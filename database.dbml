@@ -1,0 +1,64 @@
+// Application database
+
+Table Form {
+  id int [pk]
+  items JSON
+  i18n JSON
+}
+
+Table FormRevision {
+  id int [pk]
+  items JSON
+  i18n JSON
+  version int
+  form int [ref: > Form.id]
+}
+
+Table Participant {
+  id int [pk]
+  token varchar
+  identifier varchar
+  status varchar
+  company int [ref: > Company.id]
+}
+
+Table Company {
+  id int [pk]
+  name varchar
+}
+
+Table Campaign {
+  id int [pk]
+  company int [ref: > Company.id]
+  form_revision int [ref: > FormRevision.id]
+}
+
+Table CampaignParticipants {
+  campaign_id  int [ref: > Campaign.id]
+  participant_id  int [ref: > Participant.id]
+}
+
+Table CaseReport {
+  id int [pk]
+  identifier varchar
+  company int [ref: > Company.id]
+  campaign int [ref: > Campaign.id]
+  form_revision int [ref: > FormRevision.id]
+  participant int [ref: > Participant.id]
+}
+
+// Private data database
+
+Table DataEntry {
+  id int [pk]
+  identifier varchar
+  data varchar // encrypted JSON
+}
+
+Table AccessLog {
+  id int [pk]
+  timestamp datetime
+  entry int [ref: > DataEntry.id]
+  username varchar
+  method varchar
+}
