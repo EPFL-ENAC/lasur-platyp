@@ -6,7 +6,6 @@ from logging import basicConfig, INFO, DEBUG
 from pydantic import BaseModel
 from sqlalchemy.sql import text
 from api.views.forms import router as forms_router
-from api.views.campaigns import router as campaigns_router
 
 basicConfig(level=DEBUG)
 
@@ -52,13 +51,7 @@ async def get_health(
     return HealthCheck(status="OK")
 
 app.include_router(
-    natural_resources_router,
+    forms_router,
     prefix="/form",
     tags=["Forms"],
-)
-
-app.include_router(
-    building_materials_router,
-    prefix="/campaign",
-    tags=["Campaigns"],
 )
