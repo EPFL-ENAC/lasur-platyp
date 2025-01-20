@@ -18,7 +18,7 @@ async def find(
     range: str = Query("[0,99]"),
     session: AsyncSession = Depends(get_session),
 ) -> FormResult:
-    """Search for natural resources"""
+    """Search for forms"""
     try:
         validated = validate_params(filter, sort, range, select)
         return await FormService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"])
@@ -28,7 +28,7 @@ async def find(
 
 @router.get("/{id}", response_model=Form, response_model_exclude_none=True)
 async def get(id: int, session: AsyncSession = Depends(get_session)) -> Form:
-    """Get a natural resource by id"""
+    """Get a form by id"""
     return await FormService(session).get(id)
 
 
@@ -38,7 +38,7 @@ async def delete(
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Form:
-    """Delete a natural resource by id"""
+    """Delete a form by id"""
     return await FormService(session).delete(id)
 
 
@@ -48,7 +48,7 @@ async def create(
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Form:
-    """Create a natural resource"""
+    """Create a form"""
     return await FormService(session).create(natural_resource, user)
 
 
@@ -59,5 +59,5 @@ async def update(
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Form:
-    """Update a natural resource by id"""
+    """Update a form by id"""
     return await FormService(session).update(id, natural_resource, user)

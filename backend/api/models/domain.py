@@ -32,6 +32,7 @@ class Form(FormBase, table=True):
         primary_key=True,
         index=True,
     )
+    form_revisions: list["FormRevision"] = Relationship(back_populates="form")
 
 
 class FormRevisionBase(Entity):
@@ -47,8 +48,10 @@ class FormRevision(FormRevisionBase, table=True):
         primary_key=True,
         index=True,
     )
+    form_id: int | None = Field(default=None, foreign_key="form.id")
+    form: Form | None = Relationship(back_populates="form_revisions")
     campaigns: List["Campaign"] = Relationship(
-        back_populates="form", cascade_delete=True)
+        back_populates="form_revision", cascade_delete=True)
 
 
 class CompanyBase(Entity):
@@ -62,8 +65,7 @@ class Company(CompanyBase, table=True):
         primary_key=True,
         index=True,
     )
-    campaigns: List["Campaign"] = Relationship(
-        back_populates="company", cascade_delete=True)
+    campaigns: List["Campaign"] = Relationship(back_populates="company")
 
 
 class CampaignBase(Entity):
@@ -78,7 +80,11 @@ class Campaign(CampaignBase, table=True):
         index=True,
     )
     form_revision_id: int = Field(default=None, foreign_key="formrevision.id")
+    form_revision: FormRevision | None = Relationship(
+        back_populates="campaigns")
     company_id: int = Field(default=None, foreign_key="company.id")
+    company: Company | None = Relationship(back_populates="campaigns")
+    participants: list["Participant"] = Relationship(back_populates="campaign")
 
 
 class ParticipantBase(Entity):
@@ -95,6 +101,7 @@ class Participant(ParticipantBase, table=True):
         index=True,
     )
     campaign_id: int = Field(default=None, foreign_key="campaign.id")
+    campaign: Campaign | None = Relationship(back_populates="participants")
 
 
 class CaseReportBase(Entity):

@@ -4,14 +4,14 @@ from sqlalchemy.sql import text
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from fastapi import HTTPException
-from api.models.domain import Form
-from api.models.query import FormResult
+from api.models.domain import FormRevision
+from api.models.query import FormRevisionResult
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 from api.auth import User
 
 
-class FormQueryBuilder(QueryBuilder):
+class FormRevisionQueryBuilder(QueryBuilder):
 
     def build_count_query_with_joins(self, filter):
         query = self.build_count_query()
@@ -28,43 +28,44 @@ class FormQueryBuilder(QueryBuilder):
         return query
 
 
-class FormService:
+class FormRevisionService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def count(self) -> int:
-        """Count all forms"""
-        count = (await self.session.exec(text("select count(id) from form"))).scalar()
+        """Count all form revisions"""
+        count = (await self.session.exec(text("select count(id) from formrevision"))).scalar()
         return count
 
-    async def get(self, id: int) -> Form:
-        """Get a form by id"""
+    async def get(self, id: int) -> FormRevision:
+        """Get a form revision by id"""
         res = await self.session.exec(
-            select(Form).where(
-                Form.id == id))
+            select(FormRevision).where(
+                FormRevision.id == id))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Form not found")
+                status_code=404, detail="FormRevision not found")
         return entity
 
-    async def delete(self, id: int) -> Form:
-        """Delete a form by id"""
+    async def delete(self, id: int) -> FormRevision:
+        """Delete a form revision by id"""
         res = await self.session.exec(
-            select(Form).where(Form.id == id)
+            select(FormRevision).where(FormRevision.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Form not found")
+                status_code=404, detail="FormRevision not found")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> FormResult:
-        """Get all forms matching filter and range"""
-        builder = FormQueryBuilder(Form, filter, sort, range, {})
+    async def find(self, filter: dict, fields: list, sort: list, range: list) -> FormRevisionResult:
+        """Get all form revisions matching filter and range"""
+        builder = FormRevisionQueryBuilder(
+            FormRevision, filter, sort, range, {})
 
         # Do a query to satisfy total count
         count_query = builder.build_count_query_with_joins(filter)
@@ -79,16 +80,16 @@ class FormService:
         results = await self.session.exec(query)
         entities = results.all()
 
-        return FormResult(
+        return FormRevisionResult(
             total=total_count,
             skip=start,
             limit=end - start + 1,
             data=entities
         )
 
-    async def create(self, payload: Form, user: User = None) -> Form:
-        """Create a new form"""
-        entity = Form(**payload.model_dump())
+    async def create(self, payload: FormRevision, user: User = None) -> FormRevision:
+        """Create a new form revision"""
+        entity = FormRevision(**payload.model_dump())
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
         if user:
@@ -98,15 +99,15 @@ class FormService:
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: Form, user: User = None) -> Form:
-        """Update a form"""
+    async def update(self, id: int, payload: FormRevision, user: User = None) -> FormRevision:
+        """Update a form revision"""
         res = await self.session.exec(
-            select(Form).where(Form.id == id)
+            select(FormRevision).where(FormRevision.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Form not found")
+                status_code=404, detail="FormRevision not found")
         for key, value in payload.model_dump().items():
             print(key, value)
             if key not in ["id", "created_at", "updated_at", "created_by", "updated_by"]:

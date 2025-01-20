@@ -5,19 +5,19 @@ a {
 }
 
 a.q-markdown--link,
-a.epfl {
+a.modus {
   text-decoration: underline;
-  text-decoration-color: red;
+  text-decoration-color: #01983b;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
   color: black;
 }
 
 a:hover.q-markdown--link,
-a:hover.epfl {
+a:hover.modus {
   text-decoration: underline;
   text-decoration-color: black;
-  color: red;
+  color: #01983b;
 }
 
 .text-help {
@@ -29,7 +29,7 @@ li + li {
 }
 
 .text-logo {
-  color: red;
+  color: #01983b;
   font-family: 'Helvetica';
   font-weight: bold;
   font-size: 2.3em;
