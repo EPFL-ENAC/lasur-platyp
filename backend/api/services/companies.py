@@ -115,4 +115,5 @@ class CompanyService:
         entity.updated_at = datetime.now()
         if user:
             entity.updated_by = user.username
+        await self.session.commit()
         return entity

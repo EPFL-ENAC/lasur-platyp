@@ -44,20 +44,20 @@ async def delete(
 
 @router.post("/", response_model=Participant, response_model_exclude_none=True)
 async def create(
-    natural_resource: Participant,
+    item: Participant,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Participant:
     """Create a participant"""
-    return await ParticipantService(session).create(natural_resource, user)
+    return await ParticipantService(session).create(item, user)
 
 
 @router.put("/{id}", response_model=Participant, response_model_exclude_none=True)
 async def update(
     id: int,
-    natural_resource: Participant,
+    item: Participant,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Participant:
     """Update a participant by id"""
-    return await ParticipantService(session).update(id, natural_resource, user)
+    return await ParticipantService(session).update(id, item, user)

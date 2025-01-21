@@ -44,20 +44,20 @@ async def delete(
 
 @router.post("/", response_model=Company, response_model_exclude_none=True)
 async def create(
-    natural_resource: Company,
+    item: Company,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Company:
     """Create a company"""
-    return await CompanyService(session).create(natural_resource, user)
+    return await CompanyService(session).create(item, user)
 
 
 @router.put("/{id}", response_model=Company, response_model_exclude_none=True)
 async def update(
     id: int,
-    natural_resource: Company,
+    item: Company,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Company:
     """Update a company by id"""
-    return await CompanyService(session).update(id, natural_resource, user)
+    return await CompanyService(session).update(id, item, user)

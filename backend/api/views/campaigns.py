@@ -44,20 +44,20 @@ async def delete(
 
 @router.post("/", response_model=Campaign, response_model_exclude_none=True)
 async def create(
-    natural_resource: Campaign,
+    item: Campaign,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Campaign:
     """Create a campaign"""
-    return await CampaignService(session).create(natural_resource, user)
+    return await CampaignService(session).create(item, user)
 
 
 @router.put("/{id}", response_model=Campaign, response_model_exclude_none=True)
 async def update(
     id: int,
-    natural_resource: Campaign,
+    item: Campaign,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Campaign:
     """Update a campaign by id"""
-    return await CampaignService(session).update(id, natural_resource, user)
+    return await CampaignService(session).update(id, item, user)
