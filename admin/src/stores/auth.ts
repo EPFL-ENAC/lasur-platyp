@@ -9,7 +9,6 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdmin = computed(() => realmRoles.value.includes('platyp-admin'))
 
   const accessToken = computed(() => keycloak.token)
-  //const accessToken = ref<string>();
 
   async function init() {
     if (isAuthenticated.value) return Promise.resolve(true)
@@ -22,7 +21,6 @@ export const useAuthStore = defineStore('auth', () => {
       .then((authenticated: boolean) => {
         if (authenticated) {
           realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
-          //accessToken.value = keycloak.token;
           return keycloak.loadUserProfile().then((prof: KeycloakProfile) => {
             profile.value = prof
             return authenticated
