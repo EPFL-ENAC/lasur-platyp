@@ -20,42 +20,8 @@ class Entity(SQLModel):
     updated_by: Optional[str] = Field(default=None)
 
 
-class FormBase(Entity):
-    items: Dict[str, Any] = Field(default=None, sa_type=JSON)
-    i18n: Dict[str, Any] = Field(default=None, sa_type=JSON)
-
-
-class Form(FormBase, table=True):
-    id: Optional[int] = Field(
-        default=None,
-        nullable=False,
-        primary_key=True,
-        index=True,
-    )
-    form_revisions: list["FormRevision"] = Relationship(back_populates="form")
-
-
-class FormRevisionBase(Entity):
-    items: Dict[str, Any] = Field(default=None, sa_type=JSON)
-    i18n: Dict[str, Any] = Field(default=None, sa_type=JSON)
-    version: int = Field(default=1)
-
-
-class FormRevision(FormRevisionBase, table=True):
-    id: Optional[int] = Field(
-        default=None,
-        nullable=False,
-        primary_key=True,
-        index=True,
-    )
-    form_id: int | None = Field(default=None, foreign_key="form.id")
-    form: Form | None = Relationship(back_populates="form_revisions")
-    campaigns: List["Campaign"] = Relationship(
-        back_populates="form_revision", cascade_delete=True)
-
-
 class CompanyBase(Entity):
-    name: str
+    pass
 
 
 class Company(CompanyBase, table=True):
@@ -79,9 +45,6 @@ class Campaign(CampaignBase, table=True):
         primary_key=True,
         index=True,
     )
-    form_revision_id: int = Field(default=None, foreign_key="formrevision.id")
-    form_revision: FormRevision | None = Relationship(
-        back_populates="campaigns")
     company_id: int = Field(default=None, foreign_key="company.id")
     company: Company | None = Relationship(back_populates="campaigns")
     participants: list["Participant"] = Relationship(back_populates="campaign")
@@ -116,7 +79,6 @@ class CaseReport(CaseReportBase, table=True):
         index=True,
     )
     data: str
-    form_revision_id: int = Field(default=None, foreign_key="formrevision.id")
     participant_id: int = Field(default=None, foreign_key="participant.id")
     campaign_id: int = Field(default=None, foreign_key="campaign.id")
     company_id: int = Field(default=None, foreign_key="company.id")

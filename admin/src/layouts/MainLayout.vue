@@ -37,14 +37,6 @@
         </q-item>
 
         <q-item-label class="text-h6" header>{{ t('content') }}</q-item-label>
-        <q-item clickable v-close-popup :to="'/forms'">
-          <q-item-section avatar>
-            <q-icon name="fa-brands fa-wpforms" size="xs" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label header>{{ t('forms') }}</q-item-label>
-          </q-item-section>
-        </q-item>
         <q-item clickable v-close-popup :to="'/companies'">
           <q-item-section avatar>
             <q-icon name="fa-solid fa-building" size="xs" />
@@ -53,18 +45,22 @@
             <q-item-label header>{{ t('companies') }}</q-item-label>
           </q-item-section>
         </q-item>
-
-        <q-item-label class="text-h6" header>{{ t('help') }}</q-item-label>
-        <q-item
-          clickable
-          v-close-popup
-          @click="onOpenUrl('https://www.markdownguide.org/cheat-sheet/')"
-        >
+        <q-item clickable v-close-popup :to="'/case-reports'">
           <q-item-section avatar>
-            <q-icon name="fa-brands fa-markdown" size="xs" />
+            <q-icon name="fa-brands fa-wpforms" size="xs" />
           </q-item-section>
           <q-item-section>
-            <q-item-label header>{{ t('markdown_guide') }}</q-item-label>
+            <q-item-label header>{{ t('case_reports') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item-label class="text-h6" header>{{ t('help') }}</q-item-label>
+        <q-item clickable v-close-popup :to="'/cookbook'">
+          <q-item-section avatar>
+            <q-icon name="fa-solid fa-bowl-rice" size="xs" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label header>{{ t('cookbook') }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -109,9 +105,5 @@ function toggleLeftDrawer() {
 
 function onLogout() {
   authStore.logout()
-}
-
-function onOpenUrl(url: string) {
-  window.open(url, '_blank')
 }
 </script>

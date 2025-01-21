@@ -1,8 +1,14 @@
-export interface Todo {
-  id: number;
-  content: string;
+export interface Filter {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
 }
 
-export interface Meta {
-  totalCount: number;
+export interface Query {
+  $skip?: number
+  $limit?: number
+  $sort?: [string, boolean] // [field, descending]
+  $select?: string[]
+  filter?: Filter
 }
+
+export const DefaultAlignment: 'left' | 'right' | 'center' = 'left'

@@ -5,8 +5,6 @@ from api.db import get_session, AsyncSession
 from logging import basicConfig, INFO, DEBUG
 from pydantic import BaseModel
 from sqlalchemy.sql import text
-from api.views.forms import router as forms_router
-from api.views.form_revisions import router as form_revisions_router
 from api.views.companies import router as companies_router
 from api.views.campaigns import router as campaigns_router
 from api.views.participants import router as participants_router
@@ -55,16 +53,6 @@ async def get_health(
 
     return HealthCheck(status="OK")
 
-app.include_router(
-    forms_router,
-    prefix="/form",
-    tags=["Forms"],
-)
-app.include_router(
-    form_revisions_router,
-    prefix="/form-revision",
-    tags=["Form Revisions"],
-)
 app.include_router(
     companies_router,
     prefix="/company",

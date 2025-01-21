@@ -99,6 +99,8 @@
     "watchPostEffect": true,
     "watchSyncEffect": true,
     "Profile": true,
-    "useAuthStore": true
+    "useAuthStore": true,
+    "Service": true,
+    "useServices": true
   }
 }

@@ -22,7 +22,7 @@ const appEnv = (window as unknown as CustomWindow).env
 
 const keycloak = new Keycloak({
   url: 'https://enac-it-sso.epfl.ch/',
-  realm: 'LASURE',
+  realm: 'LASUR',
   clientId: appEnv.AUTH_CLIENT_ID,
 })
 const baseUrl = `${appEnv.API_URL}${appEnv.API_PATH}`
