@@ -9,6 +9,7 @@ from alembic import context
 from sqlmodel import SQLModel
 
 from api.models.domain import Company, Campaign, Participant, CaseReport, DataEntry
+from api.models.authz import AppUser, AppRole, AppUserRole, AppResource, ACL
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

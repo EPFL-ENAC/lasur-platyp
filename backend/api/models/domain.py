@@ -31,6 +31,8 @@ class Company(CompanyBase, table=True):
         primary_key=True,
         index=True,
     )
+    administrators: Optional[List[str]] = Field(
+        default=None, sa_column=Column(JSON))
     campaigns: List["Campaign"] = Relationship(back_populates="company")
 
 
