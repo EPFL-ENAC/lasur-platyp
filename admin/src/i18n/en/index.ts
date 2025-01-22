@@ -5,6 +5,11 @@ export default {
   main: {
     brand: 'PLATYP',
   },
+  company: {
+    administrators: 'Administrators',
+    administrators_hint:
+      'Provide the email address of the administrators for this company (type Enter to add entry).',
+  },
   action: 'Action',
   add: 'Add',
   case_reports: 'Case Reports',

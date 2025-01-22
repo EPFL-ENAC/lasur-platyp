@@ -9,6 +9,7 @@ from api.models.query import CompanyResult
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 from api.auth import User
+from api.services.authz import ACLService
 
 
 class CompanyQueryBuilder(QueryBuilder):
@@ -97,6 +98,8 @@ class CompanyService:
             entity.updated_by = user.username
         self.session.add(entity)
         await self.session.commit()
+        self.apply_admin_permissions(entity)
+
         return entity
 
     async def update(self, id: int, payload: Company, user: User = None) -> Company:
@@ -116,4 +119,18 @@ class CompanyService:
         if user:
             entity.updated_by = user.username
         await self.session.commit()
+        self.apply_admin_permissions(entity)
         return entity
+
+    def apply_admin_permissions(self, entity: Company):
+        resource = self.as_resource(entity)
+        acl_service = ACLService(self.session)
+        # Note: permissions are only applied
+        acl_service.delete_user_permissions(resource)
+        if entity.administrators:
+            for admin in entity.administrators:
+                acl_service.apply_user_permission(resource, "*", admin)
+                pass
+
+    def as_resource(self, entity: Company):
+        return f"company:{entity.id}"

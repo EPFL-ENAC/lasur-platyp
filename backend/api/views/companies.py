@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
-from api.auth import kc_service, User
+from api.auth import kc_service, User, require_admin_or_perm
 from api.models.domain import Company
 from api.models.query import CompanyResult
 from api.services.companies import CompanyService
@@ -16,7 +16,7 @@ async def find(
     select: str = Query(None),
     sort: str = Query(None),
     range: str = Query("[0,99]"),
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_session)
 ) -> CompanyResult:
     """Search for companies"""
     try:
@@ -27,8 +27,11 @@ async def find(
 
 
 @router.get("/{id}", response_model=Company, response_model_exclude_none=True)
-async def get(id: int, session: AsyncSession = Depends(get_session)) -> Company:
+async def get(id: int,
+              session: AsyncSession = Depends(get_session),
+              user: User = Depends(kc_service.get_user_info())) -> Company:
     """Get a company by id"""
+    require_admin_or_perm(user, f"company:{id}", "read")
     return await CompanyService(session).get(id)
 
 

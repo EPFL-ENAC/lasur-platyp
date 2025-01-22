@@ -21,7 +21,7 @@ class Entity(SQLModel):
 
 
 class CompanyBase(Entity):
-    pass
+    administrators: Optional[List[str]]
 
 
 class Company(CompanyBase, table=True):

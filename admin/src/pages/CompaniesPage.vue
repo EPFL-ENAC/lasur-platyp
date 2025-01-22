@@ -33,13 +33,30 @@
             </template>
           </q-input>
         </template>
-        <template v-slot:body-cell-type="props">
+        <template v-slot:body-cell-name="props">
           <q-td :props="props">
-            <q-badge color="accent" :label="props.value" />
+            <router-link :to="`/company/${props.row.id}`" class="modus">{{
+              props.row.name
+            }}</router-link>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-administrators="props">
+          <q-td :props="props">
+            <q-badge color="accent" :label="props.row.administrators.length || 0" />
           </q-td>
         </template>
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
+            <q-btn
+              color="grey-8"
+              size="12px"
+              flat
+              dense
+              round
+              icon="visibility"
+              :to="`/company/${props.row.id}`"
+            >
+            </q-btn>
             <q-btn
               color="grey-8"
               size="12px"
@@ -102,7 +119,15 @@ const columns = computed(() => {
       sortable: true,
     },
     {
-      name: 'lastModified',
+      name: 'administrators',
+      required: true,
+      label: t('company.administrators'),
+      align: DefaultAlignment,
+      field: 'administrators',
+      sortable: true,
+    },
+    {
+      name: 'updated_at',
       required: true,
       label: t('last_modified'),
       align: DefaultAlignment,
@@ -110,7 +135,7 @@ const columns = computed(() => {
         const date = new Date(row.updated_at || row.created_at || '')
         return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
       },
-      sortable: false,
+      sortable: true,
     },
   ]
 
@@ -194,7 +219,7 @@ function fetchFromServer(
 const onRequest = makePaginationRequestHandler(fetchFromServer, pagination)
 
 function onAdd() {
-  selected.value = { name: '' }
+  selected.value = { name: '', administrators: [] }
   showEditDialog.value = true
 }
 

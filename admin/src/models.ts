@@ -23,5 +23,6 @@ export interface Campaign extends Entity {
 }
 
 export interface Company extends Entity {
+  administrators: string[]
   campaings?: Campaign[]
 }

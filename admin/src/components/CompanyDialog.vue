@@ -9,7 +9,20 @@
       <q-separator />
 
       <q-card-section>
-        <q-input filled v-model="selected.name" :label="t('name') + ' *'" />
+        <q-input filled v-model="selected.name" :label="t('name') + ' *'" class="q-mb-md" />
+        <q-select
+          filled
+          v-model="selected.administrators"
+          :label="t('company.administrators')"
+          :hint="t('company.administrators_hint')"
+          use-input
+          use-chips
+          multiple
+          hide-dropdown-icon
+          input-debounce="0"
+          new-value-mode="add-unique"
+          class="q-mb-md"
+        />
       </q-card-section>
 
       <q-separator />
@@ -54,6 +67,9 @@ watch(
     if (value) {
       // deep copy
       selected.value = JSON.parse(JSON.stringify(props.item))
+      if (selected.value.administrators === undefined) {
+        selected.value.administrators = []
+      }
       editMode.value = selected.value.id !== undefined
     }
     showDialog.value = value
