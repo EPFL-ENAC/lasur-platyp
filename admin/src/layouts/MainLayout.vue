@@ -67,6 +67,18 @@
           </q-item-section>
         </q-item>
 
+        <q-item-label v-if="authStore.isAdmin" class="text-h6" header>{{
+          t('administration')
+        }}</q-item-label>
+        <q-item v-if="authStore.isAdmin" clickable :to="'/users'">
+          <q-item-section avatar>
+            <q-icon name="fa-solid fa-users" size="xs" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label header>{{ t('users') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-item-label class="text-h6" header>{{ t('help') }}</q-item-label>
         <q-item clickable :to="'/cookbook'">
           <q-item-section avatar>

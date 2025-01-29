@@ -1,6 +1,4 @@
-from typing import List, Optional, Dict
-from sqlmodel import Field
-from sqlalchemy.dialects.postgresql import JSONB as JSON
+from typing import List
 from api.models.domain import CompanyBase, CampaignBase, ParticipantBase, CaseReportBase, DataEntryBase
 from enacit4r_sql.models.query import ListResult
 

@@ -19,6 +19,8 @@ class Config(BaseSettings):
     KEYCLOAK_URL: str = "https://enac-it-sso.epfl.ch"
     KEYCLOAK_API_ID: str
     KEYCLOAK_API_SECRET: str
+    KEYCLOAK_ADMIN_USER: str = "platyp-admin"
+    KEYCLOAK_ADMIN_PASSWORD: str
 
     PATH_PREFIX: str = "/api"
 

@@ -3,9 +3,16 @@ from enacit4r_auth.services.auth import KeycloakService, User
 from api.config import config
 from api.db import get_session
 from api.services.authz import ACLService
+from keycloak import KeycloakAdmin
 
 kc_service = KeycloakService(config.KEYCLOAK_URL, config.KEYCLOAK_REALM,
                              config.KEYCLOAK_API_ID, config.KEYCLOAK_API_SECRET, "platyp-admin")
+
+kc_admin = KeycloakAdmin(server_url=config.KEYCLOAK_URL,
+                         username=config.KEYCLOAK_ADMIN_USER,
+                         password=config.KEYCLOAK_ADMIN_PASSWORD,
+                         realm_name=config.KEYCLOAK_REALM,
+                         verify=True)
 
 acl_service = ACLService(get_session())
 

@@ -3,7 +3,6 @@ from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy.dialects.postgresql import JSONB as JSON
 from sqlalchemy import TIMESTAMP
 from datetime import datetime
-from pydantic import BaseModel
 
 # Base classes
 

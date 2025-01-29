@@ -9,6 +9,7 @@ from api.views.companies import router as companies_router
 from api.views.campaigns import router as campaigns_router
 from api.views.participants import router as participants_router
 from api.views.case_reports import router as case_reports_router
+from api.views.users import router as users_router
 
 basicConfig(level=DEBUG)
 
@@ -72,4 +73,10 @@ app.include_router(
     case_reports_router,
     prefix="/case-report",
     tags=["Case Reports"],
+)
+
+app.include_router(
+    users_router,
+    prefix="/user",
+    tags=["Users"],
 )
