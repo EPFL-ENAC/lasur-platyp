@@ -87,7 +87,7 @@
               round
               icon="delete"
               :title="t('remove')"
-              @click="onRemove(props.row)"
+              @click="onConfirmRemove(props.row)"
             >
             </q-btn>
           </q-td>
@@ -95,6 +95,12 @@
       </q-table>
       <user-dialog v-model="showDialog" :item="selected" @saved="usersStore.init" />
       <user-password-dialog v-model="showPasswordDialog" :item="selected" />
+      <confirm-dialog
+        v-model="showRemoveDialog"
+        :title="t('remove_user')"
+        :text="t('remove_user_text', { name: selected.email })"
+        @confirm="onRemove()"
+      />
     </div>
   </q-page>
 </template>
@@ -104,6 +110,7 @@ import { DefaultAlignment } from 'src/components/models'
 import type { AppUser } from 'src/models'
 import UserDialog from 'src/components/UserDialog.vue'
 import UserPasswordDialog from 'src/components/UserPasswordDialog.vue'
+import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import { notifyError } from 'src/utils/notify'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -112,6 +119,7 @@ const usersStore = useUsersStore()
 const filter = ref('')
 const showDialog = ref(false)
 const showPasswordDialog = ref(false)
+const showRemoveDialog = ref(false)
 const selected = ref<AppUser>({} as AppUser)
 
 const columns = computed(() => {
@@ -188,10 +196,15 @@ function onEdit(user: AppUser) {
   showDialog.value = true
 }
 
-function onRemove(user: AppUser) {
-  if (user.id)
+function onConfirmRemove(user: AppUser) {
+  selected.value = user
+  showRemoveDialog.value = true
+}
+
+function onRemove() {
+  if (selected.value?.id)
     usersStore
-      .remove(user.id)
+      .remove(selected.value.id)
       .catch(notifyError)
       .finally(() => usersStore.init())
 }

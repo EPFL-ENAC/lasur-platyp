@@ -20,11 +20,27 @@
           v-if="!editMode"
           filled
           v-model="selected.password"
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
           :label="t('password') + ' *'"
           :hint="t('password_hint')"
           class="q-mb-md"
-        />
+        >
+          <template v-slot:append>
+            <q-icon
+              name="visibility"
+              size="xs"
+              class="cursor-pointer on-left"
+              @click="showPassword = !showPassword"
+            />
+            <q-icon
+              name="content_copy"
+              size="xs"
+              class="cursor-pointer on-left"
+              @click="onCopyPassword"
+            />
+            <q-icon name="electric_bolt" class="cursor-pointer" @click="onGeneratePassword" />
+          </template>
+        </q-input>
         <q-input
           filled
           v-model="selected.first_name"
@@ -51,8 +67,10 @@
 </template>
 
 <script setup lang="ts">
+import { copyToClipboard } from 'quasar'
 import type { AppUser } from 'src/models'
-import { notifyError } from 'src/utils/notify'
+import { notifyError, notifySuccess } from 'src/utils/notify'
+import { generateToken } from 'src/utils/generate'
 
 interface DialogProps {
   modelValue: boolean
@@ -66,6 +84,7 @@ const { t } = useI18n()
 const usersStore = useUsersStore()
 
 const showDialog = ref(props.modelValue)
+const showPassword = ref(false)
 const selected = ref<AppUser>({
   email: '',
 } as AppUser)
@@ -85,6 +104,9 @@ watch(
         selected.value.enabled = true
       }
       editMode.value = selected.value.id !== undefined
+      if (!editMode.value) {
+        onGeneratePassword()
+      }
     }
     showDialog.value = value
   },
@@ -114,5 +136,18 @@ async function onSave() {
       })
       .catch(notifyError)
   }
+}
+
+function onGeneratePassword() {
+  selected.value.password = generateToken(12)
+}
+
+function onCopyPassword() {
+  if (selected.value.password === undefined) return
+  copyToClipboard(selected.value.password)
+    .then(() => {
+      notifySuccess('password_copied')
+    })
+    .catch(notifyError)
 }
 </script>

@@ -23,11 +23,9 @@ KEYCLOAK_REALM=LASUR
 KEYCLOAK_URL=https://enac-it-sso.epfl.ch
 KEYCLOAK_API_ID=local-api
 KEYCLOAK_API_SECRET=xxxxx
-KEYCLOAK_ADMIN_USER=platyp-admin
-KEYCLOAK_ADMIN_PASSWORD=xxxxx
 ```
 
-Note: the Keycloak admin user and password are used to manage local users. The required role for this user are:
+Note: the API Keycloak client is used to manage local users. The required role for this client are:
 * `realm-management` manage-users
 * `realm-management` query-users	
 * `realm-management` view-users

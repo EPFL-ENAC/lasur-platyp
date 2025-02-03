@@ -12,11 +12,27 @@
         <q-input
           filled
           v-model="password"
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
           :label="t('password') + ' *'"
           :hint="t('password_hint')"
           class="q-mb-md"
-        />
+        >
+          <template v-slot:append>
+            <q-icon
+              name="visibility"
+              class="cursor-pointer on-left"
+              size="xs"
+              @click="showPassword = !showPassword"
+            />
+            <q-icon
+              name="content_copy"
+              size="xs"
+              class="cursor-pointer on-left"
+              @click="onCopyPassword"
+            />
+            <q-icon name="electric_bolt" class="cursor-pointer" @click="onGeneratePassword" />
+          </template>
+        </q-input>
       </q-card-section>
 
       <q-separator />
@@ -30,8 +46,10 @@
 </template>
 
 <script setup lang="ts">
+import { copyToClipboard } from 'quasar'
 import type { AppUser } from 'src/models'
-import { notifyError } from 'src/utils/notify'
+import { notifyError, notifySuccess } from 'src/utils/notify'
+import { generateToken } from 'src/utils/generate'
 
 interface DialogProps {
   modelValue: boolean
@@ -45,6 +63,7 @@ const { t } = useI18n()
 const usersStore = useUsersStore()
 
 const showDialog = ref(props.modelValue)
+const showPassword = ref(false)
 const password = ref('')
 const isValid = computed(() => {
   return password.value?.trim().length > 0
@@ -54,6 +73,7 @@ watch(
   () => props.modelValue,
   (value) => {
     showDialog.value = value
+    onGeneratePassword()
   },
 )
 
@@ -72,5 +92,17 @@ async function onSave() {
       })
       .catch(notifyError)
   }
+}
+
+function onGeneratePassword() {
+  password.value = generateToken(12)
+}
+
+function onCopyPassword() {
+  copyToClipboard(password.value)
+    .then(() => {
+      notifySuccess('password_copied')
+    })
+    .catch(notifyError)
 }
 </script>
