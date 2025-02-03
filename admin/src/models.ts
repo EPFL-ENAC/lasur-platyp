@@ -23,5 +23,19 @@ export interface Campaign extends Entity {
 }
 
 export interface Company extends Entity {
+  administrators: string[]
   campaings?: Campaign[]
+}
+
+export interface AppUser {
+  id?: string
+  username: string
+  email: string
+  email_verified: boolean
+  first_name?: string
+  last_name?: string
+  enabled: boolean
+  totp: boolean
+  roles: string[]
+  password?: string
 }

@@ -101,6 +101,7 @@
     "Profile": true,
     "useAuthStore": true,
     "Service": true,
-    "useServices": true
+    "useServices": true,
+    "useUsersStore": true
   }
 }

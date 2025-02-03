@@ -24,6 +24,14 @@ KEYCLOAK_URL=https://enac-it-sso.epfl.ch
 KEYCLOAK_API_ID=local-api
 KEYCLOAK_API_SECRET=xxxxx
 ```
+
+Note: the API Keycloak client is used to manage local users. The required role for this client are:
+* `realm-management` manage-users
+* `realm-management` query-users	
+* `realm-management` view-users
+* `realm-management` view-realm	
+
+
 ## Manage external services
 
 Local Postgres database:

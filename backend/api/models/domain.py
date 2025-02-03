@@ -3,7 +3,6 @@ from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy.dialects.postgresql import JSONB as JSON
 from sqlalchemy import TIMESTAMP
 from datetime import datetime
-from pydantic import BaseModel
 
 # Base classes
 
@@ -21,7 +20,7 @@ class Entity(SQLModel):
 
 
 class CompanyBase(Entity):
-    pass
+    administrators: Optional[List[str]]
 
 
 class Company(CompanyBase, table=True):
@@ -31,6 +30,8 @@ class Company(CompanyBase, table=True):
         primary_key=True,
         index=True,
     )
+    administrators: Optional[List[str]] = Field(
+        default=None, sa_column=Column(JSON))
     campaigns: List["Campaign"] = Relationship(back_populates="company")
 
 

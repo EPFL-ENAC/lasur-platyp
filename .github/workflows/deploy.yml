@@ -19,4 +19,4 @@ jobs:
       # Optional inputs can be passed here
       org: epfl-lasure
       repo: platyp
-      build_context: '["./backend", "./admin", "./collect"]' # Optional"
+      build_context: '["./backend", "./admin"]' # "./collect"
