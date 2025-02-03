@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
 from api.models.domain import Campaign
-from api.models.query import CampaignResult
+from api.models.query import CampaignResult, CampaignDraft
 from api.services.campaigns import CampaignService
 from enacit4r_sql.utils.query import validate_params, ValidationError
 from api.models.domain import Campaign
@@ -17,6 +17,7 @@ async def find(
     sort: str = Query(None),
     range: str = Query("[0,99]"),
     session: AsyncSession = Depends(get_session),
+    user: User = Depends(kc_service.require_admin()),
 ) -> CampaignResult:
     """Search for campaigns"""
     try:
@@ -27,7 +28,9 @@ async def find(
 
 
 @router.get("/{id}", response_model=Campaign, response_model_exclude_none=True)
-async def get(id: int, session: AsyncSession = Depends(get_session)) -> Campaign:
+async def get(id: int,
+              session: AsyncSession = Depends(get_session),
+              user: User = Depends(kc_service.require_admin())) -> Campaign:
     """Get a campaign by id"""
     return await CampaignService(session).get(id)
 
@@ -44,7 +47,7 @@ async def delete(
 
 @router.post("/", response_model=Campaign, response_model_exclude_none=True)
 async def create(
-    item: Campaign,
+    item: CampaignDraft,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Campaign:
@@ -55,7 +58,7 @@ async def create(
 @router.put("/{id}", response_model=Campaign, response_model_exclude_none=True)
 async def update(
     id: int,
-    item: Campaign,
+    item: CampaignDraft,
     session: AsyncSession = Depends(get_session),
     user: User = Depends(kc_service.require_admin())
 ) -> Campaign:

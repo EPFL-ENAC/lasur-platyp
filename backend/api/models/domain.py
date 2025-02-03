@@ -36,7 +36,7 @@ class Company(CompanyBase, table=True):
 
 
 class CampaignBase(Entity):
-    url: str
+    url: Optional[str] = Field(default=None)
 
 
 class Campaign(CampaignBase, table=True):

@@ -5,7 +5,7 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from fastapi import HTTPException
 from api.models.domain import Campaign
-from api.models.query import CampaignResult
+from api.models.query import CampaignResult, CampaignDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 from api.auth import User
@@ -87,7 +87,7 @@ class CampaignService:
             data=entities
         )
 
-    async def create(self, payload: Campaign, user: User = None) -> Campaign:
+    async def create(self, payload: CampaignDraft, user: User = None) -> Campaign:
         """Create a new campaign"""
         entity = Campaign(**payload.model_dump())
         entity.created_at = datetime.now()
@@ -99,7 +99,7 @@ class CampaignService:
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: Campaign, user: User = None) -> Campaign:
+    async def update(self, id: int, payload: CampaignDraft, user: User = None) -> Campaign:
         """Update a campaign"""
         res = await self.session.exec(
             select(Campaign).where(Campaign.id == id)

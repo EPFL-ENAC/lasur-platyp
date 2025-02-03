@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Optional
+from sqlmodel import Field
 from api.models.domain import CompanyBase, CampaignBase, ParticipantBase, CaseReportBase, DataEntryBase
 from enacit4r_sql.models.query import ListResult
 
@@ -13,6 +14,12 @@ class CompanyResult(ListResult):
 
 class CampaignRead(CampaignBase):
     id: int
+    company_id: int
+
+
+class CampaignDraft(CampaignBase):
+    id: Optional[int] = Field(default=None)
+    company_id: int = Field(default=None)
 
 
 class CampaignResult(ListResult):

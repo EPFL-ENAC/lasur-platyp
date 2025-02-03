@@ -24,22 +24,36 @@ export class Service<Type extends Company | Campaign | Participant> {
   }
 
   async get(id: string): Promise<Type> {
-    return api.get(`/${this.entityName}/${id}`)
+    if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
+    return authStore.updateToken().then(() => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      }
+      return api.get(`/${this.entityName}/${id}`, config).then((res) => res.data)
+    })
   }
 
   async find(query: Query | undefined) {
+    if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
     const range = [query?.$skip || 0, query?.$limit || 10 - 1]
     const sort = query?.$sort ? [query?.$sort[0], query?.$sort[1] ? 'DESC' : 'ASC'] : ['id', 'ASC']
-    return api
-      .get(`/${this.entityName}/`, {
-        params: {
-          select: query?.$select ? JSON.stringify(query?.$select) : undefined,
-          range: JSON.stringify(range),
-          sort: JSON.stringify(sort),
-          filter: JSON.stringify(query?.filter),
-        },
-      })
-      .then((res) => res.data)
+    return authStore.updateToken().then(() => {
+      return api
+        .get(`/${this.entityName}/`, {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`,
+          },
+          params: {
+            select: query?.$select ? JSON.stringify(query?.$select) : undefined,
+            range: JSON.stringify(range),
+            sort: JSON.stringify(sort),
+            filter: JSON.stringify(query?.filter),
+          },
+        })
+        .then((res) => res.data)
+    })
   }
 
   async update(id: string | number, payload: Type) {

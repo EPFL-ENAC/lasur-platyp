@@ -102,6 +102,7 @@
     "useAuthStore": true,
     "Service": true,
     "useServices": true,
-    "useUsersStore": true
+    "useUsersStore": true,
+    "useCampaigns": true
   }
 }
