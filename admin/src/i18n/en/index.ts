@@ -16,6 +16,8 @@ export default {
   },
   action: 'Action',
   add: 'Add',
+  address: 'Address',
+  address_input_hint: 'Type Enter to lookup addresses.',
   administration: 'Administration',
   campaigns: 'Campaigns',
   case_reports: 'Case Reports',
@@ -32,6 +34,7 @@ export default {
   help: 'Help',
   last_modified: 'Last Modified',
   last_name: 'Last Name',
+  location: 'Location',
   logout: 'Logout',
   name: 'Name',
   participants: 'Participants',
@@ -44,4 +47,6 @@ export default {
   remove: 'Remove',
   roles: 'Roles',
   users: 'Users',
+  start_date: 'Start Date',
+  end_date: 'End Date',
 }

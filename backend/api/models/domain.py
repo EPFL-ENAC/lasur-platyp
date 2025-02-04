@@ -37,6 +37,11 @@ class Company(CompanyBase, table=True):
 
 class CampaignBase(Entity):
     url: Optional[str] = Field(default=None)
+    address: Optional[str] = Field(default=None)
+    start_date: Optional[datetime] = Field(default=None)
+    end_date: Optional[datetime] = Field(default=None)
+    lat: Optional[float] = Field(default=None)
+    lon: Optional[float] = Field(default=None)
 
 
 class Campaign(CampaignBase, table=True):

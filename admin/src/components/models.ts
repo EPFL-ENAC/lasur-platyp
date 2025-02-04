@@ -12,3 +12,9 @@ export interface Query {
 }
 
 export const DefaultAlignment: 'left' | 'right' | 'center' = 'left'
+
+export interface AddressLocation {
+  address: string
+  lat?: number | undefined
+  lon?: number | undefined
+}

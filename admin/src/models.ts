@@ -19,6 +19,11 @@ export interface Participant extends Entity {
 
 export interface Campaign extends Entity {
   url?: string
+  address?: string
+  start_date?: string | undefined
+  end_date?: string | undefined
+  lat?: number | undefined
+  lon?: number | undefined
   company_id?: number
 }
 
