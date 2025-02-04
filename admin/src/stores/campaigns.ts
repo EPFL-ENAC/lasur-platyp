@@ -12,6 +12,7 @@ export const useCampaigns = defineStore('campaigns', () => {
     loading.value = true
     return service
       .find({
+        $limit: 100,
         filter: {
           company_id: company.value.id,
         },
