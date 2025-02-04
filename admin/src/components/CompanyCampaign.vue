@@ -3,7 +3,7 @@
     <q-btn
       v-if="authStore.isAdmin"
       size="sm"
-      color="primary"
+      color="secondary"
       icon="edit"
       class="q-mb-md"
       @click="onEdit"
@@ -17,6 +17,7 @@
       </div>
     </div>
     <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
+    <company-campaign-participants :campaign="item" />
     <company-campaign-dialog
       v-if="props.company"
       v-model="showDialog"
@@ -30,6 +31,7 @@
 <script setup lang="ts">
 import type { Campaign, Company } from 'src/models'
 import CompanyCampaignDialog from 'src/components/CompanyCampaignDialog.vue'
+import CompanyCampaignParticipants from 'src/components/CompanyCampaignParticipants.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'

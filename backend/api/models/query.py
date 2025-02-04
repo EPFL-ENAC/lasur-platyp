@@ -1,4 +1,5 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
+from pydantic import BaseModel
 from sqlmodel import Field
 from api.models.domain import CompanyBase, CampaignBase, ParticipantBase, CaseReportBase, DataEntryBase
 from enacit4r_sql.models.query import ListResult
@@ -28,6 +29,13 @@ class CampaignResult(ListResult):
 
 class ParticipantRead(ParticipantBase):
     id: int
+    campaign_id: int
+
+
+class ParticipantDraft(ParticipantBase):
+    id: Optional[int] = Field(default=None)
+    token: Optional[str] = Field(default=None)
+    campaign_id: int = Field(default=None)
 
 
 class ParticipantResult(ListResult):
@@ -44,3 +52,7 @@ class CaseReportResult(ListResult):
 
 class DataEntryRead(DataEntryBase):
     id: int
+
+
+class ParticipantData(BaseModel):
+    data: Optional[Dict] = None

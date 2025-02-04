@@ -103,6 +103,7 @@
     "Service": true,
     "useServices": true,
     "useUsersStore": true,
-    "useCampaigns": true
+    "useCampaigns": true,
+    "useParticipants": true
   }
 }

@@ -1,4 +1,4 @@
-import { Notify } from 'quasar'
+import { notifyError } from './notify'
 
 type PaginationProperties = {
   pagination: PaginationOptions
@@ -42,14 +42,6 @@ export function makePaginationRequestHandler(
       .then((result: PaginationFetchResult) => {
         pagination.value = { ...props.pagination, rowsNumber: result.total }
       })
-      .catch((err: Error) => {
-        // auth error will be handled in the layout component
-        if (err.name !== 'NotAuthenticated') {
-          Notify.create({
-            message: err.message,
-            type: 'negative',
-          })
-        }
-      })
+      .catch(notifyError)
   }
 }

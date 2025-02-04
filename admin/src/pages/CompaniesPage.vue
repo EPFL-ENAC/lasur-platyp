@@ -239,9 +239,6 @@ function remove(item: Company) {
     .then(() => {
       tableRef.value.requestServerInteraction()
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .catch((err: any) => {
-      notifyError(err)
-    })
+    .catch(notifyError)
 }
 </script>

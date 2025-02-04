@@ -30,12 +30,8 @@ export function notifyError(error: any) {
   } else {
     console.error(error)
     message = error.message
-    if (error.response?.data && error.response.data?.status) {
-      message = t(`error.${error.response?.data.status}`)
-      if (error.response.data.arguments && error.response.data.arguments.length) {
-        const args = error.response.data.arguments.join(', ')
-        message = `${message} - ${args}`
-      }
+    if (error.response?.data && error.response.data?.detail) {
+      message = error.response.data.detail
     }
   }
   Notify.create({

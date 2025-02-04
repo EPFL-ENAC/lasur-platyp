@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy.dialects.postgresql import JSONB as JSON
 from sqlalchemy import TIMESTAMP
@@ -7,16 +7,18 @@ from datetime import datetime
 # Base classes
 
 
-class Entity(SQLModel):
-    name: str
-    description: Optional[str] = Field(default=None)
-
+class TimestampMixin(SQLModel):
     created_at: datetime = Field(
         sa_column=TIMESTAMP(timezone=True), default=None)
     updated_at: datetime = Field(
         sa_column=TIMESTAMP(timezone=True), default=None)
     created_by: Optional[str] = Field(default=None)
     updated_by: Optional[str] = Field(default=None)
+
+
+class Entity(TimestampMixin):
+    name: str
+    description: Optional[str] = Field(default=None)
 
 
 class CompanyBase(Entity):
@@ -56,10 +58,11 @@ class Campaign(CampaignBase, table=True):
     participants: list["Participant"] = Relationship(back_populates="campaign")
 
 
-class ParticipantBase(Entity):
-    token: str
-    identifier: str
+class ParticipantBase(TimestampMixin):
+    token: str = Field(default=None, unique=True)
+    identifier: str = Field(default=None, unique=True)
     status: str = Field(default="open")
+    data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
 
 
 class Participant(ParticipantBase, table=True):

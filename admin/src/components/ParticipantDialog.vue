@@ -9,20 +9,7 @@
       <q-separator />
 
       <q-card-section>
-        <q-input filled v-model="selected.name" :label="t('name') + ' *'" class="q-mb-md" />
-        <q-select
-          filled
-          v-model="selected.administrators"
-          :label="t('company.administrators')"
-          :hint="t('company.administrators_hint')"
-          use-input
-          use-chips
-          multiple
-          hide-dropdown-icon
-          input-debounce="0"
-          new-value-mode="add-unique"
-          class="q-mb-md"
-        />
+        <participant-form v-model="selected" />
       </q-card-section>
 
       <q-separator />
@@ -36,12 +23,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Company } from 'src/models'
+import type { Participant } from 'src/models'
 import { notifyError } from 'src/utils/notify'
+import ParticipantForm from 'src/components/ParticipantForm.vue'
 
 interface DialogProps {
   modelValue: boolean
-  item: Company | undefined
+  item: Participant | undefined
 }
 
 const props = defineProps<DialogProps>()
@@ -49,16 +37,16 @@ const emit = defineEmits(['update:modelValue', 'saved'])
 
 const { t } = useI18n()
 const services = useServices()
-const service = services.make('company')
+const service = services.make('participant')
 
 const showDialog = ref(props.modelValue)
-const selected = ref<Company>({
-  name: '',
-} as Company)
+const selected = ref<Participant>({
+  identifier: '',
+} as Participant)
 const editMode = ref(false)
 
 const isValid = computed(() => {
-  return selected.value.name?.trim().length > 0
+  return selected.value.identifier && selected.value.identifier.trim().length > 0
 })
 
 watch(
@@ -67,9 +55,6 @@ watch(
     if (value) {
       // deep copy
       selected.value = JSON.parse(JSON.stringify(props.item))
-      if (selected.value.administrators === undefined) {
-        selected.value.administrators = []
-      }
       editMode.value = selected.value.id !== undefined
     }
     showDialog.value = value

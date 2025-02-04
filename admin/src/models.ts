@@ -15,6 +15,7 @@ export interface Participant extends Entity {
   status?: string
   company_id?: number
   campaign_id?: number
+  data?: ParticipantData
 }
 
 export interface Campaign extends Entity {
@@ -43,4 +44,12 @@ export interface AppUser {
   totp: boolean
   roles: string[]
   password?: string
+}
+
+export interface ParticipantData {
+  identifier: string
+  age_class: string
+  employment_rate: number
+  remote_work_rate: number
+  company_vehicle: boolean
 }
