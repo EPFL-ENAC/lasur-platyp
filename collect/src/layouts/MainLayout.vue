@@ -6,7 +6,7 @@
 
         <q-toolbar-title>
           <a href="https://modus-ge.ch/" target="_blank">
-            <img src="modus.svg" height="25px" />
+            <img src="/modus.svg" height="25px" />
           </a>
           <span class="text-white text-bold on-right">{{ t('main.brand') }}</span>
         </q-toolbar-title>

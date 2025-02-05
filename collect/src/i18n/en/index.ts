@@ -3,4 +3,5 @@ export default {
     brand: 'PLATYP',
   },
   welcome: 'Welcome to {brand}',
+  token: 'Token',
 }
