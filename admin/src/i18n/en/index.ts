@@ -29,6 +29,7 @@ export default {
   campaigns: 'Campaigns',
   case_reports: 'Case Reports',
   companies: 'Companies',
+  company_removed: 'Company removed',
   content: 'Content',
   cookbook: 'Cookbook',
   dashboard: 'Dashboard',
@@ -53,6 +54,12 @@ export default {
   password_copied: 'Password copied to clipboard',
   password_hint: 'Temporary password that user will update at the next login.',
   password: 'Password',
+  remove_campaign_text:
+    "Are you sure you want to remove the campaign '{name}' and all the associated participants personal data?",
+  remove_campaign: 'Remove Campaign',
+  remove_company_text:
+    "Are you sure you want to remove the company '{name}' and all the associated campaigns and participants personal data?",
+  remove_company: 'Remove Company',
   remove_participant_text:
     "Are you sure you want to remove the participant '{identifier}' and all the associated personal data?",
   remove_participant: 'Remove Participant',

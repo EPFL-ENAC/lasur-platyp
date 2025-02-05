@@ -74,7 +74,7 @@
               dense
               round
               icon="delete"
-              @click="remove(props.row)"
+              @click="onShowRemove(props.row)"
             >
             </q-btn>
           </q-td>
@@ -82,6 +82,13 @@
       </q-table>
 
       <company-dialog v-model="showEditDialog" :item="selected" @saved="onSaved"></company-dialog>
+      <confirm-dialog
+        v-if="selected"
+        v-model="showRemoveDialog"
+        :title="t('remove_company')"
+        :text="t('remove_company_text', { name: selected.name })"
+        @confirm="onRemove"
+      />
     </div>
   </q-page>
 </template>
@@ -90,6 +97,7 @@
 import { DefaultAlignment, type Query } from 'src/components/models'
 import type { Company } from 'src/models'
 import CompanyDialog from 'src/components/CompanyDialog.vue'
+import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import { makePaginationRequestHandler } from 'src/utils/pagination'
 import type { PaginationOptions } from 'src/utils/pagination'
 import { notifyError } from 'src/utils/notify'
@@ -154,6 +162,7 @@ const columns = computed(() => {
 })
 
 const selected = ref<Company>()
+const showRemoveDialog = ref(false)
 const showEditDialog = ref(false)
 const tableRef = ref()
 const rows = ref<Company[]>([])
@@ -228,14 +237,19 @@ function onEdit(item: Company) {
   showEditDialog.value = true
 }
 
+function onShowRemove(item: Company) {
+  selected.value = { ...item }
+  showRemoveDialog.value = true
+}
+
 function onSaved() {
   tableRef.value.requestServerInteraction()
 }
 
-function remove(item: Company) {
-  if (!item.id) return
+function onRemove() {
+  if (!selected.value?.id) return
   service
-    .remove(item.id)
+    .remove(selected.value.id)
     .then(() => {
       tableRef.value.requestServerInteraction()
     })

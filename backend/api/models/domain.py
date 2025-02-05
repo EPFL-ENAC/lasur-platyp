@@ -34,7 +34,8 @@ class Company(CompanyBase, table=True):
     )
     administrators: Optional[List[str]] = Field(
         default=None, sa_column=Column(JSON))
-    campaigns: List["Campaign"] = Relationship(back_populates="company")
+    campaigns: List["Campaign"] = Relationship(
+        back_populates="company", cascade_delete=True)
 
 
 class CampaignBase(Entity):
@@ -55,7 +56,8 @@ class Campaign(CampaignBase, table=True):
     )
     company_id: int = Field(default=None, foreign_key="company.id")
     company: Company | None = Relationship(back_populates="campaigns")
-    participants: list["Participant"] = Relationship(back_populates="campaign")
+    participants: list["Participant"] = Relationship(
+        back_populates="campaign", cascade_delete=True)
 
 
 class ParticipantBase(TimestampMixin):

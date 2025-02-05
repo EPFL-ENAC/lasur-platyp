@@ -8,6 +8,15 @@
       class="q-mb-md"
       @click="onEdit"
     />
+    <q-btn
+      v-if="authStore.isAdmin"
+      flat
+      size="sm"
+      color="negative"
+      icon="delete"
+      class="q-mb-md on-right"
+      @click="onShowRemove"
+    />
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-md-6">
         <fields-list :items="items1" :dbobject="item" />
@@ -25,6 +34,12 @@
       :company="props.company"
       @saved="onSaved"
     />
+    <confirm-dialog
+      v-model="showRemoveDialog"
+      :title="t('remove_campaign')"
+      :text="t('remove_campaign_text', { name: props.item.name })"
+      @confirm="onRemove"
+    />
   </div>
 </template>
 
@@ -32,6 +47,7 @@
 import type { Campaign, Company } from 'src/models'
 import CompanyCampaignDialog from 'src/components/CompanyCampaignDialog.vue'
 import CompanyCampaignParticipants from 'src/components/CompanyCampaignParticipants.vue'
+import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
@@ -47,6 +63,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const showDialog = ref(false)
+const showRemoveDialog = ref(false)
 
 const items1: FieldItem[] = [
   {
@@ -89,5 +106,16 @@ function onEdit() {
 
 function onSaved() {
   campaignsStore.load()
+}
+
+function onShowRemove() {
+  showRemoveDialog.value = true
+}
+
+function onRemove() {
+  if (!props.item.id) return
+  campaignsStore.service.remove(props.item.id).then(() => {
+    campaignsStore.load()
+  })
 }
 </script>
