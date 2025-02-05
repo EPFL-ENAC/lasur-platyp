@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 00f8a5d82419
+Revision ID: de4dff0b724d
 Revises: 
-Create Date: 2025-02-05 11:06:23.897968
+Create Date: 2025-02-05 11:45:26.299269
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ from sqlalchemy.dialects import postgresql
 import sqlmodel
 
 # revision identifiers, used by Alembic.
-revision: str = '00f8a5d82419'
+revision: str = 'de4dff0b724d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -103,8 +103,6 @@ def upgrade() -> None:
                         'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
                     sa.Column('description', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
-                    sa.Column(
-                        'url', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column(
                         'address', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('start_date', sa.DateTime(), nullable=True),
