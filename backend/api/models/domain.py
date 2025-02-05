@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy.dialects.postgresql import JSONB as JSON
 from sqlalchemy import TIMESTAMP
@@ -7,16 +7,18 @@ from datetime import datetime
 # Base classes
 
 
-class Entity(SQLModel):
-    name: str
-    description: Optional[str] = Field(default=None)
-
+class TimestampMixin(SQLModel):
     created_at: datetime = Field(
         sa_column=TIMESTAMP(timezone=True), default=None)
     updated_at: datetime = Field(
         sa_column=TIMESTAMP(timezone=True), default=None)
     created_by: Optional[str] = Field(default=None)
     updated_by: Optional[str] = Field(default=None)
+
+
+class Entity(TimestampMixin):
+    name: str
+    description: Optional[str] = Field(default=None)
 
 
 class CompanyBase(Entity):
@@ -32,11 +34,16 @@ class Company(CompanyBase, table=True):
     )
     administrators: Optional[List[str]] = Field(
         default=None, sa_column=Column(JSON))
-    campaigns: List["Campaign"] = Relationship(back_populates="company")
+    campaigns: List["Campaign"] = Relationship(
+        back_populates="company", cascade_delete=True)
 
 
 class CampaignBase(Entity):
-    url: str
+    address: Optional[str] = Field(default=None)
+    start_date: Optional[datetime] = Field(default=None)
+    end_date: Optional[datetime] = Field(default=None)
+    lat: Optional[float] = Field(default=None)
+    lon: Optional[float] = Field(default=None)
 
 
 class Campaign(CampaignBase, table=True):
@@ -48,13 +55,15 @@ class Campaign(CampaignBase, table=True):
     )
     company_id: int = Field(default=None, foreign_key="company.id")
     company: Company | None = Relationship(back_populates="campaigns")
-    participants: list["Participant"] = Relationship(back_populates="campaign")
+    participants: list["Participant"] = Relationship(
+        back_populates="campaign", cascade_delete=True)
 
 
-class ParticipantBase(Entity):
-    token: str
+class ParticipantBase(TimestampMixin):
+    token: str = Field(default=None, unique=True)
     identifier: str
     status: str = Field(default="open")
+    data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
 
 
 class Participant(ParticipantBase, table=True):

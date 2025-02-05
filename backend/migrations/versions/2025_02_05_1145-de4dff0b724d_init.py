@@ -1,8 +1,8 @@
 """init
 
-Revision ID: e446a65267fb
+Revision ID: de4dff0b724d
 Revises: 
-Create Date: 2025-01-22 14:58:22.767334
+Create Date: 2025-02-05 11:45:26.299269
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ from sqlalchemy.dialects import postgresql
 import sqlmodel
 
 # revision identifiers, used by Alembic.
-revision: str = 'e446a65267fb'
+revision: str = 'de4dff0b724d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,15 +34,15 @@ def upgrade() -> None:
                     sa.PrimaryKeyConstraint('id')
                     )
     op.create_table('company',
-                    sa.Column(
-                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-                    sa.Column(
-                        'description', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
                     sa.Column('updated_at', sa.DateTime(), nullable=False),
                     sa.Column('created_by', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('updated_by', sqlmodel.sql.sqltypes.AutoString(),
+                              nullable=True),
+                    sa.Column(
+                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                    sa.Column('description', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('administrators', postgresql.JSONB(
@@ -51,15 +51,15 @@ def upgrade() -> None:
                     )
     op.create_index(op.f('ix_company_id'), 'company', ['id'], unique=False)
     op.create_table('dataentry',
-                    sa.Column(
-                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-                    sa.Column(
-                        'description', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
                     sa.Column('updated_at', sa.DateTime(), nullable=False),
                     sa.Column('created_by', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('updated_by', sqlmodel.sql.sqltypes.AutoString(),
+                              nullable=True),
+                    sa.Column(
+                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                    sa.Column('description', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('identifier', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=False),
@@ -70,15 +70,15 @@ def upgrade() -> None:
                     )
     op.create_index(op.f('ix_dataentry_id'), 'dataentry', ['id'], unique=False)
     op.create_table('accesslog',
-                    sa.Column(
-                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-                    sa.Column(
-                        'description', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
                     sa.Column('updated_at', sa.DateTime(), nullable=False),
                     sa.Column('created_by', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('updated_by', sqlmodel.sql.sqltypes.AutoString(),
+                              nullable=True),
+                    sa.Column(
+                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                    sa.Column('description', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('username', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=False),
@@ -93,10 +93,6 @@ def upgrade() -> None:
                     )
     op.create_index(op.f('ix_accesslog_id'), 'accesslog', ['id'], unique=False)
     op.create_table('campaign',
-                    sa.Column(
-                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-                    sa.Column(
-                        'description', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
                     sa.Column('updated_at', sa.DateTime(), nullable=False),
                     sa.Column('created_by', sqlmodel.sql.sqltypes.AutoString(),
@@ -104,7 +100,15 @@ def upgrade() -> None:
                     sa.Column('updated_by', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column(
-                        'url', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                    sa.Column('description', sqlmodel.sql.sqltypes.AutoString(),
+                              nullable=True),
+                    sa.Column(
+                        'address', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+                    sa.Column('start_date', sa.DateTime(), nullable=True),
+                    sa.Column('end_date', sa.DateTime(), nullable=True),
+                    sa.Column('lat', sa.Float(), nullable=True),
+                    sa.Column('lon', sa.Float(), nullable=True),
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('company_id', sa.Integer(), nullable=False),
                     sa.ForeignKeyConstraint(['company_id'], ['company.id'], ),
@@ -112,10 +116,6 @@ def upgrade() -> None:
                     )
     op.create_index(op.f('ix_campaign_id'), 'campaign', ['id'], unique=False)
     op.create_table('participant',
-                    sa.Column(
-                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-                    sa.Column(
-                        'description', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
                     sa.Column('updated_at', sa.DateTime(), nullable=False),
                     sa.Column('created_by', sqlmodel.sql.sqltypes.AutoString(),
@@ -128,24 +128,27 @@ def upgrade() -> None:
                               nullable=False),
                     sa.Column(
                         'status', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                    sa.Column('data', postgresql.JSONB(
+                        astext_type=sa.Text()), nullable=True),
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('campaign_id', sa.Integer(), nullable=False),
                     sa.ForeignKeyConstraint(
                         ['campaign_id'], ['campaign.id'], ),
-                    sa.PrimaryKeyConstraint('id')
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint('token')
                     )
     op.create_index(op.f('ix_participant_id'),
                     'participant', ['id'], unique=False)
     op.create_table('casereport',
-                    sa.Column(
-                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-                    sa.Column(
-                        'description', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
                     sa.Column('updated_at', sa.DateTime(), nullable=False),
                     sa.Column('created_by', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('updated_by', sqlmodel.sql.sqltypes.AutoString(),
+                              nullable=True),
+                    sa.Column(
+                        'name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                    sa.Column('description', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=True),
                     sa.Column('identifier', sqlmodel.sql.sqltypes.AutoString(),
                               nullable=False),

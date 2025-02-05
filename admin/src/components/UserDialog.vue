@@ -9,58 +9,68 @@
       <q-separator />
 
       <q-card-section>
-        <q-input
-          filled
-          v-model="selected.email"
-          :disable="editMode"
-          :label="t('email') + ' *'"
-          class="q-mb-md"
-        />
-        <q-input
-          v-if="!editMode"
-          filled
-          v-model="selected.password"
-          :type="showPassword ? 'text' : 'password'"
-          :label="t('password') + ' *'"
-          :hint="t('password_hint')"
-          class="q-mb-md"
-        >
-          <template v-slot:append>
-            <q-icon
-              name="visibility"
-              size="xs"
-              class="cursor-pointer on-left"
-              @click="showPassword = !showPassword"
-            />
-            <q-icon
-              name="content_copy"
-              size="xs"
-              class="cursor-pointer on-left"
-              @click="onCopyPassword"
-            />
-            <q-icon name="electric_bolt" class="cursor-pointer" @click="onGeneratePassword" />
-          </template>
-        </q-input>
-        <q-input
-          filled
-          v-model="selected.first_name"
-          :label="t('first_name') + ' *'"
-          class="q-mb-md"
-        />
-        <q-input
-          filled
-          v-model="selected.last_name"
-          :label="t('last_name') + ' *'"
-          class="q-mb-md"
-        />
-        <q-checkbox v-model="selected.enabled" :label="t('enabled')" class="q-mb-md" />
+        <q-form ref="form">
+          <q-input
+            filled
+            v-model="selected.email"
+            :disable="editMode"
+            :label="t('email') + ' *'"
+            lazy-rules
+            :rules="[(val) => !!val || t('field_required')]"
+            class="q-mb-md"
+          />
+          <q-input
+            v-if="!editMode"
+            filled
+            v-model="selected.password"
+            :type="showPassword ? 'text' : 'password'"
+            :label="t('password') + ' *'"
+            :hint="t('password_hint')"
+            lazy-rules
+            :rules="[(val) => !!val || t('field_required')]"
+            class="q-mb-md"
+          >
+            <template v-slot:append>
+              <q-icon
+                name="visibility"
+                size="xs"
+                class="cursor-pointer on-left"
+                @click="showPassword = !showPassword"
+              />
+              <q-icon
+                name="content_copy"
+                size="xs"
+                class="cursor-pointer on-left"
+                @click="onCopyPassword"
+              />
+              <q-icon name="electric_bolt" class="cursor-pointer" @click="onGeneratePassword" />
+            </template>
+          </q-input>
+          <q-input
+            filled
+            v-model="selected.first_name"
+            :label="t('first_name') + ' *'"
+            lazy-rules
+            :rules="[(val) => !!val || t('field_required')]"
+            class="q-mb-md"
+          />
+          <q-input
+            filled
+            v-model="selected.last_name"
+            :label="t('last_name') + ' *'"
+            lazy-rules
+            :rules="[(val) => !!val || t('field_required')]"
+            class="q-mb-md"
+          />
+          <q-checkbox v-model="selected.enabled" :label="t('enabled')" class="q-mb-md" />
+        </q-form>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
-        <q-btn :label="t('save')" color="primary" @click="onSave" :disable="!isValid" />
+        <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -83,16 +93,13 @@ const emit = defineEmits(['update:modelValue', 'saved'])
 const { t } = useI18n()
 const usersStore = useUsersStore()
 
+const form = ref()
 const showDialog = ref(props.modelValue)
 const showPassword = ref(false)
 const selected = ref<AppUser>({
   email: '',
 } as AppUser)
 const editMode = ref(false)
-
-const isValid = computed(() => {
-  return selected.value.email?.trim().length > 0
-})
 
 watch(
   () => props.modelValue,
@@ -118,6 +125,8 @@ function onHide() {
 }
 
 async function onSave() {
+  const valid = await form.value.validate()
+  if (!valid) return
   if (selected.value === undefined) return
   if (selected.value.id) {
     usersStore

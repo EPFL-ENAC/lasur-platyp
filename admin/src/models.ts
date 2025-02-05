@@ -15,10 +15,15 @@ export interface Participant extends Entity {
   status?: string
   company_id?: number
   campaign_id?: number
+  data?: ParticipantData
 }
 
 export interface Campaign extends Entity {
-  url?: string
+  address?: string
+  start_date?: string | undefined
+  end_date?: string | undefined
+  lat?: number | undefined
+  lon?: number | undefined
   company_id?: number
 }
 
@@ -38,4 +43,12 @@ export interface AppUser {
   totp: boolean
   roles: string[]
   password?: string
+}
+
+export interface ParticipantData {
+  identifier: string
+  age_class: string
+  employment_rate: number
+  remote_work_rate: number
+  company_vehicle: boolean
 }
