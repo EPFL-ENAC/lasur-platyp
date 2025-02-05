@@ -9,46 +9,56 @@
       <q-separator />
 
       <q-card-section>
-        <q-input filled v-model="selected.name" :label="t('name') + ' *'" class="q-mb-md" />
-        <address-input
-          v-model="addressLocation"
-          :label="t('address') + ' *'"
-          :hint="t('address_input_hint')"
-          class="q-mb-md"
-        />
-        <q-input filled v-model="selected.start_date" :label="t('start_date')" class="q-mb-md">
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="selected.start_date" mask="YYYY-MM-DD">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-        <q-input filled v-model="selected.end_date" :label="t('end_date')" class="q-mb-md">
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="selected.end_date" mask="YYYY-MM-DD">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
+        <q-form ref="form">
+          <q-input
+            filled
+            v-model="selected.name"
+            :label="t('name') + ' *'"
+            lazy-rules
+            :rules="[(val) => !!val || t('field_required')]"
+            class="q-mb-md"
+          />
+          <address-input
+            v-model="addressLocation"
+            :label="t('address') + ' *'"
+            :hint="t('address_input_hint')"
+            required
+            class="q-mb-md"
+          />
+          <q-input filled v-model="selected.start_date" :label="t('start_date')" class="q-mb-md">
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="selected.start_date" mask="YYYY-MM-DD">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Close" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+          <q-input filled v-model="selected.end_date" :label="t('end_date')" class="q-mb-md">
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="selected.end_date" mask="YYYY-MM-DD">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Close" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </q-form>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
-        <q-btn :label="t('save')" color="primary" @click="onSave" :disable="!isValid" />
+        <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -72,21 +82,13 @@ const emit = defineEmits(['update:modelValue', 'saved'])
 const { t } = useI18n()
 const campaignsStore = useCampaigns()
 
+const form = ref()
 const showDialog = ref(props.modelValue)
 const selected = ref<Campaign>({
   name: '',
 } as Campaign)
 const editMode = ref(false)
 const addressLocation = ref<AddressLocation>({ address: '' })
-
-const isValid = computed(() => {
-  return (
-    selected.value.name?.trim().length > 0 &&
-    addressLocation.value.address?.trim().length > 0 &&
-    addressLocation.value.lat !== undefined &&
-    addressLocation.value.lon !== undefined
-  )
-})
 
 onMounted(() => {
   if (props.modelValue) {
@@ -123,6 +125,8 @@ function onHide() {
 }
 
 async function onSave() {
+  const valid = await form.value.validate()
+  if (!valid) return
   if (selected.value === undefined) return
   selected.value.address = addressLocation.value.address
   selected.value.lat = addressLocation.value.lat

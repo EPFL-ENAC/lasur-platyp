@@ -9,27 +9,36 @@
       <q-separator />
 
       <q-card-section>
-        <q-input filled v-model="selected.name" :label="t('name') + ' *'" class="q-mb-md" />
-        <q-select
-          filled
-          v-model="selected.administrators"
-          :label="t('company.administrators')"
-          :hint="t('company.administrators_hint')"
-          use-input
-          use-chips
-          multiple
-          hide-dropdown-icon
-          input-debounce="0"
-          new-value-mode="add-unique"
-          class="q-mb-md"
-        />
+        <q-form ref="form">
+          <q-input
+            filled
+            v-model="selected.name"
+            :label="t('name') + ' *'"
+            lazy-rules
+            :rules="[(val) => !!val || t('field_required')]"
+            class="q-mb-md"
+          />
+          <q-select
+            filled
+            v-model="selected.administrators"
+            :label="t('company.administrators')"
+            :hint="t('company.administrators_hint')"
+            use-input
+            use-chips
+            multiple
+            hide-dropdown-icon
+            input-debounce="0"
+            new-value-mode="add-unique"
+            class="q-mb-md"
+          />
+        </q-form>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
-        <q-btn :label="t('save')" color="primary" @click="onSave" :disable="!isValid" />
+        <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -51,15 +60,12 @@ const { t } = useI18n()
 const services = useServices()
 const service = services.make('company')
 
+const form = ref()
 const showDialog = ref(props.modelValue)
 const selected = ref<Company>({
   name: '',
 } as Company)
 const editMode = ref(false)
-
-const isValid = computed(() => {
-  return selected.value.name?.trim().length > 0
-})
 
 watch(
   () => props.modelValue,
@@ -82,6 +88,8 @@ function onHide() {
 }
 
 async function onSave() {
+  const valid = await form.value.validate()
+  if (!valid) return
   if (selected.value === undefined) return
   if (selected.value.id) {
     service

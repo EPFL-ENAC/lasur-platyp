@@ -9,6 +9,8 @@
       @keyup.enter="onSuggestAddress"
       @update:model-value="onUpdate"
       :loading="loading"
+      lazy-rules
+      :rules="required ? [(val) => !!val || t('field_required'), locationValidator] : []"
     >
       <q-menu v-model="showSuggestions" no-parent-event no-focus auto-close>
         <q-list style="min-width: 100px">
@@ -53,6 +55,7 @@ interface Props {
   modelValue: AddressLocation | undefined
   label?: string
   hint?: string
+  required?: boolean
 }
 
 const props = defineProps<Props>()
@@ -111,5 +114,12 @@ function onSuggestionSelected(suggestion: Suggestion) {
 
   emit('feature', suggestion.feature)
   onUpdate()
+}
+
+function locationValidator() {
+  return (
+    (addressLocation.value.lat !== undefined && addressLocation.value.lon !== undefined) ||
+    t('location_required')
+  )
 }
 </script>

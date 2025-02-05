@@ -9,14 +9,16 @@
       <q-separator />
 
       <q-card-section>
-        <participant-form v-model="selected" />
+        <q-form ref="form">
+          <participant-form v-model="selected" />
+        </q-form>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
-        <q-btn :label="t('save')" color="primary" @click="onSave" :disable="!isValid" />
+        <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -39,15 +41,12 @@ const { t } = useI18n()
 const services = useServices()
 const service = services.make('participant')
 
+const form = ref()
 const showDialog = ref(props.modelValue)
 const selected = ref<Participant>({
   identifier: '',
 } as Participant)
 const editMode = ref(false)
-
-const isValid = computed(() => {
-  return selected.value.identifier && selected.value.identifier.trim().length > 0
-})
 
 watch(
   () => props.modelValue,
@@ -67,6 +66,8 @@ function onHide() {
 }
 
 async function onSave() {
+  const valid = await form.value.validate()
+  if (!valid) return
   if (selected.value === undefined) return
   if (selected.value.id) {
     service
