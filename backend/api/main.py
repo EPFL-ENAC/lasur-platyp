@@ -10,6 +10,7 @@ from api.views.campaigns import router as campaigns_router
 from api.views.participants import router as participants_router
 from api.views.case_reports import router as case_reports_router
 from api.views.users import router as users_router
+from api.views.collect import router as collect_router
 
 basicConfig(level=DEBUG)
 
@@ -79,4 +80,10 @@ app.include_router(
     users_router,
     prefix="/user",
     tags=["Users"],
+)
+
+app.include_router(
+    collect_router,
+    prefix="/collect",
+    tags=["Collect"],
 )
