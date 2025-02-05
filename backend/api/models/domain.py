@@ -62,7 +62,7 @@ class Campaign(CampaignBase, table=True):
 
 class ParticipantBase(TimestampMixin):
     token: str = Field(default=None, unique=True)
-    identifier: str = Field(default=None, unique=True)
+    identifier: str
     status: str = Field(default="open")
     data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
 

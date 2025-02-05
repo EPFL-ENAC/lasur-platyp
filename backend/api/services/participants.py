@@ -94,7 +94,7 @@ class ParticipantService:
         """Create a new participant"""
         res = await self.session.exec(
             select(Participant).where(
-                Participant.identifier == payload.identifier)
+                Participant.identifier == payload.identifier, Participant.campaign_id == payload.campaign_id)
         )
         entity = res.one_or_none()
         if entity:
@@ -129,6 +129,15 @@ class ParticipantService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Participant not found")
+        if entity.identifier != payload.identifier:
+            # changing the identifier is allowed but make sure it is unique in the campaign
+            res = await self.session.exec(
+                select(Participant).where(
+                    Participant.identifier == payload.identifier, Participant.campaign_id == entity.campaign_id)
+            )
+            if res.one_or_none() is not None:
+                raise HTTPException(
+                    status_code=400, detail="Participant identifier already exists")
         for key, value in payload.model_dump().items():
             print(key, value)
             if key not in ["id", "created_at", "updated_at", "created_by", "updated_by", "token"]:
