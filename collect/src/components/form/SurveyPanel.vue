@@ -36,6 +36,18 @@
       />
     </div>
     <div v-if="step === 3">
+      <LocationItem
+        :label="t('form.workplace')"
+        v-model="collector.caseReport.data.workplace"
+        class="q-mb-xl"
+      />
+      <LocationItem
+        :label="t('form.origin')"
+        :hint="t('form.origin_hint')"
+        v-model="collector.caseReport.data.origin"
+      />
+    </div>
+    <div v-if="step === 4">
       <NumberItem
         :label="t('form.travel_time')"
         v-model="collector.caseReport.data.travel_time"
@@ -45,7 +57,7 @@
         :unit-hint="t('form.travel_time_minutes')"
       />
     </div>
-    <div v-if="step === 4">
+    <div v-if="step === 5">
       <ChoiceItem
         :label="t('form.constraints')"
         :options="constraintsOptions"
@@ -54,7 +66,7 @@
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
-    <div v-if="step === 5">
+    <div v-if="step === 6">
       <ChoiceItem
         :label="t('form.equipments')"
         :options="equipmentsOptions"
@@ -63,7 +75,7 @@
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
-    <div v-if="step === 6">
+    <div v-if="step === 7">
       <SectionItem :label="t('form.freq_mod')" :hint="t('form.freq_mod_hint')" class="q-mb-lg" />
       <SliderItem
         :label="t('form.mode.walking')"
@@ -108,7 +120,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 7">
+    <div v-if="step === 8">
       <SectionItem :label="t('form.freq_trav_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.freq_trav_pro_local')"
@@ -144,7 +156,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 8">
+    <div v-if="step === 9">
       <SectionItem :label="t('form.freq_mod_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.mode.walking')"
@@ -224,7 +236,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 9">
+    <div v-if="step === 10">
       <SectionItem
         :label="t('form.importance')"
         :hint="t('form.importance_hint')"
@@ -273,7 +285,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 10">
+    <div v-if="step === 11">
       <SectionItem :label="t('form.needs')" :hint="t('form.needs_hint')" class="q-mb-lg" />
       <RatingItem
         :label="t('form.mode.walking')"
@@ -312,7 +324,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 11">
+    <div v-if="step === 12">
       <SectionItem
         :label="t('form.adjectives')"
         :hint="t('form.adjectives_hint')"
@@ -349,18 +361,17 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 12">
+    <div v-if="step === 13">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
       <pre>{{ collector.caseReport.data }}</pre>
     </div>
-    <div v-if="step === 13">
+    <div v-if="step === 14">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
         v-model="collector.caseReport.data.comments"
         type="textarea"
         class="q-mb-lg text-h4"
         bg-color="green-3"
-        rounded
         filled
       />
     </div>
@@ -376,7 +387,7 @@
       />
       <q-btn
         rounded
-        v-if="step < 13"
+        v-if="step < 14"
         color="accent"
         icon="keyboard_arrow_right"
         size="lg"
@@ -385,7 +396,7 @@
       />
       <q-btn
         rounded
-        v-if="step === 13"
+        v-if="step === 14"
         color="primary"
         :label="t('send')"
         icon-right="send"
@@ -405,6 +416,7 @@ import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
 import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
+import LocationItem from 'src/components/form/LocationItem.vue'
 
 const { t } = useI18n()
 const collector = useCollector()

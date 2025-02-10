@@ -7,6 +7,12 @@ export interface ParticipantData {
   }
 }
 
+export interface AddressLocation {
+  address: string
+  lat?: number | undefined
+  lon?: number | undefined
+}
+
 export interface CaseReport {
   data: {
     age_class: string
@@ -49,5 +55,7 @@ export interface CaseReport {
     adjectives_pubs: string[]
     adjectives_motors: string[]
     comments: string
+    workplace: AddressLocation
+    origin: AddressLocation
   }
 }

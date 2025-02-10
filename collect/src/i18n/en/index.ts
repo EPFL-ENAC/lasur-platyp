@@ -16,6 +16,10 @@ export default {
     company_vehicle: 'Do you have a company vehicle?',
     yes: 'Yes',
     no: 'No',
+    workplace: 'Address of usual place of work',
+    origin: 'Where do you usually leave from to reach your workplace?',
+    origin_hint:
+      'This confidential information will only be used to calculate your mobility options for your home-work journey.',
     travel_time:
       'What is your average travel time from home to work, with the mode of transport you use most often?',
     travel_time_minutes: 'minutes (one way)',
@@ -106,4 +110,5 @@ export default {
   token: 'Token',
   welcome: 'Welcome to {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
+  no_results: 'No results',
 }

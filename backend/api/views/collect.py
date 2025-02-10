@@ -22,4 +22,10 @@ async def get(token: str, session: AsyncSession = Depends(get_session)) -> Parti
     if campaign.end_date is not None and campaign.end_date < datetime.now():
         raise HTTPException(
             status_code=400, detail="Campaign has already ended")
-    return ParticipantData(data=participant.data)
+    data = participant.data
+    data["workplace"] = {
+        "address": campaign.address,
+        "lon": campaign.lon,
+        "lat": campaign.lat
+    }
+    return ParticipantData(data=data)
