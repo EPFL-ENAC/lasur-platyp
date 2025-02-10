@@ -29,7 +29,9 @@
               />
             </div>
             <q-btn
-              color="primary"
+              rounded
+              icon-right="play_arrow"
+              color="accent"
               :label="t('start')"
               size="lg"
               @click="started = true"

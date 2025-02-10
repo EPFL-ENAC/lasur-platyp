@@ -48,5 +48,6 @@ export interface CaseReport {
     adjectives_bikes: string[]
     adjectives_pubs: string[]
     adjectives_motors: string[]
+    comments: string
   }
 }
