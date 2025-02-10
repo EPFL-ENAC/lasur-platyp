@@ -17,6 +17,6 @@ jobs:
       token: ${{ secrets.CD_TOKEN }}
     with:
       # Optional inputs can be passed here
-      org: epfl-lasure
+      org: epfl-lasur
       repo: platyp
       build_context: '["./backend", "./admin", "./collect"]'
