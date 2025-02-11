@@ -78,10 +78,10 @@ function onInit() {
 }
 
 const ageClassOptions = computed(() => [
-  { label: '16-18', value: '16-18' },
-  { label: '18-25', value: '18-25' },
-  { label: '26-44', value: '26-44' },
-  { label: '45-64', value: '45-64' },
-  { label: '>=65', value: '>=65' },
+  { value: '16-17', label: '16 - 17' },
+  { value: '18-24', label: '18 - 24' },
+  { value: '26-44', label: '26 - 44' },
+  { value: '45-64', label: '45 - 64' },
+  { value: '65+', label: '65+' },
 ])
 </script>

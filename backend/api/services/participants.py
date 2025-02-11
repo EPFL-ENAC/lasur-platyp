@@ -52,6 +52,17 @@ class ParticipantService:
                 status_code=404, detail="Participant not found")
         return entity
 
+    async def get_by_token(self, token: str) -> Participant:
+        """Get a participant by token"""
+        res = await self.session.exec(
+            select(Participant).where(
+                Participant.token == token))
+        entity = res.one_or_none()
+        if not entity:
+            raise HTTPException(
+                status_code=404, detail="Participant not found")
+        return entity
+
     async def delete(self, id: int) -> Participant:
         """Delete a participant by id"""
         res = await self.session.exec(
