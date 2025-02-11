@@ -4,35 +4,39 @@
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="row justify-center q-mt-xl">
       <q-btn
+        flat
         v-if="props.step2"
         rounded
         @click="decrement2"
         :disable="props.modelValue === props.min"
-        color="primary"
+        color="accent"
         icon="keyboard_double_arrow_left"
         class="q-mr-md"
       />
       <q-btn
+        flat
         rounded
         @click="decrement"
         :disable="props.modelValue === props.min"
-        color="primary"
+        color="accent"
         :icon="step2 ? 'keyboard_arrow_left' : 'remove'"
       />
       <span class="text-h4 q-ml-lg q-mr-lg">{{ props.modelValue }} {{ props.unit }}</span>
       <q-btn
+        flat
         rounded
         @click="increment"
         :disable="props.modelValue === props.max"
-        color="primary"
+        color="accent"
         :icon="step2 ? 'keyboard_arrow_right' : 'add'"
       />
       <q-btn
+        flat
         v-if="props.step2"
         rounded
         @click="increment2"
         :disable="props.modelValue === props.max"
-        color="primary"
+        color="accent"
         icon="keyboard_double_arrow_right"
         class="q-ml-md"
       />
