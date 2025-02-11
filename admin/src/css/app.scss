@@ -1,4 +1,29 @@
 // app global css in SCSS form
+@font-face {
+  font-family: Wallop;
+  src:
+    url('fonts/Wallop-Regular.woff2') format('woff2'),
+    url('fonts/Wallop-Regular.woff') format('woff'),
+    url('fonts/Wallop-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* Controls how the font is displayed while loading */
+}
+@font-face {
+  font-family: Wallop;
+  src:
+    url('fonts/Wallop-Bold.woff2') format('woff2'),
+    url('fonts/Wallop-Bold.woff') format('woff'),
+    url('fonts/Wallop-Bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
+body {
+  font-family: Wallop, Helvetica, Arial, sans-serif;
+  text-rendering: geometricPrecision;
+  // padding-top: calc(var(--header-height) - 1px)
+}
+
 a {
   text-decoration: none;
   color: black;
