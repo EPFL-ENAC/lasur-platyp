@@ -51,6 +51,7 @@ import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
+import { collectUrl } from 'src/boot/api'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -97,6 +98,17 @@ const items2: FieldItem[] = [
     field: 'end_date',
     label: 'end_date',
     format: (val: Campaign) => val.end_date?.split('T')[0] || '-',
+  },
+  {
+    field: 'slug',
+    label: 'slug',
+    links: () => [
+      {
+        label: `${props.item.slug}`,
+        to: `${collectUrl}/go/${props.item.slug}`,
+        iconRight: 'open_in_new',
+      },
+    ],
   },
 ]
 

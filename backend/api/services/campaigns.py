@@ -49,6 +49,17 @@ class CampaignService:
                 status_code=404, detail="Campaign not found")
         return entity
 
+    async def get_by_slug(self, slug: str) -> Campaign:
+        """Get a campaign by slug"""
+        res = await self.session.exec(
+            select(Campaign).where(
+                Campaign.slug == slug))
+        entity = res.one_or_none()
+        if not entity:
+            raise HTTPException(
+                status_code=404, detail="Campaign not found")
+        return entity
+
     async def delete(self, id: int) -> Campaign:
         """Delete a campaign by id"""
         res = await self.session.exec(

@@ -39,6 +39,7 @@ class Company(CompanyBase, table=True):
 
 
 class CampaignBase(Entity):
+    slug: Optional[str] = Field(default=None)
     address: Optional[str] = Field(default=None)
     start_date: Optional[datetime] = Field(default=None)
     end_date: Optional[datetime] = Field(default=None)

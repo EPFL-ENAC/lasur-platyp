@@ -17,6 +17,9 @@ export const useCollector = defineStore('collector', () => {
       .then((response) => {
         participantData.value = response.data
         caseReport.value.data = {
+          employment_rate: 100,
+          remote_work_rate: 40,
+          company_vehicle: false,
           travel_time: 0,
           equipments: [],
           constraints: [],

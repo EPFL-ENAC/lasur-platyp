@@ -6,18 +6,15 @@
       :label="t('participant.identifier') + ' *'"
       lazy-rules
       :rules="[(val) => !!val || t('field_required')]"
-      class="q-mb-md"
     />
     <q-select
       v-if="selected.data"
       filled
       v-model="selected.data.age_class"
-      :label="t('participant.age_class') + ' *'"
+      :label="t('participant.age_class')"
       :options="ageClassOptions"
       emit-value
       map-options
-      lazy-rules
-      :rules="[(val) => !!val || t('field_required')]"
       class="q-mb-md"
     />
     <q-input
@@ -27,9 +24,7 @@
       type="number"
       :min="0"
       :max="100"
-      :label="t('participant.employment_rate') + ' *'"
-      lazy-rules
-      :rules="[(val) => !!val || t('field_required')]"
+      :label="t('participant.employment_rate')"
       class="q-mb-md"
     />
     <q-input
@@ -39,9 +34,7 @@
       type="number"
       :min="0"
       :max="100"
-      :label="t('participant.remote_work_rate') + ' *'"
-      lazy-rules
-      :rules="[(val) => !!val || t('field_required')]"
+      :label="t('participant.remote_work_rate')"
       class="q-mb-md"
     />
     <q-toggle

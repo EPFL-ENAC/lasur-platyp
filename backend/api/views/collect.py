@@ -11,6 +11,20 @@ router = APIRouter()
 @router.get("/participant/{token}", response_model=ParticipantData, response_model_exclude_none=True)
 async def get(token: str, session: AsyncSession = Depends(get_session)) -> ParticipantData:
     """Get a participant by token and return its data if the status is still not completed"""
+    try:
+        campaign = await CampaignService(session).get_by_slug(token)
+        # this is a campaign's slug then make an empty participant
+        data = {
+            "workplace": {
+                "address": campaign.address,
+                "lon": campaign.lon,
+                "lat": campaign.lat
+            }
+        }
+        return ParticipantData(data=data)
+    except:
+        campaign = None
+
     participant = await ParticipantService(session).get_by_token(token)
     if participant.status == "completed":
         raise HTTPException(

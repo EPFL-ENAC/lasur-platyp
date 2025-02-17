@@ -15,6 +15,7 @@ interface CustomWindow extends Window {
     AUTH_CLIENT_ID: string
     API_URL: string
     API_PATH: string
+    COLLECT_URL: string
   }
 }
 
@@ -29,6 +30,7 @@ const baseUrl = `${appEnv.API_URL}${appEnv.API_PATH}`
 const api = axios.create({
   baseURL: baseUrl,
 })
+const collectUrl = appEnv.COLLECT_URL
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -42,4 +44,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 })
 
-export { api, baseUrl, keycloak }
+export { api, baseUrl, keycloak, collectUrl }

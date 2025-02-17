@@ -68,6 +68,7 @@ export default {
   remove: 'Remove',
   reset_password: 'Reset Password',
   roles: 'Roles',
+  slug: 'Slug',
   start_date: 'Start Date',
   status: 'Status',
   token: 'Token',
