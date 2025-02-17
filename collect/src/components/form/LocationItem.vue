@@ -6,12 +6,11 @@
       <q-input
         v-model="addressLocation.address"
         type="text"
-        class="text-h4 q-mb-md"
+        class="text-h5 q-mb-md"
         bg-color="green-3"
         filled
         debounce="300"
         @keyup.enter="onSuggestAddress"
-        @blur="onSuggestAddress"
         @update:model-value="onUpdate"
         :loading="loading"
         lazy-rules

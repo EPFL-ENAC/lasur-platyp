@@ -104,7 +104,7 @@ export default {
       poorly_served: 'Poorly served',
     },
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
-    recommendations: 'Based on your answers, we recommend the following modes of transport:',
+    recommendations: 'Based on your answers, we recommend the following modes of transport',
   },
   start: 'Start',
   token: 'Token',
