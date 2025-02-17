@@ -82,6 +82,7 @@
         v-model="collector.caseReport.data.freq_mod_walking"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
@@ -89,6 +90,7 @@
         v-model="collector.caseReport.data.freq_mod_bike"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
@@ -96,6 +98,7 @@
         v-model="collector.caseReport.data.freq_mod_pub"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
@@ -103,6 +106,7 @@
         v-model="collector.caseReport.data.freq_mod_moto"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
@@ -110,6 +114,7 @@
         v-model="collector.caseReport.data.freq_mod_car"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
@@ -117,6 +122,7 @@
         v-model="collector.caseReport.data.freq_mod_train"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
     </div>
@@ -246,42 +252,49 @@
         :label="t('form.importance_time')"
         v-model="collector.caseReport.data.importance_time"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_cost')"
         v-model="collector.caseReport.data.importance_cost"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_flex')"
         v-model="collector.caseReport.data.importance_flex"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_rel')"
         v-model="collector.caseReport.data.importance_rel"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_comfort')"
         v-model="collector.caseReport.data.importance_comfort"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_most')"
         v-model="collector.caseReport.data.importance_most"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_env')"
         v-model="collector.caseReport.data.importance_env"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
     </div>
@@ -291,36 +304,42 @@
         :label="t('form.mode.walking')"
         v-model="collector.caseReport.data.needs_walking"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.bike')"
         v-model="collector.caseReport.data.needs_bike"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.pub')"
         v-model="collector.caseReport.data.needs_pub"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.moto')"
         v-model="collector.caseReport.data.needs_moto"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.car')"
         v-model="collector.caseReport.data.needs_car"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.train')"
         v-model="collector.caseReport.data.needs_train"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
     </div>

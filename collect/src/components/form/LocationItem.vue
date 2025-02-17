@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h4 q-mb-md">{{ label }}</div>
+    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
     <div class="q-mt-lg q-mb-lg">
       <q-input
@@ -11,6 +11,7 @@
         filled
         debounce="300"
         @keyup.enter="onSuggestAddress"
+        @blur="onSuggestAddress"
         @update:model-value="onUpdate"
         :loading="loading"
         lazy-rules
