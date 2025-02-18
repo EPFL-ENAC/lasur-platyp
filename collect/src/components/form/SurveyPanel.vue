@@ -125,6 +125,13 @@
         label-class="text-h5"
         class="q-mb-lg"
       />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.caseReport.data.freq_mod_combined"
+        class="q-mt-xl q-mb-lg"
+      />
     </div>
     <div v-if="survey.step === 8">
       <SectionItem :label="t('form.freq_trav_pro')" class="q-mb-lg" />

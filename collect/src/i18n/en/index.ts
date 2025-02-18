@@ -53,6 +53,7 @@ export default {
       plane: 'Plane',
       pub_train: 'Public transport and train',
       car_moto: 'Car and motorcycle/scooter',
+      combined: 'A combination of these modes of transportation',
     },
     freq_trav_pro: 'Do you have to travel as part of your work? To what extent?',
     freq_trav_pro_local: 'Local (<30km: Geneva and surroundings, Annemasse, Nyon)',

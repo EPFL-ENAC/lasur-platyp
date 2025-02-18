@@ -27,6 +27,7 @@ export interface CaseReportData {
   freq_mod_moto: number
   freq_mod_car: number
   freq_mod_train: number
+  freq_mod_combined: boolean
   freq_trav_pro_local: number
   freq_trav_pro_region: number
   freq_trav_pro_inter: number
