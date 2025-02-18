@@ -4,11 +4,9 @@ from sqlalchemy.sql import text
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from fastapi import HTTPException
-from api.models.domain import CaseReport
-from api.models.query import CaseReportResult
+from api.models.domain import CaseReport, Campaign
+from api.models.query import CaseReportResult, CaseReportDraft
 from enacit4r_sql.utils.query import QueryBuilder
-from datetime import datetime
-from api.auth import User
 
 
 class CaseReportQueryBuilder(QueryBuilder):
@@ -43,6 +41,17 @@ class CaseReportService:
         res = await self.session.exec(
             select(CaseReport).where(
                 CaseReport.id == id))
+        entity = res.one_or_none()
+        if not entity:
+            raise HTTPException(
+                status_code=404, detail="CaseReport not found")
+        return entity
+
+    async def get_by_token(self, token: str) -> CaseReport:
+        """Get a case report by token"""
+        res = await self.session.exec(
+            select(CaseReport).where(
+                CaseReport.token == token))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
@@ -87,19 +96,26 @@ class CaseReportService:
             data=entities
         )
 
-    async def create(self, payload: CaseReport, user: User = None) -> CaseReport:
+    async def createOrUpdate(self, payload: CaseReportDraft, campaign: Campaign) -> CaseReport:
+        """Create or update a case report based on its token"""
+        res = await self.session.exec(
+            select(CaseReport).where(CaseReport.token == payload.token)
+        )
+        entity = res.one_or_none()
+        if entity:
+            return await self.update(entity.id, payload, campaign)
+        return await self.create(payload, campaign)
+
+    async def create(self, payload: CaseReportDraft, campaign: Campaign) -> CaseReport:
         """Create a new case report"""
         entity = CaseReport(**payload.model_dump())
-        entity.created_at = datetime.now()
-        entity.updated_at = datetime.now()
-        if user:
-            entity.created_by = user.username
-            entity.updated_by = user.username
+        entity.campaign_id = campaign.id
+        entity.company_id = campaign.company_id
         self.session.add(entity)
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: CaseReport, user: User = None) -> CaseReport:
+    async def update(self, id: int, payload: CaseReportDraft, campaign: Campaign) -> CaseReport:
         """Update a case report"""
         res = await self.session.exec(
             select(CaseReport).where(CaseReport.id == id)
@@ -110,10 +126,9 @@ class CaseReportService:
                 status_code=404, detail="CaseReport not found")
         for key, value in payload.model_dump().items():
             print(key, value)
-            if key not in ["id", "created_at", "updated_at", "created_by", "updated_by"]:
+            if key not in ["id"]:
                 setattr(entity, key, value)
-        entity.updated_at = datetime.now()
-        if user:
-            entity.updated_by = user.username
+        entity.campaign_id = campaign.id
+        entity.company_id = campaign.company_id
         await self.session.commit()
         return entity

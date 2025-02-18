@@ -389,7 +389,7 @@
     </div>
     <div v-if="survey.step === 13">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
-      <pre>{{ survey.caseReport.data }}</pre>
+      <pre>{{ survey.caseReport }}</pre>
     </div>
     <div v-if="survey.step === 14">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -443,9 +443,11 @@ import SectionItem from 'src/components/form/SectionItem.vue'
 import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
+import { notifyError } from 'src/utils/notify'
 
 const { t } = useI18n()
 const survey = useSurvey()
+const collector = useCollector()
 const q = useQuasar()
 
 watch(
@@ -515,6 +517,18 @@ const adjectivesOptions = computed<Option[]>(() => [
 
 function nextStep() {
   survey.incStep()
+  if (survey.tokenOrSlug) {
+    if (survey.step === 13) {
+      void collector
+        .save(survey.tokenOrSlug, survey.caseReport)
+        .then(() => {
+          void collector.loadTypo(survey.caseReport).catch(notifyError)
+        })
+        .catch(notifyError)
+    } else {
+      void collector.save(survey.tokenOrSlug, survey.caseReport).catch(console.error)
+    }
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 

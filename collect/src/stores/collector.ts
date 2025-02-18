@@ -7,13 +7,13 @@ export const useCollector = defineStore('collector', () => {
   const token = ref<string | null>(null)
   const loading = ref<boolean>(false)
 
-  async function loadParticipant(tk: string): Promise<CaseReport> {
+  async function load(tkOrSlug: string): Promise<CaseReport> {
     token.value = null
     loading.value = true
     return api
-      .get(`/collect/participant/${tk}`)
+      .get(`/collect/participant/${tkOrSlug}`)
       .then((response) => {
-        token.value = tk
+        token.value = tkOrSlug
         const cr = response.data
         const data = {
           employment_rate: 100,
@@ -67,9 +67,27 @@ export const useCollector = defineStore('collector', () => {
       })
   }
 
+  async function save(tkOrSlug: string, caseReport: CaseReport) {
+    token.value = null
+    loading.value = true
+    return api.post(`/collect/participant/${tkOrSlug}`, caseReport).finally(() => {
+      loading.value = false
+    })
+  }
+
+  async function loadTypo(caseReport: CaseReport) {
+    token.value = null
+    loading.value = true
+    return api.get(`/collect/typo/${caseReport.token}`, caseReport).finally(() => {
+      loading.value = false
+    })
+  }
+
   return {
     token,
     loading,
-    loadParticipant,
+    load,
+    save,
+    loadTypo,
   }
 })

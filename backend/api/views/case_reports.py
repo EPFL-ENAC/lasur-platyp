@@ -40,24 +40,3 @@ async def delete(
 ) -> CaseReport:
     """Delete a case report by id"""
     return await CaseReportService(session).delete(id)
-
-
-@router.post("/", response_model=CaseReport, response_model_exclude_none=True)
-async def create(
-    item: CaseReport,
-    session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
-) -> CaseReport:
-    """Create a case report"""
-    return await CaseReportService(session).create(item, user)
-
-
-@router.put("/{id}", response_model=CaseReport, response_model_exclude_none=True)
-async def update(
-    id: int,
-    item: CaseReport,
-    session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
-) -> CaseReport:
-    """Update a case report by id"""
-    return await CaseReportService(session).update(id, item, user)

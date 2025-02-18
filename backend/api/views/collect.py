@@ -2,10 +2,11 @@ import datetime
 import secrets
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
-from api.models.domain import Campaign
+from api.models.domain import Campaign, CaseReport
 from api.models.query import CaseReportDraft
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
+from api.services.case_reports import CaseReportService
 
 router = APIRouter()
 
@@ -45,6 +46,33 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         "lat": campaign.lat
     }
     return CaseReportDraft(token=tokenOrSlug, data=data)
+
+
+@router.post("/participant/{tokenOrSlug}")
+async def createOrUpdate(
+    tokenOrSlug: str,
+    item: CaseReportDraft,
+    session: AsyncSession = Depends(get_session)
+) -> None:
+    """Create or update a case report"""
+    if tokenOrSlug is None:
+        raise HTTPException(
+            status_code=400, detail="Missing token or slug")
+    campaign = None
+    if tokenOrSlug != item.token:
+        # this is a campaign's slug
+        campaign = await CampaignService(session).get_by_slug(tokenOrSlug)
+    else:
+        # this is a participant's token
+        participant = await ParticipantService(session).get_by_token(tokenOrSlug)
+        campaign = CampaignService(session).get(participant.campaign_id)
+    await CaseReportService(session).createOrUpdate(item, campaign)
+
+
+@router.get("/typo/{token}", response_model=CaseReport, response_model_exclude_none=True)
+async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> CaseReport:
+    """Get modal typology by case report token"""
+    return await CaseReportService(session).get_by_token(token)
 
 
 def _check_campaign(campaign: Campaign):

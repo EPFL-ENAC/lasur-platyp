@@ -96,13 +96,14 @@ onMounted(async () => {
 async function onToken() {
   if (tkSlug.value && tkSlug.value.trim().length > 0) {
     return collector
-      .loadParticipant(tkSlug.value.trim())
+      .load(tkSlug.value.trim())
       .then((cr: CaseReport) => {
         survey.tokenOrSlug = tkSlug.value.trim()
         survey.init(cr)
       })
       .catch(notifyError)
   }
+  return Promise.resolve()
 }
 
 async function reset() {
