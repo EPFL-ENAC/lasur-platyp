@@ -78,8 +78,9 @@ class Participant(ParticipantBase, table=True):
     campaign: Campaign | None = Relationship(back_populates="participants")
 
 
-class CaseReportBase(Entity):
-    identifier: str
+class CaseReportBase(SQLModel):
+    token: str
+    data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
 
 
 class CaseReport(CaseReportBase, table=True):
@@ -89,8 +90,6 @@ class CaseReport(CaseReportBase, table=True):
         primary_key=True,
         index=True,
     )
-    data: str
-    participant_id: int = Field(default=None, foreign_key="participant.id")
     campaign_id: int = Field(default=None, foreign_key="campaign.id")
     company_id: int = Field(default=None, foreign_key="company.id")
 

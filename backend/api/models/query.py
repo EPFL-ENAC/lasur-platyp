@@ -46,6 +46,10 @@ class CaseReportRead(CaseReportBase):
     id: int
 
 
+class CaseReportDraft(CaseReportBase):
+    id: Optional[int] = Field(default=None)
+
+
 class CaseReportResult(ListResult):
     data: List[CaseReportRead] = []
 

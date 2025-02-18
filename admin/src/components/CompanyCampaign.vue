@@ -26,7 +26,25 @@
       </div>
     </div>
     <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
+    <div class="text-hint q-mb-sm">
+      {{ t('participants_campaign_hint') }}
+    </div>
+    <div class="q-mb-lg">
+      <q-btn
+        v-if="item.slug"
+        size="sm"
+        color="accent"
+        icon-right="content_copy"
+        :label="t('survey_link')"
+        no-caps
+        @click="onSurveyLinkCopy"
+      />
+    </div>
+    <div class="text-hint q-mb-md">
+      {{ t('participants_individual_hint') }}
+    </div>
     <company-campaign-participants :campaign="item" />
+
     <company-campaign-dialog
       v-if="props.company"
       v-model="showDialog"
@@ -44,6 +62,7 @@
 </template>
 
 <script setup lang="ts">
+import { copyToClipboard } from 'quasar'
 import type { Campaign, Company } from 'src/models'
 import CompanyCampaignDialog from 'src/components/CompanyCampaignDialog.vue'
 import CompanyCampaignParticipants from 'src/components/CompanyCampaignParticipants.vue'
@@ -52,6 +71,7 @@ import FieldsList from 'src/components/FieldsList.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
 import { collectUrl } from 'src/boot/api'
+import { notifyInfo } from 'src/utils/notify'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -129,5 +149,11 @@ function onRemove() {
   campaignsStore.service.remove(props.item.id).then(() => {
     campaignsStore.load()
   })
+}
+
+function onSurveyLinkCopy() {
+  if (!props.item.slug) return
+  copyToClipboard(`${collectUrl}/go/${props.item.slug}`)
+  notifyInfo(t('survey_link_copied'))
 }
 </script>

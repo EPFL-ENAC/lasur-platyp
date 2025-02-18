@@ -106,6 +106,8 @@ export default {
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations: 'Based on your answers, we recommend the following modes of transport',
   },
+  resume: 'Resume',
+  start_new: 'Or start a new survey',
   start: 'Start',
   token: 'Token',
   welcome: 'Welcome to {brand}',

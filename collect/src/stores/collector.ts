@@ -1,22 +1,21 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/api'
-import type { ParticipantData, CaseReport } from 'src/models'
+import type { CaseReport } from 'src/models'
 
 export const useCollector = defineStore('collector', () => {
   const token = ref<string | null>(null)
-  const participantData = ref<ParticipantData | null>(null)
   const loading = ref<boolean>(false)
-  const caseReport = ref<CaseReport>({} as CaseReport)
 
-  async function loadToken(tk: string) {
+  async function loadParticipant(tk: string): Promise<CaseReport> {
     token.value = null
     loading.value = true
     return api
       .get(`/collect/participant/${tk}`)
       .then((response) => {
-        participantData.value = response.data
-        caseReport.value.data = {
+        token.value = tk
+        const cr = response.data
+        const data = {
           employment_rate: 100,
           remote_work_rate: 40,
           company_vehicle: false,
@@ -55,9 +54,12 @@ export const useCollector = defineStore('collector', () => {
           adjectives_bikes: [],
           adjectives_pubs: [],
           adjectives_motors: [],
-          ...response.data.data,
+          ...cr.data,
         }
-        token.value = tk
+        return {
+          token: cr.token,
+          data,
+        } as CaseReport
       })
       .finally(() => {
         loading.value = false
@@ -66,9 +68,7 @@ export const useCollector = defineStore('collector', () => {
 
   return {
     token,
-    participantData,
-    caseReport,
     loading,
-    loadToken,
+    loadParticipant,
   }
 })
