@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="text-h4 q-mb-md">{{ label }}</div>
+    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
     <div class="q-mt-lg q-mb-lg">
       <q-input
         v-model="addressLocation.address"
         type="text"
-        class="text-h4 q-mb-md"
+        class="text-h5 q-mb-md"
         bg-color="green-3"
         filled
         debounce="300"

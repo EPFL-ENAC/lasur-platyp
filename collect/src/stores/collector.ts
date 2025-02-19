@@ -1,22 +1,24 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/api'
-import type { ParticipantData, CaseReport } from 'src/models'
+import type { Record } from 'src/models'
 
 export const useCollector = defineStore('collector', () => {
   const token = ref<string | null>(null)
-  const participantData = ref<ParticipantData | null>(null)
   const loading = ref<boolean>(false)
-  const caseReport = ref<CaseReport>({} as CaseReport)
 
-  async function loadToken(tk: string) {
+  async function load(tkOrSlug: string): Promise<Record> {
     token.value = null
     loading.value = true
     return api
-      .get(`/collect/participant/${tk}`)
+      .get(`/collect/record/${tkOrSlug}`)
       .then((response) => {
-        participantData.value = response.data
-        caseReport.value.data = {
+        token.value = tkOrSlug
+        const cr = response.data
+        const data = {
+          employment_rate: 100,
+          remote_work_rate: 40,
+          company_vehicle: false,
           travel_time: 0,
           equipments: [],
           constraints: [],
@@ -26,6 +28,7 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_moto: 0,
           freq_mod_car: 0,
           freq_mod_train: 0,
+          freq_mod_combined: false,
           freq_trav_pro_local: 0,
           freq_trav_pro_region: 0,
           freq_trav_pro_inter: 0,
@@ -52,20 +55,39 @@ export const useCollector = defineStore('collector', () => {
           adjectives_bikes: [],
           adjectives_pubs: [],
           adjectives_motors: [],
-          ...response.data.data,
+          ...cr.data,
         }
-        token.value = tk
+        return {
+          token: cr.token,
+          data,
+        } as Record
       })
       .finally(() => {
         loading.value = false
       })
   }
 
+  async function save(tkOrSlug: string, record: Record) {
+    token.value = null
+    loading.value = true
+    return api.post(`/collect/record/${tkOrSlug}`, record).finally(() => {
+      loading.value = false
+    })
+  }
+
+  async function loadTypo(record: Record) {
+    token.value = null
+    loading.value = true
+    return api.get(`/collect/typo/${record.token}`, record).finally(() => {
+      loading.value = false
+    })
+  }
+
   return {
     token,
-    participantData,
-    caseReport,
     loading,
-    loadToken,
+    load,
+    save,
+    loadTypo,
   }
 })

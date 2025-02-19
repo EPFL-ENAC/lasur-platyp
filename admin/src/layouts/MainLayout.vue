@@ -58,12 +58,12 @@
             <q-item-label header>{{ t('companies') }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable :to="'/case-reports'">
+        <q-item clickable :to="'/records'">
           <q-item-section avatar>
             <q-icon name="fa-brands fa-wpforms" size="xs" />
           </q-item-section>
           <q-item-section>
-            <q-item-label header>{{ t('case_reports') }}</q-item-label>
+            <q-item-label header>{{ t('records') }}</q-item-label>
           </q-item-section>
         </q-item>
 

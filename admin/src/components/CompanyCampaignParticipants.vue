@@ -1,6 +1,17 @@
 <template>
   <div>
+    <div v-if="rows?.length < 1">
+      <q-btn
+        size="sm"
+        color="secondary"
+        :disable="loading"
+        :label="t('add')"
+        icon="add"
+        @click="onAdd"
+      />
+    </div>
     <q-table
+      v-show="rows?.length > 0"
       flat
       ref="tableRef"
       :rows="rows"
@@ -36,12 +47,24 @@
       </template>
       <template v-slot:body-cell-token="props">
         <q-td :props="props">
-          <span class="text-caption">{{ props.row.token }}</span>
+          <a :href="`${collectUrl}/go/${props.row.token}`" target="_blank"
+            >{{ props.row.token }} <q-icon name="open_in_new"></q-icon
+          ></a>
+          <q-btn
+            color="grey-8"
+            size="12px"
+            flat
+            dense
+            round
+            icon="content_copy"
+            class="on-right"
+            @click="onTokenCopy(props.row)"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-data="props">
         <q-td :props="props">
-          <pre>{{ props.row.data }}</pre>
+          <div class="text-caption">{{ props.row.data }}</div>
         </q-td>
       </template>
       <template v-slot:body-cell-action="props">
@@ -77,13 +100,15 @@
 </template>
 
 <script setup lang="ts">
+import { copyToClipboard } from 'quasar'
 import type { Campaign, Participant } from 'src/models'
 import type { PaginationOptions } from 'src/utils/pagination'
-import { notifyError } from 'src/utils/notify'
+import { notifyError, notifyInfo } from 'src/utils/notify'
 import ParticipantDialog from 'src/components/ParticipantDialog.vue'
 import { DefaultAlignment, type Query } from 'src/components/models'
 import { makePaginationRequestHandler } from 'src/utils/pagination'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
+import { collectUrl } from 'src/boot/api'
 
 const { t } = useI18n()
 const participantsStore = useParticipants()
@@ -233,5 +258,11 @@ function onRemove() {
       onInit()
     })
     .catch(notifyError)
+}
+
+function onTokenCopy(item: Participant) {
+  if (!item.token) return
+  copyToClipboard(`${collectUrl}/go/${item.token}`)
+  notifyInfo(t('link_copied'))
 }
 </script>

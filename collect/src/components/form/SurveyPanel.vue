@@ -1,17 +1,17 @@
 <template>
-  <div v-if="collector.caseReport">
-    <div v-if="step === 1">
+  <div v-if="survey.record">
+    <div v-if="survey.step === 1">
       <ChoiceItem
         :label="t('form.age_class')"
         :options="ageOptions"
-        v-model="collector.caseReport.data.age_class"
+        v-model="survey.record.data.age_class"
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
-    <div v-if="step === 2">
+    <div v-if="survey.step === 2">
       <NumberItem
         :label="t('form.employment_rate')"
-        v-model="collector.caseReport.data.employment_rate"
+        v-model="survey.record.data.employment_rate"
         :min="0"
         :max="100"
         :step="5"
@@ -20,7 +20,7 @@
       />
       <NumberItem
         :label="t('form.remote_work_rate')"
-        v-model="collector.caseReport.data.remote_work_rate"
+        v-model="survey.record.data.remote_work_rate"
         :min="0"
         :max="100"
         :step="5"
@@ -31,212 +31,225 @@
         :label="t('form.company_vehicle')"
         :left-label="t('form.no')"
         :right-label="t('form.yes')"
-        v-model="collector.caseReport.data.company_vehicle"
+        v-model="survey.record.data.company_vehicle"
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 3">
+    <div v-if="survey.step === 3">
       <LocationItem
         :label="t('form.workplace')"
-        v-model="collector.caseReport.data.workplace"
+        v-model="survey.record.data.workplace"
         class="q-mb-xl"
       />
       <LocationItem
         :label="t('form.origin')"
         :hint="t('form.origin_hint')"
-        v-model="collector.caseReport.data.origin"
+        v-model="survey.record.data.origin"
       />
     </div>
-    <div v-if="step === 4">
+    <div v-if="survey.step === 4">
       <NumberItem
         :label="t('form.travel_time')"
-        v-model="collector.caseReport.data.travel_time"
+        v-model="survey.record.data.travel_time"
         :min="0"
         :max="120"
         :step="5"
         :unit-hint="t('form.travel_time_minutes')"
       />
     </div>
-    <div v-if="step === 5">
+    <div v-if="survey.step === 5">
       <ChoiceItem
         :label="t('form.constraints')"
         :options="constraintsOptions"
-        v-model="collector.caseReport.data.constraints"
+        v-model="survey.record.data.constraints"
         multiple
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
-    <div v-if="step === 6">
+    <div v-if="survey.step === 6">
       <ChoiceItem
         :label="t('form.equipments')"
         :options="equipmentsOptions"
-        v-model="collector.caseReport.data.equipments"
+        v-model="survey.record.data.equipments"
         multiple
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
-    <div v-if="step === 7">
+    <div v-if="survey.step === 7">
       <SectionItem :label="t('form.freq_mod')" :hint="t('form.freq_mod_hint')" class="q-mb-lg" />
       <SliderItem
         :label="t('form.mode.walking')"
-        v-model="collector.caseReport.data.freq_mod_walking"
+        v-model="survey.record.data.freq_mod_walking"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
         :label="t('form.mode.bike')"
-        v-model="collector.caseReport.data.freq_mod_bike"
+        v-model="survey.record.data.freq_mod_bike"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
         :label="t('form.mode.pub')"
-        v-model="collector.caseReport.data.freq_mod_pub"
+        v-model="survey.record.data.freq_mod_pub"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
         :label="t('form.mode.moto')"
-        v-model="collector.caseReport.data.freq_mod_moto"
+        v-model="survey.record.data.freq_mod_moto"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
         :label="t('form.mode.car')"
-        v-model="collector.caseReport.data.freq_mod_car"
+        v-model="survey.record.data.freq_mod_car"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <SliderItem
         :label="t('form.mode.train')"
-        v-model="collector.caseReport.data.freq_mod_train"
+        v-model="survey.record.data.freq_mod_train"
         :min="0"
         :max="7"
+        label-class="text-h5"
         class="q-mb-lg"
       />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_combined"
+        class="q-mt-xl q-mb-lg"
+      />
     </div>
-    <div v-if="step === 8">
+    <div v-if="survey.step === 8">
       <SectionItem :label="t('form.freq_trav_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.freq_trav_pro_local')"
-        v-model="collector.caseReport.data.freq_trav_pro_local"
+        v-model="survey.record.data.freq_trav_pro_local"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.freq_trav_pro_region')"
-        v-model="collector.caseReport.data.freq_trav_pro_region"
+        v-model="survey.record.data.freq_trav_pro_region"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.freq_trav_pro_inter')"
-        v-model="collector.caseReport.data.freq_trav_pro_inter"
+        v-model="survey.record.data.freq_trav_pro_inter"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 9">
+    <div v-if="survey.step === 9">
       <SectionItem :label="t('form.freq_mod_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.mode.walking')"
-        v-model="collector.caseReport.data.freq_mod_pro_walking"
+        v-model="survey.record.data.freq_mod_pro_walking"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.bike')"
-        v-model="collector.caseReport.data.freq_mod_pro_bike"
+        v-model="survey.record.data.freq_mod_pro_bike"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.pub')"
-        v-model="collector.caseReport.data.freq_mod_pro_pub"
+        v-model="survey.record.data.freq_mod_pro_pub"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.moto')"
-        v-model="collector.caseReport.data.freq_mod_pro_moto"
+        v-model="survey.record.data.freq_mod_pro_moto"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.car')"
-        v-model="collector.caseReport.data.freq_mod_pro_car"
+        v-model="survey.record.data.freq_mod_pro_car"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.train')"
-        v-model="collector.caseReport.data.freq_mod_pro_train"
+        v-model="survey.record.data.freq_mod_pro_train"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.plane')"
-        v-model="collector.caseReport.data.freq_mod_pro_plane"
+        v-model="survey.record.data.freq_mod_pro_plane"
         :min="0"
         :max="365"
         :step="1"
-        :step2="5"
+        :step2="10"
         :unit-hint="t('form.days_per_year')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 10">
+    <div v-if="survey.step === 10">
       <SectionItem
         :label="t('form.importance')"
         :hint="t('form.importance_hint')"
@@ -244,87 +257,100 @@
       />
       <RatingItem
         :label="t('form.importance_time')"
-        v-model="collector.caseReport.data.importance_time"
+        v-model="survey.record.data.importance_time"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_cost')"
-        v-model="collector.caseReport.data.importance_cost"
+        v-model="survey.record.data.importance_cost"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_flex')"
-        v-model="collector.caseReport.data.importance_flex"
+        v-model="survey.record.data.importance_flex"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_rel')"
-        v-model="collector.caseReport.data.importance_rel"
+        v-model="survey.record.data.importance_rel"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_comfort')"
-        v-model="collector.caseReport.data.importance_comfort"
+        v-model="survey.record.data.importance_comfort"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_most')"
-        v-model="collector.caseReport.data.importance_most"
+        v-model="survey.record.data.importance_most"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_env')"
-        v-model="collector.caseReport.data.importance_env"
+        v-model="survey.record.data.importance_env"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 11">
+    <div v-if="survey.step === 11">
       <SectionItem :label="t('form.needs')" :hint="t('form.needs_hint')" class="q-mb-lg" />
       <RatingItem
         :label="t('form.mode.walking')"
-        v-model="collector.caseReport.data.needs_walking"
+        v-model="survey.record.data.needs_walking"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.bike')"
-        v-model="collector.caseReport.data.needs_bike"
+        v-model="survey.record.data.needs_bike"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.pub')"
-        v-model="collector.caseReport.data.needs_pub"
+        v-model="survey.record.data.needs_pub"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.moto')"
-        v-model="collector.caseReport.data.needs_moto"
+        v-model="survey.record.data.needs_moto"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.car')"
-        v-model="collector.caseReport.data.needs_car"
+        v-model="survey.record.data.needs_car"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.train')"
-        v-model="collector.caseReport.data.needs_train"
+        v-model="survey.record.data.needs_train"
         :max="5"
+        label-class="text-h5"
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 12">
+    <div v-if="survey.step === 12">
       <SectionItem
         :label="t('form.adjectives')"
         :hint="t('form.adjectives_hint')"
@@ -333,7 +359,7 @@
       <ChoiceItem
         :label="t('form.mode.bike')"
         :options="adjectivesOptions"
-        v-model="collector.caseReport.data.adjectives_bikes"
+        v-model="survey.record.data.adjectives_bikes"
         multiple
         :max="3"
         :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
@@ -343,7 +369,7 @@
       <ChoiceItem
         :label="t('form.mode.pub_train')"
         :options="adjectivesOptions"
-        v-model="collector.caseReport.data.adjectives_pubs"
+        v-model="survey.record.data.adjectives_pubs"
         multiple
         :max="3"
         :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
@@ -353,7 +379,7 @@
       <ChoiceItem
         :label="t('form.mode.car_moto')"
         :options="adjectivesOptions"
-        v-model="collector.caseReport.data.adjectives_motors"
+        v-model="survey.record.data.adjectives_motors"
         multiple
         :max="3"
         :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
@@ -361,14 +387,14 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="step === 13">
+    <div v-if="survey.step === 13">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
-      <pre>{{ collector.caseReport.data }}</pre>
+      <pre>{{ survey.record }}</pre>
     </div>
-    <div v-if="step === 14">
+    <div v-if="survey.step === 14">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
-        v-model="collector.caseReport.data.comments"
+        v-model="survey.record.data.comments"
         type="textarea"
         class="q-mb-lg text-h4"
         bg-color="green-3"
@@ -378,7 +404,7 @@
     <div class="row justify-center q-mt-xl">
       <q-btn
         rounded
-        v-if="step > 1"
+        v-if="survey.step > 1"
         color="accent"
         icon="keyboard_arrow_left"
         size="lg"
@@ -387,7 +413,7 @@
       />
       <q-btn
         rounded
-        v-if="step < 14"
+        v-if="survey.step < 14"
         color="accent"
         icon="keyboard_arrow_right"
         size="lg"
@@ -396,7 +422,7 @@
       />
       <q-btn
         rounded
-        v-if="step === 14"
+        v-if="survey.step === 14"
         color="primary"
         :label="t('send')"
         icon-right="send"
@@ -417,17 +443,17 @@ import SectionItem from 'src/components/form/SectionItem.vue'
 import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
+import { notifyError } from 'src/utils/notify'
 
 const { t } = useI18n()
+const survey = useSurvey()
 const collector = useCollector()
 const q = useQuasar()
 
-const step = ref(1)
-
 watch(
-  () => collector.caseReport,
+  () => survey.record,
   () => {
-    console.debug(collector.caseReport.data)
+    console.debug(survey.record.data)
   },
   { deep: true },
 )
@@ -490,12 +516,24 @@ const adjectivesOptions = computed<Option[]>(() => [
 ])
 
 function nextStep() {
-  step.value++
+  survey.incStep()
+  if (survey.tokenOrSlug) {
+    if (survey.step === 13) {
+      void collector
+        .save(survey.tokenOrSlug, survey.record)
+        .then(() => {
+          void collector.loadTypo(survey.record).catch(notifyError)
+        })
+        .catch(notifyError)
+    } else {
+      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+    }
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function prevStep() {
-  step.value--
+  survey.decStep()
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>

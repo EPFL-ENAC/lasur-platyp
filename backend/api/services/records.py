@@ -1,17 +1,13 @@
-from logging import debug
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from fastapi import HTTPException
-from api.models.domain import Campaign
-from api.models.query import CampaignResult, CampaignDraft
+from api.models.domain import Record, Campaign
+from api.models.query import RecordResult, RecordDraft
 from enacit4r_sql.utils.query import QueryBuilder
-from datetime import datetime
-from api.auth import User
 
 
-class CampaignQueryBuilder(QueryBuilder):
+class RecordQueryBuilder(QueryBuilder):
 
     def build_count_query_with_joins(self, filter):
         query = self.build_count_query()
@@ -28,55 +24,55 @@ class CampaignQueryBuilder(QueryBuilder):
         return query
 
 
-class CampaignService:
+class RecordService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def count(self) -> int:
-        """Count all campaigns"""
-        count = (await self.session.exec(text("select count(id) from campaign"))).scalar()
+        """Count all records"""
+        count = (await self.session.exec(text("select count(id) from record"))).scalar()
         return count
 
-    async def get(self, id: int) -> Campaign:
-        """Get a campaign by id"""
+    async def get(self, id: int) -> Record:
+        """Get a record by id"""
         res = await self.session.exec(
-            select(Campaign).where(
-                Campaign.id == id))
+            select(Record).where(
+                Record.id == id))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Campaign not found")
+                status_code=404, detail="Record not found")
         return entity
 
-    async def get_by_slug(self, slug: str) -> Campaign:
-        """Get a campaign by slug"""
+    async def get_by_token(self, token: str) -> Record:
+        """Get a record by token"""
         res = await self.session.exec(
-            select(Campaign).where(
-                Campaign.slug == slug))
+            select(Record).where(
+                Record.token == token))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Campaign not found")
+                status_code=404, detail="Record not found")
         return entity
 
-    async def delete(self, id: int) -> Campaign:
-        """Delete a campaign by id"""
+    async def delete(self, id: int) -> Record:
+        """Delete a record by id"""
         res = await self.session.exec(
-            select(Campaign).where(Campaign.id == id)
+            select(Record).where(Record.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Campaign not found")
+                status_code=404, detail="Record not found")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CampaignResult:
-        """Get all campaigns matching filter and range"""
-        builder = CampaignQueryBuilder(
-            Campaign, filter, sort, range, {})
+    async def find(self, filter: dict, fields: list, sort: list, range: list) -> RecordResult:
+        """Get all records matching filter and range"""
+        builder = RecordQueryBuilder(
+            Record, filter, sort, range, {})
 
         # Do a query to satisfy total count
         count_query = builder.build_count_query_with_joins(filter)
@@ -91,40 +87,46 @@ class CampaignService:
         results = await self.session.exec(query)
         entities = results.all()
 
-        return CampaignResult(
+        return RecordResult(
             total=total_count,
             skip=start,
             limit=end - start + 1,
             data=entities
         )
 
-    async def create(self, payload: CampaignDraft, user: User = None) -> Campaign:
-        """Create a new campaign"""
-        entity = Campaign(**payload.model_dump())
-        entity.created_at = datetime.now()
-        entity.updated_at = datetime.now()
-        if user:
-            entity.created_by = user.username
-            entity.updated_by = user.username
+    async def createOrUpdate(self, payload: RecordDraft, campaign: Campaign) -> Record:
+        """Create or update a record based on its token"""
+        res = await self.session.exec(
+            select(Record).where(Record.token == payload.token)
+        )
+        entity = res.one_or_none()
+        if entity:
+            return await self.update(entity.id, payload, campaign)
+        return await self.create(payload, campaign)
+
+    async def create(self, payload: RecordDraft, campaign: Campaign) -> Record:
+        """Create a new record"""
+        entity = Record(**payload.model_dump())
+        entity.campaign_id = campaign.id
+        entity.company_id = campaign.company_id
         self.session.add(entity)
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: CampaignDraft, user: User = None) -> Campaign:
-        """Update a campaign"""
+    async def update(self, id: int, payload: RecordDraft, campaign: Campaign) -> Record:
+        """Update a record"""
         res = await self.session.exec(
-            select(Campaign).where(Campaign.id == id)
+            select(Record).where(Record.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Campaign not found")
+                status_code=404, detail="Record not found")
         for key, value in payload.model_dump().items():
             print(key, value)
-            if key not in ["id", "created_at", "updated_at", "created_by", "updated_by"]:
+            if key not in ["id"]:
                 setattr(entity, key, value)
-        entity.updated_at = datetime.now()
-        if user:
-            entity.updated_by = user.username
+        entity.campaign_id = campaign.id
+        entity.company_id = campaign.company_id
         await self.session.commit()
         return entity

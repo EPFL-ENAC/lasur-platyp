@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h4 q-mb-md">{{ label }}</div>
+    <div class="text-h4 text-bold q-mb-md" :class="labelClass">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
     <q-rating
       v-model="selected"
@@ -20,6 +20,7 @@ interface Props {
   hint?: string
   required?: boolean
   max?: number
+  labelClass?: string
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])

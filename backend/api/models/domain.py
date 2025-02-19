@@ -39,6 +39,7 @@ class Company(CompanyBase, table=True):
 
 
 class CampaignBase(Entity):
+    slug: Optional[str] = Field(default=None)
     address: Optional[str] = Field(default=None)
     start_date: Optional[datetime] = Field(default=None)
     end_date: Optional[datetime] = Field(default=None)
@@ -77,19 +78,18 @@ class Participant(ParticipantBase, table=True):
     campaign: Campaign | None = Relationship(back_populates="participants")
 
 
-class CaseReportBase(Entity):
-    identifier: str
+class RecordBase(SQLModel):
+    token: str
+    data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
 
 
-class CaseReport(CaseReportBase, table=True):
+class Record(RecordBase, table=True):
     id: Optional[int] = Field(
         default=None,
         nullable=False,
         primary_key=True,
         index=True,
     )
-    data: str
-    participant_id: int = Field(default=None, foreign_key="participant.id")
     campaign_id: int = Field(default=None, foreign_key="campaign.id")
     company_id: int = Field(default=None, foreign_key="company.id")
 
