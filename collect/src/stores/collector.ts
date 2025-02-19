@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/api'
-import type { CaseReport } from 'src/models'
+import type { Record } from 'src/models'
 
 export const useCollector = defineStore('collector', () => {
   const token = ref<string | null>(null)
   const loading = ref<boolean>(false)
 
-  async function load(tkOrSlug: string): Promise<CaseReport> {
+  async function load(tkOrSlug: string): Promise<Record> {
     token.value = null
     loading.value = true
     return api
-      .get(`/collect/case-report/${tkOrSlug}`)
+      .get(`/collect/record/${tkOrSlug}`)
       .then((response) => {
         token.value = tkOrSlug
         const cr = response.data
@@ -60,25 +60,25 @@ export const useCollector = defineStore('collector', () => {
         return {
           token: cr.token,
           data,
-        } as CaseReport
+        } as Record
       })
       .finally(() => {
         loading.value = false
       })
   }
 
-  async function save(tkOrSlug: string, caseReport: CaseReport) {
+  async function save(tkOrSlug: string, record: Record) {
     token.value = null
     loading.value = true
-    return api.post(`/collect/case-report/${tkOrSlug}`, caseReport).finally(() => {
+    return api.post(`/collect/record/${tkOrSlug}`, record).finally(() => {
       loading.value = false
     })
   }
 
-  async function loadTypo(caseReport: CaseReport) {
+  async function loadTypo(record: Record) {
     token.value = null
     loading.value = true
-    return api.get(`/collect/typo/${caseReport.token}`, caseReport).finally(() => {
+    return api.get(`/collect/typo/${record.token}`, record).finally(() => {
       loading.value = false
     })
   }

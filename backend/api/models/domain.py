@@ -78,12 +78,12 @@ class Participant(ParticipantBase, table=True):
     campaign: Campaign | None = Relationship(back_populates="participants")
 
 
-class CaseReportBase(SQLModel):
+class RecordBase(SQLModel):
     token: str
     data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
 
 
-class CaseReport(CaseReportBase, table=True):
+class Record(RecordBase, table=True):
     id: Optional[int] = Field(
         default=None,
         nullable=False,

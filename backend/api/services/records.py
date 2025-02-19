@@ -1,15 +1,13 @@
-from logging import debug
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from fastapi import HTTPException
-from api.models.domain import CaseReport, Campaign
-from api.models.query import CaseReportResult, CaseReportDraft
+from api.models.domain import Record, Campaign
+from api.models.query import RecordResult, RecordDraft
 from enacit4r_sql.utils.query import QueryBuilder
 
 
-class CaseReportQueryBuilder(QueryBuilder):
+class RecordQueryBuilder(QueryBuilder):
 
     def build_count_query_with_joins(self, filter):
         query = self.build_count_query()
@@ -26,55 +24,55 @@ class CaseReportQueryBuilder(QueryBuilder):
         return query
 
 
-class CaseReportService:
+class RecordService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def count(self) -> int:
-        """Count all case reports"""
-        count = (await self.session.exec(text("select count(id) from casereport"))).scalar()
+        """Count all records"""
+        count = (await self.session.exec(text("select count(id) from record"))).scalar()
         return count
 
-    async def get(self, id: int) -> CaseReport:
-        """Get a case report by id"""
+    async def get(self, id: int) -> Record:
+        """Get a record by id"""
         res = await self.session.exec(
-            select(CaseReport).where(
-                CaseReport.id == id))
+            select(Record).where(
+                Record.id == id))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="CaseReport not found")
+                status_code=404, detail="Record not found")
         return entity
 
-    async def get_by_token(self, token: str) -> CaseReport:
-        """Get a case report by token"""
+    async def get_by_token(self, token: str) -> Record:
+        """Get a record by token"""
         res = await self.session.exec(
-            select(CaseReport).where(
-                CaseReport.token == token))
+            select(Record).where(
+                Record.token == token))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="CaseReport not found")
+                status_code=404, detail="Record not found")
         return entity
 
-    async def delete(self, id: int) -> CaseReport:
-        """Delete a case report by id"""
+    async def delete(self, id: int) -> Record:
+        """Delete a record by id"""
         res = await self.session.exec(
-            select(CaseReport).where(CaseReport.id == id)
+            select(Record).where(Record.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="CaseReport not found")
+                status_code=404, detail="Record not found")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CaseReportResult:
-        """Get all case reports matching filter and range"""
-        builder = CaseReportQueryBuilder(
-            CaseReport, filter, sort, range, {})
+    async def find(self, filter: dict, fields: list, sort: list, range: list) -> RecordResult:
+        """Get all records matching filter and range"""
+        builder = RecordQueryBuilder(
+            Record, filter, sort, range, {})
 
         # Do a query to satisfy total count
         count_query = builder.build_count_query_with_joins(filter)
@@ -89,41 +87,41 @@ class CaseReportService:
         results = await self.session.exec(query)
         entities = results.all()
 
-        return CaseReportResult(
+        return RecordResult(
             total=total_count,
             skip=start,
             limit=end - start + 1,
             data=entities
         )
 
-    async def createOrUpdate(self, payload: CaseReportDraft, campaign: Campaign) -> CaseReport:
-        """Create or update a case report based on its token"""
+    async def createOrUpdate(self, payload: RecordDraft, campaign: Campaign) -> Record:
+        """Create or update a record based on its token"""
         res = await self.session.exec(
-            select(CaseReport).where(CaseReport.token == payload.token)
+            select(Record).where(Record.token == payload.token)
         )
         entity = res.one_or_none()
         if entity:
             return await self.update(entity.id, payload, campaign)
         return await self.create(payload, campaign)
 
-    async def create(self, payload: CaseReportDraft, campaign: Campaign) -> CaseReport:
-        """Create a new case report"""
-        entity = CaseReport(**payload.model_dump())
+    async def create(self, payload: RecordDraft, campaign: Campaign) -> Record:
+        """Create a new record"""
+        entity = Record(**payload.model_dump())
         entity.campaign_id = campaign.id
         entity.company_id = campaign.company_id
         self.session.add(entity)
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: CaseReportDraft, campaign: Campaign) -> CaseReport:
-        """Update a case report"""
+    async def update(self, id: int, payload: RecordDraft, campaign: Campaign) -> Record:
+        """Update a record"""
         res = await self.session.exec(
-            select(CaseReport).where(CaseReport.id == id)
+            select(Record).where(Record.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="CaseReport not found")
+                status_code=404, detail="Record not found")
         for key, value in payload.model_dump().items():
             print(key, value)
             if key not in ["id"]:

@@ -1,23 +1,23 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { CaseReport } from 'src/models'
+import type { Record } from 'src/models'
 
 export const useSurvey = defineStore(
   'survey',
   () => {
     const tokenOrSlug = ref<string | null>(null)
-    const caseReport = ref<CaseReport>({} as CaseReport)
+    const record = ref<Record>({} as Record)
     const step = ref(0)
     const timestamp = ref(Date.now())
 
-    function init(cr: CaseReport) {
-      caseReport.value = cr
+    function init(cr: Record) {
+      record.value = cr
       step.value = 1
       timestamp.value = Date.now()
     }
 
     function reset() {
-      caseReport.value = {} as CaseReport
+      record.value = {} as Record
       step.value = 0
       timestamp.value = Date.now()
       tokenOrSlug.value = null
@@ -35,7 +35,7 @@ export const useSurvey = defineStore(
 
     return {
       tokenOrSlug,
-      caseReport,
+      record,
       step,
       timestamp,
       init,

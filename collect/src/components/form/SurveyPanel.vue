@@ -1,17 +1,17 @@
 <template>
-  <div v-if="survey.caseReport">
+  <div v-if="survey.record">
     <div v-if="survey.step === 1">
       <ChoiceItem
         :label="t('form.age_class')"
         :options="ageOptions"
-        v-model="survey.caseReport.data.age_class"
+        v-model="survey.record.data.age_class"
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
     <div v-if="survey.step === 2">
       <NumberItem
         :label="t('form.employment_rate')"
-        v-model="survey.caseReport.data.employment_rate"
+        v-model="survey.record.data.employment_rate"
         :min="0"
         :max="100"
         :step="5"
@@ -20,7 +20,7 @@
       />
       <NumberItem
         :label="t('form.remote_work_rate')"
-        v-model="survey.caseReport.data.remote_work_rate"
+        v-model="survey.record.data.remote_work_rate"
         :min="0"
         :max="100"
         :step="5"
@@ -31,26 +31,26 @@
         :label="t('form.company_vehicle')"
         :left-label="t('form.no')"
         :right-label="t('form.yes')"
-        v-model="survey.caseReport.data.company_vehicle"
+        v-model="survey.record.data.company_vehicle"
         class="q-mb-lg"
       />
     </div>
     <div v-if="survey.step === 3">
       <LocationItem
         :label="t('form.workplace')"
-        v-model="survey.caseReport.data.workplace"
+        v-model="survey.record.data.workplace"
         class="q-mb-xl"
       />
       <LocationItem
         :label="t('form.origin')"
         :hint="t('form.origin_hint')"
-        v-model="survey.caseReport.data.origin"
+        v-model="survey.record.data.origin"
       />
     </div>
     <div v-if="survey.step === 4">
       <NumberItem
         :label="t('form.travel_time')"
-        v-model="survey.caseReport.data.travel_time"
+        v-model="survey.record.data.travel_time"
         :min="0"
         :max="120"
         :step="5"
@@ -61,7 +61,7 @@
       <ChoiceItem
         :label="t('form.constraints')"
         :options="constraintsOptions"
-        v-model="survey.caseReport.data.constraints"
+        v-model="survey.record.data.constraints"
         multiple
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
@@ -70,7 +70,7 @@
       <ChoiceItem
         :label="t('form.equipments')"
         :options="equipmentsOptions"
-        v-model="survey.caseReport.data.equipments"
+        v-model="survey.record.data.equipments"
         multiple
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
@@ -79,7 +79,7 @@
       <SectionItem :label="t('form.freq_mod')" :hint="t('form.freq_mod_hint')" class="q-mb-lg" />
       <SliderItem
         :label="t('form.mode.walking')"
-        v-model="survey.caseReport.data.freq_mod_walking"
+        v-model="survey.record.data.freq_mod_walking"
         :min="0"
         :max="7"
         label-class="text-h5"
@@ -87,7 +87,7 @@
       />
       <SliderItem
         :label="t('form.mode.bike')"
-        v-model="survey.caseReport.data.freq_mod_bike"
+        v-model="survey.record.data.freq_mod_bike"
         :min="0"
         :max="7"
         label-class="text-h5"
@@ -95,7 +95,7 @@
       />
       <SliderItem
         :label="t('form.mode.pub')"
-        v-model="survey.caseReport.data.freq_mod_pub"
+        v-model="survey.record.data.freq_mod_pub"
         :min="0"
         :max="7"
         label-class="text-h5"
@@ -103,7 +103,7 @@
       />
       <SliderItem
         :label="t('form.mode.moto')"
-        v-model="survey.caseReport.data.freq_mod_moto"
+        v-model="survey.record.data.freq_mod_moto"
         :min="0"
         :max="7"
         label-class="text-h5"
@@ -111,7 +111,7 @@
       />
       <SliderItem
         :label="t('form.mode.car')"
-        v-model="survey.caseReport.data.freq_mod_car"
+        v-model="survey.record.data.freq_mod_car"
         :min="0"
         :max="7"
         label-class="text-h5"
@@ -119,7 +119,7 @@
       />
       <SliderItem
         :label="t('form.mode.train')"
-        v-model="survey.caseReport.data.freq_mod_train"
+        v-model="survey.record.data.freq_mod_train"
         :min="0"
         :max="7"
         label-class="text-h5"
@@ -129,7 +129,7 @@
         :label="t('form.mode.combined')"
         :left-label="t('form.no')"
         :right-label="t('form.yes')"
-        v-model="survey.caseReport.data.freq_mod_combined"
+        v-model="survey.record.data.freq_mod_combined"
         class="q-mt-xl q-mb-lg"
       />
     </div>
@@ -137,7 +137,7 @@
       <SectionItem :label="t('form.freq_trav_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.freq_trav_pro_local')"
-        v-model="survey.caseReport.data.freq_trav_pro_local"
+        v-model="survey.record.data.freq_trav_pro_local"
         :min="0"
         :max="365"
         :step="1"
@@ -148,7 +148,7 @@
       />
       <NumberItem
         :label="t('form.freq_trav_pro_region')"
-        v-model="survey.caseReport.data.freq_trav_pro_region"
+        v-model="survey.record.data.freq_trav_pro_region"
         :min="0"
         :max="365"
         :step="1"
@@ -159,7 +159,7 @@
       />
       <NumberItem
         :label="t('form.freq_trav_pro_inter')"
-        v-model="survey.caseReport.data.freq_trav_pro_inter"
+        v-model="survey.record.data.freq_trav_pro_inter"
         :min="0"
         :max="365"
         :step="1"
@@ -173,7 +173,7 @@
       <SectionItem :label="t('form.freq_mod_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.mode.walking')"
-        v-model="survey.caseReport.data.freq_mod_pro_walking"
+        v-model="survey.record.data.freq_mod_pro_walking"
         :min="0"
         :max="365"
         :step="1"
@@ -184,7 +184,7 @@
       />
       <NumberItem
         :label="t('form.mode.bike')"
-        v-model="survey.caseReport.data.freq_mod_pro_bike"
+        v-model="survey.record.data.freq_mod_pro_bike"
         :min="0"
         :max="365"
         :step="1"
@@ -195,7 +195,7 @@
       />
       <NumberItem
         :label="t('form.mode.pub')"
-        v-model="survey.caseReport.data.freq_mod_pro_pub"
+        v-model="survey.record.data.freq_mod_pro_pub"
         :min="0"
         :max="365"
         :step="1"
@@ -206,7 +206,7 @@
       />
       <NumberItem
         :label="t('form.mode.moto')"
-        v-model="survey.caseReport.data.freq_mod_pro_moto"
+        v-model="survey.record.data.freq_mod_pro_moto"
         :min="0"
         :max="365"
         :step="1"
@@ -217,7 +217,7 @@
       />
       <NumberItem
         :label="t('form.mode.car')"
-        v-model="survey.caseReport.data.freq_mod_pro_car"
+        v-model="survey.record.data.freq_mod_pro_car"
         :min="0"
         :max="365"
         :step="1"
@@ -228,7 +228,7 @@
       />
       <NumberItem
         :label="t('form.mode.train')"
-        v-model="survey.caseReport.data.freq_mod_pro_train"
+        v-model="survey.record.data.freq_mod_pro_train"
         :min="0"
         :max="365"
         :step="1"
@@ -239,7 +239,7 @@
       />
       <NumberItem
         :label="t('form.mode.plane')"
-        v-model="survey.caseReport.data.freq_mod_pro_plane"
+        v-model="survey.record.data.freq_mod_pro_plane"
         :min="0"
         :max="365"
         :step="1"
@@ -257,49 +257,49 @@
       />
       <RatingItem
         :label="t('form.importance_time')"
-        v-model="survey.caseReport.data.importance_time"
+        v-model="survey.record.data.importance_time"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_cost')"
-        v-model="survey.caseReport.data.importance_cost"
+        v-model="survey.record.data.importance_cost"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_flex')"
-        v-model="survey.caseReport.data.importance_flex"
+        v-model="survey.record.data.importance_flex"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_rel')"
-        v-model="survey.caseReport.data.importance_rel"
+        v-model="survey.record.data.importance_rel"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_comfort')"
-        v-model="survey.caseReport.data.importance_comfort"
+        v-model="survey.record.data.importance_comfort"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_most')"
-        v-model="survey.caseReport.data.importance_most"
+        v-model="survey.record.data.importance_most"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.importance_env')"
-        v-model="survey.caseReport.data.importance_env"
+        v-model="survey.record.data.importance_env"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
@@ -309,42 +309,42 @@
       <SectionItem :label="t('form.needs')" :hint="t('form.needs_hint')" class="q-mb-lg" />
       <RatingItem
         :label="t('form.mode.walking')"
-        v-model="survey.caseReport.data.needs_walking"
+        v-model="survey.record.data.needs_walking"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.bike')"
-        v-model="survey.caseReport.data.needs_bike"
+        v-model="survey.record.data.needs_bike"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.pub')"
-        v-model="survey.caseReport.data.needs_pub"
+        v-model="survey.record.data.needs_pub"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.moto')"
-        v-model="survey.caseReport.data.needs_moto"
+        v-model="survey.record.data.needs_moto"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.car')"
-        v-model="survey.caseReport.data.needs_car"
+        v-model="survey.record.data.needs_car"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
       <RatingItem
         :label="t('form.mode.train')"
-        v-model="survey.caseReport.data.needs_train"
+        v-model="survey.record.data.needs_train"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
@@ -359,7 +359,7 @@
       <ChoiceItem
         :label="t('form.mode.bike')"
         :options="adjectivesOptions"
-        v-model="survey.caseReport.data.adjectives_bikes"
+        v-model="survey.record.data.adjectives_bikes"
         multiple
         :max="3"
         :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
@@ -369,7 +369,7 @@
       <ChoiceItem
         :label="t('form.mode.pub_train')"
         :options="adjectivesOptions"
-        v-model="survey.caseReport.data.adjectives_pubs"
+        v-model="survey.record.data.adjectives_pubs"
         multiple
         :max="3"
         :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
@@ -379,7 +379,7 @@
       <ChoiceItem
         :label="t('form.mode.car_moto')"
         :options="adjectivesOptions"
-        v-model="survey.caseReport.data.adjectives_motors"
+        v-model="survey.record.data.adjectives_motors"
         multiple
         :max="3"
         :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
@@ -389,12 +389,12 @@
     </div>
     <div v-if="survey.step === 13">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
-      <pre>{{ survey.caseReport }}</pre>
+      <pre>{{ survey.record }}</pre>
     </div>
     <div v-if="survey.step === 14">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
-        v-model="survey.caseReport.data.comments"
+        v-model="survey.record.data.comments"
         type="textarea"
         class="q-mb-lg text-h4"
         bg-color="green-3"
@@ -451,9 +451,9 @@ const collector = useCollector()
 const q = useQuasar()
 
 watch(
-  () => survey.caseReport,
+  () => survey.record,
   () => {
-    console.debug(survey.caseReport.data)
+    console.debug(survey.record.data)
   },
   { deep: true },
 )
@@ -520,13 +520,13 @@ function nextStep() {
   if (survey.tokenOrSlug) {
     if (survey.step === 13) {
       void collector
-        .save(survey.tokenOrSlug, survey.caseReport)
+        .save(survey.tokenOrSlug, survey.record)
         .then(() => {
-          void collector.loadTypo(survey.caseReport).catch(notifyError)
+          void collector.loadTypo(survey.record).catch(notifyError)
         })
         .catch(notifyError)
     } else {
-      void collector.save(survey.tokenOrSlug, survey.caseReport).catch(console.error)
+      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
     }
   }
   window.scrollTo({ top: 0, behavior: 'smooth' })

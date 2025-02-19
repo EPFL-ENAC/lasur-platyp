@@ -2,18 +2,18 @@ import datetime
 import secrets
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
-from api.models.domain import Campaign, CaseReport
-from api.models.query import CaseReportDraft, CaseReportRead
+from api.models.domain import Campaign, Record
+from api.models.query import RecordDraft, RecordRead
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
-from api.services.case_reports import CaseReportService
+from api.services.records import RecordService
 
 router = APIRouter()
 
 
-@router.get("/case-report/{tokenOrSlug}", response_model=CaseReportDraft, response_model_exclude_none=True)
-async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) -> CaseReportDraft:
-    """Get a case report by participant token or campaign slug"""
+@router.get("/record/{tokenOrSlug}", response_model=RecordDraft, response_model_exclude_none=True)
+async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) -> RecordDraft:
+    """Get a record by participant token or campaign slug"""
 
     # 1. if this is a slug, then create an empty participant
     campaign = None
@@ -24,7 +24,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
 
     if campaign is not None:
         _check_campaign(campaign)
-        # this is a campaign's slug then initialize a new case report
+        # this is a campaign's slug then initialize a new record
         data = {
             "workplace": {
                 "address": campaign.address,
@@ -32,12 +32,12 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
                 "lat": campaign.lat
             }
         }
-        return CaseReportDraft(token=secrets.token_urlsafe(16), data=data)
+        return RecordDraft(token=secrets.token_urlsafe(16), data=data)
 
-    # 2. this is a participant's token: try to get the case report in case it was already saved
+    # 2. this is a participant's token: try to get the record in case it was already saved
     cr = None
     try:
-        cr = CaseReportService(session).get_by_token(tokenOrSlug)
+        cr = RecordService(session).get_by_token(tokenOrSlug)
     except:
         cr = None  # 404 if not found
     if cr is not None:
@@ -45,7 +45,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         _check_campaign(campaign)
         return cr
 
-    # 3. this is a participant's token: initialize a new case report
+    # 3. this is a participant's token: initialize a new record
     participant = await ParticipantService(session).get_by_token(tokenOrSlug)
     if participant.status == "completed":
         raise HTTPException(
@@ -58,16 +58,16 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         "lon": campaign.lon,
         "lat": campaign.lat
     }
-    return CaseReportDraft(token=tokenOrSlug, data=data)
+    return RecordDraft(token=tokenOrSlug, data=data)
 
 
-@router.post("/case-report/{tokenOrSlug}", response_model=CaseReportRead, response_model_exclude_none=True)
+@router.post("/record/{tokenOrSlug}", response_model=RecordRead, response_model_exclude_none=True)
 async def createOrUpdate(
     tokenOrSlug: str,
-    item: CaseReportDraft,
+    item: RecordDraft,
     session: AsyncSession = Depends(get_session)
-) -> CaseReportRead:
-    """Create or update a case report"""
+) -> RecordRead:
+    """Create or update a record"""
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
@@ -79,13 +79,13 @@ async def createOrUpdate(
         # this is a participant's token
         participant = await ParticipantService(session).get_by_token(tokenOrSlug)
         campaign = CampaignService(session).get(participant.campaign_id)
-    return await CaseReportService(session).createOrUpdate(item, campaign)
+    return await RecordService(session).createOrUpdate(item, campaign)
 
 
-@router.get("/typo/{token}", response_model=CaseReportRead, response_model_exclude_none=True)
-async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> CaseReportRead:
-    """Get modal typology by case report token"""
-    return await CaseReportService(session).get_by_token(token)
+@router.get("/typo/{token}", response_model=RecordRead, response_model_exclude_none=True)
+async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> RecordRead:
+    """Get modal typology by record token"""
+    return await RecordService(session).get_by_token(token)
 
 
 def _check_campaign(campaign: Campaign):

@@ -7,7 +7,7 @@
         </div>
         <div v-else>
           <div v-if="started">
-            <SurveyPanel v-if="survey.caseReport" />
+            <SurveyPanel v-if="survey.record" />
           </div>
           <div v-else>
             <div class="text-h4 q-mb-md">
@@ -71,7 +71,7 @@
 <script setup lang="ts">
 import SurveyPanel from 'src/components/form/SurveyPanel.vue'
 import { notifyError } from 'src/utils/notify'
-import type { CaseReport } from 'src/models'
+import type { Record } from 'src/models'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -84,7 +84,7 @@ const started = ref(false)
 onMounted(async () => {
   if (route.params.token) {
     tkSlug.value = route.params.token as string
-    if (survey.caseReport?.token === undefined) {
+    if (survey.record?.token === undefined) {
       await onToken()
     }
     if (survey.tokenOrSlug !== tkSlug.value) {
@@ -97,7 +97,7 @@ async function onToken() {
   if (tkSlug.value && tkSlug.value.trim().length > 0) {
     return collector
       .load(tkSlug.value.trim())
-      .then((cr: CaseReport) => {
+      .then((cr: Record) => {
         survey.tokenOrSlug = tkSlug.value.trim()
         survey.init(cr)
       })

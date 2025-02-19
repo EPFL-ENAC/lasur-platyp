@@ -27,7 +27,7 @@ export default {
   address: 'Address',
   administration: 'Administration',
   campaigns: 'Campaigns',
-  case_reports: 'Case Reports',
+  records: 'Records',
   companies: 'Companies',
   company_removed: 'Company removed',
   content: 'Content',

@@ -13,7 +13,7 @@ export interface AddressLocation {
   lon?: number | undefined
 }
 
-export interface CaseReportData {
+export interface RecordData {
   age_class: string
   employment_rate: number
   remote_work_rate: number
@@ -59,7 +59,7 @@ export interface CaseReportData {
   origin: AddressLocation
 }
 
-export interface CaseReport {
-  data: CaseReportData
+export interface Record {
+  data: RecordData
   token: string
 }
