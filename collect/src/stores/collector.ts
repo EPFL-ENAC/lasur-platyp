@@ -11,7 +11,7 @@ export const useCollector = defineStore('collector', () => {
     token.value = null
     loading.value = true
     return api
-      .get(`/collect/participant/${tkOrSlug}`)
+      .get(`/collect/case-report/${tkOrSlug}`)
       .then((response) => {
         token.value = tkOrSlug
         const cr = response.data
@@ -70,7 +70,7 @@ export const useCollector = defineStore('collector', () => {
   async function save(tkOrSlug: string, caseReport: CaseReport) {
     token.value = null
     loading.value = true
-    return api.post(`/collect/participant/${tkOrSlug}`, caseReport).finally(() => {
+    return api.post(`/collect/case-report/${tkOrSlug}`, caseReport).finally(() => {
       loading.value = false
     })
   }
