@@ -25,7 +25,7 @@ export const useSurvey = defineStore(
     }
 
     function incStep() {
-      if (step.value === 8 && record.value.data.freq_trav_pro_local === 0) {
+      if (step.value === 8 && record.value.data.freq_trav_pro_local < 4) {
         record.value.data = {
           ...record.value.data,
           freq_mod_pro_local_walking: 0,
@@ -37,7 +37,7 @@ export const useSurvey = defineStore(
           freq_mod_pro_local_combined: false,
         }
         step.value += 2
-      } else if (step.value === 10 && record.value.data.freq_trav_pro_region === 0) {
+      } else if (step.value === 10 && record.value.data.freq_trav_pro_region < 2) {
         record.value.data = {
           ...record.value.data,
           freq_mod_pro_region_pub: 0,
@@ -48,7 +48,7 @@ export const useSurvey = defineStore(
           freq_mod_pro_region_combined: false,
         }
         step.value += 2
-      } else if (step.value === 12 && record.value.data.freq_trav_pro_inter === 0) {
+      } else if (step.value === 12 && record.value.data.freq_trav_pro_inter < 1) {
         record.value.data = {
           ...record.value.data,
           freq_mod_pro_inter_car: 0,
@@ -65,11 +65,11 @@ export const useSurvey = defineStore(
     }
 
     function decStep() {
-      if (step.value === 10 && record.value.data.freq_trav_pro_local === 0) {
+      if (step.value === 10 && record.value.data.freq_trav_pro_local < 4) {
         step.value -= 2
-      } else if (step.value === 12 && record.value.data.freq_trav_pro_region === 0) {
+      } else if (step.value === 12 && record.value.data.freq_trav_pro_region < 2) {
         step.value -= 2
-      } else if (step.value === 14 && record.value.data.freq_trav_pro_inter === 0) {
+      } else if (step.value === 14 && record.value.data.freq_trav_pro_inter < 1) {
         step.value -= 2
       } else {
         step.value -= 1

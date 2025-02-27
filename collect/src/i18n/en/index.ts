@@ -59,9 +59,9 @@ export default {
     freq_trav_pro_region: 'To what extent do you have to travel regionally as part of your work?',
     freq_trav_pro_inter:
       'To what extent do you have to travel internationally as part of your work?',
-    freq_trav_pro_local_hint: 'Local (<30km: Geneva and surroundings, Annemasse, Nyon)',
-    freq_trav_pro_region_hint: 'Regional (30-300km: Lyon, Lausanne, Zurich)',
-    freq_trav_pro_inter_hint: 'International (>300km: Milan, Paris, Munich)',
+    freq_trav_pro_local_hint: 'Local (<10km: Geneva and surroundings)',
+    freq_trav_pro_region_hint: 'Regional (10-300km: Lausanne, Lyon, Bern, Zurich)',
+    freq_trav_pro_inter_hint: 'International (>300km: Milan, Paris, Francfort)',
     days_per_month: 'days per month',
     freq_mod_pro: 'How often do you use the following modes of transport for your business trips?',
     importance: 'How important are the following elements to you in your daily mobility?',
