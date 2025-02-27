@@ -32,7 +32,7 @@
                 :label="t('resume')"
                 size="lg"
                 @click="started = true"
-                class="q-mt-md"
+                class="q-mt-md on-left"
               />
               <q-btn
                 flat
@@ -42,7 +42,7 @@
                 :label="t('start_new')"
                 size="lg"
                 @click="reset()"
-                class="q-mt-md on-right"
+                class="q-mt-md"
               />
             </div>
             <div v-else>

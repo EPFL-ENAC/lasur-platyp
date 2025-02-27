@@ -721,7 +721,6 @@ function prevStep() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
-  console.log(dir['direction'])
   if (dir['direction'] === 'left' || dir['direction'] === 'up') {
     nextStep()
   } else {
