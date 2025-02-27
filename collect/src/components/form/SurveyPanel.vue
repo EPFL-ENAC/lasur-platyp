@@ -1,5 +1,5 @@
 <template>
-  <div v-if="survey.record">
+  <div v-if="survey.record" v-touch-swipe.mouse="handleSwipe">
     <div v-if="survey.step === 1">
       <ChoiceItem
         :label="t('form.age_class')"
@@ -692,6 +692,7 @@ const adjectivePairsOptions = computed<ToggleOption[]>(() => [
 ])
 
 function nextStep() {
+  if (survey.step === 20) return
   survey.incStep()
   if (survey.tokenOrSlug) {
     if (survey.step === 15) {
@@ -713,7 +714,18 @@ function nextStep() {
 }
 
 function prevStep() {
+  if (survey.step === 1) return
   survey.decStep()
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleSwipe(dir: any) {
+  console.log(dir['direction'])
+  if (dir['direction'] === 'left' || dir['direction'] === 'up') {
+    nextStep()
+  } else {
+    prevStep()
+  }
 }
 </script>

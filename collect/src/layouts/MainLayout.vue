@@ -9,7 +9,7 @@
           <span>{{ t('main.brand') }}</span>
         </q-toolbar-title>
         <a href="https://www.epfl.ch/labs/lasur/" target="_blank" class="q-mt-sm">
-          <img src="/EPFL.svg" height="20px" style="filter: grayscale(100%)" />
+          <img src="/EPFL.svg" height="20px" style="filter: grayscale(100%); opacity: 0.8" />
         </a>
       </q-toolbar>
     </q-header>
