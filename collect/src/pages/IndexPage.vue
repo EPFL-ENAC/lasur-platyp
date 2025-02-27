@@ -1,5 +1,13 @@
 <template>
   <q-page class="bg-secondary text-white">
+    <q-linear-progress
+      v-if="started"
+      size="10px"
+      :value="progress"
+      color="accent"
+      :animation-speed="200"
+      class="q-mb-md"
+    />
     <div class="container">
       <div class="content q-pa-lg">
         <div v-if="collector.loading">
@@ -80,6 +88,10 @@ const survey = useSurvey()
 
 const tkSlug = ref('')
 const started = ref(false)
+
+const progress = computed(() => {
+  return survey.step / 20
+})
 
 onMounted(async () => {
   if (route.params.token) {
