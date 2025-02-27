@@ -1,5 +1,5 @@
 <template>
-  <div v-if="survey.record" v-touch-swipe.mouse="handleSwipe">
+  <div v-if="survey.record" v-touch-swipe.mouse.left.right="handleSwipe">
     <div v-if="survey.step === 1">
       <ChoiceItem
         :label="t('form.age_class')"
