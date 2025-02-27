@@ -356,38 +356,50 @@
         :hint="t('form.adjectives_hint')"
         class="q-mb-lg"
       />
-      <ChoiceItem
+      <ToggleChoiceItem
         :label="t('form.mode.bike')"
-        :options="adjectivesOptions"
+        :options="adjectivePairsOptions"
         v-model="survey.record.data.adjectives_bikes"
-        multiple
         :max="3"
-        :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
-        option-label-class="text-h6"
-        class="q-mb-lg"
-      />
-      <ChoiceItem
-        :label="t('form.mode.pub_train')"
-        :options="adjectivesOptions"
-        v-model="survey.record.data.adjectives_pubs"
-        multiple
-        :max="3"
-        :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
-        option-label-class="text-h6"
-        class="q-mb-lg"
-      />
-      <ChoiceItem
-        :label="t('form.mode.car_moto')"
-        :options="adjectivesOptions"
-        v-model="survey.record.data.adjectives_motors"
-        multiple
-        :max="3"
-        :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
+        :col="q.screen.lt.sm ? 1 : 2"
         option-label-class="text-h6"
         class="q-mb-lg"
       />
     </div>
     <div v-if="survey.step === 13">
+      <SectionItem
+        :label="t('form.adjectives')"
+        :hint="t('form.adjectives_hint')"
+        class="q-mb-lg"
+      />
+      <ToggleChoiceItem
+        :label="t('form.mode.pub_train')"
+        :options="adjectivePairsOptions"
+        v-model="survey.record.data.adjectives_pubs"
+        :max="3"
+        :col="q.screen.lt.sm ? 1 : 2"
+        option-label-class="text-h6"
+        class="q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 14">
+      <SectionItem
+        :label="t('form.adjectives')"
+        :hint="t('form.adjectives_hint')"
+        class="q-mb-lg"
+      />
+      <ToggleChoiceItem
+        :label="t('form.mode.car_moto')"
+        :options="adjectivePairsOptions"
+        v-model="survey.record.data.adjectives_motors"
+        :max="3"
+        :col="q.screen.lt.sm ? 1 : 2"
+        option-label-class="text-h6"
+        class="q-mb-lg"
+      />
+    </div>
+
+    <div v-if="survey.step === 15">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
       <pre>{{ survey.recommendation }}</pre>
       <q-btn
@@ -402,7 +414,7 @@
       />
       <pre v-if="showRecord">{{ survey.record }}</pre>
     </div>
-    <div v-if="survey.step === 14">
+    <div v-if="survey.step === 16">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
         v-model="survey.record.data.comments"
@@ -424,7 +436,7 @@
       />
       <q-btn
         rounded
-        v-if="survey.step < 14"
+        v-if="survey.step < 16"
         color="accent"
         icon="keyboard_arrow_right"
         size="lg"
@@ -433,7 +445,7 @@
       />
       <q-btn
         rounded
-        v-if="survey.step === 14"
+        v-if="survey.step === 16"
         color="primary"
         :label="t('send')"
         icon-right="send"
@@ -446,8 +458,9 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import type { Option } from 'src/components/form/models'
+import type { Option, ToggleOption } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
+import ToggleChoiceItem from 'src/components/form/ToggleChoiceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
@@ -497,41 +510,73 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'disabled', label: t('form.constraints_option.disabled') },
 ])
 
-const adjectivesOptions = computed<Option[]>(() => [
-  { value: 'fast', label: t('form.adjectives_option.fast') },
-  { value: 'safe', label: t('form.adjectives_option.safe') },
-  { value: 'relax', label: t('form.adjectives_option.relax') },
-  { value: 'reliable', label: t('form.adjectives_option.reliable') },
-  { value: 'impractical', label: t('form.adjectives_option.impractical') },
-  { value: 'constraining', label: t('form.adjectives_option.constraining') },
-  { value: 'theft', label: t('form.adjectives_option.theft') },
-  { value: 'cheap', label: t('form.adjectives_option.cheap') },
-  { value: 'pleasant', label: t('form.adjectives_option.pleasant') },
-  { value: 'useful', label: t('form.adjectives_option.useful') },
-  { value: 'well_served', label: t('form.adjectives_option.well_served') },
-  { value: 'polluting', label: t('form.adjectives_option.polluting') },
-  { value: 'noisy', label: t('form.adjectives_option.noisy') },
-  { value: 'bad_weather', label: t('form.adjectives_option.bad_weather') },
-  { value: 'practical', label: t('form.adjectives_option.practical') },
-  { value: 'autonomous', label: t('form.adjectives_option.autonomous') },
-  { value: 'indispensable', label: t('form.adjectives_option.indispensable') },
-  { value: 'slow', label: t('form.adjectives_option.slow') },
-  { value: 'dangerous', label: t('form.adjectives_option.dangerous') },
-  { value: 'tiring', label: t('form.adjectives_option.tiring') },
-  { value: 'congested', label: t('form.adjectives_option.congested') },
-  { value: 'ecological', label: t('form.adjectives_option.ecological') },
-  { value: 'quiet', label: t('form.adjectives_option.quiet') },
-  { value: 'healthy', label: t('form.adjectives_option.healthy') },
-  { value: 'expensive', label: t('form.adjectives_option.expensive') },
-  { value: 'unpleasant', label: t('form.adjectives_option.unpleasant') },
-  { value: 'useless', label: t('form.adjectives_option.useless') },
-  { value: 'poorly_served', label: t('form.adjectives_option.poorly_served') },
+const adjectivePairsOptions = computed<ToggleOption[]>(() => [
+  {
+    trueValue: 'fast',
+    trueLabel: t('form.adjectives_option.fast'),
+    falseValue: 'slow',
+    falseLabel: t('form.adjectives_option.slow'),
+  },
+  {
+    trueValue: 'cheap',
+    trueLabel: t('form.adjectives_option.cheap'),
+    falseValue: 'expensive',
+    falseLabel: t('form.adjectives_option.expensive'),
+  },
+  {
+    trueValue: 'practical',
+    trueLabel: t('form.adjectives_option.practical'),
+    falseValue: 'impractical',
+    falseLabel: t('form.adjectives_option.impractical'),
+  },
+  {
+    trueValue: 'ecological',
+    trueLabel: t('form.adjectives_option.ecological'),
+    falseValue: 'polluting',
+    falseLabel: t('form.adjectives_option.polluting'),
+  },
+  {
+    trueValue: 'safe',
+    trueLabel: t('form.adjectives_option.safe'),
+    falseValue: 'dangerous',
+    falseLabel: t('form.adjectives_option.dangerous'),
+  },
+  {
+    trueValue: 'pleasant',
+    trueLabel: t('form.adjectives_option.pleasant'),
+    falseValue: 'unpleasant',
+    falseLabel: t('form.adjectives_option.unpleasant'),
+  },
+  {
+    trueValue: 'autonomous',
+    trueLabel: t('form.adjectives_option.autonomous'),
+    falseValue: 'constraining',
+    falseLabel: t('form.adjectives_option.constraining'),
+  },
+  {
+    trueValue: 'relax',
+    trueLabel: t('form.adjectives_option.relax'),
+    falseValue: 'tiring',
+    falseLabel: t('form.adjectives_option.tiring'),
+  },
+  {
+    trueValue: 'healthy',
+    trueLabel: t('form.adjectives_option.healthy'),
+    falseValue: 'bad_weather',
+    falseLabel: t('form.adjectives_option.bad_weather'),
+  },
+  {
+    trueValue: 'reliable',
+    trueLabel: t('form.adjectives_option.reliable'),
+    falseValue: 'congested',
+    falseLabel: t('form.adjectives_option.congested'),
+  },
 ])
 
 function nextStep() {
   survey.incStep()
   if (survey.tokenOrSlug) {
-    if (survey.step === 13) {
+    if (survey.step === 15) {
       collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
