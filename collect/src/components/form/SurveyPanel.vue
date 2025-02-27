@@ -389,7 +389,18 @@
     </div>
     <div v-if="survey.step === 13">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
-      <pre>{{ survey.record }}</pre>
+      <pre>{{ survey.recommendation }}</pre>
+      <q-btn
+        outlined
+        no-caps
+        color="primary"
+        :icon-right="showRecord ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+        size="sm"
+        :label="showRecord ? 'Hide record' : 'Show record'"
+        @click="showRecord = !showRecord"
+        class="q-mt-md"
+      />
+      <pre v-if="showRecord">{{ survey.record }}</pre>
     </div>
     <div v-if="survey.step === 14">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -458,6 +469,8 @@ watch(
   { deep: true },
 )
 
+const showRecord = ref(false)
+
 const ageOptions = computed<Option[]>(() => [
   { value: '16-17', label: t('form.age_class_option.16_17') },
   { value: '18-24', label: t('form.age_class_option.18_24') },
@@ -519,10 +532,14 @@ function nextStep() {
   survey.incStep()
   if (survey.tokenOrSlug) {
     if (survey.step === 13) {
-      void collector
+      collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
-          void collector.loadTypo(survey.record).catch(notifyError)
+          return collector.loadTypo(survey.record)
+        })
+        .then((resp) => {
+          console.log(resp)
+          survey.recommendation = resp
         })
         .catch(notifyError)
     } else {

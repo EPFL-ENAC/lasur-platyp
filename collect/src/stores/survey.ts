@@ -9,6 +9,7 @@ export const useSurvey = defineStore(
     const record = ref<Record>({} as Record)
     const step = ref(0)
     const timestamp = ref(Date.now())
+    const recommendation = ref<{ [key: string]: string }>({})
 
     function init(cr: Record) {
       record.value = cr
@@ -38,6 +39,7 @@ export const useSurvey = defineStore(
       record,
       step,
       timestamp,
+      recommendation,
       init,
       reset,
       incStep,

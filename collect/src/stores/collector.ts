@@ -78,9 +78,14 @@ export const useCollector = defineStore('collector', () => {
   async function loadTypo(record: Record) {
     token.value = null
     loading.value = true
-    return api.get(`/collect/typo/${record.token}`, record).finally(() => {
-      loading.value = false
-    })
+    return api
+      .get(`/collect/typo/${record.token}`, record)
+      .then((response) => {
+        return response.data
+      })
+      .finally(() => {
+        loading.value = false
+      })
   }
 
   return {
