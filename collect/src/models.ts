@@ -28,16 +28,30 @@ export interface RecordData {
   freq_mod_car: number
   freq_mod_train: number
   freq_mod_combined: boolean
+
   freq_trav_pro_local: number
+  freq_mod_pro_local_walking: number
+  freq_mod_pro_local_bike: number
+  freq_mod_pro_local_pub: number
+  freq_mod_pro_local_moto: number
+  freq_mod_pro_local_car: number
+  freq_mod_pro_local_train: number
+  freq_mod_pro_local_combined: boolean
+
   freq_trav_pro_region: number
+  freq_mod_pro_region_pub: number
+  freq_mod_pro_region_moto: number
+  freq_mod_pro_region_car: number
+  freq_mod_pro_region_train: number
+  freq_mod_pro_region_plane: number
+  freq_mod_pro_region_combined: boolean
+
   freq_trav_pro_inter: number
-  freq_mod_pro_walking: number
-  freq_mod_pro_bike: number
-  freq_mod_pro_pub: number
-  freq_mod_pro_moto: number
-  freq_mod_pro_car: number
-  freq_mod_pro_train: number
-  freq_mod_pro_plane: number
+  freq_mod_pro_inter_car: number
+  freq_mod_pro_inter_train: number
+  freq_mod_pro_inter_plane: number
+  freq_mod_pro_inter_combined: boolean
+
   importance_time: number
   importance_cost: number
   importance_flex: number

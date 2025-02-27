@@ -134,122 +134,241 @@
       />
     </div>
     <div v-if="survey.step === 8">
-      <SectionItem :label="t('form.freq_trav_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.freq_trav_pro_local')"
+        :hint="t('form.freq_trav_pro_local_hint')"
         v-model="survey.record.data.freq_trav_pro_local"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
-        label-class="text-h5 q-pt-lg"
-        class="q-mb-lg"
-      />
-      <NumberItem
-        :label="t('form.freq_trav_pro_region')"
-        v-model="survey.record.data.freq_trav_pro_region"
-        :min="0"
-        :max="365"
-        :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
-        label-class="text-h5 q-pt-lg"
-        class="q-mb-lg"
-      />
-      <NumberItem
-        :label="t('form.freq_trav_pro_inter')"
-        v-model="survey.record.data.freq_trav_pro_inter"
-        :min="0"
-        :max="365"
-        :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
-        label-class="text-h5 q-pt-lg"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         class="q-mb-lg"
       />
     </div>
     <div v-if="survey.step === 9">
-      <SectionItem :label="t('form.freq_mod_pro')" class="q-mb-lg" />
+      <SectionItem
+        :label="t('form.freq_mod_pro')"
+        :hint="t('form.freq_trav_pro_local_hint')"
+        class="q-mb-lg"
+      />
       <NumberItem
         :label="t('form.mode.walking')"
-        v-model="survey.record.data.freq_mod_pro_walking"
+        v-model="survey.record.data.freq_mod_pro_local_walking"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.bike')"
-        v-model="survey.record.data.freq_mod_pro_bike"
+        v-model="survey.record.data.freq_mod_pro_local_bike"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.pub')"
-        v-model="survey.record.data.freq_mod_pro_pub"
+        v-model="survey.record.data.freq_mod_pro_local_pub"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.moto')"
-        v-model="survey.record.data.freq_mod_pro_moto"
+        v-model="survey.record.data.freq_mod_pro_local_moto"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.car')"
-        v-model="survey.record.data.freq_mod_pro_car"
+        v-model="survey.record.data.freq_mod_pro_local_car"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.train')"
-        v-model="survey.record.data.freq_mod_pro_train"
+        v-model="survey.record.data.freq_mod_pro_local_train"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_pro_local_combined"
+        class="q-mt-xl q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 10">
+      <NumberItem
+        :label="t('form.freq_trav_pro_region')"
+        :hint="t('form.freq_trav_pro_region_hint')"
+        v-model="survey.record.data.freq_trav_pro_region"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        class="q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 11">
+      <SectionItem
+        :label="t('form.freq_mod_pro')"
+        :hint="t('form.freq_trav_pro_region_hint')"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.pub')"
+        v-model="survey.record.data.freq_mod_pro_region_pub"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.moto')"
+        v-model="survey.record.data.freq_mod_pro_region_moto"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.car')"
+        v-model="survey.record.data.freq_mod_pro_region_car"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.train')"
+        v-model="survey.record.data.freq_mod_pro_region_train"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.plane')"
-        v-model="survey.record.data.freq_mod_pro_plane"
+        v-model="survey.record.data.freq_mod_pro_region_plane"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_pro_region_combined"
+        class="q-mt-xl q-mb-lg"
+      />
     </div>
-    <div v-if="survey.step === 10">
+    <div v-if="survey.step === 12">
+      <NumberItem
+        :label="t('form.freq_trav_pro_inter')"
+        :hint="t('form.freq_trav_pro_inter_hint')"
+        v-model="survey.record.data.freq_trav_pro_inter"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        class="q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 13">
+      <SectionItem
+        :label="t('form.freq_mod_pro')"
+        :hint="t('form.freq_trav_pro_inter_hint')"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.car')"
+        v-model="survey.record.data.freq_mod_pro_inter_car"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.train')"
+        v-model="survey.record.data.freq_mod_pro_inter_train"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.plane')"
+        v-model="survey.record.data.freq_mod_pro_inter_plane"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_pro_inter_combined"
+        class="q-mt-xl q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 14">
       <SectionItem
         :label="t('form.importance')"
         :hint="t('form.importance_hint')"
@@ -305,7 +424,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="survey.step === 11">
+    <div v-if="survey.step === 15">
       <SectionItem :label="t('form.needs')" :hint="t('form.needs_hint')" class="q-mb-lg" />
       <RatingItem
         :label="t('form.mode.walking')"
@@ -350,7 +469,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="survey.step === 12">
+    <div v-if="survey.step === 16">
       <SectionItem
         :label="t('form.adjectives')"
         :hint="t('form.adjectives_hint')"
@@ -366,7 +485,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="survey.step === 13">
+    <div v-if="survey.step === 17">
       <SectionItem
         :label="t('form.adjectives')"
         :hint="t('form.adjectives_hint')"
@@ -382,7 +501,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="survey.step === 14">
+    <div v-if="survey.step === 18">
       <SectionItem
         :label="t('form.adjectives')"
         :hint="t('form.adjectives_hint')"
@@ -398,8 +517,7 @@
         class="q-mb-lg"
       />
     </div>
-
-    <div v-if="survey.step === 15">
+    <div v-if="survey.step === 19">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
       <pre>{{ survey.recommendation }}</pre>
       <q-btn
@@ -414,7 +532,7 @@
       />
       <pre v-if="showRecord">{{ survey.record }}</pre>
     </div>
-    <div v-if="survey.step === 16">
+    <div v-if="survey.step === 20">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
         v-model="survey.record.data.comments"
@@ -436,7 +554,7 @@
       />
       <q-btn
         rounded
-        v-if="survey.step < 16"
+        v-if="survey.step < 20"
         color="accent"
         icon="keyboard_arrow_right"
         size="lg"
@@ -445,7 +563,7 @@
       />
       <q-btn
         rounded
-        v-if="survey.step === 16"
+        v-if="survey.step === 20"
         color="primary"
         :label="t('send')"
         icon-right="send"
