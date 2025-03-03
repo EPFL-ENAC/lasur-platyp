@@ -695,7 +695,7 @@ function nextStep() {
   if (survey.step === 20) return
   survey.incStep()
   if (survey.tokenOrSlug) {
-    if (survey.step === 15) {
+    if (survey.step === 19) {
       collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
