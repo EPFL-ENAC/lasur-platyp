@@ -1,6 +1,6 @@
 import type { Feature, FeatureCollection } from 'geojson'
 
-const COUNTRIES = ['ch']
+const COUNTRIES = ['ch', 'fr']
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
 
 function handleNominatimResponse(geojson: FeatureCollection): Feature[] {
