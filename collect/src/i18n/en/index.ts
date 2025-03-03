@@ -30,7 +30,7 @@ export default {
       night: 'Night work',
       disabled: 'Parking card for disabled people',
     },
-    equipments: 'What equipments do you use for your daily commute?',
+    equipments: 'Which of the following do you have access to for your daily commute?',
     equipments_option: {
       bike: 'Bicycle',
       upt_subs: 'Urban public transport subscription',
