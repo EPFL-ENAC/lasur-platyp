@@ -3,6 +3,10 @@ export default {
     brand: 'PLATYP',
   },
   form: {
+    error: {
+      origin: 'Please enter a valid origin address',
+      workplace: 'Please enter a valid work place address',
+    },
     age_class: 'What is your age group?',
     age_class_option: {
       '16_17': '16 - 17',
@@ -102,10 +106,20 @@ export default {
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations: 'Based on your answers, we recommend the following modes of transport',
   },
+  reco: {
+    enviro: 'Environnementalist',
+    pre_auto: 'Inclined to drive',
+    pre_activ: 'Inclined to walk or bike',
+    pre_indiv: 'Inclined towards individual modes',
+    pre_alter: 'Inclined towards alternative modes',
+    comp_effi: 'Efficiency optimizer',
+    comp_conf: 'Comfort optimizer',
+  },
   resume: 'Resume',
   start_new: 'Or start a new survey',
   start: 'Start',
   token: 'Token',
+  type_enter_to_lookup_address: 'Type enter to lookup the address location',
   welcome: 'Welcome to {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
   no_results: 'No results',

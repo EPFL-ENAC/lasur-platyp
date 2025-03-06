@@ -1,6 +1,7 @@
 import type { Feature, FeatureCollection } from 'geojson'
 
 const COUNTRIES = ['ch', 'fr']
+const VIEWBOX = '5.5,45.8,7.65,47'
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
 
 function handleNominatimResponse(geojson: FeatureCollection): Feature[] {
@@ -51,7 +52,7 @@ export const geocoderApi = {
     try {
       let countrycodes = COUNTRIES.join(',')
       if (config.countries && config.countries.length > 0) countrycodes = config.countries.join(',')
-      const request = `${NOMINATIM_URL}/search?q=${config.query}&limit=${config.limit}&format=geojson&polygon_geojson=1&addressdetails=1&countrycodes=${countrycodes}`
+      const request = `${NOMINATIM_URL}/search?q=${config.query}&limit=${config.limit}&format=geojson&polygon_geojson=1&addressdetails=1&countrycodes=${countrycodes}&viewbox=${VIEWBOX}&bounded=1`
       if (searchController) searchController.abort()
       searchController = new AbortController()
       const response = await fetch(request, {
@@ -89,24 +90,20 @@ export const geocoderApi = {
 export function toAddress(feature: Feature) {
   let text = ''
   if (feature.properties?.address) {
-    ;[
-      'amenity',
-      'office',
-      'road',
-      'house_number',
-      'postcode',
-      'village',
-      'town',
-      'city',
-      'country_code',
-    ].forEach((key) => {
+    ;['square', 'amenity', 'office', 'road', 'house_number'].forEach((key) => {
       if (feature.properties?.address[key]) {
         const val = feature.properties.address[key]
-        text +=
-          (['country_code'].includes(key) ? val.toUpperCase() : val) +
-          (['amenity', 'office'].includes(key) ? ', ' : ' ')
+        text += val + (['amenity', 'office'].includes(key) ? ', ' : ' ')
+      }
+    })
+    if (text.length > 0) text = text.trim() + ', '
+    ;['postcode', 'village', 'town', 'city', 'country_code'].forEach((key) => {
+      if (feature.properties?.address[key]) {
+        const val = feature.properties.address[key]
+        text += (['country_code'].includes(key) ? val.toUpperCase() : val) + ' '
       }
     })
   }
+  // if (feature.properties?.category) text += `(${feature.properties.category})`
   return text.trim()
 }

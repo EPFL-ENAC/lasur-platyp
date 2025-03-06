@@ -693,6 +693,19 @@ const adjectivePairsOptions = computed<ToggleOption[]>(() => [
 
 function nextStep() {
   if (survey.step === 20) return
+  if (survey.step === 3) {
+    if (
+      survey.record.data.workplace?.lat === undefined ||
+      survey.record.data.workplace?.lat === 0
+    ) {
+      notifyError(t('form.error.workplace'))
+      return
+    }
+    if (survey.record.data.origin?.lat === undefined || survey.record.data.origin?.lat === 0) {
+      notifyError(t('form.error.origin'))
+      return
+    }
+  }
   survey.incStep()
   if (survey.tokenOrSlug) {
     if (survey.step === 19) {
