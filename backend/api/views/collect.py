@@ -89,10 +89,11 @@ async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> D
     """Get modal typology by record token"""
     record = await RecordService(session).get_by_token(token)
     response = {}
-    reco = ModalTypoService().get_recommendation(record)
+    service = ModalTypoService()
+    reco = service.get_recommendation_multi(record)
     response["reco"] = reco
     if "scores" in reco:
-        reco_pro = ModalTypoService().get_recommendation_pro(record, reco["scores"])
+        reco_pro = service.get_recommendation_pro(record, reco["scores"])
         response["reco_pro"] = reco_pro
     return response
 
