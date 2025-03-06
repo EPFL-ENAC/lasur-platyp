@@ -709,6 +709,7 @@ function nextStep() {
   survey.incStep()
   if (survey.tokenOrSlug) {
     if (survey.step === 19) {
+      survey.recommendation = {}
       collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {

@@ -14,7 +14,7 @@ class ModalTypoService:
         }
 
     def get_recommendation(self, record: Record) -> dict:
-        """Get typo suggestions for a text"""
+        """Get typo suggestions for a record"""
         url = f"{self.url}/modal-typo/reco"
         data = {
             "o_lon": record.data["origin"]["lon"],
@@ -49,7 +49,7 @@ class ModalTypoService:
         return response.json()
 
     def get_recommendation_multi(self, record: Record) -> dict:
-        """Get typo suggestions for a text"""
+        """Get multi typo suggestions for a record"""
         url = f"{self.url}/modal-typo/reco-multi"
         data = {
             "o_lon": record.data["origin"]["lon"],
@@ -88,7 +88,7 @@ class ModalTypoService:
         return response.json()
 
     def get_recommendation_pro(self, record: Record, scores: dict) -> dict:
-        """Get typo pro suggestions for a text"""
+        """Get typo pro suggestions for a record"""
         url = f"{self.url}/modal-typo/reco-pro"
         data = {
             "score_velo": scores["velo"],
@@ -111,6 +111,33 @@ class ModalTypoService:
             "fm_pro_int_voit": record.data["freq_mod_pro_inter_car"],
             "fm_pro_int_train": record.data["freq_mod_pro_inter_train"],
             "fm_pro_int_avio": record.data["freq_mod_pro_inter_plane"]
+        }
+        response = requests.post(
+            url, headers=self.headers, json=data)
+        response.raise_for_status()
+        return response.json()
+
+    def get_recommendation_employer_actions(self, record: Record, reco_dt2: list, reco_pro_loc: str, reco_pro_reg: str, reco_pro_int: str) -> dict:
+        """Get employer actions for a record"""
+        url = f"{self.url}/modal-typo/empl"
+        data = {
+            "empl": {  # TODO get employer actions
+                "mesures_globa": [],
+                "mesures_tpu": [],
+                "mesures_train": [],
+                "mesures_inter": [],
+                "mesures_velo": [],
+                "mesures_covoit": [],
+                "mesures_elec": [],
+                "mesures_pro_velo": [],
+                "mesures_pro_tpu": [],
+                "mesures_pro_train": [],
+                "mesures_pro_elec": [],
+            },
+            "reco_dt2": reco_dt2,
+            "reco_pro_loc": reco_pro_loc,
+            "reco_pro_reg": reco_pro_reg,
+            "reco_pro_int": reco_pro_int
         }
         response = requests.post(
             url, headers=self.headers, json=data)
