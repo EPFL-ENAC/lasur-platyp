@@ -64,8 +64,7 @@ class ModalTypoService:
             "fm_dt_train": record.data["freq_mod_train"],
             "fm_dt_velo": record.data["freq_mod_bike"],
             "fm_dt_march": record.data["freq_mod_walking"],
-            # FIXME fm_dt_inter ????
-            "fm_dt_inter": record.data["freq_trav_pro_inter"],
+            "fm_dt_inter": 1 if record.data["freq_mod_combined"] else 0,
 
             "a_voit": record.data["needs_car"],
             "a_moto": record.data["needs_moto"],
