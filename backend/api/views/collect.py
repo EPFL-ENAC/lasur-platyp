@@ -7,6 +7,7 @@ from api.models.domain import Campaign
 from api.models.query import RecordDraft, RecordRead
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
+from api.services.companies import CompanyService
 from api.services.records import RecordService
 from api.services.modal_typo import ModalTypoService
 
@@ -97,8 +98,9 @@ async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> D
         reco_pro = service.get_recommendation_pro(record, reco["scores"])
         response["reco_pro"] = reco_pro
     if "reco_dt2" in reco and reco_pro is not None:
+        company = await CompanyService(session).get(record.company_id)
         actions = service.get_recommendation_employer_actions(
-            record, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
+            company, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
         response["reco_actions"] = actions
     return response
 

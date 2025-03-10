@@ -9,6 +9,10 @@ export interface Entity {
   updated_by?: string
 }
 
+export interface EmployerActions {
+  [key: string]: string[]
+}
+
 export interface Participant extends Entity {
   token?: string
   identifier?: string
@@ -26,11 +30,13 @@ export interface Campaign extends Entity {
   lat?: number | undefined
   lon?: number | undefined
   company_id?: number
+  actions?: EmployerActions
 }
 
 export interface Company extends Entity {
   administrators: string[]
   campaings?: Campaign[]
+  actions?: EmployerActions
 }
 
 export interface AppUser {

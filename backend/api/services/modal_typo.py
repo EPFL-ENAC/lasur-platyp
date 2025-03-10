@@ -1,5 +1,5 @@
 from api.config import config
-from api.models.domain import Record
+from api.models.domain import Record, Company
 import requests
 
 
@@ -88,6 +88,7 @@ class ModalTypoService:
 
     def get_recommendation_pro(self, record: Record, scores: dict) -> dict:
         """Get typo pro suggestions for a record"""
+        record.company_id
         url = f"{self.url}/modal-typo/reco-pro"
         data = {
             "score_velo": scores["velo"],
@@ -116,22 +117,22 @@ class ModalTypoService:
         response.raise_for_status()
         return response.json()
 
-    def get_recommendation_employer_actions(self, record: Record, reco_dt2: list, reco_pro_loc: str, reco_pro_reg: str, reco_pro_int: str) -> dict:
+    def get_recommendation_employer_actions(self, company: Company, reco_dt2: list, reco_pro_loc: str, reco_pro_reg: str, reco_pro_int: str) -> dict:
         """Get employer actions for a record"""
         url = f"{self.url}/modal-typo/empl"
         data = {
-            "empl": {  # TODO get employer actions
-                "mesures_globa": [],
-                "mesures_tpu": [],
-                "mesures_train": [],
-                "mesures_inter": [],
-                "mesures_velo": [],
-                "mesures_covoit": [],
-                "mesures_elec": [],
-                "mesures_pro_velo": [],
-                "mesures_pro_tpu": [],
-                "mesures_pro_train": [],
-                "mesures_pro_elec": [],
+            "empl": {
+                "mesures_globa": company.actions.mesures_globa if company.actions else [],
+                "mesures_tpu": company.actions.mesures_tpu if company.actions else [],
+                "mesures_train": company.actions.mesures_train if company.actions else [],
+                "mesures_inter": company.actions.mesures_inter if company.actions else [],
+                "mesures_velo": company.actions.mesures_velo if company.actions else [],
+                "mesures_covoit": company.actions.mesures_covoit if company.actions else [],
+                "mesures_elec": company.actions.mesures_elec if company.actions else [],
+                "mesures_pro_velo": company.actions.mesures_pro_velo if company.actions else [],
+                "mesures_pro_tpu": company.actions.mesures_pro_tpu if company.actions else [],
+                "mesures_pro_train": company.actions.mesures_pro_train if company.actions else [],
+                "mesures_pro_elec": company.actions.mesures_pro_elec if company.actions else [],
             },
             "reco_dt2": reco_dt2,
             "reco_pro_loc": reco_pro_loc,

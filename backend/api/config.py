@@ -21,7 +21,7 @@ class Config(BaseSettings):
     KEYCLOAK_API_SECRET: str
 
     LASUR_API_URL: str = "https://lasur-ws.epfl.ch"
-    LASUR_API_KEY: str
+    LASUR_API_KEY: str = ""
 
     PATH_PREFIX: str = "/api"
 
