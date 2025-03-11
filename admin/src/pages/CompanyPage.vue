@@ -104,7 +104,8 @@ const actionItems: FieldItem[] = [
 ].map((field) => ({
   field,
   label: `actions.${field}_label`,
-  format: (actions: EmployerActions) => actions?.[field]?.join(', ') || '-',
+  format: (actions: EmployerActions) =>
+    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
 }))
 
 const actionProItems: FieldItem[] = [
@@ -115,7 +116,8 @@ const actionProItems: FieldItem[] = [
 ].map((field) => ({
   field,
   label: `actions.${field}_label`,
-  format: (actions: EmployerActions) => actions?.[field]?.join(', ') || '-',
+  format: (actions: EmployerActions) =>
+    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
 }))
 
 onMounted(() => {

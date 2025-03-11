@@ -21,6 +21,8 @@
           <q-select
             filled
             multiple
+            emit-value
+            map-options
             v-model="actions[type]"
             :options="actionOptions[type]"
             :label="t(`actions.${type}_label`)"
@@ -34,8 +36,10 @@
           <q-select
             filled
             multiple
+            emit-value
+            map-options
             v-model="actions[type]"
-            :options="actionOptions[type]"
+            :options="actionProOptions[type]"
             :label="t(`actions.${type}_label`)"
             :hint="t(`actions.${type}_hint`)"
             @update:model-value="onUpdate"
@@ -77,24 +81,42 @@ const actions = ref<EmployerActions>(
   },
 )
 
-const actionOptions: { [key: string]: string[] } = {
-  mesures_globa: [],
-  mesures_tpu: [],
-  mesures_train: [],
-  mesures_inter: [],
-  mesures_velo: [],
-  mesures_covoit: [],
-  mesures_elec: [],
+interface Option {
+  value: string
+  label: string
 }
 
-const actionProOptions: { [key: string]: string[] } = {
-  mesures_pro_velo: [],
-  mesures_pro_tpu: [],
-  mesures_pro_train: [],
-  mesures_pro_elec: [],
+const actionOptions: { [key: string]: Option[] } = {
+  mesures_globa: makeOptions(['budget', 'wfh', 'wftp']),
+  mesures_tpu: makeOptions(['tpg_pass', 'lex_pass']),
+  mesures_train: makeOptions(['cff_pass_ag', 'cff_pass_dtp', 'cff_pass_dt']),
+  mesures_inter: makeOptions(['pnr_pass', 'shuttle', 'velo_station']),
+  mesures_velo: makeOptions([
+    'bike_subs',
+    'shower',
+    'bike_parking',
+    'ebike_charging',
+    'bike_equipment',
+  ]),
+  mesures_covoit: makeOptions(['carpool_subs', 'carpool_connect', 'carpool_parking']),
+  mesures_elec: makeOptions(['ev_charging', 'mobility_pass']),
+}
+
+const actionProOptions: { [key: string]: Option[] } = {
+  mesures_pro_velo: makeOptions(['ebike_fleet']),
+  mesures_pro_tpu: makeOptions(['tpu_pro']),
+  mesures_pro_train: makeOptions(['train_pro']),
+  mesures_pro_elec: makeOptions(['ev_fleet']),
 }
 
 function onUpdate() {
   emit('update:modelValue', actions.value)
+}
+
+function makeOptions(types: string[]) {
+  return types.map((type) => ({
+    label: t(`actions.${type}`),
+    value: type,
+  }))
 }
 </script>
