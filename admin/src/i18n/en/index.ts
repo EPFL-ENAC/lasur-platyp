@@ -3,7 +3,7 @@
 
 export default {
   main: {
-    brand: 'PLATYP',
+    brand: 'Mobility Toolkit',
   },
   company: {
     actions: 'Employer actions',

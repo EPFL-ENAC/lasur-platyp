@@ -1,6 +1,6 @@
 export default {
   main: {
-    brand: 'PLATYP',
+    brand: 'Mobility Toolkit',
   },
   form: {
     error: {
@@ -11,7 +11,7 @@ export default {
     age_class_option: {
       '16_17': '16 - 17',
       '18_24': '18 - 24',
-      '26_44': '26 - 44',
+      '25_44': '25 - 44',
       '45_64': '45 - 64',
       '65': '65 and more',
     },
