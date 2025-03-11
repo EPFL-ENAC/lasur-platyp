@@ -518,42 +518,8 @@
       />
     </div>
     <div v-if="survey.step === 19">
-      <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
-      <q-list>
-        <template v-for="(reco, idx) in recoDt" :key="idx">
-          <q-item
-            active-class="bg-teal-1 text-grey-8"
-            v-ripple
-            clickable
-            class="rounded-borders q-mb-md bg-primary text-white"
-          >
-            <q-item-section>
-              <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </template>
-      </q-list>
-      <div v-if="recoActions.length" class="q-mt-xl">
-        <SectionItem :label="t('form.actions')" />
-        <q-list>
-          <template v-for="(action, idx) in recoActions" :key="idx">
-            <q-item
-              active-class="bg-teal-1 text-grey-8"
-              v-ripple
-              clickable
-              class="rounded-borders q-mb-md bg-primary text-white"
-            >
-              <q-item-section>
-                <q-item-label class="text-h5">{{ t(`actions.${action}`) }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-list>
-      </div>
-      <div v-if="recoProActions.length" class="q-mt-xl">
-        <SectionItem :label="t('form.actions_pro')" />
-        <pre>{{ recoProActions }}</pre>
-      </div>
+      <RecommendationsPanel />
+      <RecommendationsProPanel class="q-mt-xl" />
       <q-btn
         outlined
         no-caps
@@ -622,6 +588,8 @@ import SectionItem from 'src/components/form/SectionItem.vue'
 import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
+import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
+import RecommendationsProPanel from 'src/components/form/RecommendationsProPanel.vue'
 import { notifyError } from 'src/utils/notify'
 
 const { t } = useI18n()
@@ -638,36 +606,6 @@ watch(
 )
 
 const showDebug = ref(false)
-
-const recoDt = computed(() =>
-  survey.recommendation.reco ? survey.recommendation.reco.reco_dt2 : [],
-)
-
-const recoActions = computed(() => {
-  const actions: string[] = []
-  if (survey.recommendation.reco_actions) {
-    survey.recommendation.reco_actions.mesure_dt1.forEach((action) => {
-      actions.push(action)
-    })
-    survey.recommendation.reco_actions.mesure_dt2.forEach((action) => {
-      actions.push(action)
-    })
-  }
-  return actions
-})
-
-const recoProActions = computed(() => {
-  const actions: string[] = []
-  if (survey.recommendation.reco_actions) {
-    survey.recommendation.reco_actions.mesure_pro_loc.forEach((action) => {
-      actions.push(action)
-    })
-    survey.recommendation.reco_actions.mesure_pro_regint.forEach((action) => {
-      actions.push(action)
-    })
-  }
-  return actions
-})
 
 const ageOptions = computed<Option[]>(() => [
   { value: '16-17', label: t('form.age_class_option.16_17') },

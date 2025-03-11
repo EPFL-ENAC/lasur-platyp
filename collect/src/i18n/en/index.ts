@@ -106,8 +106,9 @@ export default {
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations:
       'Based on the information you have entered, the following modes of transport are recommended for your home-to-work journeys',
-    actions:
-      'To encourage more sustainable commuting, your employer is implementing the following measures that may be relevant to you',
+    recommendations_pro:
+      'The following modes of transport are recommended for your professional journeys',
+    actions: 'No actions | Your employer action: {actions} | Your employer actions: {actions}',
   },
   reco: {
     covoit: 'Carpooling',
@@ -154,4 +155,7 @@ export default {
   welcome: 'Welcome to {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
   no_results: 'No results',
+  local: 'Local',
+  regional: 'Regional',
+  international: 'International',
 }
