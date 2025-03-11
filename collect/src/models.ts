@@ -77,3 +77,40 @@ export interface Record {
   data: RecordData
   token: string
 }
+
+export interface Recommendation {
+  reco?: {
+    reco_dt2: string[]
+    scores: {
+      covoit: number
+      elec: number
+      inter: number
+      marche: number
+      tpu: number
+      train: number
+      vae: number
+      velo: number
+    }
+    access: {
+      covoit: number
+      elec: number
+      inter: number
+      marche: number
+      tpu: number
+      train: number
+      vae: number
+      velo: number
+    }
+  }
+  reco_actions?: {
+    mesure_dt1: string[]
+    mesure_dt2: string[]
+    mesure_pro_loc: string[]
+    mesure_pro_regint: string[]
+  }
+  reco_pro?: {
+    reco_pro_int: string
+    reco_pro_loc: string
+    reco_pro_reg: string
+  }
+}

@@ -519,18 +519,55 @@
     </div>
     <div v-if="survey.step === 19">
       <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
-      <pre>{{ survey.recommendation }}</pre>
+      <q-list>
+        <template v-for="(reco, idx) in recoDt" :key="idx">
+          <q-item
+            active-class="bg-teal-1 text-grey-8"
+            v-ripple
+            clickable
+            class="rounded-borders q-mb-md bg-primary text-white"
+          >
+            <q-item-section>
+              <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-list>
+      <div v-if="recoActions.length" class="q-mt-xl">
+        <SectionItem :label="t('form.actions')" />
+        <q-list>
+          <template v-for="(action, idx) in recoActions" :key="idx">
+            <q-item
+              active-class="bg-teal-1 text-grey-8"
+              v-ripple
+              clickable
+              class="rounded-borders q-mb-md bg-primary text-white"
+            >
+              <q-item-section>
+                <q-item-label class="text-h5">{{ t(`actions.${action}`) }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-list>
+      </div>
+      <div v-if="recoProActions.length" class="q-mt-xl">
+        <SectionItem :label="t('form.actions_pro')" />
+        <pre>{{ recoProActions }}</pre>
+      </div>
       <q-btn
         outlined
         no-caps
         color="primary"
-        :icon-right="showRecord ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+        :icon-right="showDebug ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
         size="sm"
-        :label="showRecord ? 'Hide record' : 'Show record'"
-        @click="showRecord = !showRecord"
+        label="Debug"
+        @click="showDebug = !showDebug"
         class="q-mt-md"
       />
-      <pre v-if="showRecord">{{ survey.record }}</pre>
+      <div v-if="showDebug">
+        <pre>{{ survey.recommendation }}</pre>
+        <pre>{{ survey.record }}</pre>
+      </div>
     </div>
     <div v-if="survey.step === 20">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -600,7 +637,37 @@ watch(
   { deep: true },
 )
 
-const showRecord = ref(false)
+const showDebug = ref(false)
+
+const recoDt = computed(() =>
+  survey.recommendation.reco ? survey.recommendation.reco.reco_dt2 : [],
+)
+
+const recoActions = computed(() => {
+  const actions: string[] = []
+  if (survey.recommendation.reco_actions) {
+    survey.recommendation.reco_actions.mesure_dt1.forEach((action) => {
+      actions.push(action)
+    })
+    survey.recommendation.reco_actions.mesure_dt2.forEach((action) => {
+      actions.push(action)
+    })
+  }
+  return actions
+})
+
+const recoProActions = computed(() => {
+  const actions: string[] = []
+  if (survey.recommendation.reco_actions) {
+    survey.recommendation.reco_actions.mesure_pro_loc.forEach((action) => {
+      actions.push(action)
+    })
+    survey.recommendation.reco_actions.mesure_pro_regint.forEach((action) => {
+      actions.push(action)
+    })
+  }
+  return actions
+})
 
 const ageOptions = computed<Option[]>(() => [
   { value: '16-17', label: t('form.age_class_option.16_17') },

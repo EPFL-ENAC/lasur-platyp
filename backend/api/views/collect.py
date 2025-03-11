@@ -88,7 +88,8 @@ async def createOrUpdate(
 @router.get("/typo/{token}")
 async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> Dict:
     """Get modal typology by record token"""
-    record = await RecordService(session).get_by_token(token)
+    recordService = RecordService(session)
+    record = await recordService.get_by_token(token)
     response = {}
     service = ModalTypoService()
     reco = service.get_recommendation_multi(record)
@@ -102,6 +103,8 @@ async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> D
         actions = service.get_recommendation_employer_actions(
             company, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
         response["reco_actions"] = actions
+    record.typo = response
+    recordService.update(record.id, record)
     return response
 
 

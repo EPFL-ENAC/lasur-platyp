@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Record } from 'src/models'
+import type { Record, Recommendation } from 'src/models'
 
 export const useSurvey = defineStore(
   'survey',
@@ -9,7 +9,7 @@ export const useSurvey = defineStore(
     const record = ref<Record>({} as Record)
     const step = ref(0)
     const timestamp = ref(Date.now())
-    const recommendation = ref<{ [key: string]: string }>({})
+    const recommendation = ref<Recommendation>({})
 
     function init(cr: Record) {
       record.value = cr

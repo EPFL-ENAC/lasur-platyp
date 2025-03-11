@@ -113,7 +113,7 @@ class RecordService:
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: RecordDraft, campaign: Campaign) -> Record:
+    async def update(self, id: int, payload: RecordDraft, campaign: Campaign = None) -> Record:
         """Update a record"""
         res = await self.session.exec(
             select(Record).where(Record.id == id)
@@ -126,7 +126,7 @@ class RecordService:
             print(key, value)
             if key not in ["id"]:
                 setattr(entity, key, value)
-        entity.campaign_id = campaign.id
-        entity.company_id = campaign.company_id
+        entity.campaign_id = campaign.id if campaign else entity.campaign_id
+        entity.company_id = campaign.company_id if campaign else entity.company_id
         await self.session.commit()
         return entity

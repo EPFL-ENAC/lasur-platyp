@@ -100,6 +100,7 @@ class Participant(ParticipantBase, table=True):
 class RecordBase(SQLModel):
     token: str
     data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
+    typo: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
 
 
 class Record(RecordBase, table=True):
