@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import secrets
 from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
