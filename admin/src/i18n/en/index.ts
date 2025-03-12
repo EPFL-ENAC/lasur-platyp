@@ -6,7 +6,7 @@ export default {
     brand: 'Mobility Toolkit',
   },
   company: {
-    actions: 'Employer actions',
+    actions: 'Employer measures',
     administrators: 'Administrators',
     administrators_hint:
       'Provide the email address of the administrators for this company (type Enter to add entry).',
@@ -31,7 +31,7 @@ export default {
     mesures_tpu_hint: '',
     mesures_train_label: 'Train',
     mesures_train_hint: '',
-    mesures_inter_label: 'International travel',
+    mesures_inter_label: 'Inter-modality',
     mesures_inter_hint: '',
     mesures_velo_label: 'Bicycle',
     mesures_velo_hint: '',
@@ -73,7 +73,7 @@ export default {
     train_pro: 'Train pass (general pass)',
     ev_fleet: 'EV fleet for professional trips',
   },
-  action: 'Action',
+  action: 'Measure',
   add: 'Add',
   address_input_hint: 'Type Enter to lookup addresses.',
   address: 'Address',

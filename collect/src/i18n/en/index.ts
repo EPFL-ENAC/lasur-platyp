@@ -108,7 +108,7 @@ export default {
       'Based on the information you have entered, the following modes of transport are recommended for your home-to-work journeys',
     recommendations_pro:
       'The following modes of transport are recommended for your professional journeys',
-    actions: 'No actions | Your employer action: {actions} | Your employer actions: {actions}',
+    actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
   },
   reco: {
     covoit: 'Carpooling',
