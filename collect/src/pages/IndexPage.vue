@@ -136,5 +136,6 @@ async function reset() {
 function onStart() {
   survey.started = true
   survey.step = 1
+  tkSlug.value = ''
 }
 </script>
