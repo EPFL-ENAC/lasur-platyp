@@ -7,18 +7,23 @@ export const useSurvey = defineStore(
   () => {
     const tokenOrSlug = ref<string | null>(null)
     const record = ref<Record>({} as Record)
+    const started = ref(false)
     const step = ref(0)
     const timestamp = ref(Date.now())
     const recommendation = ref<Recommendation>({})
 
     function init(cr: Record) {
       record.value = cr
+      recommendation.value = {} as Recommendation
+      started.value = false
       step.value = 1
       timestamp.value = Date.now()
     }
 
     function reset() {
       record.value = {} as Record
+      recommendation.value = {} as Recommendation
+      started.value = false
       step.value = 0
       timestamp.value = Date.now()
       tokenOrSlug.value = null
@@ -80,6 +85,7 @@ export const useSurvey = defineStore(
     return {
       tokenOrSlug,
       record,
+      started,
       step,
       timestamp,
       recommendation,

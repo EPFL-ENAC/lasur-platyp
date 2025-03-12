@@ -1,7 +1,5 @@
-from logging import debug
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from fastapi import HTTPException
 from api.models.domain import Company

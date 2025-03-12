@@ -552,6 +552,7 @@
         color="accent"
         icon="keyboard_arrow_left"
         size="lg"
+        :title="t('previous')"
         @click="prevStep"
         class="q-mr-md"
       />
@@ -561,6 +562,7 @@
         color="accent"
         icon="keyboard_arrow_right"
         size="lg"
+        :title="t('next')"
         @click="nextStep"
         class="q-ml-md"
       />
@@ -568,9 +570,10 @@
         rounded
         v-if="survey.step === 20"
         color="primary"
-        :label="t('send')"
+        :label="t('finish')"
         icon-right="send"
         size="lg"
+        @click="onSendComments"
         class="q-ml-md"
       />
     </div>
@@ -715,6 +718,7 @@ function nextStep() {
   if (survey.tokenOrSlug) {
     if (survey.step === 19) {
       survey.recommendation = {}
+      survey.record.data.comments = ''
       collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
@@ -725,7 +729,7 @@ function nextStep() {
           survey.recommendation = resp
         })
         .catch(notifyError)
-    } else {
+    } else if (survey.step < 19) {
       void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
     }
   }
@@ -744,6 +748,17 @@ function handleSwipe(dir: any) {
     nextStep()
   } else if (dir['direction'] === 'right') {
     prevStep()
+  }
+}
+
+function onSendComments() {
+  if (survey.tokenOrSlug) {
+    void collector
+      .saveComments(survey.record)
+      .catch(console.error)
+      .finally(() => {
+        survey.reset()
+      })
   }
 }
 </script>

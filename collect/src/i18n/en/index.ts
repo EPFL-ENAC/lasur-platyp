@@ -113,7 +113,7 @@ export default {
   reco: {
     covoit: 'Carpooling',
     elec: 'Electric vehicle',
-    inter: 'International',
+    inter: 'Inter-modal',
     marche: 'Walking',
     tpu: 'Public transport',
     train: 'Train',
@@ -158,4 +158,7 @@ export default {
   local: 'Local',
   regional: 'Regional',
   international: 'International',
+  finish: 'Finish',
+  next: 'Next',
+  previous: 'Previous',
 }

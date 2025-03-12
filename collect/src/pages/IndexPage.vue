@@ -1,7 +1,7 @@
 <template>
   <q-page class="bg-secondary text-white">
     <q-linear-progress
-      v-if="started"
+      v-if="survey.started"
       size="10px"
       :value="progress"
       color="accent"
@@ -14,7 +14,7 @@
           <q-spinner-grid color="white" size="50px" />
         </div>
         <div v-else>
-          <div v-if="started">
+          <div v-if="survey.started">
             <SurveyPanel v-if="survey.record" />
           </div>
           <div v-else>
@@ -31,7 +31,7 @@
                 color="accent"
                 :label="t('resume')"
                 size="lg"
-                @click="started = true"
+                @click="survey.started = true"
                 class="q-mt-md on-left"
               />
               <q-btn
@@ -64,8 +64,8 @@
                 color="accent"
                 :label="t('start')"
                 size="lg"
-                @click="started = true"
-                :disable="survey.step < 1"
+                @click="onStart"
+                :disable="survey.tokenOrSlug === null"
                 class="q-mt-md"
               />
             </div>
@@ -87,13 +87,23 @@ const collector = useCollector()
 const survey = useSurvey()
 
 const tkSlug = ref('')
-const started = ref(false)
 
 const progress = computed(() => {
   return survey.step / 20
 })
 
-onMounted(async () => {
+onMounted(onInit)
+
+watch(
+  () => survey.started,
+  async (value) => {
+    if (value === false) {
+      await onInit()
+    }
+  },
+)
+
+async function onInit() {
   if (route.params.token) {
     tkSlug.value = route.params.token as string
     if (survey.record?.token === undefined) {
@@ -103,7 +113,7 @@ onMounted(async () => {
       await reset()
     }
   }
-})
+}
 
 async function onToken() {
   if (tkSlug.value && tkSlug.value.trim().length > 0) {
@@ -121,5 +131,10 @@ async function onToken() {
 async function reset() {
   survey.reset()
   await onToken()
+}
+
+function onStart() {
+  survey.started = true
+  survey.step = 1
 }
 </script>

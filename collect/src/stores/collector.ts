@@ -93,7 +93,20 @@ export const useCollector = defineStore('collector', () => {
     token.value = null
     loading.value = true
     return api
-      .get(`/collect/typo/${record.token}`, record)
+      .get(`/collect/record/${record.token}/typo`, record)
+      .then((response) => {
+        return response.data
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
+  async function saveComments(record: Record) {
+    token.value = null
+    loading.value = true
+    return api
+      .put(`/collect/record/${record.token}/comments`, { comments: record.data.comments })
       .then((response) => {
         return response.data
       })
@@ -108,5 +121,6 @@ export const useCollector = defineStore('collector', () => {
     load,
     save,
     loadTypo,
+    saveComments,
   }
 })

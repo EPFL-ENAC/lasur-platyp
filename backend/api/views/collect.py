@@ -4,7 +4,7 @@ from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
 from api.models.domain import Campaign
-from api.models.query import RecordDraft, RecordRead
+from api.models.query import RecordDraft, RecordRead, RecordComments
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
 from api.services.companies import CompanyService
@@ -85,9 +85,28 @@ async def createOrUpdate(
     return await RecordService(session).createOrUpdate(item, campaign)
 
 
-@router.get("/typo/{token}")
+@router.put("/record/{token}/comments", response_model=RecordRead, response_model_exclude_none=True)
+async def saveComments(
+    token: str,
+    data: RecordComments,
+    session: AsyncSession = Depends(get_session)
+) -> RecordRead:
+    """Update a record comments"""
+    if token is None:
+        raise HTTPException(
+            status_code=400, detail="Missing token")
+    recordService = RecordService(session)
+    record = await recordService.get_by_token(token)
+    record.comments = data.comments
+    return await recordService.update(record.id, record)
+
+
+@router.get("/record/{token}/typo")
 async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> Dict:
     """Get modal typology by record token"""
+    if token is None:
+        raise HTTPException(
+            status_code=400, detail="Missing token")
     recordService = RecordService(session)
     record = await recordService.get_by_token(token)
     response = {}
@@ -104,7 +123,8 @@ async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> D
             company, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
         response["reco_actions"] = actions
     record.typo = response
-    recordService.update(record.id, record)
+    record.comments = None  # clear comments
+    await recordService.update(record.id, record)
     return response
 
 

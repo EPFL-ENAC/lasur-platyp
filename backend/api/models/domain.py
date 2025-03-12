@@ -101,6 +101,11 @@ class RecordBase(SQLModel):
     token: str
     data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
     typo: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
+    comments: Optional[str] = Field(default=None)
+    created_at: Optional[datetime] = Field(
+        sa_column=TIMESTAMP(timezone=True), default=None)
+    updated_at: Optional[datetime] = Field(
+        sa_column=TIMESTAMP(timezone=True), default=None)
 
 
 class Record(RecordBase, table=True):
