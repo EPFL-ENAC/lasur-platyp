@@ -33,6 +33,19 @@
           <fields-list :items="items" :dbobject="company" />
         </div>
       </div>
+      <div v-if="company?.actions">
+        <div class="q-mb-sm">{{ t('company.actions') }}</div>
+        <div class="row q-col-gutter-md q-mb-md">
+          <div class="col-12 col-md-6">
+            <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
+            <fields-list :items="actionItems" :dbobject="company?.actions" />
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
+            <fields-list :items="actionProItems" :dbobject="company?.actions" />
+          </div>
+        </div>
+      </div>
       <div class="text-h6 q-mb-sm">{{ t('campaigns') }}</div>
       <company-campaigns v-if="company" :company="company" />
     </div>
@@ -48,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Company } from 'src/models'
+import type { Company, EmployerActions } from 'src/models'
 import type { Service } from 'src/stores/services'
 import CompanyCampaigns from 'src/components/CompanyCampaigns.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
@@ -75,10 +88,37 @@ const items: FieldItem[] = [
   },
   {
     field: 'administrators',
-    label: t('company.administrators'),
+    label: 'company.administrators',
     format: (company: Company) => company.administrators?.join(', '),
   },
 ]
+
+const actionItems: FieldItem[] = [
+  'mesures_globa',
+  'mesures_tpu',
+  'mesures_train',
+  'mesures_inter',
+  'mesures_velo',
+  'mesures_covoit',
+  'mesures_elec',
+].map((field) => ({
+  field,
+  label: `actions.${field}_label`,
+  format: (actions: EmployerActions) =>
+    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
+}))
+
+const actionProItems: FieldItem[] = [
+  'mesures_pro_velo',
+  'mesures_pro_tpu',
+  'mesures_pro_train',
+  'mesures_pro_elec',
+].map((field) => ({
+  field,
+  label: `actions.${field}_label`,
+  format: (actions: EmployerActions) =>
+    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
+}))
 
 onMounted(() => {
   if (id.value === undefined) return

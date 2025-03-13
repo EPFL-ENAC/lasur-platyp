@@ -120,7 +120,7 @@ class CampaignService:
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
         for key, value in payload.model_dump().items():
-            print(key, value)
+            # print(key, value)
             if key not in ["id", "created_at", "updated_at", "created_by", "updated_by"]:
                 setattr(entity, key, value)
         entity.updated_at = datetime.now()

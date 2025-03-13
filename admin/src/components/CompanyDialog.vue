@@ -16,7 +16,6 @@
             :label="t('name') + ' *'"
             lazy-rules
             :rules="[(val) => !!val || t('field_required')]"
-            class="q-mb-md"
           />
           <q-select
             filled
@@ -30,6 +29,11 @@
             input-debounce="0"
             new-value-mode="add-unique"
             class="q-mb-md"
+          />
+          <employer-actions-input
+            v-model="selected.actions"
+            :label="t('company.actions')"
+            class="q-mt-lg"
           />
         </q-form>
       </q-card-section>
@@ -46,6 +50,7 @@
 
 <script setup lang="ts">
 import type { Company } from 'src/models'
+import EmployerActionsInput from 'src/components/EmployerActionsInput.vue'
 import { notifyError } from 'src/utils/notify'
 
 interface DialogProps {

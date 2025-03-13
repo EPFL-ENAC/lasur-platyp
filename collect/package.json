@@ -1,8 +1,8 @@
 {
   "name": "collect",
   "version": "0.0.1",
-  "description": "Data collection app for Platyp",
-  "productName": "Platyp Collect",
+  "description": "Data collection app for the Modus Mobility Toolkit",
+  "productName": "Modus MT",
   "author": "ymarcon <yannick.marcon@epfl.ch>",
   "type": "module",
   "private": true,

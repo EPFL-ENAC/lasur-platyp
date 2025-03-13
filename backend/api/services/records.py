@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from api.models.domain import Record, Campaign
 from api.models.query import RecordResult, RecordDraft
 from enacit4r_sql.utils.query import QueryBuilder
+from datetime import datetime
 
 
 class RecordQueryBuilder(QueryBuilder):
@@ -109,11 +110,13 @@ class RecordService:
         entity = Record(**payload.model_dump())
         entity.campaign_id = campaign.id
         entity.company_id = campaign.company_id
+        entity.created_at = datetime.now()
+        entity.updated_at = datetime.now()
         self.session.add(entity)
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: RecordDraft, campaign: Campaign) -> Record:
+    async def update(self, id: int, payload: RecordDraft, campaign: Campaign = None) -> Record:
         """Update a record"""
         res = await self.session.exec(
             select(Record).where(Record.id == id)
@@ -123,10 +126,13 @@ class RecordService:
             raise HTTPException(
                 status_code=404, detail="Record not found")
         for key, value in payload.model_dump().items():
-            print(key, value)
-            if key not in ["id"]:
+            # print(key, value)
+            if key not in ["id", "created_at", "updated_at"]:
                 setattr(entity, key, value)
-        entity.campaign_id = campaign.id
-        entity.company_id = campaign.company_id
+        if entity.created_at is None:  # legacy from db upgrade
+            entity.created_at = datetime.now()
+        entity.updated_at = datetime.now()
+        entity.campaign_id = campaign.id if campaign else entity.campaign_id
+        entity.company_id = campaign.company_id if campaign else entity.company_id
         await self.session.commit()
         return entity

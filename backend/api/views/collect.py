@@ -1,12 +1,15 @@
-import datetime
+from datetime import datetime
 import secrets
+from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
-from api.models.domain import Campaign, Record
-from api.models.query import RecordDraft, RecordRead
+from api.models.domain import Campaign
+from api.models.query import RecordDraft, RecordRead, RecordComments
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
+from api.services.companies import CompanyService
 from api.services.records import RecordService
+from api.services.modal_typo import ModalTypoService
 
 router = APIRouter()
 
@@ -82,10 +85,47 @@ async def createOrUpdate(
     return await RecordService(session).createOrUpdate(item, campaign)
 
 
-@router.get("/typo/{token}", response_model=RecordRead, response_model_exclude_none=True)
-async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> RecordRead:
+@router.put("/record/{token}/comments", response_model=RecordRead, response_model_exclude_none=True)
+async def saveComments(
+    token: str,
+    data: RecordComments,
+    session: AsyncSession = Depends(get_session)
+) -> RecordRead:
+    """Update a record comments"""
+    if token is None:
+        raise HTTPException(
+            status_code=400, detail="Missing token")
+    recordService = RecordService(session)
+    record = await recordService.get_by_token(token)
+    record.comments = data.comments
+    return await recordService.update(record.id, record)
+
+
+@router.get("/record/{token}/typo")
+async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> Dict:
     """Get modal typology by record token"""
-    return await RecordService(session).get_by_token(token)
+    if token is None:
+        raise HTTPException(
+            status_code=400, detail="Missing token")
+    recordService = RecordService(session)
+    record = await recordService.get_by_token(token)
+    response = {}
+    service = ModalTypoService()
+    reco = service.get_recommendation_multi(record)
+    response["reco"] = reco
+    reco_pro = None
+    if "scores" in reco:
+        reco_pro = service.get_recommendation_pro(record, reco["scores"])
+        response["reco_pro"] = reco_pro
+    if "reco_dt2" in reco and reco_pro is not None:
+        company = await CompanyService(session).get(record.company_id)
+        actions = service.get_recommendation_employer_actions(
+            company, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
+        response["reco_actions"] = actions
+    record.typo = response
+    record.comments = None  # clear comments
+    await recordService.update(record.id, record)
+    return response
 
 
 def _check_campaign(campaign: Campaign):

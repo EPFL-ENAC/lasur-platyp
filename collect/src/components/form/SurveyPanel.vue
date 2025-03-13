@@ -1,5 +1,5 @@
 <template>
-  <div v-if="survey.record">
+  <div v-if="survey.record" v-touch-swipe.mouse.left.right="handleSwipe">
     <div v-if="survey.step === 1">
       <ChoiceItem
         :label="t('form.age_class')"
@@ -134,122 +134,241 @@
       />
     </div>
     <div v-if="survey.step === 8">
-      <SectionItem :label="t('form.freq_trav_pro')" class="q-mb-lg" />
       <NumberItem
         :label="t('form.freq_trav_pro_local')"
+        :hint="t('form.freq_trav_pro_local_hint')"
         v-model="survey.record.data.freq_trav_pro_local"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
-        label-class="text-h5 q-pt-lg"
-        class="q-mb-lg"
-      />
-      <NumberItem
-        :label="t('form.freq_trav_pro_region')"
-        v-model="survey.record.data.freq_trav_pro_region"
-        :min="0"
-        :max="365"
-        :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
-        label-class="text-h5 q-pt-lg"
-        class="q-mb-lg"
-      />
-      <NumberItem
-        :label="t('form.freq_trav_pro_inter')"
-        v-model="survey.record.data.freq_trav_pro_inter"
-        :min="0"
-        :max="365"
-        :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
-        label-class="text-h5 q-pt-lg"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         class="q-mb-lg"
       />
     </div>
     <div v-if="survey.step === 9">
-      <SectionItem :label="t('form.freq_mod_pro')" class="q-mb-lg" />
+      <SectionItem
+        :label="t('form.freq_mod_pro')"
+        :hint="t('form.freq_trav_pro_local_hint')"
+        class="q-mb-lg"
+      />
       <NumberItem
         :label="t('form.mode.walking')"
-        v-model="survey.record.data.freq_mod_pro_walking"
+        v-model="survey.record.data.freq_mod_pro_local_walking"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.bike')"
-        v-model="survey.record.data.freq_mod_pro_bike"
+        v-model="survey.record.data.freq_mod_pro_local_bike"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.pub')"
-        v-model="survey.record.data.freq_mod_pro_pub"
+        v-model="survey.record.data.freq_mod_pro_local_pub"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.moto')"
-        v-model="survey.record.data.freq_mod_pro_moto"
+        v-model="survey.record.data.freq_mod_pro_local_moto"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.car')"
-        v-model="survey.record.data.freq_mod_pro_car"
+        v-model="survey.record.data.freq_mod_pro_local_car"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.train')"
-        v-model="survey.record.data.freq_mod_pro_train"
+        v-model="survey.record.data.freq_mod_pro_local_train"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_pro_local_combined"
+        class="q-mt-xl q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 10">
+      <NumberItem
+        :label="t('form.freq_trav_pro_region')"
+        :hint="t('form.freq_trav_pro_region_hint')"
+        v-model="survey.record.data.freq_trav_pro_region"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        class="q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 11">
+      <SectionItem
+        :label="t('form.freq_mod_pro')"
+        :hint="t('form.freq_trav_pro_region_hint')"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.pub')"
+        v-model="survey.record.data.freq_mod_pro_region_pub"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.moto')"
+        v-model="survey.record.data.freq_mod_pro_region_moto"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.car')"
+        v-model="survey.record.data.freq_mod_pro_region_car"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.train')"
+        v-model="survey.record.data.freq_mod_pro_region_train"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
       <NumberItem
         :label="t('form.mode.plane')"
-        v-model="survey.record.data.freq_mod_pro_plane"
+        v-model="survey.record.data.freq_mod_pro_region_plane"
         :min="0"
-        :max="365"
+        :max="30"
         :step="1"
-        :step2="10"
-        :unit-hint="t('form.days_per_year')"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
         label-class="text-h5 q-pt-lg"
         class="q-mb-lg"
       />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_pro_region_combined"
+        class="q-mt-xl q-mb-lg"
+      />
     </div>
-    <div v-if="survey.step === 10">
+    <div v-if="survey.step === 12">
+      <NumberItem
+        :label="t('form.freq_trav_pro_inter')"
+        :hint="t('form.freq_trav_pro_inter_hint')"
+        v-model="survey.record.data.freq_trav_pro_inter"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        class="q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 13">
+      <SectionItem
+        :label="t('form.freq_mod_pro')"
+        :hint="t('form.freq_trav_pro_inter_hint')"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.car')"
+        v-model="survey.record.data.freq_mod_pro_inter_car"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.train')"
+        v-model="survey.record.data.freq_mod_pro_inter_train"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <NumberItem
+        :label="t('form.mode.plane')"
+        v-model="survey.record.data.freq_mod_pro_inter_plane"
+        :min="0"
+        :max="30"
+        :step="1"
+        :step2="5"
+        :unit-hint="t('form.days_per_month')"
+        label-class="text-h5 q-pt-lg"
+        class="q-mb-lg"
+      />
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_pro_inter_combined"
+        class="q-mt-xl q-mb-lg"
+      />
+    </div>
+    <div v-if="survey.step === 14">
       <SectionItem
         :label="t('form.importance')"
         :hint="t('form.importance_hint')"
@@ -305,7 +424,7 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="survey.step === 11">
+    <div v-if="survey.step === 15">
       <SectionItem :label="t('form.needs')" :hint="t('form.needs_hint')" class="q-mb-lg" />
       <RatingItem
         :label="t('form.mode.walking')"
@@ -350,48 +469,73 @@
         class="q-mb-lg"
       />
     </div>
-    <div v-if="survey.step === 12">
+    <div v-if="survey.step === 16">
       <SectionItem
         :label="t('form.adjectives')"
         :hint="t('form.adjectives_hint')"
         class="q-mb-lg"
       />
-      <ChoiceItem
+      <ToggleChoiceItem
         :label="t('form.mode.bike')"
-        :options="adjectivesOptions"
+        :options="adjectivePairsOptions"
         v-model="survey.record.data.adjectives_bikes"
-        multiple
         :max="3"
-        :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
+        :col="q.screen.lt.sm ? 1 : 2"
         option-label-class="text-h6"
         class="q-mb-lg"
       />
-      <ChoiceItem
+    </div>
+    <div v-if="survey.step === 17">
+      <SectionItem
+        :label="t('form.adjectives')"
+        :hint="t('form.adjectives_hint')"
+        class="q-mb-lg"
+      />
+      <ToggleChoiceItem
         :label="t('form.mode.pub_train')"
-        :options="adjectivesOptions"
+        :options="adjectivePairsOptions"
         v-model="survey.record.data.adjectives_pubs"
-        multiple
         :max="3"
-        :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
+        :col="q.screen.lt.sm ? 1 : 2"
         option-label-class="text-h6"
         class="q-mb-lg"
       />
-      <ChoiceItem
+    </div>
+    <div v-if="survey.step === 18">
+      <SectionItem
+        :label="t('form.adjectives')"
+        :hint="t('form.adjectives_hint')"
+        class="q-mb-lg"
+      />
+      <ToggleChoiceItem
         :label="t('form.mode.car_moto')"
-        :options="adjectivesOptions"
+        :options="adjectivePairsOptions"
         v-model="survey.record.data.adjectives_motors"
-        multiple
         :max="3"
-        :col="q.screen.lt.sm ? 2 : q.screen.lt.md ? 3 : 4"
+        :col="q.screen.lt.sm ? 1 : 2"
         option-label-class="text-h6"
         class="q-mb-lg"
       />
     </div>
-    <div v-if="survey.step === 13">
-      <SectionItem :label="t('form.recommendations')" class="q-mb-lg" />
-      <pre>{{ survey.record }}</pre>
+    <div v-if="survey.step === 19">
+      <RecommendationsPanel />
+      <RecommendationsProPanel class="q-mt-xl" />
+      <q-btn
+        outlined
+        no-caps
+        color="primary"
+        :icon-right="showDebug ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+        size="sm"
+        label="Debug"
+        @click="showDebug = !showDebug"
+        class="q-mt-md"
+      />
+      <div v-if="showDebug">
+        <pre>{{ survey.recommendation }}</pre>
+        <pre>{{ survey.record }}</pre>
+      </div>
     </div>
-    <div v-if="survey.step === 14">
+    <div v-if="survey.step === 20">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
         v-model="survey.record.data.comments"
@@ -408,25 +552,28 @@
         color="accent"
         icon="keyboard_arrow_left"
         size="lg"
+        :title="t('previous')"
         @click="prevStep"
         class="q-mr-md"
       />
       <q-btn
         rounded
-        v-if="survey.step < 14"
+        v-if="survey.step < 20"
         color="accent"
         icon="keyboard_arrow_right"
         size="lg"
+        :title="t('next')"
         @click="nextStep"
         class="q-ml-md"
       />
       <q-btn
         rounded
-        v-if="survey.step === 14"
+        v-if="survey.step === 20"
         color="primary"
-        :label="t('send')"
+        :label="t('finish')"
         icon-right="send"
         size="lg"
+        @click="onSendComments"
         class="q-ml-md"
       />
     </div>
@@ -435,14 +582,17 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import type { Option } from 'src/components/form/models'
+import type { Option, ToggleOption } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
+import ToggleChoiceItem from 'src/components/form/ToggleChoiceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
 import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
+import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
+import RecommendationsProPanel from 'src/components/form/RecommendationsProPanel.vue'
 import { notifyError } from 'src/utils/notify'
 
 const { t } = useI18n()
@@ -458,10 +608,12 @@ watch(
   { deep: true },
 )
 
+const showDebug = ref(false)
+
 const ageOptions = computed<Option[]>(() => [
   { value: '16-17', label: t('form.age_class_option.16_17') },
   { value: '18-24', label: t('form.age_class_option.18_24') },
-  { value: '26-44', label: t('form.age_class_option.26_44') },
+  { value: '26-44', label: t('form.age_class_option.25_44') },
   { value: '45-64', label: t('form.age_class_option.45_64') },
   { value: '65+', label: t('form.age_class_option.65') },
 ])
@@ -484,48 +636,100 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'disabled', label: t('form.constraints_option.disabled') },
 ])
 
-const adjectivesOptions = computed<Option[]>(() => [
-  { value: 'fast', label: t('form.adjectives_option.fast') },
-  { value: 'safe', label: t('form.adjectives_option.safe') },
-  { value: 'relax', label: t('form.adjectives_option.relax') },
-  { value: 'reliable', label: t('form.adjectives_option.reliable') },
-  { value: 'impractical', label: t('form.adjectives_option.impractical') },
-  { value: 'constraining', label: t('form.adjectives_option.constraining') },
-  { value: 'theft', label: t('form.adjectives_option.theft') },
-  { value: 'cheap', label: t('form.adjectives_option.cheap') },
-  { value: 'pleasant', label: t('form.adjectives_option.pleasant') },
-  { value: 'useful', label: t('form.adjectives_option.useful') },
-  { value: 'well_served', label: t('form.adjectives_option.well_served') },
-  { value: 'polluting', label: t('form.adjectives_option.polluting') },
-  { value: 'noisy', label: t('form.adjectives_option.noisy') },
-  { value: 'bad_weather', label: t('form.adjectives_option.bad_weather') },
-  { value: 'practical', label: t('form.adjectives_option.practical') },
-  { value: 'autonomous', label: t('form.adjectives_option.autonomous') },
-  { value: 'indispensable', label: t('form.adjectives_option.indispensable') },
-  { value: 'slow', label: t('form.adjectives_option.slow') },
-  { value: 'dangerous', label: t('form.adjectives_option.dangerous') },
-  { value: 'tiring', label: t('form.adjectives_option.tiring') },
-  { value: 'congested', label: t('form.adjectives_option.congested') },
-  { value: 'ecological', label: t('form.adjectives_option.ecological') },
-  { value: 'quiet', label: t('form.adjectives_option.quiet') },
-  { value: 'healthy', label: t('form.adjectives_option.healthy') },
-  { value: 'expensive', label: t('form.adjectives_option.expensive') },
-  { value: 'unpleasant', label: t('form.adjectives_option.unpleasant') },
-  { value: 'useless', label: t('form.adjectives_option.useless') },
-  { value: 'poorly_served', label: t('form.adjectives_option.poorly_served') },
+const adjectivePairsOptions = computed<ToggleOption[]>(() => [
+  {
+    trueValue: 'fast',
+    trueLabel: t('form.adjectives_option.fast'),
+    falseValue: 'slow',
+    falseLabel: t('form.adjectives_option.slow'),
+  },
+  {
+    trueValue: 'cheap',
+    trueLabel: t('form.adjectives_option.cheap'),
+    falseValue: 'expensive',
+    falseLabel: t('form.adjectives_option.expensive'),
+  },
+  {
+    trueValue: 'practical',
+    trueLabel: t('form.adjectives_option.practical'),
+    falseValue: 'impractical',
+    falseLabel: t('form.adjectives_option.impractical'),
+  },
+  {
+    trueValue: 'ecological',
+    trueLabel: t('form.adjectives_option.ecological'),
+    falseValue: 'polluting',
+    falseLabel: t('form.adjectives_option.polluting'),
+  },
+  {
+    trueValue: 'safe',
+    trueLabel: t('form.adjectives_option.safe'),
+    falseValue: 'dangerous',
+    falseLabel: t('form.adjectives_option.dangerous'),
+  },
+  {
+    trueValue: 'pleasant',
+    trueLabel: t('form.adjectives_option.pleasant'),
+    falseValue: 'unpleasant',
+    falseLabel: t('form.adjectives_option.unpleasant'),
+  },
+  {
+    trueValue: 'autonomous',
+    trueLabel: t('form.adjectives_option.autonomous'),
+    falseValue: 'constraining',
+    falseLabel: t('form.adjectives_option.constraining'),
+  },
+  {
+    trueValue: 'relax',
+    trueLabel: t('form.adjectives_option.relax'),
+    falseValue: 'tiring',
+    falseLabel: t('form.adjectives_option.tiring'),
+  },
+  {
+    trueValue: 'healthy',
+    trueLabel: t('form.adjectives_option.healthy'),
+    falseValue: 'bad_weather',
+    falseLabel: t('form.adjectives_option.bad_weather'),
+  },
+  {
+    trueValue: 'reliable',
+    trueLabel: t('form.adjectives_option.reliable'),
+    falseValue: 'congested',
+    falseLabel: t('form.adjectives_option.congested'),
+  },
 ])
 
 function nextStep() {
+  if (survey.step === 20) return
+  if (survey.step === 3) {
+    if (
+      survey.record.data.workplace?.lat === undefined ||
+      survey.record.data.workplace?.lat === 0
+    ) {
+      notifyError(t('form.error.workplace'))
+      return
+    }
+    if (survey.record.data.origin?.lat === undefined || survey.record.data.origin?.lat === 0) {
+      notifyError(t('form.error.origin'))
+      return
+    }
+  }
   survey.incStep()
   if (survey.tokenOrSlug) {
-    if (survey.step === 13) {
-      void collector
+    if (survey.step === 19) {
+      survey.recommendation = {}
+      survey.record.data.comments = ''
+      collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
-          void collector.loadTypo(survey.record).catch(notifyError)
+          return collector.loadTypo(survey.record)
+        })
+        .then((resp) => {
+          console.log(resp)
+          survey.recommendation = resp
         })
         .catch(notifyError)
-    } else {
+    } else if (survey.step < 19) {
       void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
     }
   }
@@ -533,7 +737,28 @@ function nextStep() {
 }
 
 function prevStep() {
+  if (survey.step === 1) return
   survey.decStep()
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleSwipe(dir: any) {
+  if (dir['direction'] === 'left') {
+    nextStep()
+  } else if (dir['direction'] === 'right') {
+    prevStep()
+  }
+}
+
+function onSendComments() {
+  if (survey.tokenOrSlug) {
+    void collector
+      .saveComments(survey.record)
+      .catch(console.error)
+      .finally(() => {
+        survey.reset()
+      })
+  }
 }
 </script>

@@ -1,8 +1,8 @@
 {
   "name": "admin",
   "version": "0.0.1",
-  "description": "PLATYP administration",
-  "productName": "PLATYP Admin",
+  "description": "Modus Mobility Toolkit administration",
+  "productName": "Modus MT Admin",
   "author": "ymarcon <yannick.marcon@epfl.ch>",
   "type": "module",
   "private": true,

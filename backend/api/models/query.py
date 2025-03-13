@@ -50,6 +50,10 @@ class RecordDraft(RecordBase):
     id: Optional[int] = Field(default=None)
 
 
+class RecordComments(BaseModel):
+    comments: Optional[str] = None
+
+
 class RecordResult(ListResult):
     data: List[RecordRead] = []
 

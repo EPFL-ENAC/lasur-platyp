@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy.dialects.postgresql import JSONB as JSON
 from sqlalchemy import TIMESTAMP
 from datetime import datetime
+from pydantic import BaseModel
 
 # Base classes
 
@@ -21,8 +22,24 @@ class Entity(TimestampMixin):
     description: Optional[str] = Field(default=None)
 
 
+class EmployerActions(BaseModel):
+    mesures_globa: Optional[List[str]] = Field(default=[])
+    mesures_tpu: Optional[List[str]] = Field(default=[])
+    mesures_train: Optional[List[str]] = Field(default=[])
+    mesures_inter: Optional[List[str]] = Field(default=[])
+    mesures_velo: Optional[List[str]] = Field(default=[])
+    mesures_covoit: Optional[List[str]] = Field(default=[])
+    mesures_elec: Optional[List[str]] = Field(default=[])
+    mesures_pro_velo: Optional[List[str]] = Field(default=[])
+    mesures_pro_tpu: Optional[List[str]] = Field(default=[])
+    mesures_pro_train: Optional[List[str]] = Field(default=[])
+    mesures_pro_elec: Optional[List[str]] = Field(default=[])
+
+
 class CompanyBase(Entity):
     administrators: Optional[List[str]]
+    actions: Optional[EmployerActions] = Field(
+        default=None, sa_column=Column(JSON))
 
 
 class Company(CompanyBase, table=True):
@@ -45,6 +62,8 @@ class CampaignBase(Entity):
     end_date: Optional[datetime] = Field(default=None)
     lat: Optional[float] = Field(default=None)
     lon: Optional[float] = Field(default=None)
+    actions: Optional[EmployerActions] = Field(
+        default=None, sa_column=Column(JSON))
 
 
 class Campaign(CampaignBase, table=True):
@@ -81,6 +100,12 @@ class Participant(ParticipantBase, table=True):
 class RecordBase(SQLModel):
     token: str
     data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
+    typo: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
+    comments: Optional[str] = Field(default=None)
+    created_at: Optional[datetime] = Field(
+        sa_column=TIMESTAMP(timezone=True), default=None)
+    updated_at: Optional[datetime] = Field(
+        sa_column=TIMESTAMP(timezone=True), default=None)
 
 
 class Record(RecordBase, table=True):

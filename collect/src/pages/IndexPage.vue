@@ -1,12 +1,20 @@
 <template>
   <q-page class="bg-secondary text-white">
+    <q-linear-progress
+      v-if="survey.started"
+      size="10px"
+      :value="progress"
+      color="accent"
+      :animation-speed="200"
+      class="q-mb-md"
+    />
     <div class="container">
       <div class="content q-pa-lg">
         <div v-if="collector.loading">
           <q-spinner-grid color="white" size="50px" />
         </div>
         <div v-else>
-          <div v-if="started">
+          <div v-if="survey.started">
             <SurveyPanel v-if="survey.record" />
           </div>
           <div v-else>
@@ -23,8 +31,8 @@
                 color="accent"
                 :label="t('resume')"
                 size="lg"
-                @click="started = true"
-                class="q-mt-md"
+                @click="survey.started = true"
+                class="q-mt-md on-left"
               />
               <q-btn
                 flat
@@ -34,7 +42,7 @@
                 :label="t('start_new')"
                 size="lg"
                 @click="reset()"
-                class="q-mt-md on-right"
+                class="q-mt-md"
               />
             </div>
             <div v-else>
@@ -56,8 +64,8 @@
                 color="accent"
                 :label="t('start')"
                 size="lg"
-                @click="started = true"
-                :disable="survey.step < 1"
+                @click="onStart"
+                :disable="survey.tokenOrSlug === null"
                 class="q-mt-md"
               />
             </div>
@@ -79,9 +87,23 @@ const collector = useCollector()
 const survey = useSurvey()
 
 const tkSlug = ref('')
-const started = ref(false)
 
-onMounted(async () => {
+const progress = computed(() => {
+  return survey.step / 20
+})
+
+onMounted(onInit)
+
+watch(
+  () => survey.started,
+  async (value) => {
+    if (value === false) {
+      await onInit()
+    }
+  },
+)
+
+async function onInit() {
   if (route.params.token) {
     tkSlug.value = route.params.token as string
     if (survey.record?.token === undefined) {
@@ -91,7 +113,7 @@ onMounted(async () => {
       await reset()
     }
   }
-})
+}
 
 async function onToken() {
   if (tkSlug.value && tkSlug.value.trim().length > 0) {
@@ -109,5 +131,11 @@ async function onToken() {
 async function reset() {
   survey.reset()
   await onToken()
+}
+
+function onStart() {
+  survey.started = true
+  survey.step = 1
+  tkSlug.value = ''
 }
 </script>

@@ -9,7 +9,8 @@
         class="text-h5 q-mb-md"
         bg-color="green-3"
         filled
-        debounce="300"
+        :hint="t('type_enter_to_lookup_address')"
+        debounce="1000"
         @keyup.enter="onSuggestAddress"
         @update:model-value="onUpdate"
         :loading="loading"
@@ -97,8 +98,9 @@ function onSuggestAddress() {
   }
   loading.value = true
   showSuggestions.value = false
+  suggestions.value = []
   geocoderApi
-    .forwardGeocode({ query: addressLocation.value.address, limit: 5 })
+    .forwardGeocode({ query: addressLocation.value.address, limit: 10 })
     .then((collection) => {
       if (collection && collection.features && collection.features.length) {
         suggestions.value = collection.features

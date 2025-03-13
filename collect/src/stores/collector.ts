@@ -29,16 +29,30 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_car: 0,
           freq_mod_train: 0,
           freq_mod_combined: false,
+
           freq_trav_pro_local: 0,
+          freq_mod_pro_local_walking: 0,
+          freq_mod_pro_local_bike: 0,
+          freq_mod_pro_local_pub: 0,
+          freq_mod_pro_local_moto: 0,
+          freq_mod_pro_local_car: 0,
+          freq_mod_pro_local_train: 0,
+          freq_mod_pro_local_combined: false,
+
           freq_trav_pro_region: 0,
+          freq_mod_pro_region_pub: 0,
+          freq_mod_pro_region_moto: 0,
+          freq_mod_pro_region_car: 0,
+          freq_mod_pro_region_train: 0,
+          freq_mod_pro_region_plane: 0,
+          freq_mod_pro_region_combined: false,
+
           freq_trav_pro_inter: 0,
-          freq_mod_pro_walking: 0,
-          freq_mod_pro_bike: 0,
-          freq_mod_pro_pub: 0,
-          freq_mod_pro_moto: 0,
-          freq_mod_pro_car: 0,
-          freq_mod_pro_train: 0,
-          freq_mod_pro_plane: 0,
+          freq_mod_pro_inter_car: 0,
+          freq_mod_pro_inter_train: 0,
+          freq_mod_pro_inter_plane: 0,
+          freq_mod_pro_inter_combined: false,
+
           importance_time: 1,
           importance_cost: 1,
           importance_flex: 1,
@@ -78,9 +92,27 @@ export const useCollector = defineStore('collector', () => {
   async function loadTypo(record: Record) {
     token.value = null
     loading.value = true
-    return api.get(`/collect/typo/${record.token}`, record).finally(() => {
-      loading.value = false
-    })
+    return api
+      .get(`/collect/record/${record.token}/typo`, record)
+      .then((response) => {
+        return response.data
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
+  async function saveComments(record: Record) {
+    token.value = null
+    loading.value = true
+    return api
+      .put(`/collect/record/${record.token}/comments`, { comments: record.data.comments })
+      .then((response) => {
+        return response.data
+      })
+      .finally(() => {
+        loading.value = false
+      })
   }
 
   return {
@@ -89,5 +121,6 @@ export const useCollector = defineStore('collector', () => {
     load,
     save,
     loadTypo,
+    saveComments,
   }
 })
