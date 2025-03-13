@@ -519,21 +519,6 @@
     </div>
     <div v-if="survey.step === 19">
       <RecommendationsPanel />
-      <RecommendationsProPanel class="q-mt-xl" />
-      <q-btn
-        outlined
-        no-caps
-        color="primary"
-        :icon-right="showDebug ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-        size="sm"
-        label="Debug"
-        @click="showDebug = !showDebug"
-        class="q-mt-md"
-      />
-      <div v-if="showDebug">
-        <pre>{{ survey.recommendation }}</pre>
-        <pre>{{ survey.record }}</pre>
-      </div>
     </div>
     <div v-if="survey.step === 20">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -577,6 +562,22 @@
         class="q-ml-md"
       />
     </div>
+    <div v-if="survey.step === 19">
+      <q-btn
+        outlined
+        no-caps
+        color="secondary"
+        :icon-right="showDebug ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+        size="sm"
+        label="Debug"
+        @click="showDebug = !showDebug"
+        class="q-mt-md"
+      />
+      <div v-if="showDebug">
+        <pre>{{ survey.recommendation }}</pre>
+        <pre>{{ survey.record }}</pre>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -592,7 +593,6 @@ import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
-import RecommendationsProPanel from 'src/components/form/RecommendationsProPanel.vue'
 import { notifyError } from 'src/utils/notify'
 
 const { t } = useI18n()

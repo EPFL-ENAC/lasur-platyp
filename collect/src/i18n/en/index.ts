@@ -104,11 +104,23 @@ export default {
       congested: 'Congested',
     },
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
-    recommendations:
-      'Based on the information you have entered, the following modes of transport are recommended for your home-to-work journeys',
-    recommendations_pro:
-      'The following modes of transport are recommended for your professional journeys',
+    recommendations: 'Recommended modes of transport for your home-to-work journeys',
+    recommendations_pro: 'Recommended modes of transport for your professional journeys',
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
+  },
+  main_mode: {
+    walking: 'At present, you mainly walk to get to your workplace.',
+    bike: 'At present, you mainly use a bicycle or an electric bike to get to your workplace.',
+    pub: 'At present, you mainly use public transport to get to your workplace.',
+    moto: 'At present, you mainly use a motorcycle, scooter or moped to get to your workplace.',
+    car: 'At present, you mainly use a car to get to your workplace.',
+    train: 'At present, you mainly use a train to get to your workplace.',
+    combined: 'At present, you mainly use a combination of modes to get to your workplace.',
+    sustainable:
+      'Your commuting habits are already sustainable. The following alternatives are available to you:',
+    not_sustainable:
+      'Based on the information you have entered, the following modes of transport are recommended:',
+    actions: "Please note your employer's offers to promote sustainable mobility",
   },
   reco: {
     covoit: 'Carpooling',
@@ -152,7 +164,7 @@ export default {
   start: 'Start',
   token: 'Token',
   type_enter_to_lookup_address: 'Type enter to lookup the address location',
-  welcome: 'Welcome to {brand}',
+  welcome: 'Welcome to the {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
   no_results: 'No results',
   local: 'Local',
