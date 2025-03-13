@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
+    <div class="text-h4 text-bold q-mb-md" :class="labelClass">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
   </div>
 </template>
@@ -9,6 +9,7 @@
 interface Props {
   label?: string
   hint?: string
+  labelClass?: string
 }
 defineProps<Props>()
 </script>
