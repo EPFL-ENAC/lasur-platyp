@@ -2,7 +2,7 @@
   <q-page>
     <div class="text-h5 q-pa-md">{{ t('records') }}</div>
     <q-separator />
-    <div class="q-pa-md">
+    <div v-if="authStore.isAdmin" class="q-pa-md">
       <q-table
         flat
         ref="tableRef"
@@ -17,6 +17,14 @@
         :rows-per-page-options="[10, 25, 50]"
       >
         <template v-slot:top>
+          <q-btn
+            size="sm"
+            color="primary"
+            :disable="loading"
+            :label="t('download')"
+            icon="download"
+            @click="onDownload"
+          />
           <q-space />
           <q-input dense debounce="300" v-model="filter" clearable>
             <template v-slot:append>
@@ -31,11 +39,23 @@
             }}</router-link>
           </q-td>
         </template>
+        <template v-slot:body-cell-company_id="props">
+          <q-td :props="props">
+            <router-link :to="`/company/${props.row.company_id}`" class="modus">
+              {{ props.row.company_id }} ({{ props.row.campaign_id }})
+            </router-link>
+          </q-td>
+        </template>
         <template v-slot:body-cell-recommendations="props">
           <q-td :props="props">
             <template v-for="reco in getRecoDt2(props.row)" :key="reco">
               <q-chip :label="reco" color="primary" class="text-white" />
             </template>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-comments="props">
+          <q-td :props="props">
+            <span :title="props.row.comments">{{ truncateString(props.row.comments, 10) }}</span>
           </q-td>
         </template>
         <template v-slot:body-cell-action="props">
@@ -82,6 +102,7 @@ import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import { makePaginationRequestHandler } from 'src/utils/pagination'
 import type { PaginationOptions } from 'src/utils/pagination'
 import { notifyError } from 'src/utils/notify'
+import Papa from 'papaparse'
 
 const { t } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()
@@ -108,11 +129,27 @@ const columns = computed(() => {
       sortable: true,
     },
     {
+      name: 'company_id',
+      required: true,
+      label: t('company.label'),
+      align: DefaultAlignment,
+      field: 'company_id',
+      sortable: true,
+    },
+    {
       name: 'recommendations',
       required: true,
       label: t('recommendations'),
       align: DefaultAlignment,
       field: 'typo',
+      sortable: false,
+    },
+    {
+      name: 'comments',
+      required: true,
+      label: t('comments'),
+      align: DefaultAlignment,
+      field: 'comments',
       sortable: true,
     },
     {
@@ -146,7 +183,6 @@ const selected = ref<Record>()
 const showRemoveDialog = ref(false)
 const tableRef = ref()
 const rows = ref<Record[]>([])
-const types = ref<string[] | null>(null)
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref<PaginationOptions>({
@@ -174,24 +210,10 @@ function fetchFromServer(
     $sort: [sortBy, descending],
   }
   query.filter = {}
-  if (types.value?.length) {
-    query.filter.$or = types.value.map((val) => {
-      return {
-        type: {
-          $like: val,
-        },
-      }
-    })
-  }
   if (filter) {
-    const criterion = {
+    query.filter = {
       token: { $ilike: `%${filter}%` },
     }
-    if (query.filter.$or) {
-      const typesClause = query.filter.$or
-      delete query.filter.$or
-      query.filter.$and = [{ $or: typesClause }, criterion]
-    } else query.filter = criterion
   }
   return (
     service
@@ -224,5 +246,44 @@ function onRemove() {
 
 function getRecoDt2(row: Record): string[] {
   return (row.typo?.reco?.reco_dt2 as string[]) || []
+}
+
+function onDownload() {
+  const query: Query = {
+    $skip: 0,
+    $limit: 1000,
+  }
+  service
+    .find(query)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .then((result: any) => {
+      const csv = Papa.unparse(result.data.map((row: Record) => flattenRow(row)))
+      // make browser download the file
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'records.csv'
+      a.click()
+    })
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function flattenRow(obj: any, prefix = '') {
+  const acc: { [key: string]: string } = {}
+  return Object.keys(obj).reduce((acc, key: string) => {
+    const newKey = prefix ? `${prefix}.${key}` : key
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      Object.assign(acc, flattenRow(obj[key], newKey))
+    } else {
+      acc[newKey] = obj[key]
+    }
+    return acc
+  }, acc)
+}
+
+function truncateString(str: string, maxLength: number) {
+  if (str === null || str === undefined) return ''
+  return str.length > maxLength ? str.slice(0, maxLength) + '...' : str
 }
 </script>

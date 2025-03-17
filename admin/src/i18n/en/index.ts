@@ -6,10 +6,14 @@ export default {
     brand: 'Mobility Toolkit',
   },
   company: {
+    label: 'Company',
     actions: 'Employer measures',
     administrators: 'Administrators',
     administrators_hint:
       'Provide the email address of the administrators for this company (type Enter to add entry).',
+  },
+  campaign: {
+    label: 'Campaign',
   },
   role: {
     'platyp-user': 'User',
@@ -79,6 +83,8 @@ export default {
   address: 'Address',
   administration: 'Administration',
   campaigns: 'Campaigns',
+  comments: 'Comments',
+  download: 'Download',
   records: 'Records',
   companies: 'Companies',
   company_removed: 'Company removed',

@@ -67,6 +67,8 @@ export interface Record {
   updated_at?: string
   created_by?: string
   updated_by?: string
+  company_id: number
+  campaign_id: number
 
   data?: { [key: string]: number | string | string[] | boolean }
   typo?: { [key: string]: { [key: string]: number | string | string[] | boolean } }
