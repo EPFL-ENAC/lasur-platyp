@@ -59,3 +59,16 @@ export interface ParticipantData {
   remote_work_rate: number
   company_vehicle: boolean
 }
+
+export interface Record {
+  id: number
+  token: string
+  created_at?: string
+  updated_at?: string
+  created_by?: string
+  updated_by?: string
+
+  data?: { [key: string]: number | string | string[] | boolean }
+  typo?: { [key: string]: { [key: string]: number | string | string[] | boolean } }
+  comments?: string
+}

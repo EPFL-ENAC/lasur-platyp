@@ -112,6 +112,7 @@ export default {
   password_copied: 'Password copied to clipboard',
   password_hint: 'Temporary password that user will update at the next login.',
   password: 'Password',
+  recommendations: 'Recommendations',
   remove_campaign_text:
     "Are you sure you want to remove the campaign '{name}' and all the associated participants personal data?",
   remove_campaign: 'Remove Campaign',
@@ -121,6 +122,8 @@ export default {
   remove_participant_text:
     "Are you sure you want to remove the participant '{identifier}' and all the associated personal data?",
   remove_participant: 'Remove Participant',
+  remove_record_text: "Are you sure you want to remove the record '{token}'?",
+  remove_record: 'Remove Record',
   remove_user_text: "Are you sure you want to remove the user '{name}'?",
   remove_user: 'Remove User',
   remove: 'Remove',

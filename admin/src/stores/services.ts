@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { api } from 'src/boot/api'
-import type { Company, Campaign, Participant } from 'src/models'
+import type { Company, Campaign, Participant, Record } from 'src/models'
 import type { Query } from 'src/components/models'
 
 const authStore = useAuthStore()
 
-export class Service<Type extends Company | Campaign | Participant> {
+export class Service<Type extends Company | Campaign | Participant | Record> {
   constructor(
     public entityType: Type,
     public entityName: string,
@@ -86,7 +86,7 @@ export class Service<Type extends Company | Campaign | Participant> {
 }
 
 export const useServices = defineStore('services', () => {
-  function make(entityName: string): Service<Company | Campaign | Participant> {
+  function make(entityName: string): Service<Company | Campaign | Participant | Record> {
     let entityType
     switch (entityName) {
       case 'company':
@@ -97,6 +97,9 @@ export const useServices = defineStore('services', () => {
         break
       case 'participant':
         entityType = {} as Participant
+        break
+      case 'record':
+        entityType = {} as Record
         break
     }
     if (!entityType) {
