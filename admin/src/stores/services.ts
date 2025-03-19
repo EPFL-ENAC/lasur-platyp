@@ -37,7 +37,9 @@ export class Service<Type extends Company | Campaign | Participant | Record> {
 
   async find(query: Query | undefined) {
     if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
-    const range = [query?.$skip || 0, query?.$limit || 10 - 1]
+    const start = query?.$skip || 0
+    const limit = query?.$limit || 10
+    const range = [start, start + limit - 1]
     const sort = query?.$sort ? [query?.$sort[0], query?.$sort[1] ? 'DESC' : 'ASC'] : ['id', 'ASC']
     return authStore.updateToken().then(() => {
       return api
