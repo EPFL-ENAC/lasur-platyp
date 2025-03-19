@@ -130,7 +130,6 @@ const pagination = ref<PaginationOptions>({
   descending: false,
   page: 1,
   rowsPerPage: 10,
-  rowsNumber: 10,
 })
 
 const columns = computed(() => {

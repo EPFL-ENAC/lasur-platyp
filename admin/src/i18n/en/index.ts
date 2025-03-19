@@ -6,10 +6,14 @@ export default {
     brand: 'Mobility Toolkit',
   },
   company: {
+    label: 'Company',
     actions: 'Employer measures',
     administrators: 'Administrators',
     administrators_hint:
       'Provide the email address of the administrators for this company (type Enter to add entry).',
+  },
+  campaign: {
+    label: 'Campaign',
   },
   role: {
     'platyp-user': 'User',
@@ -79,6 +83,8 @@ export default {
   address: 'Address',
   administration: 'Administration',
   campaigns: 'Campaigns',
+  comments: 'Comments',
+  download: 'Download',
   records: 'Records',
   companies: 'Companies',
   company_removed: 'Company removed',
@@ -112,6 +118,7 @@ export default {
   password_copied: 'Password copied to clipboard',
   password_hint: 'Temporary password that user will update at the next login.',
   password: 'Password',
+  recommendations: 'Recommendations',
   remove_campaign_text:
     "Are you sure you want to remove the campaign '{name}' and all the associated participants personal data?",
   remove_campaign: 'Remove Campaign',
@@ -121,6 +128,8 @@ export default {
   remove_participant_text:
     "Are you sure you want to remove the participant '{identifier}' and all the associated personal data?",
   remove_participant: 'Remove Participant',
+  remove_record_text: "Are you sure you want to remove the record '{token}'?",
+  remove_record: 'Remove Record',
   remove_user_text: "Are you sure you want to remove the user '{name}'?",
   remove_user: 'Remove User',
   remove: 'Remove',

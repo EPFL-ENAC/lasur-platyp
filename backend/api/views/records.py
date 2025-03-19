@@ -16,6 +16,7 @@ async def find(
     select: str = Query(None),
     sort: str = Query(None),
     range: str = Query("[0,99]"),
+    user: User = Depends(kc_service.require_admin()),
     session: AsyncSession = Depends(get_session),
 ) -> RecordResult:
     """Search for records"""
@@ -27,7 +28,9 @@ async def find(
 
 
 @router.get("/{id}", response_model=Record, response_model_exclude_none=True)
-async def get(id: int, session: AsyncSession = Depends(get_session)) -> Record:
+async def get(id: int,
+              user: User = Depends(kc_service.require_admin()),
+              session: AsyncSession = Depends(get_session)) -> Record:
     """Get a record by id"""
     return await RecordService(session).get(id)
 
