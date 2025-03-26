@@ -102,6 +102,14 @@
         class="q-mb-lg"
       />
       <SliderItem
+        :label="t('form.mode.train')"
+        v-model="survey.record.data.freq_mod_train"
+        :min="0"
+        :max="7"
+        label-class="text-h5"
+        class="q-mb-lg"
+      />
+      <SliderItem
         :label="t('form.mode.moto')"
         v-model="survey.record.data.freq_mod_moto"
         :min="0"
@@ -112,14 +120,6 @@
       <SliderItem
         :label="t('form.mode.car')"
         v-model="survey.record.data.freq_mod_car"
-        :min="0"
-        :max="7"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.train')"
-        v-model="survey.record.data.freq_mod_train"
         :min="0"
         :max="7"
         label-class="text-h5"
@@ -621,10 +621,10 @@ const ageOptions = computed<Option[]>(() => [
 const equipmentsOptions = computed<Option[]>(() => [
   { value: 'bike', label: t('form.equipments_option.bike') },
   { value: 'eab', label: t('form.equipments_option.eab') },
-  { value: 'moto', label: t('form.equipments_option.moto') },
   { value: 'upt_subs', label: t('form.equipments_option.upt_subs') },
   { value: 'train_subs', label: t('form.equipments_option.train_subs') },
   { value: 'mob_subs', label: t('form.equipments_option.mob_subs') },
+  { value: 'moto', label: t('form.equipments_option.moto') },
   { value: 'car_driver', label: t('form.equipments_option.car_driver') },
   { value: 'car_passenger', label: t('form.equipments_option.car_passenger') },
 ])
