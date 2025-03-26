@@ -525,7 +525,7 @@
       <q-input
         v-model="survey.record.data.comments"
         type="textarea"
-        class="q-mb-lg text-h4"
+        class="q-mb-lg text-h6"
         bg-color="green-3"
         filled
       />
