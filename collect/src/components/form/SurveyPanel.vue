@@ -81,7 +81,7 @@
         :label="t('form.mode.walking')"
         v-model="survey.record.data.freq_mod_walking"
         :min="0"
-        :max="7"
+        :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
@@ -89,7 +89,7 @@
         :label="t('form.mode.bike')"
         v-model="survey.record.data.freq_mod_bike"
         :min="0"
-        :max="7"
+        :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
@@ -97,7 +97,7 @@
         :label="t('form.mode.pub')"
         v-model="survey.record.data.freq_mod_pub"
         :min="0"
-        :max="7"
+        :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
@@ -105,7 +105,7 @@
         :label="t('form.mode.train')"
         v-model="survey.record.data.freq_mod_train"
         :min="0"
-        :max="7"
+        :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
@@ -113,7 +113,7 @@
         :label="t('form.mode.moto')"
         v-model="survey.record.data.freq_mod_moto"
         :min="0"
-        :max="7"
+        :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
@@ -121,7 +121,7 @@
         :label="t('form.mode.car')"
         v-model="survey.record.data.freq_mod_car"
         :min="0"
-        :max="7"
+        :max="5"
         label-class="text-h5"
         class="q-mb-lg"
       />
