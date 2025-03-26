@@ -1,10 +1,11 @@
 import { defineBoot } from '#q-app/wrappers'
 import { createI18n } from 'vue-i18n'
+import { Quasar, Cookies } from 'quasar'
 
 import messages from 'src/i18n'
 
 export type MessageLanguages = keyof typeof messages
-// Type-define 'en-US' as the master schema for the resource
+// Type-define 'en' as the master schema for the resource
 export type MessageSchema = (typeof messages)['en']
 
 // See https://vue-i18n.intlify.dev/guide/advanced/typescript.html#global-resource-schema-type-definition
@@ -21,8 +22,29 @@ declare module 'vue-i18n' {
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
+const defaultLocales = ['en', 'fr']
+
+const locales = defaultLocales
+
+function getCurrentLocale(): string {
+  let detectedLocale = Cookies.get('locale')
+    ? Cookies.get('locale') // previously selected
+    : Quasar.lang.getLocale() // browser
+  if (!detectedLocale) {
+    detectedLocale = locales[0]
+  } else if (!locales.includes(detectedLocale)) {
+    detectedLocale = detectedLocale.split('-')[0]
+    if (!detectedLocale || !locales.includes(detectedLocale)) {
+      detectedLocale = locales[0]
+    }
+  }
+  return detectedLocale || locales[0] || 'en'
+}
+
 const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
-  locale: 'en',
+  locale: getCurrentLocale(),
+  fallbackLocale: locales[0] || 'en',
+  globalInjection: true,
   legacy: false,
   messages,
 })
@@ -34,4 +56,4 @@ export default defineBoot(({ app }) => {
 
 const t = i18n.global.t
 
-export { i18n, t }
+export { i18n, t, locales, getCurrentLocale }

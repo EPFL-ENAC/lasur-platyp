@@ -611,9 +611,8 @@ watch(
 const showDebug = ref(false)
 
 const ageOptions = computed<Option[]>(() => [
-  { value: '16-17', label: t('form.age_class_option.16_17') },
-  { value: '18-24', label: t('form.age_class_option.18_24') },
-  { value: '26-44', label: t('form.age_class_option.25_44') },
+  { value: '16-24', label: t('form.age_class_option.16_24') },
+  { value: '25-44', label: t('form.age_class_option.25_44') },
   { value: '45-64', label: t('form.age_class_option.45_64') },
   { value: '65+', label: t('form.age_class_option.65') },
 ])
