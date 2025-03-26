@@ -450,6 +450,13 @@
         class="q-mb-lg"
       />
       <RatingItem
+        :label="t('form.mode.train')"
+        v-model="survey.record.data.needs_train"
+        :max="5"
+        label-class="text-h5"
+        class="q-mb-lg"
+      />
+      <RatingItem
         :label="t('form.mode.moto')"
         v-model="survey.record.data.needs_moto"
         :max="5"
@@ -459,13 +466,6 @@
       <RatingItem
         :label="t('form.mode.car')"
         v-model="survey.record.data.needs_car"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <RatingItem
-        :label="t('form.mode.train')"
-        v-model="survey.record.data.needs_train"
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
