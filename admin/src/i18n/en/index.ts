@@ -14,6 +14,7 @@ export default {
   },
   campaign: {
     label: 'Campaign',
+    with_actions: 'With employer measures specific to this campaign',
   },
   role: {
     'platyp-user': 'User',

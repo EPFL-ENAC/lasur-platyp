@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="showDialog" persistent @hide="onHide">
-    <q-card class="dialog-sm">
+    <q-card class="dialog-md">
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t(editMode ? 'edit' : 'add') }}</div>
         <q-space />
@@ -68,6 +68,17 @@
               </q-icon>
             </template>
           </q-input>
+          <q-toggle
+            v-model="withActions"
+            :label="t('campaign.with_actions')"
+            @update:model-value="onWithActionsChanged"
+          />
+          <employer-actions-input
+            v-if="withActions"
+            v-model="selected.actions"
+            :label="t('company.actions')"
+            class="q-mt-lg"
+          />
         </q-form>
       </q-card-section>
 
@@ -87,6 +98,7 @@ import type { Campaign, Company } from 'src/models'
 import { notifyError } from 'src/utils/notify'
 import AddressInput from 'src/components/AddressInput.vue'
 import type { AddressLocation } from 'src/components/models'
+import EmployerActionsInput from 'src/components/EmployerActionsInput.vue'
 import { generateToken } from 'src/utils/generate'
 
 interface DialogProps {
@@ -106,6 +118,7 @@ const showDialog = ref(props.modelValue)
 const selected = ref<Campaign>({
   name: '',
 } as Campaign)
+const withActions = ref(false)
 const editMode = ref(false)
 const addressLocation = ref<AddressLocation>({ address: '' })
 
@@ -135,6 +148,13 @@ function onInit() {
     lat: selected.value.lat,
     lon: selected.value.lon,
   }
+  // check if there are some actions selected
+  withActions.value =
+    Object.keys(selected.value.actions || {}).filter((key) =>
+      selected.value.actions && selected.value.actions[key]
+        ? selected.value.actions[key].length > 0
+        : false,
+    ).length > 0
   editMode.value = selected.value.id !== undefined
   if (editMode.value && !selected.value.slug) {
     selected.value.slug = generateSlug()
@@ -181,6 +201,12 @@ async function onSave() {
         onHide()
       })
       .catch(notifyError)
+  }
+}
+
+function onWithActionsChanged(value: boolean) {
+  if (!value) {
+    selected.value.actions = {}
   }
 }
 </script>

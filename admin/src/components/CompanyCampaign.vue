@@ -25,6 +25,19 @@
         <fields-list :items="items2" :dbobject="item" />
       </div>
     </div>
+    <div v-if="hasActions">
+      <div class="q-mb-sm">{{ t('company.actions') }}</div>
+      <div class="row q-col-gutter-md q-mb-md">
+        <div class="col-12 col-md-6">
+          <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
+          <fields-list :items="actionItems" :dbobject="item?.actions" />
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
+          <fields-list :items="actionProItems" :dbobject="item?.actions" />
+        </div>
+      </div>
+    </div>
     <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
     <div class="text-hint q-mb-sm">
       {{ t('participants_campaign_hint') }}
@@ -72,6 +85,7 @@ import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
 import { collectUrl } from 'src/boot/api'
 import { notifyInfo } from 'src/utils/notify'
+import { actionItems, actionProItems } from 'src/utils/options'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -85,6 +99,13 @@ const props = defineProps<Props>()
 
 const showDialog = ref(false)
 const showRemoveDialog = ref(false)
+
+const hasActions = computed(
+  () =>
+    Object.keys(props.item.actions || {}).filter((key) =>
+      props.item.actions && props.item.actions[key] ? props.item.actions[key].length > 0 : false,
+    ).length > 0,
+)
 
 const items1: FieldItem[] = [
   {

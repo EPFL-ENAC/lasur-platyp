@@ -119,8 +119,9 @@ async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> D
         response["reco_pro"] = reco_pro
     if "reco_dt2" in reco and reco_pro is not None:
         company = await CompanyService(session).get(record.company_id)
+        campaign = await CampaignService(session).get(record.campaign_id)
         actions = service.get_recommendation_employer_actions(
-            company, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
+            company, campaign, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
         response["reco_actions"] = actions
     record.typo = response
     record.comments = None  # clear comments

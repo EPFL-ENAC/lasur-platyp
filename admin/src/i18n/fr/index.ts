@@ -7,13 +7,14 @@ export default {
   },
   company: {
     label: 'Entreprise',
-    actions: 'Mesures emploeur',
+    actions: 'Mesures employeur',
     administrators: 'Administrateurs',
     administrators_hint:
       "Veuillez fournir l'adresse email des administrateurs pour cette entreprise (tapez Entrée pour ajouter une entrée).",
   },
   campaign: {
     label: 'Campagne',
+    with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
   },
   role: {
     'platyp-user': 'Utilisateur',
