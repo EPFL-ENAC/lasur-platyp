@@ -122,13 +122,7 @@ let marker: Marker | undefined
 
 const defaultCenter: [number, number] = [6.142873, 46.205066]
 
-onMounted(() => {
-  if (props.modelValue === undefined) {
-    emit('update:modelValue', { address: '' })
-  } else {
-    onInit()
-  }
-})
+onMounted(onInit)
 
 function onInit() {
   addressLocation.value = props.modelValue || { address: '' }
@@ -138,7 +132,6 @@ function onInit() {
     : props.modelValue
       ? [props.modelValue.lon || defaultCenter[0], props.modelValue.lat || defaultCenter[1]]
       : defaultCenter
-  console.debug('center', center)
   map.value = new Map({
     container: props.mapId,
     center: center,

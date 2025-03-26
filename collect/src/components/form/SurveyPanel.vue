@@ -564,22 +564,6 @@
         class="q-ml-md"
       />
     </div>
-    <div v-if="survey.step === 19">
-      <q-btn
-        outlined
-        no-caps
-        color="secondary"
-        :icon-right="showDebug ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-        size="sm"
-        label="Debug"
-        @click="showDebug = !showDebug"
-        class="q-mt-md"
-      />
-      <div v-if="showDebug">
-        <pre>{{ survey.recommendation }}</pre>
-        <pre>{{ survey.record }}</pre>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -601,16 +585,6 @@ const { t } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
 const q = useQuasar()
-
-watch(
-  () => survey.record,
-  () => {
-    console.debug(survey.record.data)
-  },
-  { deep: true },
-)
-
-const showDebug = ref(false)
 
 const ageOptions = computed<Option[]>(() => [
   { value: '16-24', label: t('form.age_class_option.16_24') },
