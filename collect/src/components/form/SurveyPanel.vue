@@ -595,7 +595,7 @@ const ageOptions = computed<Option[]>(() => [
 
 const equipmentsOptions = computed<Option[]>(() => [
   { value: 'bike', label: t('form.equipments_option.bike') },
-  { value: 'eab', label: t('form.equipments_option.eab') },
+  { value: 'ebike', label: t('form.equipments_option.ebike') },
   { value: 'upt_subs', label: t('form.equipments_option.upt_subs') },
   { value: 'train_subs', label: t('form.equipments_option.train_subs') },
   { value: 'mob_subs', label: t('form.equipments_option.mob_subs') },
