@@ -37,11 +37,13 @@
     </div>
     <div v-if="survey.step === 3">
       <LocationItem
+        map-id="workplace-map"
         :label="t('form.workplace')"
         v-model="survey.record.data.workplace"
         class="q-mb-xl"
       />
       <LocationItem
+        map-id="origin-map"
         :label="t('form.origin')"
         :hint="t('form.origin_hint')"
         v-model="survey.record.data.origin"
@@ -743,6 +745,10 @@ function prevStep() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
+  if (survey.step === 3) {
+    // ignore because of map dragging conflict
+    return
+  }
   if (dir['direction'] === 'left') {
     nextStep()
   } else if (dir['direction'] === 'right') {

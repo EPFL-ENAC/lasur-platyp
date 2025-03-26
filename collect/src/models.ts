@@ -8,7 +8,7 @@ export interface ParticipantData {
 }
 
 export interface AddressLocation {
-  address: string
+  address: string | undefined
   lat?: number | undefined
   lon?: number | undefined
 }

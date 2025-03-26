@@ -4,8 +4,8 @@ export default {
   },
   form: {
     error: {
-      origin: "Veuillez entrer une adresse d'origine valide",
-      workplace: 'Veuillez entrer une adresse de destination valide',
+      origin: 'Veuillez entrer un point de départ',
+      workplace: 'Veuillez entrer un lieu de travail',
     },
     age_class: "Quelle est votre classe d'âge?",
     age_class_option: {
@@ -19,7 +19,7 @@ export default {
     company_vehicle: 'Avez-vous un véhicule de fonction?',
     yes: 'Oui',
     no: 'Non',
-    workplace: 'Adresse de votre lieu de travail habituel',
+    workplace: 'Votre lieu de travail habituel',
     origin: "D'où partez-vous habituellement pour vous rendre au travail?",
     origin_hint:
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',
@@ -189,7 +189,8 @@ export default {
   start_new: 'Ou recommencer du début',
   start: 'Démarrer',
   token: 'Identifiant',
-  type_enter_to_lookup_address: "Veuillez appuyer sur Enter pour afficher l'adresse",
+  lookup_address_or_select_on_map: 'Rechercher une adresse ou sélectionner sur la carte',
+  type_enter_to_lookup_address: "Taper Entrée pour chercher l'adresse",
   welcome: 'Bienvenue sur le {brand}',
   welcome_intro:
     'Veuillez remplir ce questionnaire afin de pouvoir vous proposer les mesures de mobilité les plus pertinentes pour vous',

@@ -4,8 +4,8 @@ export default {
   },
   form: {
     error: {
-      origin: 'Please enter a valid origin address',
-      workplace: 'Please enter a valid work place address',
+      origin: 'Please enter a starting point',
+      workplace: 'Please enter a work place location',
     },
     age_class: 'What is your age group?',
     age_class_option: {
@@ -19,7 +19,7 @@ export default {
     company_vehicle: 'Do you have a company vehicle?',
     yes: 'Yes',
     no: 'No',
-    workplace: 'Address of usual place of work',
+    workplace: 'Your usual place of work',
     origin: 'Where do you usually leave from to reach your workplace?',
     origin_hint:
       'This confidential information will only be used to calculate your mobility options for your home-work journey.',
@@ -178,7 +178,8 @@ export default {
   start_new: 'Or start a new survey',
   start: 'Start',
   token: 'Token',
-  type_enter_to_lookup_address: 'Type enter to lookup the address location',
+  lookup_address_or_select_on_map: 'Lookup address or select on map',
+  type_enter_to_lookup_address: 'Press Enter to lookup address',
   welcome: 'Welcome to the {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
   no_results: 'No results',
