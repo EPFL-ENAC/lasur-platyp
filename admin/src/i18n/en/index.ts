@@ -142,4 +142,5 @@ export default {
   survey_link: 'Link to survey',
   token: 'Token',
   users: 'Users',
+  your_role: 'Your role is: {role}',
 }

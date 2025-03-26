@@ -145,4 +145,5 @@ export default {
   survey_link: "Lien vers l'enquête",
   token: 'Jeton',
   users: 'Utilisateurs',
+  your_role: 'Votre rôle est: {role}',
 }
