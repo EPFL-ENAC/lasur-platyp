@@ -3,36 +3,32 @@
     <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
     <div class="q-mt-lg">
-      <q-list>
-        <q-item
-          class="rounded-borders q-mb-md bg-primary text-green-3"
-          v-ripple
-          :clickable="!hasLocation"
-          @click="showInput = !showInput"
-        >
-          <q-item-section>
-            <span v-if="hasLocation" class="text-h6 text-white">
-              <q-icon name="location_on" color="white" class="q-pb-xs" />
-              {{ formatCoordinates(addressLocation.lat, addressLocation.lon) }}
-            </span>
-            <div v-else class="text-subtitle1">
-              {{ t('lookup_address_or_select_on_map') }}
-            </div>
-          </q-item-section>
-          <q-item-section side>
-            <q-btn
-              v-if="hasLocation"
-              flat
-              rounded
-              dense
-              size="sm"
-              color="white"
-              icon="delete"
-              @click="onRemoveLocation"
-            />
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <div
+        class="row q-pt-sm q-pl-md q-pb-sm q-pr-md rounded-borders q-mb-md bg-primary text-green-3"
+      >
+        <div class="col">
+          <span v-if="hasLocation" class="text-h6 text-white">
+            <q-icon name="location_on" color="white" class="q-pb-xs" />
+            {{ formatCoordinates(addressLocation.lat, addressLocation.lon) }}
+          </span>
+          <div v-else class="text-subtitle1">
+            {{ t('lookup_address_or_select_on_map') }}
+          </div>
+        </div>
+        <div class="col-auto">
+          <q-btn
+            v-if="hasLocation"
+            flat
+            rounded
+            dense
+            size="sm"
+            color="white"
+            icon="delete"
+            @click="onRemoveLocation"
+            class="q-mt-xs"
+          />
+        </div>
+      </div>
 
       <div class="row q-mb-sm">
         <div class="col-auto q-mt-xs">
