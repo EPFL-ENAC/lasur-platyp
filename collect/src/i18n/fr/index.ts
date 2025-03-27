@@ -58,16 +58,21 @@ export default {
       car_moto: 'La voiture ou la moto',
       combined: 'Une combinaison de ces modes de transport',
     },
-    freq_trav_pro_local:
-      'Dans quelle mesure devez-vous effectuer des déplacements locaux dans le cadre de votre travail ?',
-    freq_trav_pro_region:
-      'Dans quelle mesure devez-vous effectuer des déplacements nationaux dans le cadre de votre travail ?',
-    freq_trav_pro_inter:
-      'Dans quelle mesure devez-vous effectuer des déplacements internationaux dans le cadre de votre travail ?',
-    freq_trav_pro_local_hint: 'Local (<15km : Grand Genève)',
-    freq_trav_pro_region_hint: 'National (15-400km : Lausanne, Berne, Zurich)',
-    freq_trav_pro_inter_hint: 'International (>400km : Paris, Londres, Amsterdam)',
-    days_per_month: 'jours par mois',
+    trav_pro:
+      'Dans quelle mesure devez-vous effectuer des déplacements dans le cadre de votre travail ?',
+    trav_pro_option: {
+      local: 'Local',
+      local_hint: '<15 km : Grand Genève',
+      region: 'National',
+      region_hint: '15-400 km : Lausanne, Berne, Zürich',
+      inter: 'International',
+      inter_hint: '>400 km : Paris, Londres, Amsterdam',
+    },
+    freq_trav_pro_local_hint: 'Local',
+    freq_trav_pro_region_hint: 'National',
+    freq_trav_pro_inter_hint: 'International',
+
+    days_per_month: 'En jours par mois',
     freq_mod_pro:
       'A quelle fréquence utilisez vous les modes suivants pour vos déplacements professionnels ?',
     importance:

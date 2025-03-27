@@ -30,7 +30,7 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_train: 0,
           freq_mod_combined: false,
 
-          freq_trav_pro_local: 0,
+          trav_pro: [],
           freq_mod_pro_local_walking: 0,
           freq_mod_pro_local_bike: 0,
           freq_mod_pro_local_pub: 0,
@@ -39,7 +39,6 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_pro_local_train: 0,
           freq_mod_pro_local_combined: false,
 
-          freq_trav_pro_region: 0,
           freq_mod_pro_region_pub: 0,
           freq_mod_pro_region_moto: 0,
           freq_mod_pro_region_car: 0,
@@ -47,7 +46,6 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_pro_region_plane: 0,
           freq_mod_pro_region_combined: false,
 
-          freq_trav_pro_inter: 0,
           freq_mod_pro_inter_car: 0,
           freq_mod_pro_inter_train: 0,
           freq_mod_pro_inter_plane: 0,

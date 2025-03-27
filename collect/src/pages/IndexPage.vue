@@ -89,7 +89,7 @@ const survey = useSurvey()
 const tkSlug = ref('')
 
 const progress = computed(() => {
-  return survey.step / 20
+  return survey.step / survey.stepNames.length
 })
 
 onMounted(onInit)

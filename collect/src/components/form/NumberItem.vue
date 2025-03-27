@@ -2,46 +2,52 @@
   <div>
     <div class="text-h4 text-bold q-mb-md" :class="labelClass">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
-    <div class="row justify-center q-mt-xl">
+    <div class="row justify-center">
       <q-btn
         flat
+        dense
         v-if="props.step2"
         rounded
         @click="decrement2"
         :disable="props.modelValue === props.min"
         color="accent"
+        size="lg"
         icon="keyboard_double_arrow_left"
-        class="q-mr-md"
       />
       <q-btn
         flat
+        dense
         rounded
         @click="decrement"
         :disable="props.modelValue === props.min"
         color="accent"
+        size="lg"
         :icon="step2 ? 'keyboard_arrow_left' : 'remove'"
       />
       <span class="text-h4 q-ml-lg q-mr-lg">{{ props.modelValue }} {{ props.unit }}</span>
       <q-btn
         flat
+        dense
         rounded
         @click="increment"
         :disable="props.modelValue === props.max"
         color="accent"
+        size="lg"
         :icon="step2 ? 'keyboard_arrow_right' : 'add'"
       />
       <q-btn
         flat
+        dense
         v-if="props.step2"
         rounded
         @click="increment2"
         :disable="props.modelValue === props.max"
         color="accent"
+        size="lg"
         icon="keyboard_double_arrow_right"
-        class="q-ml-md"
       />
     </div>
-    <div class="row justify-center q-mt-md">
+    <div v-if="unitHint" class="row justify-center q-mt-md">
       <span class="text-h5 q-ml-lg q-mr-lg">{{ props.unitHint }}</span>
     </div>
   </div>
