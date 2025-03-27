@@ -153,4 +153,6 @@ class ModalTypoService:
         response = requests.post(
             url, headers=self.headers, json=data)
         response.raise_for_status()
-        return response.json()
+        empl_actions = response.json()
+        empl_actions["mesures_globa"] = actions["mesures_globa"] if actions and "mesures_globa" in actions else []
+        return empl_actions

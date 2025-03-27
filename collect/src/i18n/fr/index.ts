@@ -7,33 +7,33 @@ export default {
       origin: 'Veuillez entrer un point de départ',
       workplace: 'Veuillez entrer un lieu de travail',
     },
-    age_class: "Quelle est votre classe d'âge?",
+    age_class: "Quelle est votre classe d'âge ?",
     age_class_option: {
       '16_24': 'moins de 25 ans',
       '25_44': '25 - 44 ans',
       '45_64': '45 - 64 ans',
       '65': '65 ans et plus',
     },
-    employment_rate: 'Quel est votre taux de travail?',
-    remote_work_rate: 'Quel est votre taux de télétravail?',
-    company_vehicle: 'Avez-vous un véhicule de fonction?',
+    employment_rate: 'Quel est votre taux de travail ?',
+    remote_work_rate: 'Quel est votre taux de télétravail ?',
+    company_vehicle: 'Avez-vous un véhicule de fonction ?',
     yes: 'Oui',
     no: 'Non',
     workplace: 'Votre lieu de travail habituel',
-    origin: "D'où partez-vous habituellement pour vous rendre au travail?",
+    origin: "D'où partez-vous habituellement pour vous rendre au travail ?",
     origin_hint:
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',
     travel_time:
-      'Quel est votre temps de trajet domicile-travail, avec le mode de transport que vous utilisez habituellement?',
+      'Quel est votre temps de trajet domicile-travail, avec le mode de transport que vous utilisez habituellement ?',
     travel_time_minutes: 'minutes (aller)',
-    constraints: 'Avez vous des contraintes potentielles quant à votre mobilité quotidienne?',
+    constraints: 'Avez vous des contraintes potentielles quant à votre mobilité quotidienne ?',
     constraints_option: {
       dependent: "Conduite d'enfants ou de personnes dépendantes",
       heavy: 'Transport de matériel lourd ou encombrant',
       night: 'Travail de nuit',
       disabled: 'Carte de stationnement pour personne à mobilité réduite',
     },
-    equipments: 'De quels équipements de mobilité disposez-vous?',
+    equipments: 'De quels équipements de mobilité disposez-vous ?',
     equipments_option: {
       bike: 'Vélo',
       upt_subs: 'Abonnement de transports publics urbains',
@@ -44,7 +44,7 @@ export default {
       mob_subs: 'Abonnement de mobilité partagée (mobility, etc.)',
       car_passenger: 'Voiture (en tant que passager)',
     },
-    freq_mod: 'A quelle fréquence utilisez vous les modes suivants pour vous rendre au travail?',
+    freq_mod: 'A quelle fréquence utilisez vous les modes suivants pour vous rendre au travail ?',
     freq_mod_hint: "Nombre de jours d'une semaine type",
     mode: {
       walking: 'La marche (>10 min.)',
@@ -59,19 +59,19 @@ export default {
       combined: 'Une combinaison de ces modes de transport',
     },
     freq_trav_pro_local:
-      'Dans quelle mesure devez-vous effectuer des déplacements locaux dans le cadre de votre travail?',
+      'Dans quelle mesure devez-vous effectuer des déplacements locaux dans le cadre de votre travail ?',
     freq_trav_pro_region:
-      'Dans quelle mesure devez-vous effectuer des déplacements nationaux dans le cadre de votre travail?',
+      'Dans quelle mesure devez-vous effectuer des déplacements nationaux dans le cadre de votre travail ?',
     freq_trav_pro_inter:
-      'Dans quelle mesure devez-vous effectuer des déplacements internationaux dans le cadre de votre travail?',
-    freq_trav_pro_local_hint: 'Local (<15km: Grand Genève)',
-    freq_trav_pro_region_hint: 'National (15-400km: Lausanne, Berne, Zurich)',
-    freq_trav_pro_inter_hint: 'International (>400km: Paris, Londres, Amsterdam)',
+      'Dans quelle mesure devez-vous effectuer des déplacements internationaux dans le cadre de votre travail ?',
+    freq_trav_pro_local_hint: 'Local (<15km : Grand Genève)',
+    freq_trav_pro_region_hint: 'National (15-400km : Lausanne, Berne, Zurich)',
+    freq_trav_pro_inter_hint: 'International (>400km : Paris, Londres, Amsterdam)',
     days_per_month: 'jours par mois',
     freq_mod_pro:
-      'A quelle fréquence utilisez vous les modes suivants pour vos déplacements professionnels?',
+      'A quelle fréquence utilisez vous les modes suivants pour vos déplacements professionnels ?',
     importance:
-      "Quelle est l'importance des aspectys suivants pour vous, dans votre mobilité quotidienne?",
+      "Quelle est l'importance des aspectys suivants pour vous, dans votre mobilité quotidienne ?",
     importance_hint: 'Sur une échelle de 1 (pas important du tout) à 5 (très important)',
     importance_time: 'Temps de trajet',
     importance_cost: 'Coût',
@@ -81,9 +81,9 @@ export default {
     importance_most: 'Possibilité de mettre à profit le temps de trajet',
     importance_env: 'Environnement(réduction du la pollution)',
     needs:
-      'Dans quelle mesure les modes de transport suivants sont-ils adaptés à vos besoins de mobilité quotidienne?',
+      'Dans quelle mesure les modes de transport suivants sont-ils adaptés à vos besoins de mobilité quotidienne ?',
     needs_hint: 'Sur une échelle de 1 (pas du tout adapté) à 5 (tout à fait adapté)',
-    adjectives: 'Quels adjectifs associez-vous aux modes de transport suivants?',
+    adjectives: 'Quels adjectifs associez-vous aux modes de transport suivants ?',
     adjectives_hint: 'Sélectionnez 3 adjectifs par mode de transport',
     adjectives_option: {
       fast: 'Rapide',
@@ -108,13 +108,15 @@ export default {
       congested: 'Embouteillé',
     },
     comments:
-      'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité?',
+      'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité ?',
     recommendations:
       'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels',
     actions:
-      'Pas de mesures | La mesure de votre employeur: {actions} | Les mesures de votre employeur: {actions}',
+      'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
+    actions_global:
+      "Pas de mesures globales | Votre employeur vous propose aussi la mesure d'aide à la mobilité : {actions} | Votre employeur vous propose aussi les mesures d'aide à la mobilité : {actions}",
   },
   main_mode: {
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
@@ -126,9 +128,9 @@ export default {
     combined:
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     sustainable:
-      'Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition:',
+      'Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
     not_sustainable:
-      'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées:',
+      'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées :',
     actions:
       'Votre employeur met en oeuvre les mesures suivantes afin de promouvoir la mobilité durable',
   },
@@ -171,19 +173,19 @@ export default {
   },
   benefits: {
     ben_bike:
-      'Les atouts du vélo: -	La part du vélo dans les déplacements pendulaires a augmenté de 43% entre 2015 et 2021 sur le canton de Genève -	Aller au travail en vélo diminue en moyenne de 10% le risque de mortalité et 30% le taux de mortalité lié à un cancer',
+      'Les atouts du vélo : -	La part du vélo dans les déplacements pendulaires a augmenté de 43% entre 2015 et 2021 sur le canton de Genève -	Aller au travail en vélo diminue en moyenne de 10% le risque de mortalité et 30% le taux de mortalité lié à un cancer',
     ben_walk:
-      'Les atouts de la marche: -	Aller au travail en marchant diminue en moyenne de 10% le risque de maladie cardiovasculaire et 30% le risque de diabète de type II -	Plus de 20% des résidents du canton de Genève vont au travail en marchant, alors : pourquoi pas vous?',
+      'Les atouts de la marche : -	Aller au travail en marchant diminue en moyenne de 10% le risque de maladie cardiovasculaire et 30% le risque de diabète de type II -	Plus de 20% des résidents du canton de Genève vont au travail en marchant, alors : pourquoi pas vous ?',
     ben_train:
-      'Les atouts du train: -	Lire un bon livre, traiter ses mails, ou simplement rêvasser: Le train est le mode de transport pour lequel on utilise le mieux son temps de déplacement  -	Voyager en train émet en moyenne 25 fois moins de gaz à effet de serre que seul en voiture',
+      'Les atouts du train : -	Lire un bon livre, traiter ses mails, ou simplement rêvasser : Le train est le mode de transport pour lequel on utilise le mieux son temps de déplacement  -	Voyager en train émet en moyenne 25 fois moins de gaz à effet de serre que seul en voiture',
     ben_pub:
-      "Les atouts des transports publics: -	La Suisse obtient de loin les meilleurs résultats européens en termes de ponctualité, de densité du réseau et de densité d'offre de transport public -	Voyager en transport public émet en moyenne 5 fois moins de gaz à effet de serre que seul en voiture",
+      "Les atouts des transports publics : -	La Suisse obtient de loin les meilleurs résultats européens en termes de ponctualité, de densité du réseau et de densité d'offre de transport public -	Voyager en transport public émet en moyenne 5 fois moins de gaz à effet de serre que seul en voiture",
     ben_elec:
-      "Les atouts du véhicule électrique: -	Une voiture électrique légère ou compacte émet 2,3 fois moins par km qu'une voiture thermique -	Les véhicules électriques permettent également de réduire les nuisances sonores et la pollution atmosphérique en ville",
+      "Les atouts du véhicule électrique : -	Une voiture électrique légère ou compacte émet 2,3 fois moins par km qu'une voiture thermique -	Les véhicules électriques permettent également de réduire les nuisances sonores et la pollution atmosphérique en ville",
     ben_carpool:
-      "Les atouts du covoiturage: -	Covoiturer, c'est diviser par le nombre d'occupants ses émissions, mais aussi toutes les externalités de la voiture (congestion, pollution, bruit) -	Hé Léman, Illicov, covoiturage-leman.org, e-covoiturage.ch, mov'ici… Les initiatives pour favoriser le covoiturage se développent à grands pas, en parallèle de politiques favorables (P+R, voies réservées)",
+      "Les atouts du covoiturage : -	Covoiturer, c'est diviser par le nombre d'occupants ses émissions, mais aussi toutes les externalités de la voiture (congestion, pollution, bruit) -	Hé Léman, Illicov, covoiturage-leman.org, e-covoiturage.ch, mov'ici… Les initiatives pour favoriser le covoiturage se développent à grands pas, en parallèle de politiques favorables (P+R, voies réservées)",
     ben_inter:
-      "Les atouts de l'intermodalité: -	De plus en plus d'offres voient le jour pour faciliter l'intermodalité (offre transport public-vélo en libre-service, vélostation dans les gares, abonnements P+R…) -	Faire une partie de son trajet de manière décarbonée et/ou active fait déjà une différence : chaque kilomètre compte lorsqu'il s'agit des bienfaits pour la santé et/ou l'environnement",
+      "Les atouts de l'intermodalité : -	De plus en plus d'offres voient le jour pour faciliter l'intermodalité (offre transport public-vélo en libre-service, vélostation dans les gares, abonnements P+R…) -	Faire une partie de son trajet de manière décarbonée et/ou active fait déjà une différence : chaque kilomètre compte lorsqu'il s'agit des bienfaits pour la santé et/ou l'environnement",
   },
   resume: 'Continuer le questionaire',
   start_new: 'Ou recommencer du début',

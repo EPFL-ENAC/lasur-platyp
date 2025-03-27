@@ -4,20 +4,15 @@
       <div class="text-h5 text-bold q-mb-md">
         {{ t(`main_mode.${mainFm}`) }}
       </div>
-      <div class="text-h5">
-        <span v-if="['car', 'moto'].includes(mainFm)">
-          {{ t(`main_mode.not_sustainable`) }}
-        </span>
-        <span v-else>
-          {{ t(`main_mode.sustainable`) }}
-        </span>
-      </div>
     </div>
     <q-card class="bg-primary">
       <q-card-section>
-        <SectionItem :label="t('form.recommendations')" />
-        <div v-if="hasActions" class="text-h6 q-mb-md">
-          {{ t(`main_mode.actions`) }}
+        <div class="text-h5">
+          <SectionItem
+            v-if="['car', 'moto'].includes(mainFm)"
+            :label="t(`main_mode.not_sustainable`)"
+          />
+          <SectionItem v-else :label="t(`main_mode.sustainable`)" />
         </div>
         <q-list>
           <template v-for="(reco, idx) in recoDt" :key="idx">
@@ -43,6 +38,16 @@
             </q-item>
           </template>
         </q-list>
+      </q-card-section>
+      <q-card-section v-if="globalActions.length" class="q-pt-none">
+        <div class="text-body1 text-bold text-green-2">
+          {{
+            t('form.actions_global', {
+              count: globalActions.length,
+              actions: globalActions.join(', '),
+            })
+          }}
+        </div>
       </q-card-section>
     </q-card>
   </div>
@@ -82,7 +87,7 @@ const recoDt = computed(() =>
 
 const mesure_dt1 = computed(() => survey.recommendation.reco_actions?.mesure_dt1 || [])
 const mesure_dt2 = computed(() => survey.recommendation.reco_actions?.mesure_dt2 || [])
-const hasActions = computed(() => mesure_dt1.value.length > 0 || mesure_dt2.value.length > 0)
+// const hasActions = computed(() => mesure_dt1.value.length > 0 || mesure_dt2.value.length > 0)
 
 function getActions(idx: number) {
   if (idx === 0) {
@@ -92,4 +97,12 @@ function getActions(idx: number) {
   }
   return []
 }
+
+const globalActions = computed(() => {
+  return (
+    survey.recommendation.reco_actions?.mesures_globa?.map((action: string) =>
+      t(`actions.${action}`),
+    ) || []
+  )
+})
 </script>

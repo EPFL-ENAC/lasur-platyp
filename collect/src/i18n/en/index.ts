@@ -106,6 +106,8 @@ export default {
     recommendations: 'Recommended modes of transport for your home-to-work journeys',
     recommendations_pro: 'Recommended modes of transport for your professional journeys',
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
+    actions_global:
+      'No global measures | Your employeur also proposes the measure: {actions} | Your employeur also proposes the measures: {actions}',
   },
   main_mode: {
     walking: 'At present, you mainly walk to get to your workplace.',

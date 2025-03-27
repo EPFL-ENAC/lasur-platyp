@@ -107,6 +107,7 @@ export interface Recommendation {
     mesure_dt2: string[]
     mesure_pro_loc: string[]
     mesure_pro_regint: string[]
+    mesures_globa?: string[]
   }
   reco_pro?: {
     reco_pro_int: string
