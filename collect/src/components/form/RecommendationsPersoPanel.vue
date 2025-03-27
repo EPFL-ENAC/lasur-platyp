@@ -20,12 +20,15 @@
               <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
 
               <div v-if="hasBenefits(reco)">
-                <div v-if="showBenefits" class="bg-primary q-mt-md q-pa-sm rounded-borders">
+                <div
+                  v-if="showBenefits.includes(reco)"
+                  class="bg-primary q-mt-md q-pa-sm rounded-borders"
+                >
                   <q-markdown :src="t(`benefits.${reco}`)" />
                 </div>
                 <q-btn
-                  v-if="showBenefits"
-                  @click="showBenefits = false"
+                  v-if="showBenefits.includes(reco)"
+                  @click="showBenefits = showBenefits.filter((b) => b !== reco)"
                   :label="t('benefits.hide')"
                   color="grey-4"
                   size="md"
@@ -36,7 +39,7 @@
                 />
                 <q-btn
                   v-else
-                  @click="showBenefits = true"
+                  @click="showBenefits = [...showBenefits, reco]"
                   :label="t('benefits.show')"
                   color="white"
                   size="md"
@@ -80,7 +83,7 @@ import SectionItem from 'src/components/form/SectionItem.vue'
 const { t } = useI18n()
 const survey = useSurvey()
 
-const showBenefits = ref(false)
+const showBenefits = ref<string[]>([])
 
 const mainFm = computed(() => {
   const data = survey.record.data

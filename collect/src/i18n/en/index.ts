@@ -167,7 +167,7 @@ export default {
     walk: 'The benefits of walking:\n* On average, walking to work reduces the risk of cardiovascular disease by 10% and the risk of type II diabetes by 30%\n* Over 20% of residents in the canton of Geneva walk to work, so why not you?',
     train:
       'The benefits of the train:\n* Reading a good book, dealing with e-mails, or simply daydreaming: The train is the mode of transport for which we make the best use of our travel time\n* Travelling by train emits on average 25 times less greenhouse gases than travelling alone by car',
-    pub: 'The advantages of public transport:\n* Switzerland has by far the best public transport system in Europe in terms of punctuality, network density and public transport accessibility\n* Travelling by public transport emits on average 5 times less greenhouse gases than travelling alone by car',
+    tpu: 'The advantages of public transport:\n* Switzerland has by far the best public transport system in Europe in terms of punctuality, network density and public transport accessibility\n* Travelling by public transport emits on average 5 times less greenhouse gases than travelling alone by car',
     elec: 'The advantages of electric vehicles:\n* A light or compact electric car emits 2.3 times less per km than a combustion-powered car\n* Electric vehicles also reduce noise pollution and air pollution in cities',
     carpool:
       "The benefits of carpooling:\n* Carpooling means dividing emissions by the number of occupants, as well as all the externalities of the car (congestion, pollution, noise)\n* Hé Léman, Illicov, covoiturage-leman.org, e-covoiturage.ch, mov'ici… Initiatives to encourage carpooling are developing at a rapid pace, in parallel with favorable policies (P+R, reserved lanes)",
