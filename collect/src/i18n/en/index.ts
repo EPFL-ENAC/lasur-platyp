@@ -39,7 +39,7 @@ export default {
       upt_subs: 'Urban public transport subscription',
       train_subs: 'Train subscription',
       car_driver: 'Car (as driver)',
-      moto: 'Motorcycle / scooter / moped',
+      moto: 'Motorcycle/scooter/moped',
       ebike: 'Electric bicycle',
       mob_subs: 'Shared mobility subscription (mobility, etc.)',
       car_passenger: 'Car (as passenger)',
