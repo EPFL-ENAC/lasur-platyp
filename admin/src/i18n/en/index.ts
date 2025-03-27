@@ -88,6 +88,7 @@ export default {
   download: 'Download',
   records: 'Records',
   companies: 'Companies',
+  company_campaign: 'Company (campaign)',
   company_removed: 'Company removed',
   content: 'Content',
   cookbook: 'Cookbook',

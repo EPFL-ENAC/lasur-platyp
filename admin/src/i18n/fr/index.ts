@@ -88,6 +88,7 @@ export default {
   download: 'Télécharger',
   records: 'Enregistrements',
   companies: 'Entreprises',
+  company_campaign: 'Entreprise (campagne)',
   company_removed: 'Entreprise supprimée',
   content: 'Contenu',
   cookbook: 'Recettes',

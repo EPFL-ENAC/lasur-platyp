@@ -26,6 +26,34 @@
             @click="onDownload"
           />
           <q-space />
+          <q-select
+            filled
+            dense
+            multiple
+            emit-value
+            map-options
+            use-chips
+            v-model="companyFilter"
+            :label="t('companies')"
+            :options="companyOptions"
+            class="q-mr-md"
+            style="min-width: 200px"
+            @update:model-value="onFilter"
+          />
+          <q-select
+            filled
+            dense
+            multiple
+            emit-value
+            map-options
+            use-chips
+            v-model="campaignFilter"
+            :label="t('campaigns')"
+            :options="campaignOptions"
+            class="q-mr-md"
+            style="min-width: 200px"
+            @update:model-value="onFilter"
+          />
           <q-input dense debounce="300" v-model="filter" clearable>
             <template v-slot:append>
               <q-icon name="search" />
@@ -42,7 +70,9 @@
         <template v-slot:body-cell-company_id="props">
           <q-td :props="props">
             <router-link :to="`/company/${props.row.company_id}`" class="modus">
-              {{ props.row.company_id }} ({{ props.row.campaign_id }})
+              {{ getCompanyName(props.row.company_id) }} ({{
+                getCampaignName(props.row.campaign_id)
+              }})
             </router-link>
           </q-td>
         </template>
@@ -97,7 +127,7 @@
 
 <script setup lang="ts">
 import { DefaultAlignment, type Query } from 'src/components/models'
-import type { Record } from 'src/models'
+import type { Record, Company, Campaign } from 'src/models'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import { makePaginationRequestHandler } from 'src/utils/pagination'
 import type { PaginationOptions } from 'src/utils/pagination'
@@ -108,6 +138,8 @@ const { t } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()
 const services = useServices()
 const service = services.make('record')
+const companyService = services.make('company')
+const campaignService = services.make('campaign')
 
 const columns = computed(() => {
   const cols = [
@@ -131,7 +163,7 @@ const columns = computed(() => {
     {
       name: 'company_id',
       required: true,
-      label: t('company.label'),
+      label: t('company_campaign'),
       align: DefaultAlignment,
       field: 'company_id',
       sortable: true,
@@ -169,7 +201,7 @@ const columns = computed(() => {
     cols.push({
       name: 'action',
       align: DefaultAlignment,
-      label: t('action'),
+      label: '',
       required: false,
       field: 'action',
       sortable: false,
@@ -191,8 +223,42 @@ const pagination = ref<PaginationOptions>({
   page: 1,
   rowsPerPage: 10,
 })
+const companyMap = ref<{ [key: string]: Company }>({})
+const campaignMap = ref<{ [key: string]: Campaign }>({})
+
+const companyFilter = ref<string[]>([])
+const companyOptions = computed(() => {
+  return Object.values(companyMap.value)
+    .map((company) => ({
+      label: company.name,
+      value: company.id,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
+
+const campaignFilter = ref<string[]>([])
+const campaignOptions = computed(() => {
+  return Object.values(campaignMap.value)
+    .map((campaign) => ({
+      label: `${getCompanyName(campaign.company_id)} - ${campaign.name}`,
+      value: campaign.id,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
 
 onMounted(() => {
+  companyService.find({ $limit: 1000, $select: ['id', 'name'] }).then((result) => {
+    const companies = result.data
+    companies.forEach((company: Company) => {
+      companyMap.value[`${company.id}`] = company
+    })
+  })
+  campaignService.find({ $limit: 1000, $select: ['id', 'name', 'company_id'] }).then((result) => {
+    const campaigns = result.data
+    campaigns.forEach((campaign: Campaign) => {
+      campaignMap.value[`${campaign.id}`] = campaign
+    })
+  })
   tableRef.value.requestServerInteraction()
 })
 
@@ -213,6 +279,12 @@ function fetchFromServer(
     query.filter = {
       token: { $ilike: `%${filter}%` },
     }
+  }
+  if (companyFilter.value.length) {
+    query.filter.company_id = { $in: companyFilter.value }
+  }
+  if (campaignFilter.value.length) {
+    query.filter.campaign_id = { $in: campaignFilter.value }
   }
   return (
     service
@@ -252,6 +324,18 @@ function onDownload() {
     $skip: 0,
     $limit: 1000,
   }
+  query.filter = {}
+  if (filter.value) {
+    query.filter = {
+      token: { $ilike: `%${filter.value}%` },
+    }
+  }
+  if (companyFilter.value.length) {
+    query.filter.company_id = { $in: companyFilter.value }
+  }
+  if (campaignFilter.value.length) {
+    query.filter.campaign_id = { $in: campaignFilter.value }
+  }
   service
     .find(query)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -284,5 +368,18 @@ function flattenRow(obj: any, prefix = '') {
 function truncateString(str: string, maxLength: number) {
   if (str === null || str === undefined) return ''
   return str.length > maxLength ? str.slice(0, maxLength) + '...' : str
+}
+
+function getCompanyName(companyId: string | number | undefined): string {
+  return companyMap.value[`${companyId}`]?.name || `${companyId}`
+}
+
+function getCampaignName(campaignId: string): string {
+  return campaignMap.value[campaignId]?.name || campaignId
+}
+
+function onFilter() {
+  console.debug(companyFilter.value, campaignFilter.value)
+  tableRef.value.requestServerInteraction()
 }
 </script>

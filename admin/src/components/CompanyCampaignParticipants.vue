@@ -169,7 +169,7 @@ const columns = computed(() => {
     {
       name: 'action',
       align: DefaultAlignment,
-      label: t('action'),
+      label: '',
       required: false,
       field: 'action',
       sortable: false,
