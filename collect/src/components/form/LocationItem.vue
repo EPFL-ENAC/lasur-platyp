@@ -3,71 +3,73 @@
     <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
     <div class="q-mt-lg">
-      <div v-if="addressLocation.lat && addressLocation.lon" class="q-pl-sm q-mb-lg">
-        <span class="text-h6 text-white">
-          <q-icon name="location_on" color="white" class="q-pb-xs" />
-          {{ formatCoordinates(addressLocation.lat, addressLocation.lon) }}
-        </span>
-        <q-btn
-          flat
-          rounded
-          dense
-          size="sm"
-          color="white"
-          icon="delete"
-          @click="
-            () => {
-              addressLocation.lat = undefined
-              addressLocation.lon = undefined
-              addressLocation.address = ''
-              onUpdateMarker()
-            }
-          "
-          class="q-mb-sm on-right"
-        />
-      </div>
-      <div class="text-subtitle1 q-mb-sm">
-        {{ t('lookup_address_or_select_on_map') }}
-      </div>
+      <q-list>
+        <q-item class="rounded-borders q-mb-md bg-primary text-green-3" v-ripple>
+          <q-item-section>
+            <span v-if="hasLocation" class="text-h6 text-white">
+              <q-icon name="location_on" color="white" class="q-pb-xs" />
+              {{ formatCoordinates(addressLocation.lat, addressLocation.lon) }}
+            </span>
+            <div v-else class="text-subtitle1">
+              {{ t('lookup_address_or_select_on_map') }}
+            </div>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn
+              v-if="hasLocation"
+              flat
+              rounded
+              dense
+              size="sm"
+              color="white"
+              icon="delete"
+              @click="onRemoveLocation"
+            />
+          </q-item-section>
+        </q-item>
+      </q-list>
+
       <div class="row q-mb-sm">
         <div class="col-auto q-mt-xs">
           <q-btn color="primary" icon="search" @click="showInput = !showInput" />
         </div>
         <div class="col">
-          <q-input
-            v-if="showInput"
-            v-model="addressLocation.address"
-            type="text"
-            class="on-right"
-            bg-color="green-3"
-            filled
-            dense
-            :placeholder="t('type_enter_to_lookup_address')"
-            @keyup.enter="onSuggestAddress"
-            @update:model-value="onUpdate"
-            :loading="loading"
-            lazy-rules
-            style="min-width: 250px"
-          >
-            <q-menu v-model="showSuggestions" no-parent-event no-focus auto-close>
-              <q-list style="min-width: 100px">
-                <q-item
-                  clickable
-                  v-close-popup
-                  v-for="sugg in suggestions"
-                  :key="sugg.value"
-                  @click="onSuggestionSelected(sugg)"
-                >
-                  <q-item-section>{{ sugg.value }}</q-item-section>
-                </q-item>
-                <q-item v-if="suggestions.length === 0">
-                  <q-item-section class="text-grey">
-                    {{ t('no_results') }}
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-input>
+          <transition name="fade">
+            <q-input
+              v-if="showInput"
+              v-model="addressLocation.address"
+              type="text"
+              class="on-right"
+              bg-color="green-3"
+              filled
+              dense
+              :placeholder="t('type_enter_to_lookup_address')"
+              @keyup.enter="onSuggestAddress"
+              @update:model-value="onUpdate"
+              :loading="loading"
+              lazy-rules
+              style="min-width: 250px"
+            >
+              <q-menu v-model="showSuggestions" no-parent-event no-focus auto-close>
+                <q-list style="min-width: 100px">
+                  <q-item
+                    clickable
+                    v-close-popup
+                    v-for="sugg in suggestions"
+                    :key="sugg.value"
+                    @click="onSuggestionSelected(sugg)"
+                  >
+                    <q-item-section>{{ sugg.value }}</q-item-section>
+                  </q-item>
+                  <q-item v-if="suggestions.length === 0">
+                    <q-item-section class="text-grey">
+                      {{ t('no_results') }}
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-input>
+          </transition>
         </div>
       </div>
     </div>
@@ -121,6 +123,8 @@ const map = ref<Map>()
 let marker: Marker | undefined
 
 const defaultCenter: [number, number] = [6.142873, 46.205066]
+
+const hasLocation = computed(() => addressLocation.value.lat && addressLocation.value.lon)
 
 onMounted(onInit)
 
@@ -222,10 +226,26 @@ function onSuggestionSelected(suggestion: Suggestion) {
   onUpdateMarker()
   onUpdate()
 }
+
+function onRemoveLocation() {
+  addressLocation.value.lat = undefined
+  addressLocation.value.lon = undefined
+  addressLocation.value.address = ''
+  onUpdateMarker()
+}
 </script>
 
 <style scoped>
 .mapinput {
   height: var(--t-height);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0; /* Start or end with opacity 0 for the fade effect */
 }
 </style>

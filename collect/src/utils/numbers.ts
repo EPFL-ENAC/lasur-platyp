@@ -10,7 +10,10 @@ export function toDMS(deg: number) {
 }
 
 // Function to convert decimal coordinates to a user-friendly format (DMS + N/S/E/W)
-export function formatCoordinates(lat: number, lon: number) {
+export function formatCoordinates(lat: number | undefined, lon: number | undefined) {
+  if (lat === undefined || lon === undefined) {
+    return ''
+  }
   const latDirection = lat >= 0 ? 'N' : 'S'
   const lonDirection = lon >= 0 ? 'E' : 'W'
 
