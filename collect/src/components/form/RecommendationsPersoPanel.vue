@@ -18,37 +18,7 @@
           <div class="rounded-borders q-mb-md bg-secondary text-white">
             <div class="q-pa-md">
               <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
-
-              <div v-if="hasBenefits(reco)">
-                <div
-                  v-if="showBenefits.includes(reco)"
-                  class="bg-primary q-mt-md q-pa-sm rounded-borders"
-                >
-                  <q-markdown :src="t(`benefits.${reco}`)" />
-                </div>
-                <q-btn
-                  v-if="showBenefits.includes(reco)"
-                  @click="showBenefits = showBenefits.filter((b) => b !== reco)"
-                  :label="t('benefits.hide')"
-                  color="grey-4"
-                  size="md"
-                  icon-right="keyboard_arrow_up"
-                  no-caps
-                  flat
-                  dense
-                />
-                <q-btn
-                  v-else
-                  @click="showBenefits = [...showBenefits, reco]"
-                  :label="t('benefits.show')"
-                  color="white"
-                  size="md"
-                  icon-right="keyboard_arrow_down"
-                  no-caps
-                  flat
-                  dense
-                />
-              </div>
+              <BenefitsPanel :reco="reco" />
               <q-item-label
                 v-if="getActions(idx).length"
                 class="text-body1 text-green-2 text-bold q-mt-md"
@@ -79,11 +49,10 @@
 
 <script setup lang="ts">
 import SectionItem from 'src/components/form/SectionItem.vue'
+import BenefitsPanel from 'src/components/form/BenefitsPanel.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()
-
-const showBenefits = ref<string[]>([])
 
 const mainFm = computed(() => {
   const data = survey.record.data
@@ -130,9 +99,5 @@ function getActions(idx: number) {
     return mesure_dt2.value.map((action) => t(`actions.${action}`)) || []
   }
   return []
-}
-
-function hasBenefits(reco: string) {
-  return t(`benefits.${reco}`) !== `benefits.${reco}`
 }
 </script>

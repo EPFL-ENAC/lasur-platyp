@@ -16,6 +16,7 @@
                 t('local')
               }}</q-item-label>
               <q-item-label class="text-h5">{{ t(`reco.${recoLoc}`) }}</q-item-label>
+              <BenefitsPanel :reco="recoLoc" />
               <q-item-label v-if="actionsLoc.length" class="text-body1 text-green-2 text-bold">{{
                 t('form.actions', {
                   count: actionsLoc.length,
@@ -36,6 +37,7 @@
                 t('regional')
               }}</q-item-label>
               <q-item-label class="text-h5">{{ t(`reco.${recoReg}`) }}</q-item-label>
+              <BenefitsPanel :reco="recoReg" />
               <q-item-label v-if="actionsRegInt.length" class="text-body1 text-green-2 text-bold">{{
                 t('form.actions', {
                   count: actionsRegInt.length,
@@ -56,6 +58,7 @@
                 t('international')
               }}</q-item-label>
               <q-item-label class="text-h5">{{ t(`reco.${recoInt}`) }}</q-item-label>
+              <BenefitsPanel :reco="recoInt" />
               <q-item-label v-if="actionsRegInt.length" class="text-body1 text-green-2 text-bold">{{
                 t('form.actions', {
                   count: actionsRegInt.length,
@@ -72,6 +75,7 @@
 
 <script setup lang="ts">
 import SectionItem from 'src/components/form/SectionItem.vue'
+import BenefitsPanel from 'src/components/form/BenefitsPanel.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

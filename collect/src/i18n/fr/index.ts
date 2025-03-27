@@ -179,16 +179,6 @@ export default {
   benefits: {
     show: 'Voir les avantages',
     hide: 'Masquer les avantages',
-    bike: 'Les atouts du vélo :\n* La part du vélo dans les déplacements pendulaires a augmenté de 43% entre 2015 et 2021 sur le canton de Genève\n* Aller au travail en vélo diminue en moyenne de 10% le risque de mortalité et 30% le taux de mortalité lié à un cancer',
-    walk: 'Les atouts de la marche :\n* Aller au travail en marchant diminue en moyenne de 10% le risque de maladie cardiovasculaire et 30% le risque de diabète de type II\n* Plus de 20% des résidents du canton de Genève vont au travail en marchant, alors : pourquoi pas vous ?',
-    train:
-      'Les atouts du train :\n* Lire un bon livre, traiter ses mails, ou simplement rêvasser : Le train est le mode de transport pour lequel on utilise le mieux son temps de déplacement\n* Voyager en train émet en moyenne 25 fois moins de gaz à effet de serre que seul en voiture',
-    tpu: "Les atouts des transports publics :\n* La Suisse obtient de loin les meilleurs résultats européens en termes de ponctualité, de densité du réseau et de densité d'offre de transport public\n* Voyager en transport public émet en moyenne 5 fois moins de gaz à effet de serre que seul en voiture",
-    elec: "Les atouts du véhicule électrique :\n* Une voiture électrique légère ou compacte émet 2,3 fois moins par km qu'une voiture thermique\n* Les véhicules électriques permettent également de réduire les nuisances sonores et la pollution atmosphérique en ville",
-    carpool:
-      "Les atouts du covoiturage :\n* Covoiturer, c'est diviser par le nombre d'occupants ses émissions, mais aussi toutes les externalités de la voiture (congestion, pollution, bruit)\n* Hé Léman, Illicov, covoiturage-leman.org, e-covoiturage.ch, mov'ici… Les initiatives pour favoriser le covoiturage se développent à grands pas, en parallèle de politiques favorables (P+R, voies réservées)",
-    inter:
-      "Les atouts de l'intermodalité :\n* De plus en plus d'offres voient le jour pour faciliter l'intermodalité (offre transport public-vélo en libre-service, vélostation dans les gares, abonnements P+R…)\n* Faire une partie de son trajet de manière décarbonée et/ou active fait déjà une différence : chaque kilomètre compte lorsqu'il s'agit des bienfaits pour la santé et/ou l'environnement",
   },
   resume: 'Continuer le questionaire',
   start_new: 'Ou recommencer du début',
