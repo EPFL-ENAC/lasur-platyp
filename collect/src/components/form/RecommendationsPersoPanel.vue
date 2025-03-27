@@ -19,14 +19,41 @@
             <q-item
               active-class="bg-teal-1 text-grey-8"
               v-ripple
-              clickable
               class="rounded-borders q-mb-md bg-secondary text-white"
             >
               <q-item-section>
                 <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
+
+                <div v-if="hasBenefits(reco)">
+                  <div v-if="showBenefits" class="bg-primary q-mt-md q-pa-sm rounded-borders">
+                    <q-markdown :src="t(`benefits.${reco}`)" />
+                  </div>
+                  <q-btn
+                    v-if="showBenefits"
+                    @click="showBenefits = false"
+                    :label="t('benefits.hide')"
+                    color="grey-4"
+                    size="md"
+                    icon-right="keyboard_arrow_up"
+                    no-caps
+                    flat
+                    dense
+                  />
+                  <q-btn
+                    v-else
+                    @click="showBenefits = true"
+                    :label="t('benefits.show')"
+                    color="white"
+                    size="md"
+                    icon-right="keyboard_arrow_down"
+                    no-caps
+                    flat
+                    dense
+                  />
+                </div>
                 <q-item-label
                   v-if="getActions(idx).length"
-                  class="text-body1 text-green-2 text-bold"
+                  class="text-body1 text-green-2 text-bold q-mt-md"
                   >{{
                     t('form.actions', {
                       count: getActions(idx).length,
@@ -59,6 +86,8 @@ import SectionItem from 'src/components/form/SectionItem.vue'
 const { t } = useI18n()
 const survey = useSurvey()
 
+const showBenefits = ref(false)
+
 const mainFm = computed(() => {
   const data = survey.record.data
   if (data.freq_mod_combined) return 'combined'
@@ -89,6 +118,14 @@ const mesure_dt1 = computed(() => survey.recommendation.reco_actions?.mesure_dt1
 const mesure_dt2 = computed(() => survey.recommendation.reco_actions?.mesure_dt2 || [])
 // const hasActions = computed(() => mesure_dt1.value.length > 0 || mesure_dt2.value.length > 0)
 
+const globalActions = computed(() => {
+  return (
+    survey.recommendation.reco_actions?.mesures_globa?.map((action: string) =>
+      t(`actions.${action}`),
+    ) || []
+  )
+})
+
 function getActions(idx: number) {
   if (idx === 0) {
     return mesure_dt1.value.map((action) => t(`actions.${action}`)) || []
@@ -98,11 +135,7 @@ function getActions(idx: number) {
   return []
 }
 
-const globalActions = computed(() => {
-  return (
-    survey.recommendation.reco_actions?.mesures_globa?.map((action: string) =>
-      t(`actions.${action}`),
-    ) || []
-  )
-})
+function hasBenefits(reco: string) {
+  return t(`benefits.${reco}`) !== `benefits.${reco}`
+}
 </script>
