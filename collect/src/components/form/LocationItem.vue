@@ -4,7 +4,12 @@
     <div v-if="hint" class="text-h6">{{ hint }}</div>
     <div class="q-mt-lg">
       <q-list>
-        <q-item class="rounded-borders q-mb-md bg-primary text-green-3" v-ripple>
+        <q-item
+          class="rounded-borders q-mb-md bg-primary text-green-3"
+          v-ripple
+          :clickable="!hasLocation"
+          @click="showInput = !showInput"
+        >
           <q-item-section>
             <span v-if="hasLocation" class="text-h6 text-white">
               <q-icon name="location_on" color="white" class="q-pb-xs" />

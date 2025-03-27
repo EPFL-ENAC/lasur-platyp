@@ -14,57 +14,51 @@
           />
           <SectionItem v-else :label="t(`main_mode.sustainable`)" />
         </div>
-        <q-list>
-          <template v-for="(reco, idx) in recoDt" :key="idx">
-            <q-item
-              active-class="bg-teal-1 text-grey-8"
-              v-ripple
-              class="rounded-borders q-mb-md bg-secondary text-white"
-            >
-              <q-item-section>
-                <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
+        <template v-for="(reco, idx) in recoDt" :key="idx">
+          <div class="rounded-borders q-mb-md bg-secondary text-white">
+            <div class="q-pa-md">
+              <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
 
-                <div v-if="hasBenefits(reco)">
-                  <div v-if="showBenefits" class="bg-primary q-mt-md q-pa-sm rounded-borders">
-                    <q-markdown :src="t(`benefits.${reco}`)" />
-                  </div>
-                  <q-btn
-                    v-if="showBenefits"
-                    @click="showBenefits = false"
-                    :label="t('benefits.hide')"
-                    color="grey-4"
-                    size="md"
-                    icon-right="keyboard_arrow_up"
-                    no-caps
-                    flat
-                    dense
-                  />
-                  <q-btn
-                    v-else
-                    @click="showBenefits = true"
-                    :label="t('benefits.show')"
-                    color="white"
-                    size="md"
-                    icon-right="keyboard_arrow_down"
-                    no-caps
-                    flat
-                    dense
-                  />
+              <div v-if="hasBenefits(reco)">
+                <div v-if="showBenefits" class="bg-primary q-mt-md q-pa-sm rounded-borders">
+                  <q-markdown :src="t(`benefits.${reco}`)" />
                 </div>
-                <q-item-label
-                  v-if="getActions(idx).length"
-                  class="text-body1 text-green-2 text-bold q-mt-md"
-                  >{{
-                    t('form.actions', {
-                      count: getActions(idx).length,
-                      actions: getActions(idx).join(', '),
-                    })
-                  }}</q-item-label
-                >
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-list>
+                <q-btn
+                  v-if="showBenefits"
+                  @click="showBenefits = false"
+                  :label="t('benefits.hide')"
+                  color="grey-4"
+                  size="md"
+                  icon-right="keyboard_arrow_up"
+                  no-caps
+                  flat
+                  dense
+                />
+                <q-btn
+                  v-else
+                  @click="showBenefits = true"
+                  :label="t('benefits.show')"
+                  color="white"
+                  size="md"
+                  icon-right="keyboard_arrow_down"
+                  no-caps
+                  flat
+                  dense
+                />
+              </div>
+              <q-item-label
+                v-if="getActions(idx).length"
+                class="text-body1 text-green-2 text-bold q-mt-md"
+                >{{
+                  t('form.actions', {
+                    count: getActions(idx).length,
+                    actions: getActions(idx).join(', '),
+                  })
+                }}</q-item-label
+              >
+            </div>
+          </div>
+        </template>
       </q-card-section>
       <q-card-section v-if="globalActions.length" class="q-pt-none">
         <div class="text-body1 text-bold text-green-2">

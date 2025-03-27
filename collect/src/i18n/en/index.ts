@@ -179,7 +179,7 @@ export default {
   start: 'Start',
   token: 'Token',
   lookup_address_or_select_on_map: 'Lookup address or select on map',
-  type_enter_to_lookup_address: 'Press Enter to lookup address',
+  type_enter_to_lookup_address: 'Type address, then press Enter to lookup',
   welcome: 'Welcome to the {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
   no_results: 'No results',

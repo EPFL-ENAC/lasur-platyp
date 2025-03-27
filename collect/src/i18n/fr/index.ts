@@ -190,7 +190,7 @@ export default {
   start: 'Démarrer',
   token: 'Identifiant',
   lookup_address_or_select_on_map: 'Rechercher une adresse ou sélectionner sur la carte',
-  type_enter_to_lookup_address: "Taper Entrée pour chercher l'adresse",
+  type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",
   welcome: 'Bienvenue sur le {brand}',
   welcome_intro:
     'Veuillez remplir ce questionnaire afin de pouvoir vous proposer les mesures de mobilité les plus pertinentes pour vous',
