@@ -109,7 +109,7 @@ export default {
     },
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations: 'Recommended modes of transport for your home-to-work journeys',
-    recommendations_pro: 'Recommended modes of transport for your professional journeys',
+    recommendations_pro: 'Recommended modes of transport for your professional journeys:',
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employeur also proposes the measure: {actions} | Your employeur also proposes the measures: {actions}',

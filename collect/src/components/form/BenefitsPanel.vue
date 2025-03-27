@@ -33,9 +33,9 @@
 <script setup lang="ts">
 import { hasBenefits, getBenefits } from 'src/utils/benefits'
 
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 
-const props = defineProps<{
+defineProps<{
   reco: string
 }>()
 
