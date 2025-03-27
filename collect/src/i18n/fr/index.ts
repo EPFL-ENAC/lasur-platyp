@@ -76,7 +76,7 @@ export default {
     freq_mod_pro:
       'A quelle fréquence utilisez vous les modes suivants pour vos déplacements professionnels ?',
     importance:
-      "Quelle est l'importance des aspectys suivants pour vous, dans votre mobilité quotidienne ?",
+      "Quelle est l'importance des aspects suivants pour vous, dans votre mobilité quotidienne ?",
     importance_hint: 'Sur une échelle de 1 (pas important du tout) à 5 (très important)',
     importance_time: 'Temps de trajet',
     importance_cost: 'Coût',
