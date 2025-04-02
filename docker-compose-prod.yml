@@ -1,0 +1,102 @@
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      # - "--log.level=DEBUG"
+      - "--api.dashboard=false"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=enacit4research@epfl.ch"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+    restart: always
+    networks:
+      - web
+
+  backend:
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/backend:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+    environment:
+      DB_URL: ${TOOLKIT_DB_URL}
+      KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_API_ID: ${KEYCLOAK_API_ID}
+      KEYCLOAK_API_SECRET: ${KEYCLOAK_API_SECRET}
+      LASUR_API_URL: https://lasur-ws.epfl.ch
+      LASUR_API_KEY: ${LASUR_API_KEY}
+    networks:
+      - web
+
+  admin:
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/admin:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/admin`)"
+      - "traefik.http.routers.admin.entrypoints=websecure"
+      - "traefik.http.routers.admin.tls.certresolver=letsencrypt"
+    environment:
+      API_URL: https://toolkit.modus-ge.ch
+      API_PATH: /api
+      KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
+      COLLECT_URL: https://toolkit.modus-ge.ch
+    networks:
+      - web
+
+  collect:
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/collect:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.collect.rule=Host(`toolkit.modus-ge.ch`)"
+      - "traefik.http.routers.collect.entrypoints=websecure"
+      - "traefik.http.routers.collect.tls.certresolver=letsencrypt"
+    environment:
+      API_URL: https://toolkit.modus-ge.ch
+      API_PATH: /api
+    networks:
+      - web
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0
+    command: ["start-dev"]
+    restart: always
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: ${KEYCLOAK_DB_URL}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KC_HOSTNAME: toolkit.modus-ge.ch
+      KC_HTTP_RELATIVE_PATH: /auth  # Set Keycloak to run under /auth
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      # KC_PROXY: edge
+    depends_on:
+      - keycloak-db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/auth`)"
+      - "traefik.http.routers.keycloak.middlewares=keycloak-stripprefix"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.keycloak-stripprefix.stripprefix.prefixes=/auth"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
