@@ -36,7 +36,7 @@ services:
       - "8000:8000"
     environment:
       DB_URL: ${TOOLKIT_DB_URL}
-      KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth
+      KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth/
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_API_ID: ${KEYCLOAK_API_ID}
       KEYCLOAK_API_SECRET: ${KEYCLOAK_API_SECRET}
@@ -57,7 +57,7 @@ services:
     environment:
       API_URL: https://toolkit.modus-ge.ch
       API_PATH: /api
-      KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth
+      KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth/
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
       COLLECT_URL: https://toolkit.modus-ge.ch
