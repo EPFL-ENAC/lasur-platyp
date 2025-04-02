@@ -39,7 +39,7 @@ export default {
       upt_subs: 'Abonnement de transports publics urbains',
       train_subs: 'Abonnement de train',
       car_driver: 'Voiture (en tant que conducteur)',
-      moto: 'Motorcycle / scooter / moped',
+      moto: 'Moto / scooter / cyclomoteur',
       ebike: 'Vélo à assistance électrique',
       mob_subs: 'Abonnement de mobilité partagée (mobility, etc.)',
       car_passenger: 'Voiture (en tant que passager)',
