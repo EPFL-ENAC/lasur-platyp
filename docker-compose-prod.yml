@@ -2,7 +2,7 @@ services:
   traefik:
     image: traefik:v2.10
     command:
-      # - "--log.level=DEBUG"
+      #- "--log.level=DEBUG"
       - "--api.dashboard=false"
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -24,12 +24,16 @@ services:
       - web
 
   backend:
-    image: ghcr.io/epfl-enac/epfl-lasur/platyp/backend:latest
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/backend:v0.9.0
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api"
+      - "traefik.http.routers.backend.middlewares=backend-stripprefix"
+    ports:
+      - "8000:8000"
     environment:
       DB_URL: ${TOOLKIT_DB_URL}
       KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth
@@ -42,12 +46,14 @@ services:
       - web
 
   admin:
-    image: ghcr.io/epfl-enac/epfl-lasur/platyp/admin:latest
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/admin:v0.9.0
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.admin.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/admin`)"
       - "traefik.http.routers.admin.entrypoints=websecure"
       - "traefik.http.routers.admin.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.admin-stripprefix.stripprefix.prefixes=/admin"
+      - "traefik.http.routers.admin.middlewares=admin-stripprefix"
     environment:
       API_URL: https://toolkit.modus-ge.ch
       API_PATH: /api
@@ -59,10 +65,10 @@ services:
       - web
 
   collect:
-    image: ghcr.io/epfl-enac/epfl-lasur/platyp/collect:latest
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/collect:v0.9.0
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.collect.rule=Host(`toolkit.modus-ge.ch`)"
+      - "traefik.http.routers.collect.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/`)"
       - "traefik.http.routers.collect.entrypoints=websecure"
       - "traefik.http.routers.collect.tls.certresolver=letsencrypt"
     environment:
@@ -72,8 +78,8 @@ services:
       - web
 
   keycloak:
-    image: quay.io/keycloak/keycloak:22.0
-    command: ["start-dev"]
+    image: quay.io/keycloak/keycloak:26.1.4
+    command: ["start"]
     restart: always
     environment:
       KC_DB: postgres
@@ -81,20 +87,19 @@ services:
       KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
       KC_HOSTNAME: toolkit.modus-ge.ch
-      KC_HTTP_RELATIVE_PATH: /auth  # Set Keycloak to run under /auth
+      KC_HTTP_RELATIVE_PATH: /auth
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      # KC_PROXY: edge
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: true
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.keycloak.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/auth`)"
-      - "traefik.http.routers.keycloak.middlewares=keycloak-stripprefix"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
       - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
-      - "traefik.http.middlewares.keycloak-stripprefix.stripprefix.prefixes=/auth"
     networks:
       - web
 
 networks:
   web:
-    external: true
+    driver: bridge

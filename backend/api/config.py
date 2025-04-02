@@ -6,11 +6,11 @@ from functools import lru_cache
 class Config(BaseSettings):
 
     # Postgres settings
-    DB_HOST: str
-    DB_PORT: int  # 5432
-    DB_USER: str
-    DB_PASSWORD: str
-    DB_NAME: str  # postgres
+    DB_HOST: str | None = None
+    DB_PORT: int = 5432
+    DB_USER: str | None = None
+    DB_PASSWORD: str | None = None
+    DB_NAME: str | None = None  # postgres
     DB_PREFIX: str = "postgresql+asyncpg"
     DB_URL: str | None = None
 
