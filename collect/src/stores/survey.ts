@@ -6,6 +6,7 @@ export const useSurvey = defineStore(
   'survey',
   () => {
     const stepNames = [
+      'agreement',
       'age_class',
       'employment',
       'places',

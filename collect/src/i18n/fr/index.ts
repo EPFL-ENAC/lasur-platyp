@@ -4,9 +4,17 @@ export default {
   },
   form: {
     error: {
+      terms_conditions: 'Veuillez accepter les conditions générales pour continuer',
+      confidentiality: 'Veuillez accepter la politique de confidentialité pour continuer',
       origin: 'Veuillez entrer un point de départ',
       workplace: 'Veuillez entrer un lieu de travail',
     },
+    agreement: 'Accord',
+    terms_conditions: "J'ai lu et accepte les conditions générales d'utilisation",
+    terms_conditions_link: "Voir les conditions générales d'utilisation",
+    confidentiality: "J'ai lu et accepte la politique de confidentialité",
+    confidentiality_link: 'Voir la politique de confidentialité',
+
     age_class: "Quelle est votre classe d'âge ?",
     age_class_option: {
       '16_24': 'moins de 25 ans',

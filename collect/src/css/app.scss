@@ -26,16 +26,16 @@ body {
 
 a {
   text-decoration: none;
-  color: black;
+  color: $green-6;
 }
 
 a.q-markdown--link,
 a.modus {
   text-decoration: underline;
-  text-decoration-color: #333;
+  text-decoration-color: $green-6;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
-  color: #333;
+  color: $green-6;
 }
 
 a:hover.q-markdown--link,

@@ -14,6 +14,9 @@ export interface AddressLocation {
 }
 
 export interface RecordData {
+  terms_conditions: boolean
+  confidentiality: boolean
+
   age_class: string
   employment_rate: number
   remote_work_rate: number

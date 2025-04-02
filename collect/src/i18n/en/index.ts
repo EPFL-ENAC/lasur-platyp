@@ -4,9 +4,17 @@ export default {
   },
   form: {
     error: {
+      terms_conditions: 'Please accept the terms and conditions to continue',
+      confidentiality: 'Please accept the confidentiality policy to continue',
       origin: 'Please enter a starting point',
       workplace: 'Please enter a work place location',
     },
+    agreement: 'Agreement',
+    terms_conditions: 'I have read and I accept the terms and conditions',
+    terms_conditions_link: 'See the terms and conditions',
+    confidentiality: 'I have read and I accept the confidentiality policy',
+    confidentiality_link: 'See the confidentiality policy',
+
     age_class: 'What is your age group?',
     age_class_option: {
       '16_24': 'under 25',
