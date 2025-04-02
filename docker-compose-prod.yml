@@ -85,8 +85,6 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       # KC_PROXY: edge
-    depends_on:
-      - keycloak-db
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.keycloak.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/auth`)"
