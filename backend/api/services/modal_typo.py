@@ -1,5 +1,5 @@
 from api.config import config
-from api.models.domain import Record, Company
+from api.models.domain import Record, Company, Campaign
 import requests
 
 
@@ -95,9 +95,9 @@ class ModalTypoService:
             "score_tpu": scores["tpu"],
             "score_train": scores["train"],
             "score_elec": scores["elec"],
-            "fr_pro_loc": record.data["freq_trav_pro_local"],
-            "fr_pro_reg": record.data["freq_trav_pro_region"],
-            "fr_pro_int": record.data["freq_trav_pro_inter"],
+            "pro_loc": 'local' in record.data["trav_pro"],
+            "pro_reg": 'region' in record.data["trav_pro"],
+            "pro_int": 'inter' in record.data["trav_pro"],
             "fm_pro_loc_voit": record.data["freq_mod_pro_local_car"],
             "fm_pro_loc_moto": record.data["freq_mod_pro_local_moto"],
             "fm_pro_loc_tpu": record.data["freq_mod_pro_local_pub"],
@@ -117,22 +117,33 @@ class ModalTypoService:
         response.raise_for_status()
         return response.json()
 
-    def get_recommendation_employer_actions(self, company: Company, reco_dt2: list, reco_pro_loc: str, reco_pro_reg: str, reco_pro_int: str) -> dict:
+    def get_recommendation_employer_actions(self, company: Company, campaign: Campaign, reco_dt2: list, reco_pro_loc: str, reco_pro_reg: str, reco_pro_int: str) -> dict:
         """Get employer actions for a record"""
         url = f"{self.url}/modal-typo/empl"
+        # check if campaign has actions
+        actions = company.actions
+        if campaign.actions:
+            # campaign actions replaces company actions if actions are not empty lists
+            has_actions = False
+            for key, value in campaign.actions.items():
+                if len(value) > 0:
+                    has_actions = True
+                    break
+            if has_actions:
+                actions = campaign.actions
         data = {
             "empl": {
-                "mesures_globa": company.actions["mesures_globa"] if company.actions and "mesures_globa" in company.actions else [],
-                "mesures_tpu": company.actions["mesures_tpu"] if company.actions and "mesures_tpu" in company.actions else [],
-                "mesures_train": company.actions["mesures_train"] if company.actions and "mesures_train" in company.actions else [],
-                "mesures_inter": company.actions["mesures_inter"] if company.actions and "mesures_inter" in company.actions else [],
-                "mesures_velo": company.actions["mesures_velo"] if company.actions and "mesures_velo" in company.actions else [],
-                "mesures_covoit": company.actions["mesures_covoit"] if company.actions and "mesures_covoit" in company.actions else [],
-                "mesures_elec": company.actions["mesures_elec"] if company.actions and "mesures_elec" in company.actions else [],
-                "mesures_pro_velo": company.actions["mesures_pro_velo"] if company.actions and "mesures_pro_velo" in company.actions else [],
-                "mesures_pro_tpu": company.actions["mesures_pro_tpu"] if company.actions and "mesures_pro_tpu" in company.actions else [],
-                "mesures_pro_train": company.actions["mesures_pro_train"] if company.actions and "mesures_pro_train" in company.actions else [],
-                "mesures_pro_elec": company.actions["mesures_pro_elec"] if company.actions and "mesures_pro_elec" in company.actions else [],
+                "mesures_globa": actions["mesures_globa"] if actions and "mesures_globa" in actions else [],
+                "mesures_tpu": actions["mesures_tpu"] if actions and "mesures_tpu" in actions else [],
+                "mesures_train": actions["mesures_train"] if actions and "mesures_train" in actions else [],
+                "mesures_inter": actions["mesures_inter"] if actions and "mesures_inter" in actions else [],
+                "mesures_velo": actions["mesures_velo"] if actions and "mesures_velo" in actions else [],
+                "mesures_covoit": actions["mesures_covoit"] if actions and "mesures_covoit" in actions else [],
+                "mesures_elec": actions["mesures_elec"] if actions and "mesures_elec" in actions else [],
+                "mesures_pro_velo": actions["mesures_pro_velo"] if actions and "mesures_pro_velo" in actions else [],
+                "mesures_pro_tpu": actions["mesures_pro_tpu"] if actions and "mesures_pro_tpu" in actions else [],
+                "mesures_pro_train": actions["mesures_pro_train"] if actions and "mesures_pro_train" in actions else [],
+                "mesures_pro_elec": actions["mesures_pro_elec"] if actions and "mesures_pro_elec" in actions else [],
             },
             "reco_dt2": reco_dt2,
             "reco_pro_loc": reco_pro_loc,
@@ -142,4 +153,6 @@ class ModalTypoService:
         response = requests.post(
             url, headers=self.headers, json=data)
         response.raise_for_status()
-        return response.json()
+        empl_actions = response.json()
+        empl_actions["mesures_globa"] = actions["mesures_globa"] if actions and "mesures_globa" in actions else []
+        return empl_actions

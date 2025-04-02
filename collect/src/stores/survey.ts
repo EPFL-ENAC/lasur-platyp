@@ -5,12 +5,35 @@ import type { Record, Recommendation } from 'src/models'
 export const useSurvey = defineStore(
   'survey',
   () => {
+    const stepNames = [
+      'age_class',
+      'employment',
+      'places',
+      'travel_time',
+      'constraints',
+      'equipments',
+      'freq_mod',
+      'trav_pro',
+      'freq_mod_pro_local',
+      'freq_mod_pro_region',
+      'freq_mod_pro_inter',
+      'importance',
+      'needs',
+      'adjectives_bike',
+      'adjectives_pub_train',
+      'adjectives_car_moto',
+      'recommendations',
+      'comments',
+    ]
+
     const tokenOrSlug = ref<string | null>(null)
     const record = ref<Record>({} as Record)
     const started = ref(false)
     const step = ref(0)
     const timestamp = ref(Date.now())
     const recommendation = ref<Recommendation>({})
+
+    const stepName = computed(() => stepNames[step.value - 1])
 
     function init(cr: Record) {
       record.value = cr
@@ -29,8 +52,37 @@ export const useSurvey = defineStore(
       tokenOrSlug.value = null
     }
 
+    function isBeforeStep(name: string) {
+      return step.value < stepNames.indexOf(name) + 1
+    }
+
+    function isAfterStep(name: string) {
+      return step.value > stepNames.indexOf(name) + 1
+    }
+
     function incStep() {
-      if (step.value === 8 && record.value.data.freq_trav_pro_local < 4) {
+      step.value += 1
+      let skipped = skipIncSteps()
+      while (skipped) {
+        skipped = skipIncSteps()
+      }
+      timestamp.value = Date.now()
+    }
+
+    function decStep() {
+      step.value -= 1
+      let skipped = skipDecSteps()
+      while (skipped) {
+        skipped = skipDecSteps()
+      }
+      timestamp.value = Date.now()
+    }
+
+    function skipIncSteps() {
+      if (
+        stepName.value === 'freq_mod_pro_local' &&
+        !record.value.data.trav_pro?.includes('local')
+      ) {
         record.value.data = {
           ...record.value.data,
           freq_mod_pro_local_walking: 0,
@@ -41,8 +93,14 @@ export const useSurvey = defineStore(
           freq_mod_pro_local_train: 0,
           freq_mod_pro_local_combined: false,
         }
-        step.value += 2
-      } else if (step.value === 10 && record.value.data.freq_trav_pro_region < 2) {
+        step.value += 1
+        return true
+      }
+
+      if (
+        stepName.value === 'freq_mod_pro_region' &&
+        !record.value.data.trav_pro?.includes('region')
+      ) {
         record.value.data = {
           ...record.value.data,
           freq_mod_pro_region_pub: 0,
@@ -52,8 +110,14 @@ export const useSurvey = defineStore(
           freq_mod_pro_region_plane: 0,
           freq_mod_pro_region_combined: false,
         }
-        step.value += 2
-      } else if (step.value === 12 && record.value.data.freq_trav_pro_inter < 1) {
+        step.value += 1
+        return true
+      }
+
+      if (
+        stepName.value === 'freq_mod_pro_inter' &&
+        !record.value.data.trav_pro?.includes('inter')
+      ) {
         record.value.data = {
           ...record.value.data,
           freq_mod_pro_inter_car: 0,
@@ -61,36 +125,51 @@ export const useSurvey = defineStore(
           freq_mod_pro_inter_plane: 0,
           freq_mod_pro_inter_combined: false,
         }
-        step.value += 2
-      } else {
         step.value += 1
+        return true
       }
 
-      timestamp.value = Date.now()
+      return false
     }
 
-    function decStep() {
-      if (step.value === 10 && record.value.data.freq_trav_pro_local < 4) {
-        step.value -= 2
-      } else if (step.value === 12 && record.value.data.freq_trav_pro_region < 2) {
-        step.value -= 2
-      } else if (step.value === 14 && record.value.data.freq_trav_pro_inter < 1) {
-        step.value -= 2
-      } else {
+    function skipDecSteps() {
+      if (
+        stepName.value === 'freq_mod_pro_local' &&
+        !record.value.data.trav_pro?.includes('local')
+      ) {
         step.value -= 1
+        return true
       }
-      timestamp.value = Date.now()
+      if (
+        stepName.value === 'freq_mod_pro_region' &&
+        !record.value.data.trav_pro?.includes('region')
+      ) {
+        step.value -= 1
+        return true
+      }
+      if (
+        stepName.value === 'freq_mod_pro_inter' &&
+        !record.value.data.trav_pro?.includes('inter')
+      ) {
+        step.value -= 1
+        return true
+      }
+      return false
     }
 
     return {
+      stepNames,
       tokenOrSlug,
       record,
       started,
       step,
+      stepName,
       timestamp,
       recommendation,
       init,
       reset,
+      isBeforeStep,
+      isAfterStep,
       incStep,
       decStep,
     }

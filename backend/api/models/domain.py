@@ -37,7 +37,7 @@ class EmployerActions(BaseModel):
 
 
 class CompanyBase(Entity):
-    administrators: Optional[List[str]]
+    administrators: Optional[List[str]] = Field(default=None)
     actions: Optional[EmployerActions] = Field(
         default=None, sa_column=Column(JSON))
 

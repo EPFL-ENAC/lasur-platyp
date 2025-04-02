@@ -32,17 +32,17 @@ a {
 a.q-markdown--link,
 a.modus {
   text-decoration: underline;
-  text-decoration-color: #01983b;
+  text-decoration-color: #333;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
-  color: black;
+  color: #333;
 }
 
 a:hover.q-markdown--link,
 a:hover.modus {
   text-decoration: underline;
-  text-decoration-color: black;
-  color: #01983b;
+  text-decoration-color: #333;
+  color: #333;
 }
 
 .text-help {

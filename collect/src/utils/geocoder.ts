@@ -1,7 +1,7 @@
 import type { Feature, FeatureCollection } from 'geojson'
 
 const COUNTRIES = ['ch', 'fr']
-const VIEWBOX = '5.5,45.8,7.65,47'
+const VIEWBOX = '5,45,9,48'
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
 
 function handleNominatimResponse(geojson: FeatureCollection): Feature[] {

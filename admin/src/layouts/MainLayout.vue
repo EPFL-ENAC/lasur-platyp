@@ -11,6 +11,24 @@
           <span class="text-primary text-bold on-right">{{ t('main.brand') }}</span>
         </q-toolbar-title>
 
+        <q-btn-dropdown flat dense :label="locale" class="on-left">
+          <q-list>
+            <q-item
+              clickable
+              v-close-popup
+              @click="onLocaleSelection(localeOpt)"
+              v-for="localeOpt in localeOptions"
+              :key="localeOpt.value"
+            >
+              <q-item-section>
+                <q-item-label>{{ localeOpt.label }}</q-item-label>
+              </q-item-section>
+              <q-item-section avatar v-if="locale === localeOpt.value">
+                <q-icon color="primary" name="check" />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
         <a href="https://www.epfl.ch" target="_blank">
           <img src="EPFL.svg" height="20px" class="on-left" />
         </a>
@@ -100,13 +118,24 @@
 </template>
 
 <script setup lang="ts">
+import { Cookies } from 'quasar'
+import { locales } from 'boot/i18n'
 import LoginDialog from 'src/components/LoginDialog.vue'
 
 const authStore = useAuthStore()
-const { t } = useI18n()
+const { locale, t } = useI18n()
 
 const showLogin = ref(false)
 const loggedOut = ref(false)
+const leftDrawerOpen = ref(false)
+
+const username = computed(() => authStore.profile?.email)
+const localeOptions = computed(() => {
+  return locales.map((key) => ({
+    label: key.toUpperCase(),
+    value: key,
+  }))
+})
 
 onMounted(() => {
   authStore.init().then(() => {
@@ -127,10 +156,6 @@ watch(
   },
 )
 
-const leftDrawerOpen = ref(false)
-
-const username = computed(() => authStore.profile?.email)
-
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
@@ -138,5 +163,10 @@ function toggleLeftDrawer() {
 function onLogout() {
   loggedOut.value = true
   authStore.logout()
+}
+
+function onLocaleSelection(localeOpt: { label: string; value: string }) {
+  locale.value = localeOpt.value
+  Cookies.set('locale', localeOpt.value)
 }
 </script>

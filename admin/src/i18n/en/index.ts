@@ -14,6 +14,7 @@ export default {
   },
   campaign: {
     label: 'Campaign',
+    with_actions: 'With employer measures specific to this campaign',
   },
   role: {
     'platyp-user': 'User',
@@ -39,7 +40,7 @@ export default {
     mesures_inter_hint: '',
     mesures_velo_label: 'Bicycle',
     mesures_velo_hint: '',
-    mesures_covoit_label: 'Care sharing',
+    mesures_covoit_label: 'Care pooling',
     mesures_covoit_hint: '',
     mesures_elec_label: 'Electric',
     mesures_elec_hint: '',
@@ -71,7 +72,7 @@ export default {
     carpool_connect: 'Connection to nearby colleagues to facilitate car-pooling',
     carpool_parking: 'Parking spots reserved for car-pooling',
     ev_charging: 'EV charging at the workplace',
-    mobility_pass: 'Mobility car-sharing pass',
+    mobility_pass: 'Mobility car-pooling pass',
     ebike_fleet: 'E-bike fleet for professional trips',
     tpu_pro: 'Public transport (UNIRESO) pass',
     train_pro: 'Train pass (general pass)',
@@ -87,6 +88,7 @@ export default {
   download: 'Download',
   records: 'Records',
   companies: 'Companies',
+  company_campaign: 'Company (campaign)',
   company_removed: 'Company removed',
   content: 'Content',
   cookbook: 'Cookbook',
@@ -142,4 +144,5 @@ export default {
   survey_link: 'Link to survey',
   token: 'Token',
   users: 'Users',
+  your_role: 'Your role is: {role}',
 }

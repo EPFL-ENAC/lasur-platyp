@@ -20,7 +20,7 @@
                     <q-item-label class="text-h4" :class="optionLabelClass">{{
                       option.label
                     }}</q-item-label>
-                    <q-item-label v-if="option.hint" caption>
+                    <q-item-label v-if="option.hint" class="text-h6">
                       {{ option.hint }}
                     </q-item-label>
                   </q-item-section>
@@ -77,7 +77,7 @@ function isSelected(option: Option) {
 
 function onOption(option: Option) {
   if (props.multiple) {
-    const value = props.modelValue as string[]
+    const value = (props.modelValue as string[]) || []
     const index = value.indexOf(option.value)
     if (index === -1) {
       if (props.max === undefined || value.length < props.max) {

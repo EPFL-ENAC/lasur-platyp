@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Company, EmployerActions } from 'src/models'
+import type { Company } from 'src/models'
 import type { Service } from 'src/stores/services'
 import CompanyCampaigns from 'src/components/CompanyCampaigns.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
@@ -69,6 +69,7 @@ import type { FieldItem } from 'src/components/FieldsList.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import CompanyDialog from 'src/components/CompanyDialog.vue'
 import { notifySuccess } from 'src/utils/notify'
+import { actionItems, actionProItems } from 'src/utils/options'
 
 const route = useRoute()
 const router = useRouter()
@@ -92,33 +93,6 @@ const items: FieldItem[] = [
     format: (company: Company) => company.administrators?.join(', '),
   },
 ]
-
-const actionItems: FieldItem[] = [
-  'mesures_globa',
-  'mesures_tpu',
-  'mesures_train',
-  'mesures_inter',
-  'mesures_velo',
-  'mesures_covoit',
-  'mesures_elec',
-].map((field) => ({
-  field,
-  label: `actions.${field}_label`,
-  format: (actions: EmployerActions) =>
-    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
-}))
-
-const actionProItems: FieldItem[] = [
-  'mesures_pro_velo',
-  'mesures_pro_tpu',
-  'mesures_pro_train',
-  'mesures_pro_elec',
-].map((field) => ({
-  field,
-  label: `actions.${field}_label`,
-  format: (actions: EmployerActions) =>
-    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
-}))
 
 onMounted(() => {
   if (id.value === undefined) return

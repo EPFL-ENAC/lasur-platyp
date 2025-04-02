@@ -12,6 +12,8 @@ declare module '@vue/runtime-core' {
 
 interface CustomWindow extends Window {
   env: {
+    KEYCLOAK_URL?: string
+    KEYCLOAK_REALM?: string
     AUTH_CLIENT_ID: string
     API_URL: string
     API_PATH: string
@@ -22,8 +24,8 @@ interface CustomWindow extends Window {
 const appEnv = (window as unknown as CustomWindow).env
 
 const keycloak = new Keycloak({
-  url: 'https://enac-it-sso.epfl.ch/',
-  realm: 'LASUR',
+  url: appEnv.KEYCLOAK_URL || 'https://enac-it-sso.epfl.ch/',
+  realm: appEnv.KEYCLOAK_REALM || 'LASUR',
   clientId: appEnv.AUTH_CLIENT_ID,
 })
 const baseUrl = `${appEnv.API_URL}${appEnv.API_PATH}`

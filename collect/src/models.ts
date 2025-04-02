@@ -8,7 +8,7 @@ export interface ParticipantData {
 }
 
 export interface AddressLocation {
-  address: string
+  address: string | undefined
   lat?: number | undefined
   lon?: number | undefined
 }
@@ -29,7 +29,7 @@ export interface RecordData {
   freq_mod_train: number
   freq_mod_combined: boolean
 
-  freq_trav_pro_local: number
+  trav_pro: string[]
   freq_mod_pro_local_walking: number
   freq_mod_pro_local_bike: number
   freq_mod_pro_local_pub: number
@@ -38,7 +38,6 @@ export interface RecordData {
   freq_mod_pro_local_train: number
   freq_mod_pro_local_combined: boolean
 
-  freq_trav_pro_region: number
   freq_mod_pro_region_pub: number
   freq_mod_pro_region_moto: number
   freq_mod_pro_region_car: number
@@ -46,7 +45,6 @@ export interface RecordData {
   freq_mod_pro_region_plane: number
   freq_mod_pro_region_combined: boolean
 
-  freq_trav_pro_inter: number
   freq_mod_pro_inter_car: number
   freq_mod_pro_inter_train: number
   freq_mod_pro_inter_plane: number
@@ -107,6 +105,7 @@ export interface Recommendation {
     mesure_dt2: string[]
     mesure_pro_loc: string[]
     mesure_pro_regint: string[]
+    mesures_globa?: string[]
   }
   reco_pro?: {
     reco_pro_int: string
