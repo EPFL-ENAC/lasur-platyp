@@ -38,7 +38,7 @@ export default {
     travel_time_minutes: 'minutes (one way)',
     constraints: 'What are your possible constraints related to daily mobility?',
     constraints_option: {
-      dependent: 'Driving children or dependent persons',
+      dependent: 'Accompanying children or dependent persons',
       heavy: 'Transporting heavy/bulky equipment',
       night: 'Night work',
       disabled: 'Parking card for people with reduced mobility',

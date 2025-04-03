@@ -38,7 +38,7 @@ export default {
     travel_time_minutes: 'minutes (aller)',
     constraints: 'Avez vous des contraintes potentielles quant à votre mobilité quotidienne ?',
     constraints_option: {
-      dependent: "Conduite d'enfants ou de personnes dépendantes",
+      dependent: 'Emmener des enfants ou des personnes dépendantes',
       heavy: 'Transport de matériel lourd ou encombrant',
       night: 'Travail de nuit',
       disabled: 'Carte de stationnement pour personne à mobilité réduite',
