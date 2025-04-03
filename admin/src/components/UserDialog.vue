@@ -62,7 +62,12 @@
             :rules="[(val) => !!val || t('field_required')]"
             class="q-mb-md"
           />
-          <q-checkbox v-model="selected.enabled" :label="t('enabled')" class="q-mb-md" />
+          <div>
+            <q-checkbox v-model="isAdministrator" :label="t('administrator')" class="q-mb-md" />
+          </div>
+          <div>
+            <q-checkbox v-model="selected.enabled" :label="t('enabled')" class="q-mb-md" />
+          </div>
         </q-form>
       </q-card-section>
 
@@ -100,6 +105,7 @@ const selected = ref<AppUser>({
   email: '',
 } as AppUser)
 const editMode = ref(false)
+const isAdministrator = ref(false)
 
 watch(
   () => props.modelValue,
@@ -114,6 +120,7 @@ watch(
       if (!editMode.value) {
         onGeneratePassword()
       }
+      isAdministrator.value = selected.value.roles?.includes('platyp-admin') ?? false
     }
     showDialog.value = value
   },
@@ -128,6 +135,19 @@ async function onSave() {
   const valid = await form.value.validate()
   if (!valid) return
   if (selected.value === undefined) return
+  if (selected.value.roles === undefined) {
+    selected.value.roles = []
+  }
+  if (isAdministrator.value) {
+    if (!selected.value.roles.includes('platyp-admin')) {
+      selected.value.roles.push('platyp-admin')
+    }
+  } else {
+    const index = selected.value.roles.indexOf('platyp-admin')
+    if (index !== -1) {
+      selected.value.roles.splice(index, 1)
+    }
+  }
   if (selected.value.id) {
     usersStore
       .update(selected.value)

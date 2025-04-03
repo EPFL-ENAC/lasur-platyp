@@ -83,6 +83,7 @@ export default {
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",
   address: 'Adresse',
   administration: 'Administration',
+  administrator: 'Administrateur',
   campaigns: 'Campagnes',
   comments: 'Commentaires',
   download: 'Télécharger',
