@@ -9,8 +9,10 @@ export default {
       origin: 'Veuillez entrer un point de départ',
       workplace: 'Veuillez entrer un lieu de travail',
     },
-    agreement: 'Accord',
-    terms_conditions: "J'ai lu et accepte les conditions générales d'utilisation",
+    agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
+    agreement_hint:
+      "Les CGU formalisent l'accord auquel vous consentez, entre vous et la Fondation Modus, en utilisant le toolkit mobilité. La politique de confidentialité vous explique à quoi servent les données récoltées et comment celles-ci sont traitées.",
+    terms_conditions: "J'ai lu et accepte les CGU",
     terms_conditions_link: "Voir les conditions générales d'utilisation",
     confidentiality: "J'ai lu et accepte la politique de confidentialité",
     confidentiality_link: 'Voir la politique de confidentialité',

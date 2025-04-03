@@ -2,7 +2,7 @@
   <div v-if="survey.record" v-touch-swipe.mouse.left.right="handleSwipe">
     <!--pre>{{ survey.step }} - {{ survey.stepName }}</pre-->
     <div v-if="survey.stepName === 'agreement'">
-      <SectionItem :label="t('form.agreement')" class="q-mb-lg" />
+      <SectionItem :label="t('form.agreement')" :hint="t('form.agreement_hint')" class="q-mb-lg" />
       <div class="bg-primary rounded-borders q-pa-md q-mt-lg">
         <q-checkbox
           v-model="survey.record.data.terms_conditions"

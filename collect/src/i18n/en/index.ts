@@ -5,15 +5,17 @@ export default {
   form: {
     error: {
       terms_conditions: 'Please accept the terms and conditions to continue',
-      confidentiality: 'Please accept the confidentiality policy to continue',
+      confidentiality: 'Please accept the privacy policy to continue',
       origin: 'Please enter a starting point',
       workplace: 'Please enter a work place location',
     },
-    agreement: 'Agreement',
-    terms_conditions: 'I have read and I accept the terms and conditions',
+    agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
+    agreement_hint:
+      'The GTC formalizes the agreement to which you consent, between you and the Modus Foundation, by using the mobility toolkit. The confidentiality policy explains what the data collected is used for and how it is processed.',
+    terms_conditions: 'I have read and accept the GTC',
     terms_conditions_link: 'See the terms and conditions',
-    confidentiality: 'I have read and I accept the confidentiality policy',
-    confidentiality_link: 'See the confidentiality policy',
+    confidentiality: 'I have read and accept the privacy policy',
+    confidentiality_link: 'See the privacy policy',
 
     age_class: 'What is your age group?',
     age_class_option: {
