@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "platyp-api"
-version = "0.1.0"
+version = "0.10.0"
 description = ""
 authors = ["ymarcon <yannick.marcon@epfl.ch>"]
 readme = "README.md"

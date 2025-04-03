@@ -1,6 +1,6 @@
 {
   "name": "admin",
-  "version": "0.0.1",
+  "version": "0.10.0",
   "description": "Modus Mobility Toolkit administration",
   "productName": "Modus MT Admin",
   "author": "ymarcon <yannick.marcon@epfl.ch>",
