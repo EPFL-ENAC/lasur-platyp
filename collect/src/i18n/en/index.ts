@@ -192,4 +192,5 @@ export default {
   finish: 'Finish',
   next: 'Next',
   previous: 'Previous',
+  select_preferred_language: 'Select your preferred language',
 }

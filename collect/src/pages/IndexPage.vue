@@ -69,6 +69,29 @@
                 class="q-mt-md"
               />
             </div>
+            <div class="q-mt-lg">
+              <span>
+                {{ t('select_preferred_language') }}
+              </span>
+              <q-btn-dropdown flat :label="locale" icon="language" class="on-right">
+                <q-list>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="onLocaleSelection(localeOpt)"
+                    v-for="localeOpt in localeOptions"
+                    :key="localeOpt.value"
+                  >
+                    <q-item-section>
+                      <q-item-label>{{ localeOpt.label }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section avatar v-if="locale === localeOpt.value">
+                      <q-icon color="primary" name="check" />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </div>
           </div>
         </div>
       </div>
@@ -77,11 +100,13 @@
 </template>
 
 <script setup lang="ts">
+import { Cookies } from 'quasar'
+import { locales } from 'boot/i18n'
 import SurveyPanel from 'src/components/form/SurveyPanel.vue'
 import { notifyError } from 'src/utils/notify'
 import type { Record } from 'src/models'
 
-const { t } = useI18n()
+const { locale, t } = useI18n()
 const route = useRoute()
 const collector = useCollector()
 const survey = useSurvey()
@@ -90,6 +115,12 @@ const tkSlug = ref('')
 
 const progress = computed(() => {
   return survey.step / survey.stepNames.length
+})
+const localeOptions = computed(() => {
+  return locales.map((key) => ({
+    label: key.toUpperCase(),
+    value: key,
+  }))
 })
 
 onMounted(onInit)
@@ -137,5 +168,10 @@ function onStart() {
   survey.started = true
   survey.step = 1
   tkSlug.value = ''
+}
+
+function onLocaleSelection(localeOpt: { label: string; value: string }) {
+  locale.value = localeOpt.value
+  Cookies.set('locale', localeOpt.value)
 }
 </script>

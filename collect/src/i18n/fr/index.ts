@@ -196,7 +196,7 @@ export default {
   type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",
   welcome: 'Bienvenue sur le {brand}',
   welcome_intro:
-    'Veuillez remplir ce questionnaire afin de pouvoir vous proposer les mesures de mobilité les plus pertinentes pour vous',
+    'Veuillez remplir ce questionnaire afin que nous puissions vous proposer les mesures de mobilité les plus pertinentes.',
   no_results: 'Pas de résultat',
   local: 'Local',
   regional: 'National',
@@ -204,4 +204,5 @@ export default {
   finish: 'Fin',
   next: 'Suivant',
   previous: 'Précédent',
+  select_preferred_language: 'Sélectionner votre langue préférée',
 }
