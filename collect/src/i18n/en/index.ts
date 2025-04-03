@@ -4,9 +4,19 @@ export default {
   },
   form: {
     error: {
+      terms_conditions: 'Please accept the terms and conditions to continue',
+      confidentiality: 'Please accept the privacy policy to continue',
       origin: 'Please enter a starting point',
       workplace: 'Please enter a work place location',
     },
+    agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
+    agreement_hint:
+      'The GTC formalizes the agreement to which you consent, between you and the Modus Foundation, by using the mobility toolkit. The confidentiality policy explains what the data collected is used for and how it is processed.',
+    terms_conditions: 'I have read and accept the GTC',
+    terms_conditions_link: 'See the terms and conditions',
+    confidentiality: 'I have read and accept the privacy policy',
+    confidentiality_link: 'See the privacy policy',
+
     age_class: 'What is your age group?',
     age_class_option: {
       '16_24': 'under 25',
@@ -28,7 +38,7 @@ export default {
     travel_time_minutes: 'minutes (one way)',
     constraints: 'What are your possible constraints related to daily mobility?',
     constraints_option: {
-      dependent: 'Driving children or dependent persons',
+      dependent: 'Accompanying children or dependent persons',
       heavy: 'Transporting heavy/bulky equipment',
       night: 'Night work',
       disabled: 'Parking card for people with reduced mobility',
@@ -184,4 +194,5 @@ export default {
   finish: 'Finish',
   next: 'Next',
   previous: 'Previous',
+  select_preferred_language: 'Select your preferred language',
 }

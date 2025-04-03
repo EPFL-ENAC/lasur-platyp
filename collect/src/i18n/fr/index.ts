@@ -4,9 +4,19 @@ export default {
   },
   form: {
     error: {
+      terms_conditions: 'Veuillez accepter les conditions générales pour continuer',
+      confidentiality: 'Veuillez accepter la politique de confidentialité pour continuer',
       origin: 'Veuillez entrer un point de départ',
       workplace: 'Veuillez entrer un lieu de travail',
     },
+    agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
+    agreement_hint:
+      "Les CGU formalisent l'accord auquel vous consentez, entre vous et la Fondation Modus, en utilisant le toolkit mobilité. La politique de confidentialité vous explique à quoi servent les données récoltées et comment celles-ci sont traitées.",
+    terms_conditions: "J'ai lu et accepte les CGU",
+    terms_conditions_link: "Voir les conditions générales d'utilisation",
+    confidentiality: "J'ai lu et accepte la politique de confidentialité",
+    confidentiality_link: 'Voir la politique de confidentialité',
+
     age_class: "Quelle est votre classe d'âge ?",
     age_class_option: {
       '16_24': 'moins de 25 ans',
@@ -28,7 +38,7 @@ export default {
     travel_time_minutes: 'minutes (aller)',
     constraints: 'Avez vous des contraintes potentielles quant à votre mobilité quotidienne ?',
     constraints_option: {
-      dependent: "Conduite d'enfants ou de personnes dépendantes",
+      dependent: 'Emmener des enfants ou des personnes dépendantes',
       heavy: 'Transport de matériel lourd ou encombrant',
       night: 'Travail de nuit',
       disabled: 'Carte de stationnement pour personne à mobilité réduite',
@@ -188,7 +198,7 @@ export default {
   type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",
   welcome: 'Bienvenue sur le {brand}',
   welcome_intro:
-    'Veuillez remplir ce questionnaire afin de pouvoir vous proposer les mesures de mobilité les plus pertinentes pour vous',
+    'Veuillez remplir ce questionnaire afin que nous puissions vous proposer les mesures de mobilité les plus pertinentes.',
   no_results: 'Pas de résultat',
   local: 'Local',
   regional: 'National',
@@ -196,4 +206,5 @@ export default {
   finish: 'Fin',
   next: 'Suivant',
   previous: 'Précédent',
+  select_preferred_language: 'Sélectionner votre langue préférée',
 }

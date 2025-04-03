@@ -83,6 +83,7 @@ export default {
   address_input_hint: 'Type Enter to lookup addresses.',
   address: 'Address',
   administration: 'Administration',
+  administrator: 'Administrator',
   campaigns: 'Campaigns',
   comments: 'Comments',
   download: 'Download',

@@ -47,6 +47,8 @@ export const useUsersStore = defineStore('users', () => {
       }
       if (payload.roles === undefined) {
         payload.roles = ['platyp-user']
+      } else if (!payload.roles.includes('platyp-user')) {
+        payload.roles.push('platyp-user')
       }
       if (payload.username === undefined) {
         payload.username = payload.email
@@ -58,6 +60,11 @@ export const useUsersStore = defineStore('users', () => {
 
   async function update(payload: AppUser) {
     if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
+    if (payload.roles === undefined) {
+      payload.roles = ['platyp-user']
+    } else if (!payload.roles.includes('platyp-user')) {
+      payload.roles.push('platyp-user')
+    }
     return authStore.updateToken().then(() => {
       const config = {
         headers: {

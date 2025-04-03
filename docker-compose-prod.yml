@@ -24,7 +24,7 @@ services:
       - web
 
   backend:
-    image: ghcr.io/epfl-enac/epfl-lasur/platyp/backend:v0.9.0
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/backend:latest
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/api`)"
@@ -34,9 +34,11 @@ services:
       - "traefik.http.routers.backend.middlewares=backend-stripprefix"
     ports:
       - "8000:8000"
+    depends_on:
+      - keycloak
     environment:
       DB_URL: ${TOOLKIT_DB_URL}
-      KEYCLOAK_URL: https://toolkit.modus-ge.ch/auth/
+      KEYCLOAK_URL: http://keycloak:8080/auth/
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_API_ID: ${KEYCLOAK_API_ID}
       KEYCLOAK_API_SECRET: ${KEYCLOAK_API_SECRET}
@@ -46,7 +48,7 @@ services:
       - web
 
   admin:
-    image: ghcr.io/epfl-enac/epfl-lasur/platyp/admin:v0.9.0
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/admin:latest
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.admin.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/admin`)"
@@ -65,7 +67,7 @@ services:
       - web
 
   collect:
-    image: ghcr.io/epfl-enac/epfl-lasur/platyp/collect:v0.9.0
+    image: ghcr.io/epfl-enac/epfl-lasur/platyp/collect:latest
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.collect.rule=Host(`toolkit.modus-ge.ch`) && PathPrefix(`/`)"

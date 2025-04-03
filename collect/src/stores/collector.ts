@@ -16,6 +16,9 @@ export const useCollector = defineStore('collector', () => {
         token.value = tkOrSlug
         const cr = response.data
         const data = {
+          terms_conditions: false,
+          confidentiality: false,
+
           employment_rate: 100,
           remote_work_rate: 40,
           company_vehicle: false,

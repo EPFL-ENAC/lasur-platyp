@@ -41,9 +41,11 @@
         </template>
         <template v-slot:body-cell-roles="props">
           <q-td :props="props">
-            <span v-for="role in props.value" :key="role" class="on-left">{{
-              t(`role.${role}`)
-            }}</span>
+            <q-icon
+              :name="props.row.roles.includes('platyp-admin') ? 'check' : 'close'"
+              :color="props.row.roles.includes('platyp-admin') ? 'positive' : 'negative'"
+              size="20px"
+            />
           </q-td>
         </template>
         <template v-slot:body-cell-enabled="props">
@@ -152,9 +154,8 @@ const columns = computed(() => {
     {
       name: 'roles',
       required: true,
-      label: t('roles'),
+      label: t('administrator'),
       align: DefaultAlignment,
-      format: (val: string[]) => val?.filter((rl) => rl.startsWith('platyp-')),
       field: 'roles',
       sortable: true,
     },

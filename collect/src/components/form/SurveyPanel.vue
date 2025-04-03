@@ -1,6 +1,43 @@
 <template>
   <div v-if="survey.record" v-touch-swipe.mouse.left.right="handleSwipe">
     <!--pre>{{ survey.step }} - {{ survey.stepName }}</pre-->
+    <div v-if="survey.stepName === 'agreement'">
+      <SectionItem :label="t('form.agreement')" :hint="t('form.agreement_hint')" class="q-mb-lg" />
+      <div class="bg-primary rounded-borders q-pa-md q-mt-lg">
+        <q-checkbox
+          v-model="survey.record.data.terms_conditions"
+          :label="t('form.terms_conditions')"
+          size="xl"
+          color="green-6"
+          class="text-h6"
+        />
+        <div class="text-h6 q-ml-xl">
+          <a href="https://modus-ge.ch/toolkit-cgu" target="_blank" class="text-secondary q-ml-sm">
+            {{ t('form.terms_conditions_link') }}
+            <q-icon name="open_in_new" size="xs" />
+          </a>
+        </div>
+      </div>
+      <div class="bg-primary rounded-borders q-pa-md q-mt-lg">
+        <q-checkbox
+          v-model="survey.record.data.confidentiality"
+          :label="t('form.confidentiality')"
+          size="xl"
+          color="green-6"
+          class="text-h6"
+        />
+        <div class="text-h6 q-ml-xl">
+          <a
+            href="https://modus-ge.ch/toolkit-privacy-notice"
+            target="_blank"
+            class="text-secondary q-ml-sm"
+          >
+            {{ t('form.confidentiality_link') }}
+            <q-icon name="open_in_new" size="xs"
+          /></a>
+        </div>
+      </div>
+    </div>
     <div v-if="survey.stepName === 'age_class'">
       <ChoiceItem
         :label="t('form.age_class')"
@@ -565,7 +602,7 @@
     <div class="row justify-center q-mt-xl">
       <q-btn
         rounded
-        v-if="survey.isAfterStep('age_class')"
+        v-if="survey.isAfterStep('agreement')"
         color="accent"
         icon="keyboard_arrow_left"
         size="lg"
@@ -724,6 +761,16 @@ const adjectivePairsOptions = computed<ToggleOption[]>(() => [
 
 function nextStep() {
   if (survey.stepName === 'comments') return
+  if (survey.stepName === 'agreement') {
+    if (!survey.record.data.terms_conditions) {
+      notifyError(t('form.error.terms_conditions'))
+      return
+    }
+    if (!survey.record.data.confidentiality) {
+      notifyError(t('form.error.confidentiality'))
+      return
+    }
+  }
   if (survey.stepName === 'places') {
     if (
       survey.record.data.workplace?.lat === undefined ||
@@ -759,7 +806,7 @@ function nextStep() {
 }
 
 function prevStep() {
-  if (survey.stepName === 'age_class') return
+  if (survey.stepName === 'agreement') return
   survey.decStep()
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
