@@ -131,7 +131,7 @@ export default {
     actions:
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
-      "Pas de mesures globales | Votre employeur vous propose aussi la mesure d'aide à la mobilité : {actions} | Votre employeur vous propose aussi les mesures d'aide à la mobilité : {actions}",
+      "Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}",
   },
   main_mode: {
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
