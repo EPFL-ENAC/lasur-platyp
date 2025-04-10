@@ -90,11 +90,11 @@ export const useCollector = defineStore('collector', () => {
     })
   }
 
-  async function loadTypo(record: Record) {
+  async function loadTypo(record: Record, locale: string) {
     token.value = null
     loading.value = true
     return api
-      .get(`/collect/record/${record.token}/typo`, record)
+      .get(`/collect/record/${record.token}/typo`, { params: { locale } })
       .then((response) => {
         return response.data
       })

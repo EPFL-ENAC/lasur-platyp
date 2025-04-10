@@ -648,7 +648,7 @@ import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
 import { notifyError } from 'src/utils/notify'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
 const q = useQuasar()
@@ -792,7 +792,7 @@ function nextStep() {
       collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
-          return collector.loadTypo(survey.record)
+          return collector.loadTypo(survey.record, locale.value)
         })
         .then((resp) => {
           survey.recommendation = resp

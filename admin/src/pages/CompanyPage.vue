@@ -33,16 +33,29 @@
           <fields-list :items="items" :dbobject="company" />
         </div>
       </div>
+      <div class="q-mb-sm">{{ t('company.actions') }}</div>
+      <q-btn
+        v-if="authStore.isAdmin"
+        size="sm"
+        color="primary"
+        :label="t('company.custom_actions')"
+        icon="settings"
+        class="q-mb-md"
+        @click="onShowCustomActions"
+      >
+        <q-badge v-if="actionsStore.items.length" color="white" class="text-secondary q-ml-sm">{{
+          actionsStore.items.length
+        }}</q-badge>
+      </q-btn>
       <div v-if="company?.actions">
-        <div class="q-mb-sm">{{ t('company.actions') }}</div>
         <div class="row q-col-gutter-md q-mb-md">
           <div class="col-12 col-md-6">
             <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
-            <fields-list :items="actionItems" :dbobject="company?.actions" />
+            <fields-list :items="actionItems" :dbobject="formattedActions" />
           </div>
           <div class="col-12 col-md-6">
             <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
-            <fields-list :items="actionProItems" :dbobject="company?.actions" />
+            <fields-list :items="actionProItems" :dbobject="formattedActions" />
           </div>
         </div>
       </div>
@@ -57,14 +70,21 @@
       :text="t('remove_company_text', { name: company.name })"
       @confirm="onRemove"
     />
+    <custom-actions-dialog
+      v-if="company"
+      v-model="showCustomActionsDialog"
+      :company="company"
+      @saved="onCustomActionsUpdated"
+    />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import type { Company } from 'src/models'
+import type { Company, EmployerActions } from 'src/models'
 import type { Service } from 'src/stores/services'
 import CompanyCampaigns from 'src/components/CompanyCampaigns.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
+import CustomActionsDialog from 'src/components/CustomActionsDialog.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import CompanyDialog from 'src/components/CompanyDialog.vue'
@@ -73,15 +93,41 @@ import { actionItems, actionProItems } from 'src/utils/options'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const services = useServices()
 const service = services.make('company') as Service<Company>
+const actionsStore = useActions()
 
 const id = computed(() => route.params.id)
 const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showDialog = ref(false)
+const showCustomActionsDialog = ref(false)
+
+const formattedActions = computed(() => {
+  const allActions: EmployerActions = {}
+  if (company.value?.actions) {
+    Object.keys(company.value.actions).forEach((group) => {
+      allActions[group] =
+        company.value?.actions && company.value.actions[group]
+          ? company.value.actions[group].map((action) => {
+              // check action can be parsed as a number
+              const actionId = parseInt(action, 10)
+              if (!isNaN(actionId)) {
+                const labels = actionsStore.items.find((a) => a.id === actionId)?.labels
+                if (labels) {
+                  return labels[locale.value] || labels.en || action
+                }
+                return action
+              }
+              return t(`actions.${action}`)
+            })
+          : []
+    })
+  }
+  return allActions
+})
 
 const items: FieldItem[] = [
   {
@@ -102,6 +148,8 @@ onMounted(() => {
 function onInit() {
   service.get(id.value + '').then((data: Company) => {
     company.value = data
+    actionsStore.company = data
+    actionsStore.load()
   })
 }
 
@@ -123,5 +171,13 @@ function onRemove() {
 
 function onSaved() {
   onInit()
+}
+
+function onShowCustomActions() {
+  showCustomActionsDialog.value = true
+}
+
+function onCustomActionsUpdated() {
+  actionsStore.load()
 }
 </script>

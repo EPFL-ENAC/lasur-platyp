@@ -85,19 +85,23 @@ const mesure_dt2 = computed(() => survey.recommendation.reco_actions?.mesure_dt2
 // const hasActions = computed(() => mesure_dt1.value.length > 0 || mesure_dt2.value.length > 0)
 
 const globalActions = computed(() => {
-  return (
-    survey.recommendation.reco_actions?.mesures_globa?.map((action: string) =>
-      t(`actions.${action}`),
-    ) || []
-  )
+  return survey.recommendation.reco_actions?.mesures_globa?.map(translateAction) || []
 })
 
 function getActions(idx: number) {
   if (idx === 0) {
-    return mesure_dt1.value.map((action) => t(`actions.${action}`)) || []
+    return mesure_dt1.value.map(translateAction) || []
   } else if (idx === 1) {
-    return mesure_dt2.value.map((action) => t(`actions.${action}`)) || []
+    return mesure_dt2.value.map(translateAction) || []
   }
   return []
+}
+
+function translateAction(action: string) {
+  const label = t(`actions.${action}`)
+  if (label === `actions.${action}`) {
+    return action
+  }
+  return label
 }
 </script>

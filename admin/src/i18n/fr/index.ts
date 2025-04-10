@@ -8,6 +8,9 @@ export default {
   company: {
     label: 'Entreprise',
     actions: 'Mesures employeur',
+    custom_actions: 'Mesures spécifiques',
+    custom_actions_hint:
+      'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des employés. Ces mesures sont regroupées par mode de transport ou sont globales.',
     administrators: 'Administrateurs',
     administrators_hint:
       "Veuillez fournir l'adresse email des administrateurs pour cette entreprise (tapez Entrée pour ajouter une entrée).",
@@ -103,8 +106,11 @@ export default {
   field_required: 'Ce champ est requis',
   first_name: 'Prénom',
   go_home: 'Accueil',
+  group: 'Groupe',
   help: 'Aide',
   identifier: 'Identifiant',
+  label_en: 'Libellé (EN)',
+  label_fr: 'Libellé (FR)',
   last_modified: 'Dernière modification',
   last_name: 'Nom',
   link_copied:

@@ -2,14 +2,13 @@ from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlmodel import select
 from fastapi import HTTPException
-from api.models.domain import Campaign
-from api.models.query import CampaignResult, CampaignDraft
+from api.models.domain import CompanyAction
+from api.models.query import CompanyActionResult, CompanyActionDraft
 from enacit4r_sql.utils.query import QueryBuilder
-from datetime import datetime
 from api.auth import User
 
 
-class CampaignQueryBuilder(QueryBuilder):
+class CompanyActionQueryBuilder(QueryBuilder):
 
     def build_count_query_with_joins(self, filter):
         query = self.build_count_query()
@@ -26,55 +25,44 @@ class CampaignQueryBuilder(QueryBuilder):
         return query
 
 
-class CampaignService:
+class CompanyActionService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def count(self) -> int:
-        """Count all campaigns"""
-        count = (await self.session.exec(text("select count(id) from campaign"))).scalar()
+        """Count all company actions"""
+        count = (await self.session.exec(text("select count(id) from companyaction"))).scalar()
         return count
 
-    async def get(self, id: int) -> Campaign:
-        """Get a campaign by id"""
+    async def get(self, id: int) -> CompanyAction:
+        """Get a company action by id"""
         res = await self.session.exec(
-            select(Campaign).where(
-                Campaign.id == id))
+            select(CompanyAction).where(
+                CompanyAction.id == id))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Campaign not found")
+                status_code=404, detail="Company action not found")
         return entity
 
-    async def get_by_slug(self, slug: str) -> Campaign:
-        """Get a campaign by slug"""
+    async def delete(self, id: int) -> CompanyAction:
+        """Delete a company action by id"""
         res = await self.session.exec(
-            select(Campaign).where(
-                Campaign.slug == slug))
-        entity = res.one_or_none()
-        if not entity:
-            raise HTTPException(
-                status_code=404, detail="Campaign not found")
-        return entity
-
-    async def delete(self, id: int) -> Campaign:
-        """Delete a campaign by id"""
-        res = await self.session.exec(
-            select(Campaign).where(Campaign.id == id)
+            select(CompanyAction).where(CompanyAction.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Campaign not found")
+                status_code=404, detail="Company action not found")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CampaignResult:
-        """Get all campaigns matching filter and range"""
-        builder = CampaignQueryBuilder(
-            Campaign, filter, sort, range, {})
+    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CompanyActionResult:
+        """Get all company actions matching filter and range"""
+        builder = CompanyActionQueryBuilder(
+            CompanyAction, filter, sort, range, {})
 
         # Do a query to satisfy total count
         count_query = builder.build_count_query_with_joins(filter)
@@ -89,40 +77,40 @@ class CampaignService:
         results = await self.session.exec(query)
         entities = results.all()
 
-        return CampaignResult(
+        return CompanyActionResult(
             total=total_count,
             skip=start,
             limit=end - start + 1,
             data=entities
         )
 
-    async def create(self, payload: CampaignDraft, user: User = None) -> Campaign:
-        """Create a new campaign"""
-        entity = Campaign(**payload.model_dump())
-        entity.created_at = datetime.now()
-        entity.updated_at = datetime.now()
-        if user:
-            entity.created_by = user.username
-            entity.updated_by = user.username
+    async def create(self, payload: CompanyActionDraft, user: User = None) -> CompanyAction:
+        """Create a new company action"""
+        entity = CompanyAction(**payload.model_dump())
         self.session.add(entity)
         await self.session.commit()
         return entity
 
-    async def update(self, id: int, payload: CampaignDraft, user: User = None) -> Campaign:
-        """Update a campaign"""
+    async def update(self, id: int, payload: CompanyActionDraft, user: User = None) -> CompanyAction:
+        """Update a company action"""
         res = await self.session.exec(
-            select(Campaign).where(Campaign.id == id)
+            select(CompanyAction).where(CompanyAction.id == id)
         )
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
-                status_code=404, detail="Campaign not found")
+                status_code=404, detail="Company action not found")
         for key, value in payload.model_dump().items():
             # print(key, value)
-            if key not in ["id", "created_at", "updated_at", "created_by", "updated_by"]:
+            if key not in ["id"]:
                 setattr(entity, key, value)
-        entity.updated_at = datetime.now()
-        if user:
-            entity.updated_by = user.username
         await self.session.commit()
         return entity
+
+    async def get_company_actions(self, company_id: int) -> list[CompanyAction]:
+        """Get all actions for a company"""
+        res = await self.session.exec(
+            select(CompanyAction).where(CompanyAction.company_id == company_id)
+        )
+        entities = res.all()
+        return entities

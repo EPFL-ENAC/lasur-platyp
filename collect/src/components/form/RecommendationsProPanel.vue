@@ -71,13 +71,17 @@ const recoReg = computed(() => survey.recommendation.reco_pro?.reco_pro_reg || '
 const recoInt = computed(() => survey.recommendation.reco_pro?.reco_pro_int || '')
 
 const actionsLoc = computed(
-  () =>
-    survey.recommendation.reco_actions?.mesure_pro_loc.map((action) => t(`actions.${action}`)) ||
-    [],
+  () => survey.recommendation.reco_actions?.mesure_pro_loc.map(translateAction) || [],
 )
 const actionsRegInt = computed(
-  () =>
-    survey.recommendation.reco_actions?.mesure_pro_regint.map((action) => t(`actions.${action}`)) ||
-    [],
+  () => survey.recommendation.reco_actions?.mesure_pro_regint.map(translateAction) || [],
 )
+
+function translateAction(action: string) {
+  const label = t(`actions.${action}`)
+  if (label === `actions.${action}`) {
+    return action
+  }
+  return label
+}
 </script>

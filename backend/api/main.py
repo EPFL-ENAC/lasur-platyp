@@ -6,6 +6,7 @@ from logging import basicConfig, INFO, DEBUG
 from pydantic import BaseModel
 from sqlalchemy.sql import text
 from api.views.companies import router as companies_router
+from api.views.actions import router as actions_router
 from api.views.campaigns import router as campaigns_router
 from api.views.participants import router as participants_router
 from api.views.records import router as records_router
@@ -59,6 +60,11 @@ app.include_router(
     companies_router,
     prefix="/company",
     tags=["Companies"],
+)
+app.include_router(
+    actions_router,
+    prefix="/action",
+    tags=["Company Actions"],
 )
 app.include_router(
     campaigns_router,
