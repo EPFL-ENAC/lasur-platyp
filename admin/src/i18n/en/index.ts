@@ -8,6 +8,9 @@ export default {
   company: {
     label: 'Company',
     actions: 'Employer measures',
+    custom_actions: 'Custom measures',
+    custom_actions_hint:
+      'Add or remove custom employer measures that will facilitate employees mobility. These measures are grouped per transport mode or are global.',
     administrators: 'Administrators',
     administrators_hint:
       'Provide the email address of the administrators for this company (type Enter to add entry).',
@@ -103,6 +106,7 @@ export default {
   field_required: 'This field is required',
   first_name: 'First Name',
   go_home: 'Go Home',
+  group: 'Group',
   help: 'Help',
   identifier: 'Identifier',
   last_modified: 'Last Modified',

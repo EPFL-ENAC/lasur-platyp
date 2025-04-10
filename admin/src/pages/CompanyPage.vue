@@ -33,8 +33,17 @@
           <fields-list :items="items" :dbobject="company" />
         </div>
       </div>
+      <div class="q-mb-sm">{{ t('company.actions') }}</div>
+      <q-btn
+        v-if="authStore.isAdmin"
+        size="sm"
+        color="primary"
+        :label="t('company.custom_actions')"
+        icon="settings"
+        class="q-mb-md"
+        @click="onShowCustomActions"
+      />
       <div v-if="company?.actions">
-        <div class="q-mb-sm">{{ t('company.actions') }}</div>
         <div class="row q-col-gutter-md q-mb-md">
           <div class="col-12 col-md-6">
             <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
@@ -57,6 +66,7 @@
       :text="t('remove_company_text', { name: company.name })"
       @confirm="onRemove"
     />
+    <custom-actions-dialog v-if="company" v-model="showCustomActionsDialog" :company="company" />
   </q-page>
 </template>
 
@@ -65,6 +75,7 @@ import type { Company } from 'src/models'
 import type { Service } from 'src/stores/services'
 import CompanyCampaigns from 'src/components/CompanyCampaigns.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
+import CustomActionsDialog from 'src/components/CustomActionsDialog.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import CompanyDialog from 'src/components/CompanyDialog.vue'
@@ -82,6 +93,7 @@ const id = computed(() => route.params.id)
 const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showDialog = ref(false)
+const showCustomActionsDialog = ref(false)
 
 const items: FieldItem[] = [
   {
@@ -123,5 +135,9 @@ function onRemove() {
 
 function onSaved() {
   onInit()
+}
+
+function onShowCustomActions() {
+  showCustomActionsDialog.value = true
 }
 </script>

@@ -1,15 +1,15 @@
-import type { Campaign, Company } from 'src/models'
+import type { Company, CompanyAction } from 'src/models'
 const services = useServices()
 
-export const useCampaigns = defineStore('campaigns', () => {
-  const items = ref<Campaign[]>([])
+export const useActions = defineStore('actions', () => {
+  const items = ref<CompanyAction[]>([])
   const company = ref<Company>()
-  const service = services.make('campaign')
+  const service = services.make('action')
   const loading = ref(false)
 
   async function load() {
     items.value = []
-    if (!company.value) return
+    if (!company.value || !company.value.id) return
     loading.value = true
     return service
       .find({

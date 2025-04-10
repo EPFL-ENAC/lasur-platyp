@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { api } from 'src/boot/api'
-import type { Company, Campaign, Participant, Record } from 'src/models'
+import type { Entity, Company, CompanyAction, Campaign, Participant, Record } from 'src/models'
 import type { Query } from 'src/components/models'
 
 const authStore = useAuthStore()
 
-export class Service<Type extends Company | Campaign | Participant | Record> {
+export class Service<Type extends Company | CompanyAction | Campaign | Participant | Record> {
   constructor(
     public entityType: Type,
     public entityName: string,
@@ -60,10 +60,10 @@ export class Service<Type extends Company | Campaign | Participant | Record> {
 
   async update(id: string | number, payload: Type) {
     if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
-    delete payload.created_at
-    delete payload.updated_at
-    delete payload.created_by
-    delete payload.updated_by
+    delete (payload as Entity).created_at
+    delete (payload as Entity).updated_at
+    delete (payload as Entity).created_by
+    delete (payload as Entity).updated_by
     return authStore.updateToken().then(() => {
       const config = {
         headers: {
@@ -88,11 +88,16 @@ export class Service<Type extends Company | Campaign | Participant | Record> {
 }
 
 export const useServices = defineStore('services', () => {
-  function make(entityName: string): Service<Company | Campaign | Participant | Record> {
+  function make(
+    entityName: string,
+  ): Service<Company | CompanyAction | Campaign | Participant | Record> {
     let entityType
     switch (entityName) {
       case 'company':
         entityType = {} as Company
+        break
+      case 'action':
+        entityType = {} as CompanyAction
         break
       case 'campaign':
         entityType = {} as Campaign

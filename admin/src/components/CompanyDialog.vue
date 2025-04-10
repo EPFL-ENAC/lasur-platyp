@@ -32,6 +32,7 @@
           />
           <employer-actions-input
             v-model="selected.actions"
+            :company="selected"
             :label="t('company.actions')"
             class="q-mt-lg"
           />

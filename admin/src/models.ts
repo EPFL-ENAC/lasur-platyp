@@ -33,12 +33,19 @@ export interface Campaign extends Entity {
   actions?: EmployerActions
 }
 
+export interface CompanyAction {
+  id?: number
+  name: string
+  group: string
+  labels?: { [key: string]: string[] }
+}
+
 export interface Company extends Entity {
   administrators: string[]
   campaings?: Campaign[]
+  custom_actions?: CompanyAction[]
   actions?: EmployerActions
 }
-
 export interface AppUser {
   id?: string
   username: string

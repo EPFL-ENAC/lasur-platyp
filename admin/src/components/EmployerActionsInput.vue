@@ -51,9 +51,12 @@
 </template>
 
 <script setup lang="ts">
-import type { EmployerActions } from 'src/models'
+import type { EmployerActions, Company } from 'src/models'
+import { notifyError } from 'src/utils/notify'
+
 interface Props {
   modelValue: EmployerActions | undefined
+  company: Company
   label?: string
   hint?: string
 }
@@ -62,6 +65,7 @@ const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 
 const { t } = useI18n()
+const actionsStore = useActions()
 
 const tab = ref<string>('personnal')
 
@@ -84,6 +88,17 @@ const actions = ref<EmployerActions>(
 interface Option {
   value: string
   label: string
+}
+
+onMounted(onInit)
+
+watch(() => props.modelValue, onInit)
+
+function onInit() {
+  if (props.company.id) {
+    actionsStore.company = props.company
+    actionsStore.load().catch(notifyError)
+  }
 }
 
 const actionOptions: { [key: string]: Option[] } = {

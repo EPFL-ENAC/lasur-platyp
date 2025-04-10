@@ -28,3 +28,20 @@ export const actionProItems: FieldItem[] = [
   format: (actions: EmployerActions) =>
     actions?.[field]?.map((action: string) => t(`actions.${action}`)).join('; ') || '-',
 }))
+
+export const actionGroupOptions = [
+  'mesures_globa',
+  'mesures_tpu',
+  'mesures_train',
+  'mesures_inter',
+  'mesures_velo',
+  'mesures_covoit',
+  'mesures_elec',
+  'mesures_pro_velo',
+  'mesures_pro_tpu',
+  'mesures_pro_train',
+  'mesures_pro_elec',
+].map((field) => ({
+  label: t(`actions.${field}_label`) + (field.startsWith('pro_') ? ' (pro)' : ''),
+  value: field,
+}))
