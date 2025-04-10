@@ -25,7 +25,7 @@
                 >{{
                   t('form.actions', {
                     count: getActions(idx).length,
-                    actions: getActions(idx).join(', '),
+                    actions: getActions(idx).join('; '),
                   })
                 }}</q-item-label
               >
@@ -38,7 +38,7 @@
           {{
             t('form.actions_global', {
               count: globalActions.length,
-              actions: globalActions.join(', '),
+              actions: globalActions.join('; '),
             })
           }}
         </div>

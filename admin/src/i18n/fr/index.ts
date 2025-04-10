@@ -72,7 +72,7 @@ export default {
     carpool_connect: 'Mise en relation avec des collègues pour covoiturer',
     carpool_parking: 'Places de stationnement réservées covoiturage',
     ev_charging: 'Chargement de véhicule électrique sur le lieu de travail',
-    mobility_pass: 'Abonement autopartage mobility',
+    mobility_pass: 'Abonnement autopartage mobility',
     ebike_fleet: 'Flotte de vélos électriques pour les déplacements professionnels',
     tpu_pro: 'Abonnement transports publics (UNIRESO)',
     train_pro: 'Abonnement train (abonnement général)',

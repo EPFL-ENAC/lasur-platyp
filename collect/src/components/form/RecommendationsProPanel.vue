@@ -11,7 +11,7 @@
             <q-item-label v-if="actionsLoc.length" class="text-body1 text-green-2 text-bold">{{
               t('form.actions', {
                 count: actionsLoc.length,
-                actions: actionsLoc.join(', '),
+                actions: actionsLoc.join('; '),
               })
             }}</q-item-label>
           </div>
@@ -26,7 +26,7 @@
             <q-item-label v-if="actionsRegInt.length" class="text-body1 text-green-2 text-bold">{{
               t('form.actions', {
                 count: actionsRegInt.length,
-                actions: actionsRegInt.join(', '),
+                actions: actionsRegInt.join('; '),
               })
             }}</q-item-label>
           </div>
@@ -41,7 +41,7 @@
             <q-item-label v-if="actionsRegInt.length" class="text-body1 text-green-2 text-bold">{{
               t('form.actions', {
                 count: actionsRegInt.length,
-                actions: actionsRegInt.join(', '),
+                actions: actionsRegInt.join('; '),
               })
             }}</q-item-label>
           </div>
