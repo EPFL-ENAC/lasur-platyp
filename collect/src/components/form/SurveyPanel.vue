@@ -91,7 +91,7 @@
       <NumberItem
         :label="t('form.travel_time')"
         v-model="survey.record.data.travel_time"
-        :min="0"
+        :min="5"
         :max="120"
         :step="5"
         :unit-hint="t('form.travel_time_minutes')"
