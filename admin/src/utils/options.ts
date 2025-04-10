@@ -14,7 +14,7 @@ export const actionItems: FieldItem[] = [
   field,
   label: `actions.${field}_label`,
   format: (actions: EmployerActions) =>
-    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
+    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join('; ') || '-',
 }))
 
 export const actionProItems: FieldItem[] = [
@@ -26,5 +26,5 @@ export const actionProItems: FieldItem[] = [
   field,
   label: `actions.${field}_label`,
   format: (actions: EmployerActions) =>
-    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join(', ') || '-',
+    actions?.[field]?.map((action: string) => t(`actions.${action}`)).join('; ') || '-',
 }))
