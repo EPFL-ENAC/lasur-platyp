@@ -32,10 +32,10 @@ a {
 a.q-markdown--link,
 a.modus {
   text-decoration: underline;
-  text-decoration-color: $green-6;
+  text-decoration-color: #333;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
-  color: $green-6;
+  color: #333;
 }
 
 a:hover.q-markdown--link,
