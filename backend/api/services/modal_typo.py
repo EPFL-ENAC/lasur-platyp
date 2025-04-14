@@ -136,24 +136,25 @@ class ModalTypoService:
         # check if custom actions are applied and change id for locale label
         if custom_actions and len(custom_actions) > 0:
             for group in actions:
-                for i, action in enumerate(actions[group]):
-                    # check if action can be parsed as an int
-                    if self.is_id(action):
-                        # check if action is a custom action
-                        for custom_action in custom_actions:
-                            if str(custom_action.id) == action:
-                                if custom_action.labels:
-                                    # replace action with its label
-                                    if locale in custom_action.labels:
-                                        actions[group][i] = custom_action.labels[locale]
-                                    elif "en" in custom_action.labels:
-                                        # if no label for the locale, use the english label
-                                        actions[group][i] = custom_action.labels["en"]
-                                    else:
-                                        # if no label for the locale, use the first label
-                                        actions[group][i] = list(
-                                            custom_action.labels.values())[0]
-                                break
+                if actions[group]:
+                    for i, action in enumerate(actions[group]):
+                        # check if action can be parsed as an int
+                        if self.is_id(action):
+                            # check if action is a custom action
+                            for custom_action in custom_actions:
+                                if str(custom_action.id) == action:
+                                    if custom_action.labels:
+                                        # replace action with its label
+                                        if locale in custom_action.labels:
+                                            actions[group][i] = custom_action.labels[locale]
+                                        elif "en" in custom_action.labels:
+                                            # if no label for the locale, use the english label
+                                            actions[group][i] = custom_action.labels["en"]
+                                        else:
+                                            # if no label for the locale, use the first label
+                                            actions[group][i] = list(
+                                                custom_action.labels.values())[0]
+                                    break
 
         data = {
             "empl": {
