@@ -76,6 +76,7 @@
           <employer-actions-input
             v-if="withActions"
             v-model="selected.actions"
+            :company="props.company"
             :label="t('company.actions')"
             class="q-mt-lg"
           />

@@ -53,6 +53,25 @@ class Company(CompanyBase, table=True):
         default=None, sa_column=Column(JSON))
     campaigns: List["Campaign"] = Relationship(
         back_populates="company", cascade_delete=True)
+    custom_actions: List["CompanyAction"] = Relationship(
+        back_populates="company", cascade_delete=True)
+
+
+class CompanyActionBase(SQLModel):
+    group: str  # mode of transport or global
+    # key is language code, value is label in this language
+    labels: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
+
+
+class CompanyAction(CompanyActionBase, table=True):
+    id: Optional[int] = Field(
+        default=None,
+        nullable=False,
+        primary_key=True,
+        index=True,
+    )
+    company_id: int = Field(default=None, foreign_key="company.id")
+    company: Company | None = Relationship(back_populates="custom_actions")
 
 
 class CampaignBase(Entity):

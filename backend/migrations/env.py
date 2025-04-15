@@ -8,7 +8,7 @@ from api.config import config as app_config
 from alembic import context
 from sqlmodel import SQLModel
 
-from api.models.domain import Company, Campaign, Participant, Record, DataEntry
+from api.models.domain import Company, Campaign, Participant, Record, DataEntry, CompanyAction
 from api.models.authz import ACL
 
 # this is the Alembic Config object, which provides

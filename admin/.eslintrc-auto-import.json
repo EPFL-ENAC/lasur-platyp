@@ -104,6 +104,7 @@
     "useServices": true,
     "useUsersStore": true,
     "useCampaigns": true,
-    "useParticipants": true
+    "useParticipants": true,
+    "useActions": true
   }
 }

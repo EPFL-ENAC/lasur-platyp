@@ -30,11 +30,11 @@
       <div class="row q-col-gutter-md q-mb-md">
         <div class="col-12 col-md-6">
           <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
-          <fields-list :items="actionItems" :dbobject="item?.actions" />
+          <fields-list :items="actionItems" :dbobject="formattedActions" />
         </div>
         <div class="col-12 col-md-6">
           <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
-          <fields-list :items="actionProItems" :dbobject="item?.actions" />
+          <fields-list :items="actionProItems" :dbobject="formattedActions" />
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar'
-import type { Campaign, Company } from 'src/models'
+import type { Campaign, Company, EmployerActions } from 'src/models'
 import CompanyCampaignDialog from 'src/components/CompanyCampaignDialog.vue'
 import CompanyCampaignParticipants from 'src/components/CompanyCampaignParticipants.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
@@ -87,9 +87,10 @@ import { collectUrl } from 'src/boot/api'
 import { notifyInfo } from 'src/utils/notify'
 import { actionItems, actionProItems } from 'src/utils/options'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const campaignsStore = useCampaigns()
+const actionsStore = useActions()
 
 interface Props {
   item: Campaign
@@ -106,6 +107,30 @@ const hasActions = computed(
       props.item.actions && props.item.actions[key] ? props.item.actions[key].length > 0 : false,
     ).length > 0,
 )
+
+const formattedActions = computed(() => {
+  const allActions: EmployerActions = {}
+  if (props.item.actions) {
+    Object.keys(props.item.actions).forEach((group) => {
+      allActions[group] =
+        props.item.actions && props.item.actions[group]
+          ? props.item.actions[group].map((action) => {
+              // check action can be parsed as a number
+              const actionId = parseInt(action, 10)
+              if (!isNaN(actionId)) {
+                const labels = actionsStore.items.find((a) => a.id === actionId)?.labels
+                if (labels) {
+                  return labels[locale.value] || labels.en || action
+                }
+                return action
+              }
+              return t(`actions.${action}`)
+            })
+          : []
+    })
+  }
+  return allActions
+})
 
 const items1: FieldItem[] = [
   {

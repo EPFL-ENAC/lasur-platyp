@@ -8,6 +8,7 @@ from api.models.query import RecordDraft, RecordRead, RecordComments
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
 from api.services.companies import CompanyService
+from api.services.actions import CompanyActionService
 from api.services.records import RecordService
 from api.services.modal_typo import ModalTypoService
 
@@ -102,7 +103,7 @@ async def saveComments(
 
 
 @router.get("/record/{token}/typo")
-async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> Dict:
+async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depends(get_session)) -> Dict:
     """Get modal typology by record token"""
     if token is None:
         raise HTTPException(
@@ -120,8 +121,9 @@ async def getTypo(token: str, session: AsyncSession = Depends(get_session)) -> D
     if "reco_dt2" in reco and reco_pro is not None:
         company = await CompanyService(session).get(record.company_id)
         campaign = await CampaignService(session).get(record.campaign_id)
+        custom_actions = await CompanyActionService(session).get_company_actions(company.id)
         actions = service.get_recommendation_employer_actions(
-            company, campaign, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
+            company, campaign, custom_actions, locale, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
         response["reco_actions"] = actions
     record.typo = response
     record.comments = None  # clear comments

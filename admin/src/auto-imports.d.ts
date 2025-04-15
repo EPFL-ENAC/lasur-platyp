@@ -74,6 +74,7 @@ declare global {
   const toValue: typeof import('vue')['toValue']
   const triggerRef: typeof import('vue')['triggerRef']
   const unref: typeof import('vue')['unref']
+  const useActions: typeof import('./stores/actions')['useActions']
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuthStore: typeof import('./stores/auth')['useAuthStore']
   const useCampaigns: typeof import('./stores/campaigns')['useCampaigns']
@@ -182,6 +183,7 @@ declare module 'vue' {
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
+    readonly useActions: UnwrapRef<typeof import('./stores/actions')['useActions']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('./stores/auth')['useAuthStore']>
     readonly useCampaigns: UnwrapRef<typeof import('./stores/campaigns')['useCampaigns']>

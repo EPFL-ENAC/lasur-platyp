@@ -1,7 +1,7 @@
 from typing import List, Optional, Dict
 from pydantic import BaseModel
 from sqlmodel import Field
-from api.models.domain import CompanyBase, CampaignBase, ParticipantBase, RecordBase, DataEntryBase
+from api.models.domain import CompanyBase, CompanyActionBase, CampaignBase, ParticipantBase, RecordBase, DataEntryBase
 from enacit4r_sql.models.query import ListResult
 
 
@@ -11,6 +11,20 @@ class CompanyRead(CompanyBase):
 
 class CompanyResult(ListResult):
     data: List[CompanyRead] = []
+
+
+class CompanyActionRead(CompanyActionBase):
+    id: int
+    company_id: int
+
+
+class CompanyActionDraft(CompanyActionBase):
+    id: Optional[int] = Field(default=None)
+    company_id: int = Field(default=None)
+
+
+class CompanyActionResult(ListResult):
+    data: List[CompanyActionRead] = []
 
 
 class CampaignRead(CampaignBase):
