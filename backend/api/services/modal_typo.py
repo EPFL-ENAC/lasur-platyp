@@ -179,7 +179,7 @@ class ModalTypoService:
             url, headers=self.headers, json=data)
         response.raise_for_status()
         empl_actions = response.json()
-        empl_actions["mesures_globa"] = actions["mesures_globa"] if actions and "mesures_globa" in actions else []
+        empl_actions["mesures_globa"] = actions["mesures_globa"] if "mesures_globa" in actions else []
         return empl_actions
 
     def is_id(self, s: str) -> bool:
