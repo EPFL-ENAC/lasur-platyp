@@ -17,7 +17,7 @@ export default {
     confidentiality: "J'ai lu et accepte la politique de confidentialité",
     confidentiality_link: 'Voir la politique de confidentialité',
 
-    age_class: "Quelle est votre classe d'âge ?",
+    age_class: "Quelle est votre âge ?",
     age_class_option: {
       '16_24': 'moins de 25 ans',
       '25_44': '25 - 44 ans',
@@ -34,13 +34,13 @@ export default {
     origin_hint:
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',
     travel_time:
-      'Quel est votre temps de trajet domicile-travail, avec le mode de transport que vous utilisez habituellement ?',
+      'Combien de temps mettez-vous environ pour aller au travail ?',
     travel_time_minutes: 'minutes (aller)',
     constraints: 'Avez vous des contraintes potentielles quant à votre mobilité quotidienne ?',
     constraints_option: {
       dependent: 'Emmener des enfants ou des personnes dépendantes',
       heavy: 'Transport de matériel lourd ou encombrant',
-      night: 'Travail de nuit',
+      night: 'Horaires spéciaux',
       disabled: 'Carte de stationnement pour personne à mobilité réduite',
     },
     equipments: 'De quels équipements de mobilité disposez-vous ?',
@@ -54,11 +54,11 @@ export default {
       mob_subs: 'Abonnement de mobilité partagée (mobility, etc.)',
       car_passenger: 'Voiture (en tant que passager)',
     },
-    freq_mod: 'A quelle fréquence utilisez vous les modes suivants pour vous rendre au travail ?',
+    freq_mod: 'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',
     freq_mod_hint: "Nombre de jours d'une semaine type",
     mode: {
       walking: 'La marche (>10 min.)',
-      bike: 'Le vélo (ou VAE)',
+      bike: 'Le vélo (mécanique ou électrique)',
       pub: 'Les transports publics urbains',
       train: 'le train',
       moto: 'La moto / le scooter',
@@ -66,16 +66,16 @@ export default {
       plane: "L'avion",
       pub_train: 'Les transports publics (y compris le train)',
       car_moto: 'La voiture ou la moto',
-      combined: 'Une combinaison de ces modes de transport',
+      combined: 'Utilisez-vous plusieurs de ces modes pour un même trajet',
     },
     trav_pro:
-      'Dans quelle mesure devez-vous effectuer des déplacements dans le cadre de votre travail ?',
+      'Effectuez-vous des déplacements professionnels ? A quelle distance ?',
     trav_pro_option: {
-      local: 'Local',
+      local: 'Locale',
       local_hint: '<15 km : Grand Genève',
-      region: 'National',
+      region: 'Nationale',
       region_hint: '15-400 km : Lausanne, Berne, Zürich',
-      inter: 'International',
+      inter: 'Internationale (en Europe)',
       inter_hint: '>400 km : Paris, Londres, Amsterdam',
     },
     freq_trav_pro_local_hint: 'Local',
@@ -84,7 +84,7 @@ export default {
 
     days_per_month: 'En jours par mois',
     freq_mod_pro:
-      'A quelle fréquence utilisez vous les modes suivants pour vos déplacements professionnels ?',
+      'Combien de fois par mois utilisez-vous ces modes pour vos déplacements professionnels ?',
     importance:
       "Quelle est l'importance des aspects suivants pour vous, dans votre mobilité quotidienne ?",
     importance_hint: 'Sur une échelle de 1 (pas important du tout) à 5 (très important)',
@@ -96,7 +96,7 @@ export default {
     importance_most: 'Possibilité de mettre à profit le temps de trajet',
     importance_env: 'Environnement (réduction du la pollution)',
     needs:
-      'Dans quelle mesure les modes de transport suivants sont-ils adaptés à vos besoins de mobilité quotidienne ?',
+      'Pensez-vous que les modes suivants sont adaptés pour votre mobilité quotidienne ?',
     needs_hint: 'Sur une échelle de 1 (pas du tout adapté) à 5 (tout à fait adapté)',
     adjectives: 'Quels adjectifs associez-vous aux modes de transport suivants ?',
     adjectives_hint: 'Sélectionnez 3 adjectifs par mode de transport',
@@ -135,7 +135,7 @@ export default {
   },
   main_mode: {
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
-    bike: 'Actuellement, vous vous rendez au travail principalement en vélo (ou VAE).',
+    bike: 'Actuellement, vous vous rendez au travail principalement en vélo (mécanique ou électrique).',
     pub: 'Actuellement, vous vous rendez au travail principalement en transports publics.',
     moto: 'Actuellement, vous vous rendez au travail principalement en moto ou en scooter.',
     car: 'Actuellement, vous vous rendez au travail principalement en voiture.',
