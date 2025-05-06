@@ -340,7 +340,17 @@ function onDownload() {
     .find(query)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then((result: any) => {
-      const csv = Papa.unparse(result.data.map((row: Record) => flattenRow(row)))
+      const rows = result.data.map((row: Record) => flattenRow(row))
+      const columns: string[] = []
+      rows.forEach((row: Record) => {
+        Object.keys(row).forEach((key) => {
+          if (!columns.includes(key)) {
+            columns.push(key)
+          }
+        })
+      })
+      columns.sort()
+      const csv = Papa.unparse(rows, { columns })
       // make browser download the file
       const blob = new Blob([csv], { type: 'text/csv' })
       const url = URL.createObjectURL(blob)
