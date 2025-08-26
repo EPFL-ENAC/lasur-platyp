@@ -30,6 +30,7 @@ class EmployerActions(BaseModel):
     mesures_velo: Optional[List[str]] = Field(default=[])
     mesures_covoit: Optional[List[str]] = Field(default=[])
     mesures_elec: Optional[List[str]] = Field(default=[])
+    mesures_pro_globa: Optional[List[str]] = Field(default=[])
     mesures_pro_velo: Optional[List[str]] = Field(default=[])
     mesures_pro_tpu: Optional[List[str]] = Field(default=[])
     mesures_pro_train: Optional[List[str]] = Field(default=[])

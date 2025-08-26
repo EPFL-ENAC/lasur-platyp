@@ -1,6 +1,3 @@
-// This is just an example,
-// so you can safely delete all default props below
-
 export default {
   main: {
     brand: 'Mobility Toolkit',
@@ -47,6 +44,8 @@ export default {
     mesures_covoit_hint: '',
     mesures_elec_label: 'Electric',
     mesures_elec_hint: '',
+    mesures_pro_globa_label: 'Global',
+    mesures_pro_globa_hint: '',
     mesures_pro_velo_label: 'Bicycle',
     mesures_pro_velo_hint: '',
     mesures_pro_tpu_label: 'Public transports',
@@ -58,6 +57,9 @@ export default {
     budget: 'Sustainable mobility budget',
     wfh: 'Ability to work from home',
     wftp: 'Ability to work remotely',
+    wfro: 'Ability to work remotely occasionally',
+    videoconf:
+      'Workplace videoconferencing system that can be booked to reduce long-distance travel',
     tpg_pass: 'Public transport (UNIRESO) pass',
     lex_pass: 'Léman express pass',
     cff_pass_ag: 'Train pass (general pass)',
@@ -71,6 +73,7 @@ export default {
     bike_parking: 'Secure bicycle parking',
     ebike_charging: 'E-bike battery charging',
     bike_equipment: 'Subsidy for the purchase of bicycle safety and comfort gear',
+    bike_courses: 'Setting up cycling courses at the workplace',
     carpool_subs: 'Reimbursement of car-pooling journeys',
     carpool_connect: 'Connection to nearby colleagues to facilitate car-pooling',
     carpool_parking: 'Parking spots reserved for car-pooling',
@@ -78,7 +81,10 @@ export default {
     mobility_pass: 'Mobility car-pooling pass',
     ebike_fleet: 'E-bike fleet for professional trips',
     tpu_pro: 'Public transport (UNIRESO) pass',
+    tpu_rmb: 'Reimbursement of public transport tickets for business travel',
     train_pro: 'Train pass (general pass)',
+    train_obl: 'Obligation to use train where possible, for business journeys',
+    train_rmb: 'Reimbursement of train tickets for business travel',
     ev_fleet: 'EV fleet for professional trips',
   },
   action: 'Measure',

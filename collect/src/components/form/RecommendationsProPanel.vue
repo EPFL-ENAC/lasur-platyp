@@ -47,6 +47,16 @@
           </div>
         </div>
       </q-card-section>
+      <q-card-section v-if="globalActions.length" class="q-pt-none">
+        <div class="text-body1 text-bold text-green-2">
+          {{
+            t('form.actions_global', {
+              count: globalActions.length,
+              actions: globalActions.join('; '),
+            })
+          }}
+        </div>
+      </q-card-section>
     </q-card>
   </div>
 </template>
@@ -76,6 +86,10 @@ const actionsLoc = computed(
 const actionsRegInt = computed(
   () => survey.recommendation.reco_actions?.mesure_pro_regint.map(translateAction) || [],
 )
+
+const globalActions = computed(() => {
+  return survey.recommendation.reco_actions?.mesures_pro_globa?.map(translateAction) || []
+})
 
 function translateAction(action: string) {
   const label = t(`actions.${action}`)

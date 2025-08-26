@@ -17,6 +17,7 @@ export const actionItems: FieldItem[] = [
 }))
 
 export const actionProItems: FieldItem[] = [
+  'mesures_pro_globa',
   'mesures_pro_velo',
   'mesures_pro_tpu',
   'mesures_pro_train',
@@ -35,6 +36,7 @@ export const actionGroupOptions = [
   'mesures_velo',
   'mesures_covoit',
   'mesures_elec',
+  'mesures_pro_globa',
   'mesures_pro_velo',
   'mesures_pro_tpu',
   'mesures_pro_train',

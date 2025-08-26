@@ -1,6 +1,3 @@
-// This is just an example,
-// so you can safely delete all default props below
-
 export default {
   main: {
     brand: 'Toolkit Mobilité',
@@ -47,6 +44,8 @@ export default {
     mesures_covoit_hint: '',
     mesures_elec_label: 'Electrique',
     mesures_elec_hint: '',
+    mesures_pro_globa_label: 'Global',
+    mesures_pro_globa_hint: '',
     mesures_pro_velo_label: 'Vélo',
     mesures_pro_velo_hint: '',
     mesures_pro_tpu_label: 'Transports publics',
@@ -58,6 +57,9 @@ export default {
     budget: 'Budget mobilité',
     wfh: 'Possibilité de télétravailler au domicile',
     wftp: 'Possibilité de télétravailler dans un tiers-lieu',
+    wfro: 'Possibilité de télétravailler occasionnellement',
+    videoconf:
+      'Système de visioconférence réservable au travail pour limiter les longs déplacements',
     tpg_pass: 'Abonnement transports publics (UNIRESO)',
     lex_pass: 'Abonnement léman express',
     cff_pass_ag: 'Abonnement train (abonnement général)',
@@ -71,6 +73,7 @@ export default {
     bike_parking: 'Stationnement vélo sécurisé',
     ebike_charging: 'Possibilité de chargement vélo électrique',
     bike_equipment: "Subvention à l'achat d'équipement de sécurité vélo",
+    bike_courses: 'Mise en place de cours pour la pratique du vélo sur le lieu de travail',
     carpool_subs: 'Remboursement des trajets de covoiturage',
     carpool_connect: 'Mise en relation avec des collègues pour covoiturer',
     carpool_parking: 'Places de stationnement réservées covoiturage',
@@ -78,7 +81,11 @@ export default {
     mobility_pass: 'Abonnement autopartage mobility',
     ebike_fleet: 'Flotte de vélos électriques pour les déplacements professionnels',
     tpu_pro: 'Abonnement transports publics (UNIRESO)',
+    tpu_rmb: 'Remboursement des billets de transports publics pour les déplacements professionnels',
     train_pro: 'Abonnement train (abonnement général)',
+    train_obl:
+      "Obligation d'utiliser le train dans la mesure du possible, pour les voyages professionnels",
+    train_rmb: 'Remboursement des billets de train pour les déplacements professionnels',
     ev_fleet: 'Flotte de véhicules électriques pour les déplacements professionnels',
   },
   action: 'Mesure',

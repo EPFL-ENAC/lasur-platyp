@@ -107,7 +107,7 @@ function onInit() {
 
 const actionOptions = computed<{ [key: string]: Option[] }>(() => {
   return {
-    mesures_globa: makeOptions('mesures_globa', ['budget', 'wfh', 'wftp']),
+    mesures_globa: makeOptions('mesures_globa', ['budget', 'wfh', 'wftp', 'wfro']),
     mesures_tpu: makeOptions('mesures_tpu', ['tpg_pass', 'lex_pass']),
     mesures_train: makeOptions('mesures_train', ['cff_pass_ag', 'cff_pass_dtp', 'cff_pass_dt']),
     mesures_inter: makeOptions('mesures_inter', ['pnr_pass', 'shuttle', 'velo_station']),
@@ -117,6 +117,7 @@ const actionOptions = computed<{ [key: string]: Option[] }>(() => {
       'bike_parking',
       'ebike_charging',
       'bike_equipment',
+      'bike_courses',
     ]),
     mesures_covoit: makeOptions('mesures_covoit', [
       'carpool_subs',
@@ -129,9 +130,10 @@ const actionOptions = computed<{ [key: string]: Option[] }>(() => {
 
 const actionProOptions = computed<{ [key: string]: Option[] }>(() => {
   return {
+    mesures_pro_globa: makeOptions('mesures_pro_globa', ['videoconf']),
     mesures_pro_velo: makeOptions('mesures_pro_velo', ['ebike_fleet']),
-    mesures_pro_tpu: makeOptions('mesures_pro_tpu', ['tpu_pro']),
-    mesures_pro_train: makeOptions('mesures_pro_train', ['train_pro']),
+    mesures_pro_tpu: makeOptions('mesures_pro_tpu', ['tpu_pro', 'tpu_rmb']),
+    mesures_pro_train: makeOptions('mesures_pro_train', ['train_pro', 'train_obl', 'train_rmb']),
     mesures_pro_elec: makeOptions('mesures_pro_elec', ['ev_fleet']),
   }
 })
