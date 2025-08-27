@@ -196,6 +196,11 @@ export default {
     show: 'Voir les avantages',
     hide: 'Masquer les avantages',
   },
+  contact: {
+    description:
+      "Pour plus d'informations sur la mobilité à {company_name}, veuillez contacter : {contact_name} {contact_email}",
+    website: "Veuillez visiter la page d'informations à {info_url}",
+  },
   resume: 'Continuer le questionaire',
   start_new: 'Ou recommencer du début',
   start: 'Démarrer',

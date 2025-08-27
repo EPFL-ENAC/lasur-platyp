@@ -32,6 +32,9 @@
         <div class="col-12 col-md-6">
           <fields-list :items="items" :dbobject="company" />
         </div>
+        <div class="col-12 col-md-6">
+          <fields-list :items="items2" :dbobject="company" />
+        </div>
       </div>
       <div class="q-mb-sm">{{ t('company.actions') }}</div>
       <q-btn
@@ -137,6 +140,31 @@ const items: FieldItem[] = [
     field: 'administrators',
     label: 'company.administrators',
     format: (company: Company) => company.administrators?.join(', '),
+  },
+]
+
+const items2: FieldItem[] = [
+  {
+    field: 'contact_name',
+    label: 'company.contact_name',
+  },
+  {
+    field: 'contact_email',
+    label: 'company.contact_email',
+  },
+  {
+    field: 'info_url',
+    label: 'company.info_url',
+    links: (val) =>
+      val.info_url
+        ? [
+            {
+              label: val.info_url,
+              to: val.info_url,
+              iconRight: 'open_in_new',
+            },
+          ]
+        : [],
   },
 ]
 

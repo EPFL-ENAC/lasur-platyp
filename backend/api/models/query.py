@@ -80,3 +80,11 @@ class DataEntryRead(DataEntryBase):
 
 class ParticipantData(BaseModel):
     data: Optional[Dict] = None
+
+
+class CampaignInfo(BaseModel):
+    name: str
+    company_name: str
+    contact_email: Optional[str] = None
+    contact_name: Optional[str] = None
+    info_url: Optional[str] = None

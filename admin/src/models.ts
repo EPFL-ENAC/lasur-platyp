@@ -29,6 +29,9 @@ export interface Campaign extends Entity {
   end_date?: string | undefined
   lat?: number | undefined
   lon?: number | undefined
+  contact_email?: string
+  contact_name?: string
+  info_url?: string
   company_id?: number
   actions?: EmployerActions
 }
@@ -42,6 +45,9 @@ export interface CompanyAction {
 
 export interface Company extends Entity {
   administrators: string[]
+  contact_email?: string
+  contact_name?: string
+  info_url?: string
   campaings?: Campaign[]
   custom_actions?: CompanyAction[]
   actions?: EmployerActions

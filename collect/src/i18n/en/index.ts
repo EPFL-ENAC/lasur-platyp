@@ -186,6 +186,11 @@ export default {
     show: 'Show benefits',
     hide: 'Hide benefits',
   },
+  contact: {
+    description:
+      'For more information about the mobility at {company_name}, please contact: {contact_name} {contact_email}',
+    website: 'Please visit the information page at {info_url}',
+  },
   resume: 'Resume',
   start_new: 'Or start a new survey',
   start: 'Start',

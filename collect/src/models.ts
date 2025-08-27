@@ -117,3 +117,11 @@ export interface Recommendation {
     reco_pro_reg: string
   }
 }
+
+export interface CampaignInfo {
+  name: string
+  company_name: string
+  contact_name?: string
+  contact_email?: string
+  info_url?: string
+}

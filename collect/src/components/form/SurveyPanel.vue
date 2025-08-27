@@ -588,6 +588,7 @@
     </div>
     <div v-if="survey.stepName === 'recommendations'">
       <RecommendationsPanel />
+      <InfoPanel class="q-mt-lg" />
     </div>
     <div v-if="survey.stepName === 'comments'">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -598,6 +599,7 @@
         bg-color="green-3"
         filled
       />
+      <InfoPanel />
     </div>
     <div class="row justify-center q-mt-xl">
       <q-btn
@@ -646,6 +648,7 @@ import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
+import InfoPanel from 'src/components/form/InfoPanel.vue'
 import { notifyError } from 'src/utils/notify'
 
 const { t, locale } = useI18n()
@@ -792,6 +795,7 @@ function nextStep() {
       collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
+          void collector.loadInfo(survey.record.token)
           return collector.loadTypo(survey.record, locale.value)
         })
         .then((resp) => {

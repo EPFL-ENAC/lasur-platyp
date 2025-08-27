@@ -10,11 +10,30 @@ export default {
       'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des employés. Ces mesures sont regroupées par mode de transport ou sont globales.',
     administrators: 'Administrateurs',
     administrators_hint:
-      "Veuillez fournir l'adresse email des administrateurs pour cette entreprise (tapez Entrée pour ajouter une entrée).",
+      "L'adresse email des administrateurs pour cette entreprise (tapez Entrée pour ajouter une entrée).",
+    contact_name: 'Nom du contact',
+    contact_name_hint: 'Le nom de la personne de contact pour la mobilité dans cette entreprise.',
+    contact_email: 'Email du contact',
+    contact_email_hint:
+      "L'adresse email de la personne de contact pour la mobilité dans cette entreprise.",
+    contact_info: 'Informations de contact',
+    info_url: "Lien d'information",
+    info_url_hint:
+      "Un lien vers plus d'informations sur les options de mobilité de cette entreprise.",
   },
   campaign: {
     label: 'Campagne',
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
+    contact_name: 'Nom du contact',
+    contact_name_hint:
+      "Le nom de la personne de contact pour la mobilité dans cette entreprise (si différent du contact de l'entreprise).",
+    contact_email: 'Email du contact',
+    contact_email_hint:
+      "L'adresse email de la personne de contact pour la mobilité dans cette entreprise (si différent du contact de l'entreprise).",
+    contact_info: 'Informations de contact',
+    info_url: "Lien d'information",
+    info_url_hint:
+      "Un lien vers plus d'informations sur les options de mobilité de cette entreprise (si différent du lien d'information de l'entreprise).",
   },
   role: {
     'platyp-user': 'Utilisateur',
@@ -161,5 +180,7 @@ export default {
   survey_link: "Lien vers l'enquête",
   token: 'Jeton',
   users: 'Utilisateurs',
+  valid_email_required: 'Une adresse email valide est requise',
+  valid_url_required: 'Une URL valide est requise (commençant par http:// ou https://)',
   your_role: 'Votre rôle est: {role}',
 }

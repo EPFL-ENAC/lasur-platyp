@@ -11,10 +11,28 @@ export default {
     administrators: 'Administrators',
     administrators_hint:
       'Provide the email address of the administrators for this company (type Enter to add entry).',
+    contact_name: 'Contact Name',
+    contact_name_hint: 'Provide the name of the contact person for mobility in this company.',
+    contact_email: 'Contact Email',
+    contact_email_hint:
+      'Provide the email address of the contact person for mobility in this company.',
+    contact_info: 'Contact Information',
+    info_url: 'Information link',
+    info_url_hint: 'Provide a link to more information about the company mobility options.',
   },
   campaign: {
     label: 'Campaign',
     with_actions: 'With employer measures specific to this campaign',
+    contact_name: 'Contact Name',
+    contact_name_hint:
+      'Provide the name of the contact person for mobility in this company (if different from the company contact).',
+    contact_email: 'Contact Email',
+    contact_email_hint:
+      'Provide the email address of the contact person for mobility in this company (if different from the company contact).',
+    contact_info: 'Contact Information',
+    info_url: 'Information link',
+    info_url_hint:
+      'Provide a link to more information about the company mobility options (if different from the company information link).',
   },
   role: {
     'platyp-user': 'User',
@@ -157,5 +175,7 @@ export default {
   survey_link: 'Link to survey',
   token: 'Token',
   users: 'Users',
+  valid_email_required: 'A valid email address is required',
+  valid_url_required: 'A valid URL is required (starting with http:// or https://)',
   your_role: 'Your role is: {role}',
 }
