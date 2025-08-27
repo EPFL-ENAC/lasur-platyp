@@ -123,6 +123,7 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employeur also offers the following measure: {actions} | Your employeur also offers the following measures: {actions}',
+    final: 'Your answers have been registered, thank you for your participation!',
   },
   main_mode: {
     walking: 'At present, you mainly walk to get to your workplace.',

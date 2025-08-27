@@ -25,6 +25,7 @@ export const useSurvey = defineStore(
       'adjectives_car_moto',
       'recommendations',
       'comments',
+      'final',
     ]
 
     const tokenOrSlug = ref<string | null>(null)

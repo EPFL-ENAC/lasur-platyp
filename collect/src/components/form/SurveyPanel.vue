@@ -601,10 +601,13 @@
       />
       <InfoPanel />
     </div>
+    <div v-if="survey.stepName === 'final'">
+      <FinalPanel />
+    </div>
     <div class="row justify-center q-mt-xl">
       <q-btn
         rounded
-        v-if="survey.isAfterStep('agreement')"
+        v-if="survey.isAfterStep('agreement') && survey.stepName !== 'final'"
         color="accent"
         icon="keyboard_arrow_left"
         size="lg"
@@ -649,6 +652,7 @@ import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
 import InfoPanel from 'src/components/form/InfoPanel.vue'
+import FinalPanel from 'src/components/form/FinalPanel.vue'
 import { notifyError } from 'src/utils/notify'
 
 const { t, locale } = useI18n()
@@ -763,7 +767,6 @@ const adjectivePairsOptions = computed<ToggleOption[]>(() => [
 ])
 
 function nextStep() {
-  if (survey.stepName === 'comments') return
   if (survey.stepName === 'agreement') {
     if (!survey.record.data.terms_conditions) {
       notifyError(t('form.error.terms_conditions'))
@@ -834,7 +837,7 @@ function onSendComments() {
       .saveComments(survey.record)
       .catch(console.error)
       .finally(() => {
-        survey.reset()
+        nextStep()
       })
   }
 }

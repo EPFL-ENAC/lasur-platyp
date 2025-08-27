@@ -130,6 +130,8 @@ export default {
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
+
+    final: 'Vos réponses ont été enregistrées, merci de votre participation !',
   },
   main_mode: {
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
