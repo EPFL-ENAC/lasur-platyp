@@ -88,3 +88,13 @@ class CampaignInfo(BaseModel):
     contact_email: Optional[str] = None
     contact_name: Optional[str] = None
     info_url: Optional[str] = None
+
+
+class Frequency(BaseModel):
+    value: Optional[str] = None
+    count: Optional[int] = None
+
+
+class Frequencies(BaseModel):
+    total: Optional[int] = None
+    data: List[Frequency] = []

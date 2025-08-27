@@ -105,6 +105,9 @@ export default {
     train_rmb: 'Reimbursement of train tickets for business travel',
     ev_fleet: 'EV fleet for professional trips',
   },
+  stats: {
+    equipments: 'Mobility Equipments',
+  },
   action: 'Measure',
   add: 'Add',
   address_input_hint: 'Type Enter to lookup addresses.',
@@ -171,6 +174,7 @@ export default {
   slug: 'Slug',
   start_date: 'Start Date',
   status: 'Status',
+  statistics: 'Statistics',
   survey_link_copied: 'Survey link copied to clipboard, you can now share it with the participants',
   survey_link: 'Link to survey',
   token: 'Token',

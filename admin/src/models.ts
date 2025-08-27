@@ -87,3 +87,12 @@ export interface Record {
   typo?: { [key: string]: { [key: string]: number | string | string[] | boolean } }
   comments?: string
 }
+
+export interface Frequency {
+  value: string
+  count: number
+}
+export interface Frequencies {
+  total: number
+  data: Frequency[]
+}

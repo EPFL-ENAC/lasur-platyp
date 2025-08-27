@@ -107,6 +107,9 @@ export default {
     train_rmb: 'Remboursement des billets de train pour les déplacements professionnels',
     ev_fleet: 'Flotte de véhicules électriques pour les déplacements professionnels',
   },
+  stats: {
+    equipments: 'Équipements de mobilité',
+  },
   action: 'Mesure',
   add: 'Ajouter',
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",
@@ -175,6 +178,7 @@ export default {
   slug: 'Slug',
   start_date: 'Date de début',
   status: 'Statut',
+  statistics: 'Statistiques',
   survey_link_copied:
     "Lien vers l'enquête copié dans le presse-papiers, vous pouvez maintenant le partager avec les participants",
   survey_link: "Lien vers l'enquête",

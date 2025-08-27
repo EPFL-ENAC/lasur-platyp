@@ -1,9 +1,12 @@
+from html import entities
 from api.db import AsyncSession
 from sqlalchemy.sql import text
+from sqlalchemy import select, func, and_, cast
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import select
 from fastapi import HTTPException
 from api.models.domain import Record, Campaign
-from api.models.query import RecordResult, RecordDraft
+from api.models.query import RecordResult, RecordDraft, Frequencies, Frequency
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 
@@ -33,6 +36,11 @@ class RecordService:
     async def count(self) -> int:
         """Count all records"""
         count = (await self.session.exec(text("select count(id) from record"))).scalar()
+        return count
+
+    async def count_completed(self) -> int:
+        """Count all completed records"""
+        count = (await self.session.exec(text("select count(id) from record where typo->'reco' != 'null'::jsonb"))).scalar()
         return count
 
     async def get(self, id: int) -> Record:
@@ -136,3 +144,45 @@ class RecordService:
         entity.company_id = campaign.company_id if campaign else entity.company_id
         await self.session.commit()
         return entity
+
+    async def find_equipments_frequencies(self, filter: dict) -> Frequencies:
+        results = await self.find(filter, fields=[], sort=[], range=[])
+        ids = [entity.id for entity in results.data]
+
+        total_count = await self.count_completed()
+
+        # Create a subquery/CTE that expands the JSON array
+        expanded = (
+            select(
+                Record.id,
+                func.jsonb_array_elements_text(
+                    Record.data['equipments']).label('equipment')
+            )
+            .select_from(Record)
+            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
+            .subquery()
+        )
+
+        # Main query
+        query = (
+            select(
+                expanded.c.equipment,
+                func.count().label('usage_count')
+            )
+            .group_by(expanded.c.equipment)
+            .order_by(func.count().desc())
+        )
+
+        counts = await self.session.exec(query)
+        # counts = await self.session.exec(text("SELECT elem AS equipment, COUNT(*) AS usage_count FROM record CROSS JOIN LATERAL jsonb_array_elements_text(data->'equipments') elem GROUP BY elem ORDER BY usage_count DESC"))
+
+        return Frequencies(
+            total=total_count,
+            data=[
+                Frequency(
+                    value=row.equipment,
+                    count=row.usage_count
+                )
+                for row in counts
+            ]
+        )
