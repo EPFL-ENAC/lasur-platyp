@@ -107,6 +107,7 @@ export default {
   },
   stats: {
     equipments: 'Mobility Equipments',
+    constraints: 'Mobility Constraints',
   },
   action: 'Measure',
   add: 'Add',

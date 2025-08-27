@@ -15,6 +15,8 @@
       <div v-else>
         <div class="text-h6 q-mb-md">{{ t('stats.equipments') }}</div>
         <div>{{ stats.equipments }}</div>
+        <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.constraints') }}</div>
+        <div>{{ stats.constraints }}</div>
       </div>
     </div>
   </q-page>
@@ -26,6 +28,6 @@ const authStore = useAuthStore()
 const stats = useStats()
 
 onMounted(() => {
-  stats.loadEquipments()
+  stats.loadStats()
 })
 </script>
