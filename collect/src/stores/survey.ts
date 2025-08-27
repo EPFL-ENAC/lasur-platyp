@@ -20,9 +20,6 @@ export const useSurvey = defineStore(
       'freq_mod_pro_inter',
       'importance',
       'needs',
-      'adjectives_bike',
-      'adjectives_pub_train',
-      'adjectives_car_moto',
       'recommendations',
       'comments',
       'final',
@@ -43,6 +40,12 @@ export const useSurvey = defineStore(
       started.value = false
       step.value = 1
       timestamp.value = Date.now()
+    }
+
+    function finish() {
+      record.value = {} as Record
+      recommendation.value = {} as Recommendation
+      tokenOrSlug.value = null
     }
 
     function reset() {
@@ -169,6 +172,7 @@ export const useSurvey = defineStore(
       timestamp,
       recommendation,
       init,
+      finish,
       reset,
       isBeforeStep,
       isAfterStep,

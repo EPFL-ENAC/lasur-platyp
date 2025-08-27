@@ -9,5 +9,11 @@
 
 <script setup lang="ts">
 import InfoPanel from 'src/components/form/InfoPanel.vue'
+
 const { t } = useI18n()
+const survey = useSurvey()
+
+onMounted(() => {
+  survey.finish()
+})
 </script>
