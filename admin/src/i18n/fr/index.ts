@@ -108,6 +108,7 @@ export default {
     ev_fleet: 'Flotte de véhicules électriques pour les déplacements professionnels',
   },
   stats: {
+    filter_by_company: 'Filtrer par entreprise',
     equipments: 'Équipements de mobilité',
     constraints: 'Contraintes de mobilité',
     travel_time: 'Temps de trajet',

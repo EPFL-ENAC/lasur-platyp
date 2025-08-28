@@ -1,4 +1,5 @@
 import type { Frequencies } from 'src/models'
+import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
 const authStore = useAuthStore()
@@ -7,18 +8,18 @@ export const useStats = defineStore('stats', () => {
   const frequencies = ref<{ [key: string]: Frequencies }>({} as { [key: string]: Frequencies })
   const loading = ref(false)
 
-  async function loadStats() {
+  async function loadStats(filter: Filter | undefined = undefined) {
     loading.value = true
     return Promise.all([
-      loadFrequencies('equipments'),
-      loadFrequencies('constraints'),
-      loadFrequencies('travel_time'),
+      loadFrequencies('equipments', filter),
+      loadFrequencies('constraints', filter),
+      loadFrequencies('travel_time', filter),
     ]).finally(() => {
       loading.value = false
     })
   }
 
-  async function loadFrequencies(field: string) {
+  async function loadFrequencies(field: string, filter: Filter | undefined) {
     frequencies.value[field] = { total: 0, data: [] }
     return authStore.updateToken().then(() => {
       const config = {
@@ -27,7 +28,10 @@ export const useStats = defineStore('stats', () => {
         },
       }
       return api
-        .get(`/stats/${field}`, config)
+        .get(`/stats/${field}`, {
+          ...config,
+          params: { filter: filter ? JSON.stringify(filter) : undefined },
+        })
         .then((res) => {
           frequencies.value[field] = res.data
         })

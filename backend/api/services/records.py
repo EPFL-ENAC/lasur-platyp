@@ -38,9 +38,14 @@ class RecordService:
         count = (await self.session.exec(text("select count(id) from record"))).scalar()
         return count
 
-    async def count_completed(self) -> int:
+    async def count_completed(self, filter: dict) -> int:
         """Count all completed records"""
-        count = (await self.session.exec(text("select count(id) from record where typo->'reco' != 'null'::jsonb"))).scalar()
+        builder = RecordQueryBuilder(
+            Record, filter, [], [], {})
+        count_query = builder.build_count_query_with_joins(filter)
+        count_query = count_query.where(
+            Record.typo['reco'] != cast('null', JSONB))
+        count = (await self.session.exec(count_query)).one()
         return count
 
     async def get(self, id: int) -> Record:
@@ -146,10 +151,12 @@ class RecordService:
         return entity
 
     async def find_equipments_frequencies(self, filter: dict) -> Frequencies:
+        total_count = await self.count_completed(filter)
+        if total_count == 0:
+            return Frequencies(total=0, data=[])
+
         results = await self.find(filter, fields=[], sort=[], range=[])
         ids = [entity.id for entity in results.data]
-
-        total_count = await self.count_completed()
 
         # Create a subquery/CTE that expands the JSON array
         expanded = (
@@ -187,10 +194,12 @@ class RecordService:
         )
 
     async def find_constraints_frequencies(self, filter: dict) -> Frequencies:
+        total_count = await self.count_completed(filter)
+        if total_count == 0:
+            return Frequencies(total=0, data=[])
+
         results = await self.find(filter, fields=[], sort=[], range=[])
         ids = [entity.id for entity in results.data]
-
-        total_count = await self.count_completed()
 
         # Create a subquery/CTE that expands the JSON array
         expanded = (
@@ -228,10 +237,12 @@ class RecordService:
         )
 
     async def find_travel_time_frequencies(self, filter: dict) -> Frequencies:
+        total_count = await self.count_completed(filter)
+        if total_count == 0:
+            return Frequencies(total=0, data=[])
+
         results = await self.find(filter, fields=[], sort=[], range=[])
         ids = [entity.id for entity in results.data]
-
-        total_count = await self.count_completed()
 
         # Create a subquery/CTE that expands the JSON array
         expanded = (

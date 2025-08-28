@@ -106,6 +106,7 @@ export default {
     ev_fleet: 'EV fleet for professional trips',
   },
   stats: {
+    filter_by_company: 'Filter by Company',
     equipments: 'Mobility Equipments',
     constraints: 'Mobility Constraints',
     travel_time: 'Travel Time',
