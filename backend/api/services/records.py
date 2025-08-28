@@ -226,3 +226,43 @@ class RecordService:
                 for row in counts
             ]
         )
+
+    async def find_travel_time_frequencies(self, filter: dict) -> Frequencies:
+        results = await self.find(filter, fields=[], sort=[], range=[])
+        ids = [entity.id for entity in results.data]
+
+        total_count = await self.count_completed()
+
+        # Create a subquery/CTE that expands the JSON array
+        expanded = (
+            select(
+                Record.id,
+                Record.data['travel_time'].astext.label('travel_time')
+            )
+            .select_from(Record)
+            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
+            .subquery()
+        )
+
+        # Main query
+        query = (
+            select(
+                expanded.c.travel_time,
+                func.count().label('usage_count')
+            )
+            .group_by(expanded.c.travel_time)
+            .order_by(func.count().desc())
+        )
+
+        counts = await self.session.exec(query)
+
+        return Frequencies(
+            total=total_count,
+            data=[
+                Frequency(
+                    value=row.travel_time,
+                    count=row.usage_count
+                )
+                for row in counts
+            ]
+        )

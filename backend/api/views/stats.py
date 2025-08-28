@@ -34,3 +34,17 @@ async def find(
         return await RecordService(session).find_constraints_frequencies(validated["filter"])
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
+
+
+@router.get("/travel_time", response_model=Frequencies, response_model_exclude_none=True)
+async def find(
+    filter: str = Query(None),
+    user: User = Depends(kc_service.get_user_info()),
+    session: AsyncSession = Depends(get_session),
+) -> Frequencies:
+    """Query frequency of travel_time in records"""
+    try:
+        validated = validate_params(filter, None, None, None)
+        return await RecordService(session).find_travel_time_frequencies(validated["filter"])
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=f"{e}")

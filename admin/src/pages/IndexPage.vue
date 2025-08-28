@@ -14,9 +14,11 @@
       </div>
       <div v-else>
         <div class="text-h6 q-mb-md">{{ t('stats.equipments') }}</div>
-        <div>{{ stats.equipments }}</div>
+        <div>{{ stats.frequencies.equipments }}</div>
         <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.constraints') }}</div>
-        <div>{{ stats.constraints }}</div>
+        <div>{{ stats.frequencies.constraints }}</div>
+        <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.travel_time') }}</div>
+        <div>{{ stats.frequencies.travel_time }}</div>
       </div>
     </div>
   </q-page>

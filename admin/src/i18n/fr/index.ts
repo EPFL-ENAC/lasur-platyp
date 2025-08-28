@@ -110,6 +110,7 @@ export default {
   stats: {
     equipments: 'Équipements de mobilité',
     constraints: 'Contraintes de mobilité',
+    travel_time: 'Temps de trajet',
   },
   action: 'Mesure',
   add: 'Ajouter',
