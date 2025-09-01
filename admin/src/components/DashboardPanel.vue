@@ -41,6 +41,8 @@
       <div>{{ stats.frequencies.travel_time }}</div>
       <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod') }}</div>
       <div>{{ stats.frequencies.freq_mod }}</div>
+      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_pro') }}</div>
+      <div>{{ stats.frequencies.freq_mod_pro }}</div>
     </div>
   </div>
 </template>

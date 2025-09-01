@@ -111,6 +111,7 @@ export default {
     constraints: 'Mobility Constraints',
     travel_time: 'Travel Time',
     freq_mod: 'Modes of transport',
+    freq_mod_pro: 'Modes of transport (professional)',
   },
   action: 'Measure',
   add: 'Add',

@@ -17,6 +17,7 @@ export const useStats = defineStore('stats', () => {
       loadFrequencies('constraints', filter),
       loadFrequencies('travel_time', filter),
       loadFrequencies('freq_mod', filter),
+      loadFrequencies('freq_mod_pro', filter),
     ]).finally(() => {
       loading.value = false
     })
