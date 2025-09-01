@@ -387,7 +387,6 @@ function getCampaignName(campaignId: string): string {
 }
 
 function onFilter() {
-  console.debug(companyFilter.value, campaignFilter.value)
   tableRef.value.requestServerInteraction()
 }
 </script>
