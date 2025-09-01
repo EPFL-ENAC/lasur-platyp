@@ -91,8 +91,10 @@ export interface Record {
 export interface Frequency {
   value: string
   count: number
+  sum?: number
 }
 export interface Frequencies {
+  field: string
   total: number
   data: Frequency[]
 }

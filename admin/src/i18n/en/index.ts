@@ -110,6 +110,7 @@ export default {
     equipments: 'Mobility Equipments',
     constraints: 'Mobility Constraints',
     travel_time: 'Travel Time',
+    freq_mod: 'Modes of transport',
   },
   action: 'Measure',
   add: 'Add',

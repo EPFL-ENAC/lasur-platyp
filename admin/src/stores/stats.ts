@@ -5,7 +5,9 @@ import { api } from 'src/boot/api'
 const authStore = useAuthStore()
 
 export const useStats = defineStore('stats', () => {
-  const frequencies = ref<{ [key: string]: Frequencies }>({} as { [key: string]: Frequencies })
+  const frequencies = ref<{ [key: string]: Frequencies | Frequencies[] }>(
+    {} as { [key: string]: Frequencies },
+  )
   const loading = ref(false)
 
   async function loadStats(filter: Filter | undefined = undefined) {
@@ -14,13 +16,14 @@ export const useStats = defineStore('stats', () => {
       loadFrequencies('equipments', filter),
       loadFrequencies('constraints', filter),
       loadFrequencies('travel_time', filter),
+      loadFrequencies('freq_mod', filter),
     ]).finally(() => {
       loading.value = false
     })
   }
 
   async function loadFrequencies(field: string, filter: Filter | undefined) {
-    frequencies.value[field] = { total: 0, data: [] }
+    frequencies.value[field] = { field, total: 0, data: [] }
     return authStore.updateToken().then(() => {
       const config = {
         headers: {
@@ -36,7 +39,7 @@ export const useStats = defineStore('stats', () => {
           frequencies.value[field] = res.data
         })
         .catch(() => {
-          frequencies.value[field] = { total: 0, data: [] }
+          frequencies.value[field] = { field, total: 0, data: [] }
         })
     })
   }

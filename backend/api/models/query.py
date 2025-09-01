@@ -93,8 +93,10 @@ class CampaignInfo(BaseModel):
 class Frequency(BaseModel):
     value: Optional[str] = None
     count: Optional[int] = None
+    sum: Optional[int] = None
 
 
 class Frequencies(BaseModel):
+    field: Optional[str] = None
     total: Optional[int] = None
     data: List[Frequency] = []

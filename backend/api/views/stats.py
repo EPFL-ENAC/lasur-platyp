@@ -17,7 +17,7 @@ async def find(
     """Query frequency of equipments in records"""
     try:
         validated = validate_params(filter, None, None, None)
-        return await RecordService(session).find_equipments_frequencies(validated["filter"])
+        return await RecordService(session).get_equipments_frequencies(validated["filter"])
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -31,7 +31,7 @@ async def find(
     """Query frequency of constraints in records"""
     try:
         validated = validate_params(filter, None, None, None)
-        return await RecordService(session).find_constraints_frequencies(validated["filter"])
+        return await RecordService(session).get_constraints_frequencies(validated["filter"])
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -45,6 +45,20 @@ async def find(
     """Query frequency of travel_time in records"""
     try:
         validated = validate_params(filter, None, None, None)
-        return await RecordService(session).find_travel_time_frequencies(validated["filter"])
+        return await RecordService(session).get_travel_time_frequencies(validated["filter"])
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+
+
+@router.get("/freq_mod", response_model=list[Frequencies], response_model_exclude_none=True)
+async def find(
+    filter: str = Query(None),
+    # user: User = Depends(kc_service.get_user_info()),
+    session: AsyncSession = Depends(get_session),
+) -> list[Frequencies]:
+    """Query frequency of modalities in records"""
+    try:
+        validated = validate_params(filter, None, None, None)
+        return [await RecordService(session).get_mod_stats(mod, validated["filter"]) for mod in ['freq_mod_car', 'freq_mod_pub', 'freq_mod_bike', 'freq_mod_moto', 'freq_mod_train', 'freq_mod_walking']]
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")

@@ -3,7 +3,7 @@ from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlalchemy import select, func, and_, cast
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlmodel import select
+from sqlmodel import Integer, select
 from fastapi import HTTPException
 from api.models.domain import Record, Campaign
 from api.models.query import RecordResult, RecordDraft, Frequencies, Frequency
@@ -150,7 +150,7 @@ class RecordService:
         await self.session.commit()
         return entity
 
-    async def find_equipments_frequencies(self, filter: dict) -> Frequencies:
+    async def get_equipments_frequencies(self, filter: dict) -> Frequencies:
         total_count = await self.count_completed(filter)
         if total_count == 0:
             return Frequencies(total=0, data=[])
@@ -183,6 +183,7 @@ class RecordService:
         counts = await self.session.exec(query)
 
         return Frequencies(
+            field='equipments',
             total=total_count,
             data=[
                 Frequency(
@@ -193,7 +194,7 @@ class RecordService:
             ]
         )
 
-    async def find_constraints_frequencies(self, filter: dict) -> Frequencies:
+    async def get_constraints_frequencies(self, filter: dict) -> Frequencies:
         total_count = await self.count_completed(filter)
         if total_count == 0:
             return Frequencies(total=0, data=[])
@@ -226,6 +227,7 @@ class RecordService:
         counts = await self.session.exec(query)
 
         return Frequencies(
+            field='constraints',
             total=total_count,
             data=[
                 Frequency(
@@ -236,7 +238,7 @@ class RecordService:
             ]
         )
 
-    async def find_travel_time_frequencies(self, filter: dict) -> Frequencies:
+    async def get_travel_time_frequencies(self, filter: dict) -> Frequencies:
         total_count = await self.count_completed(filter)
         if total_count == 0:
             return Frequencies(total=0, data=[])
@@ -268,11 +270,57 @@ class RecordService:
         counts = await self.session.exec(query)
 
         return Frequencies(
+            field='travel_time',
             total=total_count,
             data=[
                 Frequency(
                     value=row.travel_time,
                     count=row.usage_count
+                )
+                for row in counts
+            ]
+        )
+
+    async def get_mod_stats(self, mod: str, filter: dict):
+        total_count = await self.count_completed(filter)
+        if total_count == 0:
+            return Frequencies(total=0, data=[])
+
+        results = await self.find(filter, fields=[], sort=[], range=[])
+        ids = [entity.id for entity in results.data]
+
+        # Create a subquery/CTE that expands the JSON array
+        expanded = (
+            select(
+                Record.id,
+                Record.data[mod].astext.label('mod')
+            )
+            .select_from(Record)
+            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
+            .subquery()
+        )
+
+        # Main query
+        query = (
+            select(
+                expanded.c.mod,
+                func.sum(cast(expanded.c.mod, Integer)).label('usage_sum'),
+                func.count().label('usage_count')
+            )
+            .group_by(expanded.c.mod)
+            .order_by(func.count().desc())
+        )
+
+        counts = await self.session.exec(query)
+
+        return Frequencies(
+            field=mod,
+            total=total_count,
+            data=[
+                Frequency(
+                    value=row.mod,
+                    count=row.usage_count,
+                    sum=row.usage_sum
                 )
                 for row in counts
             ]

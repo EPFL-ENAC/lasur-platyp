@@ -112,6 +112,7 @@ export default {
     equipments: 'Équipements de mobilité',
     constraints: 'Contraintes de mobilité',
     travel_time: 'Temps de trajet',
+    freq_mod: 'Modes de transport',
   },
   action: 'Mesure',
   add: 'Ajouter',
