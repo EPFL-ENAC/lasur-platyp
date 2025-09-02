@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="text-h5 q-mb-sm">{{ t('statistics') }}</div>
-    <div class="row q-col-gutter-md q-mb-md">
+    <div class="row q-col-gutter-md q-mb-lg">
       <q-select
         filled
         dense
@@ -33,27 +33,48 @@
       <q-spinner-dots size="md" color="primary" />
     </div>
     <div v-else>
-      <div class="text-h6 q-mb-md">{{ t('stats.equipments') }}</div>
-      <div>{{ stats.frequencies.equipments }}</div>
-      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.constraints') }}</div>
-      <div>{{ stats.frequencies.constraints }}</div>
-      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.travel_time') }}</div>
-      <div>{{ stats.frequencies.travel_time }}</div>
-      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod') }}</div>
-      <div>{{ stats.frequencies.freq_mod }}</div>
-      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_pro') }}</div>
-      <div>{{ stats.frequencies.freq_mod_pro }}</div>
-      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_emissions') }}</div>
-      <div>{{ stats.emissions.freq_mod }}</div>
-      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.mod_reco') }}</div>
-      <div>{{ stats.links.mod_reco }}</div>
+      <div class="row q-col-gutter-md">
+        <div class="col">
+          <frequencies-chart type="equipments" class="q-mb-md" />
+        </div>
+        <div class="col">
+          <frequencies-chart type="constraints" class="q-mb-md" />
+        </div>
+      </div>
+      <div class="row q-col-gutter-md">
+        <div class="col">
+          <frequencies-chart type="travel_time" :range-step="5" class="q-mb-md" />
+        </div>
+        <div class="col">
+          <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod.title') }}</div>
+          <div>{{ stats.frequencies.freq_mod }}</div>
+        </div>
+      </div>
+      <div class="row q-col-gutter-md">
+        <div class="col">
+          <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_pro.title') }}</div>
+          <div>{{ stats.frequencies.freq_mod_pro }}</div>
+        </div>
+        <div class="col">
+          <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_emissions.title') }}</div>
+          <div>{{ stats.emissions.freq_mod }}</div>
+        </div>
+      </div>
+      <div class="row q-col-gutter-md">
+        <div class="col">
+          <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.mod_reco.title') }}</div>
+          <div>{{ stats.links.mod_reco }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
+
 const { t } = useI18n()
 const stats = useStats()
 const services = useServices()
