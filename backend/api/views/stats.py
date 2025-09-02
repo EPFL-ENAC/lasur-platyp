@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
-from api.models.query import Frequencies, Emissions
+from api.models.query import Frequencies, Emissions, Links
 from api.services.records import RecordService
 from enacit4r_sql.utils.query import validate_params, ValidationError
 
@@ -42,7 +42,7 @@ async def compute_travel_time_frequencies(
     user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
 ) -> Frequencies:
-    """Query frequency of travel_time in records"""
+    """Query frequency of travel time in records"""
     try:
         validated = validate_params(filter, None, None, None)
         return await RecordService(session).get_travel_time_frequencies(validated["filter"])
@@ -76,7 +76,7 @@ async def compute_freq_mod_pro_frequencies(
     user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
 ) -> list[Frequencies]:
-    """Query frequency of modalities in records"""
+    """Query frequency of professional modalities in records"""
     try:
         validated = validate_params(filter, None, None, None)
         return [await RecordService(session).get_mod_stats(mod, validated["filter"]) for mod in [
@@ -104,7 +104,7 @@ async def compute_freq_mod_emissions(
     user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
 ) -> list[Emissions]:
-    """Query frequency of modalities in records"""
+    """Query frequency of modalities emissions in records"""
     try:
         validated = validate_params(filter, None, None, None)
         return [await RecordService(session).get_mod_co2_emissions(mod, validated["filter"]) for mod in [
@@ -114,5 +114,19 @@ async def compute_freq_mod_emissions(
             'freq_mod_moto',
             'freq_mod_train',
             'freq_mod_walking']]
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+
+
+@router.get("/mod_reco", response_model=Links, response_model_exclude_none=True)
+async def compute_freq_mod_emissions(
+    filter: str = Query(None),
+    user: User = Depends(kc_service.get_user_info()),
+    session: AsyncSession = Depends(get_session),
+) -> Links:
+    """Query modality to recommendation links in records"""
+    try:
+        validated = validate_params(filter, None, None, None)
+        return await RecordService(session).get_mod_reco_links(validated["filter"])
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")

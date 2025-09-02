@@ -1,13 +1,13 @@
 from html import entities
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy import Float, select, func, and_, cast
+from sqlalchemy import Float, select, func, and_, cast, literal_column, lateral
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Integer, select
 from fastapi import HTTPException
 from api.models import query
 from api.models.domain import Record, Campaign
-from api.models.query import RecordResult, RecordDraft, Frequencies, Frequency, Emissions
+from api.models.query import Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 
@@ -366,3 +366,72 @@ class RecordService:
         emissions = [row.distance_km * 1.3 *
                      45 * 2 * int(row.mod) * mod_emissions[mod.replace("freq_mod_", "")] / 1000 for row in rows]
         return Emissions(field=mod, total=total_count, distances=sum(distances), journeys=sum(journeys), emissions=sum(emissions))
+
+    async def get_mod_reco_links(self, filter: dict) -> Links:
+        total_count = await self.count_completed(filter)
+        if total_count == 0:
+            return Links(total=0, data=[])
+
+        results = await self.find(filter, fields=[], sort=[], range=[])
+        ids = [entity.id for entity in results.data]
+
+        # Create a subquery/CTE that expands the JSON array
+        expanded = (
+            select(
+                Record.id,
+                func.jsonb_array_elements_text(
+                    Record.typo["reco"]["reco_dt2"]).label('reco')
+            )
+            .select_from(Record)
+            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
+            .subquery()
+        )
+
+        # JSON fields
+        train_val = cast(Record.data["freq_mod_train"].astext, Integer)
+        car_val = cast(Record.data["freq_mod_car"].astext, Integer)
+        pub_val = cast(Record.data["freq_mod_pub"].astext, Integer)
+        bike_val = cast(Record.data["freq_mod_bike"].astext, Integer)
+        moto_val = cast(Record.data["freq_mod_moto"].astext, Integer)
+        walking_val = cast(Record.data["freq_mod_walking"].astext, Integer)
+        combined_val = Record.data["freq_mod_combined"].astext
+
+        query = (
+            select(
+                Record.id,
+                (train_val > 0).label("train"),
+                (car_val > 0).label("car"),
+                (pub_val > 0).label("pub"),
+                (bike_val > 0).label("bike"),
+                (moto_val > 0).label("moto"),
+                (walking_val > 0).label("walking"),
+                combined_val.label("combined"),
+                expanded.c.reco,
+            ).select_from(Record)
+        )
+
+        rows = await self.session.exec(query)
+        counts = {}
+        for row in rows:
+            mod = 'unknown'
+            if row.train:
+                mod = 'train'
+            elif row.car:
+                mod = 'car'
+            elif row.pub:
+                mod = 'pub'
+            elif row.bike:
+                mod = 'bike'
+            elif row.moto:
+                mod = 'moto'
+            elif row.walking:
+                mod = 'walking'
+            elif row.combined == 'true':
+                mod = 'combined'
+            reco = row.reco
+            mod_counts = counts.get(mod, {})
+            mod_counts[reco] = mod_counts.get(reco, 0) + 1
+            counts[mod] = mod_counts
+        links = [{"source": mod, "target": reco, "value": count} for mod,
+                 reco_counts in counts.items() for reco, count in reco_counts.items()]
+        return Links(total=total_count, data=links)

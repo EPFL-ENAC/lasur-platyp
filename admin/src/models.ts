@@ -106,3 +106,14 @@ export interface Emissions {
   journeys: number
   emissions: number
 }
+
+export interface Link {
+  source: string
+  target: string
+  value: number
+}
+
+export interface Links {
+  total: number
+  data: Link[]
+}

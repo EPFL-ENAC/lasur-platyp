@@ -1,4 +1,4 @@
-import type { Emissions, Frequencies } from 'src/models'
+import type { Emissions, Frequencies, Links } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -8,9 +8,8 @@ export const useStats = defineStore('stats', () => {
   const frequencies = ref<{ [key: string]: Frequencies | Frequencies[] }>(
     {} as { [key: string]: Frequencies },
   )
-  const emissions = ref<{ [key: string]: Emissions | Emissions[] }>(
-    {} as { [key: string]: Emissions },
-  )
+  const emissions = ref<{ [key: string]: Emissions[] }>({} as { [key: string]: Emissions[] })
+  const links = ref<{ [key: string]: Links }>({} as { [key: string]: Links })
   const loading = ref(false)
 
   async function loadStats(filter: Filter | undefined = undefined) {
@@ -22,6 +21,7 @@ export const useStats = defineStore('stats', () => {
       loadFrequencies('freq_mod', filter),
       loadFrequencies('freq_mod_pro', filter),
       loadEmissions('freq_mod', filter),
+      loadLinks('mod_reco', filter),
     ]).finally(() => {
       loading.value = false
     })
@@ -50,7 +50,7 @@ export const useStats = defineStore('stats', () => {
   }
 
   async function loadEmissions(field: string, filter: Filter | undefined) {
-    emissions.value[field] = { field, total: 0, distances: 0, journeys: 0, emissions: 0 }
+    emissions.value[field] = []
     return authStore.updateToken().then(() => {
       const config = {
         headers: {
@@ -66,7 +66,29 @@ export const useStats = defineStore('stats', () => {
           emissions.value[field] = res.data
         })
         .catch(() => {
-          emissions.value[field] = { field, total: 0, distances: 0, journeys: 0, emissions: 0 }
+          emissions.value[field] = []
+        })
+    })
+  }
+
+  async function loadLinks(type: string, filter: Filter | undefined) {
+    links.value[type] = { total: 0, data: [] }
+    return authStore.updateToken().then(() => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      }
+      return api
+        .get(`/stats/${type}`, {
+          ...config,
+          params: { filter: filter ? JSON.stringify(filter) : undefined },
+        })
+        .then((res) => {
+          links.value[type] = res.data
+        })
+        .catch(() => {
+          links.value[type] = { total: 0, data: [] }
         })
     })
   }
@@ -74,6 +96,7 @@ export const useStats = defineStore('stats', () => {
   return {
     frequencies,
     emissions,
+    links,
     loading,
     loadStats,
   }

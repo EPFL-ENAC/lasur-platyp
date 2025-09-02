@@ -108,3 +108,14 @@ class Emissions(BaseModel):
     distances: Optional[float] = None
     journeys: Optional[int] = None
     emissions: Optional[float] = None
+
+
+class Link(BaseModel):
+    source: str
+    target: str
+    value: float
+
+
+class Links(BaseModel):
+    total: Optional[int] = None
+    data: List[Link] = []
