@@ -100,3 +100,11 @@ class Frequencies(BaseModel):
     field: Optional[str] = None
     total: Optional[int] = None
     data: List[Frequency] = []
+
+
+class Emissions(BaseModel):
+    field: Optional[str] = None
+    total: Optional[int] = None
+    distances: Optional[float] = None
+    journeys: Optional[int] = None
+    emissions: Optional[float] = None

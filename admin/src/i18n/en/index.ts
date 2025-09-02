@@ -112,6 +112,7 @@ export default {
     travel_time: 'Travel Time',
     freq_mod: 'Modes of transport',
     freq_mod_pro: 'Modes of transport (professional)',
+    freq_mod_emissions: 'Modes of transport (CO₂ emissions)',
   },
   action: 'Measure',
   add: 'Add',

@@ -98,3 +98,11 @@ export interface Frequencies {
   total: number
   data: Frequency[]
 }
+
+export interface Emissions {
+  field: string
+  total: number
+  distances: number
+  journeys: number
+  emissions: number
+}

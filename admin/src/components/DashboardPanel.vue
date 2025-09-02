@@ -43,6 +43,8 @@
       <div>{{ stats.frequencies.freq_mod }}</div>
       <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_pro') }}</div>
       <div>{{ stats.frequencies.freq_mod_pro }}</div>
+      <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_emissions') }}</div>
+      <div>{{ stats.emissions.freq_mod }}</div>
     </div>
   </div>
 </template>

@@ -1,12 +1,13 @@
 from html import entities
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy import select, func, and_, cast
+from sqlalchemy import Float, select, func, and_, cast
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Integer, select
 from fastapi import HTTPException
+from api.models import query
 from api.models.domain import Record, Campaign
-from api.models.query import RecordResult, RecordDraft, Frequencies, Frequency
+from api.models.query import RecordResult, RecordDraft, Frequencies, Frequency, Emissions
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 
@@ -325,3 +326,43 @@ class RecordService:
                 for row in counts
             ]
         )
+
+    async def get_mod_co2_emissions(self, mod: str, filter: dict) -> Emissions:
+        total_count = await self.count_completed(filter)
+        if total_count == 0:
+            return {"total": 0, "co2_emissions": 0}
+
+        results = await self.find(filter, fields=[], sort=[], range=[])
+        ids = [entity.id for entity in results.data]
+
+        mod_emissions = {'car': 186, 'train': 8, 'pub': 25,
+                         'bike': 6, 'moto': 155, 'walking': 0}
+
+        # calculate distances between origin (lat, lon) and workplace (lat, lon)
+        origin_lat = cast(Record.data["origin"]["lat"].astext, Float)
+        origin_lon = cast(Record.data["origin"]["lon"].astext, Float)
+        work_lat = cast(Record.data["workplace"]["lat"].astext, Float)
+        work_lon = cast(Record.data["workplace"]["lon"].astext, Float)
+
+        # Main query
+        query = (
+            select(
+                Record.id,
+                (6371 * func.acos(
+                    func.cos(func.radians(origin_lat)) *
+                    func.cos(func.radians(work_lat)) *
+                    func.cos(func.radians(work_lon) - func.radians(origin_lon)) +
+                    func.sin(func.radians(origin_lat)) *
+                    func.sin(func.radians(work_lat))
+                )).label("distance_km"),
+                Record.data[mod].astext.label('mod')
+            ).where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
+        )
+
+        counts = await self.session.exec(query)
+        rows = [row for row in counts if row.distance_km]
+        distances = [row.distance_km * 1.3 for row in rows]
+        journeys = [45 * 2 * int(row.mod) for row in rows]
+        emissions = [row.distance_km * 1.3 *
+                     45 * 2 * int(row.mod) * mod_emissions[mod.replace("freq_mod_", "")] / 1000 for row in rows]
+        return Emissions(field=mod, total=total_count, distances=sum(distances), journeys=sum(journeys), emissions=sum(emissions))

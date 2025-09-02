@@ -1,4 +1,4 @@
-import type { Frequencies } from 'src/models'
+import type { Emissions, Frequencies } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -7,6 +7,9 @@ const authStore = useAuthStore()
 export const useStats = defineStore('stats', () => {
   const frequencies = ref<{ [key: string]: Frequencies | Frequencies[] }>(
     {} as { [key: string]: Frequencies },
+  )
+  const emissions = ref<{ [key: string]: Emissions | Emissions[] }>(
+    {} as { [key: string]: Emissions },
   )
   const loading = ref(false)
 
@@ -18,6 +21,7 @@ export const useStats = defineStore('stats', () => {
       loadFrequencies('travel_time', filter),
       loadFrequencies('freq_mod', filter),
       loadFrequencies('freq_mod_pro', filter),
+      loadEmissions('freq_mod', filter),
     ]).finally(() => {
       loading.value = false
     })
@@ -45,8 +49,31 @@ export const useStats = defineStore('stats', () => {
     })
   }
 
+  async function loadEmissions(field: string, filter: Filter | undefined) {
+    emissions.value[field] = { field, total: 0, distances: 0, journeys: 0, emissions: 0 }
+    return authStore.updateToken().then(() => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      }
+      return api
+        .get(`/stats/${field}_emissions`, {
+          ...config,
+          params: { filter: filter ? JSON.stringify(filter) : undefined },
+        })
+        .then((res) => {
+          emissions.value[field] = res.data
+        })
+        .catch(() => {
+          emissions.value[field] = { field, total: 0, distances: 0, journeys: 0, emissions: 0 }
+        })
+    })
+  }
+
   return {
     frequencies,
+    emissions,
     loading,
     loadStats,
   }
