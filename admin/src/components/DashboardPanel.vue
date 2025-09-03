@@ -56,8 +56,12 @@
       </div>
       <div class="row q-col-gutter-md">
         <div class="col">
-          <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_pro.title') }}</div>
-          <div>{{ stats.frequencies.freq_mod_pro }}</div>
+          <frequencies-stack-chart
+            type="freq_mod_pro"
+            :groups="['local', 'region', 'inter']"
+            :xaxis="t('stats.freq_mod_pro.xaxis')"
+            class="q-mb-md"
+          />
         </div>
         <div class="col">
           <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod_emissions.title') }}</div>
@@ -76,6 +80,7 @@
 
 <script setup lang="ts">
 import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
+import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'

@@ -13,9 +13,9 @@
 
 <script setup lang="ts">
 import ECharts from 'vue-echarts'
-import type { EChartsOption } from 'echarts'
+import { type EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { PieChart } from 'echarts/charts'
+import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { initOptions, updateOptions } from './commons'
 import {
@@ -29,10 +29,13 @@ import { MOD_COLORS } from './commons'
 
 const { t } = useI18n()
 const stats = useStats()
-use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   type: string
+  groups: string[]
+  xaxis?: string
+  yaxis?: string
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -95,24 +98,51 @@ function initChartOptions() {
     total = frequencies.total
   }
 
-  // Extract category names and values for series
-  const categories = dataset.map((item) => item.key)
-  const colors = categories.map((category) => MOD_COLORS[category] || '#ccc')
-
-  if (categories.length === 0) {
+  // Extract category names and values for yAxis and series
+  const modes = new Set<string>()
+  dataset
+    .map((item) => item.key)
+    .forEach((key) => {
+      props.groups.forEach((grp) => {
+        if (key.startsWith(grp)) {
+          modes.add(key.replace(`${grp}_`, ''))
+        }
+      })
+    })
+  if (modes.size === 0) {
     return
   }
+  const modes_order = ['plane', 'car', 'moto', 'pub', 'train', 'bike', 'walking']
+  const sorted_modes = Array.from(modes).sort((a, b) => {
+    return modes_order.indexOf(a) - modes_order.indexOf(b)
+  })
+
+  const series = sorted_modes.map((mode) => {
+    return {
+      name: t(`stats.${props.type}.labels.${mode}`),
+      type: 'bar' as const,
+      stack: 'total',
+      emphasis: {
+        focus: 'series' as const,
+      },
+      color: MOD_COLORS[mode] || '#ccc',
+      data: props.groups.map((grp) => {
+        const item = dataset.find((d) => d.key === `${grp}_${mode}`)
+        return item ? item.value : 0
+      }),
+    }
+  })
 
   const newOption: EChartsOption = {
     grid: {
       left: '20',
       right: '20',
-      top: '40',
-      bottom: '20',
+      top: '60',
+      bottom: '40',
       containLabel: true,
     },
     animation: false,
-    height: props.height,
+    height: props.height - 120,
     title: {
       text: t(`stats.${props.type}.title`),
       subtext: t(`stats.total`, { count: total }),
@@ -123,25 +153,31 @@ function initChartOptions() {
       },
     },
     tooltip: {
-      trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c} ({d}%)',
+      trigger: 'axis',
+      axisPointer: {
+        // Use axis to trigger tooltip
+        type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
+      },
     },
     legend: {
       show: false,
+      bottom: 0, // position at the bottom
+      left: 'center', // center horizontally
     },
-    series: [
-      {
-        type: 'pie',
-        radius: ['30%', '50%'],
-        avoidLabelOverlap: true,
-        color: colors,
-        label: {
-          margin: 0,
-          fontWeight: 'bold',
-        },
-        data: dataset,
-      },
-    ],
+    yAxis: {
+      name: props.yaxis || '',
+      nameLocation: 'end',
+      nameGap: 30,
+      type: 'category',
+      data: props.groups.map((g) => t(`stats.${props.type}.labels.${g}`)),
+    },
+    xAxis: {
+      name: props.xaxis || t('stats.nb_employees'),
+      nameLocation: 'middle',
+      nameGap: 30,
+      type: 'value',
+    },
+    series: series,
   }
   option.value = newOption
 }

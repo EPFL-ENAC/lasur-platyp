@@ -105,7 +105,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     grid: {
       left: '40',
       right: '20',
-      top: '40',
+      top: '80',
       bottom: '40',
       containLabel: true,
     },
@@ -113,8 +113,10 @@ function initValuesChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
+      subtext: t(`stats.total`, { count: frequencies.total }),
       left: 'center',
       top: 0,
+      itemGap: 10,
       textStyle: {
         fontSize: 16,
       },
@@ -170,7 +172,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     grid: {
       left: '20',
       right: '20',
-      top: '40',
+      top: '60',
       bottom: '20',
       containLabel: true,
     },
@@ -178,8 +180,10 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
+      subtext: t(`stats.total`, { count: frequencies.total }),
       left: 'center',
       top: 0,
+      itemGap: 10,
       textStyle: {
         fontSize: 16,
       },
@@ -193,7 +197,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     },
     yAxis: {
       name: props.yaxis || '',
-      nameLocation: 'middle',
+      nameLocation: 'end',
       nameGap: 30,
       type: 'category',
       data: categories,

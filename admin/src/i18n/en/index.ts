@@ -107,6 +107,7 @@ export default {
   },
   stats: {
     nb_employees: 'Number of employees',
+    total: 'N: {count}',
     equipments: {
       title: 'Mobility equipments',
       labels: {
@@ -148,7 +149,24 @@ export default {
         combined: 'Combined',
       },
     },
-    freq_mod_pro: { title: 'Modes of transport (professional)' },
+    freq_mod_pro: {
+      title: 'Modes of transport (professional)',
+      xaxis: 'Days per month',
+      labels: {
+        local: 'Local',
+        region: 'Regional',
+        inter: 'International',
+        walking: 'Walking (>10 min.)',
+        bike: 'Bicycle (or electric bike)',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car (driver/passenger)',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+      },
+    },
     freq_mod_emissions: { title: 'Modes of transport (CO₂ emissions)' },
     mod_reco: { title: 'Modal shift recommendations' },
   },
