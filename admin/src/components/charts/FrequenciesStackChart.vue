@@ -25,7 +25,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
-import { MOD_COLORS } from './commons'
+import { MODE_COLORS } from './commons'
 
 const { t } = useI18n()
 const stats = useStats()
@@ -125,7 +125,7 @@ function initChartOptions() {
       emphasis: {
         focus: 'series' as const,
       },
-      color: MOD_COLORS[mode] || '#ccc',
+      color: MODE_COLORS[mode] || '#ccc',
       data: props.groups.map((grp) => {
         const item = dataset.find((d) => d.key === `${grp}_${mode}`)
         return item ? item.value : 0

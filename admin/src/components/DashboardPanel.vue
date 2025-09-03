@@ -77,8 +77,7 @@
           <share-chart type="reco_dt2" class="q-mb-md" />
         </div>
         <div class="col">
-          <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.mod_reco.title') }}</div>
-          <div>{{ stats.links.mod_reco }}</div>
+          <links-chart type="mod_reco" class="q-mb-md" />
         </div>
       </div>
     </div>
@@ -88,7 +87,8 @@
 <script setup lang="ts">
 import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
 import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
-import EmissionsChart from './charts/EmissionsChart.vue'
+import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
+import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'

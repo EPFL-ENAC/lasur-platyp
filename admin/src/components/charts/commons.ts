@@ -14,7 +14,7 @@ interface InitOptions {
   renderer: 'canvas' | 'svg'
 }
 
-export const MOD_COLORS: { [key: string]: string } = {
+export const MODE_COLORS: { [key: string]: string } = {
   car: '#7030A0',
   car_driver: '#7030A0',
   elec: '#7030A0',
@@ -33,4 +33,5 @@ export const MOD_COLORS: { [key: string]: string } = {
   walking: '#c7ff0a',
   marche: '#c7ff0a',
   plane: '#99001A',
+  default: '#ccc',
 }

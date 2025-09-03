@@ -24,7 +24,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { MOD_COLORS } from './commons'
+import { MODE_COLORS } from './commons'
 
 const { t } = useI18n()
 const stats = useStats()
@@ -83,12 +83,14 @@ function initChartOptions() {
       ubound + item.journeys,
       item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0,
       keyLabel(item.field),
-      MOD_COLORS[shortKey(item.field)] || MOD_COLORS['default'],
+      MODE_COLORS[shortKey(item.field)] || MODE_COLORS['default'],
+      item.emissions.toFixed(0),
+      item.journeys,
+      `${item.distances.toFixed(0)} km`,
     ]
     ubound += item.journeys
     return data
   })
-  console.log(dataset)
 
   const newOption: EChartsOption = {
     grid: {
@@ -112,7 +114,6 @@ function initChartOptions() {
     },
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c}',
     },
     legend: {
       show: false,
@@ -156,11 +157,20 @@ function initChartOptions() {
           show: true,
           position: 'top',
         },
-        dimensions: ['From', 'To', 'Emissions'],
+        dimensions: [
+          'from',
+          'to',
+          'emissions',
+          'label',
+          'color',
+          keyLabel('emissions'),
+          keyLabel('journeys'),
+          keyLabel('distances'),
+        ],
         encode: {
           x: [0, 1],
           y: 2,
-          tooltip: [0, 1, 2],
+          tooltip: [5, 6, 7],
           itemName: 3,
         },
         data: dataset,

@@ -15,7 +15,7 @@
 import ECharts from 'vue-echarts'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { PieChart } from 'echarts/charts'
+import { SankeyChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { initOptions, updateOptions } from './commons'
 import {
@@ -24,12 +24,12 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { Links } from 'src/models'
 import { MODE_COLORS } from './commons'
 
 const { t } = useI18n()
 const stats = useStats()
-use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   type: string
@@ -68,51 +68,35 @@ function keyLabel(key: string) {
 
 function initChartOptions() {
   option.value = {}
-  if (!stats.frequencies || !stats.frequencies[props.type]) {
+  if (!stats.links || !stats.links[props.type]) {
     return
   }
 
-  let dataset: { key: string; name: string; value: number }[] = []
-  let total = 0
-  if (Array.isArray(stats.frequencies[props.type])) {
-    dataset = (stats.frequencies[props.type] as Frequencies[]).map((item: Frequencies) => {
-      total = item.total
-      return {
-        key: shortKey(item.field),
-        name: keyLabel(item.field),
-        value: item.data
-          .map((d) => (d.sum === undefined ? d.count : d.sum))
-          .reduce((a, b) => a + b, 0),
-      }
-    })
-  } else {
-    const frequencies = stats.frequencies[props.type] as Frequencies
-    dataset = frequencies.data.map((item) => ({
-      key: shortKey(item.value),
-      name: keyLabel(item.value),
-      value: item.sum === undefined ? item.count : item.sum,
-    }))
-    total = frequencies.total
-  }
-
-  // Extract category names and values for series
-  const categories = dataset.map((item) => item.key)
-  const colors = categories.map((category) => MODE_COLORS[category] || '#ccc')
-
-  if (categories.length === 0) {
+  const links = stats.links[props.type] as Links
+  if (links.data.length === 0) {
     return
   }
+  const total = links.total || 0
+  const linksData = links.data.map((item) => ({
+    source: keyLabel(item.source),
+    target: keyLabel(item.target) + ' (reco)',
+    value: item.value,
+  }))
+  const nodes = new Set<string>()
+  links.data.forEach((item) => {
+    nodes.add(item.source)
+    nodes.add(item.target + '_reco')
+  })
 
   const newOption: EChartsOption = {
     grid: {
-      left: '20',
-      right: '20',
+      left: '0',
+      right: '0',
       top: '40',
-      bottom: '20',
-      containLabel: true,
+      bottom: '0',
     },
     animation: false,
-    height: props.height,
+    height: props.height - 80,
     title: {
       text: t(`stats.${props.type}.title`),
       subtext: t(`stats.total`, { count: total }),
@@ -122,27 +106,33 @@ function initChartOptions() {
         fontSize: 16,
       },
     },
-    tooltip: {
-      trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c} ({d}%)',
-    },
     legend: {
       show: false,
     },
+    tooltip: {
+      trigger: 'item',
+      triggerOn: 'mousemove',
+    },
     series: [
       {
-        type: 'pie',
-        radius: ['30%', '50%'],
-        avoidLabelOverlap: true,
-        color: colors,
-        label: {
-          margin: 0,
-          fontWeight: 'bold',
+        type: 'sankey',
+        top: 60,
+        emphasis: {
+          focus: 'adjacency',
         },
-        data: dataset,
+        data: Array.from(nodes).map((key) => ({
+          name: key.endsWith('_reco')
+            ? keyLabel(key.replace('_reco', '')) + ' (reco)'
+            : keyLabel(key),
+          itemStyle: {
+            color: MODE_COLORS[key.replace('_reco', '')] || MODE_COLORS.default || '#ccc',
+          },
+        })),
+        links: linksData,
       },
     ],
   }
+  console.log(newOption)
   option.value = newOption
 }
 
