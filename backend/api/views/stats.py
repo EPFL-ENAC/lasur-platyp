@@ -50,6 +50,20 @@ async def compute_travel_time_frequencies(
         raise HTTPException(status_code=400, detail=f"{e}")
 
 
+@router.get("/reco_dt2", response_model=Frequencies, response_model_exclude_none=True)
+async def compute_reco_dt2_frequencies(
+    filter: str = Query(None),
+    user: User = Depends(kc_service.get_user_info()),
+    session: AsyncSession = Depends(get_session),
+) -> Frequencies:
+    """Query frequency of recommendations in records"""
+    try:
+        validated = validate_params(filter, None, None, None)
+        return await RecordService(session).get_recommendation_frequencies(validated["filter"])
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+
+
 @router.get("/freq_mod", response_model=list[Frequencies], response_model_exclude_none=True)
 async def compute_freq_mod_frequencies(
     filter: str = Query(None),

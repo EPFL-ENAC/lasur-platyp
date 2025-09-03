@@ -134,6 +134,19 @@ export default {
       title: 'Travel time',
       xaxis: 'Time (min)',
     },
+    reco_dt2: {
+      title: 'Recommendations',
+      labels: {
+        covoit: 'Carpooling',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        marche: 'Walking',
+        tpu: 'Public transport',
+        train: 'Train',
+        vae: 'Electric bike',
+        velo: 'Bike',
+      },
+    },
     freq_mod: {
       title: 'Modes of transport',
       labels: {
@@ -167,7 +180,7 @@ export default {
         car_moto: 'Car and motorcycle/scooter',
       },
     },
-    freq_mod_emissions: { title: 'Modes of transport (CO₂ emissions)' },
+    freq_mod_emissions: { title: 'CO₂ emissions per mode of transport' },
     mod_reco: { title: 'Modal shift recommendations' },
   },
   action: 'Measure',

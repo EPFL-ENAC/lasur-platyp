@@ -282,6 +282,50 @@ class RecordService:
             ]
         )
 
+    async def get_recommendation_frequencies(self, filter: dict) -> Frequencies:
+        total_count = await self.count_completed(filter)
+        if total_count == 0:
+            return Links(total=0, data=[])
+
+        results = await self.find(filter, fields=[], sort=[], range=[])
+        ids = [entity.id for entity in results.data]
+
+        # Create a subquery/CTE that expands the JSON array
+        expanded = (
+            select(
+                Record.id,
+                func.jsonb_array_elements_text(
+                    Record.typo["reco"]["reco_dt2"]).label('reco')
+            )
+            .select_from(Record)
+            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
+            .subquery()
+        )
+
+        # Main query
+        query = (
+            select(
+                expanded.c.reco,
+                func.count().label('reco_count')
+            )
+            .group_by(expanded.c.reco)
+            .order_by(func.count().desc())
+        )
+
+        counts = await self.session.exec(query)
+
+        return Frequencies(
+            field='reco_dt2',
+            total=total_count,
+            data=[
+                Frequency(
+                    value=row.reco,
+                    count=row.reco_count
+                )
+                for row in counts
+            ]
+        )
+
     async def get_mod_stats(self, mod: str, filter: dict):
         total_count = await self.count_completed(filter)
         if total_count == 0:

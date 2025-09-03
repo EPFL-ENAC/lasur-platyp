@@ -70,6 +70,9 @@
       </div>
       <div class="row q-col-gutter-md">
         <div class="col">
+          <share-chart type="reco_dt2" class="q-mb-md" />
+        </div>
+        <div class="col">
           <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.mod_reco.title') }}</div>
           <div>{{ stats.links.mod_reco }}</div>
         </div>

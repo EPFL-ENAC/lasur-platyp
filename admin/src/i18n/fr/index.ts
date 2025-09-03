@@ -136,6 +136,19 @@ export default {
       title: 'Temps de trajet',
       xaxis: 'Temps (min)',
     },
+    reco_dt2: {
+      title: 'Recommendations',
+      labels: {
+        covoit: 'Le covoiturage',
+        elec: 'La voiture électrique',
+        inter: "L'intermodalité",
+        marche: 'La marche',
+        tpu: 'Les transports publics',
+        train: 'Le train',
+        vae: 'Le vélo à assistance électrique',
+        velo: 'Le vélo',
+      },
+    },
     freq_mod: {
       title: 'Modes de transport',
       labels: {
@@ -169,7 +182,7 @@ export default {
         car_moto: 'La voiture ou la moto',
       },
     },
-    freq_mod_emissions: { title: 'Modes de transport (émissions CO₂)' },
+    freq_mod_emissions: { title: 'Émissions CO₂ par mode de transport' },
     mod_reco: { title: 'Recommandations de changement modal' },
   },
   action: 'Mesure',
