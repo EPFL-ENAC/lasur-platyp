@@ -43,11 +43,15 @@
       </div>
       <div class="row q-col-gutter-md">
         <div class="col">
-          <frequencies-chart type="travel_time" :range-step="5" class="q-mb-md" />
+          <frequencies-chart
+            type="travel_time"
+            :xaxis="t('stats.travel_time.xaxis')"
+            :range-step="5"
+            class="q-mb-md"
+          />
         </div>
         <div class="col">
-          <div class="text-h6 q-mt-md q-mb-md">{{ t('stats.freq_mod.title') }}</div>
-          <div>{{ stats.frequencies.freq_mod }}</div>
+          <share-chart type="freq_mod" class="q-mb-md" />
         </div>
       </div>
       <div class="row q-col-gutter-md">
@@ -72,6 +76,7 @@
 
 <script setup lang="ts">
 import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
+import ShareChart from 'src/components/charts/ShareChart.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
 

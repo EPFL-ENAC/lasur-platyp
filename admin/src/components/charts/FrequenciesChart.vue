@@ -32,6 +32,8 @@ use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, G
 
 interface Props {
   type: string
+  xaxis?: string
+  yaxis?: string
   rangeStep?: number
   height?: number
 }
@@ -108,7 +110,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
       containLabel: true,
     },
     animation: false,
-    height: props.height - 40,
+    height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
       left: 'center',
@@ -119,17 +121,20 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c}',
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c}`,
     },
     legend: {
       show: false,
     },
     xAxis: {
       type: 'category',
+      name: props.xaxis || '',
+      nameGap: 30,
+      nameLocation: 'middle',
       data: categories,
     },
     yAxis: {
-      name: t('stats.nb_employees'),
+      name: props.yaxis || t('stats.nb_employees'),
       nameLocation: 'end',
       nameGap: 30,
       type: 'value',
@@ -139,6 +144,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
         data: values,
         type: 'bar',
         barCategoryGap: '0',
+        color: '#008066',
       },
     ],
   }
@@ -186,11 +192,14 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       show: false,
     },
     yAxis: {
+      name: props.yaxis || '',
+      nameLocation: 'middle',
+      nameGap: 30,
       type: 'category',
       data: categories,
     },
     xAxis: {
-      name: t('stats.nb_employees'),
+      name: props.xaxis || t('stats.nb_employees'),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
@@ -199,6 +208,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       {
         data: values,
         type: 'bar',
+        color: '#008066',
       },
     ],
   }
