@@ -137,7 +137,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     yAxis: {
       name: props.yaxis || t('stats.nb_employees'),
-      nameLocation: 'end',
+      nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
     },
