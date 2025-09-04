@@ -8,6 +8,7 @@
       }}
     </div>
     <div class="q-pa-md">
+      <div class="text-h5 q-mb-sm">{{ t('statistics') }}</div>
       <dashboard-panel />
     </div>
   </q-page>

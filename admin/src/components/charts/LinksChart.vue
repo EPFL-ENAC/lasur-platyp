@@ -51,6 +51,12 @@ watch(
   },
 )
 
+watch([() => props.height], () => {
+  if (!stats.loading) {
+    initChartOptions()
+  }
+})
+
 onMounted(() => {
   initChartOptions()
 })
@@ -67,6 +73,7 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  const recoSuffix = ' '
   option.value = {}
   if (!stats.links || !stats.links[props.type]) {
     return
@@ -79,7 +86,7 @@ function initChartOptions() {
   const total = links.total || 0
   const linksData = links.data.map((item) => ({
     source: keyLabel(item.source),
-    target: keyLabel(item.target) + ' (reco)',
+    target: keyLabel(item.target) + recoSuffix,
     value: item.value,
   }))
   const nodes = new Set<string>()
@@ -122,7 +129,7 @@ function initChartOptions() {
         },
         data: Array.from(nodes).map((key) => ({
           name: key.endsWith('_reco')
-            ? keyLabel(key.replace('_reco', '')) + ' (reco)'
+            ? keyLabel(key.replace('_reco', '')) + recoSuffix
             : keyLabel(key),
           itemStyle: {
             color: MODE_COLORS[key.replace('_reco', '')] || MODE_COLORS.default || '#ccc',
@@ -132,7 +139,6 @@ function initChartOptions() {
       },
     ],
   }
-  console.log(newOption)
   option.value = newOption
 }
 

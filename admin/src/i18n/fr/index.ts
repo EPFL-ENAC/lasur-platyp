@@ -108,6 +108,7 @@ export default {
     ev_fleet: 'Flotte de véhicules électriques pour les déplacements professionnels',
   },
   stats: {
+    charts_height: 'Hauteur des graphiques',
     nb_employees: "Nombre d'employé.e.s",
     percent_employees: "% d'employé.e.s",
     total: 'N : {count}',

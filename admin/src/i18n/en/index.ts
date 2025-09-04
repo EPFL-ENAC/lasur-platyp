@@ -106,6 +106,7 @@ export default {
     ev_fleet: 'EV fleet for professional trips',
   },
   stats: {
+    charts_height: 'Charts height',
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',
     total: 'N: {count}',

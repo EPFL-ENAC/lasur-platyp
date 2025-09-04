@@ -54,6 +54,12 @@ watch(
   },
 )
 
+watch([() => props.percent, () => props.height], () => {
+  if (!stats.loading) {
+    initChartOptions()
+  }
+})
+
 onMounted(() => {
   initChartOptions()
 })
@@ -85,6 +91,8 @@ function initChartOptions() {
 }
 
 function initValuesChartOptions(frequencies: Frequencies) {
+  const total = frequencies.total || 0
+
   // find max value
   const max = Math.max(
     ...frequencies.data.map((item) => {
@@ -99,7 +107,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
   const values =
     categories?.map((category) => {
       const item = frequencies.data.find((item) => item.value === `${category}`)
-      return item ? item.count : 0
+      return item ? (props.percent ? ((item.count / total) * 100).toFixed(2) : item.count) : 0
     }) || []
 
   const newOption: EChartsOption = {
@@ -114,7 +122,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
-      subtext: t(`stats.total`, { count: frequencies.total }),
+      subtext: t(`stats.total`, { count: total }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -124,7 +132,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c}`,
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -137,7 +145,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     yAxis: {
-      name: props.yaxis || t('stats.nb_employees'),
+      name: props.yaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',

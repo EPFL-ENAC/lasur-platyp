@@ -50,6 +50,12 @@ watch([() => stats.loading], () => {
   }
 })
 
+watch([() => props.height], () => {
+  if (!stats.loading) {
+    initChartOptions()
+  }
+})
+
 onMounted(() => {
   initChartOptions()
 })
