@@ -419,18 +419,6 @@ class RecordService:
         results = await self.find(filter, fields=[], sort=[], range=[])
         ids = [entity.id for entity in results.data]
 
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                func.jsonb_array_elements_text(
-                    Record.typo["reco"]["reco_dt2"]).label('reco')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
         # JSON fields
         train_val = cast(Record.data["freq_mod_train"].astext, Integer)
         car_val = cast(Record.data["freq_mod_car"].astext, Integer)
@@ -450,32 +438,22 @@ class RecordService:
                 (moto_val > 0).label("moto"),
                 (walking_val > 0).label("walking"),
                 combined_val.label("combined"),
-                expanded.c.reco,
-            ).select_from(Record)
+                # first reco only
+                Record.typo["reco"]["reco_dt2"][0].astext.label('reco')
+            )
+            .select_from(Record)
+            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
         )
 
         rows = await self.session.exec(query)
         counts = {}
         for row in rows:
-            mod = 'unknown'
-            if row.train:
-                mod = 'train'
-            elif row.car:
-                mod = 'car'
-            elif row.pub:
-                mod = 'pub'
-            elif row.bike:
-                mod = 'bike'
-            elif row.moto:
-                mod = 'moto'
-            elif row.walking:
-                mod = 'walking'
-            elif row.combined == 'true':
-                mod = 'combined'
-            reco = row.reco
-            mod_counts = counts.get(mod, {})
-            mod_counts[reco] = mod_counts.get(reco, 0) + 1
-            counts[mod] = mod_counts
+            for mod in ['train', 'car', 'pub', 'bike', 'moto', 'walking']:
+                if getattr(row, mod):
+                    reco = row.reco
+                    mod_counts = counts.get(mod, {})
+                    mod_counts[reco] = mod_counts.get(reco, 0) + 1
+                    counts[mod] = mod_counts
         links = [{"source": mod, "target": reco, "value": count} for mod,
                  reco_counts in counts.items() for reco, count in reco_counts.items()]
         return Links(total=total_count, data=links)

@@ -35,10 +35,10 @@
     <div v-else>
       <div class="row q-col-gutter-md">
         <div class="col">
-          <frequencies-chart type="equipments" class="q-mb-md" />
+          <frequencies-chart type="equipments" percent class="q-mb-md" />
         </div>
         <div class="col">
-          <frequencies-chart type="constraints" class="q-mb-md" />
+          <frequencies-chart type="constraints" percent class="q-mb-md" />
         </div>
       </div>
       <div class="row q-col-gutter-md">

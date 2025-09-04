@@ -35,6 +35,7 @@ interface Props {
   xaxis?: string
   yaxis?: string
   rangeStep?: number
+  percent?: boolean
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -154,10 +155,11 @@ function initValuesChartOptions(frequencies: Frequencies) {
 }
 
 function initLabelsChartOptions(frequencies: Frequencies) {
+  const total = frequencies.total || 0
   const dataset = frequencies.data.map((item) => ({
     key: item.value || 'null',
     name: keyLabel(item.value || 'null'),
-    value: item.count,
+    value: props.percent ? ((item.count / total) * 100).toFixed(2) : item.count,
   }))
 
   // Extract category names and values for yAxis and series
@@ -180,7 +182,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
-      subtext: t(`stats.total`, { count: frequencies.total }),
+      subtext: t(`stats.total`, { count: total }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -190,7 +192,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c}',
+      formatter: `<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -203,7 +205,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     xAxis: {
-      name: props.xaxis || t('stats.nb_employees'),
+      name: props.xaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',

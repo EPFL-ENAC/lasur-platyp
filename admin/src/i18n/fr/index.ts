@@ -109,6 +109,7 @@ export default {
   },
   stats: {
     nb_employees: "Nombre d'employé.e.s",
+    percent_employees: "% d'employé.e.s",
     total: 'N : {count}',
     equipments: {
       title: 'Équipements de mobilité',
