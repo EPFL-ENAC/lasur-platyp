@@ -135,7 +135,7 @@ async def compute_freq_mod_emissions(
 @router.get("/mod_reco", response_model=Links, response_model_exclude_none=True)
 async def compute_freq_mod_recommendations_links(
     filter: str = Query(None),
-    # user: User = Depends(kc_service.get_user_info()),
+    user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
 ) -> Links:
     """Query modality to recommendation links in records"""

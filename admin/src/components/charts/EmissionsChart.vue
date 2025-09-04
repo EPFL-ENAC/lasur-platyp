@@ -77,20 +77,26 @@ function initChartOptions() {
   }
 
   let ubound = 0
-  const dataset = emissions.map((item) => {
-    const data = [
-      ubound,
-      ubound + item.journeys,
-      item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0,
-      keyLabel(item.field),
-      MODE_COLORS[shortKey(item.field)] || MODE_COLORS['default'],
-      item.emissions.toFixed(0),
-      item.journeys,
-      `${item.distances.toFixed(0)} km`,
-    ]
-    ubound += item.journeys
-    return data
-  })
+  const dataset = emissions
+    .sort((a, b) => {
+      const emaA = a.journeys ? a.emissions / a.journeys : 0
+      const emaB = b.journeys ? b.emissions / b.journeys : 0
+      return emaB - emaA
+    })
+    .map((item) => {
+      const data = [
+        ubound,
+        ubound + item.journeys,
+        item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0,
+        keyLabel(item.field),
+        MODE_COLORS[shortKey(item.field)] || MODE_COLORS['default'],
+        item.emissions.toFixed(0),
+        item.journeys,
+        `${item.distances.toFixed(0)} km`,
+      ]
+      ubound += item.journeys
+      return data
+    })
 
   const newOption: EChartsOption = {
     grid: {
