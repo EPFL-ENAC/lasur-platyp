@@ -142,14 +142,14 @@ function initChartOptions() {
         renderItem: function (params, api) {
           const val0 = (api.value(0) as number) || 0
           const val1 = (api.value(1) as number) || 0
-          const yValue = api.value(2)
-          const start = api.coord([api.value(0) || 0, yValue || 0]) || [0, 0]
+          const yValue = api.value(2) || 0
+          const start = api.coord([api.value(0) || 0, yValue]) || [0, 0]
           const size: [number, number] = api.size
             ? (api.size([val1 - val0, yValue]) as [number, number])
             : [0, 0]
           const style = { fill: api.value(4) as string }
-          return {
-            type: 'rect',
+          const rect = {
+            type: 'rect' as const,
             shape: {
               x: start[0] as number,
               y: start[1] as number,
@@ -158,6 +158,23 @@ function initChartOptions() {
             },
             style: style,
           }
+
+          const pxLeft = api.coord([val0, 0])[0] || 0
+          const pxRight = api.coord([val1, 0])[0] || 0
+          const pxBaseY = api.coord([0, 0])[1] || 0
+          const pxValY = api.coord([0, yValue])[1] || 0
+          const label = {
+            type: 'text' as const,
+            style: {
+              text: String(api.value(3)),
+              x: (pxLeft + pxRight) / 2,
+              y: yValue ? pxValY - 10 : pxBaseY + 14,
+              textAlign: 'center',
+              textVerticalAlign: 'middle',
+            },
+            silent: true, // don't intercept mouse events
+          }
+          return { type: 'group', children: [rect, label] }
         },
         label: {
           show: true,
