@@ -74,6 +74,7 @@ export interface RecordData {
   comments: string
   workplace: AddressLocation
   origin: AddressLocation
+  change: Change
 }
 
 export interface Record {
@@ -120,6 +121,11 @@ export interface Recommendation {
     reco_pro_loc: string
     reco_pro_reg: string
   }
+}
+
+export interface Change {
+  motivation?: number
+  levers?: string[]
 }
 
 export interface CampaignInfo {

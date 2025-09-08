@@ -602,6 +602,38 @@
       <RecommendationsPanel />
       <InfoPanel class="q-mt-lg" />
     </div>
+    <div v-if="survey.stepName === 'change' && survey.record.data.change">
+      <SectionItem
+        :label="t('form.change', { reco: t(`reco.${firstRecoDt}`) })"
+        label-class="text-h4"
+        class="q-mb-lg"
+      />
+      <RatingItem
+        v-if="isRecoChange"
+        :label="t('form.change_motivation')"
+        :hint="t('form.change_motivation_hint')"
+        v-model="survey.record.data.change.motivation"
+        :max="5"
+        label-class="text-h5"
+        class="q-mb-lg"
+        @update:model-value="onSave"
+      />
+      <ChoiceItem
+        :label="t('form.change_levers')"
+        :options="[
+          { value: 'finance', label: t('form.change_levers_option.financial_support') },
+          { value: 'flexibility', label: t('form.change_levers_option.work_flexibility') },
+          { value: 'collective', label: t('form.change_levers_option.collective_changes') },
+          { value: 'environment', label: t('form.change_levers_option.work_environment') },
+          { value: 'other', label: t('form.change_levers_option.other') },
+        ]"
+        v-model="survey.record.data.change.levers"
+        multiple
+        label-class="text-h5"
+        option-label-class="text-h5"
+        @update:model-value="onSave"
+      />
+    </div>
     <div v-if="survey.stepName === 'comments'">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
@@ -719,6 +751,18 @@ const travProOptions = computed<Option[]>(() => [
   },
 ])
 
+const firstRecoDt = computed(() =>
+  survey.recommendation.reco && survey.recommendation.reco.reco_dt2.length
+    ? survey.recommendation.reco.reco_dt2[0]
+    : '',
+)
+
+const isRecoChange = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mod_usage = (survey.record.data as any)[`freq_mod_${firstRecoDt.value}`]
+  return mod_usage === undefined || mod_usage === 0
+})
+
 function nextStep() {
   if (survey.stepName === 'agreement') {
     if (!survey.record.data.terms_conditions) {
@@ -760,6 +804,11 @@ function nextStep() {
         .catch(notifyError)
     } else if (survey.isBeforeStep('recommendations')) {
       void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+    } else if (survey.stepName === 'change') {
+      if (survey.record.data.change === undefined) {
+        survey.record.data.change = {}
+      }
+      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
     }
   }
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -781,6 +830,12 @@ function handleSwipe(dir: any) {
     nextStep()
   } else if (dir['direction'] === 'right') {
     prevStep()
+  }
+}
+
+function onSave() {
+  if (survey.tokenOrSlug) {
+    void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
   }
 }
 

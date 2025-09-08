@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
+    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="q-mt-lg">
       <div :class="col ? 'row q-col-gutter-md' : ''">
@@ -45,6 +45,7 @@ interface Props {
   multiple?: boolean
   max?: number
   col?: number
+  labelClass?: string
   optionLabelClass?: string
 }
 const props = defineProps<Props>()

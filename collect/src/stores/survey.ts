@@ -22,6 +22,7 @@ export const useSurvey = defineStore(
       'importance',
       'needs',
       'recommendations',
+      'change',
       'comments',
       'final',
     ]

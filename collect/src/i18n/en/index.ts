@@ -102,6 +102,18 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employeur also offers the following measure: {actions} | Your employeur also offers the following measures: {actions}',
+    change: 'About the recommended mode of transport "{reco}"',
+    change_motivation: 'Your motivation to change',
+    change_motivation_hint:
+      'On a scale of 1 (not motivated at all) to 5 (very motivated), how motivated are you to use this mode of transport for your home-work journeys?',
+    change_levers: 'What would help you to use this mode of transport?',
+    change_levers_option: {
+      financial_support: 'Financial support',
+      work_flexibility: 'Greater flexibility at work (schedules, teleworking, etc.)',
+      collective_changes: 'Collective changes (company communication, colleague involvement, etc.)',
+      work_environment: 'Workplace adjustments (showers, bicycle parking, etc.)',
+      other: 'Other',
+    },
     final: 'Your answers have been registered, thank you for your participation!',
   },
   main_mode: {

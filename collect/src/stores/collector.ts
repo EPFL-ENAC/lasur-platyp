@@ -86,6 +86,9 @@ export const useCollector = defineStore('collector', () => {
           needs_moto: 1,
           needs_car: 1,
           needs_train: 1,
+
+          change: {},
+
           ...cr.data,
         }
         return {
@@ -100,9 +103,9 @@ export const useCollector = defineStore('collector', () => {
 
   async function save(tkOrSlug: string, record: Record) {
     token.value = null
-    loading.value = true
+    //loading.value = true
     return api.post(`/collect/record/${tkOrSlug}`, record).finally(() => {
-      loading.value = false
+      //loading.value = false
     })
   }
 
