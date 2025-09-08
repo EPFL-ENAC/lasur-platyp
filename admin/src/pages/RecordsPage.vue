@@ -17,14 +17,21 @@
         :rows-per-page-options="[10, 25, 50]"
       >
         <template v-slot:top>
-          <q-btn
-            size="sm"
-            color="primary"
-            :disable="loading"
-            :label="t('download')"
-            icon="download"
-            @click="onDownload"
-          />
+          <q-btn-dropdown color="primary" size="sm" icon="download" :label="t('download')">
+            <q-list>
+              <q-item clickable v-close-popup @click="onDownload(false)">
+                <q-item-section>
+                  <q-item-label>{{ t('all') }}</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable v-close-popup @click="onDownload(true)">
+                <q-item-section>
+                  <q-item-label>{{ t('completed') }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
           <q-space />
           <q-select
             filled
@@ -319,7 +326,7 @@ function getRecoDt2(row: Record): string[] {
   return (row.typo?.reco?.reco_dt2 as string[]) || []
 }
 
-function onDownload() {
+function onDownload(completedOnly: boolean) {
   const query: Query = {
     $skip: 0,
     $limit: 1000,
@@ -329,6 +336,9 @@ function onDownload() {
     query.filter = {
       token: { $ilike: `%${filter.value}%` },
     }
+  }
+  if (completedOnly) {
+    query.filter.typo = { $exists: true }
   }
   if (companyFilter.value.length) {
     query.filter.company_id = { $in: companyFilter.value }
