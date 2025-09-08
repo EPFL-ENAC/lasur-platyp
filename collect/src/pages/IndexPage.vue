@@ -168,6 +168,7 @@ function onStart() {
   survey.started = true
   survey.step = 1
   tkSlug.value = ''
+  void collector.loadInfo(survey.record.token)
 }
 
 function onLocaleSelection(localeOpt: { label: string; value: string }) {

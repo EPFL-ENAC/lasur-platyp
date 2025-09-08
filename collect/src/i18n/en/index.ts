@@ -123,6 +123,7 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employeur also offers the following measure: {actions} | Your employeur also offers the following measures: {actions}',
+    final: 'Your answers have been registered, thank you for your participation!',
   },
   main_mode: {
     walking: 'At present, you mainly walk to get to your workplace.',
@@ -152,6 +153,9 @@ export default {
     budget: 'Sustainable mobility budget',
     wfh: 'Ability to work from home',
     wftp: 'Ability to work remotely',
+    wfro: 'Ability to work remotely occasionally',
+    videoconf:
+      'Workplace videoconferencing system that can be booked to reduce long-distance travel',
     tpg_pass: 'Public transport (UNIRESO) pass',
     lex_pass: 'Léman express pass',
     cff_pass_ag: 'Train pass (general pass)',
@@ -165,6 +169,7 @@ export default {
     bike_parking: 'Secure bicycle parking',
     ebike_charging: 'E-bike battery charging',
     bike_equipment: 'Subsidy for the purchase of bicycle safety and comfort gear',
+    bike_courses: 'Setting up cycling courses at the workplace',
     carpool_subs: 'Reimbursement of car-pooling journeys',
     carpool_connect: 'Connection to nearby colleagues to facilitate car-pooling',
     carpool_parking: 'Parking spots reserved for car-pooling',
@@ -172,12 +177,20 @@ export default {
     mobility_pass: 'Mobility car-sharing pass',
     ebike_fleet: 'E-bike fleet for professional trips',
     tpu_pro: 'Public transport (UNIRESO) pass',
+    tpu_rmb: 'Reimbursement of public transport tickets for business travel',
     train_pro: 'Train pass (general pass)',
+    train_obl: 'Obligation to use train where possible, for business journeys',
+    train_rmb: 'Reimbursement of train tickets for business travel',
     ev_fleet: 'EV fleet for professional trips',
   },
   benefits: {
     show: 'Show benefits',
     hide: 'Hide benefits',
+  },
+  contact: {
+    description:
+      'For more information about the mobility at {company_name}, please contact: {contact_name} {contact_email}',
+    website: 'Please visit the information page at {info_url}',
   },
   resume: 'Resume',
   start_new: 'Or start a new survey',

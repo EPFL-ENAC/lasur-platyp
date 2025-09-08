@@ -1,11 +1,20 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/api'
-import type { Record } from 'src/models'
+import type { Record, CampaignInfo } from 'src/models'
 
 export const useCollector = defineStore('collector', () => {
+  const info = ref<CampaignInfo>({} as CampaignInfo)
   const token = ref<string | null>(null)
   const loading = ref<boolean>(false)
+
+  async function loadInfo(tkOrSlug: string): Promise<CampaignInfo> {
+    info.value = {} as CampaignInfo
+    return api.get(`/collect/info/${tkOrSlug}`).then((response) => {
+      info.value = response.data
+      return info.value
+    })
+  }
 
   async function load(tkOrSlug: string): Promise<Record> {
     token.value = null
@@ -117,8 +126,10 @@ export const useCollector = defineStore('collector', () => {
   }
 
   return {
+    info,
     token,
     loading,
+    loadInfo,
     load,
     save,
     loadTypo,

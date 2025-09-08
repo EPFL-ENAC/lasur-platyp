@@ -29,6 +29,9 @@ export interface Campaign extends Entity {
   end_date?: string | undefined
   lat?: number | undefined
   lon?: number | undefined
+  contact_email?: string
+  contact_name?: string
+  info_url?: string
   company_id?: number
   actions?: EmployerActions
 }
@@ -42,6 +45,9 @@ export interface CompanyAction {
 
 export interface Company extends Entity {
   administrators: string[]
+  contact_email?: string
+  contact_name?: string
+  info_url?: string
   campaings?: Campaign[]
   custom_actions?: CompanyAction[]
   actions?: EmployerActions
@@ -80,4 +86,34 @@ export interface Record {
   data?: { [key: string]: number | string | string[] | boolean }
   typo?: { [key: string]: { [key: string]: number | string | string[] | boolean } }
   comments?: string
+}
+
+export interface Frequency {
+  value: string
+  count: number
+  sum?: number
+}
+export interface Frequencies {
+  field: string
+  total: number
+  data: Frequency[]
+}
+
+export interface Emissions {
+  field: string
+  total: number
+  distances: number
+  journeys: number
+  emissions: number
+}
+
+export interface Link {
+  source: string
+  target: string
+  value: number
+}
+
+export interface Links {
+  total: number
+  data: Link[]
 }

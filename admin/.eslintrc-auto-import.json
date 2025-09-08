@@ -105,6 +105,7 @@
     "useUsersStore": true,
     "useCampaigns": true,
     "useParticipants": true,
-    "useActions": true
+    "useActions": true,
+    "useStats": true
   }
 }

@@ -4,7 +4,7 @@ from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
 from api.models.domain import Campaign
-from api.models.query import RecordDraft, RecordRead, RecordComments
+from api.models.query import RecordDraft, RecordRead, RecordComments, CampaignInfo
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
 from api.services.companies import CompanyService
@@ -13,6 +13,35 @@ from api.services.records import RecordService
 from api.services.modal_typo import ModalTypoService
 
 router = APIRouter()
+
+
+@router.get("/info/{tokenOrSlug}", response_model=CampaignInfo, response_model_exclude_none=True)
+async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) -> CampaignInfo:
+    """Get campaign info by participant token or campaign slug"""
+    if tokenOrSlug is None:
+        raise HTTPException(
+            status_code=400, detail="Missing token or slug")
+    try:
+        campaign = await CampaignService(session).get_by_slug(tokenOrSlug)
+    except:
+        campaign = None
+    if not campaign:
+        try:
+            cr = await RecordService(session).get_by_token(tokenOrSlug)
+            if cr:
+                campaign = await CampaignService(session).get(cr.campaign_id)
+        except:
+            campaign = None
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    company = await CompanyService(session).get(campaign.company_id)
+    return CampaignInfo(
+        name=campaign.name,
+        company_name=company.name,
+        contact_email=campaign.contact_email if campaign.contact_email else company.contact_email,
+        contact_name=campaign.contact_name if campaign.contact_name else company.contact_name,
+        info_url=campaign.info_url if campaign.info_url else company.info_url
+    )
 
 
 @router.get("/record/{tokenOrSlug}", response_model=RecordDraft, response_model_exclude_none=True)
@@ -41,7 +70,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
     # 2. this is a participant's token: try to get the record in case it was already saved
     cr = None
     try:
-        cr = RecordService(session).get_by_token(tokenOrSlug)
+        cr = await RecordService(session).get_by_token(tokenOrSlug)
     except:
         cr = None  # 404 if not found
     if cr is not None:
@@ -82,7 +111,7 @@ async def createOrUpdate(
     else:
         # this is a participant's token
         participant = await ParticipantService(session).get_by_token(tokenOrSlug)
-        campaign = CampaignService(session).get(participant.campaign_id)
+        campaign = await CampaignService(session).get(participant.campaign_id)
     return await RecordService(session).createOrUpdate(item, campaign)
 
 

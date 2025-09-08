@@ -80,3 +80,42 @@ class DataEntryRead(DataEntryBase):
 
 class ParticipantData(BaseModel):
     data: Optional[Dict] = None
+
+
+class CampaignInfo(BaseModel):
+    name: str
+    company_name: str
+    contact_email: Optional[str] = None
+    contact_name: Optional[str] = None
+    info_url: Optional[str] = None
+
+
+class Frequency(BaseModel):
+    value: Optional[str] = None
+    count: Optional[int] = None
+    sum: Optional[int] = None
+
+
+class Frequencies(BaseModel):
+    field: Optional[str] = None
+    total: Optional[int] = None
+    data: List[Frequency] = []
+
+
+class Emissions(BaseModel):
+    field: Optional[str] = None
+    total: Optional[int] = None
+    distances: Optional[float] = None
+    journeys: Optional[int] = None
+    emissions: Optional[float] = None
+
+
+class Link(BaseModel):
+    source: str
+    target: str
+    value: float
+
+
+class Links(BaseModel):
+    total: Optional[int] = None
+    data: List[Link] = []

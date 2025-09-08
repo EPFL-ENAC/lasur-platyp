@@ -17,7 +17,7 @@ export default {
     confidentiality: "J'ai lu et accepte la politique de confidentialité",
     confidentiality_link: 'Voir la politique de confidentialité',
 
-    age_class: "Quelle est votre âge ?",
+    age_class: 'Quelle est votre âge ?',
     age_class_option: {
       '16_24': 'moins de 25 ans',
       '25_44': '25 - 44 ans',
@@ -33,8 +33,7 @@ export default {
     origin: "D'où partez-vous habituellement pour vous rendre au travail ?",
     origin_hint:
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',
-    travel_time:
-      'Combien de temps mettez-vous environ pour aller au travail ?',
+    travel_time: 'Combien de temps mettez-vous environ pour aller au travail ?',
     travel_time_minutes: 'minutes (aller)',
     constraints: 'Avez vous des contraintes potentielles quant à votre mobilité quotidienne ?',
     constraints_option: {
@@ -54,7 +53,8 @@ export default {
       mob_subs: 'Abonnement de mobilité partagée (mobility, etc.)',
       car_passenger: 'Voiture (en tant que passager)',
     },
-    freq_mod: 'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',
+    freq_mod:
+      'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',
     freq_mod_hint: "Nombre de jours d'une semaine type",
     mode: {
       walking: 'La marche (>10 min.)',
@@ -68,8 +68,7 @@ export default {
       car_moto: 'La voiture ou la moto',
       combined: 'Utilisez-vous plusieurs de ces modes pour un même trajet ?',
     },
-    trav_pro:
-      'Effectuez-vous des déplacements professionnels ? A quelle distance ?',
+    trav_pro: 'Effectuez-vous des déplacements professionnels ? A quelle distance ?',
     trav_pro_option: {
       local: 'Locale',
       local_hint: '<15 km : Grand Genève',
@@ -95,8 +94,7 @@ export default {
     importance_comfort: 'Confort du trajet',
     importance_most: 'Possibilité de mettre à profit le temps de trajet',
     importance_env: 'Environnement (réduction du la pollution)',
-    needs:
-      'Pensez-vous que les modes suivants sont adaptés pour votre mobilité quotidienne ?',
+    needs: 'Pensez-vous que les modes suivants sont adaptés pour votre mobilité quotidienne ?',
     needs_hint: 'Sur une échelle de 1 (pas du tout adapté) à 5 (tout à fait adapté)',
     adjectives: 'Quels adjectifs associez-vous aux modes de transport suivants ?',
     adjectives_hint: 'Sélectionnez 3 adjectifs par mode de transport',
@@ -132,6 +130,8 @@ export default {
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
+
+    final: 'Vos réponses ont été enregistrées, merci de votre participation !',
   },
   main_mode: {
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
@@ -163,6 +163,9 @@ export default {
     budget: 'Budget mobilité',
     wfh: 'Possibilité de télétravailler au domicile',
     wftp: 'Possibilité de télétravailler dans un tiers-lieu',
+    wfro: 'Possibilité de télétravailler occasionnellement',
+    videoconf:
+      'Système de visioconférence réservable au travail pour limiter les longs déplacements',
     tpg_pass: 'Abonnement transports publics (UNIRESO)',
     lex_pass: 'Abonnement léman express',
     cff_pass_ag: 'Abonnement train (abonnement général)',
@@ -176,6 +179,7 @@ export default {
     bike_parking: 'Stationnement vélo sécurisé',
     ebike_charging: 'Possibilité de chargement vélo électrique',
     bike_equipment: "Subvention à l'achat d'équipement de sécurité vélo",
+    bike_courses: 'Mise en place de cours pour la pratique du vélo sur le lieu de travail',
     carpool_subs: 'Remboursement des trajets de covoiturage',
     carpool_connect: 'Mise en relation avec des collègues pour covoiturer',
     carpool_parking: 'Places de stationnement réservées covoiturage',
@@ -183,12 +187,21 @@ export default {
     mobility_pass: 'Abonnement autopartage mobility',
     ebike_fleet: 'Flotte de vélos électriques pour les déplacements professionnels',
     tpu_pro: 'Abonnement transports publics (UNIRESO)',
+    tpu_rmb: 'Remboursement des billets de transports publics pour les déplacements professionnels',
     train_pro: 'Abonnement train (abonnement général)',
+    train_obl:
+      "Obligation d'utiliser le train dans la mesure du possible, pour les voyages professionnels",
+    train_rmb: 'Remboursement des billets de train pour les déplacements professionnels',
     ev_fleet: 'Flotte de véhicules électriques pour les déplacements professionnels',
   },
   benefits: {
     show: 'Voir les avantages',
     hide: 'Masquer les avantages',
+  },
+  contact: {
+    description:
+      "Pour plus d'informations sur la mobilité à {company_name}, veuillez contacter : {contact_name} {contact_email}",
+    website: "Veuillez visiter la page d'informations à {info_url}",
   },
   resume: 'Continuer le questionaire',
   start_new: 'Ou recommencer du début',

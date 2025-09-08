@@ -30,6 +30,33 @@
             new-value-mode="add-unique"
             class="q-mb-md"
           />
+          <q-input
+            filled
+            v-model="selected.contact_name"
+            :label="t('company.contact_name')"
+            :hint="t('company.contact_name_hint')"
+            class="q-mb-md"
+          />
+          <q-input
+            filled
+            v-model="selected.contact_email"
+            :label="t('company.contact_email')"
+            :hint="t('company.contact_email_hint')"
+            lazy-rules
+            :rules="[
+              (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || t('valid_email_required'),
+            ]"
+            class="q-mb-md"
+          />
+          <q-input
+            filled
+            v-model="selected.info_url"
+            :label="t('company.info_url')"
+            :hint="t('company.info_url_hint')"
+            lazy-rules
+            :rules="[(val) => !val || /^(http|https):/.test(val) || t('valid_url_required')]"
+            class="q-mb-md"
+          />
           <employer-actions-input
             v-model="selected.actions"
             :company="selected"

@@ -30,6 +30,7 @@ class EmployerActions(BaseModel):
     mesures_velo: Optional[List[str]] = Field(default=[])
     mesures_covoit: Optional[List[str]] = Field(default=[])
     mesures_elec: Optional[List[str]] = Field(default=[])
+    mesures_pro_globa: Optional[List[str]] = Field(default=[])
     mesures_pro_velo: Optional[List[str]] = Field(default=[])
     mesures_pro_tpu: Optional[List[str]] = Field(default=[])
     mesures_pro_train: Optional[List[str]] = Field(default=[])
@@ -51,6 +52,9 @@ class Company(CompanyBase, table=True):
     )
     administrators: Optional[List[str]] = Field(
         default=None, sa_column=Column(JSON))
+    contact_email: Optional[str] = Field(default=None)
+    contact_name: Optional[str] = Field(default=None)
+    info_url: Optional[str] = Field(default=None)
     campaigns: List["Campaign"] = Relationship(
         back_populates="company", cascade_delete=True)
     custom_actions: List["CompanyAction"] = Relationship(
@@ -81,6 +85,9 @@ class CampaignBase(Entity):
     end_date: Optional[datetime] = Field(default=None)
     lat: Optional[float] = Field(default=None)
     lon: Optional[float] = Field(default=None)
+    contact_email: Optional[str] = Field(default=None)
+    contact_name: Optional[str] = Field(default=None)
+    info_url: Optional[str] = Field(default=None)
     actions: Optional[EmployerActions] = Field(
         default=None, sa_column=Column(JSON))
 

@@ -152,9 +152,31 @@ const items1: FieldItem[] = [
       },
     ],
   },
+  {
+    field: 'contact_name',
+    label: 'campaign.contact_name',
+  },
+  {
+    field: 'contact_email',
+    label: 'campaign.contact_email',
+  },
 ]
 
 const items2: FieldItem[] = [
+  {
+    field: 'info_url',
+    label: 'campaign.info_url',
+    links: (val) =>
+      val.info_url
+        ? [
+            {
+              label: val.info_url,
+              to: val.info_url,
+              iconRight: 'open_in_new',
+            },
+          ]
+        : [],
+  },
   {
     field: 'start_date',
     label: 'start_date',

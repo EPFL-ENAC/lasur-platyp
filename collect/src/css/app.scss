@@ -31,18 +31,23 @@ a {
 
 a.q-markdown--link,
 a.modus {
-  text-decoration: underline;
+  text-decoration: none;
   text-decoration-color: #333;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
-  color: #333;
+  color: #016052;
+  font-weight: 600;
 }
 
 a:hover.q-markdown--link,
 a:hover.modus {
   text-decoration: underline;
-  text-decoration-color: #333;
-  color: #333;
+  text-decoration-color: #016052;
+  color: #016052;
+}
+
+.q-markdown--link-external:after {
+  display: none !important;
 }
 
 .text-help {

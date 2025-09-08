@@ -109,10 +109,19 @@ export interface Recommendation {
     mesure_pro_loc: string[]
     mesure_pro_regint: string[]
     mesures_globa?: string[]
+    mesures_pro_globa?: string[]
   }
   reco_pro?: {
     reco_pro_int: string
     reco_pro_loc: string
     reco_pro_reg: string
   }
+}
+
+export interface CampaignInfo {
+  name: string
+  company_name: string
+  contact_name?: string
+  contact_email?: string
+  info_url?: string
 }
