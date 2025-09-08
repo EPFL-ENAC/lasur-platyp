@@ -48,6 +48,11 @@ export interface RecordData {
   freq_mod_pro_region_plane: number
   freq_mod_pro_region_combined: boolean
 
+  freq_mod_pro_europe_car: number
+  freq_mod_pro_europe_train: number
+  freq_mod_pro_europe_plane: number
+  freq_mod_pro_europe_combined: boolean
+
   freq_mod_pro_inter_car: number
   freq_mod_pro_inter_train: number
   freq_mod_pro_inter_plane: number

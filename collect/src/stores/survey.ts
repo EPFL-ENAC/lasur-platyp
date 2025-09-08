@@ -17,6 +17,7 @@ export const useSurvey = defineStore(
       'trav_pro',
       'freq_mod_pro_local',
       'freq_mod_pro_region',
+      'freq_mod_pro_europe',
       'freq_mod_pro_inter',
       'importance',
       'needs',

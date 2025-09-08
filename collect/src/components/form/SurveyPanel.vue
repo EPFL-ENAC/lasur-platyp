@@ -365,6 +365,66 @@
         class="q-mt-xl q-mb-lg"
       />
     </div>
+    <div v-if="survey.stepName === 'freq_mod_pro_europe'">
+      <SectionItem
+        :label="t('form.freq_trav_pro_europe_hint')"
+        label-class="text-h2 text-green-2"
+        class="q-mb-lg"
+      />
+      <SectionItem
+        :label="t('form.freq_mod_pro')"
+        :hint="t('form.days_per_month')"
+        class="q-mb-lg"
+      />
+      <div class="row q-col-gutter-md q-mb-md">
+        <div class="col-xs-12 col-sm-6">
+          <NumberItem
+            :label="t('form.mode.car')"
+            v-model="survey.record.data.freq_mod_pro_europe_car"
+            :min="0"
+            :max="30"
+            :step="1"
+            :step2="5"
+            label-class="text-subtitle1 text-center"
+            class="bg-primary rounded-borders q-pa-md"
+          />
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <NumberItem
+            :label="t('form.mode.train')"
+            v-model="survey.record.data.freq_mod_pro_europe_train"
+            :min="0"
+            :max="30"
+            :step="1"
+            :step2="5"
+            label-class="text-subtitle1 text-center"
+            class="bg-primary rounded-borders q-pa-md"
+          />
+        </div>
+      </div>
+      <div class="row q-col-gutter-md q-mb-md">
+        <div class="col-xs-12 col-sm-6">
+          <NumberItem
+            :label="t('form.mode.plane')"
+            v-model="survey.record.data.freq_mod_pro_europe_plane"
+            :min="0"
+            :max="30"
+            :step="1"
+            :step2="5"
+            label-class="text-subtitle1 text-center"
+            class="bg-primary rounded-borders q-pa-md"
+          />
+        </div>
+        <div class="col-xs-12 col-sm-6"></div>
+      </div>
+      <ToggleItem
+        :label="t('form.mode.combined')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="survey.record.data.freq_mod_pro_inter_combined"
+        class="q-mt-xl q-mb-lg"
+      />
+    </div>
     <div v-if="survey.stepName === 'freq_mod_pro_inter'">
       <SectionItem
         :label="t('form.freq_trav_pro_inter_hint')"
@@ -593,9 +653,8 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import type { Option, ToggleOption } from 'src/components/form/models'
+import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
-import ToggleChoiceItem from 'src/components/form/ToggleChoiceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
@@ -647,6 +706,11 @@ const travProOptions = computed<Option[]>(() => [
     value: 'region',
     label: t('form.trav_pro_option.region'),
     hint: t('form.trav_pro_option.region_hint'),
+  },
+  {
+    value: 'europe',
+    label: t('form.trav_pro_option.europe'),
+    hint: t('form.trav_pro_option.europe_hint'),
   },
   {
     value: 'inter',

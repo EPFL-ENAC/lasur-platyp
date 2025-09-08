@@ -98,6 +98,7 @@
     "watchEffect": true,
     "watchPostEffect": true,
     "watchSyncEffect": true,
-    "useSurvey": true
+    "useSurvey": true,
+    "VERSION": true
   }
 }

@@ -108,6 +108,9 @@ class ModalTypoService:
             "fm_pro_reg_moto": record.data["freq_mod_pro_region_moto"],
             "fm_pro_reg_train": record.data["freq_mod_pro_region_train"],
             "fm_pro_reg_avio": record.data["freq_mod_pro_region_plane"],
+            "fm_pro_int_voit": record.data["freq_mod_pro_europe_car"],
+            "fm_pro_int_train": record.data["freq_mod_pro_europe_train"],
+            "fm_pro_int_avio": record.data["freq_mod_pro_europe_plane"],
             "fm_pro_int_voit": record.data["freq_mod_pro_inter_car"],
             "fm_pro_int_train": record.data["freq_mod_pro_inter_train"],
             "fm_pro_int_avio": record.data["freq_mod_pro_inter_plane"]

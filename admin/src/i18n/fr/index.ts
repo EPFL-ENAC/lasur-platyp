@@ -172,7 +172,8 @@ export default {
       labels: {
         local: 'Local',
         region: 'Régional',
-        inter: 'International',
+        europe: 'Européen',
+        inter: 'Intercontinental',
         walking: 'La marche',
         bike: 'Le vélo (mécanique ou électrique)',
         pub: 'Les transports publics urbains',

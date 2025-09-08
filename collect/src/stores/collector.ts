@@ -63,6 +63,11 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_pro_region_plane: 0,
           freq_mod_pro_region_combined: false,
 
+          freq_mod_pro_europe_car: 0,
+          freq_mod_pro_europe_train: 0,
+          freq_mod_pro_europe_plane: 0,
+          freq_mod_pro_europe_combined: false,
+
           freq_mod_pro_inter_car: 0,
           freq_mod_pro_inter_train: 0,
           freq_mod_pro_inter_plane: 0,
