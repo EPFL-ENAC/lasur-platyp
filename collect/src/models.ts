@@ -93,6 +93,7 @@ export interface Recommendation {
       train: number
       vae: number
       velo: number
+      cargo: number
     }
     access: {
       covoit: number
@@ -103,6 +104,7 @@ export interface Recommendation {
       train: number
       vae: number
       velo: number
+      cargo: number
     }
   }
   reco_actions?: {

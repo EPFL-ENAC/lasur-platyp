@@ -149,6 +149,7 @@ export default {
         train: 'Le train',
         vae: 'Le vélo à assistance électrique',
         velo: 'Le vélo',
+        cargo: 'Le vélo cargo',
       },
     },
     freq_mod: {
@@ -223,6 +224,7 @@ export default {
         tpu: 'Les transports publics',
         vae: 'Le vélo à assistance électrique',
         velo: 'Le vélo',
+        cargo: 'Le vélo cargo',
       },
     },
   },

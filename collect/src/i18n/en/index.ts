@@ -127,6 +127,7 @@ export default {
     train: 'Train',
     vae: 'Electric bike',
     velo: 'Bike',
+    cargo: 'Cargo bike',
   },
   actions: {
     budget: 'Sustainable mobility budget',
