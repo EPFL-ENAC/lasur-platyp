@@ -1,4 +1,3 @@
-from html import entities
 from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlalchemy import Float, select, func, and_, cast, literal_column, lateral
@@ -285,7 +284,7 @@ class RecordService:
     async def get_recommendation_frequencies(self, filter: dict) -> Frequencies:
         total_count = await self.count_completed(filter)
         if total_count == 0:
-            return Links(total=0, data=[])
+            return Frequencies(total=0, data=[])
 
         results = await self.find(filter, fields=[], sort=[], range=[])
         ids = [entity.id for entity in results.data]
@@ -374,7 +373,7 @@ class RecordService:
     async def get_mod_co2_emissions(self, mod: str, filter: dict) -> Emissions:
         total_count = await self.count_completed(filter)
         if total_count == 0:
-            return {"total": 0, "co2_emissions": 0}
+            return Emissions(field=mod, total=0, distances=0, journeys=0, emissions=0)
 
         results = await self.find(filter, fields=[], sort=[], range=[])
         ids = [entity.id for entity in results.data]
