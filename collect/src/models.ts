@@ -66,9 +66,6 @@ export interface RecordData {
   needs_moto: number
   needs_car: number
   needs_train: number
-  adjectives_bikes: string[]
-  adjectives_pubs: string[]
-  adjectives_motors: string[]
   comments: string
   workplace: AddressLocation
   origin: AddressLocation

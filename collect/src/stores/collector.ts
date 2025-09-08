@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import { api } from 'src/boot/api'
 import type { Record, CampaignInfo } from 'src/models'
 
+// Current version of the form data structure
+export const VERSION = '1.1.0'
+
 export const useCollector = defineStore('collector', () => {
   const info = ref<CampaignInfo>({} as CampaignInfo)
   const token = ref<string | null>(null)
@@ -25,6 +28,8 @@ export const useCollector = defineStore('collector', () => {
         token.value = tkOrSlug
         const cr = response.data
         const data = {
+          version: VERSION,
+
           terms_conditions: false,
           confidentiality: false,
 
@@ -76,9 +81,6 @@ export const useCollector = defineStore('collector', () => {
           needs_moto: 1,
           needs_car: 1,
           needs_train: 1,
-          adjectives_bikes: [],
-          adjectives_pubs: [],
-          adjectives_motors: [],
           ...cr.data,
         }
         return {
