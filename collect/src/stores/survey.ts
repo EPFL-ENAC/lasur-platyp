@@ -13,6 +13,7 @@ export const useSurvey = defineStore(
       'travel_time',
       'constraints',
       'equipments',
+      'intermodality',
       'freq_mod',
       'trav_pro',
       'freq_mod_pro_local',

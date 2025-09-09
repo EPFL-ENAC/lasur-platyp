@@ -66,7 +66,7 @@ export default {
       plane: "L'avion",
       pub_train: 'Les transports publics (y compris le train)',
       car_moto: 'La voiture ou la moto',
-      combined: 'Utilisez-vous plusieurs de ces modes pour un même trajet ?',
+      combined: 'Comment vous rendez-vous habituellement sur votre lieu de travail ?',
     },
     trav_pro: 'Effectuez-vous des déplacements professionnels ? A quelle distance ?',
     trav_pro_option: {

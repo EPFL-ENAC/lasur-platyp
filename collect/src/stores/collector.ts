@@ -45,7 +45,7 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_moto: 0,
           freq_mod_car: 0,
           freq_mod_train: 0,
-          freq_mod_combined: false,
+          freq_mod_inter: '',
 
           trav_pro: [],
           freq_mod_pro_local_walking: 0,

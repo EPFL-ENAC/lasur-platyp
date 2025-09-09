@@ -66,7 +66,7 @@ export default {
       plane: 'Plane',
       pub_train: 'Public transport and train',
       car_moto: 'Car and motorcycle/scooter',
-      combined: 'A combination of these modes of transportation',
+      combined: 'How do you usually get to your workplace?',
     },
     trav_pro: 'To what extent do you have to travel as part of your work?',
     trav_pro_option: {

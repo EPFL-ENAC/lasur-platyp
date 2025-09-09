@@ -115,6 +115,7 @@
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
+    <div v-if="survey.stepName === 'intermodality'"></div>
     <div v-if="survey.stepName === 'freq_mod'">
       <SectionItem :label="t('form.freq_mod')" :hint="t('form.freq_mod_hint')" class="q-mb-lg" />
       <SliderItem
@@ -164,13 +165,6 @@
         :max="5"
         label-class="text-h5"
         class="q-mb-lg"
-      />
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_combined"
-        class="q-mt-xl q-mb-lg"
       />
     </div>
     <div v-if="survey.stepName === 'trav_pro'">
