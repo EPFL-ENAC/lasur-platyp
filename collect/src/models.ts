@@ -31,6 +31,7 @@ export interface RecordData {
   freq_mod_car: number
   freq_mod_train: number
   freq_mod_combined: boolean
+  freq_mod_intermodality: string[]
 
   trav_pro: string[]
   freq_mod_pro_local_walking: number

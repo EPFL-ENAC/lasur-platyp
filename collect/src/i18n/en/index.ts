@@ -68,6 +68,8 @@ export default {
       car_moto: 'Car and motorcycle/scooter',
       combined: 'How do you usually get to your workplace?',
     },
+    intermodality: 'Which modes of transport do you use?',
+    intermodality_hint: 'Describe the sequence of transport modes of a typical journey.',
     trav_pro: 'To what extent do you have to travel as part of your work?',
     trav_pro_option: {
       local: 'Local',
@@ -200,4 +202,5 @@ export default {
   next: 'Next',
   previous: 'Previous',
   select_preferred_language: 'Select your preferred language',
+  select_or_drag_item: 'Select or drag one of the options',
 }

@@ -68,6 +68,8 @@ export default {
       car_moto: 'La voiture ou la moto',
       combined: 'Comment vous rendez-vous habituellement sur votre lieu de travail ?',
     },
+    intermodality: 'Quels sont les modes de transport que vous utilisez ?',
+    intermodality_hint: "Décrivez la suite de modes de transports d'un trajet typique.",
     trav_pro: 'Effectuez-vous des déplacements professionnels ? A quelle distance ?',
     trav_pro_option: {
       local: 'Locale',
@@ -211,4 +213,5 @@ export default {
   next: 'Suivant',
   previous: 'Précédent',
   select_preferred_language: 'Sélectionner votre langue préférée',
+  select_or_drag_item: 'Sélectionnez ou glisser une des options',
 }
