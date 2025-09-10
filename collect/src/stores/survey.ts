@@ -186,6 +186,26 @@ export const useSurvey = defineStore(
       return false
     }
 
+    function getFreqMod(mode: string) {
+      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+        let freq = 0
+        record.value.data.freq_mod_journeys.forEach((j) => {
+          if (j.modes.includes(mode)) {
+            freq += j.days
+          }
+        })
+        return freq
+      }
+      return 0
+    }
+
+    function getFreqModCombined() {
+      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+        return record.value.data.freq_mod_journeys.some((j) => j.modes.length > 1)
+      }
+      return false
+    }
+
     return {
       stepNames,
       tokenOrSlug,
@@ -202,6 +222,8 @@ export const useSurvey = defineStore(
       isAfterStep,
       incStep,
       decStep,
+      getFreqMod,
+      getFreqModCombined,
     }
   },
   { persist: true },

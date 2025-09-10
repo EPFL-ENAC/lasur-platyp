@@ -29,13 +29,6 @@ export interface RecordData {
   travel_time: number
   equipments: string[]
   constraints: string[]
-  freq_mod_walking: number
-  freq_mod_bike: number
-  freq_mod_pub: number
-  freq_mod_moto: number
-  freq_mod_car: number
-  freq_mod_train: number
-  freq_mod_combined: boolean
   freq_mod_journeys: Journey[]
 
   trav_pro: string[]

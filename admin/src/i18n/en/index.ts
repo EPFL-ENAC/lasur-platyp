@@ -252,6 +252,7 @@ export default {
   error_not_found: 'Oops. Nothing here...',
   field_required: 'This field is required',
   first_name: 'First Name',
+  form_version: 'Form version',
   go_home: 'Go Home',
   group: 'Group',
   help: 'Help',

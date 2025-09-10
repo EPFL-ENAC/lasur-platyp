@@ -4,7 +4,7 @@ import { api } from 'src/boot/api'
 import type { Record, CampaignInfo } from 'src/models'
 
 // Current version of the form data structure
-export const VERSION = '1.1.0'
+export const VERSION = '2.0.0'
 
 export const useCollector = defineStore('collector', () => {
   const info = ref<CampaignInfo>({} as CampaignInfo)
@@ -39,13 +39,6 @@ export const useCollector = defineStore('collector', () => {
           travel_time: 5,
           equipments: [],
           constraints: [],
-          freq_mod_walking: 0,
-          freq_mod_bike: 0,
-          freq_mod_pub: 0,
-          freq_mod_moto: 0,
-          freq_mod_car: 0,
-          freq_mod_train: 0,
-          freq_mod_inter: '',
           freq_mod_journeys: [{ modes: [], days: 1 }],
 
           trav_pro: [],
