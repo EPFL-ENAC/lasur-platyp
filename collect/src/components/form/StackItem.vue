@@ -6,11 +6,17 @@
       <q-list>
         <template v-for="(sel, idx) in selected" :key="idx">
           <q-item
-            :id="`#${idx}`"
+            @dragenter="onDragEnter"
+            @dragleave="onDragLeave"
+            @dragover="onDragOver"
+            @drop="onDropInsert($event, idx)"
+            dropzone
+            :id="`${itemPrefix}${idx}`"
             draggable="true"
             @dragstart="onDragStart"
             v-ripple
             class="rounded-borders q-mt-md q-mb-md bg-teal-1 text-grey-8"
+            style="cursor: move"
           >
             <q-item-section>
               <div class="row" :class="optionLabelClass">
@@ -32,8 +38,8 @@
         @dragleave="onDragLeave"
         @dragover="onDragOver"
         @drop="onDrop"
-        class="q-pa-md text-h5"
-        style="border: dashed 4px"
+        dropzone
+        class="q-pa-md text-h5 drop-zone"
       >
         <span class="text-grey-6">{{ t('select_or_drag_item') }}</span>
       </div>
@@ -43,7 +49,6 @@
             :id="option.value"
             draggable="true"
             @dragstart="onDragStart"
-            round
             :icon="option.icon"
             :title="option.label"
             color="primary"
@@ -74,6 +79,7 @@ const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 
 const { t } = useI18n()
+const itemPrefix = 'item-'
 
 const selected = computed(() => {
   return (props.modelValue as string[]) || []
@@ -92,9 +98,33 @@ function onAdd(option: Option | undefined) {
   emit('update:modelValue', value)
 }
 
+function onInsert(option: Option | undefined, index: number) {
+  if (!option) return
+  const value = (props.modelValue as string[]) || []
+  if (props.max === undefined || value.length < props.max) {
+    value.splice(index, 0, option.value)
+  }
+  emit('update:modelValue', value)
+}
+
 function onRemove(index: number) {
   const value = (props.modelValue as string[]) || []
   value.splice(index, 1)
+  emit('update:modelValue', value)
+}
+
+function onMove(position: number, index: number) {
+  if (position === index) return
+  const value = (props.modelValue as string[]) || []
+  const movedValue = value[position]
+  if (!movedValue) return
+  if (position > index) {
+    value.splice(index, 0, movedValue)
+    value.splice(position + 1, 1)
+  } else {
+    value.splice(position, 1)
+    value.splice(index - 1, 0, movedValue)
+  }
   emit('update:modelValue', value)
 }
 
@@ -105,11 +135,21 @@ function onDragStart(e: DragEvent) {
 }
 
 function onDragEnter(e: DragEvent) {
+  e.preventDefault()
   if (!e.target) return
   // don't drop on other draggables
   const target = e.target as HTMLElement
-  if (target.draggable !== true) {
+  if (target.hasAttribute('dropzone')) {
     target.classList.add('drag-enter')
+  } else {
+    // get parent element with dropzone attribute
+    let parent = target.parentElement
+    while (parent && !parent.hasAttribute('dropzone')) {
+      parent = parent.parentElement
+    }
+    if (parent) {
+      parent.classList.add('drag-enter')
+    }
   }
 }
 
@@ -128,7 +168,7 @@ function onDrop(e: DragEvent) {
 
   // don't drop on other draggables
   const target = e.target as HTMLElement
-  if (target.draggable === true) return
+  if (!target.hasAttribute('dropzone')) return
   if (!e.dataTransfer) return
 
   const draggedId = e.dataTransfer.getData('text')
@@ -144,10 +184,50 @@ function onDrop(e: DragEvent) {
   onAdd(getOption(draggedId))
   target.classList.remove('drag-enter')
 }
+
+function onDropInsert(e: DragEvent, index: number) {
+  e.preventDefault()
+
+  // don't drop on other draggables
+  const target = e.target as HTMLElement
+  //if (!target.hasAttribute('dropzone')) return
+  if (!e.dataTransfer) return
+
+  const draggedId = e.dataTransfer.getData('text')
+  const draggedEl = document.getElementById(draggedId)
+
+  // check if original parent node
+  if (draggedEl && draggedEl.parentNode === target) {
+    target.classList.remove('drag-enter')
+    return
+  }
+
+  // make the exchange
+  if (draggedId.startsWith(itemPrefix)) {
+    // this is an item move
+    const position = Number(draggedId.replace(itemPrefix, ''))
+    onMove(position, index)
+  } else {
+    // this is an insert
+    onInsert(getOption(draggedId), index)
+  }
+  target.classList.remove('drag-enter')
+  // remove from dropzone parents
+  let parent = target.parentElement
+  while (parent && !parent.hasAttribute('dropzone')) {
+    parent = parent.parentElement
+  }
+  if (parent) {
+    parent.classList.remove('drag-enter')
+  }
+}
 </script>
 
-<style lang="css">
+<style lang="scss">
+.drop-zone {
+  border: dashed 4px #ccc;
+}
 .drag-enter {
-  border: dashed 4px #1976d2 !important;
+  border: dashed 4px $primary !important;
 }
 </style>
