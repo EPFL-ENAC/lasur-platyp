@@ -18,7 +18,7 @@
             class="rounded-borders q-mt-md q-mb-md bg-teal-1 text-grey-8"
             style="cursor: move"
           >
-            <q-item-section avatar>
+            <q-item-section v-if="q.screen.gt.xs" avatar>
               <q-icon name="drag_indicator" color="primary" size="lg" />
             </q-item-section>
             <q-item-section>
@@ -57,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar'
 import type { Option } from 'src/components/form/models'
 interface Props {
   modelValue: string | string[] | undefined
@@ -71,6 +72,8 @@ interface Props {
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
+
+const q = useQuasar()
 
 const itemPrefix = 'item-'
 

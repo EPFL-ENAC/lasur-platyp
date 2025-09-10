@@ -7,7 +7,9 @@
     <template v-for="(journey, idx) in survey.record.data.freq_mod_journeys" :key="idx">
       <q-card class="bg-primary q-mb-md">
         <q-card-section>
-          <div class="row">
+          <q-toolbar>
+            <div class="on-left text-h6 q-pt-xs">{{ t('form.journey.hint') }}</div>
+            <q-space />
             <q-btn
               round
               :title="t('form.journey.remove')"
@@ -15,8 +17,7 @@
               color="accent"
               @click="onRemoveJourney(idx)"
             />
-            <div class="on-right text-h6 q-pt-xs">{{ t('form.journey.hint') }}</div>
-          </div>
+          </q-toolbar>
           <JourneyItem
             v-if="survey.record.data.freq_mod_journeys[idx]"
             v-model="survey.record.data.freq_mod_journeys[idx]"
