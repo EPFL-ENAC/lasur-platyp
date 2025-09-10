@@ -69,12 +69,20 @@ export default {
       combined: 'Comment vous rendez-vous habituellement sur votre lieu de travail ?',
     },
     intermodality: 'Quels sont les modes de transport que vous utilisez ?',
-    intermodality_hint: 'Décrivez un ou plusieurs trajets domicile - travail.',
+    intermodality_hint: 'Décrivez un ou plusieurs trajets typiques domicile - travail.',
     journey: {
       hint: "Décrivez la suite de modes de transports d'un trajet typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
       days_per_week: 'Jours par semaine',
+    },
+    intermodality_pro: 'Quel est le principal mode de transport que vous utilisez ?',
+    intermodality_pro_hint: 'Décrivez un ou plusieurs trajets professionnels typiques.',
+    journey_pro: {
+      hint: "Sélectionnez le principal mode de transport d'un trajet professionnel typique.",
+      add: 'Ajouter un trajet',
+      remove: 'Supprimer le trajet',
+      days_per_month: 'Jours par mois',
     },
     trav_pro: 'Effectuez-vous des déplacements professionnels ? A quelle distance ?',
     trav_pro_option: {

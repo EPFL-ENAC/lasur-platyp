@@ -116,7 +116,7 @@
       />
     </div>
     <div v-if="survey.stepName === 'intermodality'">
-      <journeys-panel />
+      <JourneysPanel />
     </div>
     <div v-if="survey.stepName === 'trav_pro'">
       <ChoiceItem
@@ -133,95 +133,9 @@
         label-class="text-h2 text-green-2"
         class="q-mb-lg"
       />
-      <SectionItem
-        :label="t('form.freq_mod_pro')"
-        :hint="t('form.days_per_month')"
-        class="q-mb-lg"
-      />
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.walking')"
-            v-model="survey.record.data.freq_mod_pro_local_walking"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.bike')"
-            v-model="survey.record.data.freq_mod_pro_local_bike"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.pub')"
-            v-model="survey.record.data.freq_mod_pro_local_pub"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.freq_mod_pro_local_train"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.moto')"
-            v-model="survey.record.data.freq_mod_pro_local_moto"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.freq_mod_pro_local_car"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_pro_local_combined"
-        class="q-mt-xl q-mb-lg"
+      <ProJourneysPanel
+        v-model="survey.record.data.freq_mod_pro_local_journeys"
+        :modes="['walking', 'bike', 'pub', 'moto', 'car', 'train']"
       />
     </div>
     <div v-if="survey.stepName === 'freq_mod_pro_region'">
@@ -230,84 +144,9 @@
         label-class="text-h2 text-green-2"
         class="q-mb-lg"
       />
-      <SectionItem
-        :label="t('form.freq_mod_pro')"
-        :hint="t('form.days_per_month')"
-        class="q-mb-lg"
-      />
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.pub')"
-            v-model="survey.record.data.freq_mod_pro_region_pub"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.freq_mod_pro_region_train"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.moto')"
-            v-model="survey.record.data.freq_mod_pro_region_moto"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.freq_mod_pro_region_car"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.plane')"
-            v-model="survey.record.data.freq_mod_pro_region_plane"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6"></div>
-      </div>
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_pro_region_combined"
-        class="q-mt-xl q-mb-lg"
+      <ProJourneysPanel
+        v-model="survey.record.data.freq_mod_pro_region_journeys"
+        :modes="['pub', 'moto', 'car', 'train', 'plane']"
       />
     </div>
     <div v-if="survey.stepName === 'freq_mod_pro_europe'">
@@ -316,58 +155,9 @@
         label-class="text-h2 text-green-2"
         class="q-mb-lg"
       />
-      <SectionItem
-        :label="t('form.freq_mod_pro')"
-        :hint="t('form.days_per_month')"
-        class="q-mb-lg"
-      />
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.freq_mod_pro_europe_car"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.freq_mod_pro_europe_train"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.plane')"
-            v-model="survey.record.data.freq_mod_pro_europe_plane"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6"></div>
-      </div>
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_pro_inter_combined"
-        class="q-mt-xl q-mb-lg"
+      <ProJourneysPanel
+        v-model="survey.record.data.freq_mod_pro_europe_journeys"
+        :modes="['car', 'train', 'plane']"
       />
     </div>
     <div v-if="survey.stepName === 'freq_mod_pro_inter'">
@@ -376,58 +166,9 @@
         label-class="text-h2 text-green-2"
         class="q-mb-lg"
       />
-      <SectionItem
-        :label="t('form.freq_mod_pro')"
-        :hint="t('form.days_per_month')"
-        class="q-mb-lg"
-      />
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.freq_mod_pro_inter_car"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.freq_mod_pro_inter_train"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.plane')"
-            v-model="survey.record.data.freq_mod_pro_inter_plane"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6"></div>
-      </div>
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_pro_inter_combined"
-        class="q-mt-xl q-mb-lg"
+      <ProJourneysPanel
+        v-model="survey.record.data.freq_mod_pro_inter_journeys"
+        :modes="['car', 'train', 'plane']"
       />
     </div>
     <div v-if="survey.stepName === 'importance'">
@@ -644,6 +385,7 @@ import { useQuasar } from 'quasar'
 import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
 import JourneysPanel from 'src/components/form/JourneysPanel.vue'
+import ProJourneysPanel from 'src/components/form/ProJourneysPanel.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'

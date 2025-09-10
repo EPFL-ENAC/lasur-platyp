@@ -92,13 +92,7 @@ export const useSurvey = defineStore(
       ) {
         record.value.data = {
           ...record.value.data,
-          freq_mod_pro_local_walking: 0,
-          freq_mod_pro_local_bike: 0,
-          freq_mod_pro_local_pub: 0,
-          freq_mod_pro_local_moto: 0,
-          freq_mod_pro_local_car: 0,
-          freq_mod_pro_local_train: 0,
-          freq_mod_pro_local_combined: false,
+          freq_mod_pro_local_journeys: [],
         }
         step.value += 1
         return true
@@ -110,12 +104,7 @@ export const useSurvey = defineStore(
       ) {
         record.value.data = {
           ...record.value.data,
-          freq_mod_pro_region_pub: 0,
-          freq_mod_pro_region_moto: 0,
-          freq_mod_pro_region_car: 0,
-          freq_mod_pro_region_train: 0,
-          freq_mod_pro_region_plane: 0,
-          freq_mod_pro_region_combined: false,
+          freq_mod_pro_region_journeys: [],
         }
         step.value += 1
         return true
@@ -127,10 +116,7 @@ export const useSurvey = defineStore(
       ) {
         record.value.data = {
           ...record.value.data,
-          freq_mod_pro_europe_car: 0,
-          freq_mod_pro_europe_train: 0,
-          freq_mod_pro_europe_plane: 0,
-          freq_mod_pro_europe_combined: false,
+          freq_mod_pro_europe_journeys: [],
         }
         step.value += 1
         return true
@@ -142,10 +128,7 @@ export const useSurvey = defineStore(
       ) {
         record.value.data = {
           ...record.value.data,
-          freq_mod_pro_inter_car: 0,
-          freq_mod_pro_inter_train: 0,
-          freq_mod_pro_inter_plane: 0,
-          freq_mod_pro_inter_combined: false,
+          freq_mod_pro_inter_journeys: [],
         }
         step.value += 1
         return true
