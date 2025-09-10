@@ -55,15 +55,14 @@ const { t } = useI18n()
 const survey = useSurvey()
 
 const mainFm = computed(() => {
-  const data = survey.record.data
-  if (data.freq_mod_combined) return 'combined'
+  if (survey.getFreqModCombined()) return 'combined'
   const fm: { [key: string]: number } = {
-    walking: data.freq_mod_walking,
-    bike: data.freq_mod_bike,
-    pub: data.freq_mod_pub,
-    moto: data.freq_mod_moto,
-    car: data.freq_mod_car,
-    train: data.freq_mod_train,
+    walking: survey.getFreqMod('walking'),
+    bike: survey.getFreqMod('bike'),
+    pub: survey.getFreqMod('pub'),
+    moto: survey.getFreqMod('moto'),
+    car: survey.getFreqMod('car'),
+    train: survey.getFreqMod('train'),
   }
   let max = -1
   let main = ''

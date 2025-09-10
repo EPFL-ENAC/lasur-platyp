@@ -16,6 +16,7 @@ class ModalTypoService:
     def get_recommendation(self, record: Record) -> dict:
         """Get typo suggestions for a record"""
         url = f"{self.url}/modal-typo/reco"
+        freq_mods = self.get_freq_mod_params(record)
         data = {
             "o_lon": record.data["origin"]["lon"],
             "o_lat": record.data["origin"]["lat"],
@@ -24,11 +25,11 @@ class ModalTypoService:
             "tps_traj": record.data["travel_time"],
             "tx_trav": record.data["employment_rate"],
             "tx_tele": record.data["remote_work_rate"],
-            "fm_dt_voit": record.data["freq_mod_car"],
-            "fm_dt_moto": record.data["freq_mod_moto"],
-            "fm_dt_tpu": record.data["freq_mod_pub"],
-            "fm_dt_train": record.data["freq_mod_train"],
-            "fm_dt_velo": record.data["freq_mod_bike"],
+            "fm_dt_voit": freq_mods["fm_dt_voit"],
+            "fm_dt_moto": freq_mods["fm_dt_moto"],
+            "fm_dt_tpu": freq_mods["fm_dt_tpu"],
+            "fm_dt_train": freq_mods["fm_dt_train"],
+            "fm_dt_velo": freq_mods["fm_dt_velo"],
             "a_voit": record.data["needs_car"],
             "a_moto": record.data["needs_moto"],
             "a_tpu": record.data["needs_pub"],
@@ -51,6 +52,7 @@ class ModalTypoService:
     def get_recommendation_multi(self, record: Record) -> dict:
         """Get multi typo suggestions for a record"""
         url = f"{self.url}/modal-typo/reco-multi"
+        freq_mods = self.get_freq_mod_params(record)
         data = {
             "o_lon": record.data["origin"]["lon"],
             "o_lat": record.data["origin"]["lat"],
@@ -58,13 +60,13 @@ class ModalTypoService:
             "d_lat": record.data["workplace"]["lat"],
             "tps_traj": record.data["travel_time"],
             "constraints": record.data["constraints"],
-            "fm_dt_voit": record.data["freq_mod_car"],
-            "fm_dt_moto": record.data["freq_mod_moto"],
-            "fm_dt_tpu": record.data["freq_mod_pub"],
-            "fm_dt_train": record.data["freq_mod_train"],
-            "fm_dt_velo": record.data["freq_mod_bike"],
-            "fm_dt_march": record.data["freq_mod_walking"],
-            "fm_dt_inter": 1 if record.data["freq_mod_combined"] else 0,
+            "fm_dt_voit": freq_mods["fm_dt_voit"],
+            "fm_dt_moto": freq_mods["fm_dt_moto"],
+            "fm_dt_tpu": freq_mods["fm_dt_tpu"],
+            "fm_dt_train": freq_mods["fm_dt_train"],
+            "fm_dt_velo": freq_mods["fm_dt_velo"],
+            "fm_dt_march": freq_mods["fm_dt_march"],
+            "fm_dt_inter": freq_mods["fm_dt_inter"],
 
             "a_voit": record.data["needs_car"],
             "a_moto": record.data["needs_moto"],
@@ -187,9 +189,58 @@ class ModalTypoService:
         empl_actions["mesures_pro_globa"] = actions["mesures_pro_globa"] if "mesures_pro_globa" in actions else []
         return empl_actions
 
+    def get_freq_mod_params(self, record: Record) -> dict:
+        """Get frequency modes from record data"""
+        fm_dt_voit = self.as_int(
+            record.data["freq_mod_car"]) if "freq_mod_car" in record.data else 0
+        fm_dt_moto = self.as_int(
+            record.data["freq_mod_moto"]) if "freq_mod_moto" in record.data else 0
+        fm_dt_tpu = self.as_int(
+            record.data["freq_mod_pub"]) if "freq_mod_pub" in record.data else 0
+        fm_dt_train = self.as_int(
+            record.data["freq_mod_train"]) if "freq_mod_train" in record.data else 0
+        fm_dt_velo = self.as_int(
+            record.data["freq_mod_bike"]) if "freq_mod_bike" in record.data else 0
+        fm_dt_march = self.as_int(
+            record.data["freq_mod_walking"]) if "freq_mod_walking" in record.data else 0
+        fm_dt_inter = 1 if "freq_mod_combined" in record.data else 0
+        journeys = record.data["freq_mod_journeys"] if "freq_mod_journeys" in record.data else [
+        ]
+        # count mode days for each journey
+        for journey in journeys:
+            if "car" in journey["modes"]:
+                fm_dt_voit += journey.get('days', 1)
+            if "moto" in journey["modes"]:
+                fm_dt_moto += journey.get('days', 1)
+            if "pub" in journey["modes"]:
+                fm_dt_tpu += journey.get('days', 1)
+            if "train" in journey["modes"]:
+                fm_dt_train += journey.get('days', 1)
+            if "bike" in journey["modes"]:
+                fm_dt_velo += journey.get('days', 1)
+            if "walking" in journey["modes"]:
+                fm_dt_march += journey.get('days', 1)
+            if len(journey["modes"]) > 1:
+                fm_dt_inter = 1
+        return {
+            "fm_dt_voit": fm_dt_voit,
+            "fm_dt_moto": fm_dt_moto,
+            "fm_dt_tpu": fm_dt_tpu,
+            "fm_dt_train": fm_dt_train,
+            "fm_dt_velo": fm_dt_velo,
+            "fm_dt_march": fm_dt_march,
+            "fm_dt_inter": fm_dt_inter,
+        }
+
     def is_id(self, s: str) -> bool:
         try:
             int(s)
             return True
         except ValueError:
             return False
+
+    def as_int(self, val: int | tuple) -> int:
+        try:
+            return int(val[0]) if isinstance(val, tuple) else int(val)
+        except (ValueError, TypeError):
+            return 0

@@ -66,7 +66,15 @@ export default {
       plane: 'Plane',
       pub_train: 'Public transport and train',
       car_moto: 'Car and motorcycle/scooter',
-      combined: 'A combination of these modes of transportation',
+      combined: 'How do you usually get to your workplace?',
+    },
+    intermodality: 'Which modes of transport do you use?',
+    intermodality_hint: 'Describe one or more journeys from home to work.',
+    journey: {
+      hint: 'Describe the sequence of transport modes of a typical journey.',
+      add: 'Add journey',
+      remove: 'Remove journey',
+      days_per_week: 'Days per week',
     },
     trav_pro: 'To what extent do you have to travel as part of your work?',
     trav_pro_option: {
@@ -200,4 +208,5 @@ export default {
   next: 'Next',
   previous: 'Previous',
   select_preferred_language: 'Select your preferred language',
+  select_or_drag_item: 'Select or drag one of the options',
 }

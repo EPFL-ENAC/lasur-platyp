@@ -192,6 +192,13 @@ const columns = computed(() => {
       sortable: true,
     },
     {
+      name: 'version',
+      required: true,
+      label: t('form_version'),
+      align: DefaultAlignment,
+      field: (row: Record) => row?.data?.version || '-',
+    },
+    {
       name: 'updated_at',
       required: true,
       label: t('last_modified'),

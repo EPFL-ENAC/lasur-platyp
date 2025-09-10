@@ -115,63 +115,8 @@
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
-    <div v-if="survey.stepName === 'freq_mod'">
-      <SectionItem :label="t('form.freq_mod')" :hint="t('form.freq_mod_hint')" class="q-mb-lg" />
-      <SliderItem
-        :label="t('form.mode.walking')"
-        v-model="survey.record.data.freq_mod_walking"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.bike')"
-        v-model="survey.record.data.freq_mod_bike"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.pub')"
-        v-model="survey.record.data.freq_mod_pub"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.train')"
-        v-model="survey.record.data.freq_mod_train"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.moto')"
-        v-model="survey.record.data.freq_mod_moto"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.car')"
-        v-model="survey.record.data.freq_mod_car"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_combined"
-        class="q-mt-xl q-mb-lg"
-      />
+    <div v-if="survey.stepName === 'intermodality'">
+      <journeys-panel />
     </div>
     <div v-if="survey.stepName === 'trav_pro'">
       <ChoiceItem
@@ -687,10 +632,10 @@
 import { useQuasar } from 'quasar'
 import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
+import JourneysPanel from 'src/components/form/JourneysPanel.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
-import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
@@ -822,7 +767,7 @@ function prevStep() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
-  if (survey.stepName === 'places') {
+  if (['places', 'intermodality'].includes(survey.stepName || '')) {
     // ignore because of map dragging conflict
     return
   }

@@ -13,7 +13,7 @@ export const useSurvey = defineStore(
       'travel_time',
       'constraints',
       'equipments',
-      'freq_mod',
+      'intermodality',
       'trav_pro',
       'freq_mod_pro_local',
       'freq_mod_pro_region',
@@ -122,6 +122,21 @@ export const useSurvey = defineStore(
       }
 
       if (
+        stepName.value === 'freq_mod_pro_europe' &&
+        !record.value.data.trav_pro?.includes('europe')
+      ) {
+        record.value.data = {
+          ...record.value.data,
+          freq_mod_pro_europe_car: 0,
+          freq_mod_pro_europe_train: 0,
+          freq_mod_pro_europe_plane: 0,
+          freq_mod_pro_europe_combined: false,
+        }
+        step.value += 1
+        return true
+      }
+
+      if (
         stepName.value === 'freq_mod_pro_inter' &&
         !record.value.data.trav_pro?.includes('inter')
       ) {
@@ -155,11 +170,38 @@ export const useSurvey = defineStore(
         return true
       }
       if (
+        stepName.value === 'freq_mod_pro_europe' &&
+        !record.value.data.trav_pro?.includes('europe')
+      ) {
+        step.value -= 1
+        return true
+      }
+      if (
         stepName.value === 'freq_mod_pro_inter' &&
         !record.value.data.trav_pro?.includes('inter')
       ) {
         step.value -= 1
         return true
+      }
+      return false
+    }
+
+    function getFreqMod(mode: string) {
+      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+        let freq = 0
+        record.value.data.freq_mod_journeys.forEach((j) => {
+          if (j.modes.includes(mode)) {
+            freq += j.days
+          }
+        })
+        return freq
+      }
+      return 0
+    }
+
+    function getFreqModCombined() {
+      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+        return record.value.data.freq_mod_journeys.some((j) => j.modes.length > 1)
       }
       return false
     }
@@ -180,6 +222,8 @@ export const useSurvey = defineStore(
       isAfterStep,
       incStep,
       decStep,
+      getFreqMod,
+      getFreqModCombined,
     }
   },
   { persist: true },

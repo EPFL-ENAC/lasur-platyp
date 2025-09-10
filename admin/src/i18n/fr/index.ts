@@ -254,6 +254,7 @@ export default {
   error_not_found: 'Oops. Rien ici...',
   field_required: 'Ce champ est requis',
   first_name: 'Prénom',
+  form_version: 'Version du formulaire',
   go_home: 'Accueil',
   group: 'Groupe',
   help: 'Aide',

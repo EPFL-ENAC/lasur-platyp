@@ -66,7 +66,15 @@ export default {
       plane: "L'avion",
       pub_train: 'Les transports publics (y compris le train)',
       car_moto: 'La voiture ou la moto',
-      combined: 'Utilisez-vous plusieurs de ces modes pour un même trajet ?',
+      combined: 'Comment vous rendez-vous habituellement sur votre lieu de travail ?',
+    },
+    intermodality: 'Quels sont les modes de transport que vous utilisez ?',
+    intermodality_hint: 'Décrivez un ou plusieurs trajets domicile - travail.',
+    journey: {
+      hint: "Décrivez la suite de modes de transports d'un trajet typique.",
+      add: 'Ajouter un trajet',
+      remove: 'Supprimer le trajet',
+      days_per_week: 'Jours par semaine',
     },
     trav_pro: 'Effectuez-vous des déplacements professionnels ? A quelle distance ?',
     trav_pro_option: {
@@ -211,4 +219,5 @@ export default {
   next: 'Suivant',
   previous: 'Précédent',
   select_preferred_language: 'Sélectionner votre langue préférée',
+  select_or_drag_item: 'Sélectionnez ou glisser une des options',
 }
