@@ -37,10 +37,14 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits(['update:modelValue'])
 const q = useQuasar()
 const { t } = useI18n()
 
-const journey = ref(props.modelValue)
+const journey = computed({
+  get: () => props.modelValue,
+  set: (val: Journey) => emit('update:modelValue', val),
+})
 
 const modeOptions = computed<Option[]>(() => [
   { value: 'walking', label: t('form.mode.walking'), icon: 'directions_walk' },

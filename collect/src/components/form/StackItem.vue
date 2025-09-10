@@ -35,17 +35,6 @@
           </q-item>
         </template>
       </q-list>
-      <div
-        v-if="false"
-        @dragenter="onDragEnter"
-        @dragleave="onDragLeave"
-        @dragover="onDragOver"
-        @drop="onDrop"
-        dropzone
-        class="q-pa-md text-h5 drop-zone"
-      >
-        <span class="text-grey-6">{{ t('select_or_drag_item') }}</span>
-      </div>
       <div class="row justify-center q-mt-lg">
         <template v-for="option in options" :key="option.value">
           <q-btn
@@ -81,7 +70,6 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 
-const { t } = useI18n()
 const itemPrefix = 'item-'
 
 const selected = computed(() => {
@@ -166,34 +154,10 @@ function onDragOver(e: DragEvent) {
   e.preventDefault()
 }
 
-function onDrop(e: DragEvent) {
-  e.preventDefault()
-
-  // don't drop on other draggables
-  const target = e.target as HTMLElement
-  if (!target.hasAttribute('dropzone')) return
-  if (!e.dataTransfer) return
-
-  const draggedId = e.dataTransfer.getData('text')
-  const draggedEl = document.getElementById(draggedId)
-
-  // check if original parent node
-  if (draggedEl && draggedEl.parentNode === target) {
-    target.classList.remove('drag-enter')
-    return
-  }
-
-  // make the exchange
-  onAdd(getOption(draggedId))
-  target.classList.remove('drag-enter')
-}
-
 function onDropInsert(e: DragEvent, index: number) {
   e.preventDefault()
 
-  // don't drop on other draggables
   const target = e.target as HTMLElement
-  //if (!target.hasAttribute('dropzone')) return
   if (!e.dataTransfer) return
 
   const draggedId = e.dataTransfer.getData('text')

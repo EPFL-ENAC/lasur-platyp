@@ -209,17 +209,17 @@ class ModalTypoService:
         # count mode days for each journey
         for journey in journeys:
             if "car" in journey["modes"]:
-                fm_dt_voit += 1
+                fm_dt_voit += journey.get('days', 1)
             if "moto" in journey["modes"]:
-                fm_dt_moto += 1
+                fm_dt_moto += journey.get('days', 1)
             if "pub" in journey["modes"]:
-                fm_dt_tpu += 1
+                fm_dt_tpu += journey.get('days', 1)
             if "train" in journey["modes"]:
-                fm_dt_train += 1
+                fm_dt_train += journey.get('days', 1)
             if "bike" in journey["modes"]:
-                fm_dt_velo += 1
+                fm_dt_velo += journey.get('days', 1)
             if "walking" in journey["modes"]:
-                fm_dt_march += 1
+                fm_dt_march += journey.get('days', 1)
             if len(journey["modes"]) > 1:
                 fm_dt_inter = 1
         return {
