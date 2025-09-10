@@ -18,10 +18,12 @@
             class="rounded-borders q-mt-md q-mb-md bg-teal-1 text-grey-8"
             style="cursor: move"
           >
+            <q-item-section avatar>
+              <q-icon name="drag_indicator" color="primary" size="lg" />
+            </q-item-section>
             <q-item-section>
               <div class="row" :class="optionLabelClass">
-                <q-icon name="drag_indicator" color="primary" size="lg" />
-                <span class="text-h4 on-right"
+                <span class="on-right"
                   >{{ `${withPosition ? idx + 1 + ' - ' : ''}` }}{{ getOption(sel)?.label }}</span
                 >
               </div>
@@ -45,7 +47,7 @@
             :title="option.label"
             color="secondary"
             size="xl"
-            class="on-right on-left"
+            class="on-right on-left q-mb-md"
             @click="onAdd(option)"
           />
         </template>

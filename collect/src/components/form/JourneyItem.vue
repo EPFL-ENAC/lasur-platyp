@@ -5,7 +5,7 @@
     <StackItem
       :options="modeOptions"
       v-model="journey.modes"
-      :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
+      :option-label-class="q.screen.lt.sm ? 'text-h6' : 'text-h4'"
     />
     <SliderItem
       :label="t('form.journey.days_per_week')"
