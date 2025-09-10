@@ -129,6 +129,7 @@ export default {
       work_environment: 'Des aménagements sur le lieu de travail (douches, parkings vélo, etc.)',
       other: 'Autre',
     },
+    change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
     final: 'Vos réponses ont été enregistrées, merci de votre participation !',
   },
   main_mode: {

@@ -122,6 +122,7 @@ export default {
       work_environment: 'Workplace adjustments (showers, bicycle parking, etc.)',
       other: 'Other',
     },
+    change_other_levers_specify: 'Please specify what other measures would help you',
     final: 'Your answers have been registered, thank you for your participation!',
   },
   main_mode: {

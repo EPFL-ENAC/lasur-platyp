@@ -125,6 +125,7 @@ export interface Recommendation {
 export interface Change {
   motivation?: number
   levers?: string[]
+  other_levers?: string | undefined
 }
 
 export interface CampaignInfo {

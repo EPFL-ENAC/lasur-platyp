@@ -578,6 +578,17 @@
         option-label-class="text-h5"
         @update:model-value="onSave"
       />
+      <q-input
+        v-if="survey.record.data.change.levers?.includes('other')"
+        v-model="survey.record.data.change.other_levers"
+        :label="t('form.change_other_levers_specify')"
+        type="textarea"
+        class="q-mb-lg text-h6"
+        bg-color="green-3"
+        filled
+        debounce="500"
+        @update:model-value="onSave"
+      />
     </div>
     <div v-if="survey.stepName === 'comments'">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -780,6 +791,9 @@ function handleSwipe(dir: any) {
 
 function onSave() {
   if (survey.tokenOrSlug) {
+    if (survey.record.data.change.levers?.includes('other') === false) {
+      survey.record.data.change.other_levers = undefined
+    }
     void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
   }
 }
