@@ -7,11 +7,13 @@
       marker-labels
       track-size="20px"
       thumb-size="45px"
-      thumb-color="green-4"
+      thumb-color="accent"
+      color="secondary"
       :min="min"
       :max="max"
       :step="step"
       @update:model-value="onUpdate"
+      class="q-pl-sm q-pr-sm"
     />
   </div>
 </template>

@@ -116,64 +116,7 @@
       />
     </div>
     <div v-if="survey.stepName === 'intermodality'">
-      <StackItem
-        :label="t('form.intermodality')"
-        :hint="t('form.intermodality_hint')"
-        :options="modeOptions"
-        v-model="survey.record.data.freq_mod_intermodality"
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
-      />
-    </div>
-    <div v-if="survey.stepName === 'freq_mod'">
-      <SectionItem :label="t('form.freq_mod')" :hint="t('form.freq_mod_hint')" class="q-mb-lg" />
-      <SliderItem
-        :label="t('form.mode.walking')"
-        v-model="survey.record.data.freq_mod_walking"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.bike')"
-        v-model="survey.record.data.freq_mod_bike"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.pub')"
-        v-model="survey.record.data.freq_mod_pub"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.train')"
-        v-model="survey.record.data.freq_mod_train"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.moto')"
-        v-model="survey.record.data.freq_mod_moto"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.car')"
-        v-model="survey.record.data.freq_mod_car"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
+      <journeys-panel />
     </div>
     <div v-if="survey.stepName === 'trav_pro'">
       <ChoiceItem
@@ -689,11 +632,10 @@
 import { useQuasar } from 'quasar'
 import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
-import StackItem from 'src/components/form/StackItem.vue'
+import JourneysPanel from 'src/components/form/JourneysPanel.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
-import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
@@ -729,15 +671,6 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'heavy', label: t('form.constraints_option.heavy') },
   { value: 'night', label: t('form.constraints_option.night') },
   { value: 'disabled', label: t('form.constraints_option.disabled') },
-])
-
-const modeOptions = computed<Option[]>(() => [
-  { value: 'walking', label: t('form.mode.walking'), icon: 'directions_walk' },
-  { value: 'bike', label: t('form.mode.bike'), icon: 'directions_bike' },
-  { value: 'pub', label: t('form.mode.pub'), icon: 'directions_bus' },
-  { value: 'moto', label: t('form.mode.moto'), icon: 'two_wheeler' },
-  { value: 'car', label: t('form.mode.car'), icon: 'directions_car' },
-  { value: 'train', label: t('form.mode.train'), icon: 'train' },
 ])
 
 const travProOptions = computed<Option[]>(() => [

@@ -21,7 +21,9 @@
             <q-item-section>
               <div class="row" :class="optionLabelClass">
                 <q-icon name="drag_indicator" color="primary" size="lg" />
-                <span class="text-h4 on-right">{{ idx + 1 }} - {{ getOption(sel)?.label }}</span>
+                <span class="text-h4 on-right"
+                  >{{ `${withPosition ? idx + 1 + ' - ' : ''}` }}{{ getOption(sel)?.label }}</span
+                >
               </div>
               <q-item-label v-if="getOption(sel)?.hint" class="text-h6">
                 {{ getOption(sel)?.hint }}
@@ -34,6 +36,7 @@
         </template>
       </q-list>
       <div
+        v-if="false"
         @dragenter="onDragEnter"
         @dragleave="onDragLeave"
         @dragover="onDragOver"
@@ -43,7 +46,7 @@
       >
         <span class="text-grey-6">{{ t('select_or_drag_item') }}</span>
       </div>
-      <div class="row justify-center q-mt-lg" v-if="!col">
+      <div class="row justify-center q-mt-lg">
         <template v-for="option in options" :key="option.value">
           <q-btn
             :id="option.value"
@@ -51,7 +54,7 @@
             @dragstart="onDragStart"
             :icon="option.icon"
             :title="option.label"
-            color="primary"
+            color="secondary"
             size="xl"
             class="on-right on-left"
             @click="onAdd(option)"
@@ -66,12 +69,12 @@
 import type { Option } from 'src/components/form/models'
 interface Props {
   modelValue: string | string[] | undefined
-  label?: string
-  hint?: string
+  label?: string | undefined
+  hint?: string | undefined
   options: Option[]
   required?: boolean
   max?: number
-  col?: number
+  withPosition?: number
   labelClass?: string
   optionLabelClass?: string
 }
@@ -228,6 +231,6 @@ function onDropInsert(e: DragEvent, index: number) {
   border: dashed 4px #ccc;
 }
 .drag-enter {
-  border: dashed 4px $primary !important;
+  // border: dashed 4px $secondary !important;
 }
 </style>

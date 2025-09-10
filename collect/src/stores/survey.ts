@@ -14,7 +14,6 @@ export const useSurvey = defineStore(
       'constraints',
       'equipments',
       'intermodality',
-      'freq_mod',
       'trav_pro',
       'freq_mod_pro_local',
       'freq_mod_pro_region',
@@ -123,6 +122,21 @@ export const useSurvey = defineStore(
       }
 
       if (
+        stepName.value === 'freq_mod_pro_europe' &&
+        !record.value.data.trav_pro?.includes('europe')
+      ) {
+        record.value.data = {
+          ...record.value.data,
+          freq_mod_pro_europe_car: 0,
+          freq_mod_pro_europe_train: 0,
+          freq_mod_pro_europe_plane: 0,
+          freq_mod_pro_europe_combined: false,
+        }
+        step.value += 1
+        return true
+      }
+
+      if (
         stepName.value === 'freq_mod_pro_inter' &&
         !record.value.data.trav_pro?.includes('inter')
       ) {
@@ -151,6 +165,13 @@ export const useSurvey = defineStore(
       if (
         stepName.value === 'freq_mod_pro_region' &&
         !record.value.data.trav_pro?.includes('region')
+      ) {
+        step.value -= 1
+        return true
+      }
+      if (
+        stepName.value === 'freq_mod_pro_europe' &&
+        !record.value.data.trav_pro?.includes('europe')
       ) {
         step.value -= 1
         return true

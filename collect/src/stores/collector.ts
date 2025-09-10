@@ -46,6 +46,7 @@ export const useCollector = defineStore('collector', () => {
           freq_mod_car: 0,
           freq_mod_train: 0,
           freq_mod_inter: '',
+          freq_mod_journeys: [{ modes: [], days: 1 }],
 
           trav_pro: [],
           freq_mod_pro_local_walking: 0,

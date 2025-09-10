@@ -69,7 +69,13 @@ export default {
       combined: 'How do you usually get to your workplace?',
     },
     intermodality: 'Which modes of transport do you use?',
-    intermodality_hint: 'Describe the sequence of transport modes of a typical journey.',
+    intermodality_hint: 'Describe one or more journeys from home to work.',
+    journey: {
+      hint: 'Describe the sequence of transport modes of a typical journey.',
+      add: 'Add journey',
+      remove: 'Remove journey',
+      days_per_week: 'Days per week',
+    },
     trav_pro: 'To what extent do you have to travel as part of your work?',
     trav_pro_option: {
       local: 'Local',
