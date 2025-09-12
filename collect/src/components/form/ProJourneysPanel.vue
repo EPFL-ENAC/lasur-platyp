@@ -60,7 +60,7 @@ function onAddJourney() {
   journeys.value.push({
     days: 1,
     mode: '',
-    destination: null,
+    destination: undefined,
   })
 }
 

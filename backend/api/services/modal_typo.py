@@ -113,9 +113,6 @@ class ModalTypoService:
             "fm_pro_reg_avio": freq_mod_pros["fm_pro_reg_avio"],
             "fm_pro_int_voit": freq_mod_pros["fm_pro_int_voit"],
             "fm_pro_int_train": freq_mod_pros["fm_pro_int_train"],
-            "fm_pro_int_avio": freq_mod_pros["fm_pro_int_avio"],
-            "fm_pro_int_voit": freq_mod_pros["fm_pro_int_voit"],
-            "fm_pro_int_train": freq_mod_pros["fm_pro_int_train"],
             "fm_pro_int_avio": freq_mod_pros["fm_pro_int_avio"]
         }
         response = requests.post(

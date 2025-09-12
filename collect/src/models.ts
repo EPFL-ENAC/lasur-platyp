@@ -26,7 +26,7 @@ export interface Journey {
 export interface ProJourney {
   mode: string
   days: number
-  destination: Location | null
+  destination: Location | undefined
 }
 
 export interface RecordData {

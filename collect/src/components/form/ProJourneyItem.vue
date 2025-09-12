@@ -2,6 +2,15 @@
   <div>
     <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-sm">{{ hint }}</div>
+    <div class="q-mt-md">
+      <PlaceItem
+        :map-id="`map-pro-${Math.floor(Math.random() * 100)}`"
+        label-class="text-h6"
+        v-model="journey.destination"
+        :zoom="3"
+        class="q-mb-xl"
+      />
+    </div>
     <div class="row justify-center q-mt-lg">
       <template v-for="option in modeOptions" :key="option.value">
         <q-btn
@@ -28,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import PlaceItem from 'src/components/form/PlaceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import type { Option } from 'src/components/form/models'
 import type { ProJourney } from 'src/models'
