@@ -13,9 +13,20 @@ export interface AddressLocation {
   lon?: number | undefined
 }
 
+export interface Location {
+  lat?: number | undefined
+  lon?: number | undefined
+}
+
 export interface Journey {
   modes: string[]
   days: number
+}
+
+export interface ProJourney {
+  mode: string
+  days: number
+  destination: Location | undefined
 }
 
 export interface RecordData {
@@ -32,30 +43,11 @@ export interface RecordData {
   freq_mod_journeys: Journey[]
 
   trav_pro: string[]
-  freq_mod_pro_local_walking: number
-  freq_mod_pro_local_bike: number
-  freq_mod_pro_local_pub: number
-  freq_mod_pro_local_moto: number
-  freq_mod_pro_local_car: number
-  freq_mod_pro_local_train: number
-  freq_mod_pro_local_combined: boolean
 
-  freq_mod_pro_region_pub: number
-  freq_mod_pro_region_moto: number
-  freq_mod_pro_region_car: number
-  freq_mod_pro_region_train: number
-  freq_mod_pro_region_plane: number
-  freq_mod_pro_region_combined: boolean
-
-  freq_mod_pro_europe_car: number
-  freq_mod_pro_europe_train: number
-  freq_mod_pro_europe_plane: number
-  freq_mod_pro_europe_combined: boolean
-
-  freq_mod_pro_inter_car: number
-  freq_mod_pro_inter_train: number
-  freq_mod_pro_inter_plane: number
-  freq_mod_pro_inter_combined: boolean
+  freq_mod_pro_local_journeys: ProJourney[]
+  freq_mod_pro_region_journeys: ProJourney[]
+  freq_mod_pro_europe_journeys: ProJourney[]
+  freq_mod_pro_inter_journeys: ProJourney[]
 
   importance_time: number
   importance_cost: number

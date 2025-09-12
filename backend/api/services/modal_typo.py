@@ -92,6 +92,7 @@ class ModalTypoService:
         """Get typo pro suggestions for a record"""
         record.company_id
         url = f"{self.url}/modal-typo/reco-pro"
+        freq_mod_pros = self.get_freq_mod_pro_params(record)
         data = {
             "score_velo": scores["velo"],
             "score_tpu": scores["tpu"],
@@ -100,22 +101,19 @@ class ModalTypoService:
             "pro_loc": 'local' in record.data["trav_pro"],
             "pro_reg": 'region' in record.data["trav_pro"],
             "pro_int": 'inter' in record.data["trav_pro"],
-            "fm_pro_loc_voit": record.data["freq_mod_pro_local_car"],
-            "fm_pro_loc_moto": record.data["freq_mod_pro_local_moto"],
-            "fm_pro_loc_tpu": record.data["freq_mod_pro_local_pub"],
-            "fm_pro_loc_train": record.data["freq_mod_pro_local_train"],
-            "fm_pro_loc_velo": record.data["freq_mod_pro_local_bike"],
-            "fm_pro_loc_marc": record.data["freq_mod_pro_local_walking"],
-            "fm_pro_reg_voit": record.data["freq_mod_pro_region_car"],
-            "fm_pro_reg_moto": record.data["freq_mod_pro_region_moto"],
-            "fm_pro_reg_train": record.data["freq_mod_pro_region_train"],
-            "fm_pro_reg_avio": record.data["freq_mod_pro_region_plane"],
-            "fm_pro_int_voit": record.data["freq_mod_pro_europe_car"],
-            "fm_pro_int_train": record.data["freq_mod_pro_europe_train"],
-            "fm_pro_int_avio": record.data["freq_mod_pro_europe_plane"],
-            "fm_pro_int_voit": record.data["freq_mod_pro_inter_car"],
-            "fm_pro_int_train": record.data["freq_mod_pro_inter_train"],
-            "fm_pro_int_avio": record.data["freq_mod_pro_inter_plane"]
+            "fm_pro_loc_voit": freq_mod_pros["fm_pro_loc_voit"],
+            "fm_pro_loc_moto": freq_mod_pros["fm_pro_loc_moto"],
+            "fm_pro_loc_tpu": freq_mod_pros["fm_pro_loc_tpu"],
+            "fm_pro_loc_train": freq_mod_pros["fm_pro_loc_train"],
+            "fm_pro_loc_velo": freq_mod_pros["fm_pro_loc_velo"],
+            "fm_pro_loc_marc": freq_mod_pros["fm_pro_loc_marc"],
+            "fm_pro_reg_voit": freq_mod_pros["fm_pro_reg_voit"],
+            "fm_pro_reg_moto": freq_mod_pros["fm_pro_reg_moto"],
+            "fm_pro_reg_train": freq_mod_pros["fm_pro_reg_train"],
+            "fm_pro_reg_avio": freq_mod_pros["fm_pro_reg_avio"],
+            "fm_pro_int_voit": freq_mod_pros["fm_pro_int_voit"],
+            "fm_pro_int_train": freq_mod_pros["fm_pro_int_train"],
+            "fm_pro_int_avio": freq_mod_pros["fm_pro_int_avio"]
         }
         response = requests.post(
             url, headers=self.headers, json=data)
@@ -232,6 +230,114 @@ class ModalTypoService:
             "fm_dt_velo": fm_dt_velo,
             "fm_dt_march": fm_dt_march,
             "fm_dt_inter": fm_dt_inter,
+        }
+
+    def get_freq_mod_pro_params(self, record: Record) -> dict:
+        """Get frequency modes professional from record data"""
+        fm_pro_loc_voit = self.as_int(
+            record.data["freq_mod_pro_local_car"]) if "freq_mod_pro_local_car" in record.data else 0
+        fm_pro_loc_moto = self.as_int(
+            record.data["freq_mod_pro_local_moto"]) if "freq_mod_pro_local_moto" in record.data else 0
+        fm_pro_loc_tpu = self.as_int(
+            record.data["freq_mod_pro_local_pub"]) if "freq_mod_pro_local_pub" in record.data else 0
+        fm_pro_loc_train = self.as_int(
+            record.data["freq_mod_pro_local_train"]) if "freq_mod_pro_local_train" in record.data else 0
+        fm_pro_loc_velo = self.as_int(
+            record.data["freq_mod_pro_local_bike"]) if "freq_mod_pro_local_bike" in record.data else 0
+        fm_pro_loc_marc = self.as_int(
+            record.data["freq_mod_pro_local_walking"]) if "freq_mod_pro_local_walking" in record.data else 0
+        loc_journeys = record.data["freq_mod_pro_local_journeys"] if "freq_mod_pro_local_journeys" in record.data else [
+        ]
+        # count mode days for each journey
+        for journey in loc_journeys:
+            if "car" == journey["mode"]:
+                fm_pro_loc_voit += journey.get('days', 1)
+            if "moto" == journey["mode"]:
+                fm_pro_loc_moto += journey.get('days', 1)
+            if "pub" == journey["mode"]:
+                fm_pro_loc_tpu += journey.get('days', 1)
+            if "train" == journey["mode"]:
+                fm_pro_loc_train += journey.get('days', 1)
+            if "bike" == journey["mode"]:
+                fm_pro_loc_velo += journey.get('days', 1)
+            if "walking" == journey["mode"]:
+                fm_pro_loc_marc += journey.get('days', 1)
+
+        fm_pro_reg_voit = self.as_int(
+            record.data["freq_mod_pro_regional_car"]) if "freq_mod_pro_regional_car" in record.data else 0
+        fm_pro_reg_moto = self.as_int(
+            record.data["freq_mod_pro_regional_moto"]) if "freq_mod_pro_regional_moto" in record.data else 0
+        fm_pro_reg_train = self.as_int(
+            record.data["freq_mod_pro_regional_train"]) if "freq_mod_pro_regional_train" in record.data else 0
+        fm_pro_reg_avio = self.as_int(
+            record.data["freq_mod_pro_regional_plane"]) if "freq_mod_pro_regional_plane" in record.data else 0
+        reg_journeys = record.data["freq_mod_pro_regional_journeys"] if "freq_mod_pro_regional_journeys" in record.data else [
+        ]
+        # count mode days for each journey
+        for journey in reg_journeys:
+            if "car" == journey["mode"]:
+                fm_pro_reg_voit += journey.get('days', 1)
+            if "moto" == journey["mode"]:
+                fm_pro_reg_moto += journey.get('days', 1)
+            if "train" == journey["mode"]:
+                fm_pro_reg_train += journey.get('days', 1)
+            if "plane" == journey["mode"]:
+                fm_pro_reg_avio += journey.get('days', 1)
+
+        fm_pro_eur_voit = self.as_int(
+            record.data["freq_mod_pro_europe_car"]) if "freq_mod_pro_europe_car" in record.data else 0
+        fm_pro_eur_train = self.as_int(
+            record.data["freq_mod_pro_europe_train"]) if "freq_mod_pro_europe_train" in record.data else 0
+        fm_pro_eur_avio = self.as_int(
+            record.data["freq_mod_pro_europe_plane"]) if "freq_mod_pro_europe_plane" in record.data else 0
+        eur_journeys = record.data["freq_mod_pro_europe_journeys"] if "freq_mod_pro_europe_journeys" in record.data else [
+        ]
+        # count mode days for each journey
+        for journey in eur_journeys:
+            if "car" == journey["mode"]:
+                fm_pro_eur_voit += journey.get('days', 1)
+            if "train" == journey["mode"]:
+                fm_pro_eur_train += journey.get('days', 1)
+            if "plane" == journey["mode"]:
+                fm_pro_eur_avio += journey.get('days', 1)
+
+        fm_pro_int_voit = self.as_int(
+            record.data["freq_mod_pro_inter_car"]) if "freq_mod_pro_inter_car" in record.data else 0
+        fm_pro_int_train = self.as_int(
+            record.data["freq_mod_pro_inter_train"]) if "freq_mod_pro_inter_train" in record.data else 0
+        fm_pro_int_avio = self.as_int(
+            record.data["freq_mod_pro_inter_plane"]) if "freq_mod_pro_inter_plane" in record.data else 0
+        int_journeys = record.data["freq_mod_pro_inter_journeys"] if "freq_mod_pro_inter_journeys" in record.data else [
+        ]
+        # count mode days for each journey
+        for journey in int_journeys:
+            if "car" == journey["mode"]:
+                fm_pro_int_voit += journey.get('days', 1)
+            if "train" == journey["mode"]:
+                fm_pro_int_train += journey.get('days', 1)
+            if "plane" == journey["mode"]:
+                fm_pro_int_avio += journey.get('days', 1)
+
+        return {
+            "fm_pro_loc_voit": fm_pro_loc_voit,
+            "fm_pro_loc_moto": fm_pro_loc_moto,
+            "fm_pro_loc_tpu": fm_pro_loc_tpu,
+            "fm_pro_loc_train": fm_pro_loc_train,
+            "fm_pro_loc_velo": fm_pro_loc_velo,
+            "fm_pro_loc_marc": fm_pro_loc_marc,
+
+            "fm_pro_reg_voit": fm_pro_reg_voit,
+            "fm_pro_reg_moto": fm_pro_reg_moto,
+            "fm_pro_reg_train": fm_pro_reg_train,
+            "fm_pro_reg_avio": fm_pro_reg_avio,
+
+            "fm_pro_eur_voit": fm_pro_eur_voit,
+            "fm_pro_eur_train": fm_pro_eur_train,
+            "fm_pro_eur_avio": fm_pro_eur_avio,
+
+            "fm_pro_int_voit": fm_pro_int_voit,
+            "fm_pro_int_train": fm_pro_int_train,
+            "fm_pro_int_avio": fm_pro_int_avio
         }
 
     def is_id(self, s: str) -> bool:
