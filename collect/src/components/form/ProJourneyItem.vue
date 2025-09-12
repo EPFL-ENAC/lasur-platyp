@@ -14,19 +14,21 @@
         />
       </template>
     </div>
-    <SliderItem
+    <NumberItem
       :label="t('form.journey_pro.days_per_month')"
       v-model="journey.days"
       :min="1"
-      :max="20"
-      label-class="text-h5"
-      class="q-pa-sm"
+      :max="30"
+      :step="1"
+      :step2="5"
+      label-class="text-subtitle1 text-center"
+      class="bg-primary rounded-borders q-pa-md"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import SliderItem from 'src/components/form/SliderItem.vue'
+import NumberItem from 'src/components/form/NumberItem.vue'
 import type { Option } from 'src/components/form/models'
 import type { ProJourney } from 'src/models'
 
