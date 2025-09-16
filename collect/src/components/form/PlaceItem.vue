@@ -2,27 +2,20 @@
   <div>
     <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
-    <div>
+    <div class="bg-white">
       <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapinput" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Location } from 'src/models'
-import {
-  AttributionControl,
-  FullscreenControl,
-  Map,
-  Marker,
-  NavigationControl,
-  //type IControl,
-} from 'maplibre-gl'
+import { AttributionControl, FullscreenControl, Map, NavigationControl } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
+import { H3GridManager, H3Utils, type H3Index } from 'src/utils/h3'
 
 interface Props {
-  modelValue: Location | undefined
+  modelValue: string | undefined
   label?: string
   hint?: string
   height?: string
@@ -36,19 +29,20 @@ const emit = defineEmits(['update:modelValue'])
 
 const defaultCenter: [number, number] = [6.142873, 46.205066]
 
-const location = ref<Location>({ lon: defaultCenter[0], lat: defaultCenter[1] })
+const location = ref<H3Index>('' as H3Index)
 const map = ref<Map>()
-let marker: Marker | undefined
 
 onMounted(onInit)
 
 function onInit() {
-  location.value = props.modelValue || {}
-  const center: [number, number] = props.center
-    ? [props.center[0], props.center[1]]
-    : props.modelValue
-      ? [props.modelValue.lon || defaultCenter[0], props.modelValue.lat || defaultCenter[1]]
-      : defaultCenter
+  let center = defaultCenter
+  location.value = props.modelValue || ''
+  if (location.value !== '') {
+    const latLong = H3Utils.getLatLong(location.value)
+    center = [latLong[1], latLong[0]]
+  } else if (props.center) {
+    center = [props.center[0], props.center[1]]
+  }
   map.value = new Map({
     container: props.mapId,
     center: center,
@@ -66,34 +60,11 @@ function onInit() {
         '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
     }),
   )
-  if (props.modelValue?.lat && props.modelValue?.lon) {
-    marker = new Marker().setLngLat([props.modelValue.lon, props.modelValue.lat])
-    marker.addTo(map.value)
-  }
-  map.value.on('click', (e) => {
-    location.value.lat = e.lngLat.lat
-    location.value.lon = e.lngLat.lng
-    onUpdateMarker()
-    onUpdate()
-  })
-}
 
-function onUpdateMarker() {
-  if (!map.value) {
-    return
-  }
-  if (marker) {
-    marker.remove()
-  }
-  if (location.value.lat && location.value.lon) {
-    marker = new Marker().setLngLat([location.value.lon, location.value.lat])
-    marker.addTo(map.value)
-    map.value.flyTo({
-      center: [location.value.lon, location.value.lat], // New center
-      zoom: map.value.getZoom(),
-      speed: 2, // Control the animation speed (default: 1.2)
-      curve: 1, // Control the smoothness of the curve
-      essential: true, // Makes it non-disruptive for screen readers
+  if (map.value) {
+    new H3GridManager(map.value, location.value, (hexId: H3Index) => {
+      location.value = hexId
+      onUpdate()
     })
   }
 }

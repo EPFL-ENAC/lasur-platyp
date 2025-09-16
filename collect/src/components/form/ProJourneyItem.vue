@@ -6,7 +6,7 @@
       <PlaceItem
         :map-id="`map-pro-${Math.floor(Math.random() * 100)}`"
         label-class="text-h6"
-        v-model="journey.destination"
+        v-model="journey.hex_id"
         :zoom="8"
         class="q-mb-xl"
       />

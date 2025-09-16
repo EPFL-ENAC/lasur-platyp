@@ -7,15 +7,13 @@ export interface ParticipantData {
   }
 }
 
-export interface AddressLocation {
-  address: string | undefined
+export interface Location {
   lat?: number | undefined
   lon?: number | undefined
 }
 
-export interface Location {
-  lat?: number | undefined
-  lon?: number | undefined
+export interface AddressLocation extends Location {
+  address: string | undefined
 }
 
 export interface Journey {
@@ -26,7 +24,7 @@ export interface Journey {
 export interface ProJourney {
   mode: string
   days: number
-  destination: Location | undefined
+  hex_id: string | undefined
 }
 
 export interface RecordData {
