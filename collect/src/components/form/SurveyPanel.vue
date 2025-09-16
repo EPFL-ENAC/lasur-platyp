@@ -118,57 +118,18 @@
     <div v-if="survey.stepName === 'intermodality'">
       <JourneysPanel />
     </div>
-    <div v-if="survey.stepName === 'trav_pro'">
-      <ChoiceItem
-        :label="t('form.trav_pro')"
-        :options="travProOptions"
-        v-model="survey.record.data.trav_pro"
-        multiple
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
+    <div v-if="survey.stepName === 'travel_pro'">
+      <ToggleItem
+        :label="t('form.travel_pro')"
+        v-model="survey.record.data.travel_pro"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
       />
     </div>
-    <div v-if="survey.stepName === 'freq_mod_pro_local'">
-      <SectionItem
-        :label="t('form.freq_trav_pro_local_hint')"
-        label-class="text-h2 text-green-2"
-        class="q-mb-lg"
-      />
+    <div v-if="survey.stepName === 'freq_mod_pro'">
       <ProJourneysPanel
-        v-model="survey.record.data.freq_mod_pro_local_journeys"
-        :modes="['walking', 'bike', 'pub', 'moto', 'car', 'train']"
-      />
-    </div>
-    <div v-if="survey.stepName === 'freq_mod_pro_region'">
-      <SectionItem
-        :label="t('form.freq_trav_pro_region_hint')"
-        label-class="text-h2 text-green-2"
-        class="q-mb-lg"
-      />
-      <ProJourneysPanel
-        v-model="survey.record.data.freq_mod_pro_region_journeys"
-        :modes="['pub', 'moto', 'car', 'train', 'plane']"
-      />
-    </div>
-    <div v-if="survey.stepName === 'freq_mod_pro_europe'">
-      <SectionItem
-        :label="t('form.freq_trav_pro_europe_hint')"
-        label-class="text-h2 text-green-2"
-        class="q-mb-lg"
-      />
-      <ProJourneysPanel
-        v-model="survey.record.data.freq_mod_pro_europe_journeys"
-        :modes="['car', 'train', 'plane']"
-      />
-    </div>
-    <div v-if="survey.stepName === 'freq_mod_pro_inter'">
-      <SectionItem
-        :label="t('form.freq_trav_pro_inter_hint')"
-        label-class="text-h2 text-green-2"
-        class="q-mb-lg"
-      />
-      <ProJourneysPanel
-        v-model="survey.record.data.freq_mod_pro_inter_journeys"
-        :modes="['car', 'train', 'plane']"
+        v-model="survey.record.data.freq_mod_pro_journeys"
+        :modes="['walking', 'bike', 'pub', 'moto', 'car', 'train', 'boat', 'plane']"
       />
     </div>
     <div v-if="survey.stepName === 'importance'">
@@ -426,29 +387,6 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'disabled', label: t('form.constraints_option.disabled') },
 ])
 
-const travProOptions = computed<Option[]>(() => [
-  {
-    value: 'local',
-    label: t('form.trav_pro_option.local'),
-    hint: t('form.trav_pro_option.local_hint'),
-  },
-  {
-    value: 'region',
-    label: t('form.trav_pro_option.region'),
-    hint: t('form.trav_pro_option.region_hint'),
-  },
-  {
-    value: 'europe',
-    label: t('form.trav_pro_option.europe'),
-    hint: t('form.trav_pro_option.europe_hint'),
-  },
-  {
-    value: 'inter',
-    label: t('form.trav_pro_option.inter'),
-    hint: t('form.trav_pro_option.inter_hint'),
-  },
-])
-
 const firstRecoDt = computed(() =>
   survey.recommendation.reco && survey.recommendation.reco.reco_dt2.length
     ? survey.recommendation.reco.reco_dt2[0]
@@ -520,7 +458,7 @@ function prevStep() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
-  if (['places', 'intermodality'].includes(survey.stepName || '')) {
+  if (['places', 'intermodality', 'freq_mod_pro'].includes(survey.stepName || '')) {
     // ignore because of map dragging conflict
     return
   }

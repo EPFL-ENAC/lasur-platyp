@@ -14,11 +14,8 @@ export const useSurvey = defineStore(
       'constraints',
       'equipments',
       'intermodality',
-      'trav_pro',
-      'freq_mod_pro_local',
-      'freq_mod_pro_region',
-      'freq_mod_pro_europe',
-      'freq_mod_pro_inter',
+      'travel_pro',
+      'freq_mod_pro',
       'importance',
       'needs',
       'recommendations',
@@ -86,49 +83,10 @@ export const useSurvey = defineStore(
     }
 
     function skipIncSteps() {
-      if (
-        stepName.value === 'freq_mod_pro_local' &&
-        !record.value.data.trav_pro?.includes('local')
-      ) {
+      if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         record.value.data = {
           ...record.value.data,
-          freq_mod_pro_local_journeys: [],
-        }
-        step.value += 1
-        return true
-      }
-
-      if (
-        stepName.value === 'freq_mod_pro_region' &&
-        !record.value.data.trav_pro?.includes('region')
-      ) {
-        record.value.data = {
-          ...record.value.data,
-          freq_mod_pro_region_journeys: [],
-        }
-        step.value += 1
-        return true
-      }
-
-      if (
-        stepName.value === 'freq_mod_pro_europe' &&
-        !record.value.data.trav_pro?.includes('europe')
-      ) {
-        record.value.data = {
-          ...record.value.data,
-          freq_mod_pro_europe_journeys: [],
-        }
-        step.value += 1
-        return true
-      }
-
-      if (
-        stepName.value === 'freq_mod_pro_inter' &&
-        !record.value.data.trav_pro?.includes('inter')
-      ) {
-        record.value.data = {
-          ...record.value.data,
-          freq_mod_pro_inter_journeys: [],
+          freq_mod_pro_journeys: [],
         }
         step.value += 1
         return true
@@ -138,31 +96,7 @@ export const useSurvey = defineStore(
     }
 
     function skipDecSteps() {
-      if (
-        stepName.value === 'freq_mod_pro_local' &&
-        !record.value.data.trav_pro?.includes('local')
-      ) {
-        step.value -= 1
-        return true
-      }
-      if (
-        stepName.value === 'freq_mod_pro_region' &&
-        !record.value.data.trav_pro?.includes('region')
-      ) {
-        step.value -= 1
-        return true
-      }
-      if (
-        stepName.value === 'freq_mod_pro_europe' &&
-        !record.value.data.trav_pro?.includes('europe')
-      ) {
-        step.value -= 1
-        return true
-      }
-      if (
-        stepName.value === 'freq_mod_pro_inter' &&
-        !record.value.data.trav_pro?.includes('inter')
-      ) {
+      if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         step.value -= 1
         return true
       }

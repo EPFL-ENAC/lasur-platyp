@@ -7,11 +7,11 @@
         :map-id="`map-pro-${Math.floor(Math.random() * 100)}`"
         label-class="text-h6"
         v-model="journey.destination"
-        :zoom="3"
+        :zoom="8"
         class="q-mb-xl"
       />
     </div>
-    <div class="row justify-center q-mt-lg">
+    <div class="row justify-center q-mt-lg" style="max-width: 400px; margin: auto">
       <template v-for="option in modeOptions" :key="option.value">
         <q-btn
           :icon="option.icon"
@@ -24,12 +24,12 @@
       </template>
     </div>
     <NumberItem
-      :label="t('form.journey_pro.days_per_month')"
+      :label="t('form.journey_pro.days_per_year')"
       v-model="journey.days"
       :min="1"
-      :max="30"
+      :max="300"
       :step="1"
-      :step2="5"
+      :step2="10"
       label-class="text-subtitle1 text-center"
       class="bg-primary rounded-borders q-pa-md"
     />
@@ -69,6 +69,7 @@ const modeOptions = computed<Option[]>(() =>
     { value: 'moto', label: t('form.mode.moto'), icon: 'two_wheeler' },
     { value: 'car', label: t('form.mode.car'), icon: 'directions_car' },
     { value: 'train', label: t('form.mode.train'), icon: 'train' },
+    { value: 'boat', label: t('form.mode.boat'), icon: 'directions_boat' },
     { value: 'plane', label: t('form.mode.plane'), icon: 'flight' },
   ].filter((opt) => props.modes.includes(opt.value)),
 )

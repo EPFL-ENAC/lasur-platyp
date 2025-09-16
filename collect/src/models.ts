@@ -42,12 +42,8 @@ export interface RecordData {
   constraints: string[]
   freq_mod_journeys: Journey[]
 
-  trav_pro: string[]
-
-  freq_mod_pro_local_journeys: ProJourney[]
-  freq_mod_pro_region_journeys: ProJourney[]
-  freq_mod_pro_europe_journeys: ProJourney[]
-  freq_mod_pro_inter_journeys: ProJourney[]
+  travel_pro: boolean
+  freq_mod_pro_journeys: ProJourney[]
 
   importance_time: number
   importance_cost: number

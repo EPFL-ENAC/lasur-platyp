@@ -41,11 +41,8 @@ export const useCollector = defineStore('collector', () => {
           constraints: [],
           freq_mod_journeys: [{ modes: [], days: 1 }],
 
-          trav_pro: [],
-          freq_mod_pro_local_journeys: [],
-          freq_mod_pro_region_journeys: [],
-          freq_mod_pro_europe_journeys: [],
-          freq_mod_pro_inter_journeys: [],
+          travel_pro: false,
+          freq_mod_pro_journeys: [],
 
           importance_time: 1,
           importance_cost: 1,
