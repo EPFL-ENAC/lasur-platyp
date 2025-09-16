@@ -43,7 +43,7 @@ onMounted(() => {
   }
 })
 
-function onUpdate(value: boolean) {
-  emit('update:modelValue', value === undefined ? false : value)
+function onUpdate() {
+  emit('update:modelValue', selected.value)
 }
 </script>
