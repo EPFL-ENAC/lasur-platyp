@@ -226,6 +226,11 @@ export default {
       },
     },
   },
+  record: {
+    reco: 'Recommended mode of transport: {mode}',
+    isochrones: 'Isochrones',
+    isochrones_hint: 'Travel time with the recommended mode of transport.',
+  },
   action: 'Measure',
   add: 'Add',
   address_input_hint: 'Type Enter to lookup addresses.',

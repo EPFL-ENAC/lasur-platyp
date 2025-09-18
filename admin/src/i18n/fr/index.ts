@@ -228,6 +228,11 @@ export default {
       },
     },
   },
+  record: {
+    reco: 'Mode de transport recommandé : {mode}',
+    isochrones: 'Isochrones',
+    isochrones_hint: 'Temps de trajet avec le mode de transport recommandé.',
+  },
   action: 'Mesure',
   add: 'Ajouter',
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",

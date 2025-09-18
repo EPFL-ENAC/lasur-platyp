@@ -83,6 +83,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useId: typeof import('vue')['useId']
+  const useIsochrones: typeof import('./stores/isochrones')['useIsochrones']
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
   const useParticipants: typeof import('./stores/participants')['useParticipants']
@@ -192,6 +193,7 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
+    readonly useIsochrones: UnwrapRef<typeof import('./stores/isochrones')['useIsochrones']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useParticipants: UnwrapRef<typeof import('./stores/participants')['useParticipants']>

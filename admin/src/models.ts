@@ -117,3 +117,16 @@ export interface Links {
   total: number
   data: Link[]
 }
+
+export interface IsochronesParams {
+  lon: number
+  lat: number
+  cutoffSec: number[]
+  datetime: string
+  categories: string[]
+}
+
+export interface IsochronesData {
+  isochrones: GeoJSON.FeatureCollection<GeoJSON.Geometry>
+  pois: GeoJSON.FeatureCollection<GeoJSON.Geometry>
+}
