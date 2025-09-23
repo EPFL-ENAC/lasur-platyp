@@ -31,6 +31,8 @@ async def compute_isochrones(
     - **lat**: Latitude of the starting point.
     - **cutoffSec**: List of cutoff times in seconds for which to compute isochrones.
     - **datetime**: ISO 8601 formatted datetime string representing the departure time.
+    - **mode**: Transportation mode (e.g., driving, walking, cycling).
+    - **bikeSpeed**: Optional cycling speed in km/h, required if mode includes cycling.
     - **categories**: Optional list of POI categories to filter.
 
     Returns a GeoJSON FeatureCollection of isochrones and optionally a FeatureCollection of POIs.

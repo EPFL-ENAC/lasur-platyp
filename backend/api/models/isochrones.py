@@ -8,6 +8,9 @@ class IsochroneData(BaseModel):
     mode: str
     cutoffSec: List[int]
     datetime: str  # ISO 8601 format
+    bikeSpeed: Optional[float] = Field(
+        None, description="Cycling speed in km/h, required if mode includes cycling"
+    )
 
 
 class FeatureGeometry(BaseModel):

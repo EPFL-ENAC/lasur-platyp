@@ -138,6 +138,7 @@ async function loadIsochronesData() {
       lon,
       lat,
       mode: selectedMode.value,
+      bikeSpeed: 13,
       cutoffSec,
       datetime: '2025-01-15T06:00:00Z',
       categories: [],

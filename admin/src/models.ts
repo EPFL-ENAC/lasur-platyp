@@ -123,6 +123,7 @@ export interface IsochronesParams {
   lat: number
   mode: string
   cutoffSec: number[]
+  bikeSpeed?: number
   datetime: string
   categories: string[]
 }
