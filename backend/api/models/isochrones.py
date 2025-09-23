@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 class IsochroneData(BaseModel):
     lon: float
     lat: float
+    mode: str
     cutoffSec: List[int]
     datetime: str  # ISO 8601 format
 

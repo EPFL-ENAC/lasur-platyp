@@ -1,10 +1,22 @@
+from ast import Dict, List
 import logging
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from api.auth import kc_service, User
-from ..models.isochrones import IsochronePoisData, IsochroneResponse, FeatureCollection
+from ..models.isochrones import IsochronePoisData, IsochroneResponse, FeatureCollection, PoisData, PoisData
 from api.services.isochrones import IsochronesService
 
 router = APIRouter()
+
+
+@router.get("/_modes")
+async def get_available_modes(
+    user: User = Depends(kc_service.require_admin())
+) -> Response:
+    """
+    Retrieve available transportation modes for isochrone calculations.
+    """
+    service = IsochronesService()
+    return service.get_available_modes()
 
 
 @router.post("/_compute", response_model=IsochroneResponse, response_model_exclude_none=True)
@@ -25,3 +37,12 @@ async def compute_isochrones(
     """
     service = IsochronesService()
     return service.compute_isochrones(data)
+
+
+@router.post("/_pois", response_model=FeatureCollection, response_model_exclude_none=True)
+async def get_pois(
+    data: PoisData,
+    user: User = Depends(kc_service.require_admin())
+) -> FeatureCollection:
+    service = IsochronesService()
+    return service.get_pois(data)

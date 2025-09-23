@@ -1,5 +1,5 @@
 import { api } from 'src/boot/api'
-import type { IsochronesParams, IsochronesData } from 'src/models'
+import type { IsochronesParams, IsochronesData, IsochronesModes, PoisParams } from 'src/models'
 
 const authStore = useAuthStore()
 
@@ -124,6 +124,28 @@ export const CATEGORY_TAGS = {
 }
 
 export const useIsochrones = defineStore('isochrones', () => {
+  function getModes() {
+    return authStore.updateToken().then(() => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      }
+      return api
+        .get('/isochrones/_modes', config)
+        .then((res) => {
+          const data = res.data as { [key: string]: string }
+          // split values
+          return Object.fromEntries(
+            Object.entries(data).map(([k, v]) => [k, v.split(',')]),
+          ) as IsochronesModes
+        })
+        .catch(() => {
+          return undefined
+        })
+    })
+  }
+
   function computeIsochrones(payload: IsochronesParams) {
     return authStore.updateToken().then(() => {
       const config = {
@@ -142,6 +164,24 @@ export const useIsochrones = defineStore('isochrones', () => {
     })
   }
 
+  function getPois(payload: PoisParams) {
+    return authStore.updateToken().then(() => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      }
+      return api
+        .post('/isochrones/_pois', payload, config)
+        .then((res) => {
+          return res.data as GeoJSON.FeatureCollection
+        })
+        .catch(() => {
+          return undefined
+        })
+    })
+  }
+
   function findCategory(tag: string, value: string) {
     for (const [category, tags] of Object.entries(CATEGORY_TAGS)) {
       if (tags[tag as keyof typeof tags]?.includes(value)) {
@@ -151,5 +191,5 @@ export const useIsochrones = defineStore('isochrones', () => {
     return 'other'
   }
 
-  return { computeIsochrones, findCategory }
+  return { computeIsochrones, findCategory, getModes, getPois }
 })

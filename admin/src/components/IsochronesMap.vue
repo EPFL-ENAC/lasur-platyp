@@ -2,19 +2,35 @@
   <div>
     <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'text-h6'">{{ label }}</div>
     <div v-if="hint" class="text-help q-mb-md">{{ hint }}</div>
-    <div class="bg-white">
-      <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapinput" />
-    </div>
-    <div v-if="allCategories.size > 0" class="q-mt-md">
-      <div class="text-subtitle1 q-mb-sm">Categories</div>
-      <div class="q-gutter-sm row">
-        <div v-for="cat in Array.from(allCategories).sort()" :key="cat" class="row items-center">
-          <div
-            :style="`width: 16px; height: 16px; background-color: ${stringToHexColor(cat)}; border: 1px solid #000; margin-right: 4px;`"
-          ></div>
-          <div>{{ cat }}</div>
+    <div v-if="modeOptions.length > 1" class="row q-mb-md">
+      <q-select
+        label="Mode"
+        v-model="selectedMode"
+        :loading="loadingIsochrones"
+        :disable="loadingIsochrones"
+        :options="modeOptions"
+        option-value="value"
+        option-label="label"
+        filled
+        emit-value
+        map-options
+        hide-dropdown-icon
+        style="min-width: 300px"
+        @update:model-value="loadIsochronesData"
+      />
+      <div v-if="allCategories.size > 0" class="q-mt-md on-right">
+        <div class="q-gutter-sm row">
+          <div v-for="cat in Array.from(allCategories).sort()" :key="cat" class="row items-center">
+            <div
+              :style="`width: 16px; height: 16px; background-color: ${stringToHexColor(cat)}; border: 1px solid #000; margin-right: 4px;`"
+            ></div>
+            <div>{{ cat }}</div>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="bg-white">
+      <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapinput" />
     </div>
   </div>
 </template>
@@ -30,6 +46,7 @@ import {
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
+import type { IsochronesModes } from 'src/models'
 
 const isoService = useIsochrones()
 
@@ -48,6 +65,16 @@ const props = defineProps<Props>()
 const map = ref<Map>()
 let marker: Marker | undefined
 const allCategories = ref(new Set<string>())
+const availableModes = ref<IsochronesModes>({})
+const loadingIsochrones = ref(false)
+
+const selectedMode = ref<string>('')
+const modeOptions = computed(() => {
+  return Object.entries(availableModes.value).map(([key, value]) => ({
+    label: `${key.toLowerCase()} [${value.join(', ')}]`,
+    value: key,
+  }))
+})
 
 onMounted(onInit)
 
@@ -76,16 +103,44 @@ function onInit() {
 
 function loadIsochrones() {
   if (!map.value) return
+  loadIsochronesModes().then(() => {
+    loadIsochronesData()
+  })
+}
+
+async function loadIsochronesModes() {
+  const modes = await isoService.getModes()
+  availableModes.value = modes || {}
+  selectedMode.value =
+    props.reco in availableModes.value ? props.reco : Object.keys(modes || {})[0] || 'WALK'
+}
+
+async function loadIsochronesData() {
+  loadingIsochrones.value = true
   const lon = props.center[0]
   const lat = props.center[1]
-  const cutoffSec = [1800, 3600, 5400]
-  isoService
+  let cutoffSec = [300, 600, 900, 1200, 1800]
+  switch (selectedMode.value) {
+    case 'WALK':
+    case 'BIKE':
+      cutoffSec = [600, 1200, 1800, 2400, 3600]
+      break
+    case 'CAR':
+    case 'BUS':
+      cutoffSec = [900, 1800, 2700, 3600]
+      break
+    default:
+      cutoffSec = [300, 600, 900, 1200, 1800]
+      break
+  }
+  return isoService
     .computeIsochrones({
       lon,
       lat,
+      mode: selectedMode.value,
       cutoffSec,
-      datetime: new Date().toISOString(),
-      categories: ['food', 'education', 'service', 'health', 'leisure', 'transport', 'commerce'],
+      datetime: '2025-01-15T06:00:00Z',
+      categories: [],
     })
     .then((data) => {
       console.log('Isochrones data:', data)
@@ -94,11 +149,30 @@ function loadIsochrones() {
       }
       if (data?.pois) {
         showPois(data?.pois)
+      } else if (data?.isochrones.bbox) {
+        // load POIs in the current map bbox
+        loadPois(data?.isochrones.bbox as [number, number, number, number])
       }
     })
     .catch((err) => {
       console.error('Error computing isochrones', err)
     })
+    .finally(() => {
+      loadingIsochrones.value = false
+    })
+}
+
+async function loadPois(bbox: [number, number, number, number]) {
+  if (!map.value) return
+  loadingIsochrones.value = true
+  const data = await isoService.getPois({
+    categories: ['food', 'education', 'service', 'health', 'leisure', 'transport', 'commerce'],
+    bbox,
+  })
+  if (data) {
+    showPois(data)
+  }
+  loadingIsochrones.value = false
 }
 
 function showIsochrones(geojson: GeoJSON.FeatureCollection) {
@@ -125,24 +199,24 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
 
 function showPois(geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
+  allCategories.value.clear()
+  // set a color property based on category
+  geojson.features.forEach((feature) => {
+    if (feature.properties && feature.properties.variable && feature.properties.value) {
+      const cat = isoService.findCategory(
+        feature.properties.variable as string,
+        feature.properties.value as string,
+      )
+      feature.properties.category = cat
+      feature.properties.color = stringToHexColor(cat)
+      allCategories.value.add(cat)
+    } else if (feature.properties) {
+      feature.properties.color = '#000000'
+    }
+  })
   if (map.value.getSource('pois')) {
     ;(map.value.getSource('pois') as GeoJSONSource).setData(geojson)
   } else {
-    // set a color property based on category
-    allCategories.value.clear()
-    geojson.features.forEach((feature) => {
-      if (feature.properties && feature.properties.variable && feature.properties.value) {
-        const cat = isoService.findCategory(
-          feature.properties.variable as string,
-          feature.properties.value as string,
-        )
-        feature.properties.category = cat
-        feature.properties.color = stringToHexColor(cat)
-        allCategories.value.add(cat)
-      } else if (feature.properties) {
-        feature.properties.color = '#000000'
-      }
-    })
     map.value.addSource('pois', {
       type: 'geojson',
       data: geojson,
@@ -152,7 +226,8 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
       type: 'circle',
       source: 'pois',
       paint: {
-        'circle-radius': 6,
+        // zoom level 5 -> 2px, level 15 -> 10px
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, 1, 18, 5],
         'circle-color': ['get', 'color'],
       },
     })

@@ -107,6 +107,7 @@
     "useParticipants": true,
     "useActions": true,
     "useStats": true,
-    "useIsochrones": true
+    "useIsochrones": true,
+    "CATEGORY_TAGS": true
   }
 }
