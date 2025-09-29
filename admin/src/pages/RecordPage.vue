@@ -23,7 +23,13 @@
           :zoom="11"
         />
       </div>
-      <pre>{{ record }}</pre>
+      <div>
+        <div class="text-h6 q-mb-sm q-mt-lg">{{ t('record.raw_data') }}</div>
+
+        <q-scroll-area style="height: 600px">
+          <pre class="q-pa-md bg-grey-2">{{ record }}</pre>
+        </q-scroll-area>
+      </div>
     </div>
   </q-page>
 </template>

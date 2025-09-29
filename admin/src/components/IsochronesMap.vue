@@ -79,7 +79,7 @@ const { t } = useI18n()
 const map = ref<Map>()
 let marker: Marker | undefined
 const loadingIsochrones = ref(false)
-
+const isochronesData = ref<GeoJSON.FeatureCollection>()
 const selectedMode = ref<string>('WALK')
 const modeOptions = computed(() => {
   return ['WALK', 'BIKE', 'EBIKE'].map((m) => {
@@ -169,15 +169,18 @@ async function loadIsochronesData() {
       categories: [],
     })
     .then((data) => {
-      console.log('Isochrones data:', data)
       if (data?.isochrones) {
-        showIsochrones(data?.isochrones)
-      }
-      if (data?.pois) {
-        showPois(data?.pois)
-      } else if (data?.isochrones.bbox) {
-        // load POIs in the current map bbox
-        loadPois(data?.isochrones.bbox as [number, number, number, number])
+        isochronesData.value = data?.isochrones
+        showIsochrones(isochronesData.value)
+        if (data?.isochrones.bbox) {
+          // load POIs in the current map bbox
+          const selected = Object.entries(showPoisMap.value)
+            .filter(([, v]) => v)
+            .map(([k]) => k)
+          if (selected.length > 0) {
+            loadPois(selected)
+          }
+        }
       }
     })
     .catch((err) => {
@@ -188,11 +191,13 @@ async function loadIsochronesData() {
     })
 }
 
-async function loadPois(bbox: [number, number, number, number]) {
+async function loadPois(categories: string[]) {
   if (!map.value) return
+  if (!isochronesData.value || !isochronesData.value.bbox) return
+  const bbox = isochronesData.value.bbox as [number, number, number, number]
   loadingIsochrones.value = true
   const data = await isoService.getPois({
-    categories: ['food', 'education', 'service', 'health', 'leisure', 'transport', 'commerce'],
+    categories,
     bbox,
   })
   if (data) {
@@ -221,6 +226,14 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
       },
     })
   }
+  // remove pois layers if any
+  poisOptions.value.forEach((cat) => {
+    const layerId = `pois-layer-${cat.value}`
+    if (map.value?.getLayer(layerId)) {
+      map.value.removeLayer(layerId)
+      map.value.removeSource(layerId)
+    }
+  })
 }
 
 function showPois(geojson: GeoJSON.FeatureCollection) {
@@ -282,6 +295,17 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
 function onShowPoisMap(name: string) {
   if (!map.value) return
   const layerId = `pois-layer-${name}`
+  const hasLayer = map.value.getLayer(layerId) !== undefined
+  if (!hasLayer) {
+    // load POIs in the current map bbox
+    if (map.value) {
+      const bbox = isochronesData.value?.bbox as [number, number, number, number]
+      if (!bbox) return
+      loadPois([name])
+    }
+    return
+  }
+  // show/hide layer
   if (showPoisMap.value[name]) {
     if (map.value.getLayer(layerId)) {
       map.value.setLayoutProperty(layerId, 'visibility', 'visible')

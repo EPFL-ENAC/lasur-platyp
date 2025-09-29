@@ -248,6 +248,7 @@ export default {
       transport: 'Transports',
       commerce: 'Commerce',
     },
+    raw_data: "Données brutes de l'enquête",
   },
   action: 'Mesure',
   add: 'Ajouter',

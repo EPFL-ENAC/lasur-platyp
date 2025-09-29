@@ -246,6 +246,7 @@ export default {
       transport: 'Transport',
       commerce: 'Commerce',
     },
+    raw_data: 'Raw data',
   },
   action: 'Measure',
   add: 'Add',

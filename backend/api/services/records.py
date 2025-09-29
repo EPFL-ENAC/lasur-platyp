@@ -403,11 +403,12 @@ class RecordService:
         )
 
         counts = await self.session.exec(query)
-        rows = [row for row in counts if row.distance_km]
+        rows = [row for row in counts if row.distance_km is not None and row.mod is not None and int(
+            row.mod) > 0]
         distances = [row.distance_km * 1.3 for row in rows]
         journeys = [45 * 2 * int(row.mod) for row in rows]
-        emissions = [row.distance_km * 1.3 *
-                     45 * 2 * int(row.mod) * mod_emissions[mod.replace("freq_mod_", "")] / 1000 for row in rows]
+        emissions = [row.distance_km * 1.3 * 45 * 2 * int(
+            row.mod) * mod_emissions[mod.replace("freq_mod_", "")] / 1000 for row in rows]
         return Emissions(field=mod, total=total_count, distances=sum(distances), journeys=sum(journeys), emissions=sum(emissions))
 
     async def get_mod_reco_links(self, filter: dict) -> Links:
