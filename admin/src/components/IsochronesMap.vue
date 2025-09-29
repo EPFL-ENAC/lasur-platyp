@@ -1,7 +1,5 @@
 <template>
   <div>
-    <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'text-h6'">{{ label }}</div>
-    <div v-if="hint" class="text-help q-mb-md">{{ hint }}</div>
     <div v-if="modeOptions.length > 1" class="row q-mb-md">
       <q-select
         label="Mode"
@@ -18,19 +16,36 @@
         style="min-width: 300px"
         @update:model-value="loadIsochronesData"
       />
-      <div v-if="allCategories.size > 0" class="q-mt-md on-right">
-        <div class="q-gutter-sm row">
-          <div v-for="cat in Array.from(allCategories).sort()" :key="cat" class="row items-center">
-            <div
-              :style="`width: 16px; height: 16px; background-color: ${stringToHexColor(cat)}; border: 1px solid #000; margin-right: 4px;`"
-            ></div>
-            <div>{{ cat }}</div>
-          </div>
-        </div>
-      </div>
     </div>
-    <div class="bg-white">
-      <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapinput" />
+    <div class="container">
+      <q-btn
+        :label="t('record.pois')"
+        icon="layers"
+        color="white"
+        text-color="grey-10"
+        no-caps
+        class="layers bg-white"
+        size="12px"
+      >
+        <q-menu>
+          <q-list>
+            <template v-for="pois in poisOptions" :key="pois.value">
+              <q-item clickable>
+                <q-item-section>{{ pois.label }}</q-item-section>
+                <q-item-section side>
+                  <q-toggle
+                    v-model="showPoisMap[pois.value]"
+                    :color="pois.color"
+                    keep-color
+                    @update:model-value="onShowPoisMap(pois.value)"
+                  />
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-list>
+        </q-menu>
+      </q-btn>
+      <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapview" />
     </div>
   </div>
 </template>
@@ -46,15 +61,12 @@ import {
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
-import type { IsochronesModes } from 'src/models'
 
 const isoService = useIsochrones()
 
 interface Props {
   center: [number, number]
   reco: string
-  label?: string
-  hint?: string
   height?: string
   zoom?: number
   mapId: string
@@ -62,18 +74,33 @@ interface Props {
 }
 const props = defineProps<Props>()
 
+const { t } = useI18n()
+
 const map = ref<Map>()
 let marker: Marker | undefined
-const allCategories = ref(new Set<string>())
-const availableModes = ref<IsochronesModes>({})
 const loadingIsochrones = ref(false)
 
-const selectedMode = ref<string>('')
+const selectedMode = ref<string>('WALK')
 const modeOptions = computed(() => {
-  return Object.entries(availableModes.value).map(([key, value]) => ({
-    label: `${key.toLowerCase()} [${value.join(', ')}]`,
-    value: key,
-  }))
+  return ['WALK', 'BIKE', 'EBIKE'].map((m) => {
+    return { label: t(`record.mode.${m.toLowerCase()}`), value: m }
+  })
+})
+const poisOptions = computed(() =>
+  ['food', 'education', 'service', 'health', 'leisure', 'transport', 'commerce'].map((cat) => ({
+    label: t(`record.categories.${cat}`),
+    value: cat,
+    color: categoryToColor(cat)?.name || 'grey-8',
+  })),
+)
+const showPoisMap = ref<{ [key: string]: boolean }>({
+  food: false,
+  education: false,
+  service: false,
+  health: false,
+  leisure: false,
+  transport: false,
+  commerce: false,
 })
 
 onMounted(onInit)
@@ -103,16 +130,7 @@ function onInit() {
 
 function loadIsochrones() {
   if (!map.value) return
-  loadIsochronesModes().then(() => {
-    loadIsochronesData()
-  })
-}
-
-async function loadIsochronesModes() {
-  const modes = await isoService.getModes()
-  availableModes.value = modes || {}
-  selectedMode.value =
-    props.reco in availableModes.value ? props.reco : Object.keys(modes || {})[0] || 'WALK'
+  loadIsochronesData()
 }
 
 async function loadIsochronesData() {
@@ -120,14 +138,21 @@ async function loadIsochronesData() {
   const lon = props.center[0]
   const lat = props.center[1]
   let cutoffSec = [300, 600, 900, 1200, 1800]
+  let mode = 'WALK'
+  let bikeSpeed = 13
   switch (selectedMode.value) {
     case 'WALK':
-    case 'BIKE':
+      mode = 'WALK'
       cutoffSec = [600, 1200, 1800, 2400, 3600]
       break
-    case 'CAR':
-    case 'BUS':
-      cutoffSec = [900, 1800, 2700, 3600]
+    case 'BIKE':
+      mode = 'BICYCLE'
+      cutoffSec = [600, 1200, 1800, 2400, 3600]
+      break
+    case 'EBIKE':
+      mode = 'BICYCLE'
+      bikeSpeed = 17
+      cutoffSec = [600, 1200, 1800, 2400, 3600]
       break
     default:
       cutoffSec = [300, 600, 900, 1200, 1800]
@@ -137,8 +162,8 @@ async function loadIsochronesData() {
     .computeIsochrones({
       lon,
       lat,
-      mode: selectedMode.value,
-      bikeSpeed: 13,
+      mode,
+      bikeSpeed,
       cutoffSec,
       datetime: '2025-01-15T06:00:00Z',
       categories: [],
@@ -200,7 +225,7 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
 
 function showPois(geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
-  allCategories.value.clear()
+  const sources: { [key: string]: GeoJSON.FeatureCollection } = {}
   // set a color property based on category
   geojson.features.forEach((feature) => {
     if (feature.properties && feature.properties.variable && feature.properties.value) {
@@ -209,52 +234,86 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
         feature.properties.value as string,
       )
       feature.properties.category = cat
-      feature.properties.color = stringToHexColor(cat)
-      allCategories.value.add(cat)
+      feature.properties.color = categoryToColor(cat)?.hex || '#000000'
     } else if (feature.properties) {
       feature.properties.color = '#000000'
     }
   })
-  if (map.value.getSource('pois')) {
-    ;(map.value.getSource('pois') as GeoJSONSource).setData(geojson)
+  // split by category
+  geojson.features.forEach((feature) => {
+    if (feature.properties && feature.properties.category) {
+      const cat = feature.properties.category as string
+      if (!(cat in sources)) {
+        sources[cat] = { type: 'FeatureCollection', features: [] }
+      }
+      if (sources[cat]) {
+        sources[cat].features.push(feature)
+      }
+    }
+  })
+  // add a layer per category
+  Object.entries(sources).forEach(([cat, data]) => {
+    const layerId = `pois-layer-${cat}`
+    if (map.value?.getSource(layerId)) {
+      ;(map.value?.getSource(layerId) as GeoJSONSource).setData(data)
+    } else {
+      map.value?.addSource(layerId, {
+        type: 'geojson',
+        data,
+      })
+      map.value?.addLayer({
+        id: layerId,
+        type: 'circle',
+        source: layerId,
+        paint: {
+          // zoom level 5 -> 2px, level 15 -> 10px
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, 1, 18, 5],
+          'circle-color': ['get', 'color'],
+        },
+      })
+      // hide if not selected
+      if (map.value?.getLayer(layerId) && !showPoisMap.value[cat]) {
+        map.value.setLayoutProperty(layerId, 'visibility', 'none')
+      }
+    }
+  })
+}
+
+function onShowPoisMap(name: string) {
+  if (!map.value) return
+  const layerId = `pois-layer-${name}`
+  if (showPoisMap.value[name]) {
+    if (map.value.getLayer(layerId)) {
+      map.value.setLayoutProperty(layerId, 'visibility', 'visible')
+    }
   } else {
-    map.value.addSource('pois', {
-      type: 'geojson',
-      data: geojson,
-    })
-    map.value.addLayer({
-      id: 'pois-layer',
-      type: 'circle',
-      source: 'pois',
-      paint: {
-        // zoom level 5 -> 2px, level 15 -> 10px
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, 1, 18, 5],
-        'circle-color': ['get', 'color'],
-      },
-    })
+    if (map.value.getLayer(layerId)) {
+      map.value.setLayoutProperty(layerId, 'visibility', 'none')
+    }
   }
 }
 
-function stringToHexColor(str: string): string {
-  // simple non-cryptographic hash
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i)
-    // convert to 32bit int
-    hash |= 0
+function categoryToColor(str: string): { name: string; hex: string } | undefined {
+  const mapColors: { [key: string]: { name: string; hex: string } } = {
+    food: { name: 'red-9', hex: '#c62828' },
+    education: { name: 'purple-9', hex: '#6a1b9a' },
+    service: { name: 'blue-8', hex: '#1976d2' },
+    health: { name: 'green-13', hex: '#00e676' },
+    leisure: { name: 'light-green-9', hex: '#558b2f' },
+    transport: { name: 'yellow-8', hex: '#fbc02d' },
+    commerce: { name: 'pink-4', hex: '#f06292' },
   }
-
-  // build color from hash
-  const r = (hash >> 16) & 0xff
-  const g = (hash >> 8) & 0xff
-  const b = hash & 0xff
-
-  return '#' + [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('')
+  if (str in mapColors && mapColors[str]) {
+    return mapColors[str]
+  }
 }
 </script>
 
 <style scoped>
-.mapinput {
+.mapview {
+  position: relative;
+  z-index: 1;
+  width: var(--t-width);
   height: var(--t-height);
 }
 .fade-enter-active,
@@ -265,5 +324,21 @@ function stringToHexColor(str: string): string {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0; /* Start or end with opacity 0 for the fade effect */
+}
+
+.container {
+  position: relative; /* Needed for absolute children */
+}
+.layers {
+  position: absolute;
+  z-index: 10;
+  top: 10px;
+  left: 10px;
+}
+.colors {
+  position: absolute;
+  z-index: 10;
+  bottom: 10px;
+  left: 10px;
 }
 </style>
