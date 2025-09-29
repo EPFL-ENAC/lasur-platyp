@@ -248,6 +248,7 @@ export default {
       transport: 'Transports',
       commerce: 'Commerce',
     },
+    minutes: '{min} min',
     raw_data: "Données brutes de l'enquête",
   },
   action: 'Mesure',

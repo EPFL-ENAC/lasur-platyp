@@ -46,6 +46,20 @@
         </q-menu>
       </q-btn>
       <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapview" />
+      <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders">
+        <div class="row q-gutter-sm">
+          <div
+            v-for="(cutoff, index) in selectedModeCutoffSec"
+            :key="`color-${cutoff}`"
+            class="row items-center"
+          >
+            <div
+              :style="`width: 15px; height: 15px; background-color: rgba(90, 63, 192, ${cutoffSecTransparency(index)}); border: 1px solid #5a3fc0; margin-right: 5px;`"
+            ></div>
+            <div>{{ t('record.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +95,7 @@ let marker: Marker | undefined
 const loadingIsochrones = ref(false)
 const isochronesData = ref<GeoJSON.FeatureCollection>()
 const selectedMode = ref<string>('WALK')
+const selectedModeCutoffSec = ref<number[]>([]) // in seconds
 const modeOptions = computed(() => {
   return ['WALK', 'BIKE', 'EBIKE'].map((m) => {
     return { label: t(`record.mode.${m.toLowerCase()}`), value: m }
@@ -137,7 +152,7 @@ async function loadIsochronesData() {
   loadingIsochrones.value = true
   const lon = props.center[0]
   const lat = props.center[1]
-  let cutoffSec = [300, 600, 900, 1200, 1800]
+  let cutoffSec = []
   let mode = 'WALK'
   let bikeSpeed = 13
   switch (selectedMode.value) {
@@ -158,6 +173,7 @@ async function loadIsochronesData() {
       cutoffSec = [300, 600, 900, 1200, 1800]
       break
   }
+  selectedModeCutoffSec.value = cutoffSec
   return isoService
     .computeIsochrones({
       lon,
@@ -330,6 +346,11 @@ function categoryToColor(str: string): { name: string; hex: string } | undefined
   if (str in mapColors && mapColors[str]) {
     return mapColors[str]
   }
+}
+
+function cutoffSecTransparency(index: number): number {
+  const total = selectedModeCutoffSec.value.length
+  return 0.1 + (0.7 * (total - index + 1)) / total
 }
 </script>
 

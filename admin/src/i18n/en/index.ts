@@ -246,6 +246,7 @@ export default {
       transport: 'Transport',
       commerce: 'Commerce',
     },
+    minutes: '{count} min',
     raw_data: 'Raw data',
   },
   action: 'Measure',
