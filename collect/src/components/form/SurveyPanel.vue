@@ -458,7 +458,9 @@ function prevStep() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
-  if (['places', 'intermodality', 'freq_mod_pro'].includes(survey.stepName || '')) {
+  if (
+    ['places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(survey.stepName || '')
+  ) {
     // ignore because of map dragging conflict
     return
   }

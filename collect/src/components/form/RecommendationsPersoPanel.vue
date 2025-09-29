@@ -1,9 +1,7 @@
 <template>
   <div>
     <div class="q-mb-lg">
-      <div class="text-h5 text-bold q-mb-md">
-        {{ t(`main_mode.${mainFm}`) }}
-      </div>
+      <div class="text-h5 text-bold q-mb-md">{{ t(`main_mode.${mainFm}`) }}</div>
     </div>
     <q-card class="bg-primary">
       <q-card-section>
@@ -18,7 +16,15 @@
           <div class="rounded-borders q-mb-md bg-secondary text-white">
             <div class="q-pa-md">
               <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
-              <BenefitsPanel :reco="reco" />
+              <BenefitsPanel :reco="reco" class="q-mt-sm" />
+              <IsochronesMap
+                v-if="showIsochrones(reco)"
+                :center="center"
+                :reco="reco"
+                :height="'400px'"
+                :zoom="zoomIsochrones(reco)"
+                class="q-mt-sm"
+              />
               <q-item-label
                 v-if="getActions(idx).length"
                 class="text-body1 text-green-2 text-bold q-mt-md"
@@ -50,6 +56,7 @@
 <script setup lang="ts">
 import SectionItem from 'src/components/form/SectionItem.vue'
 import BenefitsPanel from 'src/components/form/BenefitsPanel.vue'
+import IsochronesMap from 'src/components/form/IsochronesMap.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()
@@ -78,7 +85,10 @@ const mainFm = computed(() => {
 const recoDt = computed(() =>
   survey.recommendation.reco ? survey.recommendation.reco.reco_dt2 : [],
 )
-
+const center = computed(() => {
+  const loc = survey.record.data.origin
+  return [loc.lon, loc.lat] as [number, number]
+})
 const mesure_dt1 = computed(() => survey.recommendation.reco_actions?.mesure_dt1 || [])
 const mesure_dt2 = computed(() => survey.recommendation.reco_actions?.mesure_dt2 || [])
 // const hasActions = computed(() => mesure_dt1.value.length > 0 || mesure_dt2.value.length > 0)
@@ -86,6 +96,14 @@ const mesure_dt2 = computed(() => survey.recommendation.reco_actions?.mesure_dt2
 const globalActions = computed(() => {
   return survey.recommendation.reco_actions?.mesures_globa?.map(translateAction) || []
 })
+
+function showIsochrones(reco: string) {
+  return ['marche', 'velo', 'vae'].includes(reco)
+}
+
+function zoomIsochrones(reco: string) {
+  return reco === 'marche' ? 11 : 9
+}
 
 function getActions(idx: number) {
   if (idx === 0) {

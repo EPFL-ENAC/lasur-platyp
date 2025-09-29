@@ -99,6 +99,8 @@
     "watchPostEffect": true,
     "watchSyncEffect": true,
     "useSurvey": true,
-    "VERSION": true
+    "VERSION": true,
+    "CATEGORY_TAGS": true,
+    "useIsochrones": true
   }
 }
