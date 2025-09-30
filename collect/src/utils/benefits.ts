@@ -18,6 +18,7 @@ import CargoEnMd from 'src/assets/benefits/cargo-en.md'
 import CargoFrMd from 'src/assets/benefits/cargo-fr.md'
 
 export const benefits: { [key: string]: { en: string; fr: string } } = {
+  bike: { en: VeloEnMd, fr: VeloFrMd },
   velo: { en: VeloEnMd, fr: VeloFrMd },
   covoit: { en: CovoitEnMd, fr: CovoitFrMd },
   elec: { en: ElecEnMd, fr: ElecFrMd },
