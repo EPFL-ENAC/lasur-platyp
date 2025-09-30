@@ -8,6 +8,8 @@ export default {
       confidentiality: 'Please accept the privacy policy to continue',
       origin: 'Please enter a starting point',
       workplace: 'Please enter a work place location',
+      pro_journey_mode: 'Please specify the mode of transport for each journey',
+      pro_journey_hex_id: 'Please specify the destination for each journey',
     },
     agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
     agreement_hint:

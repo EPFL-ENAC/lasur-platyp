@@ -424,6 +424,21 @@ function nextStep() {
       return
     }
   }
+  if (survey.stepName === 'freq_mod_pro') {
+    const errors: string[] = []
+    for (const journey of survey.record.data.freq_mod_pro_journeys || []) {
+      if (journey.mode === undefined || journey.mode === '') {
+        errors.push(t('form.error.pro_journey_mode'))
+      }
+      if (journey.hex_id === undefined || journey.hex_id === '') {
+        errors.push(t('form.error.pro_journey_hex_id'))
+      }
+    }
+    if (errors.length) {
+      errors.forEach((err) => notifyError(err))
+      return
+    }
+  }
   survey.incStep()
   if (survey.tokenOrSlug) {
     if (survey.stepName === 'recommendations') {

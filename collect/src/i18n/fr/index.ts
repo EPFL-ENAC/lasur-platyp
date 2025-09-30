@@ -8,6 +8,8 @@ export default {
       confidentiality: 'Veuillez accepter la politique de confidentialité pour continuer',
       origin: 'Veuillez entrer un point de départ',
       workplace: 'Veuillez entrer un lieu de travail',
+      pro_journey_mode: 'Veuillez spécifier le mode de transport pour chaque trajet',
+      pro_journey_hex_id: 'Veuillez spécifier la destination pour chaque trajet',
     },
     agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
     agreement_hint:
