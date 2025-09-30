@@ -1,30 +1,20 @@
 <template>
   <div v-if="hasBenefits(reco)">
-    <div v-if="showBenefits.includes(reco)" class="bg-primary q-mt-md q-pa-sm rounded-borders">
-      <q-markdown :src="getBenefits(reco, locale)" />
-    </div>
     <q-btn
-      v-if="showBenefits.includes(reco)"
-      @click="showBenefits = showBenefits.filter((b) => b !== reco)"
-      :label="t('benefits.hide')"
-      color="grey-4"
-      size="md"
-      icon-right="keyboard_arrow_up"
-      no-caps
-      flat
-      dense
-    />
-    <q-btn
-      v-else
-      @click="showBenefits = [...showBenefits, reco]"
       :label="t('benefits.show')"
       color="white"
       size="md"
-      icon-right="keyboard_arrow_down"
+      icon-right="workspace_premium"
       no-caps
       flat
       dense
-    />
+    >
+      <q-menu class="q-mr-md" :max-width="'400px'">
+        <div class="bg-white text-secondary q-pt-md q-pr-md q-pl-md rounded-borders">
+          <q-markdown :src="getBenefits(reco, locale)" />
+        </div>
+      </q-menu>
+    </q-btn>
   </div>
 </template>
 
@@ -36,6 +26,4 @@ const { locale, t } = useI18n()
 defineProps<{
   reco: string
 }>()
-
-const showBenefits = ref<string[]>([])
 </script>
