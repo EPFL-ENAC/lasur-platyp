@@ -424,6 +424,14 @@ function nextStep() {
       return
     }
   }
+  if (survey.stepName === 'intermodality') {
+    for (const journey of survey.record.data.freq_mod_journeys || []) {
+      if (journey.modes === undefined || journey.modes.length === 0) {
+        notifyError(t('form.error.journey_mode'))
+        return
+      }
+    }
+  }
   if (survey.stepName === 'freq_mod_pro') {
     const errors: string[] = []
     for (const journey of survey.record.data.freq_mod_pro_journeys || []) {

@@ -8,6 +8,8 @@ export default {
       confidentiality: 'Please accept the privacy policy to continue',
       origin: 'Please enter a starting point',
       workplace: 'Please enter a work place location',
+      journey_mode: 'Please specify at least one mode of transport for each journey',
+      journey_days: 'Please specify the number of days per week for each journey',
       pro_journey_mode: 'Please specify the mode of transport for each journey',
       pro_journey_hex_id: 'Please specify the destination for each journey',
     },
