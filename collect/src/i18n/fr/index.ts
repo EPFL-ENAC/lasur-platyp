@@ -116,8 +116,8 @@ export default {
     change: 'À propos du mode de transport recommandé "{reco}"',
     change_motivation: 'Votre motivation à changer',
     change_motivation_hint:
-      'Sur une échelle de 1 (pas du tout motivé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous motivé·e à utiliser ce mode de transport pour vos déplacements domicile-travail ?',
-    change_levers: 'Quels leviers pourraient vous aider à utiliser ce mode de transport ?',
+      'Sur une échelle de 1 (pas du tout motivé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous prêt·e à changer ce mode de transport pour vos déplacements domicile-travail ?',
+    change_levers: 'Comment vous aider à utiliser ce mode de transport ?',
     change_levers_option: {
       financial_support: 'Une aide financière',
       work_flexibility: 'Une plus grande flexibilité au travail (horaires, télétravail, etc.)',
