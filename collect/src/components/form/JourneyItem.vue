@@ -49,11 +49,11 @@ const journey = computed({
 const modeOptions = computed<Option[]>(() => [
   { value: 'walking', label: t('form.mode.walking'), icon: 'directions_walk' },
   { value: 'bike', label: t('form.mode.bike'), icon: 'directions_bike' },
-  { value: 'vae', label: t('form.mode.vae'), icon: 'electric_bike' },
+  { value: 'ebike', label: t('form.mode.ebike'), icon: 'electric_bike' },
   { value: 'pub', label: t('form.mode.pub'), icon: 'directions_bus' },
   { value: 'moto', label: t('form.mode.moto'), icon: 'two_wheeler' },
   { value: 'car', label: t('form.mode.car'), icon: 'directions_car' },
-  { value: 'covoit', label: t('form.mode.covoit'), icon: 'local_taxi' },
+  { value: 'carpool', label: t('form.mode.carpool'), icon: 'local_taxi' },
   { value: 'train', label: t('form.mode.train'), icon: 'train' },
 ])
 </script>
