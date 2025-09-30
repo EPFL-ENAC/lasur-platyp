@@ -23,7 +23,7 @@
               v-model="survey.record.data.freq_mod_pro_journeys[index].hex_id"
               read-only
               :height="'200px'"
-              class="q-mt-sm"
+              class="q-mt-sm q-mb-sm"
             />
             <q-item-label
               v-if="getActions(index).length"
