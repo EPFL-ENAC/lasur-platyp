@@ -40,6 +40,7 @@
       <div class="row justify-center q-mt-lg">
         <template v-for="option in options" :key="option.value">
           <q-btn
+            v-if="!option.children || option.children.length === 0"
             :id="option.value"
             draggable="true"
             @dragstart="onDragStart"
@@ -50,6 +51,35 @@
             class="on-right on-left q-mb-md"
             @click="onAdd(option)"
           />
+          <q-btn
+            v-else
+            :id="option.value"
+            :icon="option.icon"
+            :title="option.label"
+            color="secondary"
+            size="xl"
+            class="on-right on-left q-mb-md"
+          >
+            <q-menu auto-close>
+              <q-list>
+                <q-item
+                  v-for="child in option.children"
+                  :key="child.value"
+                  clickable
+                  v-ripple
+                  @click="onAdd(child)"
+                >
+                  <q-item-section avatar>
+                    <q-icon :name="child.icon" color="primary" size="lg" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ child.label }}</q-item-label>
+                    <q-item-label v-if="child.hint" class="text-h6">{{ child.hint }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </template>
       </div>
     </div>
@@ -82,7 +112,15 @@ const selected = computed(() => {
 })
 
 function getOption(value: string) {
-  return props.options.find((opt) => opt.value === value)
+  // find in options or in options children
+  for (const opt of props.options) {
+    if (opt.value === value) return opt
+    if (opt.children) {
+      const child = opt.children.find((child) => child.value === value)
+      if (child) return child
+    }
+  }
+  return undefined
 }
 
 function onAdd(option: Option | undefined) {
