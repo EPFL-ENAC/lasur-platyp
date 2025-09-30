@@ -52,6 +52,7 @@ const modeOptions = computed<Option[]>(() => [
   { value: 'pub', label: t('form.mode.pub'), icon: 'directions_bus' },
   { value: 'moto', label: t('form.mode.moto'), icon: 'two_wheeler' },
   { value: 'car', label: t('form.mode.car'), icon: 'directions_car' },
+  { value: 'covoit', label: t('form.mode.covoit'), icon: 'local_taxi' },
   { value: 'train', label: t('form.mode.train'), icon: 'train' },
 ])
 </script>
