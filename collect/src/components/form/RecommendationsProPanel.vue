@@ -14,6 +14,17 @@
             }}</q-item-label>
             <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
             <BenefitsPanel :reco="reco" class="q-mt-sm" />
+            <PlaceItem
+              v-if="
+                survey.record.data.freq_mod_pro_journeys &&
+                survey.record.data.freq_mod_pro_journeys[index]
+              "
+              :map-id="`map-pro-${index}`"
+              v-model="survey.record.data.freq_mod_pro_journeys[index].hex_id"
+              read-only
+              :height="'200px'"
+              class="q-mt-sm"
+            />
             <q-item-label
               v-if="getActions(index).length"
               class="text-body1 text-green-2 text-bold"
@@ -44,6 +55,7 @@
 <script setup lang="ts">
 import SectionItem from 'src/components/form/SectionItem.vue'
 import BenefitsPanel from 'src/components/form/BenefitsPanel.vue'
+import PlaceItem from 'src/components/form/PlaceItem.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

@@ -23,6 +23,7 @@ interface Props {
   zoom?: number
   mapId: string
   labelClass?: string
+  readOnly?: boolean
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
@@ -62,10 +63,16 @@ function onInit() {
   )
 
   if (map.value) {
-    new H3GridManager(map.value, location.value, (hexId: H3Index) => {
-      location.value = hexId
-      onUpdate()
-    })
+    new H3GridManager(
+      map.value,
+      location.value,
+      props.readOnly
+        ? undefined
+        : (hexId: H3Index) => {
+            location.value = hexId
+            onUpdate()
+          },
+    )
   }
 }
 

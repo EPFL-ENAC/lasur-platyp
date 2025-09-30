@@ -38,7 +38,7 @@
         :style="`--t-height: ${height || '400px'}; --t-width: ${width || '100%'};`"
         class="map-view"
       ></div>
-      <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders">
+      <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders q-mr-sm">
         <div class="row q-gutter-sm">
           <div
             v-for="(cutoff, index) in selectedModeCutoffSec"

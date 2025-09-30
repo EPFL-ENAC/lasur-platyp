@@ -51,12 +51,12 @@ type H3Selector = (hexId: H3Index) => void
 
 class H3GridManager {
   private map: Map
-  private selectionHandler: H3Selector
+  private selectionHandler: H3Selector | undefined
   private sourceId: string = 'h3-grid'
   private fillLayerId: string = 'h3-grid-fill'
   private outlineLayerId: string = 'h3-grid-outline'
 
-  constructor(map: Map, initSelection: H3Index, selectionHandler: H3Selector) {
+  constructor(map: Map, initSelection: H3Index, selectionHandler: H3Selector | undefined) {
     this.map = map
     this.selectionHandler = selectionHandler
     this.initialize(initSelection)
@@ -214,23 +214,27 @@ class H3GridManager {
       this.map.getCanvas().style.cursor = ''
     })
 
-    this.map.on('click', this.fillLayerId, (e: MapLayerMouseEvent) => {
-      //console.log('Zoom level:', this.map.getZoom())
-      if (!e.features || e.features.length === 0) return
-      // Find feature with the highest resolution
-      const highestResFeature = e.features.reduce((prev, curr) => {
-        return (prev.properties?.resolution || 0) > (curr.properties?.resolution || 0) ? prev : curr
+    if (this.selectionHandler) {
+      this.map.on('click', this.fillLayerId, (e: MapLayerMouseEvent) => {
+        //console.log('Zoom level:', this.map.getZoom())
+        if (!e.features || e.features.length === 0) return
+        // Find feature with the highest resolution
+        const highestResFeature = e.features.reduce((prev, curr) => {
+          return (prev.properties?.resolution || 0) > (curr.properties?.resolution || 0)
+            ? prev
+            : curr
+        })
+        if (!highestResFeature || !highestResFeature.properties) return
+
+        // Fill this feature with a different color
+        this.paintHex(highestResFeature.properties?.hexId)
+
+        const hexId = highestResFeature.properties.hexId
+        if (this.selectionHandler) {
+          this.selectionHandler(hexId)
+        }
       })
-      if (!highestResFeature || !highestResFeature.properties) return
-
-      // Fill this feature with a different color
-      this.paintHex(highestResFeature.properties?.hexId)
-
-      const hexId = highestResFeature.properties.hexId
-      if (this.selectionHandler) {
-        this.selectionHandler(hexId)
-      }
-    })
+    }
   }
 
   private paintHex(hexId: H3Index) {
@@ -247,7 +251,7 @@ class H3GridManager {
     const resolution = h3.getResolution(hexId)
     // update zoom level based on resolution
     const zoom = Math.min(8, 2 + resolution)
-    this.map.flyTo({ center: [lng, lat], zoom: zoom, maxDuration: 0 })
+    this.map.flyTo({ center: [lng, lat], zoom: zoom, maxDuration: 0, animate: false }) // instant
   }
 }
 
