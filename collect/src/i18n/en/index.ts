@@ -153,7 +153,8 @@ export default {
     walking: 'Walking',
     bike: 'Bike',
     pub: 'Public transport',
-    avoid: 'Avoid travel',
+    avoid:
+      'Aim to reduce the frequency of long-distance travel, and, where possible, leverage video-conferencing solutions',
   },
   actions: {
     budget: 'Sustainable mobility budget',

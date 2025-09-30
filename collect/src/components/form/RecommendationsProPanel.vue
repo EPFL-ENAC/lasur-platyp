@@ -12,7 +12,9 @@
             <q-item-label class="text-body1 text-green-6 text-bold">{{
               t('form.journey_pro.label_idx', { index: index + 1 })
             }}</q-item-label>
-            <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
+            <q-item-label :class="reco === 'avoid' ? 'text-subtitle1' : 'text-h5'">{{
+              t(`reco.${reco}`)
+            }}</q-item-label>
             <BenefitsPanel :reco="reco" class="q-mt-sm" />
             <PlaceItem
               v-if="

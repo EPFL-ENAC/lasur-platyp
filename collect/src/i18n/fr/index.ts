@@ -162,7 +162,8 @@ export default {
     walking: 'La marche',
     bike: 'Le vélo',
     pub: 'Les transports publics',
-    avoid: 'Éviter les déplacements',
+    avoid:
+      'Visez à réduire la fréquence de vos déplacements de longue distance et, dans la mesure du possible, privilégiez les solutions de vidéoconférence.',
   },
   actions: {
     budget: 'Budget mobilité',
