@@ -3,6 +3,7 @@ export interface Option {
   label: string
   hint?: string
   icon?: string
+  exclusive?: boolean
 }
 
 export interface ToggleOption {

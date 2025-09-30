@@ -42,6 +42,7 @@ export default {
       heavy: 'Transporting heavy/bulky equipment',
       night: 'Night work',
       disabled: 'Parking card for people with reduced mobility',
+      none: 'No particular constraints',
     },
     equipments: 'Which of the following equipments do you have access to?',
     equipments_option: {

@@ -41,6 +41,7 @@ export default {
       heavy: 'Transport de matériel lourd ou encombrant',
       night: 'Horaires spéciaux',
       disabled: 'Carte de stationnement pour personne à mobilité réduite',
+      none: 'Aucune contrainte particulière',
     },
     equipments: 'De quels équipements de mobilité disposez-vous ?',
     equipments_option: {

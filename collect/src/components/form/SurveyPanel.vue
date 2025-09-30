@@ -385,6 +385,7 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'heavy', label: t('form.constraints_option.heavy') },
   { value: 'night', label: t('form.constraints_option.night') },
   { value: 'disabled', label: t('form.constraints_option.disabled') },
+  { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
 ])
 
 const firstRecoDt = computed(() =>
