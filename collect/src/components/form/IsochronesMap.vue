@@ -21,6 +21,7 @@
                 <q-item-section>{{ pois.label }}</q-item-section>
                 <q-item-section side>
                   <q-toggle
+                    dense
                     v-model="showPoisMap[pois.value]"
                     :color="pois.color"
                     keep-color
@@ -84,6 +85,7 @@ const { t } = useI18n()
 const map = ref<Map>()
 let marker: Marker | undefined
 const loadingIsochrones = ref(true)
+const loadingPois = ref(false)
 const isochronesData = ref<GeoJSON.FeatureCollection>()
 const selectedMode = ref<string>('WALK')
 const selectedModeCutoffSec = ref<number[]>([]) // in seconds
@@ -215,7 +217,7 @@ async function loadPois(categories: string[]) {
   if (!map.value) return
   if (!isochronesData.value || !isochronesData.value.bbox) return
   const bbox = isochronesData.value.bbox as [number, number, number, number]
-  loadingIsochrones.value = true
+  loadingPois.value = true
   const data = await isoService.getPois({
     categories,
     bbox,
@@ -223,7 +225,7 @@ async function loadPois(categories: string[]) {
   if (data) {
     showPois(data)
   }
-  loadingIsochrones.value = false
+  loadingPois.value = false
 }
 
 function showIsochrones(geojson: GeoJSON.FeatureCollection) {

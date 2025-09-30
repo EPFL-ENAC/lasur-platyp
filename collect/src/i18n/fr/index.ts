@@ -72,6 +72,7 @@ export default {
     intermodality: 'Quels sont les modes de transport que vous utilisez ?',
     intermodality_hint: 'Décrivez un ou plusieurs trajets typiques domicile - travail.',
     journey: {
+      label_idx: 'Trajet #{index}',
       hint: "Décrivez la suite de modes de transports d'un trajet typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
@@ -80,6 +81,7 @@ export default {
     intermodality_pro: 'Quel est le principal mode de transport que vous utilisez ?',
     intermodality_pro_hint: 'Décrivez un ou plusieurs trajets professionnels typiques.',
     journey_pro: {
+      label_idx: 'Trajet professionnel #{index}',
       hint: "Sélectionnez le principal mode de transport d'un trajet professionnel typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
@@ -153,6 +155,12 @@ export default {
     vae: 'Le vélo à assistance électrique',
     velo: 'Le vélo',
     cargo: 'Le vélo cargo',
+    boat: 'Le bateau',
+    elec_moto: 'La moto/scooter électrique',
+    walking: 'La marche',
+    bike: 'Le vélo',
+    pub: 'Les transports publics',
+    avoid: 'Éviter les déplacements',
   },
   actions: {
     budget: 'Budget mobilité',

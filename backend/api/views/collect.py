@@ -152,7 +152,7 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
         campaign = await CampaignService(session).get(record.campaign_id)
         custom_actions = await CompanyActionService(session).get_company_actions(company.id)
         actions = service.get_recommendation_employer_actions(
-            company, campaign, custom_actions, locale, reco["reco_dt2"], reco_pro["reco_pro_loc"], reco_pro["reco_pro_reg"], reco_pro["reco_pro_int"])
+            company, campaign, custom_actions, locale, reco["reco_dt2"], reco_pro["reco_pros"])
         response["reco_actions"] = actions
     record.typo = response
     record.comments = None  # clear comments

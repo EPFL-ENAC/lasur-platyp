@@ -15,6 +15,9 @@
         <template v-for="(reco, idx) in recoDt" :key="idx">
           <div class="rounded-borders q-mb-md bg-secondary text-white">
             <div class="q-pa-md">
+              <q-item-label class="text-body1 text-green-6 text-bold">{{
+                t('form.journey.label_idx', { index: idx + 1 })
+              }}</q-item-label>
               <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
               <BenefitsPanel :reco="reco" class="q-mt-sm" />
               <IsochronesMap

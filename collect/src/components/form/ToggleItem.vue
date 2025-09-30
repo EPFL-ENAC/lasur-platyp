@@ -9,7 +9,7 @@
         @click="selected = false"
         >{{ leftLabel }}</span
       >
-      <q-toggle v-model="selected" color="primary" size="80px" @update:model-value="onUpdate" />
+      <q-toggle v-model="selected" color="primary" size="80px" />
       <span
         class="text-h4 q-mt-md q-ml-lg cursor-pointer"
         :class="selected ? 'text-white' : 'text-grey-6'"
@@ -33,17 +33,8 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 
-const selected = ref<boolean>(false)
-
-onMounted(() => {
-  if (props.modelValue === undefined) {
-    emit('update:modelValue', false)
-  } else {
-    selected.value = props.modelValue
-  }
+const selected = computed({
+  get: () => props.modelValue,
+  set: (val: boolean) => emit('update:modelValue', val),
 })
-
-function onUpdate() {
-  emit('update:modelValue', selected.value)
-}
 </script>

@@ -52,7 +52,6 @@ class ModalTypoService:
     def get_recommendation_multi(self, record: Record) -> dict:
         """Get multi typo suggestions for a record"""
         url = f"{self.url}/modal-typo/reco-multi"
-        freq_mods = self.get_freq_mod_params(record)
         data = {
             "o_lon": record.data["origin"]["lon"],
             "o_lat": record.data["origin"]["lat"],
@@ -60,13 +59,7 @@ class ModalTypoService:
             "d_lat": record.data["workplace"]["lat"],
             "tps_traj": record.data["travel_time"],
             "constraints": record.data["constraints"],
-            "fm_dt_voit": freq_mods["fm_dt_voit"],
-            "fm_dt_moto": freq_mods["fm_dt_moto"],
-            "fm_dt_tpu": freq_mods["fm_dt_tpu"],
-            "fm_dt_train": freq_mods["fm_dt_train"],
-            "fm_dt_velo": freq_mods["fm_dt_velo"],
-            "fm_dt_march": freq_mods["fm_dt_march"],
-            "fm_dt_inter": freq_mods["fm_dt_inter"],
+            "freq_mod_journeys": record.data["freq_mod_journeys"],
 
             "a_voit": record.data["needs_car"],
             "a_moto": record.data["needs_moto"],
@@ -91,40 +84,22 @@ class ModalTypoService:
     def get_recommendation_pro(self, record: Record, scores: dict) -> dict:
         """Get typo pro suggestions for a record"""
         record.company_id
-        url = f"{self.url}/modal-typo/reco-pro"
-        freq_mod_pros = self.get_freq_mod_pro_params(record)
+        url = f"{self.url}/modal-typo/reco-pro-h3"
         data = {
             "score_velo": scores["velo"],
             "score_tpu": scores["tpu"],
             "score_train": scores["train"],
             "score_elec": scores["elec"],
-            # TODO update pro model in typo
-            "pro_loc": record.data["travel_pro"],
-            "pro_reg": record.data["travel_pro"],
-            "pro_int": record.data["travel_pro"],
-            "fm_pro_loc_voit": freq_mod_pros["fm_pro_voit"],
-            "fm_pro_loc_moto": freq_mod_pros["fm_pro_moto"],
-            "fm_pro_loc_tpu": freq_mod_pros["fm_pro_tpu"],
-            "fm_pro_loc_velo": freq_mod_pros["fm_pro_velo"],
-            "fm_pro_loc_marc": freq_mod_pros["fm_pro_marc"],
-            "fm_pro_loc_train": freq_mod_pros["fm_pro_train"],
-            "fm_pro_reg_train": freq_mod_pros["fm_pro_train"],
-            # TODO add following when typo model is updated
-            # "fm_pro_bat": freq_mod_pros["fm_pro_bat"],
-            "fm_pro_int_avio": freq_mod_pros["fm_pro_avio"],
-            # TODO remove following when typo model is updated
-            "fm_pro_reg_voit": freq_mod_pros["fm_pro_voit"],
-            "fm_pro_reg_moto": freq_mod_pros["fm_pro_moto"],
-            "fm_pro_reg_avio": freq_mod_pros["fm_pro_train"],
-            "fm_pro_int_voit": freq_mod_pros["fm_pro_voit"],
-            "fm_pro_int_train": freq_mod_pros["fm_pro_train"],
+            "freq_mod_pro_journeys": record.data["freq_mod_pro_journeys"],
+            "d_lon": record.data["workplace"]["lon"],
+            "d_lat": record.data["workplace"]["lat"],
         }
         response = requests.post(
             url, headers=self.headers, json=data)
         response.raise_for_status()
         return response.json()
 
-    def get_recommendation_employer_actions(self, company: Company, campaign: Campaign, custom_actions: list[CompanyAction], locale: str, reco_dt2: list, reco_pro_loc: str, reco_pro_reg: str, reco_pro_int: str) -> dict:
+    def get_recommendation_employer_actions(self, company: Company, campaign: Campaign, custom_actions: list[CompanyAction], locale: str, reco_dt2: list, reco_pro: list[str]) -> dict:
         """Get employer actions for a record"""
         url = f"{self.url}/modal-typo/empl"
 
@@ -179,9 +154,7 @@ class ModalTypoService:
                 "mesures_pro_elec": actions["mesures_pro_elec"] if "mesures_pro_elec" in actions else [],
             },
             "reco_dt2": reco_dt2,
-            "reco_pro_loc": reco_pro_loc,
-            "reco_pro_reg": reco_pro_reg,
-            "reco_pro_int": reco_pro_int
+            "reco_pro": reco_pro
         }
         response = requests.post(
             url, headers=self.headers, json=data)

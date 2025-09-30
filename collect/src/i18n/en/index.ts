@@ -72,6 +72,7 @@ export default {
     intermodality: 'Which modes of transport do you use?',
     intermodality_hint: 'Describe one or more typical journeys from home to work.',
     journey: {
+      label_idx: 'Journey #{index}',
       hint: 'Describe the sequence of transport modes of a typical journey.',
       add: 'Add journey',
       remove: 'Remove journey',
@@ -80,6 +81,7 @@ export default {
     intermodality_pro: 'Which main mode of transport do you use?',
     intermodality_pro_hint: 'Describe one or more typical professional journeys.',
     journey_pro: {
+      label_idx: 'Professional journey #{index}',
       hint: 'Select the main mode of transport of a typical professional journey.',
       add: 'Add journey',
       remove: 'Remove journey',
@@ -144,6 +146,12 @@ export default {
     vae: 'Electric bike',
     velo: 'Bike',
     cargo: 'Cargo bike',
+    boat: 'Boat',
+    elec_moto: 'Electric motorcycle/scooter',
+    walking: 'Walking',
+    bike: 'Bike',
+    pub: 'Public transport',
+    avoid: 'Avoid travel',
   },
   actions: {
     budget: 'Sustainable mobility budget',
