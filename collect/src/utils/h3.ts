@@ -40,10 +40,10 @@ const EUROPE_BOUNDS: Bounds = {
   north: 66,
 }
 
-const SWISS_BOUNDS: Bounds = {
-  west: 5,
+const REGION_BOUNDS: Bounds = {
+  west: 4.5,
   south: 45,
-  east: 10,
+  east: 10.5,
   north: 49,
 }
 
@@ -83,7 +83,7 @@ class H3GridManager {
   }
 
   private getSwissHexagons(): H3FeatureCollection {
-    return this.getHexagons('local', SWISS_BOUNDS, 1, 10, 5)
+    return this.getHexagons('local', REGION_BOUNDS, 1, 10, 5)
   }
 
   private getHexagons(
