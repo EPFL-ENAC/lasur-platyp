@@ -139,6 +139,8 @@ export default {
   main_mode: {
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
     bike: 'Actuellement, vous vous rendez au travail principalement en vélo (mécanique ou électrique).',
+    ebike: 'Actuellement, vous vous rendez au travail principalement en vélo électrique.',
+    carpool: 'Actuellement, vous vous rendez au travail principalement en covoiturage.',
     pub: 'Actuellement, vous vous rendez au travail principalement en transports publics.',
     moto: 'Actuellement, vous vous rendez au travail principalement en moto ou en scooter.',
     car: 'Actuellement, vous vous rendez au travail principalement en voiture.',

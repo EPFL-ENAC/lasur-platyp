@@ -132,6 +132,8 @@ export default {
   main_mode: {
     walking: 'At present, you mainly walk to get to your workplace.',
     bike: 'At present, you mainly use a bicycle or an electric bike to get to your workplace.',
+    ebike: 'At present, you mainly use an electric bike to get to your workplace.',
+    carpool: 'At present, you mainly use carpooling to get to your workplace.',
     pub: 'At present, you mainly use public transport to get to your workplace.',
     moto: 'At present, you mainly use a motorcycle, scooter or moped to get to your workplace.',
     car: 'At present, you mainly use a car to get to your workplace.',

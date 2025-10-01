@@ -69,9 +69,11 @@ const mainFm = computed(() => {
   const fm: { [key: string]: number } = {
     walking: survey.getFreqMod('walking'),
     bike: survey.getFreqMod('bike'),
+    ebike: survey.getFreqMod('ebike'),
     pub: survey.getFreqMod('pub'),
     moto: survey.getFreqMod('moto'),
     car: survey.getFreqMod('car'),
+    carpool: survey.getFreqMod('carpool'),
     train: survey.getFreqMod('train'),
   }
   let max = -1
