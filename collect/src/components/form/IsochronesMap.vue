@@ -1,6 +1,12 @@
 <template>
   <div>
-    <div class="text-subtitle1 q-mb-sm">{{ t('isochrones.accessible_areas') }}</div>
+    <div class="text-subtitle1 q-mb-sm">
+      {{
+        t('isochrones.accessible_areas', {
+          mode: t(`isochrones.modes.${selectedMode.toLowerCase()}`),
+        })
+      }}
+    </div>
     <div v-if="loadingIsochrones">
       <q-spinner-dots color="primary" size="50px" />
     </div>

@@ -205,8 +205,14 @@ export default {
     website: 'Please visit the information page at {info_url}',
   },
   isochrones: {
-    accessible_areas: 'Areas accessible by this mode of transport',
+    accessible_areas:
+      'Did you know that you can access the following areas and points of interest {mode}?',
     pois: 'Points of interest',
+    modes: {
+      walking: 'on foot',
+      bike: 'by bike',
+      ebike: 'by e-bike',
+    },
     categories: {
       food: 'Food',
       education: 'Education',
