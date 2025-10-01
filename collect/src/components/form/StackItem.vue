@@ -73,7 +73,8 @@
                     <q-img
                       v-if="child.icon?.endsWith('.svg')"
                       :src="child.icon"
-                      style="width: 38px; height: 38px"
+                      style="width: 40px; height: 40px"
+                      no-spinner
                       class="icon-primary"
                     />
                     <q-icon v-else :name="child.icon" color="primary" size="lg" />
