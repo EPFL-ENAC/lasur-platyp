@@ -65,7 +65,11 @@ const modeOptions = computed<Option[]>(() => [
     icon: 'directions_car',
     children: [
       { value: 'car', label: t('form.mode.car'), icon: 'directions_car' },
-      { value: 'carpool', label: t('form.mode.carpool'), icon: 'local_taxi' },
+      {
+        value: 'carpool',
+        label: t('form.mode.carpool'),
+        icon: '/icons/directions_carpool.svg',
+      },
     ],
   },
   { value: 'train', label: t('form.mode.train'), icon: 'train' },

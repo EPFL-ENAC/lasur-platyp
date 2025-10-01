@@ -70,7 +70,13 @@
                   @click="onAdd(child)"
                 >
                   <q-item-section avatar>
-                    <q-icon :name="child.icon" color="primary" size="lg" />
+                    <q-img
+                      v-if="child.icon?.endsWith('.svg')"
+                      :src="child.icon"
+                      style="width: 38px; height: 38px"
+                      class="icon-primary"
+                    />
+                    <q-icon v-else :name="child.icon" color="primary" size="lg" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ child.label }}</q-item-label>
@@ -239,5 +245,8 @@ function onDropInsert(e: DragEvent, index: number) {
 }
 .drag-enter {
   // border: dashed 4px $secondary !important;
+}
+.icon-primary {
+  filter: invert(26%) sepia(77%) saturate(3932%) hue-rotate(140deg) brightness(102%) contrast(99%);
 }
 </style>
