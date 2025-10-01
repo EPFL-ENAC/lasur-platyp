@@ -89,7 +89,7 @@ export default {
     intermodality_pro_hint: 'Describe one or more typical professional journeys.',
     journey_pro: {
       label_idx: 'Professional journey #{index}',
-      hint: 'Select the main mode of transport of a typical professional journey.',
+      hint: 'Select the destination and the main mode of transport of a typical professional journey.',
       add: 'Add journey',
       remove: 'Remove journey',
       days_per_year: 'Days per year',
