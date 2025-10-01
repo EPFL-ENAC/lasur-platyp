@@ -219,7 +219,7 @@ export default {
       "Saviez-vous que vous avez accès aux zones et points d'intérêts ci-dessous {mode} ?",
     pois: "Points d'intérêt",
     modes: {
-      walking: 'à pied',
+      walk: 'à pied',
       bike: 'en vélo',
       ebike: 'en vélo électrique',
     },

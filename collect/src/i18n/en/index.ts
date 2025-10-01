@@ -209,7 +209,7 @@ export default {
       'Did you know that you can access the following areas and points of interest {mode}?',
     pois: 'Points of interest',
     modes: {
-      walking: 'on foot',
+      walk: 'on foot',
       bike: 'by bike',
       ebike: 'by e-bike',
     },
