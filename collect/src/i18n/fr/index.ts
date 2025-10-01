@@ -79,7 +79,7 @@ export default {
     intermodality: 'Quels sont les modes de transport que vous utilisez ?',
     intermodality_hint: 'Décrivez un ou plusieurs trajets typiques domicile - travail.',
     journey: {
-      label_idx: 'Trajet #{index}',
+      label_idx: 'Recommandation #{index}',
       hint: "Décrivez la suite de modes de transports d'un trajet typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
