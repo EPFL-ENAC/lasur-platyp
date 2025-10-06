@@ -121,6 +121,8 @@ export default {
         ebike: 'Electric bicycle',
         mob_subs: 'Shared mobility subscription',
         car_passenger: 'Car (as passenger)',
+        car: 'Car (driver/passenger)',
+        ev: 'Electric vehicle',
       },
     },
     constraints: {

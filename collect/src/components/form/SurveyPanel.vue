@@ -376,8 +376,8 @@ const equipmentsOptions = computed<Option[]>(() => [
   { value: 'train_subs', label: t('form.equipments_option.train_subs') },
   { value: 'mob_subs', label: t('form.equipments_option.mob_subs') },
   { value: 'moto', label: t('form.equipments_option.moto') },
-  { value: 'car_driver', label: t('form.equipments_option.car_driver') },
-  { value: 'car_passenger', label: t('form.equipments_option.car_passenger') },
+  { value: 'car', label: t('form.equipments_option.car') },
+  { value: 'ev', label: t('form.equipments_option.ev') },
 ])
 
 const constraintsOptions = computed<Option[]>(() => [

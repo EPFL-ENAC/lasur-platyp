@@ -52,11 +52,11 @@ export default {
       bike: 'Vélo',
       upt_subs: 'Abonnement de transports publics urbains',
       train_subs: 'Abonnement de train',
-      car_driver: 'Voiture (en tant que conducteur)',
       moto: 'Moto / scooter / cyclomoteur',
       ebike: 'Vélo à assistance électrique',
       mob_subs: 'Abonnement de mobilité partagée (mobility, etc.)',
-      car_passenger: 'Voiture (en tant que passager)',
+      car: 'Voiture (conducteur/passager)',
+      ev: 'Véhicule électrique',
     },
     freq_mod:
       'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',

@@ -123,6 +123,8 @@ export default {
         ebike: 'Vélo à assistance électrique',
         mob_subs: 'Abonnement de mobilité\npartagée',
         car_passenger: 'Voiture (en tant que passager)',
+        car: 'Voiture (conducteur/passager)',
+        ev: 'Véhicule électrique',
       },
     },
     constraints: {
