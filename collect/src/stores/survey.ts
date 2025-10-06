@@ -115,8 +115,17 @@ export const useSurvey = defineStore(
       if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
         let freq = 0
         record.value.data.freq_mod_journeys.forEach((j) => {
-          if (j.modes.includes(mode)) {
-            freq += j.days
+          // unique values of modes
+          const modes = Array.from(new Set(j.modes))
+          if (modes.includes(mode)) {
+            if (mode === 'walking') {
+              // only count walking if it's the only mode
+              if (modes.length === 1) {
+                freq += j.days
+              }
+            } else {
+              freq += j.days
+            }
           }
         })
         return freq
@@ -126,7 +135,12 @@ export const useSurvey = defineStore(
 
     function getFreqModCombined() {
       if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
-        return record.value.data.freq_mod_journeys.some((j) => j.modes.length > 1)
+        return (
+          record.value.data.freq_mod_journeys
+            // remove walking from modes
+            .map((j) => ({ ...j, modes: j.modes.filter((m) => m !== 'walking') }))
+            .some((j) => j.modes.length > 1)
+        )
       }
       return false
     }
@@ -137,8 +151,8 @@ export const useSurvey = defineStore(
      * If there is a combined mode, return 'combined'.
      * If no mode is found, return ''.
      */
-    function getMainFreqMod() {
-      if (getFreqModCombined()) return 'combined'
+    function getMainFreqMod(withCombined = true) {
+      if (withCombined && getFreqModCombined()) return 'combined'
       const fm: { [key: string]: number } = {
         walking: getFreqMod('walking'),
         bike: getFreqMod('bike'),
@@ -158,6 +172,10 @@ export const useSurvey = defineStore(
         }
       })
       return main
+    }
+
+    function isModeSustainable(mode: string) {
+      return !['car', 'moto'].includes(mode)
     }
 
     /**
@@ -191,6 +209,7 @@ export const useSurvey = defineStore(
       getFreqMod,
       getFreqModCombined,
       getMainFreqMod,
+      isModeSustainable,
       isModeInRecommendation,
     }
   },

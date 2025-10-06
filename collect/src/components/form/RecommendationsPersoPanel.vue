@@ -75,7 +75,7 @@ const survey = useSurvey()
 
 // main frequency mode
 const mainFm = computed(() => survey.getMainFreqMod())
-const isModeSustainable = computed(() => !['car', 'moto', 'plane'].includes(mainFm.value))
+const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
 const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
 const recoDt = computed(() =>
   survey.recommendation.reco ? survey.recommendation.reco.reco_dt2 : [],
