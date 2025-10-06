@@ -13,6 +13,7 @@ declare global {
   const $ref: typeof import('vue/macros')['$ref']
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
+  const CATEGORY_TAGS: typeof import('./stores/isochrones')['CATEGORY_TAGS']
   const EffectScope: typeof import('vue')['EffectScope']
   const Service: typeof import('./stores/services')['Service']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -83,6 +84,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useId: typeof import('vue')['useId']
+  const useIsochrones: typeof import('./stores/isochrones')['useIsochrones']
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
   const useParticipants: typeof import('./stores/participants')['useParticipants']
@@ -123,6 +125,7 @@ declare module 'vue' {
     readonly $ref: UnwrapRef<typeof import('vue/macros')['$ref']>
     readonly $shallowRef: UnwrapRef<typeof import('vue/macros')['$shallowRef']>
     readonly $toRef: UnwrapRef<typeof import('vue/macros')['$toRef']>
+    readonly CATEGORY_TAGS: UnwrapRef<typeof import('./stores/isochrones')['CATEGORY_TAGS']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Service: UnwrapRef<typeof import('./stores/services')['Service']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
@@ -192,6 +195,7 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
+    readonly useIsochrones: UnwrapRef<typeof import('./stores/isochrones')['useIsochrones']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useParticipants: UnwrapRef<typeof import('./stores/participants')['useParticipants']>

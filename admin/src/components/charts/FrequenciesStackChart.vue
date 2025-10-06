@@ -89,9 +89,7 @@ function initChartOptions() {
       return {
         key: shortKey(item.field),
         name: keyLabel(item.field),
-        value: item.data
-          .map((d) => (d.sum === undefined ? d.count : d.sum))
-          .reduce((a, b) => a + b, 0),
+        value: item.data.map((d) => (d.sum === undefined ? 0 : d.sum)).reduce((a, b) => a + b, 0),
       }
     })
   } else {
@@ -99,7 +97,7 @@ function initChartOptions() {
     dataset = frequencies.data.map((item) => ({
       key: shortKey(item.value),
       name: keyLabel(item.value),
-      value: item.sum === undefined ? item.count : item.sum,
+      value: item.sum === undefined ? 0 : item.sum,
     }))
     total = frequencies.total
   }

@@ -106,6 +106,8 @@
     "useCampaigns": true,
     "useParticipants": true,
     "useActions": true,
-    "useStats": true
+    "useStats": true,
+    "useIsochrones": true,
+    "CATEGORY_TAGS": true
   }
 }

@@ -23,6 +23,9 @@ KEYCLOAK_REALM=LASUR
 KEYCLOAK_URL=https://enac-it-sso.epfl.ch
 KEYCLOAK_API_ID=local-api
 KEYCLOAK_API_SECRET=xxxxx
+# LASUR web services
+LASUR_API_URL=https://lasur-ws.epfl.ch
+LASUR_API_KEY=xxxxx
 ```
 
 Note: the API Keycloak client is used to manage local users. The required role for this client are:

@@ -13,6 +13,7 @@ from api.views.records import router as records_router
 from api.views.users import router as users_router
 from api.views.collect import router as collect_router
 from api.views.stats import router as stats_router
+from api.views.isochrones import router as isochrones_router
 
 basicConfig(level=DEBUG)
 
@@ -99,4 +100,10 @@ app.include_router(
     stats_router,
     prefix="/stats",
     tags=["Statistics"],
+)
+
+app.include_router(
+    isochrones_router,
+    prefix="/isochrones",
+    tags=["Isochrones"],
 )

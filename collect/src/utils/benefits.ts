@@ -14,8 +14,11 @@ import TrainEnMd from 'src/assets/benefits/train-en.md'
 import TrainFrMd from 'src/assets/benefits/train-fr.md'
 import VaeEnMd from 'src/assets/benefits/vae-en.md'
 import VaeFrMd from 'src/assets/benefits/vae-fr.md'
+import CargoEnMd from 'src/assets/benefits/cargo-en.md'
+import CargoFrMd from 'src/assets/benefits/cargo-fr.md'
 
 export const benefits: { [key: string]: { en: string; fr: string } } = {
+  bike: { en: VeloEnMd, fr: VeloFrMd },
   velo: { en: VeloEnMd, fr: VeloFrMd },
   covoit: { en: CovoitEnMd, fr: CovoitFrMd },
   elec: { en: ElecEnMd, fr: ElecFrMd },
@@ -24,6 +27,7 @@ export const benefits: { [key: string]: { en: string; fr: string } } = {
   tpu: { en: TpuEnMd, fr: TpuFrMd },
   train: { en: TrainEnMd, fr: TrainFrMd },
   vae: { en: VaeEnMd, fr: VaeFrMd },
+  cargo: { en: CargoEnMd, fr: CargoFrMd },
 }
 
 export function hasBenefits(reco: string) {

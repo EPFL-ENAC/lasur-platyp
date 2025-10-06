@@ -105,6 +105,9 @@ async def compute_freq_mod_pro_frequencies(
             'freq_mod_pro_region_train',
             'freq_mod_pro_region_moto',
             'freq_mod_pro_region_plane',
+            'freq_mod_pro_europe_car',
+            'freq_mod_pro_europe_train',
+            'freq_mod_pro_europe_plane',
             'freq_mod_pro_inter_car',
             'freq_mod_pro_inter_train',
             'freq_mod_pro_inter_plane']]

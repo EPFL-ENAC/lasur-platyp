@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md" :class="labelClass">{{ label }}</div>
-    <div v-if="hint" class="text-h6">{{ hint }}</div>
+    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <q-rating
       v-model="selected"
       size="3.5em"

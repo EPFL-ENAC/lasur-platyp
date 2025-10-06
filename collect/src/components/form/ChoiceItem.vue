@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
+    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="q-mt-lg">
       <div :class="col ? 'row q-col-gutter-md' : ''">
@@ -45,6 +45,7 @@ interface Props {
   multiple?: boolean
   max?: number
   col?: number
+  labelClass?: string
   optionLabelClass?: string
 }
 const props = defineProps<Props>()
@@ -79,6 +80,26 @@ function onOption(option: Option) {
   if (props.multiple) {
     const value = (props.modelValue as string[]) || []
     const index = value.indexOf(option.value)
+    if (option.exclusive) {
+      if (index === -1) {
+        // select exclusive option: clear all others
+        emit('update:modelValue', [option.value])
+      } else {
+        // unselect exclusive option
+        value.splice(index, 1)
+        emit('update:modelValue', value)
+      }
+      return
+    } else {
+      // unselect all exclusive options
+      props.options
+        .filter((opt) => opt.exclusive)
+        .forEach((opt) => {
+          const i = value.indexOf(opt.value)
+          if (i !== -1) value.splice(i, 1)
+        })
+    }
+    // toggle option
     if (index === -1) {
       if (props.max === undefined || value.length < props.max) {
         value.push(option.value)

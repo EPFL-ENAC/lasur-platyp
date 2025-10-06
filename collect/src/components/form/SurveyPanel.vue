@@ -115,314 +115,21 @@
         :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
       />
     </div>
-    <div v-if="survey.stepName === 'freq_mod'">
-      <SectionItem :label="t('form.freq_mod')" :hint="t('form.freq_mod_hint')" class="q-mb-lg" />
-      <SliderItem
-        :label="t('form.mode.walking')"
-        v-model="survey.record.data.freq_mod_walking"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.bike')"
-        v-model="survey.record.data.freq_mod_bike"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.pub')"
-        v-model="survey.record.data.freq_mod_pub"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.train')"
-        v-model="survey.record.data.freq_mod_train"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.moto')"
-        v-model="survey.record.data.freq_mod_moto"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
-      <SliderItem
-        :label="t('form.mode.car')"
-        v-model="survey.record.data.freq_mod_car"
-        :min="0"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-      />
+    <div v-if="survey.stepName === 'intermodality'">
+      <JourneysPanel />
+    </div>
+    <div v-if="survey.stepName === 'travel_pro'">
       <ToggleItem
-        :label="t('form.mode.combined')"
+        :label="t('form.travel_pro')"
+        v-model="survey.record.data.travel_pro"
         :left-label="t('form.no')"
         :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_combined"
-        class="q-mt-xl q-mb-lg"
       />
     </div>
-    <div v-if="survey.stepName === 'trav_pro'">
-      <ChoiceItem
-        :label="t('form.trav_pro')"
-        :options="travProOptions"
-        v-model="survey.record.data.trav_pro"
-        multiple
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
-      />
-    </div>
-    <div v-if="survey.stepName === 'freq_mod_pro_local'">
-      <SectionItem
-        :label="t('form.freq_trav_pro_local_hint')"
-        label-class="text-h2 text-green-2"
-        class="q-mb-lg"
-      />
-      <SectionItem
-        :label="t('form.freq_mod_pro')"
-        :hint="t('form.days_per_month')"
-        class="q-mb-lg"
-      />
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.walking')"
-            v-model="survey.record.data.freq_mod_pro_local_walking"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.bike')"
-            v-model="survey.record.data.freq_mod_pro_local_bike"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.pub')"
-            v-model="survey.record.data.freq_mod_pro_local_pub"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.freq_mod_pro_local_train"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.moto')"
-            v-model="survey.record.data.freq_mod_pro_local_moto"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.freq_mod_pro_local_car"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_pro_local_combined"
-        class="q-mt-xl q-mb-lg"
-      />
-    </div>
-    <div v-if="survey.stepName === 'freq_mod_pro_region'">
-      <SectionItem
-        :label="t('form.freq_trav_pro_region_hint')"
-        label-class="text-h2 text-green-2"
-        class="q-mb-lg"
-      />
-      <SectionItem
-        :label="t('form.freq_mod_pro')"
-        :hint="t('form.days_per_month')"
-        class="q-mb-lg"
-      />
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.pub')"
-            v-model="survey.record.data.freq_mod_pro_region_pub"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.freq_mod_pro_region_train"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.moto')"
-            v-model="survey.record.data.freq_mod_pro_region_moto"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.freq_mod_pro_region_car"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.plane')"
-            v-model="survey.record.data.freq_mod_pro_region_plane"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6"></div>
-      </div>
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_pro_region_combined"
-        class="q-mt-xl q-mb-lg"
-      />
-    </div>
-    <div v-if="survey.stepName === 'freq_mod_pro_inter'">
-      <SectionItem
-        :label="t('form.freq_trav_pro_inter_hint')"
-        label-class="text-h2 text-green-2"
-        class="q-mb-lg"
-      />
-      <SectionItem
-        :label="t('form.freq_mod_pro')"
-        :hint="t('form.days_per_month')"
-        class="q-mb-lg"
-      />
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.freq_mod_pro_inter_car"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.freq_mod_pro_inter_train"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-xs-12 col-sm-6">
-          <NumberItem
-            :label="t('form.mode.plane')"
-            v-model="survey.record.data.freq_mod_pro_inter_plane"
-            :min="0"
-            :max="30"
-            :step="1"
-            :step2="5"
-            label-class="text-subtitle1 text-center"
-            class="bg-primary rounded-borders q-pa-md"
-          />
-        </div>
-        <div class="col-xs-12 col-sm-6"></div>
-      </div>
-      <ToggleItem
-        :label="t('form.mode.combined')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.freq_mod_pro_inter_combined"
-        class="q-mt-xl q-mb-lg"
+    <div v-if="survey.stepName === 'freq_mod_pro'">
+      <ProJourneysPanel
+        v-model="survey.record.data.freq_mod_pro_journeys"
+        :modes="['walking', 'bike', 'pub', 'moto', 'car', 'train', 'boat', 'plane']"
       />
     </div>
     <div v-if="survey.stepName === 'importance'">
@@ -538,57 +245,52 @@
         </div>
       </div>
     </div>
-    <div v-if="survey.stepName === 'adjectives_bike'">
-      <SectionItem
-        :label="t('form.adjectives')"
-        :hint="t('form.adjectives_hint')"
-        class="q-mb-lg"
-      />
-      <ToggleChoiceItem
-        :label="t('form.mode.bike')"
-        :options="adjectivePairsOptions"
-        v-model="survey.record.data.adjectives_bikes"
-        :max="3"
-        :col="q.screen.lt.sm ? 1 : 2"
-        option-label-class="text-h6"
-        class="q-mb-lg"
-      />
-    </div>
-    <div v-if="survey.stepName === 'adjectives_pub_train'">
-      <SectionItem
-        :label="t('form.adjectives')"
-        :hint="t('form.adjectives_hint')"
-        class="q-mb-lg"
-      />
-      <ToggleChoiceItem
-        :label="t('form.mode.pub_train')"
-        :options="adjectivePairsOptions"
-        v-model="survey.record.data.adjectives_pubs"
-        :max="3"
-        :col="q.screen.lt.sm ? 1 : 2"
-        option-label-class="text-h6"
-        class="q-mb-lg"
-      />
-    </div>
-    <div v-if="survey.stepName === 'adjectives_car_moto'">
-      <SectionItem
-        :label="t('form.adjectives')"
-        :hint="t('form.adjectives_hint')"
-        class="q-mb-lg"
-      />
-      <ToggleChoiceItem
-        :label="t('form.mode.car_moto')"
-        :options="adjectivePairsOptions"
-        v-model="survey.record.data.adjectives_motors"
-        :max="3"
-        :col="q.screen.lt.sm ? 1 : 2"
-        option-label-class="text-h6"
-        class="q-mb-lg"
-      />
-    </div>
     <div v-if="survey.stepName === 'recommendations'">
       <RecommendationsPanel />
       <InfoPanel class="q-mt-lg" />
+    </div>
+    <div v-if="survey.stepName === 'change' && survey.record.data.change">
+      <SectionItem
+        :label="t('form.change', { reco: t(`reco.${firstRecoDt}`) })"
+        label-class="text-h4"
+        class="q-mb-lg"
+      />
+      <RatingItem
+        v-if="isRecoChange"
+        :label="t('form.change_motivation')"
+        :hint="t('form.change_motivation_hint')"
+        v-model="survey.record.data.change.motivation"
+        :max="5"
+        label-class="text-h5"
+        class="q-mb-lg"
+        @update:model-value="onSave"
+      />
+      <ChoiceItem
+        :label="t('form.change_levers')"
+        :options="[
+          { value: 'finance', label: t('form.change_levers_option.financial_support') },
+          { value: 'flexibility', label: t('form.change_levers_option.work_flexibility') },
+          { value: 'collective', label: t('form.change_levers_option.collective_changes') },
+          { value: 'environment', label: t('form.change_levers_option.work_environment') },
+          { value: 'other', label: t('form.change_levers_option.other') },
+        ]"
+        v-model="survey.record.data.change.levers"
+        multiple
+        label-class="text-h5"
+        option-label-class="text-h5"
+        @update:model-value="onSave"
+      />
+      <q-input
+        v-if="survey.record.data.change.levers?.includes('other')"
+        v-model="survey.record.data.change.other_levers"
+        :label="t('form.change_other_levers_specify')"
+        type="textarea"
+        class="q-mb-lg text-h6"
+        bg-color="green-3"
+        filled
+        debounce="500"
+        @update:model-value="onSave"
+      />
     </div>
     <div v-if="survey.stepName === 'comments'">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -641,13 +343,13 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import type { Option, ToggleOption } from 'src/components/form/models'
+import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
-import ToggleChoiceItem from 'src/components/form/ToggleChoiceItem.vue'
+import JourneysPanel from 'src/components/form/JourneysPanel.vue'
+import ProJourneysPanel from 'src/components/form/ProJourneysPanel.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
-import SliderItem from 'src/components/form/SliderItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
@@ -674,8 +376,8 @@ const equipmentsOptions = computed<Option[]>(() => [
   { value: 'train_subs', label: t('form.equipments_option.train_subs') },
   { value: 'mob_subs', label: t('form.equipments_option.mob_subs') },
   { value: 'moto', label: t('form.equipments_option.moto') },
-  { value: 'car_driver', label: t('form.equipments_option.car_driver') },
-  { value: 'car_passenger', label: t('form.equipments_option.car_passenger') },
+  { value: 'car', label: t('form.equipments_option.car') },
+  { value: 'ev', label: t('form.equipments_option.ev') },
 ])
 
 const constraintsOptions = computed<Option[]>(() => [
@@ -683,88 +385,16 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'heavy', label: t('form.constraints_option.heavy') },
   { value: 'night', label: t('form.constraints_option.night') },
   { value: 'disabled', label: t('form.constraints_option.disabled') },
+  { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
 ])
 
-const travProOptions = computed<Option[]>(() => [
-  {
-    value: 'local',
-    label: t('form.trav_pro_option.local'),
-    hint: t('form.trav_pro_option.local_hint'),
-  },
-  {
-    value: 'region',
-    label: t('form.trav_pro_option.region'),
-    hint: t('form.trav_pro_option.region_hint'),
-  },
-  {
-    value: 'inter',
-    label: t('form.trav_pro_option.inter'),
-    hint: t('form.trav_pro_option.inter_hint'),
-  },
-])
+const firstRecoDt = computed(() =>
+  survey.recommendation.reco && survey.recommendation.reco.reco_dt2.length
+    ? survey.recommendation.reco.reco_dt2[0]
+    : '',
+)
 
-const adjectivePairsOptions = computed<ToggleOption[]>(() => [
-  {
-    trueValue: 'fast',
-    trueLabel: t('form.adjectives_option.fast'),
-    falseValue: 'slow',
-    falseLabel: t('form.adjectives_option.slow'),
-  },
-  {
-    trueValue: 'cheap',
-    trueLabel: t('form.adjectives_option.cheap'),
-    falseValue: 'expensive',
-    falseLabel: t('form.adjectives_option.expensive'),
-  },
-  {
-    trueValue: 'practical',
-    trueLabel: t('form.adjectives_option.practical'),
-    falseValue: 'impractical',
-    falseLabel: t('form.adjectives_option.impractical'),
-  },
-  {
-    trueValue: 'ecological',
-    trueLabel: t('form.adjectives_option.ecological'),
-    falseValue: 'polluting',
-    falseLabel: t('form.adjectives_option.polluting'),
-  },
-  {
-    trueValue: 'safe',
-    trueLabel: t('form.adjectives_option.safe'),
-    falseValue: 'dangerous',
-    falseLabel: t('form.adjectives_option.dangerous'),
-  },
-  {
-    trueValue: 'pleasant',
-    trueLabel: t('form.adjectives_option.pleasant'),
-    falseValue: 'unpleasant',
-    falseLabel: t('form.adjectives_option.unpleasant'),
-  },
-  {
-    trueValue: 'autonomous',
-    trueLabel: t('form.adjectives_option.autonomous'),
-    falseValue: 'constraining',
-    falseLabel: t('form.adjectives_option.constraining'),
-  },
-  {
-    trueValue: 'relax',
-    trueLabel: t('form.adjectives_option.relax'),
-    falseValue: 'tiring',
-    falseLabel: t('form.adjectives_option.tiring'),
-  },
-  {
-    trueValue: 'healthy',
-    trueLabel: t('form.adjectives_option.healthy'),
-    falseValue: 'bad_weather',
-    falseLabel: t('form.adjectives_option.bad_weather'),
-  },
-  {
-    trueValue: 'reliable',
-    trueLabel: t('form.adjectives_option.reliable'),
-    falseValue: 'congested',
-    falseLabel: t('form.adjectives_option.congested'),
-  },
-])
+const isRecoChange = computed(() => !survey.isModeInRecommendation(survey.getMainFreqMod()))
 
 function nextStep() {
   if (survey.stepName === 'agreement') {
@@ -790,6 +420,29 @@ function nextStep() {
       return
     }
   }
+  if (survey.stepName === 'intermodality') {
+    for (const journey of survey.record.data.freq_mod_journeys || []) {
+      if (journey.modes === undefined || journey.modes.length === 0) {
+        notifyError(t('form.error.journey_mode'))
+        return
+      }
+    }
+  }
+  if (survey.stepName === 'freq_mod_pro') {
+    const errors: string[] = []
+    for (const journey of survey.record.data.freq_mod_pro_journeys || []) {
+      if (journey.mode === undefined || journey.mode === '') {
+        errors.push(t('form.error.pro_journey_mode'))
+      }
+      if (journey.hex_id === undefined || journey.hex_id === '') {
+        errors.push(t('form.error.pro_journey_hex_id'))
+      }
+    }
+    if (errors.length) {
+      errors.forEach((err) => notifyError(err))
+      return
+    }
+  }
   survey.incStep()
   if (survey.tokenOrSlug) {
     if (survey.stepName === 'recommendations') {
@@ -807,6 +460,11 @@ function nextStep() {
         .catch(notifyError)
     } else if (survey.isBeforeStep('recommendations')) {
       void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+    } else if (survey.stepName === 'change') {
+      if (survey.record.data.change === undefined) {
+        survey.record.data.change = {}
+      }
+      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
     }
   }
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -820,7 +478,9 @@ function prevStep() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
-  if (survey.stepName === 'places') {
+  if (
+    ['places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(survey.stepName || '')
+  ) {
     // ignore because of map dragging conflict
     return
   }
@@ -828,6 +488,15 @@ function handleSwipe(dir: any) {
     nextStep()
   } else if (dir['direction'] === 'right') {
     prevStep()
+  }
+}
+
+function onSave() {
+  if (survey.tokenOrSlug) {
+    if (survey.record.data.change.levers?.includes('other') === false) {
+      survey.record.data.change.other_levers = undefined
+    }
+    void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
   }
 }
 

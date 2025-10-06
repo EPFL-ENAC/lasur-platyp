@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import { api } from 'src/boot/api'
 import type { Record, CampaignInfo } from 'src/models'
 
+// Current version of the form data structure
+export const VERSION = '2.0.0'
+
 export const useCollector = defineStore('collector', () => {
   const info = ref<CampaignInfo>({} as CampaignInfo)
   const token = ref<string | null>(null)
@@ -25,6 +28,8 @@ export const useCollector = defineStore('collector', () => {
         token.value = tkOrSlug
         const cr = response.data
         const data = {
+          version: VERSION,
+
           terms_conditions: false,
           confidentiality: false,
 
@@ -34,34 +39,10 @@ export const useCollector = defineStore('collector', () => {
           travel_time: 5,
           equipments: [],
           constraints: [],
-          freq_mod_walking: 0,
-          freq_mod_bike: 0,
-          freq_mod_pub: 0,
-          freq_mod_moto: 0,
-          freq_mod_car: 0,
-          freq_mod_train: 0,
-          freq_mod_combined: false,
+          freq_mod_journeys: [{ modes: [], days: 1 }],
 
-          trav_pro: [],
-          freq_mod_pro_local_walking: 0,
-          freq_mod_pro_local_bike: 0,
-          freq_mod_pro_local_pub: 0,
-          freq_mod_pro_local_moto: 0,
-          freq_mod_pro_local_car: 0,
-          freq_mod_pro_local_train: 0,
-          freq_mod_pro_local_combined: false,
-
-          freq_mod_pro_region_pub: 0,
-          freq_mod_pro_region_moto: 0,
-          freq_mod_pro_region_car: 0,
-          freq_mod_pro_region_train: 0,
-          freq_mod_pro_region_plane: 0,
-          freq_mod_pro_region_combined: false,
-
-          freq_mod_pro_inter_car: 0,
-          freq_mod_pro_inter_train: 0,
-          freq_mod_pro_inter_plane: 0,
-          freq_mod_pro_inter_combined: false,
+          travel_pro: false,
+          freq_mod_pro_journeys: [],
 
           importance_time: 1,
           importance_cost: 1,
@@ -76,9 +57,9 @@ export const useCollector = defineStore('collector', () => {
           needs_moto: 1,
           needs_car: 1,
           needs_train: 1,
-          adjectives_bikes: [],
-          adjectives_pubs: [],
-          adjectives_motors: [],
+
+          change: {},
+
           ...cr.data,
         }
         return {
@@ -93,9 +74,9 @@ export const useCollector = defineStore('collector', () => {
 
   async function save(tkOrSlug: string, record: Record) {
     token.value = null
-    loading.value = true
+    //loading.value = true
     return api.post(`/collect/record/${tkOrSlug}`, record).finally(() => {
-      loading.value = false
+      //loading.value = false
     })
   }
 

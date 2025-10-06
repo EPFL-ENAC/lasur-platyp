@@ -2,6 +2,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Record, Recommendation } from 'src/models'
 
+const RecoToMode: { [key: string]: string | undefined } = {
+  marche: 'walking',
+  velo: 'bike',
+  vae: 'ebike',
+  covoit: 'carpool',
+  tpu: 'pub',
+}
+
 export const useSurvey = defineStore(
   'survey',
   () => {
@@ -13,14 +21,13 @@ export const useSurvey = defineStore(
       'travel_time',
       'constraints',
       'equipments',
-      'freq_mod',
-      'trav_pro',
-      'freq_mod_pro_local',
-      'freq_mod_pro_region',
-      'freq_mod_pro_inter',
+      'intermodality',
+      'travel_pro',
+      'freq_mod_pro',
       'importance',
       'needs',
       'recommendations',
+      'change',
       'comments',
       'final',
     ]
@@ -84,51 +91,10 @@ export const useSurvey = defineStore(
     }
 
     function skipIncSteps() {
-      if (
-        stepName.value === 'freq_mod_pro_local' &&
-        !record.value.data.trav_pro?.includes('local')
-      ) {
+      if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         record.value.data = {
           ...record.value.data,
-          freq_mod_pro_local_walking: 0,
-          freq_mod_pro_local_bike: 0,
-          freq_mod_pro_local_pub: 0,
-          freq_mod_pro_local_moto: 0,
-          freq_mod_pro_local_car: 0,
-          freq_mod_pro_local_train: 0,
-          freq_mod_pro_local_combined: false,
-        }
-        step.value += 1
-        return true
-      }
-
-      if (
-        stepName.value === 'freq_mod_pro_region' &&
-        !record.value.data.trav_pro?.includes('region')
-      ) {
-        record.value.data = {
-          ...record.value.data,
-          freq_mod_pro_region_pub: 0,
-          freq_mod_pro_region_moto: 0,
-          freq_mod_pro_region_car: 0,
-          freq_mod_pro_region_train: 0,
-          freq_mod_pro_region_plane: 0,
-          freq_mod_pro_region_combined: false,
-        }
-        step.value += 1
-        return true
-      }
-
-      if (
-        stepName.value === 'freq_mod_pro_inter' &&
-        !record.value.data.trav_pro?.includes('inter')
-      ) {
-        record.value.data = {
-          ...record.value.data,
-          freq_mod_pro_inter_car: 0,
-          freq_mod_pro_inter_train: 0,
-          freq_mod_pro_inter_plane: 0,
-          freq_mod_pro_inter_combined: false,
+          freq_mod_pro_journeys: [],
         }
         step.value += 1
         return true
@@ -138,26 +104,70 @@ export const useSurvey = defineStore(
     }
 
     function skipDecSteps() {
-      if (
-        stepName.value === 'freq_mod_pro_local' &&
-        !record.value.data.trav_pro?.includes('local')
-      ) {
+      if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         step.value -= 1
         return true
       }
-      if (
-        stepName.value === 'freq_mod_pro_region' &&
-        !record.value.data.trav_pro?.includes('region')
-      ) {
-        step.value -= 1
-        return true
+      return false
+    }
+
+    function getFreqMod(mode: string) {
+      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+        let freq = 0
+        record.value.data.freq_mod_journeys.forEach((j) => {
+          if (j.modes.includes(mode)) {
+            freq += j.days
+          }
+        })
+        return freq
       }
-      if (
-        stepName.value === 'freq_mod_pro_inter' &&
-        !record.value.data.trav_pro?.includes('inter')
-      ) {
-        step.value -= 1
-        return true
+      return 0
+    }
+
+    function getFreqModCombined() {
+      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+        return record.value.data.freq_mod_journeys.some((j) => j.modes.length > 1)
+      }
+      return false
+    }
+
+    /**
+     * Get the main frequency mode (the one with the highest frequency).
+     * If there is a tie, return the first one found.
+     * If there is a combined mode, return 'combined'.
+     * If no mode is found, return ''.
+     */
+    function getMainFreqMod() {
+      if (getFreqModCombined()) return 'combined'
+      const fm: { [key: string]: number } = {
+        walking: getFreqMod('walking'),
+        bike: getFreqMod('bike'),
+        ebike: getFreqMod('ebike'),
+        pub: getFreqMod('pub'),
+        moto: getFreqMod('moto'),
+        car: getFreqMod('car'),
+        carpool: getFreqMod('carpool'),
+        train: getFreqMod('train'),
+      }
+      let max = -1
+      let main = ''
+      Object.keys(fm).forEach((key) => {
+        if (fm[key] !== undefined && fm[key] > max) {
+          max = fm[key]
+          main = key
+        }
+      })
+      return main
+    }
+
+    /**
+     * Check if a mode is in the recommendation (reco_dt2).
+     */
+    function isModeInRecommendation(mode: string) {
+      if (recommendation.value.reco && recommendation.value.reco.reco_dt2) {
+        return recommendation.value.reco.reco_dt2.some(
+          (reco) => (RecoToMode[reco] || reco) === mode,
+        )
       }
       return false
     }
@@ -178,6 +188,10 @@ export const useSurvey = defineStore(
       isAfterStep,
       incStep,
       decStep,
+      getFreqMod,
+      getFreqModCombined,
+      getMainFreqMod,
+      isModeInRecommendation,
     }
   },
   { persist: true },
