@@ -73,43 +73,10 @@ import IsochronesMap from 'src/components/form/IsochronesMap.vue'
 const { t } = useI18n()
 const survey = useSurvey()
 
-const recoToMode: { [key: string]: string | undefined } = {
-  marche: 'walking',
-  velo: 'bike',
-  vae: 'ebike',
-  covoit: 'carpool',
-  tpu: 'pub',
-}
-
 // main frequency mode
-const mainFm = computed(() => {
-  if (survey.getFreqModCombined()) return 'combined'
-  const fm: { [key: string]: number } = {
-    walking: survey.getFreqMod('walking'),
-    bike: survey.getFreqMod('bike'),
-    ebike: survey.getFreqMod('ebike'),
-    pub: survey.getFreqMod('pub'),
-    moto: survey.getFreqMod('moto'),
-    car: survey.getFreqMod('car'),
-    carpool: survey.getFreqMod('carpool'),
-    train: survey.getFreqMod('train'),
-  }
-  let max = -1
-  let main = ''
-  Object.keys(fm).forEach((key) => {
-    if (fm[key] !== undefined && fm[key] > max) {
-      max = fm[key]
-      main = key
-    }
-  })
-  return main
-})
+const mainFm = computed(() => survey.getMainFreqMod())
 const isModeSustainable = computed(() => !['car', 'moto', 'plane'].includes(mainFm.value))
-const isModeOptions = computed(() =>
-  (survey.recommendation.reco?.reco_dt2 || [])
-    .map((reco) => recoToMode[reco] || reco)
-    .includes(mainFm.value),
-)
+const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
 const recoDt = computed(() =>
   survey.recommendation.reco ? survey.recommendation.reco.reco_dt2 : [],
 )
@@ -117,8 +84,20 @@ const center = computed(() => {
   const loc = survey.record.data.origin
   return [loc.lon, loc.lat] as [number, number]
 })
-const mesure_dt1 = computed(() => survey.recommendation.reco_actions?.mesure_dt1 || [])
-const mesure_dt2 = computed(() => survey.recommendation.reco_actions?.mesure_dt2 || [])
+const mesure_dt1 = computed(() =>
+  Array.isArray(survey.recommendation.reco_actions?.mesure_dt1)
+    ? survey.recommendation.reco_actions?.mesure_dt1
+    : survey.recommendation.reco_actions?.mesure_dt1 === undefined
+      ? []
+      : [survey.recommendation.reco_actions?.mesure_dt1],
+)
+const mesure_dt2 = computed(() =>
+  Array.isArray(survey.recommendation.reco_actions?.mesure_dt2)
+    ? survey.recommendation.reco_actions?.mesure_dt2
+    : survey.recommendation.reco_actions?.mesure_dt2 === undefined
+      ? []
+      : [survey.recommendation.reco_actions?.mesure_dt2],
+)
 // const hasActions = computed(() => mesure_dt1.value.length > 0 || mesure_dt2.value.length > 0)
 
 const globalActions = computed(() => {

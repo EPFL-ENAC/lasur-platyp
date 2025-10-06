@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 from api.config import config
 from api.models.isochrones import IsochronePoisData, IsochroneResponse, FeatureCollection
 import requests

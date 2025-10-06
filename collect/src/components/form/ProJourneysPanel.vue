@@ -21,6 +21,7 @@
           <ProJourneyItem
             v-if="journeys[idx]"
             v-model="journeys[idx]"
+            :map-id="`map-pro-${idx}`"
             :modes="modes"
             :option-label-class="q.screen.lt.sm ? 'text-h5' : 'text-h5'"
           />

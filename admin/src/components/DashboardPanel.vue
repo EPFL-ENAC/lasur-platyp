@@ -94,7 +94,7 @@
         <div class="item">
           <frequencies-stack-chart
             type="freq_mod_pro"
-            :groups="['local', 'region', 'europe', 'inter']"
+            :groups="['local', 'region', 'inter']"
             :xaxis="t('stats.freq_mod_pro.xaxis')"
             :height="height"
             class="q-mb-md"

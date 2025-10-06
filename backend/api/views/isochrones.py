@@ -1,7 +1,4 @@
-from ast import Dict, List
-import logging
-from fastapi import APIRouter, Depends, Response
-from api.auth import kc_service, User
+from fastapi import APIRouter, Response
 from ..models.isochrones import IsochronePoisData, IsochroneResponse, FeatureCollection, PoisData, PoisData
 from api.services.isochrones import IsochronesService
 

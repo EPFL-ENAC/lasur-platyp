@@ -2,6 +2,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Record, Recommendation } from 'src/models'
 
+const RecoToMode: { [key: string]: string | undefined } = {
+  marche: 'walking',
+  velo: 'bike',
+  vae: 'ebike',
+  covoit: 'carpool',
+  tpu: 'pub',
+}
+
 export const useSurvey = defineStore(
   'survey',
   () => {
@@ -123,6 +131,47 @@ export const useSurvey = defineStore(
       return false
     }
 
+    /**
+     * Get the main frequency mode (the one with the highest frequency).
+     * If there is a tie, return the first one found.
+     * If there is a combined mode, return 'combined'.
+     * If no mode is found, return ''.
+     */
+    function getMainFreqMod() {
+      if (getFreqModCombined()) return 'combined'
+      const fm: { [key: string]: number } = {
+        walking: getFreqMod('walking'),
+        bike: getFreqMod('bike'),
+        ebike: getFreqMod('ebike'),
+        pub: getFreqMod('pub'),
+        moto: getFreqMod('moto'),
+        car: getFreqMod('car'),
+        carpool: getFreqMod('carpool'),
+        train: getFreqMod('train'),
+      }
+      let max = -1
+      let main = ''
+      Object.keys(fm).forEach((key) => {
+        if (fm[key] !== undefined && fm[key] > max) {
+          max = fm[key]
+          main = key
+        }
+      })
+      return main
+    }
+
+    /**
+     * Check if a mode is in the recommendation (reco_dt2).
+     */
+    function isModeInRecommendation(mode: string) {
+      if (recommendation.value.reco && recommendation.value.reco.reco_dt2) {
+        return recommendation.value.reco.reco_dt2.some(
+          (reco) => (RecoToMode[reco] || reco) === mode,
+        )
+      }
+      return false
+    }
+
     return {
       stepNames,
       tokenOrSlug,
@@ -141,6 +190,8 @@ export const useSurvey = defineStore(
       decStep,
       getFreqMod,
       getFreqModCombined,
+      getMainFreqMod,
+      isModeInRecommendation,
     }
   },
   { persist: true },

@@ -133,7 +133,7 @@ function getOption(value: string) {
 function onAdd(option: Option | undefined) {
   if (!option) return
   const value = (props.modelValue as string[]) || []
-  if (props.max === undefined || value.length < props.max) {
+  if (!value.includes(option.value) && (props.max === undefined || value.length < props.max)) {
     value.push(option.value)
   }
   emit('update:modelValue', value)

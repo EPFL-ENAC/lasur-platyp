@@ -173,8 +173,7 @@ export default {
       labels: {
         local: 'Local',
         region: 'Régional',
-        europe: 'Européen',
-        inter: 'Intercontinental',
+        inter: 'International',
         walking: 'La marche',
         bike: 'Le vélo (mécanique ou électrique)',
         pub: 'Les transports publics urbains',
@@ -248,7 +247,7 @@ export default {
       transport: 'Transports',
       commerce: 'Commerce',
     },
-    minutes: '{min} min',
+    minutes: '{count} min',
     raw_data: "Données brutes de l'enquête",
   },
   action: 'Mesure',

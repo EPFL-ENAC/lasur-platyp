@@ -394,11 +394,7 @@ const firstRecoDt = computed(() =>
     : '',
 )
 
-const isRecoChange = computed(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mod_usage = (survey.record.data as any)[`freq_mod_${firstRecoDt.value}`]
-  return mod_usage === undefined || mod_usage === 0
-})
+const isRecoChange = computed(() => !survey.isModeInRecommendation(survey.getMainFreqMod()))
 
 function nextStep() {
   if (survey.stepName === 'agreement') {

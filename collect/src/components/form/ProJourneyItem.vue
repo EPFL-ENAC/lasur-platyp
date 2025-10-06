@@ -4,7 +4,7 @@
     <div v-if="hint" class="text-h6 q-mb-sm">{{ hint }}</div>
     <div class="q-mt-md">
       <PlaceItem
-        :map-id="`map-pro-${Math.floor(Math.random() * 100)}`"
+        :map-id="mapId"
         label-class="text-h6"
         v-model="journey.hex_id"
         :zoom="8"
@@ -44,6 +44,7 @@ import type { ProJourney } from 'src/models'
 
 interface Props {
   modelValue: ProJourney
+  mapId: string
   label?: string
   hint?: string
   modes: string[]

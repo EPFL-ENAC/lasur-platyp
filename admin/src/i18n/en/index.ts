@@ -171,8 +171,7 @@ export default {
       labels: {
         local: 'Local',
         region: 'Regional',
-        europe: 'European',
-        inter: 'Intercontinental',
+        inter: 'International',
         walking: 'Walking',
         bike: 'Bicycle (or electric bike)',
         pub: 'Public transport',
