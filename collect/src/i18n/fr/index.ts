@@ -80,6 +80,7 @@ export default {
     intermodality_hint: 'Décrivez un ou plusieurs trajets typiques domicile - travail.',
     journey: {
       label_idx: 'Recommandation #{index}',
+      label_option_idx: 'Option #{index}',
       hint: "Décrivez la suite de modes de transports d'un trajet typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
@@ -149,6 +150,8 @@ export default {
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     sustainable:
       'Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
+    sustainable_options:
+      'Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
     not_sustainable:
       'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées :',
     actions:

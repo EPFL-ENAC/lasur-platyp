@@ -80,6 +80,7 @@ export default {
     intermodality_hint: 'Describe one or more typical journeys from home to work.',
     journey: {
       label_idx: 'Recommendation #{index}',
+      label_option_idx: 'Option #{index}',
       hint: 'Describe the sequence of transport modes of a typical journey.',
       add: 'Add journey',
       remove: 'Remove journey',
@@ -141,6 +142,8 @@ export default {
     combined: 'At present, you mainly use a combination of modes to get to your workplace.',
     sustainable:
       'Your commuting habits are already sustainable. The following alternatives are available to you:',
+    sustainable_options:
+      'Your commuting habits are already sustainable. The following options are available to you:',
     not_sustainable:
       'Based on the information you have entered, the following alternative modes are recommended:',
     actions: 'Your employer implements the following measures to promote sustainable mobility',

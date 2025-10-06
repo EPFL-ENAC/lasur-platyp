@@ -7,16 +7,25 @@
       <q-card-section>
         <div class="text-h5">
           <SectionItem
-            v-if="['car', 'moto'].includes(mainFm)"
-            :label="t(`main_mode.not_sustainable`)"
+            v-if="isModeSustainable && !isModeOptions"
+            :label="t(`main_mode.sustainable`)"
           />
-          <SectionItem v-else :label="t(`main_mode.sustainable`)" />
+          <SectionItem
+            v-else-if="isModeSustainable && isModeOptions"
+            :label="t(`main_mode.sustainable_options`)"
+          />
+          <SectionItem v-else :label="t(`main_mode.not_sustainable`)" />
         </div>
         <template v-for="(reco, idx) in recoDt" :key="idx">
           <div class="rounded-borders q-mb-md bg-secondary text-white">
             <div class="q-pa-md">
               <q-item-label class="text-body1 text-green-6 text-bold">{{
-                t('form.journey.label_idx', { index: idx + 1 })
+                t(
+                  isModeSustainable && isModeOptions
+                    ? 'form.journey.label_option_idx'
+                    : 'form.journey.label_idx',
+                  { index: idx + 1 },
+                )
               }}</q-item-label>
               <q-item-label class="text-h5">{{ t(`reco.${reco}`) }}</q-item-label>
               <BenefitsPanel :reco="reco" class="q-mt-sm" />
@@ -64,6 +73,15 @@ import IsochronesMap from 'src/components/form/IsochronesMap.vue'
 const { t } = useI18n()
 const survey = useSurvey()
 
+const recoToMode: { [key: string]: string | undefined } = {
+  marche: 'walking',
+  velo: 'bike',
+  vae: 'ebike',
+  covoit: 'carpool',
+  tpu: 'pub',
+}
+
+// main frequency mode
 const mainFm = computed(() => {
   if (survey.getFreqModCombined()) return 'combined'
   const fm: { [key: string]: number } = {
@@ -86,7 +104,12 @@ const mainFm = computed(() => {
   })
   return main
 })
-
+const isModeSustainable = computed(() => !['car', 'moto', 'plane'].includes(mainFm.value))
+const isModeOptions = computed(() =>
+  (survey.recommendation.reco?.reco_dt2 || [])
+    .map((reco) => recoToMode[reco] || reco)
+    .includes(mainFm.value),
+)
 const recoDt = computed(() =>
   survey.recommendation.reco ? survey.recommendation.reco.reco_dt2 : [],
 )
