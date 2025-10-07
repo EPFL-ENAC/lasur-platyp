@@ -116,9 +116,9 @@ export default {
     actions_global:
       'No global measures | Your employeur also offers the following measure: {actions} | Your employeur also offers the following measures: {actions}',
     change: 'About the recommended mode of transport "{reco}"',
-    change_motivation: 'Your motivation to change',
+    change_motivation: 'Your willingness to change',
     change_motivation_hint:
-      'On a scale of 1 (not motivated at all) to 5 (very motivated), how motivated are you to use this mode of transport for your home-work journeys?',
+      'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-work journeys?',
     change_levers: 'What would help you to use this mode of transport?',
     change_levers_option: {
       financial_support: 'Financial support',
