@@ -64,6 +64,7 @@ export interface RecordData {
 
 export interface Record {
   data: RecordData
+  typo: Recommendation | null
   token: string
 }
 
