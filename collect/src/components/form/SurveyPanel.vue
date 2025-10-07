@@ -456,6 +456,7 @@ function nextStep() {
         })
         .then((resp) => {
           survey.recommendation = resp
+          survey.record.typo = resp
         })
         .catch(notifyError)
     } else if (survey.isBeforeStep('recommendations')) {
