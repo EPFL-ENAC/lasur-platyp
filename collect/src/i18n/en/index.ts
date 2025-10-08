@@ -114,7 +114,7 @@ export default {
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
-      'No global measures | Your employeur also offers the following measure: {actions} | Your employeur also offers the following measures: {actions}',
+      'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
     change: 'About the recommended mode of transport "{reco}"',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:

@@ -93,7 +93,7 @@ export default {
       hint: "Sélectionnez la destination et le principal mode de transport d'un trajet professionnel typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
-      days_per_year: 'Jours par mois',
+      days_per_year: 'Jours par année',
     },
     travel_pro: 'Effectuez-vous des déplacements professionnels ?',
     days_per_month: 'En jours par mois',
