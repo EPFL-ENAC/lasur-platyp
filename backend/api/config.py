@@ -22,6 +22,7 @@ class Config(BaseSettings):
 
     LASUR_API_URL: str = "https://lasur-ws.epfl.ch"
     LASUR_API_KEY: str = ""
+    LASUR_OSM_SOURCE: str = "geneva-greater-area.osm.pbf"
 
     PATH_PREFIX: str = "/api"
 
