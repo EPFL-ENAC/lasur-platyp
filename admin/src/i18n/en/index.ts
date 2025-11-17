@@ -132,6 +132,7 @@ export default {
         heavy: 'Transporting heavy/bulky\nequipment',
         night: 'Night work',
         disabled: 'Parking card for people\nwith reduced mobility',
+        none: 'No constraint',
       },
     },
     travel_time: {

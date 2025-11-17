@@ -6,9 +6,10 @@ from sqlmodel import Integer, select
 from fastapi import HTTPException
 from api.models import query
 from api.models.domain import Record, Campaign
-from api.models.query import Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
+from api.models.query import AllFrequencies, Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
+import pandas as pd
 
 
 class RecordQueryBuilder(QueryBuilder):
@@ -457,3 +458,155 @@ class RecordService:
         links = [{"source": mod, "target": reco, "value": count} for mod,
                  reco_counts in counts.items() for reco, count in reco_counts.items()]
         return Links(total=total_count, data=links)
+
+    async def compute_equipments_frequencies(self, df: pd.DataFrame) -> Frequencies:
+        """Compute equipments frequencies from a DataFrame of records."""
+        # Find columns starting with 'data.equipments.'
+        equipments_cols = [
+            col for col in df.columns if col.startswith('data.equipments.')]
+        # Each column contains the name of an equipment if present, else NaN
+        all_equipments = []
+        for col in equipments_cols:
+            all_equipments.extend(
+                df[col].dropna().tolist()
+            )
+        equipment_counts = pd.Series(all_equipments).value_counts()
+
+        return Frequencies(
+            field='equipments',
+            total=len(df),
+            data=[
+                Frequency(
+                    value=equipment,
+                    count=count
+                )
+                for equipment, count in equipment_counts.items()
+            ]
+        )
+
+    async def compute_constraints_frequencies(self, df: pd.DataFrame) -> Frequencies:
+        """Compute constraints frequencies from a DataFrame of records."""
+        # Find columns starting with 'data.constraints.'
+        constraints_cols = [
+            col for col in df.columns if col.startswith('data.constraints.')]
+        # Each column contains the name of a constraint if present, else NaN
+        all_constraints = []
+        for col in constraints_cols:
+            all_constraints.extend(
+                df[col].dropna().tolist()
+            )
+        constraint_counts = pd.Series(all_constraints).value_counts()
+
+        return Frequencies(
+            field='constraints',
+            total=len(df),
+            data=[
+                Frequency(
+                    value=constraint,
+                    count=count
+                )
+                for constraint, count in constraint_counts.items()
+            ]
+        )
+
+    async def compute_travel_time_frequencies(self, df: pd.DataFrame) -> Frequencies:
+        """Compute travel time frequencies from a DataFrame of records."""
+        travel_time_series = df['data.travel_time'].dropna().astype(str)
+        travel_time_counts = travel_time_series.value_counts()
+
+        return Frequencies(
+            field='travel_time',
+            total=len(df),
+            data=[
+                Frequency(
+                    value=travel_time,
+                    count=count
+                )
+                for travel_time, count in travel_time_counts.items()
+            ]
+        )
+
+    async def compute_recommendation_frequencies(self, df: pd.DataFrame) -> Frequencies:
+        """Compute recommendation frequencies from a DataFrame of records."""
+        reco_series = df['typo.reco.reco_dt2.0'].dropna()
+        reco_counts = reco_series.value_counts()
+
+        return Frequencies(
+            field='reco_dt2',
+            total=len(df),
+            data=[
+                Frequency(
+                    value=reco,
+                    count=count
+                )
+                for reco, count in reco_counts.items()
+            ]
+        )
+
+    async def compute_frequencies(self, filter: dict) -> AllFrequencies:
+        """Compute all frequencies for equipments, constraints, travel_time, and recommendations."""
+        df = await self.get_dataframe(filter, flat=True)
+        # Filter records with values in column typo.reco_dt2.0
+        df = df[df['typo.reco.reco_dt2.0'].notna()]
+        equipments = await self.compute_equipments_frequencies(df)
+        constraints = await self.compute_constraints_frequencies(df)
+        travel_time = await self.compute_travel_time_frequencies(df)
+        recommendations = await self.compute_recommendation_frequencies(df)
+
+        return AllFrequencies(
+            total=len(df),
+            equipments=equipments,
+            constraints=constraints,
+            travel_time=travel_time,
+            reco_dt2=recommendations
+        )
+
+    async def get_dataframe(self, filter: dict, flat: bool = False) -> pd.DataFrame:
+        """Get a DataFrame representation of the records.
+
+        Args:
+            filter (dict): The filter criteria for the records.
+            flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
+
+        Returns:
+            pd.DataFrame: A DataFrame representation of the records.
+        """
+        # Implement your test logic here
+        results = await self.find(filter, fields=[], sort=[], range=[])
+        # Read results into a pandas DataFrame
+        df = pd.DataFrame([result.model_dump() for result in results.data])
+        if not flat:
+            return df
+        # Flatten nested JSON fields in 'data' and 'typo'
+        for col in ['data', 'typo']:
+            if col in df.columns:
+                df[col] = df[col].apply(
+                    lambda x: x if isinstance(x, dict) else {})
+                # Flatten the JSON column
+                df_data = df[col].apply(self.flatten_json).apply(pd.Series)
+                df_data = df_data.add_prefix(f"{col}.")
+                # Combine with original DataFrame
+                df = pd.concat(
+                    [df.drop(columns=[col]), df_data], axis=1)
+        # Return a simple message for testing purposes
+        # return {"message": f"Columns count: {len(df_flat.columns)}", "columns": df_flat.columns.tolist()}
+        return df
+
+    def flatten_json(self, obj, parent_key="", sep="."):
+        """Recursively flatten JSON with lists indexed."""
+        items = []
+
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                new_key = f"{parent_key}{sep}{k}" if parent_key else k
+                items.extend(self.flatten_json(v, new_key, sep=sep).items())
+
+        elif isinstance(obj, list):
+            for i, v in enumerate(obj):
+                new_key = f"{parent_key}{sep}{i}"
+                items.extend(self.flatten_json(v, new_key, sep=sep).items())
+
+        else:
+            items.append((parent_key, obj))
+
+        return dict(items)

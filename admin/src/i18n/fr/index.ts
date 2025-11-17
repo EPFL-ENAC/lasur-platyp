@@ -134,6 +134,7 @@ export default {
         heavy: 'Transport de matériel\nlourd ou encombrant',
         night: 'Horaires spéciaux',
         disabled: 'Carte de stationnement pour\npersonne à mobilité réduite',
+        none: 'Aucune contrainte',
       },
     },
     travel_time: {
