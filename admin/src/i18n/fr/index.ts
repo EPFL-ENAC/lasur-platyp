@@ -239,6 +239,10 @@ export default {
       walk: 'La marche',
       bike: 'Le vélo',
       ebike: 'Le vélo électrique',
+      car: 'La voiture',
+      transit: 'Les transports publics',
+      rail: 'Le train',
+      bus: 'Le bus',
     },
     categories: {
       food: 'Nourriture',

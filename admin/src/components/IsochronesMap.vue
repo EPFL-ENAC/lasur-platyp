@@ -49,12 +49,12 @@
       <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders">
         <div class="row q-gutter-sm">
           <div
-            v-for="(cutoff, index) in selectedModeCutoffSec"
+            v-for="cutoff in selectedModeCutoffSec"
             :key="`color-${cutoff}`"
             class="row items-center"
           >
             <div
-              :style="`width: 15px; height: 15px; background-color: rgba(90, 63, 192, ${cutoffSecTransparency(index)}); border: 1px solid #5a3fc0; margin-right: 5px;`"
+              :style="`width: 15px; height: 15px; background-color: ${getCutoffColor(cutoff)}; border: 1px solid #5a3fc0; margin-right: 5px;`"
             ></div>
             <div>{{ t('record.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
           </div>
@@ -74,7 +74,7 @@ import {
   type GeoJSONSource,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style } from 'src/utils/maps'
+import { style, ISOCHRONE_CUTOFF_COLORS } from 'src/utils/maps'
 
 const isoService = useIsochrones()
 
@@ -97,7 +97,7 @@ const isochronesData = ref<GeoJSON.FeatureCollection>()
 const selectedMode = ref<string>('WALK')
 const selectedModeCutoffSec = ref<number[]>([]) // in seconds
 const modeOptions = computed(() => {
-  return ['WALK', 'BIKE', 'EBIKE'].map((m) => {
+  return ['WALK', 'BIKE', 'EBIKE', 'CAR', 'TRANSIT', 'RAIL', 'BUS'].map((m) => {
     return { label: t(`record.mode.${m.toLowerCase()}`), value: m }
   })
 })
@@ -169,6 +169,22 @@ async function loadIsochronesData() {
       bikeSpeed = 17
       cutoffSec = [600, 1200, 1800, 2400, 3600]
       break
+    case 'CAR':
+      mode = 'CAR'
+      cutoffSec = [1200, 2400]
+      break
+    case 'TRANSIT':
+      mode = 'TRANSIT'
+      cutoffSec = [1200, 2400, 3600]
+      break
+    case 'RAIL':
+      mode = 'RAIL'
+      cutoffSec = [1200, 2400, 3600]
+      break
+    case 'BUS':
+      mode = 'BUS'
+      cutoffSec = [1200, 2400, 3600]
+      break
     default:
       cutoffSec = [300, 600, 900, 1200, 1800]
       break
@@ -181,7 +197,7 @@ async function loadIsochronesData() {
       mode,
       bikeSpeed,
       cutoffSec,
-      datetime: '2025-01-15T06:00:00Z',
+      datetime: '2025-01-15T08:30:00Z', // UTC
       categories: [],
     })
     .then((data) => {
@@ -236,7 +252,26 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
       type: 'fill',
       source: 'isochrones',
       paint: {
-        'fill-color': '#5a3fc0',
+        // fill color depends on the time property with default value #5a3fc0
+        'fill-color': [
+          'interpolate',
+          ['linear'],
+          ['get', 'time'],
+          300,
+          getCutoffColor(300),
+          600,
+          getCutoffColor(600),
+          900,
+          getCutoffColor(900),
+          1200,
+          getCutoffColor(1200),
+          1800,
+          getCutoffColor(1800),
+          2400,
+          getCutoffColor(2400),
+          3600,
+          getCutoffColor(3600),
+        ],
         'fill-opacity': 0.3,
         'fill-outline-color': '#5a3fc0',
       },
@@ -348,9 +383,8 @@ function categoryToColor(str: string): { name: string; hex: string } | undefined
   }
 }
 
-function cutoffSecTransparency(index: number): number {
-  const total = selectedModeCutoffSec.value.length
-  return 0.1 + (0.7 * (total - index + 1)) / total
+function getCutoffColor(cutoff: number): string {
+  return ISOCHRONE_CUTOFF_COLORS[cutoff] || '#5a3fc0'
 }
 </script>
 

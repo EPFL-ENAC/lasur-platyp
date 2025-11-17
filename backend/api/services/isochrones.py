@@ -15,9 +15,11 @@ class IsochronesService:
         }
 
     def compute_isochrones(self, data: IsochronePoisData) -> IsochroneResponse:
+        payload = data.model_dump()
+        payload["overlap"] = True
         response = requests.post(
             f"{self.url}/isochrones/compute",
-            json=data.model_dump(),
+            json=payload,
             headers=self.headers
         )
         response.raise_for_status()
