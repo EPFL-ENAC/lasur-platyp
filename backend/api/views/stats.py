@@ -2,7 +2,7 @@ import pandas as pd
 from fastapi import APIRouter, Depends, Query, HTTPException, Response
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
-from api.models.query import AllFrequencies, Frequencies, Emissions, Links
+from api.models.query import Stats, Frequencies, Emissions, Links
 from api.services.records import RecordService
 from enacit4r_sql.utils.query import validate_params, ValidationError
 
@@ -150,16 +150,16 @@ async def compute_freq_mod_recommendations_links(
         raise HTTPException(status_code=400, detail=f"{e}")
 
 
-@router.get("/frequencies", response_model_exclude_none=True)
-async def compute_frequencies(
+@router.get("/all", response_model_exclude_none=True)
+async def compute_all_statistics(
     filter: str = Query(None),
     # user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
-) -> AllFrequencies:
-    """Query all type of frequencies in records"""
+) -> Stats:
+    """Query all type of all statistics in records"""
     try:
         validated = validate_params(filter, None, None, None)
-        return await RecordService(session).compute_frequencies(validated["filter"])
+        return await RecordService(session).compute_stats(validated["filter"])
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 

@@ -1,12 +1,11 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy import Float, select, func, and_, cast, literal_column, lateral
+from sqlalchemy import Float, select, func, and_, cast
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Integer, select
 from fastapi import HTTPException
-from api.models import query
 from api.models.domain import Record, Campaign
-from api.models.query import AllFrequencies, Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
+from api.models.query import Stats, Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 import pandas as pd
@@ -543,23 +542,35 @@ class RecordService:
             ]
         )
 
-    async def compute_frequencies(self, filter: dict) -> AllFrequencies:
-        """Compute all frequencies for equipments, constraints, travel_time, and recommendations."""
+    async def compute_stats(self, filter: dict) -> Stats:
+        """Compute all statistics for equipments, constraints, travel_time, and recommendations."""
         df = await self.get_dataframe(filter, flat=True)
-        # Filter records with values in column typo.reco_dt2.0
-        df = df[df['typo.reco.reco_dt2.0'].notna()]
+        df = self.filter_completed_records(df)
         equipments = await self.compute_equipments_frequencies(df)
         constraints = await self.compute_constraints_frequencies(df)
         travel_time = await self.compute_travel_time_frequencies(df)
         recommendations = await self.compute_recommendation_frequencies(df)
 
-        return AllFrequencies(
+        return Stats(
             total=len(df),
-            equipments=equipments,
-            constraints=constraints,
-            travel_time=travel_time,
-            reco_dt2=recommendations
+            frequencies=[
+                equipments,
+                constraints,
+                travel_time,
+                recommendations
+            ],
         )
+
+    def filter_completed_records(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Get a DataFrame representation of the completed records.
+
+        Args:
+            filter (dict): The filter criteria for the records.
+            flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
+        """
+        # Filter records with values in column typo.reco_dt2.0
+        df = df[df['typo.reco.reco_dt2.0'].notna()]
+        return df
 
     async def get_dataframe(self, filter: dict, flat: bool = False) -> pd.DataFrame:
         """Get a DataFrame representation of the records.
@@ -580,10 +591,16 @@ class RecordService:
         # Flatten nested JSON fields in 'data' and 'typo'
         for col in ['data', 'typo']:
             if col in df.columns:
+                # Replace NaN with empty dict
                 df[col] = df[col].apply(
                     lambda x: x if isinstance(x, dict) else {})
                 # Flatten the JSON column
                 df_data = df[col].apply(self.flatten_json).apply(pd.Series)
+                # Filter out empty columns
+                df_data = df_data.loc[:, df_data.notna().any()]
+                # Filter out columns with empty names
+                df_data = df_data.loc[:, df_data.columns.str.strip() != '']
+                # Prefix column names
                 df_data = df_data.add_prefix(f"{col}.")
                 # Combine with original DataFrame
                 df = pd.concat(

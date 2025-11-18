@@ -102,12 +102,9 @@ class Frequencies(BaseModel):
     data: List[Frequency] = []
 
 
-class AllFrequencies(BaseModel):
+class Stats(BaseModel):
     total: int = 0
-    equipments: Optional[Frequencies] = None
-    constraints: Optional[Frequencies] = None
-    travel_time: Optional[Frequencies] = None
-    reco_dt2: Optional[Frequencies] = None
+    frequencies: Optional[List[Frequencies]] = None
     freq_mod: Optional[List[Frequencies]] = None
 
 
