@@ -458,7 +458,7 @@ class RecordService:
                  reco_counts in counts.items() for reco, count in reco_counts.items()]
         return Links(total=total_count, data=links)
 
-    async def compute_equipments_frequencies(self, df: pd.DataFrame) -> Frequencies:
+    def compute_equipments_frequencies(self, df: pd.DataFrame) -> Frequencies:
         """Compute equipments frequencies from a DataFrame of records."""
         # Find columns starting with 'data.equipments.'
         equipments_cols = [
@@ -483,7 +483,7 @@ class RecordService:
             ]
         )
 
-    async def compute_constraints_frequencies(self, df: pd.DataFrame) -> Frequencies:
+    def compute_constraints_frequencies(self, df: pd.DataFrame) -> Frequencies:
         """Compute constraints frequencies from a DataFrame of records."""
         # Find columns starting with 'data.constraints.'
         constraints_cols = [
@@ -508,7 +508,7 @@ class RecordService:
             ]
         )
 
-    async def compute_travel_time_frequencies(self, df: pd.DataFrame) -> Frequencies:
+    def compute_travel_time_frequencies(self, df: pd.DataFrame) -> Frequencies:
         """Compute travel time frequencies from a DataFrame of records."""
         travel_time_series = df['data.travel_time'].dropna().astype(str)
         travel_time_counts = travel_time_series.value_counts()
@@ -525,7 +525,7 @@ class RecordService:
             ]
         )
 
-    async def compute_recommendation_frequencies(self, df: pd.DataFrame) -> Frequencies:
+    def compute_recommendation_frequencies(self, df: pd.DataFrame) -> Frequencies:
         """Compute recommendation frequencies from a DataFrame of records."""
         reco_series = df['typo.reco.reco_dt2.0'].dropna()
         reco_counts = reco_series.value_counts()
@@ -542,14 +542,182 @@ class RecordService:
             ]
         )
 
+    def compute_mod_frequencies_v1(self, df: pd.DataFrame, mod: str) -> Frequencies:
+        """Compute a mode frequency from a DataFrame of records."""
+        # Legacy data version: get the series for the specific mode
+
+        # Find the column name for the mode
+        col_name = f'data.freq_mod_{mod}'
+        if col_name not in df.columns:
+            return Frequencies(field=mod, total=len(df), data=[])
+        # Get the series for the specific mode
+        mod_series = df[f'data.freq_mod_{mod}'].dropna().astype(int)
+        mod_counts = mod_series.value_counts()
+        mod_sums = mod_series.groupby(mod_series).sum()
+
+        return Frequencies(
+            field=mod,
+            total=len(df),
+            data=[
+                Frequency(
+                    value=str(mod_value),
+                    count=mod_counts[mod_value],
+                    sum=mod_sums[mod_value]
+                )
+                for mod_value in mod_counts.index if mod_value > 0
+            ]
+        )
+
+    def compute_mod_frequencies_v2(self, df: pd.DataFrame, mod: str) -> Frequencies:
+        """Compute a mode frequency from a DataFrame of records."""
+
+        def is_intermodal(row, mod, i):
+            modes = []
+            for col in row.index:
+                if col.startswith(f'data.freq_mod_journeys.{i}.modes.'):
+                    val = row[col]
+                    # walking is not considered for intermodality
+                    if not pd.isna(val) and val != 'walking':
+                        modes.append(val)
+            modes = set(modes)
+            return len(modes) > 1
+
+        def extract_mod_days(row, mod, i):
+            modes = []
+            for col in row.index:
+                if col.startswith(f'data.freq_mod_journeys.{i}.modes.'):
+                    val = row[col]
+                    if not pd.isna(val) and val == mod:
+                        modes.append(val)
+            modes = set(modes)
+            if len(modes) == 0:
+                return 0
+            if len(modes) > 1:
+                # intermodality, make sure walking is not counted
+                if 'walking' in modes:
+                    modes.remove('walking')
+            # get days value
+            days_col = f'data.freq_mod_journeys.{i}.days'
+            days = row[days_col]
+            if mod in modes:
+                return int(days) if not pd.isna(days) else 0
+            return 0
+
+        # New data version: get the series from data.freq_mod_journeys
+        col_days = df.columns[df.columns.str.contains(
+            r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
+        # print(
+        #     f"Computing mod frequencies for version 2.x using columns: {col_days.tolist()}")
+        frequencies = []
+        for i in range(len(col_days)):
+            # print("mod:", mod, " i:", i)
+            col_modes_i = df.columns[df.columns.str.startswith(
+                f'data.freq_mod_journeys.{str(i)}.modes.')]
+            if col_modes_i.empty:
+                continue
+            col_days_i = col_days[i]
+            # make a dataframe with only i columns
+            df_i = df[[col_days_i] + col_modes_i.tolist()].copy()
+            # intermodality if more than one mode
+            # TODO not used for now
+            df_i['inter'] = df_i.apply(
+                lambda row: is_intermodal(row, mod, i), axis=1)
+            # extract mod days
+            df_i['mod_days'] = df_i.apply(
+                lambda row: extract_mod_days(row, mod, i), axis=1)
+            # count positive mod_days
+            df_i = df_i[df_i['mod_days'] > 0]
+            for row in df_i.itertuples():
+                days = row.mod_days
+                count = 1
+                # find in frequencies the one with value is str(days)
+                freq = next(
+                    (f for f in frequencies if f.value == str(days)), None)
+                if freq is None:
+                    frequencies.append(
+                        Frequency(
+                            value=str(days),
+                            count=int(count),
+                            sum=int(days)
+                        )
+                    )
+                else:
+                    freq.count += int(count)
+                    freq.sum += int(days)
+            # print(df_i)
+
+        # print("Final frequencies for mod", mod, ":", frequencies)
+        return Frequencies(
+            field=mod,
+            total=len(df),
+            data=frequencies
+        )
+
+    def compute_mods_frequencies(self, df: pd.DataFrame) -> list[Frequencies]:
+        """Compute all modes frequencies from a DataFrame of records."""
+        mods = [
+            'walking',
+            'bike',
+            'ebike',
+            'pub',
+            'moto',
+            'carpool',
+            'car',
+            'train'
+        ]
+        # TODO handle intermodality
+
+        # v1 is where data.version is na
+        df_v1 = df[df['data.version'].isna()]
+        results = []
+        for mod in mods:
+            results.append(self.compute_mod_frequencies_v1(df_v1, mod))
+
+        # if data.version starts with '2.' count frequencies from data.freq_mod_journeys
+        df_v2 = df[df['data.version'].notna(
+        ) & df['data.version'].str.startswith('2.')]
+        results_v2 = []
+        if not df_v2.empty:
+            for mod in mods:
+                results_v2 = self.compute_mod_frequencies_v2(df_v2, mod)
+                results = self.merge_frequencies(results, results_v2)
+
+        # finalize totals and sort data
+        for frequencies in results:
+            frequencies.total = len(df)
+            # sort frequencies data by value as integer
+            frequencies.data.sort(key=lambda x: int(x.value))
+
+        return results
+
+    def compute_mods_emissions(self, df: pd.DataFrame) -> list[Emissions]:
+        """Compute all modes CO2 emissions from a DataFrame of records."""
+        mods = [
+            'walking',
+            'bike',
+            'ebike',
+            'pub',
+            'moto',
+            'carpool',
+            'car',
+            'train'
+        ]
+        results = []
+        for mod in mods:
+            emissions = self.get_mod_co2_emissions(mod, df)
+            results.append(emissions)
+        return results
+
     async def compute_stats(self, filter: dict) -> Stats:
         """Compute all statistics for equipments, constraints, travel_time, and recommendations."""
         df = await self.get_dataframe(filter, flat=True)
         df = self.filter_completed_records(df)
-        equipments = await self.compute_equipments_frequencies(df)
-        constraints = await self.compute_constraints_frequencies(df)
-        travel_time = await self.compute_travel_time_frequencies(df)
-        recommendations = await self.compute_recommendation_frequencies(df)
+        equipments = self.compute_equipments_frequencies(df)
+        constraints = self.compute_constraints_frequencies(df)
+        travel_time = self.compute_travel_time_frequencies(df)
+        recommendations = self.compute_recommendation_frequencies(df)
+        freq_mods = self.compute_mods_frequencies(df)
+        # emissions = self.compute_mods_emissions(df)
 
         return Stats(
             total=len(df),
@@ -559,7 +727,39 @@ class RecordService:
                 travel_time,
                 recommendations
             ],
+            freq_mods=freq_mods,
+            # emissions=emissions
         )
+
+    def merge_frequencies(self, frequencies: list[Frequencies], freq2: Frequencies) -> Frequencies:
+        """Merge Frequencies into a list of Frequencies."""
+        freq1 = next((f for f in frequencies if f.field == freq2.field), None)
+        if not freq1:
+            frequencies.append(freq2)
+            return frequencies
+        merged_data = freq1.data.copy()
+        for freq in freq2.data:
+            existing_freq = next(
+                (f for f in merged_data if f.value == freq.value), None)
+            if existing_freq:
+                existing_freq.count += freq.count
+                if freq.sum is not None:
+                    if existing_freq.sum is None:
+                        existing_freq.sum = 0
+                    existing_freq.sum += freq.sum
+            else:
+                merged_data.append(freq)
+        freq = Frequencies(
+            field=freq1.field,
+            total=freq1.total + freq2.total,
+            data=merged_data
+        )
+        # replace in frequencies
+        for i in range(len(frequencies)):
+            if frequencies[i].field == freq.field:
+                frequencies[i] = freq
+                break
+        return frequencies
 
     def filter_completed_records(self, df: pd.DataFrame) -> pd.DataFrame:
         """Get a DataFrame representation of the completed records.

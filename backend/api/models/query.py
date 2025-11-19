@@ -102,12 +102,6 @@ class Frequencies(BaseModel):
     data: List[Frequency] = []
 
 
-class Stats(BaseModel):
-    total: int = 0
-    frequencies: Optional[List[Frequencies]] = None
-    freq_mod: Optional[List[Frequencies]] = None
-
-
 class Emissions(BaseModel):
     field: Optional[str] = None
     total: Optional[int] = None
@@ -125,3 +119,10 @@ class Link(BaseModel):
 class Links(BaseModel):
     total: Optional[int] = None
     data: List[Link] = []
+
+
+class Stats(BaseModel):
+    total: int = 0
+    frequencies: Optional[List[Frequencies]] = None
+    freq_mods: Optional[List[Frequencies]] = None
+    emissions: Optional[List[Emissions]] = None
