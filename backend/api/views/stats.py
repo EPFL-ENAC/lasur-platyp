@@ -167,13 +167,18 @@ async def compute_all_statistics(
 @router.get("/flat", response_model_exclude_none=True)
 async def compute_flat(
     filter: str = Query(None),
+    completed: bool = Query(
+        False, description="Whether to include only completed records"),
     # user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
 ) -> Response:
     """Query records in flat format as a CSV"""
     try:
         validated = validate_params(filter, None, None, None)
-        df = await RecordService(session).get_dataframe(validated["filter"], flat=True)
+        service = RecordService(session)
+        df = await service.get_dataframe(validated["filter"], flat=True)
+        if completed:
+            df = service.filter_completed_records(df)
         return Response(content=df.to_csv(date_format="%Y-%m-%dT%H:%M:%S.%f", index=False), media_type="text/csv")
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
