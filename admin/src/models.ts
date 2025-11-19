@@ -118,6 +118,13 @@ export interface Links {
   data: Link[]
 }
 
+export interface Stats {
+  total: number
+  frequencies: Frequencies[] | null
+  mode_frequencies: Frequencies[] | null
+  mode_emissions: Emissions[] | null
+}
+
 export interface IsochronesParams {
   lon: number
   lat: number

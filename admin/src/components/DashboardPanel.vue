@@ -90,7 +90,9 @@
             class="q-mb-md"
           />
         </div>
-        <div class="item"><share-chart type="freq_mod" :height="height" class="q-mb-md" /></div>
+        <div class="item">
+          <share-chart type="freq_mod" :height="height" class="q-mb-md" />
+        </div>
         <div class="item">
           <frequencies-stack-chart
             type="freq_mod_pro"

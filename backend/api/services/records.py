@@ -173,181 +173,6 @@ class RecordService:
         await self.session.commit()
         return entity
 
-    async def get_equipments_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                func.jsonb_array_elements_text(
-                    Record.data['equipments']).label('equipment')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.equipment,
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.equipment)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field='equipments',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.equipment,
-                    count=row.usage_count
-                )
-                for row in counts
-            ]
-        )
-
-    async def get_constraints_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                func.jsonb_array_elements_text(
-                    Record.data['constraints']).label('constraint')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.constraint,
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.constraint)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field='constraints',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.constraint,
-                    count=row.usage_count
-                )
-                for row in counts
-            ]
-        )
-
-    async def get_travel_time_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                Record.data['travel_time'].astext.label('travel_time')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.travel_time,
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.travel_time)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field='travel_time',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.travel_time,
-                    count=row.usage_count
-                )
-                for row in counts
-            ]
-        )
-
-    async def get_recommendation_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                func.jsonb_array_elements_text(
-                    Record.typo["reco"]["reco_dt2"]).label('reco')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.reco,
-                func.count().label('reco_count')
-            )
-            .group_by(expanded.c.reco)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field='reco_dt2',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.reco,
-                    count=row.reco_count
-                )
-                for row in counts
-            ]
-        )
-
     async def get_mod_stats(self, mod: str, filter: dict):
         total_count = await self.count_completed(filter)
         if total_count == 0:
@@ -392,47 +217,6 @@ class RecordService:
                 for row in counts
             ]
         )
-
-    async def get_mod_co2_emissions(self, mod: str, filter: dict) -> Emissions:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Emissions(field=mod, total=0, distances=0, journeys=0, emissions=0)
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        mod_emissions = {'car': 186, 'train': 8, 'pub': 25,
-                         'bike': 6, 'moto': 155, 'walking': 0}
-
-        # calculate distances between origin (lat, lon) and workplace (lat, lon)
-        origin_lat = cast(Record.data["origin"]["lat"].astext, Float)
-        origin_lon = cast(Record.data["origin"]["lon"].astext, Float)
-        work_lat = cast(Record.data["workplace"]["lat"].astext, Float)
-        work_lon = cast(Record.data["workplace"]["lon"].astext, Float)
-
-        # Main query
-        query = (
-            select(
-                Record.id,
-                (6371 * func.acos(
-                    func.cos(func.radians(origin_lat)) *
-                    func.cos(func.radians(work_lat)) *
-                    func.cos(func.radians(work_lon) - func.radians(origin_lon)) +
-                    func.sin(func.radians(origin_lat)) *
-                    func.sin(func.radians(work_lat))
-                )).label("distance_km"),
-                Record.data[mod].astext.label('mod')
-            ).where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-        )
-
-        counts = await self.session.exec(query)
-        rows = [row for row in counts if row.distance_km is not None and row.mod is not None and int(
-            row.mod) > 0]
-        distances = [row.distance_km * 1.3 for row in rows]
-        journeys = [45 * 2 * int(row.mod) for row in rows]
-        emissions = [row.distance_km * 1.3 * 45 * 2 * int(
-            row.mod) * mod_emissions[mod.replace("freq_mod_", "")] / 1000 for row in rows]
-        return Emissions(field=mod, total=total_count, distances=sum(distances), journeys=sum(journeys), emissions=sum(emissions))
 
     async def get_mod_reco_links(self, filter: dict) -> Links:
         total_count = await self.count_completed(filter)
@@ -842,8 +626,8 @@ class RecordService:
         constraints = self.compute_constraints_frequencies(df)
         travel_time = self.compute_travel_time_frequencies(df)
         recommendations = self.compute_recommendation_frequencies(df)
-        freq_modes = self.compute_modes_frequencies(df)
-        emissions = self.compute_modes_emissions(df)
+        mode_frequencies = self.compute_modes_frequencies(df)
+        mode_emissions = self.compute_modes_emissions(df)
 
         return Stats(
             total=len(df),
@@ -853,17 +637,21 @@ class RecordService:
                 travel_time,
                 recommendations
             ],
-            freq_modes=freq_modes,
-            emissions=emissions
+            mode_frequencies=mode_frequencies,
+            mode_emissions=mode_emissions
         )
 
     def get_records_v1(self, df: pd.DataFrame) -> pd.DataFrame:
         """Get records with data.version as NaN"""
+        if 'data.version' not in df.columns:
+            return df.copy()
         df_v1 = df[df['data.version'].isna()].copy()
         return df_v1
 
     def get_records_v2(self, df: pd.DataFrame) -> pd.DataFrame:
         """Get records with data.version starting with '2.'"""
+        if 'data.version' not in df.columns:
+            return pd.DataFrame()
         df_v2 = df[df['data.version'].notna(
         ) & df['data.version'].str.startswith('2.')].copy()
         return df_v2

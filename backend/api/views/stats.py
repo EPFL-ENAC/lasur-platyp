@@ -9,82 +9,6 @@ from enacit4r_sql.utils.query import validate_params, ValidationError
 router = APIRouter()
 
 
-@router.get("/equipments", response_model=Frequencies, response_model_exclude_none=True)
-async def compute_equipments_frequencies(
-    filter: str = Query(None),
-    user: User = Depends(kc_service.get_user_info()),
-    session: AsyncSession = Depends(get_session),
-) -> Frequencies:
-    """Query frequency of equipments in records"""
-    try:
-        validated = validate_params(filter, None, None, None)
-        return await RecordService(session).get_equipments_frequencies(validated["filter"])
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-
-
-@router.get("/constraints", response_model=Frequencies, response_model_exclude_none=True)
-async def compute_constraints_frequencies(
-    filter: str = Query(None),
-    user: User = Depends(kc_service.get_user_info()),
-    session: AsyncSession = Depends(get_session),
-) -> Frequencies:
-    """Query frequency of constraints in records"""
-    try:
-        validated = validate_params(filter, None, None, None)
-        return await RecordService(session).get_constraints_frequencies(validated["filter"])
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-
-
-@router.get("/travel_time", response_model=Frequencies, response_model_exclude_none=True)
-async def compute_travel_time_frequencies(
-    filter: str = Query(None),
-    user: User = Depends(kc_service.get_user_info()),
-    session: AsyncSession = Depends(get_session),
-) -> Frequencies:
-    """Query frequency of travel time in records"""
-    try:
-        validated = validate_params(filter, None, None, None)
-        return await RecordService(session).get_travel_time_frequencies(validated["filter"])
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-
-
-@router.get("/reco_dt2", response_model=Frequencies, response_model_exclude_none=True)
-async def compute_reco_dt2_frequencies(
-    filter: str = Query(None),
-    user: User = Depends(kc_service.get_user_info()),
-    session: AsyncSession = Depends(get_session),
-) -> Frequencies:
-    """Query frequency of recommendations in records"""
-    try:
-        validated = validate_params(filter, None, None, None)
-        return await RecordService(session).get_recommendation_frequencies(validated["filter"])
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-
-
-@router.get("/freq_mod", response_model=list[Frequencies], response_model_exclude_none=True)
-async def compute_freq_mod_frequencies(
-    filter: str = Query(None),
-    user: User = Depends(kc_service.get_user_info()),
-    session: AsyncSession = Depends(get_session),
-) -> list[Frequencies]:
-    """Query frequency of modalities in records"""
-    try:
-        validated = validate_params(filter, None, None, None)
-        return [await RecordService(session).get_mod_stats(mod, validated["filter"]) for mod in [
-            'freq_mod_car',
-            'freq_mod_pub',
-            'freq_mod_bike',
-            'freq_mod_moto',
-            'freq_mod_train',
-            'freq_mod_walking']]
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-
-
 @router.get("/freq_mod_pro", response_model=list[Frequencies], response_model_exclude_none=True)
 async def compute_freq_mod_pro_frequencies(
     filter: str = Query(None),
@@ -112,26 +36,6 @@ async def compute_freq_mod_pro_frequencies(
             'freq_mod_pro_inter_car',
             'freq_mod_pro_inter_train',
             'freq_mod_pro_inter_plane']]
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-
-
-@router.get("/freq_mod_emissions", response_model=list[Emissions], response_model_exclude_none=True)
-async def compute_freq_mod_emissions(
-    filter: str = Query(None),
-    user: User = Depends(kc_service.get_user_info()),
-    session: AsyncSession = Depends(get_session),
-) -> list[Emissions]:
-    """Query frequency of modalities emissions in records"""
-    try:
-        validated = validate_params(filter, None, None, None)
-        return [await RecordService(session).get_mod_co2_emissions(mod, validated["filter"]) for mod in [
-            'freq_mod_car',
-            'freq_mod_pub',
-            'freq_mod_bike',
-            'freq_mod_moto',
-            'freq_mod_train',
-            'freq_mod_walking']]
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 

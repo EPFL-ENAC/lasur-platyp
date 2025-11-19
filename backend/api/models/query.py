@@ -124,5 +124,5 @@ class Links(BaseModel):
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
-    freq_modes: Optional[List[Frequencies]] = None
-    emissions: Optional[List[Emissions]] = None
+    mode_frequencies: Optional[List[Frequencies]] = None
+    mode_emissions: Optional[List[Emissions]] = None
