@@ -13,7 +13,7 @@ with mock.patch.dict(os.environ, {
     "KEYCLOAK_API_SECRET": "dummy"
 }):
     from api.services.records import RecordService
-from api.models.query import Emissions, Frequencies, Frequency
+from api.models.query import Emissions, Frequencies, Frequency, Link, Links
 
 
 def assert_frequencies_equal(result: Frequencies, expected: Frequencies):
@@ -206,3 +206,55 @@ def test_compute_modes_emissions():
     assert len(result) == len(expected)
     for res_emission, exp_emission in zip(result, expected):
         assert_emissions_equal(res_emission, exp_emission)
+
+
+def test_compute_mode_reco_links():
+    # Load the test CSV into a DataFrame
+    df = pd.read_csv('tests/data/records.csv')
+    service = RecordService(session=None)  # session not needed for this test
+    df = service.preprocess_dataframe(df)
+    result = service.compute_mode_reco_links(df)
+
+    # print(result)
+    expected = Links(
+        total=30,
+        data=[
+            Link(source='walking', target='elec', value=1),
+            Link(source='walking', target='train', value=1),
+            Link(source='walking', target='tpu', value=5),
+            Link(source='bike', target='covoit', value=3),
+            Link(source='bike', target='velo', value=1),
+            Link(source='bike', target='tpu', value=2),
+            Link(source='bike', target='elec', value=1),
+            Link(source='pub', target='covoit', value=5),
+            Link(source='pub', target='train', value=2),
+            Link(source='pub', target='inter', value=1),
+            Link(source='pub', target='tpu', value=3),
+            Link(source='pub', target='elec', value=1),
+            Link(source='moto', target='elec', value=1),
+            Link(source='moto', target='covoit', value=1),
+            Link(source='car', target='elec', value=1),
+            Link(source='car', target='covoit', value=2),
+            Link(source='car', target='inter', value=3),
+            Link(source='train', target='train', value=1),
+            Link(source='train', target='covoit', value=1),
+            Link(source='train', target='tpu', value=1),
+            Link(source='car', target='vae', value=2),
+            Link(source='car', target='train', value=1),
+            Link(source='carpool', target='inter', value=1),
+            Link(source='bike', target='inter', value=3),
+            Link(source='moto', target='marche', value=1),
+            Link(source='moto', target='vae', value=1),
+            Link(source='moto', target='tpu', value=1),
+            Link(source='walking', target='inter', value=2),
+            Link(source='train', target='inter', value=1)
+        ]
+    )
+
+    assert result.total == expected.total
+    assert len(result.data) == len(expected.data)
+    for exp_link in expected.data:
+        matched = next(
+            (l for l in result.data if l.source == exp_link.source and l.target == exp_link.target), None)
+        assert matched is not None, f"Expected link {exp_link.source} -> {exp_link.target} not found"
+        assert matched.value == exp_link.value

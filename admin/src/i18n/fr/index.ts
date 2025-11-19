@@ -219,6 +219,7 @@ export default {
         train: 'le train',
         moto: 'La moto / le scooter',
         car: 'La voiture',
+        carpool: 'Le covoiturage',
         plane: "L'avion",
         pub_train: 'Les transports publics (y compris le train)',
         car_moto: 'La voiture ou la moto',

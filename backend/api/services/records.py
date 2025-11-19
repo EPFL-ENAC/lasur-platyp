@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Integer, select
 from fastapi import HTTPException
 from api.models.domain import Record, Campaign
-from api.models.query import Stats, Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
+from api.models.query import Link, Stats, Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 import pandas as pd
@@ -612,6 +612,84 @@ class RecordService:
 
         return results
 
+    def compute_mode_reco_links_v1(self, df: pd.DataFrame) -> Links:
+        """Compute all mode recommendation links from a DataFrame of records."""
+        counts = {}
+        for mode in MODES:
+            col_name = f'data.freq_mod_{mode}'
+            if col_name not in df.columns:
+                continue
+            df_mode = df[df[col_name].notna()]
+            for _, row in df_mode.iterrows():
+                reco = row['typo.reco.reco_dt2.0']
+                mod_count = int(row[col_name])
+                if mod_count <= 0:
+                    continue
+                mod_counts = counts.get(mode, {})
+                mod_counts[reco] = mod_counts.get(reco, 0) + 1
+                counts[mode] = mod_counts
+        links = [Link(source=mod, target=reco, value=int(count)) for mod,
+                 reco_counts in counts.items() for reco, count in reco_counts.items()]
+        return Links(total=len(df), data=links)
+
+    def compute_mode_reco_links_v2(self, df: pd.DataFrame) -> Links:
+        """Compute all mode recommendation links from a DataFrame of records."""
+
+        # New data version: get the series from data.freq_mod_journeys
+        col_days = df.columns[df.columns.str.contains(
+            r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
+        counts = {}
+        for i in range(len(col_days)):
+            col_modes_i = df.columns[df.columns.str.startswith(
+                f'data.freq_mod_journeys.{str(i)}.modes.')]
+            if col_modes_i.empty:
+                continue
+            col_days_i = col_days[i]
+            # make a dataframe with only i columns
+            df_i = df[[col_days_i] + col_modes_i.tolist() +
+                      ['typo.reco.reco_dt2.0']].copy()
+            # iterate rows
+            for _, row in df_i.iterrows():
+                days = row[col_days_i]
+                if pd.isna(days) or int(days) <= 0:
+                    continue
+                for col in col_modes_i:
+                    mode = row[col]
+                    if pd.isna(mode):
+                        continue
+                    reco = row['typo.reco.reco_dt2.0']
+                    mod_counts = counts.get(mode, {})
+                    mod_counts[reco] = mod_counts.get(reco, 0) + 1
+                    counts[mode] = mod_counts
+        data = [Link(source=mod, target=reco, value=int(count)) for mod,
+                reco_counts in counts.items() for reco, count in reco_counts.items()]
+        links = Links(total=len(df), data=data)
+        return links
+
+    def compute_mode_reco_links(self, df: pd.DataFrame) -> Links:
+        """Compute all mode recommendation links from a DataFrame of records."""
+        # v1: legacy data version
+        df_v1 = self.get_records_v1(df)
+        links = self.compute_mode_reco_links_v1(df_v1)
+
+        # v2: new data version
+        df_v2 = self.get_records_v2(df)
+        if not df_v2.empty:
+            links_v2 = self.compute_mode_reco_links_v2(df_v2)
+            # merge links of same source and target
+            merged_links = {}
+            for link in links.data + links_v2.data:
+                key = (link.source, link.target)
+                if key in merged_links:
+                    merged_links[key].value += link.value
+                else:
+                    merged_links[key] = Link(
+                        source=link.source, target=link.target, value=link.value)
+            links.data = list(merged_links.values())
+            links.total = len(df)
+
+        return links
+
     def preprocess_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
         """Preprocess the DataFrame before computing statistics."""
         # Filter only completed records
@@ -628,6 +706,7 @@ class RecordService:
         recommendations = self.compute_recommendation_frequencies(df)
         mode_frequencies = self.compute_modes_frequencies(df)
         mode_emissions = self.compute_modes_emissions(df)
+        mode_links = self.compute_mode_reco_links(df)
 
         return Stats(
             total=len(df),
@@ -638,7 +717,8 @@ class RecordService:
                 recommendations
             ],
             mode_frequencies=mode_frequencies,
-            mode_emissions=mode_emissions
+            mode_emissions=mode_emissions,
+            mode_links=mode_links
         )
 
     def get_records_v1(self, df: pd.DataFrame) -> pd.DataFrame:

@@ -113,7 +113,7 @@ class Emissions(BaseModel):
 class Link(BaseModel):
     source: str
     target: str
-    value: float
+    value: int
 
 
 class Links(BaseModel):
@@ -126,3 +126,4 @@ class Stats(BaseModel):
     frequencies: Optional[List[Frequencies]] = None
     mode_frequencies: Optional[List[Frequencies]] = None
     mode_emissions: Optional[List[Emissions]] = None
+    mode_links: Optional[Links] = None

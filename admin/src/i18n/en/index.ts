@@ -217,6 +217,7 @@ export default {
         train: 'Train',
         moto: 'Motorcycle/scooter',
         car: 'Car',
+        carpool: 'Carpooling',
         plane: 'Plane',
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
