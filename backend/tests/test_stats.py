@@ -23,6 +23,16 @@ def assert_emissions_equal(result: Emissions, expected: Emissions):
     assert result.emissions == expected.emissions
 
 
+def assert_links_equal(result: Links, expected: Links):
+    assert result.total == expected.total
+    assert len(result.data) == len(expected.data)
+    for exp_link in expected.data:
+        matched = next(
+            (l for l in result.data if l.source == exp_link.source and l.target == exp_link.target), None)
+        assert matched is not None, f"Expected link {exp_link.source} -> {exp_link.target} not found"
+        assert matched.value == exp_link.value
+
+
 def test_compute_equipments_frequencies():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
@@ -358,11 +368,25 @@ def test_compute_mode_reco_links():
             Link(source='train', target='inter', value=1)
         ]
     )
+    assert_links_equal(result, expected)
 
-    assert result.total == expected.total
-    assert len(result.data) == len(expected.data)
-    for exp_link in expected.data:
-        matched = next(
-            (l for l in result.data if l.source == exp_link.source and l.target == exp_link.target), None)
-        assert matched is not None, f"Expected link {exp_link.source} -> {exp_link.target} not found"
-        assert matched.value == exp_link.value
+
+def test_compute_mode_reco_pro_links():
+    # Load the test CSV into a DataFrame
+    df = pd.read_csv('tests/data/records.csv')
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
+    result = service.compute_mode_reco_pro_links(df)
+
+    expected = Links(
+        total=30,
+        data=[
+            Link(source='plane', target='train', value=1),
+            Link(source='plane', target='avoid', value=2),
+            Link(source='train', target='train', value=2),
+            Link(source='bike', target='bike', value=1),
+            Link(source='moto', target='elec_moto', value=1),
+            Link(source='moto', target='train', value=1)
+        ]
+    )
+    assert_links_equal(result, expected)

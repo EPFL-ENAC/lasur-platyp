@@ -129,6 +129,9 @@
         <div class="item">
           <share-chart type="reco_pros" :height="height" class="q-mb-md" />
         </div>
+        <div class="item">
+          <links-chart type="mod_reco_pro" :height="height" class="q-mb-md" />
+        </div>
       </div>
     </div>
     <div v-else>
