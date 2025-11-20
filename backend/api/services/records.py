@@ -1,14 +1,14 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy import Float, select, func, and_, cast, literal_column, lateral
+from sqlalchemy import select, cast
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlmodel import Integer, select
+from sqlmodel import select
 from fastapi import HTTPException
-from api.models import query
 from api.models.domain import Record, Campaign
-from api.models.query import Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
+from api.models.query import RecordResult, RecordDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
+import pandas as pd
 
 
 class RecordQueryBuilder(QueryBuilder):
@@ -150,310 +150,57 @@ class RecordService:
         await self.session.commit()
         return entity
 
-    async def get_equipments_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
+    async def get_dataframe(self, filter: dict, flat: bool = False) -> pd.DataFrame:
+        """Get a DataFrame representation of the records.
 
+        Args:
+            filter (dict): The filter criteria for the records.
+            flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
+
+        Returns:
+            pd.DataFrame: A DataFrame representation of the records.
+        """
         results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
+        # Read results into a pandas DataFrame
+        df = pd.DataFrame([result.model_dump() for result in results.data])
+        if not flat:
+            return df
+        # Flatten nested JSON fields in 'data' and 'typo'
+        for col in ['data', 'typo']:
+            if col in df.columns:
+                # Replace NaN with empty dict
+                df[col] = df[col].apply(
+                    lambda x: x if isinstance(x, dict) else {})
+                # Flatten the JSON column
+                df_data = df[col].apply(self.flatten_json).apply(pd.Series)
+                # Filter out empty columns
+                df_data = df_data.loc[:, df_data.notna().any()]
+                # Filter out columns with empty names
+                df_data = df_data.loc[:, df_data.columns.str.strip() != '']
+                # Prefix column names
+                df_data = df_data.add_prefix(f"{col}.")
+                # Combine with original DataFrame
+                df = pd.concat(
+                    [df.drop(columns=[col]), df_data], axis=1)
+        # Return a simple message for testing purposes
+        # return {"message": f"Columns count: {len(df_flat.columns)}", "columns": df_flat.columns.tolist()}
+        return df
 
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                func.jsonb_array_elements_text(
-                    Record.data['equipments']).label('equipment')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
+    def flatten_json(self, obj, parent_key="", sep="."):
+        """Recursively flatten JSON with lists indexed."""
+        items = []
 
-        # Main query
-        query = (
-            select(
-                expanded.c.equipment,
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.equipment)
-            .order_by(func.count().desc())
-        )
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                new_key = f"{parent_key}{sep}{k}" if parent_key else k
+                items.extend(self.flatten_json(v, new_key, sep=sep).items())
 
-        counts = await self.session.exec(query)
+        elif isinstance(obj, list):
+            for i, v in enumerate(obj):
+                new_key = f"{parent_key}{sep}{i}"
+                items.extend(self.flatten_json(v, new_key, sep=sep).items())
 
-        return Frequencies(
-            field='equipments',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.equipment,
-                    count=row.usage_count
-                )
-                for row in counts
-            ]
-        )
+        else:
+            items.append((parent_key, obj))
 
-    async def get_constraints_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                func.jsonb_array_elements_text(
-                    Record.data['constraints']).label('constraint')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.constraint,
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.constraint)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field='constraints',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.constraint,
-                    count=row.usage_count
-                )
-                for row in counts
-            ]
-        )
-
-    async def get_travel_time_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                Record.data['travel_time'].astext.label('travel_time')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.travel_time,
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.travel_time)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field='travel_time',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.travel_time,
-                    count=row.usage_count
-                )
-                for row in counts
-            ]
-        )
-
-    async def get_recommendation_frequencies(self, filter: dict) -> Frequencies:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                func.jsonb_array_elements_text(
-                    Record.typo["reco"]["reco_dt2"]).label('reco')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.reco,
-                func.count().label('reco_count')
-            )
-            .group_by(expanded.c.reco)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field='reco_dt2',
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.reco,
-                    count=row.reco_count
-                )
-                for row in counts
-            ]
-        )
-
-    async def get_mod_stats(self, mod: str, filter: dict):
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                Record.data[mod].astext.label('mod')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.mod,
-                func.sum(cast(expanded.c.mod, Integer)).label('usage_sum'),
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.mod)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field=mod,
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.mod,
-                    count=row.usage_count,
-                    sum=row.usage_sum
-                )
-                for row in counts
-            ]
-        )
-
-    async def get_mod_co2_emissions(self, mod: str, filter: dict) -> Emissions:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Emissions(field=mod, total=0, distances=0, journeys=0, emissions=0)
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        mod_emissions = {'car': 186, 'train': 8, 'pub': 25,
-                         'bike': 6, 'moto': 155, 'walking': 0}
-
-        # calculate distances between origin (lat, lon) and workplace (lat, lon)
-        origin_lat = cast(Record.data["origin"]["lat"].astext, Float)
-        origin_lon = cast(Record.data["origin"]["lon"].astext, Float)
-        work_lat = cast(Record.data["workplace"]["lat"].astext, Float)
-        work_lon = cast(Record.data["workplace"]["lon"].astext, Float)
-
-        # Main query
-        query = (
-            select(
-                Record.id,
-                (6371 * func.acos(
-                    func.cos(func.radians(origin_lat)) *
-                    func.cos(func.radians(work_lat)) *
-                    func.cos(func.radians(work_lon) - func.radians(origin_lon)) +
-                    func.sin(func.radians(origin_lat)) *
-                    func.sin(func.radians(work_lat))
-                )).label("distance_km"),
-                Record.data[mod].astext.label('mod')
-            ).where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-        )
-
-        counts = await self.session.exec(query)
-        rows = [row for row in counts if row.distance_km is not None and row.mod is not None and int(
-            row.mod) > 0]
-        distances = [row.distance_km * 1.3 for row in rows]
-        journeys = [45 * 2 * int(row.mod) for row in rows]
-        emissions = [row.distance_km * 1.3 * 45 * 2 * int(
-            row.mod) * mod_emissions[mod.replace("freq_mod_", "")] / 1000 for row in rows]
-        return Emissions(field=mod, total=total_count, distances=sum(distances), journeys=sum(journeys), emissions=sum(emissions))
-
-    async def get_mod_reco_links(self, filter: dict) -> Links:
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Links(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # JSON fields
-        train_val = cast(Record.data["freq_mod_train"].astext, Integer)
-        car_val = cast(Record.data["freq_mod_car"].astext, Integer)
-        pub_val = cast(Record.data["freq_mod_pub"].astext, Integer)
-        bike_val = cast(Record.data["freq_mod_bike"].astext, Integer)
-        moto_val = cast(Record.data["freq_mod_moto"].astext, Integer)
-        walking_val = cast(Record.data["freq_mod_walking"].astext, Integer)
-        combined_val = Record.data["freq_mod_combined"].astext
-
-        query = (
-            select(
-                Record.id,
-                (train_val > 0).label("train"),
-                (car_val > 0).label("car"),
-                (pub_val > 0).label("pub"),
-                (bike_val > 0).label("bike"),
-                (moto_val > 0).label("moto"),
-                (walking_val > 0).label("walking"),
-                combined_val.label("combined"),
-                # first reco only
-                Record.typo["reco"]["reco_dt2"][0].astext.label('reco')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-        )
-
-        rows = await self.session.exec(query)
-        counts = {}
-        for row in rows:
-            for mod in ['train', 'car', 'pub', 'bike', 'moto', 'walking']:
-                if getattr(row, mod):
-                    reco = row.reco
-                    mod_counts = counts.get(mod, {})
-                    mod_counts[reco] = mod_counts.get(reco, 0) + 1
-                    counts[mod] = mod_counts
-        links = [{"source": mod, "target": reco, "value": count} for mod,
-                 reco_counts in counts.items() for reco, count in reco_counts.items()]
-        return Links(total=total_count, data=links)
+        return dict(items)

@@ -15,12 +15,12 @@ interface InitOptions {
 }
 
 export const MODE_COLORS: { [key: string]: string } = {
-  car: '#7030A0',
-  car_driver: '#7030A0',
-  elec: '#7030A0',
+  car: '#7030a0',
+  car_driver: '#7030a0',
+  elec: '#7030a0',
   covoit: '#4f4f4f',
   inter: '#caad2e',
-  moto: '#D86ECC',
+  moto: '#d86ecc',
   train: '#cfd6b9',
   train_subs: '#cfd6b9',
   pub: '#80a795',
@@ -33,5 +33,6 @@ export const MODE_COLORS: { [key: string]: string } = {
   walking: '#c7ff0a',
   marche: '#c7ff0a',
   plane: '#99001A',
+  boat: '#22cdf6',
   default: '#ccc',
 }
