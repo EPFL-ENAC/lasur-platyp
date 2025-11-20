@@ -132,14 +132,14 @@ function initChartOptions() {
     },
     xAxis: {
       name: props.xaxis || '',
-      nameLocation: 'end',
+      nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
     },
     yAxis: {
       name: props.yaxis || '',
       nameLocation: 'middle',
-      nameGap: 30,
+      nameGap: 40,
       type: 'value',
     },
     series: [

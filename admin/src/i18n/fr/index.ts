@@ -155,6 +155,23 @@ export default {
         cargo: 'Vélo cargo',
       },
     },
+    reco_pros: {
+      title: 'Recommendations (professional)',
+      labels: {
+        avoid: 'Éviter le déplacement',
+        bike: 'Vélo (mécanique ou électrique)',
+        covoit: 'Covoiturage',
+        elec: 'Voiture électrique',
+        elec_moto: 'Moto électrique',
+        inter: 'Intermodalité',
+        marche: 'Marche',
+        tpu: 'Transports publics',
+        train: 'Train',
+        vae: 'Vélo à assistance électrique',
+        velo: 'Vélo',
+        cargo: 'Vélo cargo',
+      },
+    },
     freq_mod: {
       title: 'Modes de transport',
       labels: {
@@ -174,7 +191,7 @@ export default {
     },
     freq_mod_pro: {
       title: 'Modes de transport (professionnel)',
-      xaxis: 'Jours par mois',
+      xaxis: 'Trajets par année',
       labels: {
         local: 'Local',
         region: 'Régional',
@@ -196,6 +213,28 @@ export default {
     emissions_freq_mod: {
       title: 'Émissions CO₂ par mode de transport',
       yaxis: 'Émissions CO₂ par trajet (kgCO₂eq)',
+      xaxis: 'Trajets par année',
+      labels: {
+        walking: 'Marche',
+        bike: 'Vélo',
+        ebike: 'Vélo électrique',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        emissions: 'Émissions CO₂ totales',
+        journeys: 'Nombre de trajets',
+        distances: 'Distance totale',
+      },
+    },
+    emissions_freq_mod_pro: {
+      title: 'Émissions CO₂ par mode de transport (professionnel)',
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂eq)',
+      xaxis: 'Trajets par année',
       labels: {
         walking: 'Marche',
         bike: 'Vélo',

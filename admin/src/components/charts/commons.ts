@@ -18,6 +18,7 @@ export const MODE_COLORS: { [key: string]: string } = {
   car: '#7030a0',
   car_driver: '#7030a0',
   elec: '#7030a0',
+  elec_moto: '#d86ecc',
   covoit: '#4f4f4f',
   inter: '#caad2e',
   moto: '#d86ecc',

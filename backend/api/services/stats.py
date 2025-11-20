@@ -8,9 +8,13 @@ MODE_EMISSIONS = {
     'ebike': 11,
     'pub': 25,
     'moto': 155,
+    'elec_moto': 82,
     'carpool': 93,
     'car': 186,
     'train': 8,
+    'boat': 161,
+    'plane': 263,
+    'elec': 90
 }
 
 MODES = [
@@ -69,9 +73,12 @@ class StatsService:
         mode_emissions = self.compute_modes_emissions(df)
         mode_links = self.compute_mode_reco_links(df)
         mode_pro_frequencies = self.compute_modes_pro_frequencies(df)
+        mode_pro_emissions = self.compute_modes_pro_emissions(df)
+        pro_recommendations = self.compute_recommendation_pro_frequencies(df)
 
         return Stats(
             total=len(df),
+            # individual
             frequencies=[
                 equipments,
                 constraints,
@@ -81,7 +88,12 @@ class StatsService:
             mode_frequencies=mode_frequencies,
             mode_emissions=mode_emissions,
             mode_links=mode_links,
-            mode_pro_frequencies=mode_pro_frequencies
+            # professional
+            pro_frequencies=[
+                pro_recommendations
+            ],
+            mode_pro_frequencies=mode_pro_frequencies,
+            mode_pro_emissions=mode_pro_emissions,
         )
 
     def compute_equipments_frequencies(self, df: pd.DataFrame) -> Frequencies:
@@ -168,6 +180,37 @@ class StatsService:
             ]
         )
 
+    def compute_recommendation_pro_frequencies(self, df: pd.DataFrame) -> Frequencies:
+        """Compute recommendation professional frequencies from a DataFrame of records."""
+        all_reco_pros = []
+        # v1: recommendations are made per destination area type
+        for col in ['typo.reco_pro.reco_pro_loc', 'typo.reco_pro.reco_pro_reg', 'typo.reco_pro.reco_pro_inter']:
+            if col in df.columns:
+                all_reco_pros.extend(
+                    df[col].dropna().tolist()
+                )
+
+        # v2: recommendations are made per journey
+        col_reco_pros = df.columns[df.columns.str.contains(
+            r'^typo\.reco_pro\.reco_pros\..*$', regex=True)]
+        for col in col_reco_pros:
+            all_reco_pros.extend(
+                df[col].dropna().tolist()
+            )
+        reco_counts = pd.Series(all_reco_pros).value_counts()
+
+        return Frequencies(
+            field='reco_pros',
+            total=len(df),
+            data=[
+                Frequency(
+                    value=reco,
+                    count=count
+                )
+                for reco, count in reco_counts.items() if reco
+            ]
+        )
+
     def compute_modes_frequencies(self, df: pd.DataFrame) -> list[Frequencies]:
         """Compute all modes frequencies from a DataFrame of records."""
         # TODO handle intermodality
@@ -240,6 +283,8 @@ class StatsService:
             # round distances, emissions
             emission.distances = round(emission.distances, 3)
             emission.emissions = round(emission.emissions, 3)
+        # filter out emissions with zero emissions
+        results = [e for e in results if e.emissions > 0]
 
         return results
 
@@ -266,6 +311,29 @@ class StatsService:
             frequencies.data.sort(key=lambda x: int(x.value))
         # filter out frequencies with empty data
         results = [f for f in results if len(f.data) > 0]
+
+        return results
+
+    def compute_modes_pro_emissions(self, df: pd.DataFrame) -> list[Emissions]:
+        """Compute all CO2 emissions from a DataFrame of records for pro journeys."""
+        # v1: cannot compute pro emissions from v1 data
+
+        # v2: count emissions from data.freq_mod_pro_journeys
+        df_v2 = self._get_records_v2(df)
+        results = []
+        if not df_v2.empty:
+            for mode in MODES_PRO:
+                results.append(
+                    self._compute_mode_pro_emissions_v2(df_v2, mode))
+
+        # finalize totals
+        for emission in results:
+            emission.total = len(df_v2)
+            # round distances, emissions
+            emission.distances = round(emission.distances, 3)
+            emission.emissions = round(emission.emissions, 3)
+        # filter out emissions with zero emissions
+        results = [e for e in results if e.emissions > 0]
 
         return results
 
@@ -307,6 +375,8 @@ class StatsService:
             return Frequencies(field=mode, total=len(df), data=[])
         # Get the series for the specific mode
         mode_series = df[f'data.freq_mod_pro_{mode}'].dropna().astype(int)
+        # days per month to days per year
+        mode_series = mode_series * 12
         mode_counts = mode_series.value_counts()
         mode_sums = mode_series.groupby(mode_series).sum()
 
@@ -350,7 +420,11 @@ class StatsService:
         for i in range(len(col_days)):
             # print("mode:", mode, "journey:", i)
             col_mode_i = f'data.freq_mod_pro_journeys.{str(i)}.mode'
+            if col_mode_i not in df.columns:
+                continue
             col_hexid_i = f'data.freq_mod_pro_journeys.{str(i)}.hex_id'
+            if col_hexid_i not in df.columns:
+                continue
             col_days_i = col_days[i]
             # make a dataframe with only i columns and workplace lat/lon
             df_i = df[['data.workplace.lat', 'data.workplace.lon',
@@ -533,23 +607,20 @@ class StatsService:
 
             # if the train is one of the modes, consider that 80% of the distance is done by train,
             # then split the rest equally among the other modes used.
+            days = row[f'data.freq_mod_journeys.{i}.days']
+            dist = row['distance_km']
             co2 = 0
             if 'train' in modes:
                 if mode == 'train':
-                    co2 += 0.8 * 45 * 2 * (row[f'data.freq_mod_journeys.{i}.days'] *
-                                           row['distance_km'] *
-                                           MODE_EMISSIONS['train'] / 1000)
+                    co2 += 0.8 * 45 * 2 * \
+                        (days * dist * MODE_EMISSIONS['train'] / 1000)
                 elif mode in modes:
-                    co2 += 0.2 / (len(modes) - 1) * 45 * 2 * (row[f'data.freq_mod_journeys.{i}.days'] *
-                                                              row['distance_km'] *
-                                                              MODE_EMISSIONS[mode] / 1000)
+                    co2 += 0.2 / (len(modes) - 1) * 45 * 2 * \
+                        (days * dist * MODE_EMISSIONS[mode] / 1000)
             elif mode in modes:
-                co2 += 1 / len(modes) * 45 * 2 * (row[f'data.freq_mod_journeys.{i}.days'] *
-                                                  row['distance_km'] *
-                                                  MODE_EMISSIONS[mode] / 1000)
-            em_factor = co2 * 1000 / \
-                (45 * 2 *
-                 (row[f'data.freq_mod_journeys.{i}.days'] * row['distance_km']))
+                co2 += 1 / len(modes) * 45 * 2 * \
+                    (days * dist * MODE_EMISSIONS[mode] / 1000)
+            em_factor = co2 * 1000 / (45 * 2 * days * dist)
             return [co2, em_factor]
 
         # New data version: get the series from data.freq_mod_journeys
@@ -582,6 +653,67 @@ class StatsService:
                 df_i['distance_km'] * df_i[col_days_i] * 45 * 2))
             emissions.journeys += int(sum(
                 df_i[col_days_i] * 45 * 2))
+            emissions.emissions += float(sum(df_i['mode_emissions']))
+
+        return emissions
+
+    def _compute_mode_pro_emissions_v2(self, df: pd.DataFrame, mode: str) -> Emissions:
+        """Compute all CO2 emissions from a DataFrame of records."""
+
+        def calculate_distance(row, i):
+            lat = float(row['data.workplace.lat'])
+            lon = float(row['data.workplace.lon'])
+            h3_index = row[f'data.freq_mod_pro_journeys.{str(i)}.hex_id']
+            mode = row[f'data.freq_mod_pro_journeys.{str(i)}.mode']
+            return self._calculate_distance_to_h3(lat, lon, h3_index, mode)
+
+        def compute_mode_emissions(row, mode, i):
+            # if the train is one of the modes, consider that 80% of the distance is done by train,
+            # then split the rest equally among the other modes used.
+            days = row[f'data.freq_mod_pro_journeys.{i}.days']
+            dist = row['distance_km']
+            co2 = 2 * (days * dist * MODE_EMISSIONS[mode] / 1000)
+            em_factor = co2 * 1000 / (2 * days * dist)
+            return [co2, em_factor]
+
+        # New data version: get the series from data.freq_mod_journeys
+        col_days = df.columns[df.columns.str.contains(
+            r'^data\.freq_mod_pro_journeys\..*\.days$', regex=True)]
+        emissions = Emissions(
+            field=mode,
+            total=len(df),
+            distances=0,
+            journeys=0,
+            emissions=0
+        )
+        for i in range(len(col_days)):
+            # print("journey:", i)
+            col_mode_i = f'data.freq_mod_pro_journeys.{str(i)}.mode'
+            if col_mode_i not in df.columns:
+                continue
+            col_hexid_i = f'data.freq_mod_pro_journeys.{str(i)}.hex_id'
+            if col_hexid_i not in df.columns:
+                continue
+            col_days_i = col_days[i]
+            # filter only rows where mode matches
+            df_i = df[df[col_mode_i] == mode]
+            if len(df_i) == 0:
+                continue
+            # make a dataframe with only i columns and workplace lat/lon
+            df_i = df_i[['data.workplace.lat', 'data.workplace.lon',
+                         col_days_i, col_mode_i, col_hexid_i]].copy()
+            # Calculate distance_km to pro travel destination for each record
+            df_i['distance_km'] = df.apply(
+                lambda row: calculate_distance(row, i), axis=1)
+            # compute emissions factor
+            df_i[['mode_emissions', 'em_factor']] = df_i.apply(
+                lambda row: compute_mode_emissions(row, mode, i), axis=1, result_type='expand')
+            # filter only positive emissions
+            df_i = df_i[df_i['mode_emissions'] > 0]
+            # print(df_i)
+            emissions.distances += float(
+                sum(df_i['distance_km'] * df_i[col_days_i] * 2))
+            emissions.journeys += int(sum(df_i[col_days_i] * 2))
             emissions.emissions += float(sum(df_i['mode_emissions']))
 
         return emissions

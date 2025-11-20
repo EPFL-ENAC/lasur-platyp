@@ -1,3 +1,4 @@
+from unittest import result
 import pandas as pd
 from api.services.stats import StatsService
 from api.models.query import Emissions, Frequencies, Frequency, Link, Links
@@ -130,7 +131,28 @@ def test_compute_recommendation_frequencies():
             Frequency(value='marche', count=1, sum=None)
         ]
     )
+    assert_frequencies_equal(result, expected)
 
+
+def test_compute_recommendation_pro_frequencies():
+    # Load the test CSV into a DataFrame
+    df = pd.read_csv('tests/data/records.csv')
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
+    result = service.compute_recommendation_pro_frequencies(df)
+
+    # print(result)
+    expected = Frequencies(
+        field='reco_pros',
+        total=30,
+        data=[
+            Frequency(value='elec', count=4, sum=None),
+            Frequency(value='train', count=4, sum=None),
+            Frequency(value='avoid', count=2, sum=None),
+            Frequency(value='bike', count=1, sum=None),
+            Frequency(value='elec_moto', count=1, sum=None)
+        ]
+    )
     assert_frequencies_equal(result, expected)
 
 
@@ -185,14 +207,14 @@ def test_compute_modes_pro_frequencies():
                     Frequency(value='1', count=1, sum=1)]),
         Frequencies(field='local_train', total=30, data=[
                     Frequency(value='1', count=1, sum=1)]),
-        Frequencies(field='national_car', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
-            value='3', count=1, sum=3), Frequency(value='4', count=2, sum=8), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='national_car', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(value='3', count=1, sum=3), Frequency(
+            value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6), Frequency(value='48', count=1, sum=48)]),
         Frequencies(field='national_pub', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
             value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
         Frequencies(field='national_train', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
             value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
         Frequencies(field='national_moto', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(value='3', count=1, sum=3), Frequency(
-            value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6), Frequency(value='20', count=1, sum=20)]),
+            value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6), Frequency(value='240', count=1, sum=240)]),
         Frequencies(field='national_plane', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
             value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
         Frequencies(field='europe_car', total=30, data=[
@@ -204,9 +226,9 @@ def test_compute_modes_pro_frequencies():
         Frequencies(field='inter_car', total=30, data=[Frequency(
             value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
         Frequencies(field='inter_train', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='2', count=1, sum=2), Frequency(value='3', count=1, sum=3)]),
+            value='2', count=1, sum=2), Frequency(value='36', count=1, sum=36)]),
         Frequencies(field='inter_plane', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='2', count=1, sum=2), Frequency(value='3', count=1, sum=3)]),
+            value='2', count=1, sum=2), Frequency(value='36', count=1, sum=36)]),
         Frequencies(field='europe_walking', total=30, data=[
                     Frequency(value='1', count=2, sum=2)]),
         Frequencies(field='national_walking', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
@@ -236,6 +258,7 @@ def test_compute_modes_pro_frequencies():
         Frequencies(field='local_boat', total=30, data=[
                     Frequency(value='1', count=1, sum=1)]),
         Frequencies(field='local_plane', total=30, data=[Frequency(value='1', count=1, sum=1)])]
+
     assert len(result) == len(expected)
     for res_freqs, exp_freqs in zip(result, expected):
         assert_frequencies_equal(res_freqs, exp_freqs)
@@ -250,12 +273,8 @@ def test_compute_modes_emissions():
 
     # print(result)
     expected = [
-        Emissions(field='walking', total=30, distances=587.756,
-                  journeys=1170, emissions=0.0),
         Emissions(field='bike', total=30, distances=6728.72,
                   journeys=2430, emissions=151.304),
-        Emissions(field='ebike', total=30, distances=0.0,
-                  journeys=0, emissions=0.0),
         Emissions(field='pub', total=30, distances=20859.321,
                   journeys=3690, emissions=2243.077),
         Emissions(field='moto', total=30, distances=6837.789,
@@ -266,6 +285,31 @@ def test_compute_modes_emissions():
                   journeys=2970, emissions=15023.343),
         Emissions(field='train', total=30, distances=2122.997,
                   journeys=1080, emissions=82.563)
+    ]
+    assert len(result) == len(expected)
+    for res_emission, exp_emission in zip(result, expected):
+        assert_emissions_equal(res_emission, exp_emission)
+
+
+def test_compute_modes_pro_emissions():
+    # Load the test CSV into a DataFrame
+    df = pd.read_csv('tests/data/records.csv')
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
+    result = service.compute_modes_pro_emissions(df)
+
+    # print(result)
+    expected = [
+        Emissions(field='bike', total=7, distances=153.654,
+                  journeys=2, emissions=0.922),
+        Emissions(field='moto', total=7, distances=546.692,
+                  journeys=4, emissions=84.737),
+        Emissions(field='car', total=7, distances=1259.281,
+                  journeys=6, emissions=234.226),
+        Emissions(field='train', total=7, distances=5651.081,
+                  journeys=22, emissions=45.209),
+        Emissions(field='plane', total=7, distances=41811.232,
+                  journeys=10, emissions=10996.354)
     ]
     assert len(result) == len(expected)
     for res_emission, exp_emission in zip(result, expected):

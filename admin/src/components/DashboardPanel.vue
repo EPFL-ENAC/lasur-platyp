@@ -94,15 +94,6 @@
           <share-chart type="freq_mod" :height="height" class="q-mb-md" />
         </div>
         <div class="item">
-          <frequencies-stack-chart
-            type="freq_mod_pro"
-            :groups="['local', 'national', 'europe', 'inter']"
-            :xaxis="t('stats.freq_mod_pro.xaxis')"
-            :height="height"
-            class="q-mb-md"
-          />
-        </div>
-        <div class="item">
           <emissions-chart
             type="freq_mod"
             :xaxis="t('stats.emissions_freq_mod.xaxis')"
@@ -116,6 +107,27 @@
         </div>
         <div class="item">
           <links-chart type="mod_reco" :height="height" class="q-mb-md" />
+        </div>
+        <div class="item">
+          <frequencies-stack-chart
+            type="freq_mod_pro"
+            :groups="['local', 'national', 'europe', 'inter']"
+            :xaxis="t('stats.freq_mod_pro.xaxis')"
+            :height="height"
+            class="q-mb-md"
+          />
+        </div>
+        <div class="item">
+          <emissions-chart
+            type="freq_mod_pro"
+            :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
+            :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
+            :height="height"
+            class="q-mb-md"
+          />
+        </div>
+        <div class="item">
+          <share-chart type="reco_pros" :height="height" class="q-mb-md" />
         </div>
       </div>
     </div>
