@@ -176,6 +176,8 @@ export default {
       labels: {
         local: 'Local',
         region: 'Regional',
+        national: 'National',
+        europe: 'European',
         inter: 'International',
         walking: 'Walking',
         bike: 'Bicycle (or electric bike)',
@@ -186,6 +188,7 @@ export default {
         plane: 'Plane',
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
+        boat: 'Boat',
       },
     },
     emissions_freq_mod: {

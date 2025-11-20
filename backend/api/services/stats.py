@@ -1,4 +1,5 @@
 import pandas as pd
+import h3
 from api.models.query import Link, Stats, Links, Frequencies, Frequency, Emissions
 
 MODE_EMISSIONS = {
@@ -23,6 +24,37 @@ MODES = [
     'train'
 ]
 
+MODES_PRO_V1 = [
+    'local_walking',
+    'local_car',
+    'local_pub',
+    'local_bike',
+    'local_moto',
+    'local_train',
+    'region_car',
+    'region_pub',
+    'region_train',
+    'region_moto',
+    'region_plane',
+    'europe_car',
+    'europe_train',
+    'europe_plane',
+    'inter_car',
+    'inter_train',
+    'inter_plane'
+]
+
+MODES_PRO = [
+    'walking',
+    'bike',
+    'pub',
+    'moto',
+    'car',
+    'train',
+    'boat',
+    'plane',
+]
+
 
 class StatsService:
 
@@ -36,6 +68,7 @@ class StatsService:
         mode_frequencies = self.compute_modes_frequencies(df)
         mode_emissions = self.compute_modes_emissions(df)
         mode_links = self.compute_mode_reco_links(df)
+        mode_pro_frequencies = self.compute_modes_pro_frequencies(df)
 
         return Stats(
             total=len(df),
@@ -47,7 +80,8 @@ class StatsService:
             ],
             mode_frequencies=mode_frequencies,
             mode_emissions=mode_emissions,
-            mode_links=mode_links
+            mode_links=mode_links,
+            mode_pro_frequencies=mode_pro_frequencies
         )
 
     def compute_equipments_frequencies(self, df: pd.DataFrame) -> Frequencies:
@@ -163,9 +197,17 @@ class StatsService:
 
     def compute_modes_emissions(self, df: pd.DataFrame) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records."""
+
+        def calculate_distance_home_to_work(row):
+            origin_lat = float(row['data.origin.lat'])
+            origin_lon = float(row['data.origin.lon'])
+            work_lat = float(row['data.workplace.lat'])
+            work_lon = float(row['data.workplace.lon'])
+            return self._calculate_distance(origin_lat, origin_lon, work_lat, work_lon)
+
         # Calculate distance_km to workplace for each record
         df['distance_km'] = df.apply(
-            lambda row: self._calculate_distance_to_workplace(row), axis=1)
+            lambda row: calculate_distance_home_to_work(row), axis=1)
 
         # v1: count emissions from legacy fields
         df_v1 = self._get_records_v1(df)
@@ -203,28 +245,27 @@ class StatsService:
 
     def compute_modes_pro_frequencies(self, df: pd.DataFrame) -> list[Frequencies]:
         """Compute all modes frequencies from a DataFrame of records."""
-        # TODO handle intermodality
-
         # v1: count frequencies from legacy fields
         df_v1 = self._get_records_v1(df)
         results = []
-        for mode in MODES:
+        for mode in MODES_PRO_V1:
             results.append(self._compute_mode_pro_frequencies_v1(df_v1, mode))
 
-        # v2: count frequencies from data.freq_mod_journeys
+         # v2: count frequencies from data.freq_mod_journeys
         df_v2 = self._get_records_v2(df)
         if not df_v2.empty:
             results_v2 = []
-            for mode in MODES:
-                results_v2.append(
+            for mode in MODES_PRO:
+                results_v2.extend(
                     self._compute_mode_pro_frequencies_v2(df_v2, mode))
             results = self._merge_frequencies(results, results_v2)
-
         # finalize totals and sort data
         for frequencies in results:
             frequencies.total = len(df)
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
+        # filter out frequencies with empty data
+        results = [f for f in results if len(f.data) > 0]
 
         return results
 
@@ -261,16 +302,16 @@ class StatsService:
         # Legacy data version: get the series for the specific mode
 
         # Find the column name for the mode
-        col_name = f'data.freq_mod_{mode}'
+        col_name = f'data.freq_mod_pro_{mode}'
         if col_name not in df.columns:
             return Frequencies(field=mode, total=len(df), data=[])
         # Get the series for the specific mode
-        mode_series = df[f'data.freq_mod_{mode}'].dropna().astype(int)
+        mode_series = df[f'data.freq_mod_pro_{mode}'].dropna().astype(int)
         mode_counts = mode_series.value_counts()
         mode_sums = mode_series.groupby(mode_series).sum()
 
         return Frequencies(
-            field=mode,
+            field=mode.replace('region_', 'national_'),
             total=len(df),
             data=[
                 Frequency(
@@ -282,67 +323,55 @@ class StatsService:
             ]
         )
 
-    def _compute_mode_pro_frequencies_v2(self, df: pd.DataFrame, mode: str) -> Frequencies:
+    def _compute_mode_pro_frequencies_v2(self, df: pd.DataFrame, mode: str) -> list[Frequencies]:
         """Compute a mode frequency from a DataFrame of records."""
 
-        def is_intermodal(row, i):
-            modes = []
-            for col in row.index:
-                if col.startswith(f'data.freq_mod_journeys.{i}.modes.'):
-                    val = row[col]
-                    # walking is not considered for intermodality
-                    if not pd.isna(val) and val != 'walking':
-                        modes.append(val)
-            modes = set(modes)
-            return len(modes) > 1
+        def calculate_distance_type(row, i):
+            lat = float(row['data.workplace.lat'])
+            lon = float(row['data.workplace.lon'])
+            h3_index = row[f'data.freq_mod_pro_journeys.{str(i)}.hex_id']
+            mode = row[f'data.freq_mod_pro_journeys.{str(i)}.mode']
+            dist = self._calculate_distance_to_h3(lat, lon, h3_index, mode)
+            if dist < 20:
+                return 'local'
+            elif dist < 500:
+                return 'national'
+            elif dist < 1500:
+                return 'europe'
+            else:
+                return 'inter'
 
-        def extract_mod_days(row, mode, i):
-            modes = []
-            for col in row.index:
-                if col.startswith(f'data.freq_mod_journeys.{i}.modes.'):
-                    val = row[col]
-                    if not pd.isna(val) and val == mode:
-                        modes.append(val)
-            modes = set(modes)
-            if len(modes) == 0:
-                return 0
-            if len(modes) > 1:
-                # intermodality, make sure walking is not counted
-                if 'walking' in modes:
-                    modes.remove('walking')
-            # get days value
-            days_col = f'data.freq_mod_journeys.{i}.days'
-            days = row[days_col]
-            if mode in modes:
-                return int(days) if not pd.isna(days) else 0
-            return 0
-
-        # New data version: get the series from data.freq_mod_journeys
+        # New data version: get the series from data.freq_mod_pro_journeys
         col_days = df.columns[df.columns.str.contains(
-            r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
+            r'^data\.freq_mod_pro_journeys\..*\.days$', regex=True)]
         # print(
         #     f"Computing mod frequencies for version 2.x using columns: {col_days.tolist()}")
-        frequencies = []
+        field_frequencies = {}
         for i in range(len(col_days)):
             # print("mode:", mode, "journey:", i)
-            col_modes_i = df.columns[df.columns.str.startswith(
-                f'data.freq_mod_journeys.{str(i)}.modes.')]
-            if col_modes_i.empty:
-                continue
+            col_mode_i = f'data.freq_mod_pro_journeys.{str(i)}.mode'
+            col_hexid_i = f'data.freq_mod_pro_journeys.{str(i)}.hex_id'
             col_days_i = col_days[i]
-            # make a dataframe with only i columns
-            df_i = df[[col_days_i] + col_modes_i.tolist()].copy()
-            # intermodality if more than one mode
-            # TODO not used for now
-            df_i['inter'] = df_i.apply(
-                lambda row: is_intermodal(row, i), axis=1)
-            # extract mod days
-            df_i['mod_days'] = df_i.apply(
-                lambda row: extract_mod_days(row, mode, i), axis=1)
+            # make a dataframe with only i columns and workplace lat/lon
+            df_i = df[['data.workplace.lat', 'data.workplace.lon',
+                       col_days_i, col_mode_i, col_hexid_i]].copy()
+            # Calculate distance type from workplace to pro travel destination for each record
+            df_i['type'] = df_i.apply(
+                lambda row: calculate_distance_type(row, i), axis=1)
+            # print(df_i)
             # count positive mod_days
-            df_i = df_i[df_i['mod_days'] > 0]
-            for row in df_i.itertuples():
-                days = row.mod_days
+            df_i = df_i[df_i[col_days_i] > 0]
+            for idx, row in df_i.iterrows():
+                days = int(row[col_days_i])
+                type = row['type']
+                field = f"{type}_{mode}"
+                if field not in field_frequencies:
+                    field_frequencies[field] = Frequencies(
+                        field=field,
+                        total=len(df),
+                        data=[]
+                    )
+                frequencies = field_frequencies[field].data
                 count = 1
                 # find in frequencies the one with value is str(days)
                 freq = next(
@@ -358,14 +387,8 @@ class StatsService:
                 else:
                     freq.count += int(count)
                     freq.sum += int(days)
-            # print(df_i)
 
-        # print("Final frequencies for mode", mode, ":", frequencies)
-        return Frequencies(
-            field=mode,
-            total=len(df),
-            data=frequencies
-        )
+        return list(field_frequencies.values())
 
     def _compute_mode_frequencies_v1(self, df: pd.DataFrame, mode: str) -> Frequencies:
         """Compute a mode frequency from a DataFrame of records."""
@@ -638,22 +661,38 @@ class StatsService:
         ) & df['data.version'].str.startswith('2.')].copy()
         return df_v2
 
-    def _calculate_distance_to_workplace(self, row: pd.Series) -> float:
-        """Calculate the distance between origin and workplace."""
+    def _calculate_distance(self, origin_lat: float, origin_lon: float, dest_lat: float, dest_lon: float) -> float:
+        """Calculate the distance between origin and destination locations."""
         try:
-            origin_lat = float(row['data.origin.lat'])
-            origin_lon = float(row['data.origin.lon'])
-            work_lat = float(row['data.workplace.lat'])
-            work_lon = float(row['data.workplace.lon'])
             from math import radians, cos, sin, acos
             distance_km = 6371 * acos(
                 cos(radians(origin_lat)) *
-                cos(radians(work_lat)) *
-                cos(radians(work_lon) - radians(origin_lon)) +
+                cos(radians(dest_lat)) *
+                cos(radians(dest_lon) - radians(origin_lon)) +
                 sin(radians(origin_lat)) *
-                sin(radians(work_lat))
+                sin(radians(dest_lat))
             )
             return distance_km * 1.3  # factor for real distance
+        except:
+            return 0
+
+    def _calculate_distance_to_h3(self, lat: float, lon: float, h3_index: str, mode: str) -> float:
+        """Calculate the distance between workplace and destination with a transport mode."""
+        try:
+            if pd.isna(h3_index):
+                return 0
+            # Hypothèse sur l'allongement des distances : en moyenne, 1.22 (network based vs real measured distances : https://journals.sagepub.com/doi/abs/10.3141/1804-28)
+            # On pourrait améliorer ca en cherchant la meme chose pour l'avion (études sur les détours/distances faites lorsqu'on doit attendre au dessus d'un aéroport plein...)
+            # Pareil pour le bateau (pour l'instant on applique 1.22 à tous)
+            avg_dist_coeff = {'train': 1.22, 'car': 1.22, 'bike': 1.22,
+                              'walk': 1.22, 'moto': 1.22, 'pub': 1.22, 'boat': 1.22, 'plane': 1.22}
+            if h3.latlng_to_cell(lat, lon, h3.get_resolution(h3_index)) == h3_index:
+                # Si meme hexagone (apres mise à la resolution choisie par l'utilisateur), on prend une distance moyenne de la taille d'une arrête de l'hexagone.
+                return h3.average_hexagon_edge_length(h3.get_resolution(h3_index))
+            else:
+                # Si pas meme hexagone, on convertit le centre du h3 sélectionné en h3 plus petit pour calculer des distances plus précises
+                return h3.great_circle_distance(h3.cell_to_latlng(h3.cell_to_center_child(h3_index, 9)),
+                                                (lat, lon)) * avg_dist_coeff[mode]
         except:
             return 0
 

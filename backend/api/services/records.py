@@ -1,11 +1,11 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy import Float, select, func, and_, cast
+from sqlalchemy import select, cast
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlmodel import Integer, select
+from sqlmodel import select
 from fastapi import HTTPException
 from api.models.domain import Record, Campaign
-from api.models.query import Link, Stats, Links, RecordResult, RecordDraft, Frequencies, Frequency, Emissions
+from api.models.query import RecordResult, RecordDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 import pandas as pd
@@ -150,51 +150,6 @@ class RecordService:
         await self.session.commit()
         return entity
 
-    async def get_mod_stats(self, mod: str, filter: dict):
-        total_count = await self.count_completed(filter)
-        if total_count == 0:
-            return Frequencies(total=0, data=[])
-
-        results = await self.find(filter, fields=[], sort=[], range=[])
-        ids = [entity.id for entity in results.data]
-
-        # Create a subquery/CTE that expands the JSON array
-        expanded = (
-            select(
-                Record.id,
-                Record.data[mod].astext.label('mod')
-            )
-            .select_from(Record)
-            .where(and_(Record.id.in_(ids), Record.typo['reco'] != cast('null', JSONB)))
-            .subquery()
-        )
-
-        # Main query
-        query = (
-            select(
-                expanded.c.mod,
-                func.sum(cast(expanded.c.mod, Integer)).label('usage_sum'),
-                func.count().label('usage_count')
-            )
-            .group_by(expanded.c.mod)
-            .order_by(func.count().desc())
-        )
-
-        counts = await self.session.exec(query)
-
-        return Frequencies(
-            field=mod,
-            total=total_count,
-            data=[
-                Frequency(
-                    value=row.mod,
-                    count=row.usage_count,
-                    sum=row.usage_sum
-                )
-                for row in counts
-            ]
-        )
-
     async def get_dataframe(self, filter: dict, flat: bool = False) -> pd.DataFrame:
         """Get a DataFrame representation of the records.
 
@@ -205,7 +160,6 @@ class RecordService:
         Returns:
             pd.DataFrame: A DataFrame representation of the records.
         """
-        # Implement your test logic here
         results = await self.find(filter, fields=[], sort=[], range=[])
         # Read results into a pandas DataFrame
         df = pd.DataFrame([result.model_dump() for result in results.data])

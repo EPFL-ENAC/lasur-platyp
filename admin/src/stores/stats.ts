@@ -17,11 +17,9 @@ export const useStats = defineStore('stats', () => {
     frequencies.value = {}
     emissions.value = {}
     links.value = {}
-    return Promise.all([loadAllStats(filter), loadFrequencies('freq_mod_pro', filter)]).finally(
-      () => {
-        loading.value = false
-      },
-    )
+    return loadAllStats(filter).finally(() => {
+      loading.value = false
+    })
   }
 
   async function loadAllStats(filter: Filter | undefined) {
@@ -44,31 +42,10 @@ export const useStats = defineStore('stats', () => {
           frequencies.value['freq_mod'] = stats.mode_frequencies || []
           emissions.value['freq_mod'] = stats.mode_emissions || []
           links.value['mod_reco'] = stats.mode_links || { total: 0, data: [] }
+          frequencies.value['freq_mod_pro'] = stats.mode_pro_frequencies || []
         })
         .catch((err) => {
           console.error(err)
-        })
-    })
-  }
-
-  async function loadFrequencies(field: string, filter: Filter | undefined) {
-    frequencies.value[field] = { field, total: 0, data: [] }
-    return authStore.updateToken().then(() => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${authStore.accessToken}`,
-        },
-      }
-      return api
-        .get(`/stats/${field}`, {
-          ...config,
-          params: { filter: filter ? JSON.stringify(filter) : undefined },
-        })
-        .then((res) => {
-          frequencies.value[field] = res.data
-        })
-        .catch(() => {
-          frequencies.value[field] = { field, total: 0, data: [] }
         })
     })
   }

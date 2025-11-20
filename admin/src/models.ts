@@ -124,6 +124,7 @@ export interface Stats {
   mode_frequencies: Frequencies[] | null
   mode_emissions: Emissions[] | null
   mode_links: Links | null
+  mode_pro_frequencies: Frequencies[] | null
 }
 
 export interface IsochronesParams {

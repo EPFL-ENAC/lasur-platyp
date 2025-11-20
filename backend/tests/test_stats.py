@@ -1,5 +1,4 @@
 import pandas as pd
-import os
 from api.services.stats import StatsService
 from api.models.query import Emissions, Frequencies, Frequency, Link, Links
 
@@ -160,6 +159,83 @@ def test_compute_modes_frequencies():
         Frequencies(field='train', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
             value='3', count=2, sum=6), Frequency(value='5', count=1, sum=5)])
     ]
+    assert len(result) == len(expected)
+    for res_freqs, exp_freqs in zip(result, expected):
+        assert_frequencies_equal(res_freqs, exp_freqs)
+
+
+def test_compute_modes_pro_frequencies():
+    # Load the test CSV into a DataFrame
+    df = pd.read_csv('tests/data/records.csv')
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
+    result = service.compute_modes_pro_frequencies(df)
+
+    # print(result)
+    expected = [
+        Frequencies(field='local_walking', total=30, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='local_car', total=30, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='local_pub', total=30, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='local_bike', total=30, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='local_moto', total=30, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='local_train', total=30, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='national_car', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
+            value='3', count=1, sum=3), Frequency(value='4', count=2, sum=8), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='national_pub', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
+            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='national_train', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
+            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='national_moto', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(value='3', count=1, sum=3), Frequency(
+            value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6), Frequency(value='20', count=1, sum=20)]),
+        Frequencies(field='national_plane', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
+            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='europe_car', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='europe_train', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='europe_plane', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='inter_car', total=30, data=[Frequency(
+            value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
+        Frequencies(field='inter_train', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
+            value='2', count=1, sum=2), Frequency(value='3', count=1, sum=3)]),
+        Frequencies(field='inter_plane', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
+            value='2', count=1, sum=2), Frequency(value='3', count=1, sum=3)]),
+        Frequencies(field='europe_walking', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='national_walking', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
+            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='inter_walking', total=30, data=[Frequency(
+            value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
+        Frequencies(field='europe_bike', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='national_bike', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
+            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='inter_bike', total=30, data=[Frequency(
+            value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
+        Frequencies(field='europe_pub', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='inter_pub', total=30, data=[Frequency(
+            value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
+        Frequencies(field='europe_moto', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='inter_moto', total=30, data=[Frequency(
+            value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
+        Frequencies(field='europe_boat', total=30, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='national_boat', total=30, data=[Frequency(value='1', count=4, sum=4), Frequency(
+            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='inter_boat', total=30, data=[Frequency(
+            value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
+        Frequencies(field='local_boat', total=30, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='local_plane', total=30, data=[Frequency(value='1', count=1, sum=1)])]
     assert len(result) == len(expected)
     for res_freqs, exp_freqs in zip(result, expected):
         assert_frequencies_equal(res_freqs, exp_freqs)
