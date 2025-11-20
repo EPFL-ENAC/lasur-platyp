@@ -1,18 +1,6 @@
 import pandas as pd
-import pytest
 import os
-from unittest import mock
-with mock.patch.dict(os.environ, {
-    "DB_PREFIX": "test",
-    "DB_USER": "test",
-    "DB_PASSWORD": "test",
-    "DB_HOST": "localhost",
-    "DB_PORT": "5432",
-    "DB_NAME": "test",
-    "KEYCLOAK_API_ID": "dummy",
-    "KEYCLOAK_API_SECRET": "dummy"
-}):
-    from api.services.records import RecordService
+from api.services.stats import StatsService
 from api.models.query import Emissions, Frequencies, Frequency, Link, Links
 
 
@@ -38,8 +26,8 @@ def assert_emissions_equal(result: Emissions, expected: Emissions):
 def test_compute_equipments_frequencies():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
-    service = RecordService(session=None)  # session not needed for this test
-    df = service.preprocess_dataframe(df)
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
     result = service.compute_equipments_frequencies(df)
 
     # Basic checks
@@ -75,8 +63,8 @@ def test_compute_equipments_frequencies():
 def test_compute_constraints_frequencies():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
-    service = RecordService(session=None)  # session not needed for this test
-    df = service.preprocess_dataframe(df)
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
     result = service.compute_constraints_frequencies(df)
 
     # print(result)
@@ -98,8 +86,8 @@ def test_compute_constraints_frequencies():
 def test_compute_travel_time_frequencies():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
-    service = RecordService(session=None)  # session not needed for this test
-    df = service.preprocess_dataframe(df)
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
     result = service.compute_travel_time_frequencies(df)
 
     # print(result)
@@ -124,8 +112,8 @@ def test_compute_travel_time_frequencies():
 def test_compute_recommendation_frequencies():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
-    service = RecordService(session=None)  # session not needed for this test
-    df = service.preprocess_dataframe(df)
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
     result = service.compute_recommendation_frequencies(df)
 
     # print(result)
@@ -150,8 +138,8 @@ def test_compute_recommendation_frequencies():
 def test_compute_modes_frequencies():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
-    service = RecordService(session=None)  # session not needed for this test
-    df = service.preprocess_dataframe(df)
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
     result = service.compute_modes_frequencies(df)
 
     # print(result)
@@ -180,8 +168,8 @@ def test_compute_modes_frequencies():
 def test_compute_modes_emissions():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
-    service = RecordService(session=None)  # session not needed for this test
-    df = service.preprocess_dataframe(df)
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
     result = service.compute_modes_emissions(df)
 
     # print(result)
@@ -211,8 +199,8 @@ def test_compute_modes_emissions():
 def test_compute_mode_reco_links():
     # Load the test CSV into a DataFrame
     df = pd.read_csv('tests/data/records.csv')
-    service = RecordService(session=None)  # session not needed for this test
-    df = service.preprocess_dataframe(df)
+    service = StatsService()
+    df = service._preprocess_dataframe(df)
     result = service.compute_mode_reco_links(df)
 
     # print(result)
