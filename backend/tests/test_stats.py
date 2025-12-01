@@ -1,7 +1,9 @@
-from unittest import result
 import pandas as pd
-from api.services.stats import StatsService
+from api.services.stats.links import LinksService
+from api.services.stats.stats import StatsService
 from api.models.query import Emissions, Frequencies, Frequency, Link, Links
+from api.services.stats.frequencies import FrequenciesService
+from api.services.stats.emissions import EmissionsService
 
 
 def assert_frequencies_equal(result: Frequencies, expected: Frequencies):
@@ -33,12 +35,19 @@ def assert_links_equal(result: Links, expected: Links):
         assert matched.value == exp_link.value
 
 
+def load_test_dataframe() -> pd.DataFrame:
+    """Load the test CSV into a DataFrame."""
+    df = pd.read_csv('tests/data/records.csv')
+    stats = StatsService()
+    df = stats._preprocess_dataframe(df)
+    return df
+
+
 def test_compute_equipments_frequencies():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_equipments_frequencies(df)
+    df = load_test_dataframe()
+    service = FrequenciesService(df)
+    result = service.compute_equipments_frequencies()
 
     # Basic checks
     assert isinstance(result, Frequencies)
@@ -72,10 +81,9 @@ def test_compute_equipments_frequencies():
 
 def test_compute_constraints_frequencies():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_constraints_frequencies(df)
+    df = load_test_dataframe()
+    service = FrequenciesService(df)
+    result = service.compute_constraints_frequencies()
 
     # print(result)
     expected = Frequencies(
@@ -95,10 +103,9 @@ def test_compute_constraints_frequencies():
 
 def test_compute_travel_time_frequencies():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_travel_time_frequencies(df)
+    df = load_test_dataframe()
+    service = FrequenciesService(df)
+    result = service.compute_travel_time_frequencies()
 
     # print(result)
     expected = Frequencies(
@@ -121,10 +128,9 @@ def test_compute_travel_time_frequencies():
 
 def test_compute_recommendation_frequencies():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_recommendation_frequencies(df)
+    df = load_test_dataframe()
+    service = FrequenciesService(df)
+    result = service.compute_recommendation_frequencies()
 
     # print(result)
     expected = Frequencies(
@@ -146,10 +152,9 @@ def test_compute_recommendation_frequencies():
 
 def test_compute_recommendation_pro_frequencies():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_recommendation_pro_frequencies(df)
+    df = load_test_dataframe()
+    service = FrequenciesService(df)
+    result = service.compute_recommendation_pro_frequencies()
 
     # print(result)
     expected = Frequencies(
@@ -168,10 +173,9 @@ def test_compute_recommendation_pro_frequencies():
 
 def test_compute_modes_frequencies():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_modes_frequencies(df)
+    df = load_test_dataframe()
+    service = FrequenciesService(df)
+    result = service.compute_modes_frequencies()
 
     # print(result)
     expected = [
@@ -198,10 +202,9 @@ def test_compute_modes_frequencies():
 
 def test_compute_modes_pro_frequencies():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_modes_pro_frequencies(df)
+    df = load_test_dataframe()
+    service = FrequenciesService(df)
+    result = service.compute_modes_pro_frequencies()
 
     # print(result)
     expected = [
@@ -276,10 +279,9 @@ def test_compute_modes_pro_frequencies():
 
 def test_compute_modes_emissions():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_modes_emissions(df)
+    df = load_test_dataframe()
+    service = EmissionsService(df)
+    result = service.compute_modes_emissions()
 
     # print(result)
     expected = [
@@ -303,10 +305,9 @@ def test_compute_modes_emissions():
 
 def test_compute_modes_pro_emissions():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_modes_pro_emissions(df)
+    df = load_test_dataframe()
+    service = EmissionsService(df)
+    result = service.compute_modes_pro_emissions()
 
     # print(result)
     expected = [
@@ -328,10 +329,9 @@ def test_compute_modes_pro_emissions():
 
 def test_compute_mode_reco_links():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_mode_reco_links(df)
+    df = load_test_dataframe()
+    service = LinksService(df)
+    result = service.compute_mode_reco_links()
 
     # print(result)
     expected = Links(
@@ -373,10 +373,9 @@ def test_compute_mode_reco_links():
 
 def test_compute_mode_reco_pro_links():
     # Load the test CSV into a DataFrame
-    df = pd.read_csv('tests/data/records.csv')
-    service = StatsService()
-    df = service._preprocess_dataframe(df)
-    result = service.compute_mode_reco_pro_links(df)
+    df = load_test_dataframe()
+    service = LinksService(df)
+    result = service.compute_mode_reco_pro_links()
 
     expected = Links(
         total=30,

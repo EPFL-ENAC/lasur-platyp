@@ -3,7 +3,7 @@ from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
 from api.models.query import Stats
 from api.services.records import RecordService
-from api.services.stats import StatsService
+from api.services.stats.stats import StatsService
 from enacit4r_sql.utils.query import validate_params, ValidationError
 
 router = APIRouter()

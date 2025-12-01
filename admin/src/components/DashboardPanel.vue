@@ -109,6 +109,16 @@
           <links-chart type="mod_reco" :height="height" class="q-mb-md" />
         </div>
         <div class="item">
+          <reco-emissions-chart
+            type="freq_mod"
+            reco="reco_mod"
+            :xaxis="t('stats.emissions_reco_mod.xaxis')"
+            :yaxis="t('stats.emissions_reco_mod.yaxis')"
+            :height="height"
+            class="q-mb-md"
+          />
+        </div>
+        <div class="item">
           <frequencies-stack-chart
             type="freq_mod_pro"
             :groups="['local', 'national', 'europe', 'inter']"
@@ -208,6 +218,7 @@
 import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
 import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
 import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
+import RecoEmissionsChart from 'src/components/charts/RecoEmissionsChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
 import type { Company, Campaign } from 'src/models'

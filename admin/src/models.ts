@@ -123,6 +123,7 @@ export interface Stats {
   frequencies: Frequencies[] | null
   mode_frequencies: Frequencies[] | null
   mode_emissions: Emissions[] | null
+  reco_mode_emissions: Emissions[] | null
   mode_links: Links | null
   pro_frequencies: Frequencies[] | null
   pro_mode_frequencies: Frequencies[] | null

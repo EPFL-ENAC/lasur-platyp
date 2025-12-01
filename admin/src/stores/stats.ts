@@ -41,6 +41,7 @@ export const useStats = defineStore('stats', () => {
           })
           frequencies.value['freq_mod'] = stats.mode_frequencies || []
           emissions.value['freq_mod'] = stats.mode_emissions || []
+          emissions.value['reco_mod'] = stats.reco_mode_emissions || []
           links.value['mod_reco'] = stats.mode_links || { total: 0, data: [] }
           stats.pro_frequencies?.forEach((freq) => {
             frequencies.value[freq.field] = freq

@@ -126,6 +126,7 @@ class Stats(BaseModel):
     frequencies: Optional[List[Frequencies]] = None
     mode_frequencies: Optional[List[Frequencies]] = None
     mode_emissions: Optional[List[Emissions]] = None
+    reco_mode_emissions: Optional[List[Emissions]] = None
     mode_links: Optional[Links] = None
     pro_frequencies: Optional[List[Frequencies]] = None
     pro_mode_frequencies: Optional[List[Frequencies]] = None
