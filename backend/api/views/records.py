@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, Query, HTTPException, Response
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
 from api.models.domain import Record
@@ -43,3 +43,23 @@ async def delete(
 ) -> Record:
     """Delete a record by id"""
     return await RecordService(session).delete(id)
+
+
+@router.get("/flat", response_model_exclude_none=True)
+async def compute_flat(
+    filter: str = Query(None),
+    completed: bool = Query(
+        False, description="Whether to include only completed records"),
+    user: User = Depends(kc_service.require_admin()),
+    session: AsyncSession = Depends(get_session),
+) -> Response:
+    """Query records in flat format as a CSV"""
+    try:
+        validated = validate_params(filter, None, None, None)
+        service = RecordService(session)
+        df = await service.get_dataframe(validated["filter"], flat=True)
+        if completed:
+            df = service.filter_completed_records(df)
+        return Response(content=df.to_csv(date_format="%Y-%m-%dT%H:%M:%S.%f", index=False), media_type="text/csv")
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=f"{e}")

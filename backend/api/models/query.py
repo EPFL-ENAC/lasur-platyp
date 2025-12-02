@@ -103,19 +103,40 @@ class Frequencies(BaseModel):
 
 
 class Emissions(BaseModel):
-    field: Optional[str] = None
+    """For each mode (actual or recommended), how much emissions were produced."""
+    mode: Optional[str] = None
     total: Optional[int] = None
     distances: Optional[float] = None
     journeys: Optional[int] = None
     emissions: Optional[float] = None
 
 
+class EmissionReductions(BaseModel):
+    """For each recommended mode, how much emissions were reduced, independently from the actual mode used."""
+    mode: Optional[str] = None
+    total: Optional[int] = None
+    reduced: Optional[float] = None
+
+
 class Link(BaseModel):
     source: str
     target: str
-    value: float
+    value: int
 
 
 class Links(BaseModel):
     total: Optional[int] = None
     data: List[Link] = []
+
+
+class Stats(BaseModel):
+    total: int = 0
+    frequencies: Optional[List[Frequencies]] = None
+    mode_frequencies: Optional[List[Frequencies]] = None
+    mode_emissions: Optional[List[Emissions]] = None
+    reco_mode_emissions: Optional[List[Emissions]] = None
+    mode_links: Optional[Links] = None
+    pro_frequencies: Optional[List[Frequencies]] = None
+    pro_mode_frequencies: Optional[List[Frequencies]] = None
+    pro_mode_emissions: Optional[List[Emissions]] = None
+    pro_mode_links: Optional[Links] = None

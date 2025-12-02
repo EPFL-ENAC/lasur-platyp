@@ -3,6 +3,9 @@ env_path=../.env
 install:
 	poetry install
 
+test:
+	poetry run pytest -s
+
 run:
 	poetry run dotenv -f "$(env_path)" run uvicorn api.main:app
 

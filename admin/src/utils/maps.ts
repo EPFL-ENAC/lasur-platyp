@@ -29,3 +29,20 @@ export const style: StyleSpecification = {
     },
   ],
 }
+
+export const ISOCHRONE_CUTOFF_COLORS: { [key: number]: string } = {
+  // dark green
+  300: '#1b5e20',
+  // lighter green
+  600: '#4caf50',
+  // lightest green
+  900: '#a5d6a7',
+  // yellow
+  1200: '#ffeb3b',
+  // orange
+  1800: '#ff9800',
+  // red
+  2400: '#f44336',
+  // dark red
+  3600: '#b71c1c',
+}

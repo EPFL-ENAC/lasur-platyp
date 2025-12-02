@@ -94,8 +94,8 @@ function initChartOptions() {
         ubound,
         ubound + item.journeys,
         item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0,
-        keyLabel(item.field),
-        MODE_COLORS[shortKey(item.field)] || MODE_COLORS['default'],
+        keyLabel(item.mode),
+        MODE_COLORS[shortKey(item.mode)] || MODE_COLORS['default'],
         item.emissions.toFixed(0),
         item.journeys,
         `${item.distances.toFixed(0)} km`,
@@ -132,14 +132,14 @@ function initChartOptions() {
     },
     xAxis: {
       name: props.xaxis || '',
-      nameLocation: 'end',
+      nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
     },
     yAxis: {
       name: props.yaxis || '',
       nameLocation: 'middle',
-      nameGap: 30,
+      nameGap: 40,
       type: 'value',
     },
     series: [
