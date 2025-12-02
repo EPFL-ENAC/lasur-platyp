@@ -100,7 +100,7 @@ class BaseStatsService:
                 sin(radians(dest_lat))
             )
             return distance_km * 1.3  # factor for real distance
-        except:
+        except Exception:
             return 0
 
     def _calculate_distance_to_h3(self, lat: float, lon: float, h3_index: str, mode: str) -> float:
@@ -120,7 +120,7 @@ class BaseStatsService:
                 # Si pas meme hexagone, on convertit le centre du h3 sélectionné en h3 plus petit pour calculer des distances plus précises
                 return h3.great_circle_distance(h3.cell_to_latlng(h3.cell_to_center_child(h3_index, 9)),
                                                 (lat, lon)) * avg_dist_coeff[mode]
-        except:
+        except Exception:
             return 0
 
     def _calculate_distance_home_to_work(self, row):

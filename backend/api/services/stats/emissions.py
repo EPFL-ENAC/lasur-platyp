@@ -1,6 +1,5 @@
 import pandas as pd
-import h3
-from api.models.query import Emissions
+from api.models.query import EmissionReductions, Emissions
 from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO
 
 MODE_EMISSIONS = {
@@ -21,10 +20,9 @@ MODE_EMISSIONS = {
     'tpu': 25,
     'velo': 6,
     'marche': 0,
-    'elec': 90,
     'covoit': 93,
     'avoid': 0,
-    'inter': 25  # TODO: make it dynamic, depending on observed modes over the whole dataset
+    'inter': 56  # TODO: make it dynamic, depending on observed modes over the whole dataset
 }
 
 
@@ -76,6 +74,23 @@ class EmissionsService(BaseStatsService):
         # filter out emissions with zero emissions
         results = [e for e in results if e.emissions > 0]
 
+        return results
+
+    def compute_modes_emission_reductions(self) -> list[EmissionReductions]:
+        """Compute all CO2 emission reductions from a DataFrame of records."""
+        df_v2 = self._get_records_v2()
+        results = []
+        if not df_v2.empty:
+            for mode in MODES:
+                results.extend(
+                    self._compute_mode_emission_reductions_v2(df_v2, mode))
+        # finalize totals
+        for reduction in results:
+            reduction.total = len(df_v2)
+            # round reduced
+            reduction.reduced = round(reduction.reduced, 3)
+        # filter out reductions with zero reduced emissions
+        results = [e for e in results if e.reduced > 0]
         return results
 
     def compute_modes_pro_emissions(self, apply_reco: bool = False) -> list[Emissions]:
@@ -251,6 +266,59 @@ class EmissionsService(BaseStatsService):
                 all_emissions.append(emissions)
 
         return all_emissions
+
+    def _compute_mode_emission_reductions_v2(self, df: pd.DataFrame, mode: str) -> list[EmissionReductions]:
+        """Compute all CO2 emission reductions from a DataFrame of records."""
+        def compute_mode_reduction(row, mode, i):
+            modes = []
+            for col in row.index:
+                if col.startswith(f'data.freq_mod_journeys.{i}.modes.'):
+                    val = row[col]
+                    if not pd.isna(val):
+                        modes.append(val)
+            modes = set(modes)
+
+            # is intermodality if more than one mode, excluding walking
+            inter = len(modes - {'walking', 'marche'}) > 1
+
+            days = row[f'data.freq_mod_journeys.{i}.days']
+            dist = row['distance_km']
+            co2_actual = 0
+            co2_reco = 0
+            if mode in modes:
+                co2_actual += 1 / len(modes) * 45 * 2 * \
+                    (days * dist * MODE_EMISSIONS[mode] / 1000)
+            if row['typo.reco.reco_dt2.0'] == mode:
+                co2_reco += 1 / len(modes) * 45 * 2 * \
+                    (days * dist * MODE_EMISSIONS[mode] / 1000)
+            reduction = co2_actual - co2_reco
+            return reduction
+        # New data version: get the series from data.freq_mod_journeys
+        col_days = df.columns[df.columns.str.contains(
+            r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
+        reduction_total = 0
+        for i in range(len(col_days)):
+            # print("journey:", i)
+            col_modes_i = df.columns[df.columns.str.startswith(
+                f'data.freq_mod_journeys.{str(i)}.modes.')]
+            if col_modes_i.empty:
+                continue
+            col_days_i = col_days[i]
+            # make a dataframe with only i columns
+            df_i = df[['distance_km', col_days_i,
+                       'typo.reco.reco_dt2.0'] + col_modes_i.tolist()].copy()
+            # compute reduction
+            df_i['mode_reduction'] = df_i.apply(
+                lambda row: compute_mode_reduction(row, mode, i), axis=1)
+            # sum only positive reductions
+            reduction_total += float(
+                sum(df_i['mode_reduction'][df_i['mode_reduction'] > 0]))
+        reduction = EmissionReductions(
+            mode=mode,
+            total=len(df),
+            reduced=reduction_total
+        )
+        return [reduction]
 
     def _compute_mode_pro_emissions_v2(self, df: pd.DataFrame, mode: str, apply_reco: bool = False) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records."""
