@@ -119,12 +119,14 @@ export default {
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
       'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-work journeys?',
-    change_levers: 'What would help you to use this mode of transport?',
+    change_levers:
+      'What would help you to use this mode of transport (even if you already partially use it)?',
     change_levers_option: {
       financial_support: 'Financial support',
-      work_flexibility: 'Greater flexibility at work (schedules, teleworking, etc.)',
+      work_flexibility: 'Greater flexibility at work (schedules, remote working, etc.)',
       collective_changes: 'Collective changes (company communication, colleague involvement, etc.)',
-      work_environment: 'Workplace adjustments (showers, bicycle parking, etc.)',
+      work_environment:
+        'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points of parking, etc.)',
       other: 'Other',
     },
     change_other_levers_specify: 'Please specify what other measures would help you',
