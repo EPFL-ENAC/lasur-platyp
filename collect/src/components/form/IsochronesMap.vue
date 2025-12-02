@@ -142,6 +142,7 @@ function onInit() {
       selectedMode.value = 'BIKE'
       break
     case 'vae':
+    case 'cargo':
       selectedMode.value = 'EBIKE'
       break
     default:
