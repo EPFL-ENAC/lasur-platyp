@@ -24,7 +24,7 @@ MODE_EMISSIONS = {
     'elec': 90,
     'covoit': 93,
     'avoid': 0,
-    'inter': 25
+    'inter': 25  # TODO: make it dynamic, depending on observed modes over the whole dataset
 }
 
 
@@ -32,20 +32,12 @@ class EmissionsService(BaseStatsService):
 
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
+        # Calculate distance_km to workplace for each record
+        self.df['distance_km'] = self.df.apply(
+            lambda row: self._calculate_distance_home_to_work(row), axis=1)
 
     def compute_modes_emissions(self, apply_reco: bool = False) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records."""
-
-        def calculate_distance_home_to_work(row):
-            origin_lat = float(row['data.origin.lat'])
-            origin_lon = float(row['data.origin.lon'])
-            work_lat = float(row['data.workplace.lat'])
-            work_lon = float(row['data.workplace.lon'])
-            return self._calculate_distance(origin_lat, origin_lon, work_lat, work_lon)
-
-        # Calculate distance_km to workplace for each record
-        self.df['distance_km'] = self.df.apply(
-            lambda row: calculate_distance_home_to_work(row), axis=1)
 
         # v1: count emissions from legacy fields
         df_v1 = self._get_records_v1()
@@ -64,9 +56,9 @@ class EmissionsService(BaseStatsService):
                     df_v2, mode, apply_reco))
             # merge v1 and v2 results
             for em_v2 in results_v2:
-                # find in results the one with same field
+                # find in results the one with same mode
                 em_v1 = next(
-                    (e for e in results if e.field == em_v2.field), None)
+                    (e for e in results if e.mode == em_v2.mode), None)
                 if em_v1 is None:
                     results.append(em_v2)
                 else:
@@ -116,7 +108,7 @@ class EmissionsService(BaseStatsService):
     def _compute_mode_emissions_v1(self, df: pd.DataFrame, mode: str, apply_reco: bool = False) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records."""
         emissions = Emissions(
-            field=mode, total=len(df), distances=0, journeys=0, emissions=0)
+            mode=mode, total=len(df), distances=0, journeys=0, emissions=0)
         # Find the column name for the mode
         col_name = f'data.freq_mod_{mode}'
         if col_name not in df.columns:
@@ -131,20 +123,19 @@ class EmissionsService(BaseStatsService):
             # replace non sustainable modes (car, moto) by recommended mode
             df_mode = df_mode.copy()
             df_mode['applied_mode'] = df_mode.apply(
-                lambda row: row['typo.reco.reco_dt2.0']
-                if mode in ['car', 'moto'] else mode,
+                lambda row: row['typo.reco.reco_dt2.0'],
                 axis=1
             )
-            # change covoit for carpool
-            df_mode['applied_mode'] = df_mode['applied_mode'].replace(
-                'covoit', 'carpool')
+            # normalize mode naming
+            df_mode['applied_mode'] = self._normalize_mode_name(
+                df_mode, 'applied_mode')
             # make Emissions per applied_mode
             emissions_list = []
             for applied_mode in df_mode['applied_mode'].unique():
                 df_applied_mode = df_mode[df_mode['applied_mode']
                                           == applied_mode]
                 em = Emissions(
-                    field=applied_mode,
+                    mode=applied_mode,
                     total=len(df_applied_mode),
                     distances=float(sum(df_applied_mode['distance_km'])),
                     journeys=int(sum(
@@ -209,10 +200,12 @@ class EmissionsService(BaseStatsService):
                 # Emissions for recommended modes replacing non sustainable modes
                 # replace non sustainable modes (car, moto) by recommended mode
                 df_i['applied_mode'] = df_i.apply(
-                    lambda row: row['typo.reco.reco_dt2.0']
-                    if mode in ['car', 'moto'] else mode,
+                    lambda row: row['typo.reco.reco_dt2.0'],
                     axis=1
                 )
+                # normalize mode naming
+                df_i['applied_mode'] = self._normalize_mode_name(
+                    df_i, 'applied_mode')
                 # make emissions per applied_mode
                 emissions_dict = {}
                 for idx, row in df_i.iterrows():
@@ -221,7 +214,7 @@ class EmissionsService(BaseStatsService):
                         row, applied_mode, i)
                     if applied_mode not in emissions_dict:
                         emissions_dict[applied_mode] = Emissions(
-                            field=applied_mode,
+                            mode=applied_mode,
                             total=len(df),
                             distances=0,
                             journeys=0,
@@ -238,7 +231,7 @@ class EmissionsService(BaseStatsService):
             else:
                 # Emissions for requested mode only
                 emissions = Emissions(
-                    field=mode,
+                    mode=mode,
                     total=len(df),
                     distances=0,
                     journeys=0,
@@ -282,7 +275,7 @@ class EmissionsService(BaseStatsService):
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_pro_journeys\..*\.days$', regex=True)]
         emissions = Emissions(
-            field=mode,
+            mode=mode,
             total=len(df),
             distances=0,
             journeys=0,
@@ -324,12 +317,12 @@ class EmissionsService(BaseStatsService):
         """Merge each Emissions into a list of Emissions."""
         for em2 in emissions2:
             em1 = next(
-                (e for e in emissions1 if e.field == em2.field), None)
+                (e for e in emissions1 if e.mode == em2.mode), None)
             if not em1:
                 emissions1.append(em2)
                 continue
             em = Emissions(
-                field=em1.field,
+                mode=em1.mode,
                 total=em1.total + em2.total,
                 distances=em1.distances + em2.distances,
                 journeys=em1.journeys + em2.journeys,
@@ -337,8 +330,32 @@ class EmissionsService(BaseStatsService):
             )
             # replace in emissions1
             for i in range(len(emissions1)):
-                if emissions1[i].field == em.field:
+                if emissions1[i].mode == em.mode:
                     emissions1[i] = em
                     break
 
         return emissions1
+
+    def _compute_mode_emissions_part(self, mode: str, modes: list[str], days: int, dist: float) -> list[float]:
+        """Compute CO2 emissions for a mode given the other modes used, days and distance."""
+        co2 = 0
+        if 'train' in modes:
+            if mode == 'train':
+                co2 += 0.8 * 45 * 2 * \
+                    (days * dist * MODE_EMISSIONS['train'] / 1000)
+            elif mode in modes:
+                co2 += 0.2 / (len(modes) - 1) * 45 * 2 * \
+                    (days * dist * MODE_EMISSIONS[mode] / 1000)
+        elif mode in modes:
+            co2 += 1 / len(modes) * 45 * 2 * \
+                (days * dist * MODE_EMISSIONS[mode] / 1000)
+        em_factor = co2 * 1000 / (45 * 2 * days * dist)
+        return [co2, em_factor]
+
+    def _normalize_mode_name(self, df: pd.DataFrame, column: str) -> str:
+        """Normalize mode naming, because recommendations use different terms."""
+        if column not in df.columns:
+            return df[column]
+        df[column] = df[column].replace(
+            'covoit', 'carpool').replace('velo', 'bike').replace('marche', 'walking').replace('tpu', 'pub')
+        return df[column]

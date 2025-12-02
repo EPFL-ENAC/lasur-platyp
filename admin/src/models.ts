@@ -100,7 +100,7 @@ export interface Frequencies {
 }
 
 export interface Emissions {
-  field: string
+  mode: string
   total: number
   distances: number
   journeys: number

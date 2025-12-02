@@ -122,3 +122,11 @@ class BaseStatsService:
                                                 (lat, lon)) * avg_dist_coeff[mode]
         except:
             return 0
+
+    def _calculate_distance_home_to_work(self, row):
+        """Calculate distance from home to workplace for a record."""
+        origin_lat = float(row['data.origin.lat'])
+        origin_lon = float(row['data.origin.lon'])
+        work_lat = float(row['data.workplace.lat'])
+        work_lon = float(row['data.workplace.lon'])
+        return self._calculate_distance(origin_lat, origin_lon, work_lat, work_lon)

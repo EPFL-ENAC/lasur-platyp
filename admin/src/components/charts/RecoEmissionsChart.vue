@@ -34,7 +34,6 @@ use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent
 interface Props {
   type: string
   reco: string
-  xaxis?: string
   yaxis?: string
   rangeStep?: number
   height?: number
@@ -90,19 +89,22 @@ function initChartOptions() {
 
   const categories = recoEmissions
     .sort((a, b) => b.emissions - a.emissions)
-    .map((item) => item.field)
+    .map((item) => item.mode)
 
-  // make dataset for waterfall chart: reference is total of emissions, then for each category, show from previous to current
-  const totalEmissions = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
+  // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
+  const currentEmissions = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
   const categoryEmissions: { [key: string]: number } = {}
   recoEmissions.forEach((item) => {
-    categoryEmissions[item.field] = item.emissions
+    categoryEmissions[item.mode] = item.emissions
   })
   const savedEmissions =
-    totalEmissions - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
+    currentEmissions - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
 
-  const categoriesLabels = [keyLabel('total'), ...categories.map((cat) => keyLabel(cat))]
-  categoriesLabels.push(keyLabel('saved'))
+  const categoriesLabels = [
+    keyLabel('current'),
+    ...categories.map((cat) => keyLabel(cat)),
+    keyLabel('saved'),
+  ]
 
   const newOption: EChartsOption = {
     grid: {
@@ -131,7 +133,12 @@ function initChartOptions() {
         const tar = params[1]
         if (!tar) return ''
         return (
-          tar.name + '<br/>' + tar.seriesName + ' : ' + toMaxDecimals(tar.value, 2) + ' kgCO₂eq'
+          tar.name +
+          '<br/>' +
+          tar.seriesName +
+          ' : ' +
+          new Intl.NumberFormat().format(toMaxDecimals(tar.value, 0) || 0) +
+          ' kgCO₂eq'
         )
       },
     },
@@ -139,11 +146,11 @@ function initChartOptions() {
       show: false,
     },
     xAxis: {
-      // name: props.xaxis || '',
-      // nameLocation: 'middle',
-      // nameGap: 30,
       type: 'category',
       data: categoriesLabels,
+      axisLabel: {
+        rotate: 30,
+      },
     },
     yAxis: {
       name: props.yaxis || '',
@@ -176,7 +183,7 @@ function initChartOptions() {
               }
               sum += categoryEmissions[c] || 0
             }
-            return totalEmissions - sum - (categoryEmissions[cat] || 0)
+            return currentEmissions - sum - (categoryEmissions[cat] || 0)
           }),
           0,
         ],
@@ -188,11 +195,17 @@ function initChartOptions() {
         label: {
           show: true,
           position: 'inside',
+          formatter: function (params) {
+            if (params.value === 0) {
+              return ''
+            }
+            return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 0) || 0)
+          },
         },
         data: [
-          toMaxDecimals(totalEmissions, 2),
-          ...categories.map((cat) => toMaxDecimals(categoryEmissions[cat] || 0, 2)),
-          toMaxDecimals(savedEmissions, 2),
+          currentEmissions,
+          ...categories.map((cat) => categoryEmissions[cat] || 0),
+          savedEmissions,
         ],
       },
     ],
