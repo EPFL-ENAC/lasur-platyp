@@ -59,6 +59,7 @@ export const useCollector = defineStore('collector', () => {
           needs_train: 1,
 
           change: {},
+          change2: {},
 
           ...cr.data,
         }

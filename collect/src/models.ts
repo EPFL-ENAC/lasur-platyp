@@ -60,6 +60,7 @@ export interface RecordData {
   workplace: AddressLocation
   origin: AddressLocation
   change: Change
+  change2: Change
 }
 
 export interface Record {

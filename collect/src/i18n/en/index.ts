@@ -115,7 +115,7 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
-    change: 'About the recommended mode of transport "{reco}"',
+    change: 'About the recommended mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
       'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-work journeys?',
@@ -126,7 +126,7 @@ export default {
       work_flexibility: 'Greater flexibility at work (schedules, remote working, etc.)',
       collective_changes: 'Collective changes (company communication, colleague involvement, etc.)',
       work_environment:
-        'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points of parking, etc.)',
+        'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points, etc.)',
       other: 'Other',
     },
     change_other_levers_specify: 'Please specify what other measures would help you',

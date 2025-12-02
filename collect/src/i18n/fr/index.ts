@@ -121,7 +121,7 @@ export default {
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
-    change: 'À propos du mode de transport recommandé "{reco}"',
+    change: 'À propos du mode de transport recommandé :',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
       'Sur une échelle de 1 (pas intéressé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous prêt·e à adopter ce mode de transport pour vos déplacements domicile-travail ?',
@@ -133,7 +133,7 @@ export default {
       collective_changes:
         "Des changements collectifs (communication de l'entreprise, participation de collègues, etc.)",
       work_environment:
-        'Des aménagements sur le lieu de travail (douches, parking sécurisé pour vélos, navette d’entreprise, points de rencontre pour covoiturage, etc.)',
+        "Des aménagements sur le lieu de travail (douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.)",
       other: 'Autre',
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
