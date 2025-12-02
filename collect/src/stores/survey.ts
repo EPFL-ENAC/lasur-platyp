@@ -2,6 +2,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Record, Recommendation } from 'src/models'
 
+const RecoToMode: { [key: string]: string | undefined } = {
+  marche: 'walking',
+  velo: 'bike',
+  vae: 'ebike',
+  covoit: 'carpool',
+  tpu: 'pub',
+}
+
 export const useSurvey = defineStore(
   'survey',
   () => {
