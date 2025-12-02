@@ -134,7 +134,7 @@ export const useSurvey = defineStore(
       return 0
     }
 
-    function getFreqModCombined() {
+    function isIntermodality() {
       if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
         return (
           record.value.data.freq_mod_journeys
@@ -149,11 +149,11 @@ export const useSurvey = defineStore(
     /**
      * Get the main frequency mode (the one with the highest frequency).
      * If there is a tie, return the first one found.
-     * If there is a combined mode, return 'combined'.
+     * If there is a combined mode, return 'inter'.
      * If no mode is found, return ''.
      */
     function getMainFreqMod(withCombined = true) {
-      if (withCombined && getFreqModCombined()) return 'combined'
+      if (withCombined && isIntermodality()) return 'inter'
       const fm = getFreqMods()
       let max = -1
       let main = ''
@@ -242,7 +242,6 @@ export const useSurvey = defineStore(
       incStep,
       decStep,
       getFreqMod,
-      getFreqModCombined,
       getMainFreqMod,
       isModeSustainable,
       isModeInRecommendation,
