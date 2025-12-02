@@ -121,17 +121,19 @@ export default {
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
-    change: 'À propos du mode de transport recommandé "{reco}"',
+    change: 'À propos du mode de transport recommandé :',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
       'Sur une échelle de 1 (pas intéressé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous prêt·e à adopter ce mode de transport pour vos déplacements domicile-travail ?',
-    change_levers: "Qu'est-ce qui vous aiderait à utiliser ce mode de transport ?",
+    change_levers:
+      "Qu'est-ce qui vous aiderait à utiliser ce mode de transport (même si vous l'utilisez déjà partiellement) ?",
     change_levers_option: {
       financial_support: 'Une aide financière',
       work_flexibility: 'Une plus grande flexibilité au travail (horaires, télétravail, etc.)',
       collective_changes:
         "Des changements collectifs (communication de l'entreprise, participation de collègues, etc.)",
-      work_environment: 'Des aménagements sur le lieu de travail (douches, parkings vélo, etc.)',
+      work_environment:
+        "Des aménagements sur le lieu de travail (douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.)",
       other: 'Autre',
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
