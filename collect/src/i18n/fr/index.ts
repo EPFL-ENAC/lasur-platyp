@@ -152,9 +152,9 @@ export default {
     combined:
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     sustainable:
-      'Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
+      ' Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
     sustainable_options:
-      'Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
+      'Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
     not_sustainable:
       'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées :',
     actions:
