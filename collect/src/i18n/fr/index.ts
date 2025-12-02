@@ -90,7 +90,7 @@ export default {
     intermodality_pro_hint: 'Décrivez un ou plusieurs trajets professionnels typiques.',
     journey_pro: {
       label_idx: 'Trajet professionnel #{index}',
-      hint: "Sélectionnez la destination et le principal mode de transport d'un trajet professionnel typique.",
+      hint: "Sélectionnez l'aire de destination et le principal mode de transport d'un trajet professionnel typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
       days_per_year: 'Jours par année',
