@@ -77,7 +77,8 @@ export default {
       combined: 'How do you usually get to your workplace?',
     },
     intermodality: 'Which modes of transport do you use?',
-    intermodality_hint: 'Describe one or more typical journeys from home to work.',
+    intermodality_hint:
+      'For one typical journey from home to work: click on the modes of transport you use, arrange them in the order used from your home to your work place, then indicate on the slider the number of days per week that you use this mode or combination of modes of transport. Repeat these steps for another typical journey if you wish.',
     journey: {
       label_idx: 'Recommendation #{index}',
       label_option_idx: 'Option #{index}',

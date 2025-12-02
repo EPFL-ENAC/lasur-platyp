@@ -77,7 +77,8 @@ export default {
       combined: 'Comment vous rendez-vous habituellement sur votre lieu de travail ?',
     },
     intermodality: 'Quels sont les modes de transport que vous utilisez ?',
-    intermodality_hint: 'Décrivez un ou plusieurs trajets typiques domicile - travail.',
+    intermodality_hint:
+      "Pour un trajet typique domicile-travail : cliquez sur les modes de transport que vous utilisez, organisez-les dans l'ordre d'utilisation de votre domicile à votre lieu de travail, puis indiquez sur le curseur le nombre de jours par semaine où vous utilisez ce mode ou cette combinaison de modes de transport. Répétez ces étapes pour un autre trajet typique si vous le souhaitez.",
     journey: {
       label_idx: 'Recommandation #{index}',
       label_option_idx: 'Option #{index}',
