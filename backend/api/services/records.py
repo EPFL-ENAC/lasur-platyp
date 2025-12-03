@@ -5,10 +5,11 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import select
 from fastapi import HTTPException
 from api.models.domain import Record, Campaign
-from api.models.query import RecordResult, RecordDraft
+from api.models.query import RecordResult, RecordDraft, LocationFilter
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 import pandas as pd
+from shapely.geometry import Point, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon
 
 
 class RecordQueryBuilder(QueryBuilder):
@@ -184,6 +185,37 @@ class RecordService:
                     [df.drop(columns=[col]), df_data], axis=1)
         # Return a simple message for testing purposes
         # return {"message": f"Columns count: {len(df_flat.columns)}", "columns": df_flat.columns.tolist()}
+        return df
+
+    def filter_completed(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Get a DataFrame representation of the completed records.
+
+        Args:
+            filter (dict): The filter criteria for the records.
+            flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
+        """
+        # Filter records with values in column typo.reco_dt2.0
+        df = df[df['typo.reco.reco_dt2.0'].notna()]
+        return df
+
+    def filter_by_workplace_location(self, df: pd.DataFrame, filter: LocationFilter) -> pd.DataFrame:
+        geom = filter.geo_within.geometry
+        coordinates = []
+        shapely_polygon = None
+        # Depending on geometry type, extract coordinates
+        if geom.type == "Polygon":
+            coordinates = geom.coordinates[0]  # Outer ring
+            shapely_polygon = ShapelyPolygon(coordinates)
+        else:
+            raise ValueError(
+                "Unsupported geometry type for workplace location filter")
+
+        def contains_point(lat, lon):
+            point = Point(lon, lat)  # Note: Point takes (x, y) = (lon, lat)
+            return shapely_polygon.contains(point)
+
+        df = df[df.apply(lambda row: contains_point(
+            row['data.workplace.lat'], row['data.workplace.lon']), axis=1)]
         return df
 
     def flatten_json(self, obj, parent_key="", sep="."):

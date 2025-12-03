@@ -7,6 +7,9 @@
             <span>{{ company?.name }}</span>
             <span v-if="campaign"> - {{ campaign?.name }}</span>
           </q-toolbar-title>
+          <q-btn flat icon="map" @click="showMapFilter = true">
+            <q-badge v-if="areaCount > 0" color="orange" floating rounded />
+          </q-btn>
           <q-btn flat icon="close" v-close-popup />
         </q-toolbar>
       </q-card-section>
@@ -18,10 +21,17 @@
         </div>
       </q-card-section>
     </q-card>
+    <area-dialog
+      v-model="showMapFilter"
+      :title="`${t('map_filter.workplaces.title')} - ${company?.name} ${campaign ? `- ${campaign.name}` : ''}`"
+      :text="t('map_filter.workplaces.hint')"
+      @select="onWorkplacesFilter"
+    />
   </q-dialog>
 </template>
 <script setup lang="ts">
 import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
+import AreaDialog from 'src/components/AreaDialog.vue'
 import type { Campaign, Company } from 'src/models'
 import type { Filter } from 'src/components/models'
 
@@ -36,6 +46,16 @@ const emit = defineEmits(['update:modelValue'])
 
 const stats = useStats()
 const showDialog = ref(props.modelValue)
+const showMapFilter = ref(false)
+const { t } = useI18n()
+
+const areaFilter = ref<GeoJSON.FeatureCollection | undefined>(undefined)
+const areaCount = computed(() => {
+  if (areaFilter.value && areaFilter.value.features.length > 0) {
+    return areaFilter.value.features.length
+  }
+  return 0
+})
 
 watch(
   () => props.modelValue,
@@ -44,18 +64,34 @@ watch(
     if (!value) {
       return
     }
-    const query = {
-      company_id: { $eq: props.company.id },
-    } as Filter
-    if (props.campaign) {
-      query.campaign_id = { $eq: props.campaign.id }
-    }
-    stats.loadStats(query).catch(() => {})
+    onQuery()
   },
 )
+
+function onQuery() {
+  const query = {
+    company_id: { $eq: props.company.id },
+  } as Filter
+  if (props.campaign) {
+    query.campaign_id = { $eq: props.campaign.id }
+  }
+  if (areaFilter.value && areaFilter.value.features.length > 0) {
+    query.workplace_location = {
+      $geoWithin: {
+        $geometry: areaFilter.value.features[0]?.geometry,
+      },
+    }
+  }
+  stats.loadStats(query).catch(() => {})
+}
 
 function onHide() {
   showDialog.value = false
   emit('update:modelValue', false)
+}
+
+function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
+  areaFilter.value = area
+  onQuery()
 }
 </script>

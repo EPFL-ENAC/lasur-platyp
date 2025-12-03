@@ -29,6 +29,9 @@
         @update:model-value="onFilter"
         class="on-left"
       />
+      <q-btn size="sm" flat icon="map" @click="onMapFilter">
+        <q-badge v-if="areaCount > 0" color="orange" floating rounded />
+      </q-btn>
       <q-btn
         size="sm"
         flat
@@ -68,12 +71,19 @@
     <div v-else>
       <charts-carousel :percent="percent" :height="height" />
     </div>
+    <area-dialog
+      v-model="showMapFilter"
+      :title="t('map_filter.workplaces.title')"
+      :text="t('map_filter.workplaces.hint')"
+      @select="onWorkplacesFilter"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
 import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
+import AreaDialog from 'src/components/AreaDialog.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
 
@@ -88,6 +98,7 @@ const percent = ref(true)
 const height = ref(400)
 const companyMap = ref<{ [key: string]: Company }>({})
 const campaignMap = ref<{ [key: string]: Campaign }>({})
+const showMapFilter = ref(false)
 
 const companyFilter = ref<string[]>([])
 const companyOptions = computed(() => {
@@ -107,6 +118,14 @@ const campaignOptions = computed(() => {
       value: campaign.id,
     }))
     .sort((a, b) => a.label.localeCompare(b.label))
+})
+
+const areaFilter = ref<GeoJSON.FeatureCollection | undefined>(undefined)
+const areaCount = computed(() => {
+  if (areaFilter.value && areaFilter.value.features.length > 0) {
+    return areaFilter.value.features.length
+  }
+  return 0
 })
 
 onMounted(() => {
@@ -137,6 +156,23 @@ function onFilter() {
   if (campaignFilter.value.length > 0) {
     query.campaign_id = { $in: campaignFilter.value }
   }
+  if (areaFilter.value) {
+    query.workplace_location = {
+      $geoWithin: {
+        $geometry: areaFilter.value.features[0]?.geometry,
+      },
+    }
+  }
   stats.loadStats(query)
+}
+
+function onMapFilter() {
+  showMapFilter.value = true
+}
+
+function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
+  console.log('Selected area for workplaces filter:', area)
+  areaFilter.value = area
+  onFilter()
 }
 </script>

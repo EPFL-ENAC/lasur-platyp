@@ -354,6 +354,19 @@ export default {
     minutes: '{count} min',
     raw_data: 'Raw data',
   },
+  draw_mode: {
+    simple_select_hint:
+      'Click the polygon button on the top-right of the map to start drawing an area. Existing areas will be deleted.',
+    direct_select_hint: 'You are now editing the polygon. Drag the points to adjust the shape.',
+    draw_polygon_hint:
+      'Click on the map to add points to your polygon. Double-click to finish drawing.',
+  },
+  map_filter: {
+    workplaces: {
+      title: 'Workplaces filter',
+      hint: 'Draw an area to only filter workplaces within that area.',
+    },
+  },
   action: 'Measure',
   add: 'Add',
   address_input_hint: 'Type Enter to lookup addresses.',
@@ -421,6 +434,7 @@ export default {
   report: 'Report',
   reset_password: 'Reset Password',
   roles: 'Roles',
+  select: 'Select',
   slug: 'Slug',
   start_date: 'Start Date',
   status: 'Status',
