@@ -8,7 +8,6 @@ export const useCampaigns = defineStore('campaigns', () => {
   const loading = ref(false)
 
   async function load() {
-    items.value = []
     if (!company.value) return
     loading.value = true
     return service

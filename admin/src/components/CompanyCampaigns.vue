@@ -10,6 +10,9 @@
       class="q-mb-md"
       @click="onAdd"
     />
+    <div v-if="campaignsStore.loading">
+      <q-spinner-dots color="primary" size="md" />
+    </div>
     <div v-if="!campaignsStore.loading && campaigns.length > 0">
       <q-tabs
         v-model="tab"
@@ -75,7 +78,7 @@ watch(
   () => campaignsStore.items,
   () => {
     const ids = campaignsStore.items.map((item) => item.id + '')
-    if (tab.value === undefined || !ids.includes(tab.value)) {
+    if (tab.value === undefined || (ids.length > 0 && !ids.includes(tab.value))) {
       tab.value = campaigns.value.length ? campaigns.value[0]?.id + '' : ''
     }
   },
