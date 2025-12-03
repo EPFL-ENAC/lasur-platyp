@@ -58,9 +58,9 @@
         :height="height"
       />
     </q-carousel-slide>
-    <q-carousel-slide name="emissions_freq_mod" class="column no-wrap flex-center item">
+    <q-carousel-slide name="emissions_freq_mod_pro" class="column no-wrap flex-center item">
       <emissions-chart
-        type="freq_mod"
+        type="freq_mod_pro"
         :xaxis="t('stats.emissions_freq_mod.xaxis')"
         :yaxis="t('stats.emissions_freq_mod.yaxis')"
         :height="height"

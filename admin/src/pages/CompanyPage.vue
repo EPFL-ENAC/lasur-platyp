@@ -25,6 +25,15 @@
         class="q-ml-xs"
         @click="onShowRemove"
       />
+      <q-btn
+        :label="t('report')"
+        outline
+        size="sm"
+        color="info"
+        icon="bar_chart"
+        class="on-right"
+        @click="onShowStats"
+      />
     </div>
     <q-separator />
     <div class="q-pa-md">
@@ -79,18 +88,20 @@
       :company="company"
       @saved="onCustomActionsUpdated"
     />
+    <company-charts-dialog v-if="company" v-model="showChartsDialog" :company="company" />
   </q-page>
 </template>
 
 <script setup lang="ts">
 import type { Company, EmployerActions } from 'src/models'
 import type { Service } from 'src/stores/services'
-import CompanyCampaigns from 'src/components/CompanyCampaigns.vue'
+import CompanyCampaigns from 'src/components/company/CompanyCampaigns.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import CustomActionsDialog from 'src/components/CustomActionsDialog.vue'
+import CustomActionsDialog from 'src/components/company/CustomActionsDialog.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import FieldsList from 'src/components/FieldsList.vue'
-import CompanyDialog from 'src/components/CompanyDialog.vue'
+import CompanyDialog from 'src/components/company/CompanyDialog.vue'
+import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import { notifySuccess } from 'src/utils/notify'
 import { actionItems, actionProItems } from 'src/utils/options'
 
@@ -107,6 +118,7 @@ const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showDialog = ref(false)
 const showCustomActionsDialog = ref(false)
+const showChartsDialog = ref(false)
 
 const formattedActions = computed(() => {
   const allActions: EmployerActions = {}
@@ -207,5 +219,9 @@ function onShowCustomActions() {
 
 function onCustomActionsUpdated() {
   actionsStore.load()
+}
+
+function onShowStats() {
+  showChartsDialog.value = true
 }
 </script>

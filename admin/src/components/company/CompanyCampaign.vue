@@ -17,6 +17,15 @@
       class="q-mb-md on-right"
       @click="onShowRemove"
     />
+    <q-btn
+      :label="t('report')"
+      outline
+      size="sm"
+      color="info"
+      icon="bar_chart"
+      class="q-mb-md"
+      @click="onShowStats"
+    />
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-md-6">
         <fields-list :items="items1" :dbobject="item" />
@@ -71,15 +80,22 @@
       :text="t('remove_campaign_text', { name: props.item.name })"
       @confirm="onRemove"
     />
+    <company-charts-dialog
+      v-if="company"
+      v-model="showChartsDialog"
+      :company="company"
+      :campaign="item"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar'
 import type { Campaign, Company, EmployerActions } from 'src/models'
-import CompanyCampaignDialog from 'src/components/CompanyCampaignDialog.vue'
-import CompanyCampaignParticipants from 'src/components/CompanyCampaignParticipants.vue'
+import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
+import CompanyCampaignParticipants from 'src/components/company/CompanyCampaignParticipants.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
+import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
@@ -100,6 +116,7 @@ const props = defineProps<Props>()
 
 const showDialog = ref(false)
 const showRemoveDialog = ref(false)
+const showChartsDialog = ref(false)
 
 const hasActions = computed(
   () =>
@@ -223,5 +240,9 @@ function onSurveyLinkCopy() {
   if (!props.item.slug) return
   copyToClipboard(`${collectUrl}/go/${props.item.slug}`)
   notifyInfo(t('survey_link_copied'))
+}
+
+function onShowStats() {
+  showChartsDialog.value = true
 }
 </script>

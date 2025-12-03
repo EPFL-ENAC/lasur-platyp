@@ -96,7 +96,7 @@
 <script setup lang="ts">
 import { DefaultAlignment, type Query } from 'src/components/models'
 import type { Company } from 'src/models'
-import CompanyDialog from 'src/components/CompanyDialog.vue'
+import CompanyDialog from 'src/components/company/CompanyDialog.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import { makePaginationRequestHandler } from 'src/utils/pagination'
 import type { PaginationOptions } from 'src/utils/pagination'

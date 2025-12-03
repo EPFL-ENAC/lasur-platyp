@@ -55,8 +55,8 @@
 <script setup lang="ts">
 import type { Campaign, Company } from 'src/models'
 import { notifyError } from 'src/utils/notify'
-import CompanyCampaign from 'src/components/CompanyCampaign.vue'
-import CompanyCampaignDialog from 'src/components/CompanyCampaignDialog.vue'
+import CompanyCampaign from 'src/components/company/CompanyCampaign.vue'
+import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
 
 const { t } = useI18n()
 const authStore = useAuthStore()

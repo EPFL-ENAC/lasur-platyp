@@ -418,6 +418,7 @@ export default {
   remove_user_text: "Are you sure you want to remove the user '{name}'?",
   remove_user: 'Remove User',
   remove: 'Remove',
+  report: 'Report',
   reset_password: 'Reset Password',
   roles: 'Roles',
   slug: 'Slug',

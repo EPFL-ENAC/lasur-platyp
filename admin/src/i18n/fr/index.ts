@@ -422,6 +422,7 @@ export default {
   remove_user_text: "Êtes-vous sûr de vouloir supprimer l'utilisateur '{name}'?",
   remove_user: "Supprimer l'utilisateur",
   remove: 'Supprimer',
+  report: 'Rapport',
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
   slug: 'Slug',
