@@ -171,7 +171,6 @@ function onMapFilter() {
 }
 
 function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
-  console.log('Selected area for workplaces filter:', area)
   areaFilter.value = area
   onFilter()
 }

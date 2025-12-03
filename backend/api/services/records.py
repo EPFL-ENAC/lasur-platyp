@@ -191,8 +191,10 @@ class RecordService:
         """Get a DataFrame representation of the completed records.
 
         Args:
-            filter (dict): The filter criteria for the records.
-            flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
+            df (pd.DataFrame): The DataFrame containing record data.
+
+        Returns:
+            pd.DataFrame: A DataFrame filtered to include only completed records.
         """
         # Filter records with values in column typo.reco_dt2.0
         df = df[df['typo.reco.reco_dt2.0'].notna()]
@@ -200,12 +202,16 @@ class RecordService:
 
     def filter_by_workplace_location(self, df: pd.DataFrame, filter: LocationFilter) -> pd.DataFrame:
         geom = filter.geo_within.geometry
-        coordinates = []
         shapely_polygon = None
         # Depending on geometry type, extract coordinates
         if geom.type == "Polygon":
             coordinates = geom.coordinates[0]  # Outer ring
             shapely_polygon = ShapelyPolygon(coordinates)
+        elif geom.type == "MultiPolygon":
+            # Each element in geom.coordinates is a polygon (list of rings)
+            polygons = [ShapelyPolygon(polygon[0])
+                        for polygon in geom.coordinates]
+            shapely_polygon = ShapelyMultiPolygon(polygons)
         else:
             raise ValueError(
                 "Unsupported geometry type for workplace location filter")
@@ -214,6 +220,11 @@ class RecordService:
             point = Point(lon, lat)  # Note: Point takes (x, y) = (lon, lat)
             return shapely_polygon.contains(point)
 
+        # Filter out rows with missing or NaN lat/lon before applying polygon filter
+        df = df[
+            pd.notna(df['data.workplace.lat']) &
+            pd.notna(df['data.workplace.lon'])
+        ]
         df = df[df.apply(lambda row: contains_point(
             row['data.workplace.lat'], row['data.workplace.lon']), axis=1)]
         return df
