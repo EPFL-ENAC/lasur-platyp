@@ -125,7 +125,7 @@ import type { Campaign, Company } from 'src/models'
 import { notifyError } from 'src/utils/notify'
 import AddressInput from 'src/components/AddressInput.vue'
 import type { AddressLocation } from 'src/components/models'
-import EmployerActionsInput from 'src/components/EmployerActionsInput.vue'
+import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
 import { generateToken } from 'src/utils/generate'
 
 interface DialogProps {

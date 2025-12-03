@@ -5,7 +5,6 @@ from api.models.domain import Record
 from api.models.query import RecordResult
 from api.services.records import RecordService
 from enacit4r_sql.utils.query import validate_params, ValidationError
-from api.models.domain import Record
 
 router = APIRouter()
 
@@ -59,7 +58,7 @@ async def compute_flat(
         service = RecordService(session)
         df = await service.get_dataframe(validated["filter"], flat=True)
         if completed:
-            df = service.filter_completed_records(df)
+            df = service.filter_completed(df)
         return Response(content=df.to_csv(date_format="%Y-%m-%dT%H:%M:%S.%f", index=False), media_type="text/csv")
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")

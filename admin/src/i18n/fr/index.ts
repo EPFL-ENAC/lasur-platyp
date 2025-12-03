@@ -356,6 +356,20 @@ export default {
     minutes: '{count} min',
     raw_data: "Données brutes de l'enquête",
   },
+  draw_mode: {
+    simple_select_hint:
+      'Cliquez sur le bouton polygone en haut à droite de la carte pour commencer à dessiner une zone. Les zones existantes seront supprimées.',
+    direct_select_hint:
+      'Vous êtes en train de modifier le polygone. Faites glisser les points pour ajuster la forme.',
+    draw_polygon_hint:
+      'Cliquez sur la carte pour ajouter des points à votre polygone. Double-cliquez pour terminer le dessin.',
+  },
+  map_filter: {
+    workplaces: {
+      title: 'Filtre des lieux de travail',
+      hint: 'Dessinez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
+    },
+  },
   action: 'Mesure',
   add: 'Ajouter',
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",
@@ -422,8 +436,10 @@ export default {
   remove_user_text: "Êtes-vous sûr de vouloir supprimer l'utilisateur '{name}'?",
   remove_user: "Supprimer l'utilisateur",
   remove: 'Supprimer',
+  report: 'Rapport',
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
+  select: 'Sélectionner',
   slug: 'Slug',
   start_date: 'Date de début',
   status: 'Statut',

@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import type { Company } from 'src/models'
-import EmployerActionsInput from 'src/components/EmployerActionsInput.vue'
+import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
 import { notifyError } from 'src/utils/notify'
 
 interface DialogProps {

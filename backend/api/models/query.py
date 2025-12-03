@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict
-from pydantic import BaseModel
-from sqlmodel import Field
+
+from pydantic import BaseModel, Field
+from geojson_pydantic import Polygon, MultiPolygon
 from api.models.domain import CompanyBase, CompanyActionBase, CampaignBase, ParticipantBase, RecordBase, DataEntryBase
 from enacit4r_sql.models.query import ListResult
 
@@ -140,3 +141,11 @@ class Stats(BaseModel):
     pro_mode_frequencies: Optional[List[Frequencies]] = None
     pro_mode_emissions: Optional[List[Emissions]] = None
     pro_mode_links: Optional[Links] = None
+
+
+class GeoWithin(BaseModel):
+    geometry: Polygon | MultiPolygon = Field(validation_alias="$geometry")
+
+
+class LocationFilter(BaseModel):
+    geo_within: GeoWithin = Field(validation_alias="$geoWithin")
