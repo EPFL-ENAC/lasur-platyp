@@ -63,157 +63,17 @@
       <q-spinner-dots size="md" color="primary" />
     </div>
     <div v-else-if="layout === 'grid'">
-      <div class="grid-container">
-        <div class="item">
-          <frequencies-chart type="equipments" :percent="percent" :height="height" />
-        </div>
-        <div class="item">
-          <frequencies-chart type="constraints" :percent="percent" :height="height" />
-        </div>
-        <div class="item">
-          <frequencies-chart
-            type="travel_time"
-            :xaxis="t('stats.travel_time.xaxis')"
-            :range-step="5"
-            :percent="percent"
-            :height="height"
-          />
-        </div>
-        <div class="item">
-          <share-chart type="freq_mod" :height="height" />
-        </div>
-        <div class="item">
-          <emissions-chart
-            type="freq_mod"
-            :xaxis="t('stats.emissions_freq_mod.xaxis')"
-            :yaxis="t('stats.emissions_freq_mod.yaxis')"
-            :height="height"
-          />
-        </div>
-        <div class="item">
-          <share-chart type="reco_dt2" :height="height" />
-        </div>
-        <div class="item">
-          <links-chart type="mod_reco" :height="height" />
-        </div>
-        <div class="item">
-          <reco-emissions-chart
-            type="freq_mod"
-            reco="reco_mod"
-            :yaxis="t('stats.emissions_reco_mod.yaxis')"
-            :height="height"
-          />
-        </div>
-        <div class="item">
-          <frequencies-stack-chart
-            type="freq_mod_pro"
-            :groups="['local', 'national', 'europe', 'inter']"
-            :xaxis="t('stats.freq_mod_pro.xaxis')"
-            :height="height"
-          />
-        </div>
-        <div class="item">
-          <emissions-chart
-            type="freq_mod_pro"
-            :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
-            :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
-            :height="height"
-          />
-        </div>
-        <div class="item">
-          <share-chart type="reco_pros" :height="height" />
-        </div>
-        <div class="item">
-          <links-chart type="mod_reco_pro" :height="height" />
-        </div>
-      </div>
+      <charts-panel :percent="percent" :height="height" />
     </div>
     <div v-else>
-      <q-carousel
-        v-model="slide"
-        :height="`${height + 100}px`"
-        transition-prev="scale"
-        transition-next="scale"
-        control-color="primary"
-        navigation
-        padding
-        arrows
-        infinite
-      >
-        <q-carousel-slide name="equipments" class="column no-wrap flex-center item">
-          <frequencies-chart type="equipments" :percent="percent" :height="height" />
-        </q-carousel-slide>
-        <q-carousel-slide name="constraints" class="column no-wrap flex-center item">
-          <frequencies-chart type="constraints" :percent="percent" :height="height" />
-        </q-carousel-slide>
-        <q-carousel-slide name="travel_time" class="column no-wrap flex-center item">
-          <frequencies-chart
-            type="travel_time"
-            :xaxis="t('stats.travel_time.xaxis')"
-            :range-step="5"
-            :percent="percent"
-            :height="height"
-          />
-        </q-carousel-slide>
-        <q-carousel-slide name="freq_mod" class="column no-wrap flex-center item">
-          <share-chart type="freq_mod" :height="height" />
-        </q-carousel-slide>
-        <q-carousel-slide name="emissions_freq_mod" class="column no-wrap flex-center item">
-          <emissions-chart
-            type="freq_mod"
-            :xaxis="t('stats.emissions_freq_mod.xaxis')"
-            :yaxis="t('stats.emissions_freq_mod.yaxis')"
-            :height="height"
-          />
-        </q-carousel-slide>
-        <q-carousel-slide name="reco_dt2" class="column no-wrap flex-center item">
-          <share-chart type="reco_dt2" :height="height" />
-        </q-carousel-slide>
-        <q-carousel-slide name="mod_reco" class="column no-wrap flex-center item">
-          <links-chart type="mod_reco" :height="height" />
-        </q-carousel-slide>
-        <q-carousel-slide name="emissions_reco_mod" class="column no-wrap flex-center item">
-          <reco-emissions-chart
-            type="freq_mod"
-            reco="reco_mod"
-            :yaxis="t('stats.emissions_reco_mod.yaxis')"
-            :height="height"
-          />
-        </q-carousel-slide>
-        <q-carousel-slide name="freq_mod_pro" class="column no-wrap flex-center item">
-          <frequencies-stack-chart
-            type="freq_mod_pro"
-            :groups="['local', 'region', 'inter']"
-            :xaxis="t('stats.freq_mod_pro.xaxis')"
-            :height="height"
-          />
-        </q-carousel-slide>
-        <q-carousel-slide name="emissions_freq_mod" class="column no-wrap flex-center item">
-          <emissions-chart
-            type="freq_mod"
-            :xaxis="t('stats.emissions_freq_mod.xaxis')"
-            :yaxis="t('stats.emissions_freq_mod.yaxis')"
-            :height="height"
-          />
-        </q-carousel-slide>
-        <q-carousel-slide name="reco_pros" class="column no-wrap flex-center item">
-          <share-chart type="reco_pros" :height="height" />
-        </q-carousel-slide>
-        <q-carousel-slide name="mod_reco_pro" class="column no-wrap flex-center item">
-          <links-chart type="mod_reco_pro" :height="height" />
-        </q-carousel-slide>
-      </q-carousel>
+      <charts-carousel :percent="percent" :height="height" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
-import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
-import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
-import RecoEmissionsChart from 'src/components/charts/RecoEmissionsChart.vue'
-import LinksChart from 'src/components/charts/LinksChart.vue'
-import ShareChart from 'src/components/charts/ShareChart.vue'
+import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
+import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
 
@@ -224,7 +84,6 @@ const companyService = services.make('company')
 const campaignService = services.make('campaign')
 
 const layout = ref('grid')
-const slide = ref('equipments')
 const percent = ref(true)
 const height = ref(400)
 const companyMap = ref<{ [key: string]: Company }>({})
@@ -281,17 +140,3 @@ function onFilter() {
   stats.loadStats(query)
 }
 </script>
-
-<style lang="css">
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  gap: 16px;
-}
-.item {
-  background: #fafafa;
-  padding: 16px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-}
-</style>
