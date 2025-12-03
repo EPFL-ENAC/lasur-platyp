@@ -11,17 +11,20 @@
 </template>
 
 <script setup lang="ts">
-import { Map } from 'maplibre-gl'
+import { Map, Marker } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import MaplibreGlDraw from 'maplibre-gl-draw'
 import 'maplibre-gl-draw/dist/mapbox-gl-draw.css'
 import { style } from 'src/utils/maps'
+import type { Position } from 'geojson'
 
 interface Props {
   modelValue?: GeoJSON.FeatureCollection | undefined
   center?: [number, number] | undefined
   zoom?: number | undefined
+  points?: Position[] | undefined
 }
+
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 
@@ -83,6 +86,20 @@ onMounted(() => {
       }
     }
   })
+
+  // Load existing polygon
+  if (props.modelValue) {
+    draw.value?.set(props.modelValue)
+  }
+
+  // Add marker for each point
+  if (props.points) {
+    props.points.forEach((point) => {
+      new Marker()
+        .setLngLat([point[0] as number, point[1] as number])
+        .addTo(map.value as maplibregl.Map)
+    })
+  }
 })
 
 onUnmounted(() => {

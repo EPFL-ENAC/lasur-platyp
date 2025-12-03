@@ -11,7 +11,7 @@
         <div v-if="props.text" class="q-mb-md">
           {{ props.text }}
         </div>
-        <area-input v-model="area" :zoom="12" />
+        <area-input v-model="area" :zoom="8" :points="points" />
       </q-card-section>
 
       <q-separator />
@@ -26,12 +26,14 @@
 
 <script setup lang="ts">
 import AreaInput from 'src/components/AreaInput.vue'
+import type { Position } from 'geojson'
 const { t } = useI18n()
 
 interface DialogProps {
   modelValue: boolean
   title: string
   text?: string
+  points?: Position[] | undefined
 }
 
 const props = defineProps<DialogProps>()
@@ -45,7 +47,6 @@ watch(
   () => props.modelValue,
   (value) => {
     showDialog.value = value
-    area.value = undefined
   },
 )
 
