@@ -110,6 +110,7 @@ export default {
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',
     total: 'N: {count}',
+    no_data: 'No data available',
     equipments: {
       title: 'Mobility equipments',
       labels: {

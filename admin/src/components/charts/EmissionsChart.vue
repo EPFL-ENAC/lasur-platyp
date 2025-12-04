@@ -1,6 +1,7 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
+  <div :style="`height: ${height}px; width: 100%;`">
     <e-charts
+      v-if="total > 0"
       ref="chart"
       autoresize
       :init-options="initOptions"
@@ -8,6 +9,10 @@
       :update-options="updateOptions"
       :loading="stats.loading"
     />
+    <div v-else>
+      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.type}.title`) }}</div>
+      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+    </div>
   </div>
 </template>
 
@@ -43,6 +48,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
+const total = ref(0)
 
 watch([() => stats.loading], () => {
   if (stats.loading) {
@@ -73,6 +79,7 @@ function keyLabel(key: string) {
 
 function initChartOptions() {
   option.value = {}
+  total.value = 0
   if (!stats.emissions || !stats.emissions[props.type]) {
     return
   }
@@ -104,6 +111,7 @@ function initChartOptions() {
       return data
     })
 
+  total.value = emissions[0]?.total || 0
   const newOption: EChartsOption = {
     grid: {
       left: '40',
@@ -116,7 +124,7 @@ function initChartOptions() {
     height: props.height - 100,
     title: {
       text: t(`stats.emissions_${props.type}.title`),
-      subtext: t(`stats.total`, { count: emissions[0]?.total }),
+      subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,

@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="showDialog" persistent @hide="onHide" style="min-height: 500px">
-    <q-card class="dialog-md">
+    <q-card class="dialog-lg">
       <q-card-section>
         <q-toolbar>
           <q-toolbar-title>
