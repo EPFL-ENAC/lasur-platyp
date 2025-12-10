@@ -30,6 +30,9 @@
           </q-item>
         </q-list>
       </q-menu>
+      <template v-slot:append>
+        <q-btn round dense flat icon="search" @click="onSuggestAddress" />
+      </template>
     </q-input>
     <div v-if="addressLocation.lat && addressLocation.lon" class="q-pl-sm q-mt-sm text-hint">
       <a
@@ -118,7 +121,12 @@ function onSuggestionSelected(suggestion: Suggestion) {
 
 function locationValidator() {
   return (
-    (addressLocation.value.lat !== undefined && addressLocation.value.lon !== undefined) ||
+    (addressLocation.value.lat !== undefined &&
+      addressLocation.value.lat !== null &&
+      addressLocation.value.lat !== 0 &&
+      addressLocation.value.lon !== undefined &&
+      addressLocation.value.lon !== null &&
+      addressLocation.value.lon !== 0) ||
     t('location_required')
   )
 }
