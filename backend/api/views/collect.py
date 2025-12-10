@@ -195,8 +195,8 @@ def get_first_workplace(campaign: Campaign) -> Workplace:
     Returns:
         Workplace: The first workplace
     """
-    firstWorkplace = campaign.workplaces[0] if campaign.workplaces and len(
-        campaign.workplaces) > 0 else None
+    firstWorkplace = campaign.workplaces[0] if campaign.workplaces else None
     if firstWorkplace is None:
-        raise ValueError("Invalid campaign: no workplaces defined")
+        raise HTTPException(
+            status_code=400, detail="Invalid campaign: no workplaces defined")
     return firstWorkplace

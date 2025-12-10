@@ -122,11 +122,8 @@ function onSuggestionSelected(suggestion: Suggestion) {
 function locationValidator() {
   return (
     (addressLocation.value.lat !== undefined &&
-      addressLocation.value.lat !== null &&
-      addressLocation.value.lat !== 0 &&
       addressLocation.value.lon !== undefined &&
-      addressLocation.value.lon !== null &&
-      addressLocation.value.lon !== 0) ||
+      !(addressLocation.value.lat === 0 && addressLocation.value.lon === 0)) ||
     t('location_required')
   )
 }

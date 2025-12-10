@@ -175,7 +175,7 @@ const showChartsDialog = ref(false)
 const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
 
 const visibleWorkplaces = computed(() => {
-  let wps = props.item.workplaces ? props.item.workplaces : []
+  let wps = props.item.workplaces ? [...props.item.workplaces] : []
   // sort by name
   wps.sort((a, b) => a.name.localeCompare(b.name))
   wps = wps.slice(0, shownWorkplaces.value)
