@@ -42,6 +42,7 @@ export default {
       hint: 'Declare the workplaces associated with this campaign, at least one is required.',
       name: 'Name',
       name_hint: 'Name of the workplace (e.g., "Logistic Hub 12").',
+      required: 'At least one workplace must be defined for the campaign.',
     },
   },
   role: {

@@ -80,9 +80,6 @@ class CompanyAction(CompanyActionBase, table=True):
 
 class CampaignBase(Entity):
     slug: Optional[str] = Field(default=None)
-    address: Optional[str] = Field(default=None)
-    lat: Optional[float] = Field(default=None)
-    lon: Optional[float] = Field(default=None)
     start_date: Optional[datetime] = Field(default=None)
     end_date: Optional[datetime] = Field(default=None)
     contact_email: Optional[str] = Field(default=None)

@@ -5,7 +5,6 @@ from api.models.domain import Campaign
 from api.models.query import CampaignResult, CampaignDraft, CampaignRead
 from api.services.campaigns import CampaignService
 from enacit4r_sql.utils.query import validate_params, ValidationError
-from api.models.domain import Campaign
 
 router = APIRouter()
 

@@ -443,8 +443,15 @@ function nextStep() {
     void collector.loadInfo(survey.record.token)
     if (survey.stepName === 'places') {
       if (selectedWorkplace.value === '') {
-        selectedWorkplace.value =
-          survey.record.data.workplace?.name || collector.info?.workplaces[0]?.name || ''
+        // restore recorded workplace or select first available
+        selectedWorkplace.value = survey.record.data.workplace?.name || ''
+        if (selectedWorkplace.value === '') {
+          const firstWorkplace = collector.info?.workplaces?.[0]
+          if (firstWorkplace) {
+            selectedWorkplace.value =
+              survey.record.data.workplace?.name || firstWorkplace.name || ''
+          }
+        }
         onWorkplaceSelected()
       }
     } else if (survey.stepName === 'recommendations') {

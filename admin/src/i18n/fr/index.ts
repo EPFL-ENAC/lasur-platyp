@@ -43,6 +43,7 @@ export default {
       hint: 'Déclarez les lieux de travail associés à cette campagne, au moins un est requis.',
       name: 'Nom',
       name_hint: 'Nom du lieu de travail (ex. "Hub logistique 12").',
+      required: 'Au moins un lieu de travail doit être défini pour la campagne.',
     },
   },
   role: {

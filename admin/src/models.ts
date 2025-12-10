@@ -23,6 +23,7 @@ export interface Participant extends Entity {
 }
 
 export interface Workplace {
+  id?: number
   name: string
   address: string
   lat: number

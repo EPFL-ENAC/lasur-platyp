@@ -103,8 +103,8 @@ class CampaignService:
     async def create(self, payload: CampaignDraft, user: User = None) -> Campaign:
         """Create a new campaign"""
         workplaces = payload.workplaces
-        del payload.workplaces
-        entity = Campaign(**payload.model_dump())
+        payload_dict = payload.model_dump(exclude={'workplaces'})
+        entity = Campaign(**payload_dict)
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
         if user:
@@ -123,7 +123,6 @@ class CampaignService:
     async def update(self, id: int, payload: CampaignDraft, user: User = None) -> Campaign:
         """Update a campaign"""
         workplaces = payload.workplaces
-        del payload.workplaces
         res = await self.session.exec(
             select(Campaign)
             .options(selectinload(Campaign.workplaces))
@@ -135,7 +134,7 @@ class CampaignService:
                 status_code=404, detail="Campaign not found")
         for key, value in payload.model_dump().items():
             # print(key, value)
-            if key not in ["id", "created_at", "updated_at", "created_by", "updated_by"]:
+            if key not in ["id", "created_at", "updated_at", "created_by", "updated_by", "workplaces"]:
                 setattr(entity, key, value)
         entity.updated_at = datetime.now()
         if user:
@@ -160,6 +159,6 @@ class CampaignService:
                         for key, value in wp.model_dump().items():
                             if key not in ["id", "campaign_id"]:
                                 setattr(existing_wp, key, value)
-
+                        break
         await self.session.commit()
         return entity
