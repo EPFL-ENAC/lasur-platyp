@@ -258,6 +258,10 @@ async function onSave() {
   const valid = await form.value.validate()
   if (!valid) return
   if (selected.value === undefined) return
+  if (!selected.value.workplaces || selected.value.workplaces.length === 0) {
+    notifyError(t('campaign.workplaces.required'))
+    return
+  }
   selected.value.start_date =
     selected.value.start_date === '' ? undefined : selected.value.start_date
   selected.value.end_date = selected.value.end_date === '' ? undefined : selected.value.end_date
