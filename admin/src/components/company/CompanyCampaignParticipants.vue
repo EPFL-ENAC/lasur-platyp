@@ -158,14 +158,14 @@ const columns = computed(() => {
       field: 'status',
       sortable: true,
     },
-    {
-      name: 'data',
-      required: true,
-      label: t('data'),
-      align: DefaultAlignment,
-      field: 'data',
-      sortable: false,
-    },
+    //{
+    //  name: 'data',
+    //  required: true,
+    //  label: t('data'),
+    //  align: DefaultAlignment,
+    //  field: 'data',
+    //  sortable: false,
+    //},
     {
       name: 'action',
       align: DefaultAlignment,

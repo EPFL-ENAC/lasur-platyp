@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="map" ref="mapContainer"></div>
-    <div class="row q-mt-md">
+    <div class="box-info row">
       <q-icon name="info" size="xs" class="q-mr-sm" />
       <span>
         {{ t(`draw_mode.${drawMode}_hint`) }}

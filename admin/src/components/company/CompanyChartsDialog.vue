@@ -65,12 +65,18 @@ const areaCount = computed(() => {
 const campaignsPoints = computed<Position[]>(() => {
   const points: Position[] = []
   if (props.campaign) {
-    points.push([props.campaign.lon, props.campaign.lat] as Position)
+    props.campaign.workplaces?.forEach((workplace) => {
+      if (workplace.lon && workplace.lat) {
+        points.push([workplace.lon, workplace.lat] as Position)
+      }
+    })
   } else {
     campaignsStore.items?.forEach((campaign) => {
-      if (campaign.lon && campaign.lat) {
-        points.push([campaign.lon, campaign.lat] as Position)
-      }
+      campaign.workplaces?.forEach((workplace) => {
+        if (workplace.lon && workplace.lat) {
+          points.push([workplace.lon, workplace.lat] as Position)
+        }
+      })
     })
   }
   return points

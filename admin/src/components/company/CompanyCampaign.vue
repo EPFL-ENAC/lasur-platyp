@@ -32,6 +32,25 @@
         <fields-list :items="items1" :dbobject="item" />
       </div>
       <div class="col-12 col-md-6">
+        <fields-list :items="items2" :dbobject="item" />
+      </div>
+    </div>
+    <div v-if="hasActions">
+      <div class="q-mb-sm">{{ t('company.actions') }}</div>
+      <div class="row q-col-gutter-md q-mb-md">
+        <div class="col-12 col-md-6">
+          <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
+          <fields-list :items="actionItems" :dbobject="formattedActions" />
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
+          <fields-list :items="actionProItems" :dbobject="formattedActions" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row q-col-gutter-md q-mb-md">
+      <div class="col-12 col-md-6">
         <div class="text-h6">{{ t('campaign.workplaces.title') }}</div>
         <q-list separator class="fields-list">
           <q-item v-for="(wp, index) in visibleWorkplaces" :key="index">
@@ -79,40 +98,28 @@
           />
         </div>
       </div>
-    </div>
-    <div v-if="hasActions">
-      <div class="q-mb-sm">{{ t('company.actions') }}</div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-12 col-md-6">
-          <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
-          <fields-list :items="actionItems" :dbobject="formattedActions" />
+      <div class="col-12 col-md-6">
+        <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
+        <div class="text-hint q-mb-sm">
+          {{ t('participants_campaign_hint') }}
         </div>
-        <div class="col-12 col-md-6">
-          <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
-          <fields-list :items="actionProItems" :dbobject="formattedActions" />
+        <div class="q-mb-lg">
+          <q-btn
+            v-if="item.slug"
+            size="sm"
+            color="accent"
+            icon-right="content_copy"
+            :label="t('survey_link')"
+            no-caps
+            @click="onSurveyLinkCopy"
+          />
         </div>
+        <div class="text-hint q-mb-md">
+          {{ t('participants_individual_hint') }}
+        </div>
+        <company-campaign-participants :campaign="item" />
       </div>
     </div>
-    <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
-    <div class="text-hint q-mb-sm">
-      {{ t('participants_campaign_hint') }}
-    </div>
-    <div class="q-mb-lg">
-      <q-btn
-        v-if="item.slug"
-        size="sm"
-        color="accent"
-        icon-right="content_copy"
-        :label="t('survey_link')"
-        no-caps
-        @click="onSurveyLinkCopy"
-      />
-    </div>
-    <div class="text-hint q-mb-md">
-      {{ t('participants_individual_hint') }}
-    </div>
-    <company-campaign-participants :campaign="item" />
-
     <company-campaign-dialog
       v-if="props.company"
       v-model="showDialog"
@@ -234,6 +241,9 @@ const items1: FieldItem[] = [
           ]
         : [],
   },
+]
+
+const items2: FieldItem[] = [
   {
     field: 'start_date',
     label: 'start_date',
