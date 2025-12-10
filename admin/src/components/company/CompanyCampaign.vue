@@ -11,6 +11,7 @@
     <q-btn
       v-if="authStore.isAdmin"
       flat
+      dense
       size="sm"
       color="negative"
       icon="delete"
@@ -23,7 +24,7 @@
       size="sm"
       color="info"
       icon="bar_chart"
-      class="q-mb-md"
+      class="q-mb-md on-right"
       @click="onShowStats"
     />
     <div class="row q-col-gutter-md q-mb-md">
@@ -31,7 +32,30 @@
         <fields-list :items="items1" :dbobject="item" />
       </div>
       <div class="col-12 col-md-6">
-        <fields-list :items="items2" :dbobject="item" />
+        <div>{{ t('campaign.workplaces.title') }}</div>
+        <q-list separator class="fields-list">
+          <q-item v-for="(wp, index) in item.workplaces" :key="index">
+            <q-item-section :style="`max-width: 200px`">
+              <q-item-label>
+                <div class="text-overline text-grey-6">{{ wp.name }}</div>
+              </q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                <div>{{ wp.address }}</div>
+                <div class="q-mt-sm">
+                  <a
+                    :href="`https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`"
+                    target="_blank"
+                  >
+                    <q-icon name="location_on" class="q-mr-xs" />
+                    <span>{{ formatCoordinates(wp.lat, wp.lon) }}</span>
+                  </a>
+                </div>
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
     </div>
     <div v-if="hasActions">
@@ -154,22 +178,6 @@ const items1: FieldItem[] = [
     field: 'name',
   },
   {
-    field: 'address',
-    label: 'address',
-  },
-  {
-    field: 'lat',
-    label: 'location',
-    links: () => [
-      {
-        label: `${formatCoordinates(props.item.lat || 0, props.item.lon || 0)}`,
-        to: `https://www.google.com/maps/search/?api=1&query=${props.item.lat},${props.item.lon}`,
-        icon: 'location_on',
-        //iconRight: 'open_in_new',
-      },
-    ],
-  },
-  {
     field: 'contact_name',
     label: 'campaign.contact_name',
   },
@@ -177,9 +185,6 @@ const items1: FieldItem[] = [
     field: 'contact_email',
     label: 'campaign.contact_email',
   },
-]
-
-const items2: FieldItem[] = [
   {
     field: 'info_url',
     label: 'campaign.info_url',
@@ -206,7 +211,7 @@ const items2: FieldItem[] = [
   },
   {
     field: 'slug',
-    label: 'slug',
+    label: 'campaign.slug',
     links: () => [
       {
         label: `${props.item.slug}`,

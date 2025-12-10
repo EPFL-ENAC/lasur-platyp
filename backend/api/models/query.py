@@ -2,7 +2,7 @@ from typing import List, Optional, Dict
 
 from pydantic import BaseModel, Field
 from geojson_pydantic import Polygon, MultiPolygon
-from api.models.domain import CompanyBase, CompanyActionBase, CampaignBase, ParticipantBase, RecordBase, DataEntryBase
+from api.models.domain import CompanyBase, CompanyActionBase, CampaignBase, ParticipantBase, RecordBase, DataEntryBase, WorkplaceBase
 from enacit4r_sql.models.query import ListResult
 
 
@@ -28,14 +28,26 @@ class CompanyActionResult(ListResult):
     data: List[CompanyActionRead] = []
 
 
+class WorkplaceRead(WorkplaceBase):
+    id: int
+    campaign_id: int
+
+
+class WorkplaceDraft(WorkplaceBase):
+    id: Optional[int] = Field(default=None)
+    campaign_id: int = Field(default=None)
+
+
 class CampaignRead(CampaignBase):
     id: int
     company_id: int
+    workplaces: List[WorkplaceRead] = []
 
 
 class CampaignDraft(CampaignBase):
     id: Optional[int] = Field(default=None)
     company_id: int = Field(default=None)
+    workplaces: List[WorkplaceDraft] = []
 
 
 class CampaignResult(ListResult):
@@ -89,6 +101,7 @@ class CampaignInfo(BaseModel):
     contact_email: Optional[str] = None
     contact_name: Optional[str] = None
     info_url: Optional[str] = None
+    workplaces: List[WorkplaceRead] = []
 
 
 class Frequency(BaseModel):

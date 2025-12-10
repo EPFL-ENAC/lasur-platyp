@@ -40,7 +40,8 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
         company_name=company.name,
         contact_email=campaign.contact_email if campaign.contact_email else company.contact_email,
         contact_name=campaign.contact_name if campaign.contact_name else company.contact_name,
-        info_url=campaign.info_url if campaign.info_url else company.info_url
+        info_url=campaign.info_url if campaign.info_url else company.info_url,
+        workplaces=campaign.workplaces
     )
 
 
@@ -58,11 +59,16 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
     if campaign is not None:
         _check_campaign(campaign)
         # this is a campaign's slug then initialize a new record
+        firstWorkplace = campaign.workplaces[0] if campaign.workplaces and len(
+            campaign.workplaces) > 0 else None
+        if firstWorkplace is None:
+            raise ValueError("Invalid campaign: no workplaces defined")
         data = {
             "workplace": {
-                "address": campaign.address,
-                "lon": campaign.lon,
-                "lat": campaign.lat
+                "name": firstWorkplace.name,
+                "address": firstWorkplace.address,
+                "lon": firstWorkplace.lon,
+                "lat": firstWorkplace.lat
             }
         }
         return RecordDraft(token=secrets.token_urlsafe(16), data=data)

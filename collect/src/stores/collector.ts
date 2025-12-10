@@ -12,7 +12,7 @@ export const useCollector = defineStore('collector', () => {
   const loading = ref<boolean>(false)
 
   async function loadInfo(tkOrSlug: string): Promise<CampaignInfo> {
-    info.value = {} as CampaignInfo
+    if (info.value.name) return Promise.resolve(info.value)
     return api.get(`/collect/info/${tkOrSlug}`).then((response) => {
       info.value = response.data
       return info.value

@@ -22,6 +22,10 @@ export default {
   },
   campaign: {
     label: 'Campaign',
+    slug: 'Identifier',
+    slug_hint:
+      'Unique identifier for the campaign URL (e.g., "spring-2024-mobility-survey"). Only letters, numbers, hyphens and underscores are allowed.',
+    description: 'Description',
     with_actions: 'With employer measures specific to this campaign',
     contact_name: 'Contact Name',
     contact_name_hint:
@@ -33,6 +37,13 @@ export default {
     info_url: 'Information link',
     info_url_hint:
       'Provide a link to more information about the company mobility options (if different from the company information link).',
+    workplaces: {
+      title: 'Workplaces',
+      hint: 'Declare the workplaces associated with this campaign, at least one is required.',
+      name: 'Name',
+      name_hint: 'Name of the workplace (e.g., "Logistic Hub 12").',
+      required: 'At least one workplace must be defined for the campaign.',
+    },
   },
   role: {
     'platyp-user': 'User',
@@ -395,6 +406,7 @@ export default {
   field_required: 'This field is required',
   first_name: 'First Name',
   form_version: 'Form version',
+  general: 'General',
   go_home: 'Go Home',
   group: 'Group',
   help: 'Help',
@@ -436,7 +448,6 @@ export default {
   reset_password: 'Reset Password',
   roles: 'Roles',
   select: 'Select',
-  slug: 'Slug',
   start_date: 'Start Date',
   status: 'Status',
   statistics: 'Statistics',
