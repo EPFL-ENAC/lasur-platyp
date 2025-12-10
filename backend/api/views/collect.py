@@ -3,7 +3,7 @@ import secrets
 from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
-from api.models.domain import Campaign
+from api.models.domain import Campaign, Workplace
 from api.models.query import RecordDraft, RecordRead, RecordComments, CampaignInfo
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
@@ -59,16 +59,13 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
     if campaign is not None:
         _check_campaign(campaign)
         # this is a campaign's slug then initialize a new record
-        firstWorkplace = campaign.workplaces[0] if campaign.workplaces and len(
-            campaign.workplaces) > 0 else None
-        if firstWorkplace is None:
-            raise ValueError("Invalid campaign: no workplaces defined")
+        wp = get_first_workplace(campaign)
         data = {
             "workplace": {
-                "name": firstWorkplace.name,
-                "address": firstWorkplace.address,
-                "lon": firstWorkplace.lon,
-                "lat": firstWorkplace.lat
+                "name": wp.name,
+                "address": wp.address,
+                "lon": wp.lon,
+                "lat": wp.lat
             }
         }
         return RecordDraft(token=secrets.token_urlsafe(16), data=data)
@@ -91,11 +88,13 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
             status_code=400, detail="Participant has already completed the survey")
     campaign = await CampaignService(session).get(participant.campaign_id)
     _check_campaign(campaign)
+    wp = get_first_workplace(campaign)
     data = participant.data
     data["workplace"] = {
-        "address": campaign.address,
-        "lon": campaign.lon,
-        "lat": campaign.lat
+        "name": wp.name,
+        "address": wp.address,
+        "lon": wp.lon,
+        "lat": wp.lat
     }
     return RecordDraft(token=tokenOrSlug, data=data)
 
@@ -182,3 +181,22 @@ def _check_campaign(campaign: Campaign):
     if campaign.end_date is not None and campaign.end_date < datetime.now():
         raise HTTPException(
             status_code=400, detail="Campaign has already ended")
+
+
+def get_first_workplace(campaign: Campaign) -> Workplace:
+    """Get the first workplace of a campaign
+
+    Args:
+        campaign (Campaign): The campaign
+
+    Raises:
+        ValueError: if no workplace is defined
+
+    Returns:
+        Workplace: The first workplace
+    """
+    firstWorkplace = campaign.workplaces[0] if campaign.workplaces else None
+    if firstWorkplace is None:
+        raise HTTPException(
+            status_code=400, detail="Invalid campaign: no workplaces defined")
+    return firstWorkplace

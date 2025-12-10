@@ -32,9 +32,28 @@
         <fields-list :items="items1" :dbobject="item" />
       </div>
       <div class="col-12 col-md-6">
-        <div>{{ t('campaign.workplaces.title') }}</div>
+        <fields-list :items="items2" :dbobject="item" />
+      </div>
+    </div>
+    <div v-if="hasActions">
+      <div class="q-mb-sm">{{ t('company.actions') }}</div>
+      <div class="row q-col-gutter-md q-mb-md">
+        <div class="col-12 col-md-6">
+          <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
+          <fields-list :items="actionItems" :dbobject="formattedActions" />
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
+          <fields-list :items="actionProItems" :dbobject="formattedActions" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row q-col-gutter-md q-mb-md">
+      <div class="col-12 col-md-6">
+        <div class="text-h6">{{ t('campaign.workplaces.title') }}</div>
         <q-list separator class="fields-list">
-          <q-item v-for="(wp, index) in item.workplaces" :key="index">
+          <q-item v-for="(wp, index) in visibleWorkplaces" :key="index">
             <q-item-section :style="`max-width: 200px`">
               <q-item-label>
                 <div class="text-overline text-grey-6">{{ wp.name }}</div>
@@ -56,41 +75,51 @@
             </q-item-section>
           </q-item>
         </q-list>
+        <div class="row q-mt-sm">
+          <q-btn
+            v-if="hasMoreWorkplaces"
+            flat
+            no-caps
+            size="sm"
+            color="primary"
+            :label="t('show_more')"
+            icon="expand_more"
+            @click="shownWorkplaces = workplacesCount"
+          />
+          <q-btn
+            v-else-if="shownWorkplaces > SHOW_WORKPLACES_MIN"
+            flat
+            no-caps
+            size="sm"
+            color="primary"
+            :label="t('show_less')"
+            icon="expand_less"
+            @click="shownWorkplaces = SHOW_WORKPLACES_MIN"
+          />
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
+        <div class="text-hint q-mb-sm">
+          {{ t('participants_campaign_hint') }}
+        </div>
+        <div class="q-mb-lg">
+          <q-btn
+            v-if="item.slug"
+            size="sm"
+            color="accent"
+            icon-right="content_copy"
+            :label="t('survey_link')"
+            no-caps
+            @click="onSurveyLinkCopy"
+          />
+        </div>
+        <div class="text-hint q-mb-md">
+          {{ t('participants_individual_hint') }}
+        </div>
+        <company-campaign-participants :campaign="item" />
       </div>
     </div>
-    <div v-if="hasActions">
-      <div class="q-mb-sm">{{ t('company.actions') }}</div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-12 col-md-6">
-          <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
-          <fields-list :items="actionItems" :dbobject="formattedActions" />
-        </div>
-        <div class="col-12 col-md-6">
-          <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
-          <fields-list :items="actionProItems" :dbobject="formattedActions" />
-        </div>
-      </div>
-    </div>
-    <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
-    <div class="text-hint q-mb-sm">
-      {{ t('participants_campaign_hint') }}
-    </div>
-    <div class="q-mb-lg">
-      <q-btn
-        v-if="item.slug"
-        size="sm"
-        color="accent"
-        icon-right="content_copy"
-        :label="t('survey_link')"
-        no-caps
-        @click="onSurveyLinkCopy"
-      />
-    </div>
-    <div class="text-hint q-mb-md">
-      {{ t('participants_individual_hint') }}
-    </div>
-    <company-campaign-participants :campaign="item" />
-
     <company-campaign-dialog
       v-if="props.company"
       v-model="showDialog"
@@ -138,9 +167,26 @@ interface Props {
 }
 const props = defineProps<Props>()
 
+const SHOW_WORKPLACES_MIN = 5
+
 const showDialog = ref(false)
 const showRemoveDialog = ref(false)
 const showChartsDialog = ref(false)
+const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
+
+const visibleWorkplaces = computed(() => {
+  let wps = props.item.workplaces ? [...props.item.workplaces] : []
+  // sort by name
+  wps.sort((a, b) => a.name.localeCompare(b.name))
+  wps = wps.slice(0, shownWorkplaces.value)
+  return wps
+})
+const hasMoreWorkplaces = computed(() => {
+  return props.item.workplaces ? props.item.workplaces.length > shownWorkplaces.value : false
+})
+const workplacesCount = computed(() => {
+  return props.item.workplaces ? props.item.workplaces.length : 0
+})
 
 const hasActions = computed(
   () =>
@@ -199,6 +245,9 @@ const items1: FieldItem[] = [
           ]
         : [],
   },
+]
+
+const items2: FieldItem[] = [
   {
     field: 'start_date',
     label: 'start_date',

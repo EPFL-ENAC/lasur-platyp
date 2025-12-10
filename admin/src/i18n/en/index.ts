@@ -448,6 +448,8 @@ export default {
   reset_password: 'Reset Password',
   roles: 'Roles',
   select: 'Select',
+  show_less: 'Show less',
+  show_more: 'Show more',
   start_date: 'Start Date',
   status: 'Status',
   statistics: 'Statistics',

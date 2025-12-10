@@ -453,6 +453,8 @@ export default {
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
   select: 'Sélectionner',
+  show_less: 'Afficher moins',
+  show_more: 'Afficher plus',
   start_date: 'Date de début',
   status: 'Statut',
   statistics: 'Statistiques',

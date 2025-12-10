@@ -133,7 +133,7 @@
               </div>
               <div v-if="selected.workplaces && selected.workplaces.length > 0">
                 <q-list bordered separator class="q-mb-md">
-                  <q-item v-for="(workplace, index) in selected.workplaces" :key="index">
+                  <q-item v-for="(workplace, index) in selected.workplaces" :key="workplace.name">
                     <q-item-section>
                       <workplace-input
                         v-if="selected.workplaces[index]"
@@ -220,6 +220,7 @@ watch(
 )
 
 function onInit() {
+  tab.value = 'general'
   // deep copy
   selected.value = JSON.parse(JSON.stringify(props.item))
   selected.value.start_date = selected.value.start_date?.split('T')[0]

@@ -31,6 +31,7 @@
           :label="campaign.name"
         />
       </q-tabs>
+      <q-separator />
       <q-tab-panels v-model="tab">
         <q-tab-panel
           v-for="campaign in campaigns"
