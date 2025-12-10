@@ -81,10 +81,10 @@ class CompanyAction(CompanyActionBase, table=True):
 class CampaignBase(Entity):
     slug: Optional[str] = Field(default=None)
     address: Optional[str] = Field(default=None)
-    start_date: Optional[datetime] = Field(default=None)
-    end_date: Optional[datetime] = Field(default=None)
     lat: Optional[float] = Field(default=None)
     lon: Optional[float] = Field(default=None)
+    start_date: Optional[datetime] = Field(default=None)
+    end_date: Optional[datetime] = Field(default=None)
     contact_email: Optional[str] = Field(default=None)
     contact_name: Optional[str] = Field(default=None)
     info_url: Optional[str] = Field(default=None)
@@ -102,6 +102,8 @@ class Campaign(CampaignBase, table=True):
     company_id: int = Field(default=None, foreign_key="company.id")
     company: Company | None = Relationship(back_populates="campaigns")
     participants: list["Participant"] = Relationship(
+        back_populates="campaign", cascade_delete=True)
+    workplaces: list["Workplace"] = Relationship(
         back_populates="campaign", cascade_delete=True)
 
 
@@ -121,6 +123,24 @@ class Participant(ParticipantBase, table=True):
     )
     campaign_id: int = Field(default=None, foreign_key="campaign.id")
     campaign: Campaign | None = Relationship(back_populates="participants")
+
+
+class WorkplaceBase(SQLModel):
+    name: Optional[str] = Field(default=None)
+    address: Optional[str] = Field(default=None)
+    lat: Optional[float] = Field(default=None)
+    lon: Optional[float] = Field(default=None)
+
+
+class Workplace(WorkplaceBase, table=True):
+    id: Optional[int] = Field(
+        default=None,
+        nullable=False,
+        primary_key=True,
+        index=True,
+    )
+    campaign_id: int = Field(default=None, foreign_key="campaign.id")
+    campaign: Campaign | None = Relationship(back_populates="workplaces")
 
 
 class RecordBase(SQLModel):

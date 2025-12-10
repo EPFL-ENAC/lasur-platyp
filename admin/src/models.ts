@@ -22,6 +22,13 @@ export interface Participant extends Entity {
   data?: ParticipantData
 }
 
+export interface Workplace {
+  name: string
+  address: string
+  lat: number
+  lon: number
+}
+
 export interface Campaign extends Entity {
   slug?: string
   address?: string
@@ -34,6 +41,7 @@ export interface Campaign extends Entity {
   info_url?: string
   company_id?: number
   actions?: EmployerActions
+  workplaces?: Workplace[]
 }
 
 export interface CompanyAction {

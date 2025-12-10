@@ -1,8 +1,9 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlmodel import select
+from sqlalchemy.orm import selectinload
 from fastapi import HTTPException
-from api.models.domain import Campaign
+from api.models.domain import Campaign, Workplace
 from api.models.query import CampaignResult, CampaignDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
@@ -18,7 +19,8 @@ class CampaignQueryBuilder(QueryBuilder):
 
     def build_query_with_joins(self, total_count, filter, fields=None):
         start, end, query = self.build_query(total_count, fields)
-        query = self._apply_joins(query, filter)
+        query = self._apply_joins(query, filter).options(
+            selectinload(Campaign.workplaces))
         return start, end, query
 
     def _apply_joins(self, query, filter):
@@ -39,8 +41,9 @@ class CampaignService:
     async def get(self, id: int) -> Campaign:
         """Get a campaign by id"""
         res = await self.session.exec(
-            select(Campaign).where(
-                Campaign.id == id))
+            select(Campaign)
+            .options(selectinload(Campaign.workplaces))
+            .where(Campaign.id == id))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
@@ -50,8 +53,9 @@ class CampaignService:
     async def get_by_slug(self, slug: str) -> Campaign:
         """Get a campaign by slug"""
         res = await self.session.exec(
-            select(Campaign).where(
-                Campaign.slug == slug))
+            select(Campaign)
+            .options(selectinload(Campaign.workplaces))
+            .where(Campaign.slug == slug))
         entity = res.one_or_none()
         if not entity:
             raise HTTPException(
@@ -98,6 +102,8 @@ class CampaignService:
 
     async def create(self, payload: CampaignDraft, user: User = None) -> Campaign:
         """Create a new campaign"""
+        workplaces = payload.workplaces
+        del payload.workplaces
         entity = Campaign(**payload.model_dump())
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
@@ -106,12 +112,22 @@ class CampaignService:
             entity.updated_by = user.username
         self.session.add(entity)
         await self.session.commit()
+        # Add workplaces
+        for wp in workplaces:
+            wp_entity = wp.model_dump()
+            wp_entity["campaign_id"] = entity.id
+            self.session.add(Workplace.model_validate(wp_entity))
+        await self.session.commit()
         return entity
 
     async def update(self, id: int, payload: CampaignDraft, user: User = None) -> Campaign:
         """Update a campaign"""
+        workplaces = payload.workplaces
+        del payload.workplaces
         res = await self.session.exec(
-            select(Campaign).where(Campaign.id == id)
+            select(Campaign)
+            .options(selectinload(Campaign.workplaces))
+            .where(Campaign.id == id)
         )
         entity = res.one_or_none()
         if not entity:
@@ -124,5 +140,26 @@ class CampaignService:
         entity.updated_at = datetime.now()
         if user:
             entity.updated_by = user.username
+        # Update workplaces
+        incoming_wp_ids = {wp.id for wp in workplaces if wp.id is not None}
+        # Delete removed workplaces
+        for wp in entity.workplaces:
+            if wp.id not in incoming_wp_ids:
+                await self.session.delete(wp)
+        # Add or update workplaces
+        for wp in workplaces:
+            if wp.id is None:
+                # New workplace
+                wp_entity = wp.model_dump()
+                wp_entity["campaign_id"] = entity.id
+                self.session.add(Workplace.model_validate(wp_entity))
+            else:
+                # Update existing workplace
+                for existing_wp in entity.workplaces:
+                    if existing_wp.id == wp.id:
+                        for key, value in wp.model_dump().items():
+                            if key not in ["id", "campaign_id"]:
+                                setattr(existing_wp, key, value)
+
         await self.session.commit()
         return entity

@@ -10,102 +10,157 @@
 
       <q-card-section>
         <q-form ref="form">
-          <q-input
-            filled
-            v-model="selected.name"
-            :label="t('name') + ' *'"
-            lazy-rules
-            :rules="[(val) => !!val || t('field_required')]"
-          />
-          <q-input
-            filled
-            v-model="selected.contact_name"
-            :label="t('campaign.contact_name')"
-            :hint="t('campaign.contact_name_hint')"
-            class="q-mb-md"
-          />
-          <q-input
-            filled
-            v-model="selected.contact_email"
-            :label="t('campaign.contact_email')"
-            :hint="t('campaign.contact_email_hint')"
-            lazy-rules
-            :rules="[
-              (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || t('valid_email_required'),
-            ]"
-            class="q-mb-md"
-          />
-          <q-input
-            filled
-            v-model="selected.info_url"
-            :label="t('campaign.info_url')"
-            :hint="t('campaign.info_url_hint')"
-            lazy-rules
-            :rules="[(val) => !val || /^(http|https):/.test(val) || t('valid_url_required')]"
-            class="q-mb-md"
-          />
-          <q-input
-            v-if="editMode"
-            filled
-            v-model="selected.slug"
-            :label="t('slug') + ' *'"
-            lazy-rules
-            :rules="[(val) => !!val || t('field_required')]"
-            class="q-mb-md"
+          <q-tabs
+            v-model="tab"
+            dense
+            no-caps
+            class="text-grey"
+            active-color="secondary"
+            active-bg-color="grey-4"
+            indicator-color="primary"
+            align="left"
           >
-            <template v-slot:append>
-              <q-icon
-                name="refresh"
-                class="cursor-pointer"
-                @click="selected.slug = generateSlug()"
+            <q-tab name="general" :label="t('general')" />
+            <q-tab
+              name="workplaces"
+              :label="t('campaign.workplaces.title')"
+              :alert="selected.workplaces?.length ? false : 'negative'"
+            />
+          </q-tabs>
+          <q-separator />
+          <q-tab-panels animated v-model="tab">
+            <q-tab-panel name="general">
+              <q-input
+                filled
+                v-model="selected.name"
+                :label="t('name') + ' *'"
+                lazy-rules
+                :rules="[(val) => !!val || t('field_required')]"
               />
-            </template>
-          </q-input>
-          <address-input
-            v-model="addressLocation"
-            :label="t('address') + ' *'"
-            :hint="t('address_input_hint')"
-            required
-            class="q-mb-md"
-          />
-          <q-input filled v-model="selected.start_date" :label="t('start_date')" class="q-mb-md">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="selected.start_date" mask="YYYY-MM-DD">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-          <q-input filled v-model="selected.end_date" :label="t('end_date')" class="q-mb-md">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="selected.end_date" mask="YYYY-MM-DD">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-          <q-toggle
-            v-model="withActions"
-            :label="t('campaign.with_actions')"
-            @update:model-value="onWithActionsChanged"
-          />
-          <employer-actions-input
-            v-if="withActions"
-            v-model="selected.actions"
-            :company="props.company"
-            :label="t('company.actions')"
-            class="q-mt-lg"
-          />
+              <q-input
+                filled
+                v-model="selected.contact_name"
+                :label="t('campaign.contact_name')"
+                :hint="t('campaign.contact_name_hint')"
+                class="q-mb-md"
+              />
+              <q-input
+                filled
+                v-model="selected.contact_email"
+                :label="t('campaign.contact_email')"
+                :hint="t('campaign.contact_email_hint')"
+                lazy-rules
+                :rules="[
+                  (val) =>
+                    !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || t('valid_email_required'),
+                ]"
+                class="q-mb-md"
+              />
+              <q-input
+                filled
+                v-model="selected.info_url"
+                :label="t('campaign.info_url')"
+                :hint="t('campaign.info_url_hint')"
+                lazy-rules
+                :rules="[(val) => !val || /^(http|https):/.test(val) || t('valid_url_required')]"
+                class="q-mb-md"
+              />
+              <q-input
+                v-if="editMode"
+                filled
+                v-model="selected.slug"
+                :label="t('campaign.slug') + ' *'"
+                :hint="t('campaign.slug_hint')"
+                lazy-rules
+                :rules="[(val) => !!val || t('field_required')]"
+                class="q-mb-md"
+              >
+                <template v-slot:append>
+                  <q-icon
+                    name="refresh"
+                    class="cursor-pointer"
+                    @click="selected.slug = generateSlug()"
+                  />
+                </template>
+              </q-input>
+              <q-input
+                filled
+                v-model="selected.start_date"
+                :label="t('start_date')"
+                class="q-mb-md"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-date v-model="selected.start_date" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+              <q-input filled v-model="selected.end_date" :label="t('end_date')" class="q-mb-md">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-date v-model="selected.end_date" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+              <q-toggle
+                v-model="withActions"
+                :label="t('campaign.with_actions')"
+                @update:model-value="onWithActionsChanged"
+              />
+              <employer-actions-input
+                v-if="withActions"
+                v-model="selected.actions"
+                :company="props.company"
+                :label="t('company.actions')"
+                class="q-mt-lg"
+              />
+            </q-tab-panel>
+            <q-tab-panel name="workplaces">
+              <div class="text-hint q-mb-md">
+                {{ t('campaign.workplaces.hint') }}
+              </div>
+              <div v-if="selected.workplaces && selected.workplaces.length > 0">
+                <q-list bordered separator class="q-mb-md">
+                  <q-item v-for="(workplace, index) in selected.workplaces" :key="index">
+                    <q-item-section>
+                      <workplace-input
+                        v-if="selected.workplaces[index]"
+                        v-model="selected.workplaces[index]"
+                    /></q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        flat
+                        size="sm"
+                        color="negative"
+                        icon="delete"
+                        class="q-mt-sm"
+                        @click="selected.workplaces.splice(index, 1)"
+                      />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+              <q-btn
+                size="sm"
+                color="primary"
+                :label="t('add')"
+                icon="add"
+                @click="onAddWorkplace"
+              />
+            </q-tab-panel>
+          </q-tab-panels>
         </q-form>
       </q-card-section>
 
@@ -121,11 +176,10 @@
 
 <script setup lang="ts">
 import slug from 'slug'
-import type { Campaign, Company } from 'src/models'
+import type { Campaign, Company, Workplace } from 'src/models'
 import { notifyError } from 'src/utils/notify'
-import AddressInput from 'src/components/AddressInput.vue'
-import type { AddressLocation } from 'src/components/models'
 import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
+import WorkplaceInput from 'src/components/company/WorkplaceInput.vue'
 import { generateToken } from 'src/utils/generate'
 
 interface DialogProps {
@@ -147,7 +201,7 @@ const selected = ref<Campaign>({
 } as Campaign)
 const withActions = ref(false)
 const editMode = ref(false)
-const addressLocation = ref<AddressLocation>({ address: '' })
+const tab = ref('general')
 
 onMounted(() => {
   if (props.modelValue) {
@@ -170,10 +224,8 @@ function onInit() {
   selected.value = JSON.parse(JSON.stringify(props.item))
   selected.value.start_date = selected.value.start_date?.split('T')[0]
   selected.value.end_date = selected.value.end_date?.split('T')[0]
-  addressLocation.value = {
-    address: selected.value.address || '',
-    lat: selected.value.lat,
-    lon: selected.value.lon,
+  if (!selected.value.workplaces) {
+    selected.value.workplaces = []
   }
   // check if there are some actions selected
   withActions.value =
@@ -206,9 +258,6 @@ async function onSave() {
   const valid = await form.value.validate()
   if (!valid) return
   if (selected.value === undefined) return
-  selected.value.address = addressLocation.value.address
-  selected.value.lat = addressLocation.value.lat
-  selected.value.lon = addressLocation.value.lon
   selected.value.start_date =
     selected.value.start_date === '' ? undefined : selected.value.start_date
   selected.value.end_date = selected.value.end_date === '' ? undefined : selected.value.end_date
@@ -235,5 +284,17 @@ function onWithActionsChanged(value: boolean) {
   if (!value) {
     selected.value.actions = {}
   }
+}
+
+function onAddWorkplace() {
+  if (!selected.value.workplaces) {
+    selected.value.workplaces = []
+  }
+  selected.value.workplaces.push({
+    name: '',
+    address: '',
+    lat: 0,
+    lon: 0,
+  } as Workplace)
 }
 </script>

@@ -40,7 +40,8 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
         company_name=company.name,
         contact_email=campaign.contact_email if campaign.contact_email else company.contact_email,
         contact_name=campaign.contact_name if campaign.contact_name else company.contact_name,
-        info_url=campaign.info_url if campaign.info_url else company.info_url
+        info_url=campaign.info_url if campaign.info_url else company.info_url,
+        workplaces=campaign.workplaces
     )
 
 

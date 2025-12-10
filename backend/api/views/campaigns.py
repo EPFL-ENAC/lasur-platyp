@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
 from api.models.domain import Campaign
-from api.models.query import CampaignResult, CampaignDraft
+from api.models.query import CampaignResult, CampaignDraft, CampaignRead
 from api.services.campaigns import CampaignService
 from enacit4r_sql.utils.query import validate_params, ValidationError
 from api.models.domain import Campaign
@@ -27,10 +27,11 @@ async def find(
         raise HTTPException(status_code=400, detail=f"{e}")
 
 
-@router.get("/{id}", response_model=Campaign, response_model_exclude_none=True)
+@router.get("/{id}", response_model=CampaignRead, response_model_exclude_none=True)
 async def get(id: int,
               session: AsyncSession = Depends(get_session),
-              user: User = Depends(kc_service.require_admin())) -> Campaign:
+              user: User = Depends(kc_service.require_admin())
+              ) -> Campaign:
     """Get a campaign by id"""
     return await CampaignService(session).get(id)
 

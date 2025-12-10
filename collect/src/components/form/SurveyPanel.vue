@@ -74,11 +74,13 @@
       />
     </div>
     <div v-if="survey.stepName === 'places'">
-      <LocationItem
-        map-id="workplace-map"
+      <ChoiceItem
         :label="t('form.workplace')"
-        v-model="survey.record.data.workplace"
-        class="q-mb-xl"
+        :options="workplaceOptions"
+        v-model="selectedWorkplace"
+        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
+        @update:modelValue="onWorkplaceSelected"
+        class="q-mb-lg"
       />
       <LocationItem
         map-id="origin-map"
@@ -327,12 +329,22 @@ const survey = useSurvey()
 const collector = useCollector()
 const q = useQuasar()
 
+const selectedWorkplace = ref<string>(survey.record.data.workplace?.name || '')
+
 const ageOptions = computed<Option[]>(() => [
   { value: '16-24', label: t('form.age_class_option.16_24') },
   { value: '25-44', label: t('form.age_class_option.25_44') },
   { value: '45-64', label: t('form.age_class_option.45_64') },
   { value: '65+', label: t('form.age_class_option.65') },
 ])
+
+const workplaceOptions = computed<Option[]>(
+  () =>
+    collector.info?.workplaces?.map((wp) => ({
+      value: wp.name || wp.address || '',
+      label: wp.name || wp.address || '',
+    })) || [],
+)
 
 const equipmentsOptions = computed<Option[]>(() => [
   { value: 'bike', label: t('form.equipments_option.bike') },
@@ -352,6 +364,32 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'disabled', label: t('form.constraints_option.disabled') },
   { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
 ])
+
+onMounted(() => {
+  if (survey.tokenOrSlug) {
+    void collector.loadInfo(survey.record.token)
+  }
+})
+
+function onWorkplaceSelected() {
+  const wp = collector.info?.workplaces?.find(
+    (w) => (w.name || w.address || '') === selectedWorkplace.value,
+  )
+  if (wp) {
+    survey.record.data.workplace = {
+      lat: wp.lat,
+      lon: wp.lon,
+      address: wp.address,
+      name: wp.name,
+    }
+  } else {
+    survey.record.data.workplace = {
+      lat: 0,
+      lon: 0,
+      address: '',
+    }
+  }
+}
 
 function nextStep() {
   if (survey.stepName === 'agreement') {
@@ -402,7 +440,14 @@ function nextStep() {
   }
   survey.incStep()
   if (survey.tokenOrSlug) {
-    if (survey.stepName === 'recommendations') {
+    void collector.loadInfo(survey.record.token)
+    if (survey.stepName === 'places') {
+      if (selectedWorkplace.value === '') {
+        selectedWorkplace.value =
+          survey.record.data.workplace?.name || collector.info?.workplaces[0]?.name || ''
+        onWorkplaceSelected()
+      }
+    } else if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
       survey.record.data.comments = ''
       collector

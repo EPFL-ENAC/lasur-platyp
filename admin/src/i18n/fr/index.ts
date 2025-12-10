@@ -23,6 +23,10 @@ export default {
   },
   campaign: {
     label: 'Campagne',
+    slug: 'Identifiant',
+    slug_hint:
+      "Identifiant unique pour l'URL de la campagne (ex. 'printemps-2024-enquete-mobilite'). Seules les lettres, chiffres, tirets et underscores sont autorisés.",
+    description: 'Description',
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
     contact_name: 'Nom du contact',
     contact_name_hint:
@@ -34,6 +38,12 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette entreprise (si différent du lien d'information de l'entreprise).",
+    workplaces: {
+      title: 'Lieux de travail',
+      hint: 'Déclarez les lieux de travail associés à cette campagne, au moins un est requis.',
+      name: 'Nom',
+      name_hint: 'Nom du lieu de travail (ex. "Hub logistique 12").',
+    },
   },
   role: {
     'platyp-user': 'Utilisateur',
@@ -398,6 +408,7 @@ export default {
   field_required: 'Ce champ est requis',
   first_name: 'Prénom',
   form_version: 'Version du formulaire',
+  general: 'Général',
   go_home: 'Accueil',
   group: 'Groupe',
   help: 'Aide',
@@ -441,7 +452,6 @@ export default {
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
   select: 'Sélectionner',
-  slug: 'Slug',
   start_date: 'Date de début',
   status: 'Statut',
   statistics: 'Statistiques',
