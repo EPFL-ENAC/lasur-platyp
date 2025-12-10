@@ -338,12 +338,13 @@ const ageOptions = computed<Option[]>(() => [
   { value: '65+', label: t('form.age_class_option.65') },
 ])
 
-const workplaceOptions = computed<Option[]>(
-  () =>
+const workplaceOptions = computed<Option[]>(() =>
+  (
     collector.info?.workplaces?.map((wp) => ({
       value: wp.name || wp.address || '',
       label: wp.name || wp.address || '',
-    })) || [],
+    })) || []
+  ).sort((a, b) => a.label.localeCompare(b.label)),
 )
 
 const equipmentsOptions = computed<Option[]>(() => [
