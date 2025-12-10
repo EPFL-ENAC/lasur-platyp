@@ -74,11 +74,12 @@
       />
     </div>
     <div v-if="survey.stepName === 'places'">
-      <ChoiceItem
+      <LargeChoiceItem
         :label="t('form.workplace')"
         :options="workplaceOptions"
         v-model="selectedWorkplace"
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
+        :option-label-class="'text-h6 text-bold'"
+        :col="workplaceOptions.length > 1 ? 2 : 1"
         @update:modelValue="onWorkplaceSelected"
         class="q-mb-lg"
       />
@@ -310,6 +311,7 @@
 import { useQuasar } from 'quasar'
 import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
+import LargeChoiceItem from 'src/components/form/LargeChoiceItem.vue'
 import JourneysPanel from 'src/components/form/JourneysPanel.vue'
 import ProJourneysPanel from 'src/components/form/ProJourneysPanel.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
@@ -341,8 +343,9 @@ const ageOptions = computed<Option[]>(() => [
 const workplaceOptions = computed<Option[]>(() =>
   (
     collector.info?.workplaces?.map((wp) => ({
-      value: wp.name || wp.address || '',
+      value: wp.name || '',
       label: wp.name || wp.address || '',
+      hint: wp.address || '',
     })) || []
   ).sort((a, b) => a.label.localeCompare(b.label)),
 )

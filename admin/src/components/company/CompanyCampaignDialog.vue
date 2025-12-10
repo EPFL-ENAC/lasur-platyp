@@ -132,8 +132,16 @@
                 {{ t('campaign.workplaces.hint') }}
               </div>
               <div v-if="selected.workplaces && selected.workplaces.length > 0">
-                <q-list bordered separator class="q-mb-md">
-                  <q-item v-for="(workplace, index) in selected.workplaces" :key="workplace.name">
+                <q-list
+                  bordered
+                  separator
+                  class="q-mb-md"
+                  style="max-height: 500px; overflow-y: auto"
+                >
+                  <q-item
+                    v-for="(workplace, index) in selected.workplaces"
+                    :key="workplace.id || `wp-${index}`"
+                  >
                     <q-item-section>
                       <workplace-input
                         v-if="selected.workplaces[index]"
@@ -152,13 +160,35 @@
                   </q-item>
                 </q-list>
               </div>
-              <q-btn
-                size="sm"
-                color="primary"
-                :label="t('add')"
-                icon="add"
-                @click="onAddWorkplace"
-              />
+              <div class="row">
+                <q-btn
+                  size="sm"
+                  color="primary"
+                  :label="t('add')"
+                  icon="add"
+                  @click="onAddWorkplace"
+                />
+                <q-btn
+                  size="sm"
+                  color="primary"
+                  :label="t('upload_csv')"
+                  icon="upload"
+                  class="on-right"
+                  @click="onUpload"
+                />
+                <q-btn
+                  flat
+                  size="sm"
+                  color="primary"
+                  :label="t('download_csv')"
+                  icon="download"
+                  class="on-right"
+                  @click="onDownload"
+                />
+              </div>
+              <div class="text-hint q-mt-md">
+                {{ t('campaign.import_workplaces_hint') }}
+              </div>
             </q-tab-panel>
           </q-tab-panels>
         </q-form>
@@ -181,6 +211,7 @@ import { notifyError } from 'src/utils/notify'
 import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
 import WorkplaceInput from 'src/components/company/WorkplaceInput.vue'
 import { generateToken } from 'src/utils/generate'
+import Papa from 'papaparse'
 
 interface DialogProps {
   modelValue: boolean
@@ -301,5 +332,93 @@ function onAddWorkplace() {
     lat: 0,
     lon: 0,
   } as Workplace)
+}
+
+function onUpload() {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.csv,text/csv'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  input.onchange = (e: any) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    reader.onload = (event: any) => {
+      const csvData = event.target.result
+      const results = Papa.parse(csvData, {
+        header: true,
+        skipEmptyLines: true,
+      })
+      // check columns
+      const requiredColumns = ['name', 'address', 'lat', 'lon']
+      const missingColumns = requiredColumns.filter((col) => !results.meta.fields?.includes(col))
+      if (missingColumns.length > 0) {
+        notifyError(t('campaign.csv_missing_columns', { columns: missingColumns.join(', ') }))
+        return
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      results.data.forEach((row: any) => {
+        if (!selected.value.workplaces) {
+          selected.value.workplaces = []
+        }
+        if (!row['name'] || !row['address'] || !row['lat'] || !row['lon']) {
+          return
+        }
+        // add or update workplace
+        const existingIndex = selected.value.workplaces.findIndex(
+          (wp) => wp.name === row['name'] && wp.address === row['address'],
+        )
+        if (existingIndex !== -1) {
+          // update existing workplace
+          selected.value.workplaces[existingIndex] = {
+            name: row['name'],
+            address: row['address'],
+            lat: row['lat'] ? parseFloat(row['lat']) : 0,
+            lon: row['lon'] ? parseFloat(row['lon']) : 0,
+          } as Workplace
+          return
+        }
+        // add new workplace
+        selected.value.workplaces.push({
+          name: row['name'] || '',
+          address: row['address'] || '',
+          lat: row['lat'] ? parseFloat(row['lat']) : 0,
+          lon: row['lon'] ? parseFloat(row['lon']) : 0,
+        } as Workplace)
+      })
+    }
+    reader.readAsText(file)
+  }
+  input.click()
+}
+
+function onDownload() {
+  if (!selected.value.workplaces || selected.value.workplaces.length === 0) {
+    notifyError(t('campaign.workplaces.required'))
+    return
+  }
+  // use ; as separator for better compatibility with Excel in some locales
+  const csvData = Papa.unparse(
+    selected.value.workplaces.map((wp) => ({
+      name: wp.name,
+      address: wp.address,
+      lat: wp.lat,
+      lon: wp.lon,
+    })),
+    { delimiter: ';' },
+  )
+  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+  link.setAttribute('href', url)
+  link.setAttribute(
+    'download',
+    `${props.company.name}_${selected.value.name}_workplaces.csv`.replaceAll(' ', '_'),
+  )
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 </script>

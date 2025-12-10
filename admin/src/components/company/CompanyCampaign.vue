@@ -51,7 +51,19 @@
 
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-md-6">
-        <div class="text-h6">{{ t('campaign.workplaces.title') }}</div>
+        <div class="text-h6 q-mb-md">
+          {{ t('campaign.workplaces.title') }}
+          <q-badge color="info" class="on-right">{{ workplacesCount }}</q-badge>
+          <q-btn
+            outline
+            size="sm"
+            color="info"
+            :label="t('download_csv')"
+            icon="download"
+            class="on-right"
+            @click="onDownloadWorkplaces"
+          />
+        </div>
         <q-list separator class="fields-list">
           <q-item v-for="(wp, index) in visibleWorkplaces" :key="index">
             <q-item-section :style="`max-width: 200px`">
@@ -155,6 +167,7 @@ import { formatCoordinates } from 'src/utils/numbers'
 import { collectUrl } from 'src/boot/api'
 import { notifyInfo } from 'src/utils/notify'
 import { actionItems, actionProItems } from 'src/utils/options'
+import Papa from 'papaparse'
 
 const { t, locale } = useI18n()
 const authStore = useAuthStore()
@@ -298,5 +311,34 @@ function onSurveyLinkCopy() {
 
 function onShowStats() {
   showChartsDialog.value = true
+}
+
+function onDownloadWorkplaces() {
+  if (!props.item.workplaces || props.item.workplaces.length === 0) {
+    notifyInfo(t('company.no_workplaces_to_download'))
+    return
+  }
+  // use ; as separator for better compatibility with Excel in some locales
+  const csvData = Papa.unparse(
+    props.item.workplaces.map((wp) => ({
+      name: wp.name,
+      address: wp.address,
+      lat: wp.lat,
+      lon: wp.lon,
+    })),
+    { delimiter: ';' },
+  )
+  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+  link.setAttribute('href', url)
+  link.setAttribute(
+    'download',
+    `${props.company.name}_${props.item.name}_workplaces.csv`.replaceAll(' ', '_'),
+  )
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 </script>

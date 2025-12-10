@@ -37,6 +37,10 @@ export default {
     info_url: 'Information link',
     info_url_hint:
       'Provide a link to more information about the company mobility options (if different from the company information link).',
+    csv_missing_columns:
+      'The uploaded CSV file is missing the following required columns: {columns}.',
+    import_workplaces_hint:
+      'Upload a CSV file to add/update multiple workplaces to the campaign at once. The file must contain the following columns: name, address, lat, lon.',
     workplaces: {
       title: 'Workplaces',
       hint: 'Declare the workplaces associated with this campaign, at least one is required.',
@@ -398,6 +402,7 @@ export default {
   cookbook: 'Cookbook',
   dashboard: 'Dashboard',
   data: 'Data',
+  download_csv: 'Download CSV',
   edit: 'Edit',
   email: 'Email',
   enabled: 'Enabled',
@@ -456,6 +461,7 @@ export default {
   survey_link_copied: 'Survey link copied to clipboard, you can now share it with the participants',
   survey_link: 'Link to survey',
   token: 'Token',
+  upload_csv: 'Upload CSV',
   users: 'Users',
   valid_email_required: 'A valid email address is required',
   valid_url_required: 'A valid URL is required (starting with http:// or https://)',

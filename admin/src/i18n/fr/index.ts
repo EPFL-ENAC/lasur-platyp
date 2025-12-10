@@ -38,6 +38,10 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette entreprise (si différent du lien d'information de l'entreprise).",
+    csv_missing_columns:
+      'Le fichier CSV téléversé est manquant les colonnes requises suivantes : {columns}.',
+    import_workplaces_hint:
+      'Téléversez un fichier CSV pour ajouter/mette à jour plusieurs lieux de travail à la campagne en une seule fois. Le fichier doit contenir les colonnes suivantes : name, address, lat, lon.',
     workplaces: {
       title: 'Lieux de travail',
       hint: 'Déclarez les lieux de travail associés à cette campagne, au moins un est requis.',
@@ -401,6 +405,7 @@ export default {
   cookbook: 'Recettes',
   dashboard: 'Tableau de bord',
   data: 'Données',
+  download_csv: 'Télécharger CSV',
   edit: 'Editer',
   email: 'Email',
   enabled: 'Activé',
@@ -462,6 +467,7 @@ export default {
     "Lien vers l'enquête copié dans le presse-papiers, vous pouvez maintenant le partager avec les participants",
   survey_link: "Lien vers l'enquête",
   token: 'Jeton',
+  upload_csv: 'Téléverser CSV',
   users: 'Utilisateurs',
   valid_email_required: 'Une adresse email valide est requise',
   valid_url_required: 'Une URL valide est requise (commençant par http:// ou https://)',
