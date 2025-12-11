@@ -31,6 +31,7 @@ export default {
     employment_rate: 'What is your employment rate?',
     remote_work_rate: 'What is your remote work rate?',
     company_vehicle: 'Do you have a company vehicle?',
+    search_or_select_option: 'Search or select an option',
     yes: 'Yes',
     no: 'No',
     workplace: 'Your usual place of work',

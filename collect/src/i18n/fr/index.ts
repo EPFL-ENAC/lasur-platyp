@@ -31,6 +31,7 @@ export default {
     employment_rate: 'Quel est votre taux de travail ?',
     remote_work_rate: 'Quel est votre taux de télétravail ?',
     company_vehicle: 'Avez-vous un véhicule de fonction ?',
+    search_or_select_option: 'Rechercher ou sélectionner une option',
     yes: 'Oui',
     no: 'Non',
     workplace: 'Votre lieu de travail habituel',
