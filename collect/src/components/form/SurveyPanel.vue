@@ -74,7 +74,7 @@
       />
     </div>
     <div v-if="survey.stepName === 'places'">
-      <LargeChoiceItem
+      <SelectItem
         :label="t('form.workplace')"
         :options="workplaceOptions"
         v-model="selectedWorkplace"
@@ -311,7 +311,7 @@
 import { useQuasar } from 'quasar'
 import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
-import LargeChoiceItem from 'src/components/form/LargeChoiceItem.vue'
+import SelectItem from 'src/components/form/SelectItem.vue'
 import JourneysPanel from 'src/components/form/JourneysPanel.vue'
 import ProJourneysPanel from 'src/components/form/ProJourneysPanel.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
