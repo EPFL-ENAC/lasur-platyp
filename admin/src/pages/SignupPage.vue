@@ -14,9 +14,13 @@
               <q-input
                 filled
                 v-model="selected.email"
+                type="email"
                 :label="t('email') + ' *'"
                 lazy-rules
-                :rules="[(val) => !!val || t('field_required')]"
+                :rules="[
+                  (val) => !!val || t('field_required'),
+                  (val) => /\S+@\S+\.\S+/.test(val) || t('error.invalid_email'),
+                ]"
                 class="q-mb-sm"
               />
               <q-input
@@ -63,6 +67,24 @@
                 class="q-mb-sm"
               />
             </q-form>
+            <q-btn-dropdown flat dense :label="locale">
+              <q-list>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="onLocaleSelection(localeOpt)"
+                  v-for="localeOpt in localeOptions"
+                  :key="localeOpt.value"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ localeOpt.label }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section avatar v-if="locale === localeOpt.value">
+                    <q-icon color="primary" name="check" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
           </q-card-section>
           <q-card-actions class="flex justify-center q-mx-lg q-mb-lg q-pa-none">
             <q-btn
@@ -90,13 +112,14 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { copyToClipboard } from 'quasar'
+import { Cookies, copyToClipboard } from 'quasar'
 import type { AppUser } from 'src/models'
 import { notifyError, notifySuccess } from 'src/utils/notify'
 import { generatePassword } from 'src/utils/generate'
+import { locales } from 'boot/i18n'
 
 const $q = useQuasar()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const router = useRouter()
@@ -107,6 +130,18 @@ const selected = ref<AppUser>({
   email: '',
 } as AppUser)
 
+const localeOptions = computed(() => {
+  return locales.map((key) => ({
+    label: key.toUpperCase(),
+    value: key,
+  }))
+})
+
+function onLocaleSelection(localeOpt: { label: string; value: string }) {
+  locale.value = localeOpt.value
+  Cookies.set('locale', localeOpt.value)
+}
+
 onMounted(async () => {
   await authStore.init()
   if (authStore.isAuthenticated) {
@@ -115,6 +150,10 @@ onMounted(async () => {
 })
 
 async function onSignup() {
+  if (!(await form.value.validate())) {
+    notifyError(t('error.form_invalid'))
+    return
+  }
   try {
     await usersStore.register(selected.value)
   } catch (error) {

@@ -383,6 +383,12 @@ export default {
       hint: 'Draw an area to only filter workplaces within that area.',
     },
   },
+  error: {
+    user_already_exists: 'A user with this email already exists.',
+    password_complexity_not_met: 'The password does not meet the complexity requirements.',
+    invalid_email: 'A valid email address is required.',
+    form_invalid: 'Some fields are invalid.',
+  },
   action: 'Measure',
   add: 'Add',
   address_input_hint: 'Type Enter to lookup addresses.',

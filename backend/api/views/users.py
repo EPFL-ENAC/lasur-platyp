@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
 from api.auth import kc_service, User, kc_admin_service
 from api.config import config
@@ -36,7 +36,8 @@ async def create(item: AppUserDraft, user: User = Depends(kc_service.require_adm
     if config.KEYCLOAK_TOTP:
         actions.append("CONFIGURE_TOTP")
     if kc_admin_service.check_valid_password(item.password) is False:
-        raise Exception("password does not meet complexity requirements")
+        raise HTTPException(
+            status_code=400, detail="error.password_complexity_not_met")
     return await kc_admin_service.create_user(item, actions)
 
 
@@ -47,11 +48,13 @@ async def register(item: AppUserDraft) -> AppUser:
     try:
         existing_user = await kc_admin_service.get_user(item.username)
         if existing_user:
-            raise Exception("user already exists")
+            raise HTTPException(
+                status_code=400, detail="error.user_already_exists")
     except:
         pass
     if kc_admin_service.check_valid_password(item.password) is False:
-        raise Exception("password does not meet complexity requirements")
+        raise HTTPException(
+            status_code=400, detail="error.password_complexity_not_met")
     new_user = AppUserDraft(
         username=item.username,
         email=item.email,

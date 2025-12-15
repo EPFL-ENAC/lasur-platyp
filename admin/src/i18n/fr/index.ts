@@ -386,6 +386,12 @@ export default {
       hint: 'Dessinez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
     },
   },
+  error: {
+    user_already_exists: 'Un utilisateur avec cet email existe déjà.',
+    password_complexity_not_met: 'Le mot de passe ne répond pas aux exigences de complexité.',
+    invalid_email: 'Une adresse email valide est requise.',
+    form_invalid: 'Certains champs sont invalides.',
+  },
   action: 'Mesure',
   add: 'Ajouter',
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",

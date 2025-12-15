@@ -13,10 +13,14 @@
           <q-input
             filled
             v-model="selected.email"
+            type="email"
             :disable="editMode"
             :label="t('email') + ' *'"
             lazy-rules
-            :rules="[(val) => !!val || t('field_required')]"
+            :rules="[
+              (val) => !!val || t('field_required'),
+              (val) => /\S+@\S+\.\S+/.test(val) || t('error.invalid_email'),
+            ]"
             class="q-mb-md"
           />
           <q-input
@@ -134,8 +138,10 @@ function onHide() {
 }
 
 async function onSave() {
-  const valid = await form.value.validate()
-  if (!valid) return
+  if (!(await form.value.validate())) {
+    notifyError(t('error.form_invalid'))
+    return
+  }
   if (selected.value === undefined) return
   if (selected.value.roles === undefined) {
     selected.value.roles = []
