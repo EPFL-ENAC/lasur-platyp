@@ -13,6 +13,7 @@
           filled
           v-model="password"
           :type="showPassword ? 'text' : 'password'"
+          autocomplete="new-password"
           :label="t('password') + ' *'"
           :hint="t('password_hint')"
           class="q-mb-md"
@@ -73,6 +74,7 @@ watch(
   () => props.modelValue,
   (value) => {
     showDialog.value = value
+    showPassword.value = false
     onGeneratePassword()
   },
 )

@@ -26,6 +26,7 @@
             :type="showPassword ? 'text' : 'password'"
             :label="t('password') + ' *'"
             :hint="t('password_hint')"
+            autocomplete="new-password"
             lazy-rules
             :rules="[(val) => !!val || t('field_required')]"
             class="q-mb-md"
@@ -122,6 +123,7 @@ watch(
       }
       isAdministrator.value = selected.value.roles?.includes('platyp-admin') ?? false
     }
+    showPassword.value = false
     showDialog.value = value
   },
 )
