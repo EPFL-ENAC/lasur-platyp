@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
 from api.auth import kc_service, User, kc_admin_service
+from api.config import config
 
 router = APIRouter()
 
@@ -31,7 +32,43 @@ async def delete(id: str, user: User = Depends(kc_service.require_admin())):
 @router.post("/", response_model=AppUser, response_model_exclude_none=True)
 async def create(item: AppUserDraft, user: User = Depends(kc_service.require_admin())) -> AppUser:
     """Create a user"""
-    return await kc_admin_service.create_user(item)
+    actions = ["UPDATE_PASSWORD"]
+    if config.KEYCLOAK_TOTP:
+        actions.append("CONFIGURE_TOTP")
+    if kc_admin_service.check_valid_password(item.password) is False:
+        raise HTTPException(
+            status_code=400, detail="error.password_complexity_not_met")
+    return await kc_admin_service.create_user(item, actions)
+
+
+@router.post("/_register", response_model=AppUser, response_model_exclude_none=True)
+async def register(item: AppUserDraft) -> AppUser:
+    """User self-registration"""
+    # check user does not exist
+    try:
+        existing_user = await kc_admin_service.get_user(item.username)
+        if existing_user:
+            raise HTTPException(
+                status_code=400, detail="error.registration_failed")
+    except Exception:
+        pass
+
+    if kc_admin_service.check_valid_password(item.password) is False:
+        raise HTTPException(
+            status_code=400, detail="error.password_complexity_not_met")
+    new_user = AppUserDraft(
+        username=item.username,
+        email=item.email,
+        first_name=item.first_name,
+        last_name=item.last_name,
+        password=item.password,
+        enabled=True,
+        email_verified=False,
+    )
+    actions = ["VERIFY_EMAIL"]
+    if config.KEYCLOAK_TOTP:
+        actions.append("CONFIGURE_TOTP")
+    return await kc_admin_service.create_user(new_user, actions)
 
 
 @router.put("/{id}", response_model=AppUser, response_model_exclude_none=True)

@@ -31,7 +31,7 @@ export function notifyError(error: any) {
     console.error(error)
     message = error.message
     if (error.response?.data && error.response.data?.detail) {
-      message = error.response.data.detail
+      message = t(error.response.data.detail)
     }
   }
   Notify.create({

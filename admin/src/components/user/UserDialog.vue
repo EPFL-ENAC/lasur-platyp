@@ -13,10 +13,14 @@
           <q-input
             filled
             v-model="selected.email"
+            type="email"
             :disable="editMode"
             :label="t('email') + ' *'"
             lazy-rules
-            :rules="[(val) => !!val || t('field_required')]"
+            :rules="[
+              (val) => !!val || t('field_required'),
+              (val) => /\S+@\S+\.\S+/.test(val) || t('error.invalid_email'),
+            ]"
             class="q-mb-md"
           />
           <q-input
@@ -25,10 +29,11 @@
             v-model="selected.password"
             :type="showPassword ? 'text' : 'password'"
             :label="t('password') + ' *'"
-            :hint="t('password_hint')"
+            :hint="t('password_temp_hint')"
+            autocomplete="new-password"
             lazy-rules
             :rules="[(val) => !!val || t('field_required')]"
-            class="q-mb-md"
+            class="q-mb-xl"
           >
             <template v-slot:append>
               <q-icon
@@ -85,7 +90,7 @@
 import { copyToClipboard } from 'quasar'
 import type { AppUser } from 'src/models'
 import { notifyError, notifySuccess } from 'src/utils/notify'
-import { generateToken } from 'src/utils/generate'
+import { generatePassword } from 'src/utils/generate'
 
 interface DialogProps {
   modelValue: boolean
@@ -122,6 +127,7 @@ watch(
       }
       isAdministrator.value = selected.value.roles?.includes('platyp-admin') ?? false
     }
+    showPassword.value = false
     showDialog.value = value
   },
 )
@@ -132,8 +138,10 @@ function onHide() {
 }
 
 async function onSave() {
-  const valid = await form.value.validate()
-  if (!valid) return
+  if (!(await form.value.validate())) {
+    notifyError(t('error.form_invalid'))
+    return
+  }
   if (selected.value === undefined) return
   if (selected.value.roles === undefined) {
     selected.value.roles = []
@@ -168,7 +176,7 @@ async function onSave() {
 }
 
 function onGeneratePassword() {
-  selected.value.password = generateToken(12)
+  selected.value.password = generatePassword()
 }
 
 function onCopyPassword() {

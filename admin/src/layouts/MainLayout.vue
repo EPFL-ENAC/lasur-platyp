@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header bordered class="bg-white text-grey-10">
+    <q-header v-if="authStore.isAuthenticated" bordered class="bg-white text-grey-10">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
@@ -52,7 +52,7 @@
               <q-icon name="fa-solid fa-right-from-bracket" size="xs" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('logout') }}</q-item-label>
+              <q-item-label header>{{ t('signout') }}</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -106,10 +106,20 @@
             <q-item-label header>{{ t('cookbook') }}</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable @click="showTermsDialog = true">
+          <q-item-section avatar>
+            <q-icon name="fa-solid fa-gavel" size="xs" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label header>{{ t('terms_and_conditions') }}</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
+      <markdown-dialog
+        v-model="showTermsDialog"
+        :text="locale === 'fr' ? TermsConditionsFr : TermsConditionsEn"
+      />
     </q-drawer>
-
-    <login-dialog v-model="showLogin" />
 
     <q-page-container v-if="authStore.isAuthenticated">
       <router-view />
@@ -120,14 +130,16 @@
 <script setup lang="ts">
 import { Cookies } from 'quasar'
 import { locales } from 'boot/i18n'
-import LoginDialog from 'src/components/LoginDialog.vue'
+import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import TermsConditionsEn from 'src/assets/docs/en/terms-conditions.md'
+import TermsConditionsFr from 'src/assets/docs/fr/terms-conditions.md'
 
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
+const router = useRouter()
 
-const showLogin = ref(false)
-const loggedOut = ref(false)
 const leftDrawerOpen = ref(false)
+const showTermsDialog = ref(false)
 
 const username = computed(() => authStore.profile?.email)
 const localeOptions = computed(() => {
@@ -140,9 +152,7 @@ const localeOptions = computed(() => {
 onMounted(() => {
   authStore.init().then(() => {
     if (!authStore.isAuthenticated) {
-      showLogin.value = true
-    } else {
-      loggedOut.value = false
+      router.push({ path: '/signin' })
     }
   })
 })
@@ -150,8 +160,8 @@ onMounted(() => {
 watch(
   () => authStore.isAuthenticated,
   () => {
-    if (!authStore.isAuthenticated && !loggedOut.value) {
-      showLogin.value = true
+    if (!authStore.isAuthenticated) {
+      router.push('/signin')
     }
   },
 )
@@ -161,7 +171,6 @@ function toggleLeftDrawer() {
 }
 
 function onLogout() {
-  loggedOut.value = true
   authStore.logout()
 }
 
