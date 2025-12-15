@@ -423,7 +423,9 @@ export default {
   link_copied: 'Link copied to clipboard, you can now share it with the participant',
   location: 'Location',
   location_required: 'Location is required, make sure address is valid',
-  logout: 'Logout',
+  signout: 'Sign-out',
+  signin: 'Sign-in',
+  signup: 'Sign-up',
   name: 'Name',
   no_results: 'No results',
   participants_campaign_hint:

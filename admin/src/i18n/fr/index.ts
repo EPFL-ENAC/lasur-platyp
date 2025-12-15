@@ -427,7 +427,9 @@ export default {
     'Lien copié dans le presse-papiers, vous pouvez maintenant le partager avec le participant',
   location: 'Localisation',
   location_required: 'Localisation requise, veuillez sélectionner une adresse valide',
-  logout: 'Déconnexion',
+  signout: 'Déconnexion',
+  signin: 'Connexion',
+  signup: 'Inscription',
   name: 'Nom',
   no_results: 'Aucun résultat',
   participants_campaign_hint:

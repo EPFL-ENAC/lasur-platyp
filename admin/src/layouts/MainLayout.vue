@@ -52,7 +52,7 @@
               <q-icon name="fa-solid fa-right-from-bracket" size="xs" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('logout') }}</q-item-label>
+              <q-item-label header>{{ t('signout') }}</q-item-label>
             </q-item-section>
           </q-item>
 

@@ -7,12 +7,12 @@ export const useAuthStore = defineStore('auth', () => {
   const realmRoles = ref<string[]>([])
   const isAuthenticated = computed(() => profile.value !== undefined)
   const isAdmin = computed(() => realmRoles.value.includes('platyp-admin'))
-  const initiated = ref(false)
+  const initialized = ref(false)
 
   const accessToken = computed(() => keycloak.token)
 
   async function init() {
-    if (isAuthenticated.value || initiated.value) return Promise.resolve(true)
+    if (isAuthenticated.value || initialized.value) return Promise.resolve(true)
     profile.value = undefined
     realmRoles.value = []
     return keycloak
@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
         onLoad: 'check-sso', // Optional: 'login-required' forces login right away, 'check-sso' checks if the user is already logged in.
       })
       .then((authenticated: boolean) => {
-        initiated.value = true
+        initialized.value = true
         if (authenticated) {
           realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
           return keycloak.loadUserProfile().then((prof: KeycloakProfile) => {
@@ -76,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
     realmRoles,
     accessToken,
     keycloak,
+    initialized,
     init,
     login,
     logout,
