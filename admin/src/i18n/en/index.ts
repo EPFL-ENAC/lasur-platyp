@@ -434,7 +434,10 @@ export default {
     'Or you can individually assign participants to this campaign, with some prepared individual data entries. Each participant will receive a unique token to access the survey. Once survey is completed, the token is no longer valid.',
   participants: 'Participants',
   password_copied: 'Password copied to clipboard',
-  password_hint: 'Temporary password that user will update at the next login.',
+  password_hint:
+    'The password must be at least 8 characters long and contain a mix of letters (uppercase and lowercase), numbers, and special characters.',
+  password_temp_hint:
+    'Temporary password that user will update at the next login. It must be at least 8 characters long and contain a mix of letters (uppercase and lowercase), numbers, and special characters.',
   password: 'Password',
   recommendations: 'Recommendations',
   remove_campaign_text:

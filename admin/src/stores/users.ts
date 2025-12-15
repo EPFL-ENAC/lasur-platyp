@@ -58,6 +58,14 @@ export const useUsersStore = defineStore('users', () => {
     })
   }
 
+  async function register(payload: AppUser) {
+    if (authStore.isAuthenticated) return Promise.reject('Already authenticated')
+    if (payload.username === undefined) {
+      payload.username = payload.email
+    }
+    return api.post(`/user/_register`, payload)
+  }
+
   async function update(payload: AppUser) {
     if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
     if (payload.roles === undefined) {
@@ -107,5 +115,6 @@ export const useUsersStore = defineStore('users', () => {
     update,
     update_password,
     remove,
+    register,
   }
 })

@@ -28,7 +28,7 @@
                 autocomplete="new-password"
                 lazy-rules
                 :rules="[(val) => !!val || t('field_required')]"
-                class="q-mb-sm"
+                class="q-mb-xl"
               >
                 <template v-slot:append>
                   <q-icon
@@ -79,7 +79,7 @@
               :disable="!authStore.initialized"
               :loading="!authStore.initialized"
               color="primary"
-              @click="onLogin"
+              @click="onSignup"
             />
           </q-card-actions>
         </q-card>
@@ -93,11 +93,12 @@ import { useQuasar } from 'quasar'
 import { copyToClipboard } from 'quasar'
 import type { AppUser } from 'src/models'
 import { notifyError, notifySuccess } from 'src/utils/notify'
-import { generateToken } from 'src/utils/generate'
+import { generatePassword } from 'src/utils/generate'
 
 const $q = useQuasar()
 const { t } = useI18n()
 const authStore = useAuthStore()
+const usersStore = useUsersStore()
 const router = useRouter()
 
 const form = ref()
@@ -113,18 +114,18 @@ onMounted(async () => {
   }
 })
 
-async function onLogin() {
+async function onSignup() {
   try {
-    await authStore.login()
+    await usersStore.register(selected.value)
   } catch (error) {
     notifyError(error)
     return
   }
-  router.push('/')
+  router.push('/signin')
 }
 
 function onGeneratePassword() {
-  selected.value.password = generateToken(12)
+  selected.value.password = generatePassword()
 }
 
 function onCopyPassword() {

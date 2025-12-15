@@ -439,7 +439,9 @@ export default {
   participants: 'Participants',
   password_copied: 'Mot de passe copié dans le presse-papiers',
   password_hint:
-    "Mot de passe temporaire que l'utilisateur mettra à jour lors de la prochaine connexion.",
+    'Le mot de passe doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.',
+  password_temp_hint:
+    "Mot de passe temporaire que l'utilisateur mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
   password: 'Mot de passe',
   recommendations: 'Recommendations',
   remove_campaign_text:

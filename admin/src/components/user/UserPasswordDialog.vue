@@ -15,8 +15,8 @@
           :type="showPassword ? 'text' : 'password'"
           autocomplete="new-password"
           :label="t('password') + ' *'"
-          :hint="t('password_hint')"
-          class="q-mb-md"
+          :hint="t('password_temp_hint')"
+          class="q-mb-xl"
         >
           <template v-slot:append>
             <q-icon
@@ -50,7 +50,7 @@
 import { copyToClipboard } from 'quasar'
 import type { AppUser } from 'src/models'
 import { notifyError, notifySuccess } from 'src/utils/notify'
-import { generateToken } from 'src/utils/generate'
+import { generatePassword } from 'src/utils/generate'
 
 interface DialogProps {
   modelValue: boolean
@@ -97,7 +97,7 @@ async function onSave() {
 }
 
 function onGeneratePassword() {
-  password.value = generateToken(12)
+  password.value = generatePassword()
 }
 
 function onCopyPassword() {
