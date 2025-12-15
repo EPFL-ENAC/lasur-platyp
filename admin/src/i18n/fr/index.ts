@@ -405,6 +405,7 @@ export default {
   completed: 'Complétés',
   download: 'Télécharger',
   records: 'Enregistrements',
+  close: 'Fermer',
   companies: 'Entreprises',
   company_campaign: 'Entreprise (campagne)',
   company_removed: 'Entreprise supprimée',
@@ -477,6 +478,7 @@ export default {
   survey_link_copied:
     "Lien vers l'enquête copié dans le presse-papiers, vous pouvez maintenant le partager avec les participants",
   survey_link: "Lien vers l'enquête",
+  terms_and_conditions: 'Termes et conditions',
   terms_and_conditions_accept: "J'accepte les termes et conditions",
   terms_and_conditions_show: 'Voir les termes et conditions',
   token: 'Jeton',
