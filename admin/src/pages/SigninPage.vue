@@ -56,6 +56,5 @@ async function onLogin() {
     notifyError(error)
     return
   }
-  router.push('/')
 }
 </script>

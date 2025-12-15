@@ -49,9 +49,10 @@ async def register(item: AppUserDraft) -> AppUser:
         existing_user = await kc_admin_service.get_user(item.username)
         if existing_user:
             raise HTTPException(
-                status_code=400, detail="error.user_already_exists")
-    except:
+                status_code=400, detail="error.registration_failed")
+    except Exception:
         pass
+
     if kc_admin_service.check_valid_password(item.password) is False:
         raise HTTPException(
             status_code=400, detail="error.password_complexity_not_met")

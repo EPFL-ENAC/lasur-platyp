@@ -176,6 +176,7 @@ async function onSignup() {
   }
   try {
     await usersStore.register(selected.value)
+    notifySuccess('signup_successful')
   } catch (error) {
     notifyError(error)
     return

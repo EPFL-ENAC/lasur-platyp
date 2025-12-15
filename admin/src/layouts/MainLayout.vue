@@ -138,7 +138,6 @@ const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const router = useRouter()
 
-const loggedOut = ref(false)
 const leftDrawerOpen = ref(false)
 const showTermsDialog = ref(false)
 
@@ -154,8 +153,6 @@ onMounted(() => {
   authStore.init().then(() => {
     if (!authStore.isAuthenticated) {
       router.push({ path: '/signin' })
-    } else {
-      loggedOut.value = false
     }
   })
 })
@@ -174,7 +171,6 @@ function toggleLeftDrawer() {
 }
 
 function onLogout() {
-  loggedOut.value = true
   authStore.logout()
 }
 

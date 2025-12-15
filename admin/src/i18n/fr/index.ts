@@ -388,7 +388,7 @@ export default {
   },
   error: {
     accept_terms_and_conditions: 'Vous devez accepter les termes et conditions.',
-    user_already_exists: 'Un utilisateur avec cet email existe déjà.',
+    registration_failed: "L'inscription a échoué. Veuillez réessayer plus tard.",
     password_complexity_not_met: 'Le mot de passe ne répond pas aux exigences de complexité.',
     invalid_email: 'Une adresse email valide est requise.',
     form_invalid: 'Certains champs sont invalides.',
@@ -472,6 +472,7 @@ export default {
   select: 'Sélectionner',
   show_less: 'Afficher moins',
   show_more: 'Afficher plus',
+  signup_successful: 'Inscription réussie ! Vous pouvez maintenant vous connecter.',
   start_date: 'Date de début',
   status: 'Statut',
   statistics: 'Statistiques',

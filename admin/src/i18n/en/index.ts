@@ -385,7 +385,7 @@ export default {
   },
   error: {
     accept_terms_and_conditions: 'You must accept the terms and conditions.',
-    user_already_exists: 'A user with this email already exists.',
+    registration_failed: 'Registration failed. Please try again later.',
     password_complexity_not_met: 'The password does not meet the complexity requirements.',
     invalid_email: 'A valid email address is required.',
     form_invalid: 'Some fields are invalid.',
@@ -468,6 +468,7 @@ export default {
   select: 'Select',
   show_less: 'Show less',
   show_more: 'Show more',
+  signup_successful: 'Signup successful! You can now sign in.',
   start_date: 'Start Date',
   status: 'Status',
   statistics: 'Statistics',
