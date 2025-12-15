@@ -387,6 +387,7 @@ export default {
     },
   },
   error: {
+    accept_terms_and_conditions: 'Vous devez accepter les termes et conditions.',
     user_already_exists: 'Un utilisateur avec cet email existe déjà.',
     password_complexity_not_met: 'Le mot de passe ne répond pas aux exigences de complexité.',
     invalid_email: 'Une adresse email valide est requise.',
@@ -476,6 +477,8 @@ export default {
   survey_link_copied:
     "Lien vers l'enquête copié dans le presse-papiers, vous pouvez maintenant le partager avec les participants",
   survey_link: "Lien vers l'enquête",
+  terms_and_conditions_accept: "J'accepte les termes et conditions",
+  terms_and_conditions_show: 'Voir les termes et conditions',
   token: 'Jeton',
   upload_csv: 'Téléverser CSV',
   users: 'Utilisateurs',

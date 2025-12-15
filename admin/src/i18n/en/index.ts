@@ -384,6 +384,7 @@ export default {
     },
   },
   error: {
+    accept_terms_and_conditions: 'You must accept the terms and conditions.',
     user_already_exists: 'A user with this email already exists.',
     password_complexity_not_met: 'The password does not meet the complexity requirements.',
     invalid_email: 'A valid email address is required.',
@@ -471,6 +472,8 @@ export default {
   statistics: 'Statistics',
   survey_link_copied: 'Survey link copied to clipboard, you can now share it with the participants',
   survey_link: 'Link to survey',
+  terms_and_conditions_accept: 'I accept the terms and conditions',
+  terms_and_conditions_show: 'View terms and conditions',
   token: 'Token',
   upload_csv: 'Upload CSV',
   users: 'Users',

@@ -66,6 +66,13 @@
                 :rules="[(val) => !!val || t('field_required')]"
                 class="q-mb-sm"
               />
+              <q-checkbox
+                v-model="terms_and_conditions_accepted"
+                :label="t('terms_and_conditions_accept') + ' *'"
+              />
+              <q-btn flat no-caps class="text-hint q-mb-md" @click="showTermsDialog = true">
+                {{ t('terms_and_conditions_show') }}
+              </q-btn>
             </q-form>
             <q-btn-dropdown flat dense :label="locale">
               <q-list>
@@ -106,6 +113,10 @@
           </q-card-actions>
         </q-card>
       </q-page>
+      <markdown-dialog
+        v-model="showTermsDialog"
+        :text="locale === 'fr' ? TermsConditionsFr : TermsConditionsEn"
+      />
     </q-page-container>
   </q-layout>
 </template>
@@ -117,6 +128,9 @@ import type { AppUser } from 'src/models'
 import { notifyError, notifySuccess } from 'src/utils/notify'
 import { generatePassword } from 'src/utils/generate'
 import { locales } from 'boot/i18n'
+import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import TermsConditionsEn from 'src/assets/docs/en/terms-conditions.md'
+import TermsConditionsFr from 'src/assets/docs/fr/terms-conditions.md'
 
 const $q = useQuasar()
 const { t, locale } = useI18n()
@@ -125,10 +139,12 @@ const usersStore = useUsersStore()
 const router = useRouter()
 
 const form = ref()
+const terms_and_conditions_accepted = ref(false)
 const showPassword = ref(false)
 const selected = ref<AppUser>({
   email: '',
 } as AppUser)
+const showTermsDialog = ref(false)
 
 const localeOptions = computed(() => {
   return locales.map((key) => ({
@@ -152,6 +168,10 @@ onMounted(async () => {
 async function onSignup() {
   if (!(await form.value.validate())) {
     notifyError(t('error.form_invalid'))
+    return
+  }
+  if (!terms_and_conditions_accepted.value) {
+    notifyError(t('error.accept_terms_and_conditions'))
     return
   }
   try {
