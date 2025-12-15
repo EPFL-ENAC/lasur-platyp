@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header bordered class="bg-white text-grey-10">
+    <q-header v-if="authStore.isAuthenticated" bordered class="bg-white text-grey-10">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
@@ -109,8 +109,6 @@
       </q-list>
     </q-drawer>
 
-    <login-dialog v-model="showLogin" />
-
     <q-page-container v-if="authStore.isAuthenticated">
       <router-view />
     </q-page-container>
@@ -120,12 +118,11 @@
 <script setup lang="ts">
 import { Cookies } from 'quasar'
 import { locales } from 'boot/i18n'
-import LoginDialog from 'src/components/LoginDialog.vue'
 
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
+const router = useRouter()
 
-const showLogin = ref(false)
 const loggedOut = ref(false)
 const leftDrawerOpen = ref(false)
 
@@ -140,7 +137,7 @@ const localeOptions = computed(() => {
 onMounted(() => {
   authStore.init().then(() => {
     if (!authStore.isAuthenticated) {
-      showLogin.value = true
+      router.push({ path: '/signin' })
     } else {
       loggedOut.value = false
     }
@@ -150,8 +147,8 @@ onMounted(() => {
 watch(
   () => authStore.isAuthenticated,
   () => {
-    if (!authStore.isAuthenticated && !loggedOut.value) {
-      showLogin.value = true
+    if (!authStore.isAuthenticated) {
+      router.push('/signin')
     }
   },
 )
