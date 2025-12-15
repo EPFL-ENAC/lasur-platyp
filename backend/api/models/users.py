@@ -11,7 +11,7 @@ class AppUserDraftValidated(AppUserDraft):
     @classmethod
     def validate_username(cls, v: str) -> str:
         v = v.strip() if v else v
-        if not v or len(v) == 0:
+        if not v:
             raise ValueError('Username cannot be empty')
         if len(v) < 3 or len(v) > 50:
             raise ValueError('Username must be between 3 and 50 characters')
@@ -23,7 +23,7 @@ class AppUserDraftValidated(AppUserDraft):
     @classmethod
     def validate_first_name(cls, v: str) -> str:
         v = v.strip() if v else v
-        if not v or len(v) == 0:
+        if not v:
             raise ValueError('First name cannot be empty')
         if len(v) > 100:
             raise ValueError('First name must be at most 100 characters')
@@ -36,7 +36,7 @@ class AppUserDraftValidated(AppUserDraft):
     @classmethod
     def validate_last_name(cls, v: str) -> str:
         v = v.strip() if v else v
-        if not v or len(v) == 0:
+        if not v:
             raise ValueError('Last name cannot be empty')
         if len(v) > 100:
             raise ValueError('Last name must be at most 100 characters')
