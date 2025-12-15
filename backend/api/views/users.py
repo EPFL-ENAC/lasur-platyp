@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
+from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword, AppUserDraftValidated
 from api.auth import kc_service, User, kc_admin_service
 from api.config import config
 
@@ -42,7 +42,7 @@ async def create(item: AppUserDraft, user: User = Depends(kc_service.require_adm
 
 
 @router.post("/_register", response_model=AppUser, response_model_exclude_none=True)
-async def register(item: AppUserDraft) -> AppUser:
+async def register(item: AppUserDraftValidated) -> AppUser:
     """User self-registration"""
     # check user does not exist
     try:
