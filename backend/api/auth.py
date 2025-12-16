@@ -11,24 +11,26 @@ kc_service = KeycloakService(config.KEYCLOAK_URL, config.KEYCLOAK_REALM,
 kc_admin_service = KeycloakAdminService(config.KEYCLOAK_URL, config.KEYCLOAK_REALM,
                                         config.KEYCLOAK_API_ID, config.KEYCLOAK_API_SECRET, "platyp-user")
 
-acl_service = ACLService(get_session())
 
-
-def check_admin_or_perm(user: User, resource: str, permission: str):
-    # check permission was granted
-    permitted = acl_service.check_user_permission(
-        resource, permission, user.email)
-    if permitted:
-        return True
-    # else check is admin
+async def check_admin_or_perm(user: User, resource: str, permission: str):
+    # check is admin
     try:
-        kc_service.require_admin(user)
+        checker = kc_service.require_admin()
+        await checker(user)
+        return True
     except Exception as e:
-        return False
+        # else check permission was granted
+        async for session in get_session():
+            acl_service = ACLService(session)
+            permitted = await acl_service.check_user_permission(
+                resource, permission, user.email)
+            if permitted:
+                return True
+    return False
 
 
-def require_admin_or_perm(user: User, resource: str, permission: str):
-    permitted = check_admin_or_perm(user, resource, permission)
+async def require_admin_or_perm(user: User, resource: str, permission: str):
+    permitted = await check_admin_or_perm(user, resource, permission)
     if not permitted:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

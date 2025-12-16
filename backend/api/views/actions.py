@@ -17,7 +17,7 @@ async def find(
     sort: str = Query(None),
     range: str = Query("[0,99]"),
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin()),
+    user: User = Depends(kc_service.get_user_info()),
 ) -> CompanyActionResult:
     """Search for company actions"""
     try:
@@ -30,7 +30,7 @@ async def find(
 @router.get("/{id}", response_model=CompanyAction, response_model_exclude_none=True)
 async def get(id: int,
               session: AsyncSession = Depends(get_session),
-              user: User = Depends(kc_service.require_admin())) -> CompanyAction:
+              user: User = Depends(kc_service.get_user_info())) -> CompanyAction:
     """Get a company action by id"""
     return await CompanyActionService(session).get(id)
 
@@ -39,7 +39,7 @@ async def get(id: int,
 async def delete(
     id: int,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> CompanyAction:
     """Delete a company action by id"""
     return await CompanyActionService(session).delete(id)
@@ -49,7 +49,7 @@ async def delete(
 async def create(
     item: CompanyActionDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> CompanyAction:
     """Create a company action"""
     return await CompanyActionService(session).create(item, user)
@@ -60,7 +60,7 @@ async def update(
     id: int,
     item: CompanyActionDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> CompanyAction:
     """Update a company action by id"""
     return await CompanyActionService(session).update(id, item, user)

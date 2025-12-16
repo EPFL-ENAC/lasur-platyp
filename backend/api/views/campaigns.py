@@ -16,7 +16,7 @@ async def find(
     sort: str = Query(None),
     range: str = Query("[0,99]"),
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin()),
+    user: User = Depends(kc_service.get_user_info()),
 ) -> CampaignResult:
     """Search for campaigns"""
     try:
@@ -29,7 +29,7 @@ async def find(
 @router.get("/{id}", response_model=CampaignRead, response_model_exclude_none=True)
 async def get(id: int,
               session: AsyncSession = Depends(get_session),
-              user: User = Depends(kc_service.require_admin())
+              user: User = Depends(kc_service.get_user_info())
               ) -> Campaign:
     """Get a campaign by id"""
     return await CampaignService(session).get(id)
@@ -39,7 +39,7 @@ async def get(id: int,
 async def delete(
     id: int,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Campaign:
     """Delete a campaign by id"""
     return await CampaignService(session).delete(id)
@@ -49,7 +49,7 @@ async def delete(
 async def create(
     item: CampaignDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Campaign:
     """Create a campaign"""
     return await CampaignService(session).create(item, user)
@@ -60,7 +60,7 @@ async def update(
     id: int,
     item: CampaignDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Campaign:
     """Update a campaign by id"""
     return await CampaignService(session).update(id, item, user)

@@ -20,7 +20,8 @@ class ACLService:
             ACL.resource == resource and ACL.subject_type == "user")
         if subject:
             query = query.where(ACL.subject == subject)
-        acls = await self.session.exec(query)
+        res = await self.session.exec(query)
+        acls = res.all()
 
         if len(acls):
             for acl in acls:
@@ -35,10 +36,11 @@ class ACLService:
             permission (str): The permission name
             subject (str): The subject name
         """
-        acl = await self.session.exec(
+        res = await self.session.exec(
             select(ACL)
             .where(ACL.resource == resource and ACL.permission == permission and ACL.subject_type == "user" and ACL.subject == subject)
-        ).first()
+        )
+        acl = res.one_or_none()
 
         if acl:
             # user has resource permission
@@ -60,10 +62,16 @@ class ACLService:
         Returns:
             (bool): True if user has permission on resource, False otherwise
         """
-        acl = await self.session.exec(
+        res = await self.session.exec(
             select(ACL)
-            .where(ACL.resource == resource and ACL.permission == permission and ACL.subject_type == "user" and ACL.subject == subject)
-        ).first()
+            .where(
+                (ACL.resource == resource) &
+                ((ACL.permission == permission) | (ACL.permission == "*")) &
+                (ACL.subject_type == "user") &
+                (ACL.subject == subject)
+            )
+        )
+        acl = res.one_or_none()
 
         if acl:
             # user has resource permission

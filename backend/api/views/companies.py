@@ -17,7 +17,7 @@ async def find(
     sort: str = Query(None),
     range: str = Query("[0,99]"),
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> CompanyResult:
     """Search for companies"""
     try:
@@ -30,9 +30,10 @@ async def find(
 @router.get("/{id}", response_model=Company, response_model_exclude_none=True)
 async def get(id: int,
               session: AsyncSession = Depends(get_session),
-              user: User = Depends(kc_service.require_admin())) -> Company:
+              user: User = Depends(kc_service.get_user_info())
+              ) -> Company:
     """Get a company by id"""
-    require_admin_or_perm(user, f"company:{id}", "read")
+    await require_admin_or_perm(user, f"company:{id}", "read")
     return await CompanyService(session).get(id)
 
 
@@ -40,7 +41,7 @@ async def get(id: int,
 async def delete(
     id: int,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Company:
     """Delete a company by id"""
     return await CompanyService(session).delete(id)
@@ -50,7 +51,7 @@ async def delete(
 async def create(
     item: Company,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Company:
     """Create a company"""
     return await CompanyService(session).create(item, user)
@@ -61,7 +62,7 @@ async def update(
     id: int,
     item: Company,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Company:
     """Update a company by id"""
     return await CompanyService(session).update(id, item, user)

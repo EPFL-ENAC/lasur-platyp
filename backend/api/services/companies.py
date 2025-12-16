@@ -96,7 +96,7 @@ class CompanyService:
             entity.updated_by = user.username
         self.session.add(entity)
         await self.session.commit()
-        self.apply_admin_permissions(entity)
+        await self.apply_admin_permissions(entity)
 
         return entity
 
@@ -117,17 +117,17 @@ class CompanyService:
         if user:
             entity.updated_by = user.username
         await self.session.commit()
-        self.apply_admin_permissions(entity)
+        await self.apply_admin_permissions(entity)
         return entity
 
-    def apply_admin_permissions(self, entity: Company):
+    async def apply_admin_permissions(self, entity: Company):
         resource = self.as_resource(entity)
         acl_service = ACLService(self.session)
         # Note: permissions are only applied
-        acl_service.delete_user_permissions(resource)
+        await acl_service.delete_user_permissions(resource)
         if entity.administrators:
             for admin in entity.administrators:
-                acl_service.apply_user_permission(resource, "*", admin)
+                await acl_service.apply_user_permission(resource, "*", admin)
                 pass
 
     def as_resource(self, entity: Company):
