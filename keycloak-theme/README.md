@@ -7,9 +7,8 @@
 # Quick start
 
 ```bash
-git clone https://github.com/keycloakify/keycloakify-starter
-cd keycloakify-starter
-yarn install # Or use an other package manager, just be sure to delete the yarn.lock if you use another package manager.
+cd keycloak-theme
+npm install
 ```
 
 # Testing the theme locally

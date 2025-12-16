@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Wallop';
+  src:
+    url('./Wallop-Regular.woff2') format('woff2'),
+    url('./Wallop-Regular.woff') format('woff'),
+    url('./Wallop-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* Controls how the font is displayed while loading */
+}
+@font-face {
+  font-family: 'Wallop';
+  src:
+    url('./Wallop-Bold.woff2') format('woff2'),
+    url('./Wallop-Bold.woff') format('woff'),
+    url('./Wallop-Bold.ttf') format('truetype');
+  font-weight: bold;
+}

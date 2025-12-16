@@ -1,3 +1,9 @@
+@import url(./assets/fonts/wallop/main.css);
+
+body {
+  font-family: Wallop;
+}
+
 .kcBodyClass {
    background: #eceff1 !important;
 }
