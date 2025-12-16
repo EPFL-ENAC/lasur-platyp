@@ -19,7 +19,7 @@ class CampaignQueryBuilder(QueryBuilder):
 
     def build_query_with_joins(self, total_count, filter, fields=None):
         start, end, query = self.build_query(total_count, fields)
-        if fields is None or (len(fields) > 0 and "workplaces" in fields):
+        if fields is None or fields == [] or (len(fields) > 0 and "workplaces" in fields):
             query = self._apply_joins(query, filter).options(
                 selectinload(Campaign.workplaces))
         return start, end, query
