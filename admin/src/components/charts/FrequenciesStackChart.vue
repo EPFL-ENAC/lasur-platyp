@@ -1,6 +1,7 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
+  <div :style="`height: ${height}px; width: 100%;`">
     <e-charts
+      v-if="total > 0"
       ref="chart"
       autoresize
       :init-options="initOptions"
@@ -8,6 +9,10 @@
       :update-options="updateOptions"
       :loading="stats.loading"
     />
+    <div v-else>
+      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
+      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+    </div>
   </div>
 </template>
 
@@ -44,6 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
+const total = ref(0)
 
 watch(
   () => stats.loading,
@@ -77,15 +83,16 @@ function keyLabel(key: string) {
 
 function initChartOptions() {
   option.value = {}
+  total.value = 0
   if (!stats.frequencies || !stats.frequencies[props.type]) {
     return
   }
 
   let dataset: { key: string; name: string; value: number }[] = []
-  let total = 0
+  total.value = 0
   if (Array.isArray(stats.frequencies[props.type])) {
     dataset = (stats.frequencies[props.type] as Frequencies[]).map((item: Frequencies) => {
-      total = item.total
+      total.value = item.total
       return {
         key: shortKey(item.field),
         name: keyLabel(item.field),
@@ -99,7 +106,7 @@ function initChartOptions() {
       name: keyLabel(item.value),
       value: item.sum === undefined ? 0 : item.sum,
     }))
-    total = frequencies.total
+    total.value = frequencies.total
   }
 
   // Extract category names and values for yAxis and series
@@ -149,7 +156,7 @@ function initChartOptions() {
     height: props.height - 120,
     title: {
       text: t(`stats.${props.type}.title`),
-      subtext: t(`stats.total`, { count: total }),
+      subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
       textStyle: {

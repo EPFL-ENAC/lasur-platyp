@@ -10,6 +10,9 @@
       class="q-mb-md"
       @click="onAdd"
     />
+    <div v-if="campaignsStore.loading">
+      <q-spinner-dots color="primary" size="md" />
+    </div>
     <div v-if="!campaignsStore.loading && campaigns.length > 0">
       <q-tabs
         v-model="tab"
@@ -28,6 +31,7 @@
           :label="campaign.name"
         />
       </q-tabs>
+      <q-separator />
       <q-tab-panels v-model="tab">
         <q-tab-panel
           v-for="campaign in campaigns"
@@ -52,8 +56,8 @@
 <script setup lang="ts">
 import type { Campaign, Company } from 'src/models'
 import { notifyError } from 'src/utils/notify'
-import CompanyCampaign from 'src/components/CompanyCampaign.vue'
-import CompanyCampaignDialog from 'src/components/CompanyCampaignDialog.vue'
+import CompanyCampaign from 'src/components/company/CompanyCampaign.vue'
+import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -75,7 +79,7 @@ watch(
   () => campaignsStore.items,
   () => {
     const ids = campaignsStore.items.map((item) => item.id + '')
-    if (tab.value === undefined || !ids.includes(tab.value)) {
+    if (tab.value === undefined || (ids.length > 0 && !ids.includes(tab.value))) {
       tab.value = campaigns.value.length ? campaigns.value[0]?.id + '' : ''
     }
   },

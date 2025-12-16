@@ -13,6 +13,7 @@ export interface Location {
 }
 
 export interface AddressLocation extends Location {
+  name?: string | undefined
   address: string | undefined
 }
 
@@ -60,6 +61,7 @@ export interface RecordData {
   workplace: AddressLocation
   origin: AddressLocation
   change: Change
+  change2: Change
 }
 
 export interface Record {
@@ -118,6 +120,7 @@ export interface CampaignInfo {
   contact_name?: string
   contact_email?: string
   info_url?: string
+  workplaces: AddressLocation[]
 }
 
 export interface IsochronesParams {

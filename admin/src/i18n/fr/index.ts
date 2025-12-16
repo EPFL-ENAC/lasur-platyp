@@ -23,6 +23,10 @@ export default {
   },
   campaign: {
     label: 'Campagne',
+    slug: 'Identifiant',
+    slug_hint:
+      "Identifiant unique pour l'URL de la campagne (ex. 'printemps-2024-enquete-mobilite'). Seules les lettres, chiffres, tirets et underscores sont autorisés.",
+    description: 'Description',
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
     contact_name: 'Nom du contact',
     contact_name_hint:
@@ -34,6 +38,17 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette entreprise (si différent du lien d'information de l'entreprise).",
+    csv_missing_columns:
+      'Le fichier CSV téléversé est manquant les colonnes requises suivantes : {columns}.',
+    import_workplaces_hint:
+      'Téléversez un fichier CSV pour ajouter/mette à jour plusieurs lieux de travail à la campagne en une seule fois. Le fichier doit contenir les colonnes suivantes : name, address, lat, lon.',
+    workplaces: {
+      title: 'Lieux de travail',
+      hint: 'Déclarez les lieux de travail associés à cette campagne, au moins un est requis.',
+      name: 'Nom',
+      name_hint: 'Nom du lieu de travail (ex. "Hub logistique 12").',
+      required: 'Au moins un lieu de travail doit être défini pour la campagne.',
+    },
   },
   role: {
     'platyp-user': 'Utilisateur',
@@ -112,6 +127,7 @@ export default {
     nb_employees: "Nombre d'employé.e.s",
     percent_employees: "% d'employé.e.s",
     total: 'N : {count}',
+    no_data: 'Aucune donnée disponible',
     equipments: {
       title: 'Équipements de mobilité',
       labels: {
@@ -356,6 +372,27 @@ export default {
     minutes: '{count} min',
     raw_data: "Données brutes de l'enquête",
   },
+  draw_mode: {
+    simple_select_hint:
+      'Cliquez sur le bouton polygone en haut à droite de la carte pour commencer à dessiner une zone. Les zones existantes seront supprimées.',
+    direct_select_hint:
+      'Vous êtes en train de modifier le polygone. Faites glisser les points pour ajuster la forme.',
+    draw_polygon_hint:
+      'Cliquez sur la carte pour ajouter des points à votre polygone. Double-cliquez pour terminer le dessin.',
+  },
+  map_filter: {
+    workplaces: {
+      title: 'Filtre des lieux de travail',
+      hint: 'Dessinez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
+    },
+  },
+  error: {
+    accept_terms_and_conditions: 'Vous devez accepter les termes et conditions.',
+    registration_failed: "L'inscription a échoué. Veuillez réessayer plus tard.",
+    password_complexity_not_met: 'Le mot de passe ne répond pas aux exigences de complexité.',
+    invalid_email: 'Une adresse email valide est requise.',
+    form_invalid: 'Certains champs sont invalides.',
+  },
   action: 'Mesure',
   add: 'Ajouter',
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",
@@ -368,6 +405,7 @@ export default {
   completed: 'Complétés',
   download: 'Télécharger',
   records: 'Enregistrements',
+  close: 'Fermer',
   companies: 'Entreprises',
   company_campaign: 'Entreprise (campagne)',
   company_removed: 'Entreprise supprimée',
@@ -375,6 +413,7 @@ export default {
   cookbook: 'Recettes',
   dashboard: 'Tableau de bord',
   data: 'Données',
+  download_csv: 'Télécharger CSV',
   edit: 'Editer',
   email: 'Email',
   enabled: 'Activé',
@@ -383,6 +422,7 @@ export default {
   field_required: 'Ce champ est requis',
   first_name: 'Prénom',
   form_version: 'Version du formulaire',
+  general: 'Général',
   go_home: 'Accueil',
   group: 'Groupe',
   help: 'Aide',
@@ -395,7 +435,9 @@ export default {
     'Lien copié dans le presse-papiers, vous pouvez maintenant le partager avec le participant',
   location: 'Localisation',
   location_required: 'Localisation requise, veuillez sélectionner une adresse valide',
-  logout: 'Déconnexion',
+  signout: 'Déconnexion',
+  signin: 'Connexion',
+  signup: 'Inscription',
   name: 'Nom',
   no_results: 'Aucun résultat',
   participants_campaign_hint:
@@ -405,7 +447,9 @@ export default {
   participants: 'Participants',
   password_copied: 'Mot de passe copié dans le presse-papiers',
   password_hint:
-    "Mot de passe temporaire que l'utilisateur mettra à jour lors de la prochaine connexion.",
+    'Le mot de passe doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.',
+  password_temp_hint:
+    "Mot de passe temporaire que l'utilisateur mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
   password: 'Mot de passe',
   recommendations: 'Recommendations',
   remove_campaign_text:
@@ -422,16 +466,24 @@ export default {
   remove_user_text: "Êtes-vous sûr de vouloir supprimer l'utilisateur '{name}'?",
   remove_user: "Supprimer l'utilisateur",
   remove: 'Supprimer',
+  report: 'Rapport',
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
-  slug: 'Slug',
+  select: 'Sélectionner',
+  show_less: 'Afficher moins',
+  show_more: 'Afficher plus',
+  signup_successful: 'Inscription réussie ! Vous pouvez maintenant vous connecter.',
   start_date: 'Date de début',
   status: 'Statut',
   statistics: 'Statistiques',
   survey_link_copied:
     "Lien vers l'enquête copié dans le presse-papiers, vous pouvez maintenant le partager avec les participants",
   survey_link: "Lien vers l'enquête",
+  terms_and_conditions: 'Termes et conditions',
+  terms_and_conditions_accept: "J'accepte les termes et conditions",
+  terms_and_conditions_show: 'Voir les termes et conditions',
   token: 'Jeton',
+  upload_csv: 'Téléverser CSV',
   users: 'Utilisateurs',
   valid_email_required: 'Une adresse email valide est requise',
   valid_url_required: 'Une URL valide est requise (commençant par http:// ou https://)',

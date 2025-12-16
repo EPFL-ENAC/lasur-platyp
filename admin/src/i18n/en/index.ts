@@ -22,6 +22,10 @@ export default {
   },
   campaign: {
     label: 'Campaign',
+    slug: 'Identifier',
+    slug_hint:
+      'Unique identifier for the campaign URL (e.g., "spring-2024-mobility-survey"). Only letters, numbers, hyphens and underscores are allowed.',
+    description: 'Description',
     with_actions: 'With employer measures specific to this campaign',
     contact_name: 'Contact Name',
     contact_name_hint:
@@ -33,6 +37,17 @@ export default {
     info_url: 'Information link',
     info_url_hint:
       'Provide a link to more information about the company mobility options (if different from the company information link).',
+    csv_missing_columns:
+      'The uploaded CSV file is missing the following required columns: {columns}.',
+    import_workplaces_hint:
+      'Upload a CSV file to add/update multiple workplaces to the campaign at once. The file must contain the following columns: name, address, lat, lon.',
+    workplaces: {
+      title: 'Workplaces',
+      hint: 'Declare the workplaces associated with this campaign, at least one is required.',
+      name: 'Name',
+      name_hint: 'Name of the workplace (e.g., "Logistic Hub 12").',
+      required: 'At least one workplace must be defined for the campaign.',
+    },
   },
   role: {
     'platyp-user': 'User',
@@ -110,6 +125,7 @@ export default {
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',
     total: 'N: {count}',
+    no_data: 'No data available',
     equipments: {
       title: 'Mobility equipments',
       labels: {
@@ -354,6 +370,26 @@ export default {
     minutes: '{count} min',
     raw_data: 'Raw data',
   },
+  draw_mode: {
+    simple_select_hint:
+      'Click the polygon button on the top-right of the map to start drawing an area. Existing areas will be deleted.',
+    direct_select_hint: 'You are now editing the polygon. Drag the points to adjust the shape.',
+    draw_polygon_hint:
+      'Click on the map to add points to your polygon. Double-click to finish drawing.',
+  },
+  map_filter: {
+    workplaces: {
+      title: 'Workplaces filter',
+      hint: 'Draw an area to only filter workplaces within that area.',
+    },
+  },
+  error: {
+    accept_terms_and_conditions: 'You must accept the terms and conditions.',
+    registration_failed: 'Registration failed. Please try again later.',
+    password_complexity_not_met: 'The password does not meet the complexity requirements.',
+    invalid_email: 'A valid email address is required.',
+    form_invalid: 'Some fields are invalid.',
+  },
   action: 'Measure',
   add: 'Add',
   address_input_hint: 'Type Enter to lookup addresses.',
@@ -366,6 +402,7 @@ export default {
   completed: 'Completed',
   download: 'Download',
   records: 'Records',
+  close: 'Close',
   companies: 'Companies',
   company_campaign: 'Company (campaign)',
   company_removed: 'Company removed',
@@ -373,6 +410,7 @@ export default {
   cookbook: 'Cookbook',
   dashboard: 'Dashboard',
   data: 'Data',
+  download_csv: 'Download CSV',
   edit: 'Edit',
   email: 'Email',
   enabled: 'Enabled',
@@ -381,6 +419,7 @@ export default {
   field_required: 'This field is required',
   first_name: 'First Name',
   form_version: 'Form version',
+  general: 'General',
   go_home: 'Go Home',
   group: 'Group',
   help: 'Help',
@@ -392,7 +431,9 @@ export default {
   link_copied: 'Link copied to clipboard, you can now share it with the participant',
   location: 'Location',
   location_required: 'Location is required, make sure address is valid',
-  logout: 'Logout',
+  signout: 'Sign-out',
+  signin: 'Sign-in',
+  signup: 'Sign-up',
   name: 'Name',
   no_results: 'No results',
   participants_campaign_hint:
@@ -401,7 +442,10 @@ export default {
     'Or you can individually assign participants to this campaign, with some prepared individual data entries. Each participant will receive a unique token to access the survey. Once survey is completed, the token is no longer valid.',
   participants: 'Participants',
   password_copied: 'Password copied to clipboard',
-  password_hint: 'Temporary password that user will update at the next login.',
+  password_hint:
+    'The password must be at least 8 characters long and contain a mix of letters (uppercase and lowercase), numbers, and special characters.',
+  password_temp_hint:
+    'Temporary password that user will update at the next login. It must be at least 8 characters long and contain a mix of letters (uppercase and lowercase), numbers, and special characters.',
   password: 'Password',
   recommendations: 'Recommendations',
   remove_campaign_text:
@@ -418,15 +462,23 @@ export default {
   remove_user_text: "Are you sure you want to remove the user '{name}'?",
   remove_user: 'Remove User',
   remove: 'Remove',
+  report: 'Report',
   reset_password: 'Reset Password',
   roles: 'Roles',
-  slug: 'Slug',
+  select: 'Select',
+  show_less: 'Show less',
+  show_more: 'Show more',
+  signup_successful: 'Signup successful! You can now sign in.',
   start_date: 'Start Date',
   status: 'Status',
   statistics: 'Statistics',
   survey_link_copied: 'Survey link copied to clipboard, you can now share it with the participants',
   survey_link: 'Link to survey',
+  terms_and_conditions: 'Terms and Conditions',
+  terms_and_conditions_accept: 'I accept the terms and conditions',
+  terms_and_conditions_show: 'View terms and conditions',
   token: 'Token',
+  upload_csv: 'Upload CSV',
   users: 'Users',
   valid_email_required: 'A valid email address is required',
   valid_url_required: 'A valid URL is required (starting with http:// or https://)',

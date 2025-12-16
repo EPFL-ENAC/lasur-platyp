@@ -28,6 +28,7 @@ export const useSurvey = defineStore(
       'needs',
       'recommendations',
       'change',
+      'change2',
       'comments',
       'final',
     ]
@@ -133,7 +134,7 @@ export const useSurvey = defineStore(
       return 0
     }
 
-    function getFreqModCombined() {
+    function isIntermodality() {
       if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
         return (
           record.value.data.freq_mod_journeys
@@ -148,21 +149,12 @@ export const useSurvey = defineStore(
     /**
      * Get the main frequency mode (the one with the highest frequency).
      * If there is a tie, return the first one found.
-     * If there is a combined mode, return 'combined'.
+     * If there is a combined mode, return 'inter'.
      * If no mode is found, return ''.
      */
     function getMainFreqMod(withCombined = true) {
-      if (withCombined && getFreqModCombined()) return 'combined'
-      const fm: { [key: string]: number } = {
-        walking: getFreqMod('walking'),
-        bike: getFreqMod('bike'),
-        ebike: getFreqMod('ebike'),
-        pub: getFreqMod('pub'),
-        moto: getFreqMod('moto'),
-        car: getFreqMod('car'),
-        carpool: getFreqMod('carpool'),
-        train: getFreqMod('train'),
-      }
+      if (withCombined && isIntermodality()) return 'inter'
+      const fm = getFreqMods()
       let max = -1
       let main = ''
       Object.keys(fm).forEach((key) => {
@@ -174,15 +166,58 @@ export const useSurvey = defineStore(
       return main
     }
 
+    function getFreqMods(): { [key: string]: number } {
+      return {
+        walking: getFreqMod('walking'),
+        bike: getFreqMod('bike'),
+        ebike: getFreqMod('ebike'),
+        pub: getFreqMod('pub'),
+        moto: getFreqMod('moto'),
+        car: getFreqMod('car'),
+        carpool: getFreqMod('carpool'),
+        train: getFreqMod('train'),
+      }
+    }
+
     function isModeSustainable(mode: string) {
       return !['car', 'moto'].includes(mode)
     }
 
+    function isRecommendationInUse() {
+      if (
+        recommendation.value.reco &&
+        recommendation.value.reco.reco_dt2 &&
+        recommendation.value.reco.reco_dt2.length
+      ) {
+        const freqMods = getFreqMods()
+        const mode = recommendation.value.reco.reco_dt2[0]
+        return mode !== undefined && freqMods[mode] !== undefined && freqMods[mode] > 0
+      }
+      return false
+    }
+
+    function isRecommendation2InUse() {
+      if (
+        recommendation.value.reco &&
+        recommendation.value.reco.reco_dt2 &&
+        recommendation.value.reco.reco_dt2.length > 1
+      ) {
+        const freqMods = getFreqMods()
+        const mode = recommendation.value.reco.reco_dt2[1]
+        return mode !== undefined && freqMods[mode] !== undefined && freqMods[mode] > 0
+      }
+      return false
+    }
+
     /**
-     * Check if a mode is in the recommendation (reco_dt2).
+     * Check if a mode is one of the recommendations (reco_dt2).
      */
     function isModeInRecommendation(mode: string) {
-      if (recommendation.value.reco && recommendation.value.reco.reco_dt2) {
+      if (
+        recommendation.value.reco &&
+        recommendation.value.reco.reco_dt2 &&
+        recommendation.value.reco.reco_dt2.length
+      ) {
         return recommendation.value.reco.reco_dt2.some(
           (reco) => (RecoToMode[reco] || reco) === mode,
         )
@@ -207,10 +242,11 @@ export const useSurvey = defineStore(
       incStep,
       decStep,
       getFreqMod,
-      getFreqModCombined,
       getMainFreqMod,
       isModeSustainable,
       isModeInRecommendation,
+      isRecommendationInUse,
+      isRecommendation2InUse,
     }
   },
   { persist: true },

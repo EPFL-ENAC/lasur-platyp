@@ -19,6 +19,7 @@ class Config(BaseSettings):
     KEYCLOAK_URL: str = "https://enac-it-sso.epfl.ch"
     KEYCLOAK_API_ID: str
     KEYCLOAK_API_SECRET: str
+    KEYCLOAK_TOTP: bool = True
 
     LASUR_API_URL: str = "https://lasur-ws.epfl.ch"
     LASUR_API_KEY: str = ""

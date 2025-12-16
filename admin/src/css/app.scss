@@ -94,6 +94,11 @@ li + li {
   max-width: 80vw !important;
 }
 
+.dialog-xl {
+  width: 1200px !important;
+  max-width: 80vw !important;
+}
+
 .option-0 {
   padding-left: 0px;
   //font-weight: bold;
@@ -106,4 +111,28 @@ li + li {
 .option-2 {
   padding-left: 20px;
   font-size: smaller;
+}
+
+.box-info {
+  background-color: $info;
+  color: white;
+  padding: 0.5em;
+}
+
+.box-warning {
+  background-color: $warning;
+  color: $grey-10;
+  padding: 0.5em;
+}
+
+.box-negative {
+  background-color: $negative;
+  color: white;
+  padding: 0.5em;
+}
+
+.box-positive {
+  background-color: $positive;
+  color: white;
+  padding: 0.5em;
 }

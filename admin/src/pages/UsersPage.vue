@@ -110,8 +110,8 @@
 <script setup lang="ts">
 import { DefaultAlignment } from 'src/components/models'
 import type { AppUser } from 'src/models'
-import UserDialog from 'src/components/UserDialog.vue'
-import UserPasswordDialog from 'src/components/UserPasswordDialog.vue'
+import UserDialog from 'src/components/user/UserDialog.vue'
+import UserPasswordDialog from 'src/components/user/UserPasswordDialog.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import { notifyError } from 'src/utils/notify'
 

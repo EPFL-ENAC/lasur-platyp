@@ -31,6 +31,7 @@ export default {
     employment_rate: 'Quel est votre taux de travail ?',
     remote_work_rate: 'Quel est votre taux de télétravail ?',
     company_vehicle: 'Avez-vous un véhicule de fonction ?',
+    search_or_select_option: 'Rechercher ou sélectionner une option',
     yes: 'Oui',
     no: 'Non',
     workplace: 'Votre lieu de travail habituel',
@@ -77,7 +78,8 @@ export default {
       combined: 'Comment vous rendez-vous habituellement sur votre lieu de travail ?',
     },
     intermodality: 'Quels sont les modes de transport que vous utilisez ?',
-    intermodality_hint: 'Décrivez un ou plusieurs trajets typiques domicile - travail.',
+    intermodality_hint:
+      "Pour un trajet typique domicile-travail : cliquez sur les modes de transport que vous utilisez, organisez-les dans l'ordre d'utilisation de votre domicile à votre lieu de travail, puis indiquez sur le curseur le nombre de jours par semaine où vous utilisez ce mode ou cette combinaison de modes de transport. Répétez ces étapes pour un autre trajet typique si vous le souhaitez.",
     journey: {
       label_idx: 'Recommandation #{index}',
       label_option_idx: 'Option #{index}',
@@ -90,7 +92,7 @@ export default {
     intermodality_pro_hint: 'Décrivez un ou plusieurs trajets professionnels typiques.',
     journey_pro: {
       label_idx: 'Trajet professionnel #{index}',
-      hint: "Sélectionnez la destination et le principal mode de transport d'un trajet professionnel typique.",
+      hint: "Sélectionnez l'aire de destination et le principal mode de transport d'un trajet professionnel typique.",
       add: 'Ajouter un trajet',
       remove: 'Supprimer le trajet',
       days_per_year: 'Jours par année',
@@ -121,17 +123,19 @@ export default {
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
-    change: 'À propos du mode de transport recommandé "{reco}"',
+    change: 'À propos du mode de transport recommandé :',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
       'Sur une échelle de 1 (pas intéressé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous prêt·e à adopter ce mode de transport pour vos déplacements domicile-travail ?',
-    change_levers: "Qu'est-ce qui vous aiderait à utiliser ce mode de transport ?",
+    change_levers:
+      "Qu'est-ce qui vous aiderait à utiliser ce mode de transport (même si vous l'utilisez déjà partiellement) ?",
     change_levers_option: {
       financial_support: 'Une aide financière',
       work_flexibility: 'Une plus grande flexibilité au travail (horaires, télétravail, etc.)',
       collective_changes:
         "Des changements collectifs (communication de l'entreprise, participation de collègues, etc.)",
-      work_environment: 'Des aménagements sur le lieu de travail (douches, parkings vélo, etc.)',
+      work_environment:
+        "Des aménagements sur le lieu de travail (douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.)",
       other: 'Autre',
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
@@ -149,9 +153,9 @@ export default {
     combined:
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     sustainable:
-      'Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
+      ' Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
     sustainable_options:
-      'Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
+      'Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
     not_sustainable:
       'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées :',
     actions:

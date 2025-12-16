@@ -1,6 +1,7 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
+  <div :style="`height: ${height}px; width: 100%;`">
     <e-charts
+      v-if="total > 0"
       ref="chart"
       autoresize
       :init-options="initOptions"
@@ -8,6 +9,10 @@
       :update-options="updateOptions"
       :loading="stats.loading"
     />
+    <div v-else>
+      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
+      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+    </div>
   </div>
 </template>
 
@@ -41,6 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
+const total = ref(0)
 
 watch(
   () => stats.loading,
@@ -75,6 +81,7 @@ function keyLabel(key: string) {
 function initChartOptions() {
   const recoSuffix = ' '
   option.value = {}
+  total.value = 0
   if (!stats.links || !stats.links[props.type]) {
     return
   }
@@ -83,7 +90,7 @@ function initChartOptions() {
   if (links.data.length === 0) {
     return
   }
-  const total = links.total || 0
+  total.value = links.total || 0
   const linksData = links.data.map((item) => ({
     source: keyLabel(item.source),
     target: keyLabel(item.target) + recoSuffix,
@@ -106,7 +113,7 @@ function initChartOptions() {
     height: props.height - 80,
     title: {
       text: t(`stats.${props.type}.title`),
-      subtext: t(`stats.total`, { count: total }),
+      subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
       textStyle: {

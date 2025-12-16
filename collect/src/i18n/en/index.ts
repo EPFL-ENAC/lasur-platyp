@@ -31,6 +31,7 @@ export default {
     employment_rate: 'What is your employment rate?',
     remote_work_rate: 'What is your remote work rate?',
     company_vehicle: 'Do you have a company vehicle?',
+    search_or_select_option: 'Search or select an option',
     yes: 'Yes',
     no: 'No',
     workplace: 'Your usual place of work',
@@ -77,7 +78,8 @@ export default {
       combined: 'How do you usually get to your workplace?',
     },
     intermodality: 'Which modes of transport do you use?',
-    intermodality_hint: 'Describe one or more typical journeys from home to work.',
+    intermodality_hint:
+      'For one typical journey from home to work: click on the modes of transport you use, arrange them in the order used from your home to your work place, then indicate on the slider the number of days per week that you use this mode or combination of modes of transport. Repeat these steps for another typical journey if you wish.',
     journey: {
       label_idx: 'Recommendation #{index}',
       label_option_idx: 'Option #{index}',
@@ -90,7 +92,7 @@ export default {
     intermodality_pro_hint: 'Describe one or more typical professional journeys.',
     journey_pro: {
       label_idx: 'Professional journey #{index}',
-      hint: 'Select the destination and the main mode of transport of a typical professional journey.',
+      hint: 'Select the area of destination and the main mode of transport of a typical professional journey.',
       add: 'Add journey',
       remove: 'Remove journey',
       days_per_year: 'Days per year',
@@ -115,16 +117,18 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
-    change: 'About the recommended mode of transport "{reco}"',
+    change: 'About the recommended mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
       'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-work journeys?',
-    change_levers: 'What would help you to use this mode of transport?',
+    change_levers:
+      'What would help you to use this mode of transport (even if you already partially use it)?',
     change_levers_option: {
       financial_support: 'Financial support',
-      work_flexibility: 'Greater flexibility at work (schedules, teleworking, etc.)',
+      work_flexibility: 'Greater flexibility at work (schedules, remote working, etc.)',
       collective_changes: 'Collective changes (company communication, colleague involvement, etc.)',
-      work_environment: 'Workplace adjustments (showers, bicycle parking, etc.)',
+      work_environment:
+        'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points, etc.)',
       other: 'Other',
     },
     change_other_levers_specify: 'Please specify what other measures would help you',
@@ -141,9 +145,9 @@ export default {
     train: 'At present, you mainly use a train to get to your workplace.',
     combined: 'At present, you mainly use a combination of modes to get to your workplace.',
     sustainable:
-      'Your commuting habits are already sustainable. The following alternatives are available to you:',
+      'Congratulations! Your commuting habits are already sustainable. The following alternatives are also available to you:',
     sustainable_options:
-      'Your commuting habits are already sustainable. The following options are available to you:',
+      'Congratulations! Your commuting habits are already sustainable. The following options are available to you:',
     not_sustainable:
       'Based on the information you have entered, the following alternative modes are recommended:',
     actions: 'Your employer implements the following measures to promote sustainable mobility',

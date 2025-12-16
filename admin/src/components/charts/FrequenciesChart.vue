@@ -1,6 +1,7 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
+  <div :style="`height: ${height}px; width: 100%;`">
     <e-charts
+      v-if="total > 0"
       ref="chart"
       autoresize
       :init-options="initOptions"
@@ -8,6 +9,10 @@
       :update-options="updateOptions"
       :loading="stats.loading"
     />
+    <div v-else>
+      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
+      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+    </div>
   </div>
 </template>
 
@@ -44,6 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
+const total = ref(0)
 
 watch(
   () => stats.loading,
@@ -77,6 +83,7 @@ function keyLabel(key: string) {
 
 function initChartOptions() {
   option.value = {}
+  total.value = 0
   if (!stats.frequencies || !stats.frequencies[props.type]) {
     return
   }
@@ -91,7 +98,7 @@ function initChartOptions() {
 }
 
 function initValuesChartOptions(frequencies: Frequencies) {
-  const total = frequencies.total || 0
+  total.value = frequencies.total || 0
 
   // find max value
   const max = Math.max(
@@ -107,7 +114,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
   const values =
     categories?.map((category) => {
       const item = frequencies.data.find((item) => item.value === `${category}`)
-      return item ? (props.percent ? ((item.count / total) * 100).toFixed(2) : item.count) : 0
+      return item ? (props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count) : 0
     }) || []
 
   const newOption: EChartsOption = {
@@ -122,7 +129,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
-      subtext: t(`stats.total`, { count: total }),
+      subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -163,11 +170,11 @@ function initValuesChartOptions(frequencies: Frequencies) {
 }
 
 function initLabelsChartOptions(frequencies: Frequencies) {
-  const total = frequencies.total || 0
+  total.value = frequencies.total || 0
   const dataset = frequencies.data.map((item) => ({
     key: item.value || 'null',
     name: keyLabel(item.value || 'null'),
-    value: props.percent ? ((item.count / total) * 100).toFixed(2) : item.count,
+    value: props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count,
   }))
 
   // Extract category names and values for yAxis and series
@@ -190,7 +197,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
-      subtext: t(`stats.total`, { count: total }),
+      subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,

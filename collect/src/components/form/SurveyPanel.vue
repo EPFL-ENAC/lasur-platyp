@@ -74,11 +74,14 @@
       />
     </div>
     <div v-if="survey.stepName === 'places'">
-      <LocationItem
-        map-id="workplace-map"
+      <SelectItem
         :label="t('form.workplace')"
-        v-model="survey.record.data.workplace"
-        class="q-mb-xl"
+        :options="workplaceOptions"
+        v-model="selectedWorkplace"
+        :option-label-class="'text-h6 text-bold'"
+        :col="workplaceOptions.length > 1 ? 2 : 1"
+        @update:modelValue="onWorkplaceSelected"
+        class="q-mb-lg"
       />
       <LocationItem
         map-id="origin-map"
@@ -249,48 +252,11 @@
       <RecommendationsPanel />
       <InfoPanel class="q-mt-lg" />
     </div>
-    <div v-if="survey.stepName === 'change' && survey.record.data.change">
-      <SectionItem
-        :label="t('form.change', { reco: t(`reco.${firstRecoDt}`) })"
-        label-class="text-h4"
-        class="q-mb-lg"
-      />
-      <RatingItem
-        v-if="isRecoChange"
-        :label="t('form.change_motivation')"
-        :hint="t('form.change_motivation_hint')"
-        v-model="survey.record.data.change.motivation"
-        :max="5"
-        label-class="text-h5"
-        class="q-mb-lg"
-        @update:model-value="onSave"
-      />
-      <ChoiceItem
-        :label="t('form.change_levers')"
-        :options="[
-          { value: 'finance', label: t('form.change_levers_option.financial_support') },
-          { value: 'flexibility', label: t('form.change_levers_option.work_flexibility') },
-          { value: 'collective', label: t('form.change_levers_option.collective_changes') },
-          { value: 'environment', label: t('form.change_levers_option.work_environment') },
-          { value: 'other', label: t('form.change_levers_option.other') },
-        ]"
-        v-model="survey.record.data.change.levers"
-        multiple
-        label-class="text-h5"
-        option-label-class="text-h5"
-        @update:model-value="onSave"
-      />
-      <q-input
-        v-if="survey.record.data.change.levers?.includes('other')"
-        v-model="survey.record.data.change.other_levers"
-        :label="t('form.change_other_levers_specify')"
-        type="textarea"
-        class="q-mb-lg text-h6"
-        bg-color="green-3"
-        filled
-        debounce="500"
-        @update:model-value="onSave"
-      />
+    <div v-if="survey.stepName === 'change'">
+      <ChangePanel @update:modelValue="onSave" />
+    </div>
+    <div v-if="survey.stepName === 'change2'">
+      <Change2Panel @update:modelValue="onSave" />
     </div>
     <div v-if="survey.stepName === 'comments'">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
@@ -345,6 +311,7 @@
 import { useQuasar } from 'quasar'
 import type { Option } from 'src/components/form/models'
 import ChoiceItem from 'src/components/form/ChoiceItem.vue'
+import SelectItem from 'src/components/form/SelectItem.vue'
 import JourneysPanel from 'src/components/form/JourneysPanel.vue'
 import ProJourneysPanel from 'src/components/form/ProJourneysPanel.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
@@ -353,6 +320,8 @@ import SectionItem from 'src/components/form/SectionItem.vue'
 import RatingItem from 'src/components/form/RatingItem.vue'
 import LocationItem from 'src/components/form/LocationItem.vue'
 import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
+import ChangePanel from 'src/components/form/ChangePanel.vue'
+import Change2Panel from 'src/components/form/Change2Panel.vue'
 import InfoPanel from 'src/components/form/InfoPanel.vue'
 import FinalPanel from 'src/components/form/FinalPanel.vue'
 import { notifyError } from 'src/utils/notify'
@@ -362,12 +331,24 @@ const survey = useSurvey()
 const collector = useCollector()
 const q = useQuasar()
 
+const selectedWorkplace = ref<string>(survey.record.data.workplace?.name || '')
+
 const ageOptions = computed<Option[]>(() => [
   { value: '16-24', label: t('form.age_class_option.16_24') },
   { value: '25-44', label: t('form.age_class_option.25_44') },
   { value: '45-64', label: t('form.age_class_option.45_64') },
   { value: '65+', label: t('form.age_class_option.65') },
 ])
+
+const workplaceOptions = computed<Option[]>(() =>
+  (
+    collector.info?.workplaces?.map((wp) => ({
+      value: wp.name || '',
+      label: wp.name || wp.address || '',
+      hint: wp.address || '',
+    })) || []
+  ).sort((a, b) => a.label.localeCompare(b.label)),
+)
 
 const equipmentsOptions = computed<Option[]>(() => [
   { value: 'bike', label: t('form.equipments_option.bike') },
@@ -388,13 +369,31 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
 ])
 
-const firstRecoDt = computed(() =>
-  survey.recommendation.reco && survey.recommendation.reco.reco_dt2.length
-    ? survey.recommendation.reco.reco_dt2[0]
-    : '',
-)
+onMounted(() => {
+  if (survey.tokenOrSlug) {
+    void collector.loadInfo(survey.record.token)
+  }
+})
 
-const isRecoChange = computed(() => !survey.isModeInRecommendation(survey.getMainFreqMod()))
+function onWorkplaceSelected() {
+  const wp = collector.info?.workplaces?.find(
+    (w) => (w.name || w.address || '') === selectedWorkplace.value,
+  )
+  if (wp) {
+    survey.record.data.workplace = {
+      lat: wp.lat,
+      lon: wp.lon,
+      address: wp.address,
+      name: wp.name,
+    }
+  } else {
+    survey.record.data.workplace = {
+      lat: 0,
+      lon: 0,
+      address: '',
+    }
+  }
+}
 
 function nextStep() {
   if (survey.stepName === 'agreement') {
@@ -445,7 +444,21 @@ function nextStep() {
   }
   survey.incStep()
   if (survey.tokenOrSlug) {
-    if (survey.stepName === 'recommendations') {
+    void collector.loadInfo(survey.record.token)
+    if (survey.stepName === 'places') {
+      if (selectedWorkplace.value === '') {
+        // restore recorded workplace or select first available
+        selectedWorkplace.value = survey.record.data.workplace?.name || ''
+        if (selectedWorkplace.value === '') {
+          const firstWorkplace = collector.info?.workplaces?.[0]
+          if (firstWorkplace) {
+            selectedWorkplace.value =
+              survey.record.data.workplace?.name || firstWorkplace.name || ''
+          }
+        }
+        onWorkplaceSelected()
+      }
+    } else if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
       survey.record.data.comments = ''
       collector
@@ -464,6 +477,11 @@ function nextStep() {
     } else if (survey.stepName === 'change') {
       if (survey.record.data.change === undefined) {
         survey.record.data.change = {}
+      }
+      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+    } else if (survey.stepName === 'change2') {
+      if (survey.record.data.change2 === undefined) {
+        survey.record.data.change2 = {}
       }
       void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
     }
@@ -494,8 +512,11 @@ function handleSwipe(dir: any) {
 
 function onSave() {
   if (survey.tokenOrSlug) {
-    if (survey.record.data.change.levers?.includes('other') === false) {
+    if (survey.record.data.change?.levers?.includes('other') === false) {
       survey.record.data.change.other_levers = undefined
+    }
+    if (survey.record.data.change2?.levers?.includes('other') === false) {
+      survey.record.data.change2.other_levers = undefined
     }
     void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
   }
