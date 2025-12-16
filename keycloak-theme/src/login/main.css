@@ -1,0 +1,25 @@
+.kcBodyClass {
+   background: #eceff1 !important;
+}
+
+.kcFormCardClass {
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+   border-radius: 4px !important;
+   border-top: none !important;
+}
+
+.kcButtonPrimaryClass {
+    background-color: #01983b !important;
+    border-color: #01983b !important;
+    color: white !important;
+}
+
+.kcInputClass {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.kcFormPasswordVisibilityButtonClass {
+  border: none !important;
+}
