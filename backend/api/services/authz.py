@@ -99,8 +99,13 @@ class ACLService:
         Returns:
             list[int]: List of resource IDs the user has permission on
         """
+        # Validate resource_type to prevent SQL injection - only allow alphanumeric and underscore
+        if not resource_type.replace("_", "").isalnum():
+            raise ValueError(f"Invalid resource_type: {resource_type}")
+        
         # Query ACL table for all resources matching the pattern "resource_type:*"
         # where the user has the specified permission (or wildcard "*" permission)
+        # The LIKE pattern is constructed safely since resource_type is validated above
         res = await self.session.exec(
             select(ACL.resource)
             .where(
@@ -116,9 +121,11 @@ class ACLService:
         resource_ids = []
         for resource in resources:
             try:
-                # Split on ':' and get the second part (the ID)
-                parts = resource.split(":")
-                if len(parts) == 2:
+                # Split on ':' to separate resource type from ID
+                # Use rsplit with maxsplit=1 to handle IDs that might contain colons
+                parts = resource.rsplit(":", 1)
+                if len(parts) == 2 and parts[0] == resource_type:
+                    # Verify the prefix matches the requested resource type
                     resource_id = int(parts[1])
                     resource_ids.append(resource_id)
             except (ValueError, IndexError):
