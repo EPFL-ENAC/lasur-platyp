@@ -18,7 +18,6 @@
       >
         <template v-slot:top>
           <q-btn
-            v-if="authStore.isAdmin"
             size="sm"
             color="primary"
             :disable="loading"

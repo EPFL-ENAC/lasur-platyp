@@ -17,7 +17,7 @@ class ACLService:
             resource (str): The unique resource name
         """
         query = select(ACL).where(
-            ACL.resource == resource and ACL.subject_type == "user")
+            (ACL.resource == resource) & (ACL.subject_type == "user"))
         if subject:
             query = query.where(ACL.subject == subject)
         res = await self.session.exec(query)
@@ -25,8 +25,8 @@ class ACLService:
 
         if len(acls):
             for acl in acls:
-                self.session.delete(acl)
-            self.session.commit()
+                await self.session.delete(acl)
+            await self.session.commit()
 
     async def apply_user_permission(self, resource: str, permission: str, subject: str):
         """Ensure user has permission on resource
@@ -38,7 +38,12 @@ class ACLService:
         """
         res = await self.session.exec(
             select(ACL)
-            .where(ACL.resource == resource and ACL.permission == permission and ACL.subject_type == "user" and ACL.subject == subject)
+            .where(
+                (ACL.resource == resource) &
+                (ACL.permission == permission) &
+                (ACL.subject_type == "user") &
+                (ACL.subject == subject)
+            )
         )
         acl = res.one_or_none()
 

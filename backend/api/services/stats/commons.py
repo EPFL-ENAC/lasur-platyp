@@ -125,6 +125,8 @@ class BaseStatsService:
 
     def _calculate_distance_home_to_work(self, row):
         """Calculate distance from home to workplace for a record."""
+        if pd.isna(row['data.origin.lat']) or pd.isna(row['data.origin.lon']) or pd.isna(row['data.workplace.lat']) or pd.isna(row['data.workplace.lon']):
+            return 0
         origin_lat = float(row['data.origin.lat'])
         origin_lon = float(row['data.origin.lon'])
         work_lat = float(row['data.workplace.lat'])

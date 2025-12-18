@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
-from api.auth import kc_service, User, require_admin_or_perm
+from api.auth import kc_service, User
 from api.models.domain import Company
 from api.models.query import CompanyResult
 from api.services.companies import CompanyService
@@ -22,7 +22,7 @@ async def find(
     """Search for companies"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await CompanyService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"])
+        return await CompanyService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -33,8 +33,7 @@ async def get(id: int,
               user: User = Depends(kc_service.get_user_info())
               ) -> Company:
     """Get a company by id"""
-    await require_admin_or_perm(user, f"company:{id}", "read")
-    return await CompanyService(session).get(id)
+    return await CompanyService(session).get(id, user)
 
 
 @router.delete("/{id}", response_model=Company, response_model_exclude_none=True)
@@ -44,7 +43,7 @@ async def delete(
     user: User = Depends(kc_service.get_user_info())
 ) -> Company:
     """Delete a company by id"""
-    return await CompanyService(session).delete(id)
+    return await CompanyService(session).delete(id, user)
 
 
 @router.post("/", response_model=Company, response_model_exclude_none=True)
@@ -54,6 +53,7 @@ async def create(
     user: User = Depends(kc_service.get_user_info())
 ) -> Company:
     """Create a company"""
+    # Note: any user can create a company, and then get full permissions on it
     return await CompanyService(session).create(item, user)
 
 

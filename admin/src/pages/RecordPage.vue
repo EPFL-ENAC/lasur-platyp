@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import IsochronesMap from 'src/components/IsochronesMap.vue'
 import type { Record } from 'src/models'
+import { notifyError } from 'src/utils/notify'
 
 interface Location {
   lat: number
@@ -43,6 +44,7 @@ interface Location {
 }
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 const services = useServices()
 const service = services.make('record') as Service<Record>
@@ -69,8 +71,14 @@ onMounted(() => {
 })
 
 function onInit() {
-  service.get(id.value + '').then((data: Record) => {
-    record.value = data
-  })
+  service
+    .get(id.value + '')
+    .then((data: Record) => {
+      record.value = data
+    })
+    .catch(() => {
+      notifyError(t('error.loading_record'))
+      router.push('/records')
+    })
 }
 </script>

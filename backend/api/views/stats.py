@@ -23,7 +23,7 @@ async def compute_all_statistics(
             del filter_dict['workplace_location']
         validated = validate_params(filter_dict, None, None, None)
         service = RecordService(session)
-        df = await service.get_dataframe(validated["filter"], flat=True)
+        df = await service.get_dataframe(validated["filter"], flat=True, user=user)
         if workplace_filter:
             workplace_filter = LocationFilter.model_validate(
                 workplace_filter, by_alias=True)

@@ -5,9 +5,10 @@ from sqlalchemy.orm import selectinload
 from fastapi import HTTPException
 from api.models.domain import Campaign, Workplace
 from api.models.query import CampaignResult, CampaignDraft
+from api.services.companies import CompanyService
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
-from api.auth import User
+from api.auth import User, require_admin_or_perm, is_admin
 
 
 class CampaignQueryBuilder(QueryBuilder):
@@ -39,7 +40,7 @@ class CampaignService:
         count = (await self.session.exec(text("select count(id) from campaign"))).scalar()
         return count
 
-    async def get(self, id: int) -> Campaign:
+    async def get(self, id: int, user: User = None) -> Campaign:
         """Get a campaign by id"""
         res = await self.session.exec(
             select(Campaign)
@@ -49,6 +50,8 @@ class CampaignService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
         return entity
 
     async def get_by_slug(self, slug: str) -> Campaign:
@@ -63,7 +66,7 @@ class CampaignService:
                 status_code=404, detail="Campaign not found")
         return entity
 
-    async def delete(self, id: int) -> Campaign:
+    async def delete(self, id: int, user: User = None) -> Campaign:
         """Delete a campaign by id"""
         res = await self.session.exec(
             select(Campaign).where(Campaign.id == id)
@@ -72,12 +75,34 @@ class CampaignService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CampaignResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CampaignResult:
         """Get all campaigns matching filter and range"""
+        # Add permission filter
+        if user is not None and not is_admin(user):
+            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            if permitted_company_ids:
+                if filter is None:
+                    filter = {}
+                if "company_id" in filter:
+                    # Intersect existing filter with permitted ids
+                    existing_ids = filter["company_id"]
+                    if isinstance(existing_ids, int):
+                        existing_ids = [existing_ids]
+                    filter["company_id"] = list(
+                        set(existing_ids) & set(permitted_company_ids))
+                else:
+                    filter["company_id"] = permitted_company_ids
+            else:
+                # No permitted campaigns, return empty result
+                # Assuming no campaign has company_id -1
+                filter["company_id"] = [-1]
+
         builder = CampaignQueryBuilder(
             Campaign, filter, sort, range, {})
 
@@ -106,6 +131,10 @@ class CampaignService:
         workplaces = payload.workplaces
         payload_dict = payload.model_dump(exclude={'workplaces'})
         entity = Campaign(**payload_dict)
+
+        if not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
         if user:
@@ -133,6 +162,10 @@ class CampaignService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
+
+        if not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+
         for key, value in payload.model_dump().items():
             # print(key, value)
             if key not in ["id", "created_at", "updated_at", "created_by", "updated_by", "workplaces"]:

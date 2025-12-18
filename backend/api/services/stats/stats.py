@@ -67,5 +67,8 @@ class StatsService:
             flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
         """
         # Filter records with values in column typo.reco_dt2.0
-        df = df[df['typo.reco.reco_dt2.0'].notna()]
-        return df
+        if 'typo.reco.reco_dt2.0' in df.columns:
+            df = df[df['typo.reco.reco_dt2.0'].notna()]
+            return df
+        else:
+            return pd.DataFrame()

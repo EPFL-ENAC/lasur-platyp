@@ -5,7 +5,8 @@ from fastapi import HTTPException
 from api.models.domain import CompanyAction
 from api.models.query import CompanyActionResult, CompanyActionDraft
 from enacit4r_sql.utils.query import QueryBuilder
-from api.auth import User
+from api.auth import User, is_admin, require_admin_or_perm
+from api.services.companies import CompanyService
 
 
 class CompanyActionQueryBuilder(QueryBuilder):
@@ -35,7 +36,7 @@ class CompanyActionService:
         count = (await self.session.exec(text("select count(id) from companyaction"))).scalar()
         return count
 
-    async def get(self, id: int) -> CompanyAction:
+    async def get(self, id: int, user: User = None) -> CompanyAction:
         """Get a company action by id"""
         res = await self.session.exec(
             select(CompanyAction).where(
@@ -44,9 +45,11 @@ class CompanyActionService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Company action not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
         return entity
 
-    async def delete(self, id: int) -> CompanyAction:
+    async def delete(self, id: int, user: User = None) -> CompanyAction:
         """Delete a company action by id"""
         res = await self.session.exec(
             select(CompanyAction).where(CompanyAction.id == id)
@@ -55,12 +58,34 @@ class CompanyActionService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Company action not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CompanyActionResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CompanyActionResult:
         """Get all company actions matching filter and range"""
+        # Add permission filter
+        if user is not None and not is_admin(user):
+            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            if permitted_company_ids:
+                if filter is None:
+                    filter = {}
+                if "company_id" in filter:
+                    # Intersect existing filter with permitted ids
+                    existing_ids = filter["company_id"]
+                    if isinstance(existing_ids, int):
+                        existing_ids = [existing_ids]
+                    filter["company_id"] = list(
+                        set(existing_ids) & set(permitted_company_ids))
+                else:
+                    filter["company_id"] = permitted_company_ids
+            else:
+                # No permitted campaigns, return empty result
+                # Assuming no campaign has company_id -1
+                filter["company_id"] = [-1]
+
         builder = CompanyActionQueryBuilder(
             CompanyAction, filter, sort, range, {})
 
@@ -87,6 +112,10 @@ class CompanyActionService:
     async def create(self, payload: CompanyActionDraft, user: User = None) -> CompanyAction:
         """Create a new company action"""
         entity = CompanyAction(**payload.model_dump())
+
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+
         self.session.add(entity)
         await self.session.commit()
         return entity
@@ -100,6 +129,10 @@ class CompanyActionService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Company action not found")
+
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+
         for key, value in payload.model_dump().items():
             # print(key, value)
             if key not in ["id"]:
@@ -107,8 +140,11 @@ class CompanyActionService:
         await self.session.commit()
         return entity
 
-    async def get_company_actions(self, company_id: int) -> list[CompanyAction]:
+    async def get_company_actions(self, company_id: int, user: User = None) -> list[CompanyAction]:
         """Get all actions for a company"""
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{company_id}", "read")
+
         res = await self.session.exec(
             select(CompanyAction).where(CompanyAction.company_id == company_id)
         )

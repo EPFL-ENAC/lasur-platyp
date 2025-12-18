@@ -31,8 +31,11 @@ class EmissionsService(BaseStatsService):
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
         # Calculate distance_km to workplace for each record
-        self.df['distance_km'] = self.df.apply(
-            lambda row: self._calculate_distance_home_to_work(row), axis=1)
+        if self.df.empty:
+            self.df['distance_km'] = pd.Series(dtype=float)
+        else:
+            self.df['distance_km'] = self.df.apply(
+                lambda row: self._calculate_distance_home_to_work(row), axis=1)
 
     def compute_modes_emissions(self, apply_reco: bool = False) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records."""

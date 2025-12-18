@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-btn
-      v-if="authStore.isAdmin"
+      v-if="isCompanyAdmin"
       size="sm"
       color="primary"
       :disable="campaignsStore.loading"
@@ -72,6 +72,11 @@ const tab = ref<string | undefined>()
 const showDialog = ref(false)
 const selected = ref<Campaign>()
 const campaigns = computed<Campaign[]>(() => campaignsStore.items || [])
+
+const isCompanyAdmin = computed(() => {
+  if (!props.company) return false
+  return authStore.isAdmin || props.company.administrators?.includes(authStore.profile?.email || '')
+})
 
 onMounted(onInit)
 

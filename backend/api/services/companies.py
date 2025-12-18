@@ -6,7 +6,7 @@ from api.models.domain import Company
 from api.models.query import CompanyResult
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
-from api.auth import User
+from api.auth import User, check_admin_or_perm, is_admin, require_admin_or_perm
 from api.services.authz import ACLService
 
 
@@ -37,8 +37,28 @@ class CompanyService:
         count = (await self.session.exec(text("select count(id) from company"))).scalar()
         return count
 
-    async def get(self, id: int) -> Company:
+    async def list_all_ids(self) -> list[int]:
+        """List all company ids"""
+        res = await self.session.exec(
+            select(Company.id)
+        )
+        ids = res.all()
+        return ids
+
+    async def list_permitted_ids(self, user: User, permission: str) -> list[int]:
+        """List all company ids the user has the given permission on"""
+        permitted_ids = []
+        all_ids = await self.list_all_ids()
+        for company_id in all_ids:
+            permitted = await check_admin_or_perm(user, f"company:{company_id}", permission)
+            if permitted:
+                permitted_ids.append(company_id)
+        return permitted_ids
+
+    async def get(self, id: int, user: User = None) -> Company:
         """Get a company by id"""
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{id}", "read")
         res = await self.session.exec(
             select(Company).where(
                 Company.id == id))
@@ -48,8 +68,10 @@ class CompanyService:
                 status_code=404, detail="Company not found")
         return entity
 
-    async def delete(self, id: int) -> Company:
+    async def delete(self, id: int, user: User = None) -> Company:
         """Delete a company by id"""
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{id}", "delete")
         res = await self.session.exec(
             select(Company).where(Company.id == id)
         )
@@ -59,10 +81,33 @@ class CompanyService:
                 status_code=404, detail="Company not found")
         await self.session.delete(entity)
         await self.session.commit()
+        await self.delete_permissions(entity)
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CompanyResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CompanyResult:
         """Get all compagnies matching filter and range"""
+        # Add permission filter
+        if user is not None and not is_admin(user):
+            if filter is None:
+                filter = {}
+            # Restrict to companies the user has "read" permission on
+            # Note: this is a simple implementation, may not scale well with many companies
+            # A more efficient implementation would require a join with the ACL table
+            permitted_ids = await self.list_permitted_ids(user, "read")
+            if permitted_ids:
+                if "id" in filter:
+                    # Normalize to list if not already
+                    id_filter = filter["id"] if isinstance(
+                        filter["id"], list) else [filter["id"]]
+                    # Intersect with existing filter
+                    filter["id"] = list(
+                        set(id_filter).intersection(set(permitted_ids)))
+                else:
+                    filter["id"] = permitted_ids
+            else:
+                # No permitted companies, return empty result
+                filter["id"] = [-1]  # Assuming no company has id -1
+
         builder = CompanyQueryBuilder(
             Company, filter, sort, range, {})
 
@@ -94,14 +139,20 @@ class CompanyService:
         if user:
             entity.created_by = user.username
             entity.updated_by = user.username
+            # Ensure creating user is in administrators list
+            if not entity.administrators:
+                entity.administrators = [user.email]
+            elif user.email not in entity.administrators:
+                entity.administrators.append(user.email)
         self.session.add(entity)
         await self.session.commit()
         await self.apply_admin_permissions(entity)
-
         return entity
 
     async def update(self, id: int, payload: Company, user: User = None) -> Company:
         """Update a company"""
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{id}", "update")
         res = await self.session.exec(
             select(Company).where(Company.id == id)
         )
@@ -116,6 +167,11 @@ class CompanyService:
         entity.updated_at = datetime.now()
         if user:
             entity.updated_by = user.username
+            # Ensure updating user is in administrators list
+            if not entity.administrators:
+                entity.administrators = [user.email]
+            elif user.email not in entity.administrators:
+                entity.administrators.append(user.email)
         await self.session.commit()
         await self.apply_admin_permissions(entity)
         return entity
@@ -128,7 +184,11 @@ class CompanyService:
         if entity.administrators:
             for admin in entity.administrators:
                 await acl_service.apply_user_permission(resource, "*", admin)
-                pass
+
+    async def delete_permissions(self, entity: Company):
+        resource = self.as_resource(entity)
+        acl_service = ACLService(self.session)
+        await acl_service.delete_user_permissions(resource)
 
     def as_resource(self, entity: Company):
         return f"company:{entity.id}"
