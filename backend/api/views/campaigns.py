@@ -21,7 +21,7 @@ async def find(
     """Search for campaigns"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await CampaignService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"])
+        return await CampaignService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -32,7 +32,7 @@ async def get(id: int,
               user: User = Depends(kc_service.get_user_info())
               ) -> Campaign:
     """Get a campaign by id"""
-    return await CampaignService(session).get(id)
+    return await CampaignService(session).get(id, user)
 
 
 @router.delete("/{id}", response_model=Campaign, response_model_exclude_none=True)
@@ -42,7 +42,7 @@ async def delete(
     user: User = Depends(kc_service.get_user_info())
 ) -> Campaign:
     """Delete a campaign by id"""
-    return await CampaignService(session).delete(id)
+    return await CampaignService(session).delete(id, user)
 
 
 @router.post("/", response_model=Campaign, response_model_exclude_none=True)

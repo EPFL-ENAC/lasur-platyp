@@ -389,6 +389,8 @@ export default {
     password_complexity_not_met: 'The password does not meet the complexity requirements.',
     invalid_email: 'A valid email address is required.',
     form_invalid: 'Some fields are invalid.',
+    loading_company: 'Error loading company. It may not exist or you do not have access to it.',
+    loading_record: 'Error loading record. It may not exist or you do not have access to it.',
   },
   action: 'Measure',
   add: 'Add',

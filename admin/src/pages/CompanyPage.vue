@@ -6,7 +6,7 @@
         <q-breadcrumbs-el :label="company?.name" />
       </q-breadcrumbs>
       <q-btn
-        v-if="authStore.isAdmin"
+        v-if="isCompanyAdmin"
         flat
         dense
         size="sm"
@@ -16,7 +16,7 @@
         @click="onEdit"
       />
       <q-btn
-        v-if="authStore.isAdmin"
+        v-if="isCompanyAdmin"
         flat
         dense
         size="sm"
@@ -26,6 +26,7 @@
         @click="onShowRemove"
       />
       <q-btn
+        v-if="isCompanyAdmin"
         :label="t('report')"
         outline
         size="sm"
@@ -47,7 +48,7 @@
       </div>
       <div class="q-mb-sm">{{ t('company.actions') }}</div>
       <q-btn
-        v-if="authStore.isAdmin"
+        v-if="isCompanyAdmin"
         size="sm"
         color="primary"
         :label="t('company.custom_actions')"
@@ -102,7 +103,7 @@ import type { FieldItem } from 'src/components/FieldsList.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import CompanyDialog from 'src/components/company/CompanyDialog.vue'
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
-import { notifySuccess } from 'src/utils/notify'
+import { notifySuccess, notifyError } from 'src/utils/notify'
 import { actionItems, actionProItems } from 'src/utils/options'
 
 const route = useRoute()
@@ -119,6 +120,11 @@ const showRemoveDialog = ref(false)
 const showDialog = ref(false)
 const showCustomActionsDialog = ref(false)
 const showChartsDialog = ref(false)
+
+const isCompanyAdmin = computed(() => {
+  if (!company.value) return false
+  return authStore.isAdmin || company.value.administrators?.includes(authStore.profile?.email || '')
+})
 
 const formattedActions = computed(() => {
   const allActions: EmployerActions = {}
@@ -186,11 +192,17 @@ onMounted(() => {
 })
 
 function onInit() {
-  service.get(id.value + '').then((data: Company) => {
-    company.value = data
-    actionsStore.company = data
-    actionsStore.load()
-  })
+  service
+    .get(id.value + '')
+    .then((data: Company) => {
+      company.value = data
+      actionsStore.company = data
+      actionsStore.load()
+    })
+    .catch(() => {
+      notifyError(t('error.loading_company'))
+      router.push('/companies')
+    })
 }
 
 function onEdit() {

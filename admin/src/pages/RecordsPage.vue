@@ -2,7 +2,7 @@
   <q-page>
     <div class="text-h5 q-pa-md">{{ t('records') }}</div>
     <q-separator />
-    <div v-if="authStore.isAdmin" class="q-pa-md">
+    <div class="q-pa-md">
       <q-table
         flat
         ref="tableRef"

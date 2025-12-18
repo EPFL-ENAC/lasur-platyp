@@ -392,6 +392,10 @@ export default {
     password_complexity_not_met: 'Le mot de passe ne répond pas aux exigences de complexité.',
     invalid_email: 'Une adresse email valide est requise.',
     form_invalid: 'Certains champs sont invalides.',
+    loading_company:
+      "Erreur lors du chargement de l'entreprise. Il se peut qu'elle n'existe pas ou que vous n'y ayez pas accès.",
+    loading_record:
+      "Erreur lors du chargement de l'enregistrement. Il peut ne pas exister ou vous n'y avez pas accès.",
   },
   action: 'Mesure',
   add: 'Ajouter',

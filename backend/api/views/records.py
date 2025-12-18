@@ -15,33 +15,33 @@ async def find(
     select: str = Query(None),
     sort: str = Query(None),
     range: str = Query("[0,99]"),
-    user: User = Depends(kc_service.require_admin()),
+    user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
 ) -> RecordResult:
     """Search for records"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await RecordService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"])
+        return await RecordService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
 
 @router.get("/{id}", response_model=Record, response_model_exclude_none=True)
 async def get(id: int,
-              user: User = Depends(kc_service.require_admin()),
+              user: User = Depends(kc_service.get_user_info()),
               session: AsyncSession = Depends(get_session)) -> Record:
     """Get a record by id"""
-    return await RecordService(session).get(id)
+    return await RecordService(session).get(id, user)
 
 
 @router.delete("/{id}", response_model=Record, response_model_exclude_none=True)
 async def delete(
     id: int,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Record:
     """Delete a record by id"""
-    return await RecordService(session).delete(id)
+    return await RecordService(session).delete(id, user)
 
 
 @router.get("/flat", response_model_exclude_none=True)
@@ -49,14 +49,14 @@ async def compute_flat(
     filter: str = Query(None),
     completed: bool = Query(
         False, description="Whether to include only completed records"),
-    user: User = Depends(kc_service.require_admin()),
+    user: User = Depends(kc_service.get_user_info()),
     session: AsyncSession = Depends(get_session),
 ) -> Response:
     """Query records in flat format as a CSV"""
     try:
         validated = validate_params(filter, None, None, None)
         service = RecordService(session)
-        df = await service.get_dataframe(validated["filter"], flat=True)
+        df = await service.get_dataframe(validated["filter"], flat=True, user=user)
         if completed:
             df = service.filter_completed(df)
         return Response(content=df.to_csv(date_format="%Y-%m-%dT%H:%M:%S.%f", index=False), media_type="text/csv")

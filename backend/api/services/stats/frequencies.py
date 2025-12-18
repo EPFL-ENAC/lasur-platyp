@@ -60,6 +60,9 @@ class FrequenciesService(BaseStatsService):
 
     def compute_travel_time_frequencies(self) -> Frequencies:
         """Compute travel time frequencies from a DataFrame of records."""
+        if 'data.travel_time' not in self.df.columns:
+            return Frequencies(field='travel_time', total=len(self.df), data=[])
+
         travel_time_series = self.df['data.travel_time'].dropna().astype(str)
         travel_time_counts = travel_time_series.value_counts()
 
@@ -77,6 +80,9 @@ class FrequenciesService(BaseStatsService):
 
     def compute_recommendation_frequencies(self) -> Frequencies:
         """Compute recommendation frequencies from a DataFrame of records."""
+        if 'typo.reco.reco_dt2.0' not in self.df.columns:
+            return Frequencies(field='reco_dt2', total=len(self.df), data=[])
+
         reco_series = self.df['typo.reco.reco_dt2.0'].dropna()
         reco_counts = reco_series.value_counts()
 
@@ -94,6 +100,9 @@ class FrequenciesService(BaseStatsService):
 
     def compute_recommendation_pro_frequencies(self) -> Frequencies:
         """Compute recommendation professional frequencies from a DataFrame of records."""
+        if self.df.empty:
+            return Frequencies(field='reco_pros', total=0, data=[])
+
         all_reco_pros = []
         # v1: recommendations are made per destination area type
         for col in ['typo.reco_pro.reco_pro_loc', 'typo.reco_pro.reco_pro_reg', 'typo.reco_pro.reco_pro_inter']:

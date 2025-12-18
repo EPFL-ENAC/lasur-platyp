@@ -6,10 +6,14 @@ from sqlmodel import select
 from fastapi import HTTPException
 from api.models.domain import Record, Campaign
 from api.models.query import RecordResult, RecordDraft, LocationFilter
+from api.auth import User, is_admin, require_admin_or_perm
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 import pandas as pd
 from shapely.geometry import Point, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon
+
+from api.services.companies import CompanyService
+from api.services.entities import EntityService
 
 
 class RecordQueryBuilder(QueryBuilder):
@@ -29,10 +33,10 @@ class RecordQueryBuilder(QueryBuilder):
         return query
 
 
-class RecordService:
+class RecordService(EntityService):
 
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session)
 
     async def count(self) -> int:
         """Count all records"""
@@ -49,7 +53,7 @@ class RecordService:
         count = (await self.session.exec(count_query)).one()
         return count
 
-    async def get(self, id: int) -> Record:
+    async def get(self, id: int, user: User = None) -> Record:
         """Get a record by id"""
         res = await self.session.exec(
             select(Record).where(
@@ -58,6 +62,8 @@ class RecordService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
         return entity
 
     async def get_by_token(self, token: str) -> Record:
@@ -71,7 +77,7 @@ class RecordService:
                 status_code=404, detail="Record not found")
         return entity
 
-    async def delete(self, id: int) -> Record:
+    async def delete(self, id: int, user: User = None) -> Record:
         """Delete a record by id"""
         res = await self.session.exec(
             select(Record).where(Record.id == id)
@@ -80,12 +86,29 @@ class RecordService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> RecordResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> RecordResult:
         """Get all records matching filter and range"""
+        if user is not None and not is_admin(user):
+            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            if permitted_company_ids:
+                if filter is None:
+                    filter = {}
+                if "company_id" in filter:
+                    filter["company_id"] = self.merge_ids_filter(
+                        filter["company_id"], permitted_company_ids)
+                else:
+                    filter["company_id"] = permitted_company_ids
+            else:
+                # No permitted records, return empty result
+                # Assuming no record has company_id -1
+                filter = {"company_id": [-1]}
+
         builder = RecordQueryBuilder(
             Record, filter, sort, range, {})
 
@@ -151,17 +174,18 @@ class RecordService:
         await self.session.commit()
         return entity
 
-    async def get_dataframe(self, filter: dict, flat: bool = False) -> pd.DataFrame:
+    async def get_dataframe(self, filter: dict, flat: bool = False, user: User = None) -> pd.DataFrame:
         """Get a DataFrame representation of the records.
 
         Args:
             filter (dict): The filter criteria for the records.
             flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
+            user (User, optional): The user requesting the data. Defaults to None.
 
         Returns:
             pd.DataFrame: A DataFrame representation of the records.
         """
-        results = await self.find(filter, fields=[], sort=[], range=[])
+        results = await self.find(filter, fields=[], sort=[], range=[], user=user)
         # Read results into a pandas DataFrame
         df = pd.DataFrame([result.model_dump() for result in results.data])
         if not flat:

@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-btn
-      v-if="authStore.isAdmin"
+      v-if="isCompanyAdmin"
       size="sm"
       color="secondary"
       icon="edit"
@@ -9,7 +9,7 @@
       @click="onEdit"
     />
     <q-btn
-      v-if="authStore.isAdmin"
+      v-if="isCompanyAdmin"
       flat
       dense
       size="sm"
@@ -19,6 +19,7 @@
       @click="onShowRemove"
     />
     <q-btn
+      v-if="isCompanyAdmin"
       :label="t('report')"
       outline
       size="sm"
@@ -186,6 +187,11 @@ const showDialog = ref(false)
 const showRemoveDialog = ref(false)
 const showChartsDialog = ref(false)
 const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
+
+const isCompanyAdmin = computed(() => {
+  if (!props.company) return false
+  return authStore.isAdmin || props.company.administrators?.includes(authStore.profile?.email || '')
+})
 
 const visibleWorkplaces = computed(() => {
   let wps = props.item.workplaces ? [...props.item.workplaces] : []
