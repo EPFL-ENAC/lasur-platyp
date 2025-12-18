@@ -8,6 +8,7 @@ from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 from api.auth import User, check_admin_or_perm, is_admin, require_admin_or_perm
 from api.services.authz import ACLService
+from api.services.entities import EntityService
 
 
 class CompanyQueryBuilder(QueryBuilder):
@@ -27,10 +28,10 @@ class CompanyQueryBuilder(QueryBuilder):
         return query
 
 
-class CompanyService:
+class CompanyService(EntityService):
 
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session)
 
     async def count(self) -> int:
         """Count all compagnies"""
@@ -96,12 +97,8 @@ class CompanyService:
             permitted_ids = await self.list_permitted_ids(user, "read")
             if permitted_ids:
                 if "id" in filter:
-                    # Normalize to list if not already
-                    id_filter = filter["id"] if isinstance(
-                        filter["id"], list) else [filter["id"]]
-                    # Intersect with existing filter
-                    filter["id"] = list(
-                        set(id_filter).intersection(set(permitted_ids)))
+                    filter["id"] = self.merge_ids_filter(
+                        filter["id"], permitted_ids)
                 else:
                     filter["id"] = permitted_ids
             else:

@@ -7,6 +7,7 @@ from api.models.query import CompanyActionResult, CompanyActionDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from api.auth import User, is_admin, require_admin_or_perm
 from api.services.companies import CompanyService
+from api.services.entities import EntityService
 
 
 class CompanyActionQueryBuilder(QueryBuilder):
@@ -26,10 +27,10 @@ class CompanyActionQueryBuilder(QueryBuilder):
         return query
 
 
-class CompanyActionService:
+class CompanyActionService(EntityService):
 
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session)
 
     async def count(self) -> int:
         """Count all company actions"""
@@ -73,12 +74,8 @@ class CompanyActionService:
                 if filter is None:
                     filter = {}
                 if "company_id" in filter:
-                    # Intersect existing filter with permitted ids
-                    existing_ids = filter["company_id"]
-                    if isinstance(existing_ids, int):
-                        existing_ids = [existing_ids]
-                    filter["company_id"] = list(
-                        set(existing_ids) & set(permitted_company_ids))
+                    filter["company_id"] = self.merge_ids_filter(
+                        filter["company_id"], permitted_company_ids)
                 else:
                     filter["company_id"] = permitted_company_ids
             else:

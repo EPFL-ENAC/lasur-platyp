@@ -13,6 +13,7 @@ import pandas as pd
 from shapely.geometry import Point, Polygon as ShapelyPolygon, MultiPolygon as ShapelyMultiPolygon
 
 from api.services.companies import CompanyService
+from api.services.entities import EntityService
 
 
 class RecordQueryBuilder(QueryBuilder):
@@ -32,10 +33,10 @@ class RecordQueryBuilder(QueryBuilder):
         return query
 
 
-class RecordService:
+class RecordService(EntityService):
 
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session)
 
     async def count(self) -> int:
         """Count all records"""
@@ -99,12 +100,8 @@ class RecordService:
                 if filter is None:
                     filter = {}
                 if "company_id" in filter:
-                    # Intersect existing filter with permitted ids
-                    existing_ids = filter["company_id"]
-                    if isinstance(existing_ids, int):
-                        existing_ids = [existing_ids]
-                    filter["company_id"] = list(
-                        set(existing_ids) & set(permitted_company_ids))
+                    filter["company_id"] = self.merge_ids_filter(
+                        filter["company_id"], permitted_company_ids)
                 else:
                     filter["company_id"] = permitted_company_ids
             else:
