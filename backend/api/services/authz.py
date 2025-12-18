@@ -3,6 +3,7 @@ from api.db import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
 from api.models.authz import ACL
+import re
 
 
 class ACLService:
@@ -56,13 +57,13 @@ class ACLService:
         self.session.add(acl)
         await self.session.commit()
 
-    async def check_user_permission(self, resource: int, permission: str, subject: str) -> bool:
+    async def check_user_permission(self, resource: str, permission: str, subject: str) -> bool:
         """Check user has permission on a resource
 
         Args:
-            resource (int): The unique resource name
+            resource (str): The unique resource name
             permission (str): The permission
-            user (str): The unique user name
+            subject (str): The unique user name
 
         Returns:
             (bool): True if user has permission on resource, False otherwise
@@ -100,7 +101,7 @@ class ACLService:
             list[int]: List of resource IDs the user has permission on
         """
         # Validate resource_type to prevent SQL injection - only allow alphanumeric and underscore
-        if not resource_type.replace("_", "").isalnum():
+        if not re.match(r'^[a-zA-Z0-9_]+$', resource_type):
             raise ValueError(f"Invalid resource_type: {resource_type}")
         
         # Query ACL table for all resources matching the pattern "resource_type:*"
