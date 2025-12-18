@@ -34,7 +34,7 @@ class CompanyService(EntityService):
         super().__init__(session)
 
     async def count(self) -> int:
-        """Count all compagnies"""
+        """Count all companies"""
         count = (await self.session.exec(text("select count(id) from company"))).scalar()
         return count
 
@@ -86,7 +86,7 @@ class CompanyService(EntityService):
         return entity
 
     async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CompanyResult:
-        """Get all compagnies matching filter and range"""
+        """Get all companies matching filter and range"""
         # Add permission filter
         if user is not None and not is_admin(user):
             if filter is None:

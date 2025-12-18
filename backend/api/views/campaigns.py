@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
-from api.auth import kc_service, User, check_admin_or_perm, is_admin
+from api.auth import kc_service, User
 from api.models.domain import Campaign
 from api.models.query import CampaignResult, CampaignDraft, CampaignRead
 from api.services.campaigns import CampaignService

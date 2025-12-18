@@ -129,7 +129,7 @@ class CampaignService(EntityService):
         payload_dict = payload.model_dump(exclude={'workplaces'})
         entity = Campaign(**payload_dict)
 
-        if not is_admin(user):
+        if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
 
         entity.created_at = datetime.now()
@@ -160,7 +160,7 @@ class CampaignService(EntityService):
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
 
-        if not is_admin(user):
+        if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
 
         for key, value in payload.model_dump().items():

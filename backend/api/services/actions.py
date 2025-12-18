@@ -79,8 +79,8 @@ class CompanyActionService(EntityService):
                 else:
                     filter["company_id"] = permitted_company_ids
             else:
-                # No permitted campaigns, return empty result
-                # Assuming no campaign has company_id -1
+                # No permitted company actions, return empty result
+                # Assuming no company action has company_id -1
                 filter["company_id"] = [-1]
 
         builder = CompanyActionQueryBuilder(
