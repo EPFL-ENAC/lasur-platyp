@@ -47,13 +47,15 @@ class CompanyService(EntityService):
         return ids
 
     async def list_permitted_ids(self, user: User, permission: str) -> list[int]:
-        """List all company ids the user has the given permission on"""
-        permitted_ids = []
-        all_ids = await self.list_all_ids()
-        for company_id in all_ids:
-            permitted = await check_admin_or_perm(user, f"company:{company_id}", permission)
-            if permitted:
-                permitted_ids.append(company_id)
+        """List all company ids the user has the given permission on
+        
+        Uses an efficient single-query approach to avoid N+1 query problems.
+        """
+        # Use ACLService to get all permitted company IDs in a single query
+        acl_service = ACLService(self.session)
+        permitted_ids = await acl_service.get_permitted_resource_ids(
+            "company", permission, user.email
+        )
         return permitted_ids
 
     async def get(self, id: int, user: User = None) -> Company:
@@ -92,8 +94,6 @@ class CompanyService(EntityService):
             if filter is None:
                 filter = {}
             # Restrict to companies the user has "read" permission on
-            # Note: this is a simple implementation, may not scale well with many companies
-            # A more efficient implementation would require a join with the ACL table
             permitted_ids = await self.list_permitted_ids(user, "read")
             if permitted_ids:
                 if "id" in filter:

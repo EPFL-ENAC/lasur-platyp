@@ -84,3 +84,45 @@ class ACLService:
 
         debug("Permission denied: {subject} {permission} {resource}")
         return False
+
+    async def get_permitted_resource_ids(self, resource_type: str, permission: str, subject: str) -> list[int]:
+        """Get all resource IDs of a given type that a user has permission on
+
+        This method performs a single database query to fetch all permitted resources,
+        avoiding N+1 query problems.
+
+        Args:
+            resource_type (str): The resource type prefix (e.g., "company", "campaign")
+            permission (str): The permission to check (e.g., "read", "write")
+            subject (str): The subject (user email) to check permissions for
+
+        Returns:
+            list[int]: List of resource IDs the user has permission on
+        """
+        # Query ACL table for all resources matching the pattern "resource_type:*"
+        # where the user has the specified permission (or wildcard "*" permission)
+        res = await self.session.exec(
+            select(ACL.resource)
+            .where(
+                (ACL.resource.like(f"{resource_type}:%")) &
+                ((ACL.permission == permission) | (ACL.permission == "*")) &
+                (ACL.subject_type == "user") &
+                (ACL.subject == subject)
+            )
+        )
+        resources = res.all()
+
+        # Extract the numeric IDs from resource strings like "company:123"
+        resource_ids = []
+        for resource in resources:
+            try:
+                # Split on ':' and get the second part (the ID)
+                parts = resource.split(":")
+                if len(parts) == 2:
+                    resource_id = int(parts[1])
+                    resource_ids.append(resource_id)
+            except (ValueError, IndexError):
+                # Skip any malformed resource strings
+                continue
+
+        return resource_ids
