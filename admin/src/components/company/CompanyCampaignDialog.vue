@@ -24,7 +24,7 @@
             <q-tab
               name="workplaces"
               :label="t('campaign.workplaces.title')"
-              :alert="selected.workplaces?.length ? false : 'negative'"
+              :alert="validWorkplaces ? false : 'negative'"
             />
           </q-tabs>
           <q-separator />
@@ -131,6 +131,18 @@
               <div class="text-hint q-mb-md">
                 {{ t('campaign.workplaces.hint') }}
               </div>
+              <div class="q-mb-md">
+                <q-toggle
+                  v-model="selected.open_workplaces"
+                  :label="t('campaign.workplaces.open_workplaces')"
+                />
+                <div class="text-hint q-mt-xs">
+                  {{ t('campaign.workplaces.open_workplaces_hint') }}
+                </div>
+              </div>
+              <div class="q-mb-md">
+                {{ t('campaign.workplaces.workplaces_list') }}
+              </div>
               <div v-if="selected.workplaces && selected.workplaces.length > 0">
                 <q-list
                   bordered
@@ -177,6 +189,7 @@
                   @click="onUpload"
                 />
                 <q-btn
+                  v-if="selected.workplaces && selected.workplaces.length > 0"
                   flat
                   size="sm"
                   color="primary"
@@ -234,6 +247,12 @@ const withActions = ref(false)
 const editMode = ref(false)
 const tab = ref('general')
 
+const validWorkplaces = computed(
+  () =>
+    selected.value.open_workplaces ||
+    (selected.value.workplaces && selected.value.workplaces.length > 0),
+)
+
 onMounted(() => {
   if (props.modelValue) {
     onInit()
@@ -290,7 +309,7 @@ async function onSave() {
   const valid = await form.value.validate()
   if (!valid) return
   if (selected.value === undefined) return
-  if (!selected.value.workplaces || selected.value.workplaces.length === 0) {
+  if (!validWorkplaces.value) {
     notifyError(t('campaign.workplaces.required'))
     return
   }

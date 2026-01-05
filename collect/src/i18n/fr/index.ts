@@ -35,6 +35,9 @@ export default {
     yes: 'Oui',
     no: 'Non',
     workplace: 'Votre lieu de travail habituel',
+    workplace_option: {
+      other: 'Autre lieu de travail (à préciser)',
+    },
     origin: "D'où partez-vous habituellement pour vous rendre au travail ?",
     origin_hint:
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',

@@ -74,8 +74,9 @@
       />
     </div>
     <div v-if="survey.stepName === 'places'">
+      <div class="text-h4 text-bold">{{ t('form.workplace') }}</div>
       <SelectItem
-        :label="t('form.workplace')"
+        v-if="workplaceOptions.length > 0"
         :options="workplaceOptions"
         v-model="selectedWorkplace"
         :option-label-class="'text-h6 text-bold'"
@@ -84,10 +85,17 @@
         class="q-mb-lg"
       />
       <LocationItem
+        v-if="selectedWorkplace === OTHER_WORKPLACE_OPTION"
+        map-id="workplace-map"
+        v-model="survey.record.data.workplace"
+        class="q-mb-xl"
+      />
+      <LocationItem
         map-id="origin-map"
         :label="t('form.origin')"
         :hint="t('form.origin_hint')"
         v-model="survey.record.data.origin"
+        class="q-mt-xl"
       />
     </div>
     <div v-if="survey.stepName === 'travel_time'">
@@ -331,6 +339,8 @@ const survey = useSurvey()
 const collector = useCollector()
 const q = useQuasar()
 
+const OTHER_WORKPLACE_OPTION = '_other'
+
 const selectedWorkplace = ref<string>(survey.record.data.workplace?.name || '')
 
 const ageOptions = computed<Option[]>(() => [
@@ -340,15 +350,23 @@ const ageOptions = computed<Option[]>(() => [
   { value: '65+', label: t('form.age_class_option.65') },
 ])
 
-const workplaceOptions = computed<Option[]>(() =>
-  (
+const workplaceOptions = computed<Option[]>(() => {
+  const options = (
     collector.info?.workplaces?.map((wp) => ({
       value: wp.name || '',
       label: wp.name || wp.address || '',
       hint: wp.address || '',
     })) || []
-  ).sort((a, b) => a.label.localeCompare(b.label)),
-)
+  ).sort((a, b) => a.label.localeCompare(b.label))
+  if (collector.info?.open_workplaces) {
+    options.push({
+      value: OTHER_WORKPLACE_OPTION,
+      label: t('form.workplace_option.other'),
+      hint: '',
+    })
+  }
+  return options
+})
 
 const equipmentsOptions = computed<Option[]>(() => [
   { value: 'bike', label: t('form.equipments_option.bike') },
@@ -376,6 +394,15 @@ onMounted(() => {
 })
 
 function onWorkplaceSelected() {
+  if (selectedWorkplace.value === OTHER_WORKPLACE_OPTION) {
+    survey.record.data.workplace = {
+      lat: 0,
+      lon: 0,
+      address: '',
+      name: OTHER_WORKPLACE_OPTION,
+    }
+    return
+  }
   const wp = collector.info?.workplaces?.find(
     (w) => (w.name || w.address || '') === selectedWorkplace.value,
   )
