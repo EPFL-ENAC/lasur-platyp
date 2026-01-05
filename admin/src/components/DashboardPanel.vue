@@ -44,7 +44,7 @@
         icon="picture_as_pdf"
         @click="onPDFExport"
         :loading="exportingPDF"
-        :disable="layout === 'carousel' || stats.loading || exportingPDF"
+        :disable="stats.loading || exportingPDF"
       />
       <q-btn flat color="primary" icon="settings" size="sm">
         <q-menu>
@@ -90,13 +90,13 @@
 
 <script setup lang="ts">
 import { jsPDF } from 'jspdf'
-import html2canvas from 'html2canvas'
 import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
 import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { notifyError } from 'src/utils/notify'
+import { makeChartPage } from 'src/utils/report'
 
 const { t } = useI18n()
 const stats = useStats()
@@ -188,114 +188,95 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
 }
 
 async function onPDFExport() {
-  if (layout.value !== 'grid') {
-    // PDF export only available in grid layout
-    return
+  // Add filter selections
+  const filters = []
+  if (companyFilter.value.length > 0) {
+    let filterText = ''
+    const companyNames = companyFilter.value
+      .map((id) => companyOptions.value.find((c) => `${c.value}` === `${id}`)?.label || id)
+      .join(', ')
+    filterText += `${t('companies')}: ${companyNames}`
+    if (filterText) {
+      filters.push(filterText)
+    }
   }
+  if (campaignFilter.value.length > 0) {
+    let filterText = ''
+    const campaignNames = campaignFilter.value
+      .map((id) => campaignOptions.value.find((c) => `${c.value}` === `${id}`)?.label || id)
+      .join(', ')
+    filterText += `${t('campaigns')}: ${campaignNames}`
+    if (filterText) {
+      filters.push(filterText)
+    }
+  }
+
+  const doc = new jsPDF({ orientation: 'landscape' })
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 10
+  const now = new Date()
+
   exportingPDF.value = true
   try {
-    const doc = new jsPDF({ orientation: 'landscape' })
-
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const pageHeight = doc.internal.pageSize.getHeight()
-    const margin = 10
-    const maxWidth = pageWidth - 2 * margin
-    const maxHeight = pageHeight - 2 * margin
-    let topMargin = 25
-
-    // Add title
-    doc.setFontSize(54)
-    doc.setTextColor(1, 152, 59) // Primary color #01983b
-    doc.text(t('main.brand'), pageWidth / 2, topMargin, { align: 'center' })
-    topMargin += 14
-    doc.setFontSize(24)
-    doc.setTextColor(0, 0, 0) // Reset to black
-    doc.text(t('stats.title'), pageWidth / 2, topMargin, { align: 'center' })
-    topMargin = (pageHeight * 4) / 5
-    doc.setFontSize(10)
-    doc.text(new Date().toLocaleString(), margin, topMargin)
-    // Add filter selections
-    let filterText = ''
-    if (companyFilter.value.length > 0) {
-      const companyNames = companyFilter.value
-        .map((id) => companyOptions.value.find((c) => `${c.value}` === `${id}`)?.label || id)
-        .join(', ')
-      filterText += `${t('companies')}: ${companyNames}`
-    }
-    if (filterText) {
-      topMargin += 7
-      doc.text(filterText, margin, topMargin)
-    }
-    filterText = ''
-    if (campaignFilter.value.length > 0) {
-      const campaignNames = campaignFilter.value
-        .map((id) => campaignOptions.value.find((c) => `${c.value}` === `${id}`)?.label || id)
-        .join(', ')
-      filterText += `${t('campaigns')}: ${campaignNames}`
-    }
-    if (filterText) {
-      topMargin += 7
-      doc.text(filterText, margin, topMargin)
-    }
-
-    // Get all chart containers
-    const chartContainers = document.querySelectorAll('.grid-container .item')
-
+    // Get all carousel slides
+    const chartContainers = document.querySelectorAll('.echarts')
     if (chartContainers.length === 0) {
-      doc.setFontSize(12)
-      doc.text(t('stats.no_charts_to_export'), margin, 40)
-      doc.save(`report_${new Date().toISOString()}.pdf`)
+      notifyError(t('stats.no_charts_to_export'))
       return
     }
 
+    if (layout.value === 'grid') {
+      // Grid layout export
+      let topMargin = 25
+
+      // Add title
+      doc.setFontSize(54)
+      doc.setTextColor(1, 152, 59) // Primary color #01983b
+      doc.text(t('main.brand'), pageWidth / 2, topMargin, { align: 'center' })
+      topMargin += 14
+      doc.setFontSize(24)
+      doc.setTextColor(0, 0, 0) // Reset to black
+      doc.text(t('stats.title'), pageWidth / 2, topMargin, { align: 'center' })
+      topMargin = pageHeight - 15
+      doc.setFontSize(10)
+      doc.text(now.toLocaleString(), margin, topMargin)
+
+      if (filters.length > 0) {
+        doc.text(filters.join(' | '), pageWidth - margin, topMargin, { align: 'right' })
+      }
+      // Move to next page
+      doc.addPage()
+    }
     let capturedCount = 0
-
     for (let i = 0; i < chartContainers.length; i++) {
-      const container = chartContainers[i] as HTMLElement
+      const chart = chartContainers[i] as HTMLElement
 
-      // Skip if container is not visible or has no dimensions
-      if (container.offsetWidth === 0 || container.offsetHeight === 0) {
+      // Skip if chart is not visible or has no dimensions
+      if (chart.offsetWidth === 0 || chart.offsetHeight === 0) {
         continue
       }
 
-      try {
-        const canvas = await html2canvas(container, {
-          scale: 2,
-          logging: false,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-        })
-
-        const imgData = canvas.toDataURL('image/png')
-        const imgWidth = canvas.width
-        const imgHeight = canvas.height
-        const ratio = imgWidth / imgHeight
-
-        // Calculate dimensions to fit the page
-        let finalWidth = maxWidth
-        let finalHeight = finalWidth / ratio
-
-        if (finalHeight > maxHeight) {
-          finalHeight = maxHeight
-          finalWidth = finalHeight * ratio
-        }
-
-        // Make a new page for each chart
-        doc.addPage()
-
-        // Center the image on the page
-        const x = (pageWidth - finalWidth) / 2
-        const y = (pageHeight - finalHeight) / 2
-
-        doc.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight)
+      const added = await makeChartPage(
+        chart,
+        doc,
+        now,
+        t('main.brand'),
+        `${t('stats.title')}`,
+        filters.join(' | '),
+      )
+      if (added) {
         capturedCount++
-      } catch (error) {
-        console.error('Error capturing chart:', error)
+        if (i < chartContainers.length - 1) {
+          doc.addPage()
+        }
       }
     }
 
     if (capturedCount > 0) {
-      doc.save(`report_${new Date().toISOString()}.pdf`)
+      doc.save(
+        `${t('main.brand').replaceAll(' ', '_')}_${t('stats.title').replaceAll(' ', '_')}_${new Date().toISOString()}.pdf`,
+      )
     } else {
       notifyError(t('stats.no_charts_to_export'))
     }

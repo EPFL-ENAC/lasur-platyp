@@ -10,6 +10,13 @@
           <q-btn flat icon="map" @click="showMapFilter = true">
             <q-badge v-if="areaCount > 0" color="orange" floating rounded />
           </q-btn>
+          <q-btn
+            flat
+            icon="picture_as_pdf"
+            @click="onPDFExport"
+            :loading="exportingPDF"
+            :disable="stats.loading || exportingPDF"
+          />
         </q-toolbar>
       </q-card-section>
       <q-separator />
@@ -33,11 +40,14 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+import { jsPDF } from 'jspdf'
 import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
 import type { Campaign, Company } from 'src/models'
 import type { Filter } from 'src/components/models'
 import type { Position } from 'geojson'
+import { notifyError } from 'src/utils/notify'
+import { makeChartPage } from 'src/utils/report'
 
 interface DialogProps {
   modelValue: boolean
@@ -51,6 +61,7 @@ const emit = defineEmits(['update:modelValue'])
 const stats = useStats()
 const showDialog = ref(props.modelValue)
 const showMapFilter = ref(false)
+const exportingPDF = ref(false)
 const { t } = useI18n()
 const campaignsStore = useCampaigns()
 
@@ -118,5 +129,54 @@ function onHide() {
 function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
   areaFilter.value = area
   onQuery()
+}
+
+async function onPDFExport() {
+  exportingPDF.value = true
+  try {
+    // Get all carousel slides
+    const chartContainers = document.querySelectorAll('.echarts')
+    if (chartContainers.length === 0) {
+      notifyError(t('stats.no_charts_to_export'))
+      return
+    }
+
+    const doc = new jsPDF({ orientation: 'landscape' })
+    const now = new Date()
+
+    let capturedCount = 0
+
+    // Capture all visible charts
+    for (let i = 0; i < chartContainers.length; i++) {
+      const chart = chartContainers[i] as HTMLElement
+
+      // Skip if chart is not visible or has no dimensions
+      if (chart.offsetWidth === 0 || chart.offsetHeight === 0) {
+        continue
+      }
+      const added = await makeChartPage(
+        chart,
+        doc,
+        now,
+        t('main.brand'),
+        '',
+        `${props.company.name}${props.campaign ? ` - ${props.campaign.name}` : ''}`,
+      )
+      if (added) {
+        capturedCount++
+      }
+    }
+
+    if (capturedCount > 0) {
+      doc.save(`report_${props.company.name}_${new Date().toISOString()}.pdf`)
+    } else {
+      notifyError(t('stats.no_charts_to_export'))
+    }
+  } catch (error) {
+    console.error('Error generating PDF:', error)
+    notifyError(t('error.pdf_export_failed'))
+  } finally {
+    exportingPDF.value = false
+  }
 }
 </script>
