@@ -125,6 +125,8 @@ export default {
     ev_fleet: 'EV fleet for professional trips',
   },
   stats: {
+    title: 'Mobility report',
+    no_charts_to_export: 'No charts to export as PDF.',
     charts_height: 'Charts height',
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',

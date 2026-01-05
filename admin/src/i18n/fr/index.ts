@@ -127,6 +127,8 @@ export default {
     ev_fleet: 'Flotte de véhicules électriques pour les déplacements professionnels',
   },
   stats: {
+    title: 'Rapport de mobilité',
+    no_charts_to_export: 'Aucun graphique à exporter en PDF.',
     charts_height: 'Hauteur des graphiques',
     nb_employees: "Nombre d'employé.e.s",
     percent_employees: "% d'employé.e.s",
