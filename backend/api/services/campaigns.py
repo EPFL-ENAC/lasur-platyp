@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload
 from fastapi import HTTPException
 from api.models.domain import Campaign, Workplace
 from api.models.query import CampaignResult, CampaignDraft
+from api.services.authz import ACLService
 from api.services.companies import CompanyService
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
@@ -35,6 +36,26 @@ class CampaignService(EntityService):
 
     def __init__(self, session: AsyncSession):
         super().__init__(session)
+
+    async def list_permitted_ids(self, user: User, permission: str) -> list[int]:
+        """List all campaign ids the user has the given permission on
+
+        Uses an efficient single-query approach to avoid N+1 query problems.
+        """
+        # Use ACLService to get all permitted company IDs in a single query
+        acl_service = ACLService(self.session)
+        permitted_company_ids = await acl_service.get_permitted_resource_ids(
+            "company", permission, user.email
+        )
+        if not permitted_company_ids:
+            return []
+
+        res = await self.session.exec(
+            select(Campaign.id).where(
+                Campaign.company_id.in_(permitted_company_ids))
+        )
+        ids = res.all()
+        return ids
 
     async def count(self) -> int:
         """Count all campaigns"""
@@ -87,17 +108,17 @@ class CampaignService(EntityService):
         # Add permission filter
         if user is not None and not is_admin(user):
             permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            if filter is None:
+                filter = {}
             if permitted_company_ids:
-                if filter is None:
-                    filter = {}
                 if "company_id" in filter:
                     filter["company_id"] = self.merge_ids_filter(
                         filter["company_id"], permitted_company_ids)
                 else:
                     filter["company_id"] = permitted_company_ids
             else:
-                # No permitted campaigns, return empty result
-                # Assuming no campaign has company_id -1
+                # No permitted companies, return empty result
+                # Assuming no company has company_id -1
                 filter["company_id"] = [-1]
 
         builder = CampaignQueryBuilder(

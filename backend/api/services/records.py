@@ -96,9 +96,9 @@ class RecordService(EntityService):
         """Get all records matching filter and range"""
         if user is not None and not is_admin(user):
             permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            if filter is None:
+                filter = {}
             if permitted_company_ids:
-                if filter is None:
-                    filter = {}
                 if "company_id" in filter:
                     filter["company_id"] = self.merge_ids_filter(
                         filter["company_id"], permitted_company_ids)
@@ -107,7 +107,7 @@ class RecordService(EntityService):
             else:
                 # No permitted records, return empty result
                 # Assuming no record has company_id -1
-                filter = {"company_id": [-1]}
+                filter["company_id"] = [-1]
 
         builder = RecordQueryBuilder(
             Record, filter, sort, range, {})

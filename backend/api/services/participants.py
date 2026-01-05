@@ -9,9 +9,12 @@ from api.models.domain import Participant
 from api.models.query import ParticipantResult, ParticipantData, ParticipantDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
-from api.auth import User
+from api.auth import User, is_admin, require_admin_or_perm
 import pandas as pd
 import numpy as np
+
+from api.services.campaigns import CampaignService
+from api.services.entities import EntityService
 
 
 class ParticipantQueryBuilder(QueryBuilder):
@@ -31,17 +34,17 @@ class ParticipantQueryBuilder(QueryBuilder):
         return query
 
 
-class ParticipantService:
+class ParticipantService(EntityService):
 
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session)
 
     async def count(self) -> int:
         """Count all participants"""
         count = (await self.session.exec(text("select count(id) from participant"))).scalar()
         return count
 
-    async def get(self, id: int) -> Participant:
+    async def get(self, id: int, user: User = None) -> Participant:
         """Get a participant by id"""
         res = await self.session.exec(
             select(Participant).where(
@@ -50,6 +53,8 @@ class ParticipantService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Participant not found")
+        if user is not None and not is_admin(user):
+            await CampaignService(self.session).get(entity.campaign_id, user)
         return entity
 
     async def get_by_token(self, token: str) -> Participant:
@@ -63,7 +68,7 @@ class ParticipantService:
                 status_code=404, detail="Participant not found")
         return entity
 
-    async def delete(self, id: int) -> Participant:
+    async def delete(self, id: int, user: User = None) -> Participant:
         """Delete a participant by id"""
         res = await self.session.exec(
             select(Participant).where(Participant.id == id)
@@ -72,12 +77,32 @@ class ParticipantService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Participant not found")
+
+        campaign = await CampaignService(self.session).get(entity.campaign_id, user)
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{campaign.company_id}", "update")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> ParticipantResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> ParticipantResult:
         """Get all participants matching filter and range"""
+        # TODO filter by permitted company ids through campaigns
+        if user is not None and not is_admin(user):
+            permitted_campaign_ids = await CampaignService(self.session).list_permitted_ids(user, "read")
+            if filter is None:
+                filter = {}
+            if permitted_campaign_ids:
+                if "campaign_id" in filter:
+                    filter["campaign_id"] = self.merge_ids_filter(
+                        filter["campaign_id"], permitted_campaign_ids)
+                else:
+                    filter["campaign_id"] = permitted_campaign_ids
+            else:
+                # No permitted campaigns, return empty result
+                # Assuming no campaign has campaign_id -1
+                filter["campaign_id"] = [-1]
+
         builder = ParticipantQueryBuilder(
             Participant, filter, sort, range, {})
 
@@ -103,6 +128,11 @@ class ParticipantService:
 
     async def create(self, payload: ParticipantDraft, user: User = None) -> Participant:
         """Create a new participant"""
+        # Get campaign to verify access
+        campaign = await CampaignService(self.session).get(payload.campaign_id, user)
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{campaign.company_id}", "update")
+
         res = await self.session.exec(
             select(Participant).where(
                 Participant.identifier == payload.identifier, Participant.campaign_id == payload.campaign_id)
@@ -133,6 +163,11 @@ class ParticipantService:
 
     async def update(self, id: int, payload: ParticipantDraft, user: User = None) -> Participant:
         """Update a participant"""
+        # Get campaign to verify access
+        campaign = await CampaignService(self.session).get(payload.campaign_id, user)
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{campaign.company_id}", "update")
+
         res = await self.session.exec(
             select(Participant).where(Participant.id == id)
         )
