@@ -43,6 +43,7 @@ export interface Campaign extends Entity {
   company_id?: number
   actions?: EmployerActions
   workplaces?: Workplace[]
+  open_workplaces?: boolean
 }
 
 export interface CompanyAction {

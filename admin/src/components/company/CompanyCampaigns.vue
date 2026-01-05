@@ -99,6 +99,7 @@ function onAdd() {
   selected.value = {
     name: '',
     company_id: props.company.id,
+    open_workplaces: false,
   } as Campaign
   showDialog.value = true
 }

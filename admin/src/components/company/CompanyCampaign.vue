@@ -54,16 +54,26 @@
       <div class="col-12 col-md-6">
         <div class="text-h6 q-mb-md">
           {{ t('campaign.workplaces.title') }}
-          <q-badge color="info" class="on-right">{{ workplacesCount }}</q-badge>
-          <q-btn
-            outline
+          <span v-if="workplacesCount > 0">
+            <q-badge color="info" class="on-right">{{ workplacesCount }}</q-badge>
+            <q-btn
+              outline
+              size="sm"
+              color="info"
+              :label="t('download_csv')"
+              icon="download"
+              class="on-right"
+              @click="onDownloadWorkplaces"
+            />
+          </span>
+        </div>
+        <div>
+          <q-icon
+            :name="item.open_workplaces ? 'check_box' : 'check_box_outline_blank'"
             size="sm"
-            color="info"
-            :label="t('download_csv')"
-            icon="download"
-            class="on-right"
-            @click="onDownloadWorkplaces"
+            class="q-mr-sm"
           />
+          <span class="q-mt-xs">{{ t('campaign.workplaces.open_workplaces') }}</span>
         </div>
         <q-list separator class="fields-list">
           <q-item v-for="(wp, index) in visibleWorkplaces" :key="index">

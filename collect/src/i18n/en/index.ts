@@ -7,7 +7,7 @@ export default {
       terms_conditions: 'Please accept the terms and conditions to continue',
       confidentiality: 'Please accept the privacy policy to continue',
       origin: 'Please enter a starting point',
-      workplace: 'Please enter a work place location',
+      workplace: 'Please enter a workplace location',
       journey_mode: 'Please specify at least one mode of transport for each journey',
       journey_days: 'Please specify the number of days per week for each journey',
       pro_journey_mode: 'Please specify the mode of transport for each journey',
@@ -35,6 +35,9 @@ export default {
     yes: 'Yes',
     no: 'No',
     workplace: 'Your usual place of work',
+    workplace_option: {
+      other: 'Other workplace (to be specified)',
+    },
     origin: 'Where do you usually leave from to reach your workplace?',
     origin_hint:
       'This confidential information will only be used to calculate your mobility options for your home-work journey.',
@@ -79,7 +82,7 @@ export default {
     },
     intermodality: 'Which modes of transport do you use?',
     intermodality_hint:
-      'For one typical journey from home to work: click on the modes of transport you use, arrange them in the order used from your home to your work place, then indicate on the slider the number of days per week that you use this mode or combination of modes of transport. Repeat these steps for another typical journey if you wish.',
+      'For one typical journey from home to work: click on the modes of transport you use, arrange them in the order used from your home to your workplace, then indicate on the slider the number of days per week that you use this mode or combination of modes of transport. Repeat these steps for another typical journey if you wish.',
     journey: {
       label_idx: 'Recommendation #{index}',
       label_option_idx: 'Option #{index}',

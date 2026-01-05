@@ -44,10 +44,14 @@ export default {
       'Téléversez un fichier CSV pour ajouter/mette à jour plusieurs lieux de travail à la campagne en une seule fois. Le fichier doit contenir les colonnes suivantes : name, address, lat, lon.',
     workplaces: {
       title: 'Lieux de travail',
-      hint: 'Déclarez les lieux de travail associés à cette campagne, au moins un est requis.',
+      hint: 'Déclarez les lieux de travail associés à cette campagne : soit les lieux de travail peuvent être déclarés par le participant ou au moins un est requis.',
       name: 'Nom',
       name_hint: 'Nom du lieu de travail (ex. "Hub logistique 12").',
       required: 'Au moins un lieu de travail doit être défini pour la campagne.',
+      open_workplaces: 'Lieux de travail ouverts',
+      open_workplaces_hint:
+        "Si activé, les participants pourront sélectionner n'importe quel lieu de travail lors du remplissage de l'enquête.",
+      workplaces_list: 'Liste des lieux de travail connus',
     },
   },
   role: {

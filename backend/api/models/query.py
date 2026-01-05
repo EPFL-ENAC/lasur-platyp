@@ -102,6 +102,7 @@ class CampaignInfo(BaseModel):
     contact_name: Optional[str] = None
     info_url: Optional[str] = None
     workplaces: List[WorkplaceRead] = []
+    open_workplaces: Optional[bool] = None
 
 
 class Frequency(BaseModel):

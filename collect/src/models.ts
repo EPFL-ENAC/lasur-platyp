@@ -121,6 +121,7 @@ export interface CampaignInfo {
   contact_email?: string
   info_url?: string
   workplaces: AddressLocation[]
+  open_workplaces?: boolean
 }
 
 export interface IsochronesParams {

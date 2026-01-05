@@ -43,10 +43,14 @@ export default {
       'Upload a CSV file to add/update multiple workplaces to the campaign at once. The file must contain the following columns: name, address, lat, lon.',
     workplaces: {
       title: 'Workplaces',
-      hint: 'Declare the workplaces associated with this campaign, at least one is required.',
+      hint: 'Declare the workplaces associated with this campaign: either workplaces can be declared by the participant or at least one is required.',
       name: 'Name',
       name_hint: 'Name of the workplace (e.g., "Logistic Hub 12").',
       required: 'At least one workplace must be defined for the campaign.',
+      open_workplaces: 'Open workplaces',
+      open_workplaces_hint:
+        'If enabled, participants will be able to select any workplace when filling the survey.',
+      workplaces_list: 'List of known workplaces',
     },
   },
   role: {
