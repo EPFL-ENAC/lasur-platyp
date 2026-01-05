@@ -127,6 +127,8 @@ export default {
     ev_fleet: 'Flotte de véhicules électriques pour les déplacements professionnels',
   },
   stats: {
+    title: 'Rapport de mobilité',
+    no_charts_to_export: 'Aucun graphique à exporter en PDF.',
     charts_height: 'Hauteur des graphiques',
     nb_employees: "Nombre d'employé.e.s",
     percent_employees: "% d'employé.e.s",
@@ -400,6 +402,8 @@ export default {
       "Erreur lors du chargement de l'entreprise. Il se peut qu'elle n'existe pas ou que vous n'y ayez pas accès.",
     loading_record:
       "Erreur lors du chargement de l'enregistrement. Il peut ne pas exister ou vous n'y avez pas accès.",
+    pdf_export_failed: "Erreur lors de l'exportation du PDF. Veuillez réessayer plus tard.",
+    no_charts_to_export: 'Aucun graphique à exporter en PDF.',
   },
   action: 'Mesure',
   add: 'Ajouter',
