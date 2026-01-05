@@ -44,7 +44,7 @@
         icon="picture_as_pdf"
         @click="onPDFExport"
         :loading="exportingPDF"
-        :disable="layout === 'carousel'"
+        :disable="layout === 'carousel' || stats.loading || exportingPDF"
       />
       <q-btn flat color="primary" icon="settings" size="sm">
         <q-menu>
@@ -96,6 +96,7 @@ import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
+import { notifyError } from 'src/utils/notify'
 
 const { t } = useI18n()
 const stats = useStats()
@@ -187,18 +188,12 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
 }
 
 async function onPDFExport() {
+  if (layout.value !== 'grid') {
+    // PDF export only available in grid layout
+    return
+  }
   exportingPDF.value = true
   try {
-    // Temporarily switch to grid view to capture all charts
-    const originalLayout = layout.value
-    if (layout.value === 'carousel') {
-      layout.value = 'grid'
-      // Wait for the DOM to update
-      await nextTick()
-      // Wait a bit more for charts to render
-      await new Promise((resolve) => setTimeout(resolve, 500))
-    }
-
     const doc = new jsPDF({ orientation: 'landscape' })
 
     const pageWidth = doc.internal.pageSize.getWidth()
@@ -206,14 +201,17 @@ async function onPDFExport() {
     const margin = 10
     const maxWidth = pageWidth - 2 * margin
     const maxHeight = pageHeight - 2 * margin
-    let topMargin = 15
+    let topMargin = 25
 
     // Add title
-    doc.setFontSize(36)
+    doc.setFontSize(54)
     doc.setTextColor(1, 152, 59) // Primary color #01983b
-    doc.text(t('stats.title'), margin, topMargin)
-    topMargin += 7
+    doc.text(t('main.brand'), pageWidth / 2, topMargin, { align: 'center' })
+    topMargin += 14
+    doc.setFontSize(24)
     doc.setTextColor(0, 0, 0) // Reset to black
+    doc.text(t('stats.title'), pageWidth / 2, topMargin, { align: 'center' })
+    topMargin = (pageHeight * 4) / 5
     doc.setFontSize(10)
     doc.text(new Date().toLocaleString(), margin, topMargin)
     // Add filter selections
@@ -241,13 +239,12 @@ async function onPDFExport() {
     }
 
     // Get all chart containers
-    const chartContainers = document.querySelectorAll('.item')
+    const chartContainers = document.querySelectorAll('.grid-container .item')
 
     if (chartContainers.length === 0) {
       doc.setFontSize(12)
       doc.text(t('stats.no_charts_to_export'), margin, 40)
       doc.save(`report_${new Date().toISOString()}.pdf`)
-      layout.value = originalLayout
       return
     }
 
@@ -283,7 +280,7 @@ async function onPDFExport() {
           finalWidth = finalHeight * ratio
         }
 
-        // Add new page for each chart except the first
+        // Make a new page for each chart
         doc.addPage()
 
         // Center the image on the page
@@ -299,12 +296,12 @@ async function onPDFExport() {
 
     if (capturedCount > 0) {
       doc.save(`report_${new Date().toISOString()}.pdf`)
+    } else {
+      notifyError(t('stats.no_charts_to_export'))
     }
-
-    // Restore original layout
-    layout.value = originalLayout
   } catch (error) {
     console.error('Error generating PDF:', error)
+    notifyError(t('error.pdf_export_failed'))
   } finally {
     exportingPDF.value = false
   }

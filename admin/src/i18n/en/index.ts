@@ -397,6 +397,8 @@ export default {
     form_invalid: 'Some fields are invalid.',
     loading_company: 'Error loading company. It may not exist or you do not have access to it.',
     loading_record: 'Error loading record. It may not exist or you do not have access to it.',
+    pdf_export_failed: 'Error exporting PDF. Please try again later.',
+    no_charts_to_export: 'No charts to export as PDF.',
   },
   action: 'Measure',
   add: 'Add',
