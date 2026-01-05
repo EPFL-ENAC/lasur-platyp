@@ -108,17 +108,17 @@ class CampaignService(EntityService):
         # Add permission filter
         if user is not None and not is_admin(user):
             permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            if filter is None:
+                filter = {}
             if permitted_company_ids:
-                if filter is None:
-                    filter = {}
                 if "company_id" in filter:
                     filter["company_id"] = self.merge_ids_filter(
                         filter["company_id"], permitted_company_ids)
                 else:
                     filter["company_id"] = permitted_company_ids
             else:
-                # No permitted campaigns, return empty result
-                # Assuming no campaign has company_id -1
+                # No permitted companies, return empty result
+                # Assuming no company has company_id -1
                 filter["company_id"] = [-1]
 
         builder = CampaignQueryBuilder(

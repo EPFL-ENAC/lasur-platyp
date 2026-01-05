@@ -14,7 +14,6 @@ import pandas as pd
 import numpy as np
 
 from api.services.campaigns import CampaignService
-from api.services.companies import CompanyService
 from api.services.entities import EntityService
 
 
@@ -91,9 +90,9 @@ class ParticipantService(EntityService):
         # TODO filter by permitted company ids through campaigns
         if user is not None and not is_admin(user):
             permitted_campaign_ids = await CampaignService(self.session).list_permitted_ids(user, "read")
+            if filter is None:
+                filter = {}
             if permitted_campaign_ids:
-                if filter is None:
-                    filter = {}
                 if "campaign_id" in filter:
                     filter["campaign_id"] = self.merge_ids_filter(
                         filter["campaign_id"], permitted_campaign_ids)
@@ -129,7 +128,7 @@ class ParticipantService(EntityService):
 
     async def create(self, payload: ParticipantDraft, user: User = None) -> Participant:
         """Create a new participant"""
-        # Get campaign to verifie access
+        # Get campaign to verify access
         campaign = await CampaignService(self.session).get(payload.campaign_id, user)
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{campaign.company_id}", "update")
@@ -164,12 +163,11 @@ class ParticipantService(EntityService):
 
     async def update(self, id: int, payload: ParticipantDraft, user: User = None) -> Participant:
         """Update a participant"""
-        # Get campaign to verifie access
+        # Get campaign to verify access
         campaign = await CampaignService(self.session).get(payload.campaign_id, user)
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{campaign.company_id}", "update")
 
-        await CampaignService(self.session).get(payload.campaign_id, user)
         res = await self.session.exec(
             select(Participant).where(Participant.id == id)
         )
