@@ -105,7 +105,7 @@ const globalActions = computed(() => {
 })
 
 function showIsochrones(reco: string) {
-  return ['marche', 'velo', 'vae', 'cargo'].includes(reco)
+  return ['marche', 'velo', 'vae', 'cargo', 'train', 'tpu'].includes(reco)
 }
 
 function zoomIsochrones(reco: string) {

@@ -237,6 +237,8 @@ export default {
       walk: 'à pied',
       bike: 'en vélo',
       ebike: 'en vélo électrique',
+      train: 'en train',
+      transit: 'en transports publics',
     },
     categories: {
       food: 'Alimentation',
