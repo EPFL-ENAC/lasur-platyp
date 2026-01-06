@@ -148,6 +148,7 @@ export default {
     moto: 'At present, you mainly use a motorcycle, scooter or moped to get to your workplace.',
     car: 'At present, you mainly use a car to get to your workplace.',
     train: 'At present, you mainly use a train to get to your workplace.',
+    inter: 'At present, you mainly use a combination of modes to get to your workplace.',
     combined: 'At present, you mainly use a combination of modes to get to your workplace.',
     sustainable:
       'Congratulations! Your commuting habits are already sustainable. The following alternatives are also available to you:',

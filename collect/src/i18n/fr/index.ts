@@ -155,6 +155,7 @@ export default {
     moto: 'Actuellement, vous vous rendez au travail principalement en moto ou en scooter.',
     car: 'Actuellement, vous vous rendez au travail principalement en voiture.',
     train: 'Actuellement, vous vous rendez au travail principalement en train.',
+    inter: 'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     combined:
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     sustainable:
