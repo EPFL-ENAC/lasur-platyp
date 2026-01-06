@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import JourneyItem from 'src/components/form/JourneyItem.vue'
+import JourneyItem from 'src/components/form/steps/JourneyItem.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

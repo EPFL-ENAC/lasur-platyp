@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import SectionItem from 'src/components/form/SectionItem.vue'
-import BenefitsPanel from 'src/components/form/BenefitsPanel.vue'
+import BenefitsPanel from 'src/components/form/steps/BenefitsPanel.vue'
 import PlaceItem from 'src/components/form/PlaceItem.vue'
 
 const { t } = useI18n()

@@ -3,139 +3,32 @@
     <!--pre>{{ survey.step }} - {{ survey.stepName }}</pre-->
     <div v-if="survey.stepName === 'agreement'">
       <SectionItem :label="t('form.agreement')" :hint="t('form.agreement_hint')" class="q-mb-lg" />
-      <div class="bg-primary rounded-borders q-pa-md q-mt-lg">
-        <q-checkbox
-          v-model="survey.record.data.terms_conditions"
-          :label="t('form.terms_conditions')"
-          size="xl"
-          color="green-6"
-          class="text-h6"
-        />
-        <div class="text-h6 q-ml-xl">
-          <a href="https://modus-ge.ch/toolkit-cgu" target="_blank" class="text-secondary q-ml-sm">
-            {{ t('form.terms_conditions_link') }}
-            <q-icon name="open_in_new" size="xs" />
-          </a>
-        </div>
-      </div>
-      <div class="bg-primary rounded-borders q-pa-md q-mt-lg">
-        <q-checkbox
-          v-model="survey.record.data.confidentiality"
-          :label="t('form.confidentiality')"
-          size="xl"
-          color="green-6"
-          class="text-h6"
-        />
-        <div class="text-h6 q-ml-xl">
-          <a
-            href="https://modus-ge.ch/toolkit-privacy-notice"
-            target="_blank"
-            class="text-secondary q-ml-sm"
-          >
-            {{ t('form.confidentiality_link') }}
-            <q-icon name="open_in_new" size="xs"
-          /></a>
-        </div>
-      </div>
+      <AgreementPanel />
     </div>
     <div v-if="survey.stepName === 'age_class'">
-      <ChoiceItem
-        :label="t('form.age_class')"
-        :options="ageOptions"
-        v-model="survey.record.data.age_class"
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
-      />
+      <AgePanel />
     </div>
     <div v-if="survey.stepName === 'employment'">
-      <NumberItem
-        :label="t('form.employment_rate')"
-        v-model="survey.record.data.employment_rate"
-        :min="0"
-        :max="100"
-        :step="5"
-        unit="%"
-        class="q-mb-lg"
-      />
-      <NumberItem
-        :label="t('form.remote_work_rate')"
-        v-model="survey.record.data.remote_work_rate"
-        :min="0"
-        :max="100"
-        :step="5"
-        unit="%"
-        class="q-mb-lg"
-      />
-      <ToggleItem
-        :label="t('form.company_vehicle')"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-        v-model="survey.record.data.company_vehicle"
-        class="q-mb-lg"
-      />
+      <EmploymentPanel />
     </div>
     <div v-if="survey.stepName === 'places'">
       <div class="text-h4 text-bold">{{ t('form.workplace') }}</div>
-      <SelectItem
-        v-if="workplaceOptions.length > 0"
-        :options="workplaceOptions"
-        v-model="selectedWorkplace"
-        :option-label-class="'text-h6 text-bold'"
-        :col="workplaceOptions.length > 1 ? 2 : 1"
-        @update:modelValue="onWorkplaceSelected"
-        class="q-mb-lg"
-      />
-      <LocationItem
-        v-if="selectedWorkplace === OTHER_WORKPLACE_OPTION"
-        map-id="workplace-map"
-        v-model="survey.record.data.workplace"
-        class="q-mb-xl"
-      />
-      <LocationItem
-        map-id="origin-map"
-        :label="t('form.origin')"
-        :hint="t('form.origin_hint')"
-        v-model="survey.record.data.origin"
-        class="q-mt-xl"
-      />
+      <PlacesPanel />
     </div>
     <div v-if="survey.stepName === 'travel_time'">
-      <NumberItem
-        :label="t('form.travel_time')"
-        v-model="survey.record.data.travel_time"
-        :min="5"
-        :max="120"
-        :step="5"
-        :unit-hint="t('form.travel_time_minutes')"
-      />
+      <TravelTimePanel />
     </div>
     <div v-if="survey.stepName === 'constraints'">
-      <ChoiceItem
-        :label="t('form.constraints')"
-        :options="constraintsOptions"
-        v-model="survey.record.data.constraints"
-        multiple
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
-      />
+      <ConstraintsPanel />
     </div>
     <div v-if="survey.stepName === 'equipments'">
-      <ChoiceItem
-        :label="t('form.equipments')"
-        :options="equipmentsOptions"
-        v-model="survey.record.data.equipments"
-        multiple
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
-      />
+      <EquipmentsPanel />
     </div>
     <div v-if="survey.stepName === 'intermodality'">
       <JourneysPanel />
     </div>
     <div v-if="survey.stepName === 'travel_pro'">
-      <ToggleItem
-        :label="t('form.travel_pro')"
-        v-model="survey.record.data.travel_pro"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
-      />
+      <TravelProPanel />
     </div>
     <div v-if="survey.stepName === 'freq_mod_pro'">
       <ProJourneysPanel
@@ -149,112 +42,11 @@
         :hint="t('form.importance_hint')"
         class="q-mb-lg"
       />
-      <div class="row">
-        <div class="col-sm-12 col-md-6">
-          <RatingItem
-            :label="t('form.importance_time')"
-            v-model="survey.record.data.importance_time"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.importance_cost')"
-            v-model="survey.record.data.importance_cost"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.importance_flex')"
-            v-model="survey.record.data.importance_flex"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.importance_rel')"
-            v-model="survey.record.data.importance_rel"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <RatingItem
-            :label="t('form.importance_comfort')"
-            v-model="survey.record.data.importance_comfort"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.importance_most')"
-            v-model="survey.record.data.importance_most"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.importance_env')"
-            v-model="survey.record.data.importance_env"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-        </div>
-      </div>
+      <ImportancePanel />
     </div>
     <div v-if="survey.stepName === 'needs'">
       <SectionItem :label="t('form.needs')" :hint="t('form.needs_hint')" class="q-mb-lg" />
-      <div class="row">
-        <div class="col-sm-12 col-md-6">
-          <RatingItem
-            :label="t('form.mode.walking')"
-            v-model="survey.record.data.needs_walking"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.mode.bike')"
-            v-model="survey.record.data.needs_bike"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.mode.pub')"
-            v-model="survey.record.data.needs_pub"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <RatingItem
-            :label="t('form.mode.train')"
-            v-model="survey.record.data.needs_train"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.mode.moto')"
-            v-model="survey.record.data.needs_moto"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-          <RatingItem
-            :label="t('form.mode.car')"
-            v-model="survey.record.data.needs_car"
-            :max="5"
-            label-class="text-h5"
-            class="q-mb-lg"
-          />
-        </div>
-      </div>
+      <NeedsPanel />
     </div>
     <div v-if="survey.stepName === 'recommendations'">
       <RecommendationsPanel />
@@ -316,111 +108,35 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar'
-import type { Option } from 'src/components/form/models'
-import ChoiceItem from 'src/components/form/ChoiceItem.vue'
-import SelectItem from 'src/components/form/SelectItem.vue'
-import JourneysPanel from 'src/components/form/JourneysPanel.vue'
-import ProJourneysPanel from 'src/components/form/ProJourneysPanel.vue'
-import NumberItem from 'src/components/form/NumberItem.vue'
-import ToggleItem from 'src/components/form/ToggleItem.vue'
 import SectionItem from 'src/components/form/SectionItem.vue'
-import RatingItem from 'src/components/form/RatingItem.vue'
-import LocationItem from 'src/components/form/LocationItem.vue'
-import RecommendationsPanel from 'src/components/form/RecommendationsPanel.vue'
-import ChangePanel from 'src/components/form/ChangePanel.vue'
-import Change2Panel from 'src/components/form/Change2Panel.vue'
-import InfoPanel from 'src/components/form/InfoPanel.vue'
-import FinalPanel from 'src/components/form/FinalPanel.vue'
+import AgreementPanel from 'src/components/form/steps/AgreementPanel.vue'
+import AgePanel from 'src/components/form/steps/AgePanel.vue'
+import EmploymentPanel from 'src/components/form/steps/EmploymentPanel.vue'
+import PlacesPanel from 'src/components/form/steps/PlacesPanel.vue'
+import EquipmentsPanel from 'src/components/form/steps/EquipmentsPanel.vue'
+import ConstraintsPanel from 'src/components/form/steps/ConstraintsPanel.vue'
+import JourneysPanel from 'src/components/form/steps/JourneysPanel.vue'
+import ProJourneysPanel from 'src/components/form/steps/ProJourneysPanel.vue'
+import TravelTimePanel from 'src/components/form/steps/TravelTimePanel.vue'
+import TravelProPanel from 'src/components/form/steps/TravelProPanel.vue'
+import ImportancePanel from 'src/components/form/steps/ImportancePanel.vue'
+import NeedsPanel from 'src/components/form/steps/NeedsPanel.vue'
+import RecommendationsPanel from 'src/components/form/steps/RecommendationsPanel.vue'
+import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
+import Change2Panel from 'src/components/form/steps/Change2Panel.vue'
+import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
+import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
 import { notifyError } from 'src/utils/notify'
 
 const { t, locale } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
-const q = useQuasar()
-
-const OTHER_WORKPLACE_OPTION = '_other'
-
-const selectedWorkplace = ref<string>(survey.record.data.workplace?.name || '')
-
-const ageOptions = computed<Option[]>(() => [
-  { value: '16-24', label: t('form.age_class_option.16_24') },
-  { value: '25-44', label: t('form.age_class_option.25_44') },
-  { value: '45-64', label: t('form.age_class_option.45_64') },
-  { value: '65+', label: t('form.age_class_option.65') },
-])
-
-const workplaceOptions = computed<Option[]>(() => {
-  const options = (
-    collector.info?.workplaces?.map((wp) => ({
-      value: wp.name || '',
-      label: wp.name || wp.address || '',
-      hint: wp.address || '',
-    })) || []
-  ).sort((a, b) => a.label.localeCompare(b.label))
-  if (collector.info?.open_workplaces) {
-    options.push({
-      value: OTHER_WORKPLACE_OPTION,
-      label: t('form.workplace_option.other'),
-      hint: '',
-    })
-  }
-  return options
-})
-
-const equipmentsOptions = computed<Option[]>(() => [
-  { value: 'bike', label: t('form.equipments_option.bike') },
-  { value: 'ebike', label: t('form.equipments_option.ebike') },
-  { value: 'upt_subs', label: t('form.equipments_option.upt_subs') },
-  { value: 'train_subs', label: t('form.equipments_option.train_subs') },
-  { value: 'mob_subs', label: t('form.equipments_option.mob_subs') },
-  { value: 'moto', label: t('form.equipments_option.moto') },
-  { value: 'car', label: t('form.equipments_option.car') },
-  { value: 'ev', label: t('form.equipments_option.ev') },
-])
-
-const constraintsOptions = computed<Option[]>(() => [
-  { value: 'dependent', label: t('form.constraints_option.dependent') },
-  { value: 'heavy', label: t('form.constraints_option.heavy') },
-  { value: 'night', label: t('form.constraints_option.night') },
-  { value: 'disabled', label: t('form.constraints_option.disabled') },
-  { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
-])
 
 onMounted(() => {
   if (survey.tokenOrSlug) {
     void collector.loadInfo(survey.record.token)
   }
 })
-
-function onWorkplaceSelected() {
-  if (selectedWorkplace.value === OTHER_WORKPLACE_OPTION) {
-    survey.record.data.workplace = {
-      lat: 0,
-      lon: 0,
-      address: '',
-      name: OTHER_WORKPLACE_OPTION,
-    }
-    return
-  }
-  const wp = collector.info?.workplaces?.find(
-    (w) => (w.name || w.address || '') === selectedWorkplace.value,
-  )
-  if (wp) {
-    survey.record.data.workplace = {
-      lat: wp.lat,
-      lon: wp.lon,
-      address: wp.address,
-      name: wp.name,
-    }
-  } else {
-    survey.record.data.workplace = {
-      lat: 0,
-      lon: 0,
-      address: '',
-    }
-  }
-}
 
 function nextStep() {
   if (survey.stepName === 'agreement') {
@@ -472,20 +188,7 @@ function nextStep() {
   survey.incStep()
   if (survey.tokenOrSlug) {
     void collector.loadInfo(survey.record.token)
-    if (survey.stepName === 'places') {
-      if (selectedWorkplace.value === '') {
-        // restore recorded workplace or select first available
-        selectedWorkplace.value = survey.record.data.workplace?.name || ''
-        if (selectedWorkplace.value === '') {
-          const firstWorkplace = collector.info?.workplaces?.[0]
-          if (firstWorkplace) {
-            selectedWorkplace.value =
-              survey.record.data.workplace?.name || firstWorkplace.name || ''
-          }
-        }
-        onWorkplaceSelected()
-      }
-    } else if (survey.stepName === 'recommendations') {
+    if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
       survey.record.data.comments = ''
       collector

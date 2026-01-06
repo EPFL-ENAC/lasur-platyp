@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import SectionItem from 'src/components/form/SectionItem.vue'
-import BenefitsPanel from 'src/components/form/BenefitsPanel.vue'
+import BenefitsPanel from 'src/components/form/steps/BenefitsPanel.vue'
 import IsochronesMap from 'src/components/form/IsochronesMap.vue'
 
 const { t } = useI18n()
