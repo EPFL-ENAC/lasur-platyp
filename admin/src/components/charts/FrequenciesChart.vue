@@ -1,7 +1,7 @@
 <template>
   <div :style="`height: ${height}px; width: 100%;`">
     <e-charts
-      v-if="total > 0"
+      v-if="hasData"
       ref="chart"
       autoresize
       :init-options="initOptions"
@@ -50,6 +50,14 @@ const props = withDefaults(defineProps<Props>(), {
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
+
+const hasData = computed(() => {
+  if (!stats.frequencies || !stats.frequencies[props.type]) {
+    return false
+  }
+  const frequencies = stats.frequencies[props.type] as Frequencies
+  return frequencies.data.length > 0
+})
 
 watch(
   () => stats.loading,
