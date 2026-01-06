@@ -422,7 +422,7 @@ export default {
   company_campaign: 'Entreprise (campagne)',
   company_removed: 'Entreprise supprimée',
   content: 'Contenu',
-  cookbook: 'Recettes',
+  doc: 'Documentation',
   dashboard: 'Tableau de bord',
   data: 'Données',
   download_csv: 'Télécharger CSV',
@@ -439,10 +439,13 @@ export default {
   group: 'Groupe',
   help: 'Aide',
   identifier: 'Identifiant',
+  introduction_text:
+    "Bienvenue dans l'interface d'administration de Mobility Toolkit. Utilisez le menu pour naviguer à travers les différentes sections et gérer les entreprises, les campagnes, les utilisateurs, et consulter les statistiques de mobilité.",
   label_en: 'Libellé (EN)',
   label_fr: 'Libellé (FR)',
   last_modified: 'Dernière modification',
   last_name: 'Nom',
+  legal_notice: 'Mentions légales',
   link_copied:
     'Lien copié dans le presse-papiers, vous pouvez maintenant le partager avec le participant',
   location: 'Localisation',

@@ -98,27 +98,23 @@
         </q-item>
 
         <q-item-label class="text-h6" header>{{ t('help') }}</q-item-label>
-        <q-item clickable :to="'/cookbook'">
+        <q-item clickable :to="'/doc'">
           <q-item-section avatar>
-            <q-icon name="fa-solid fa-bowl-rice" size="xs" />
+            <q-icon name="fa-solid fa-book" size="xs" />
           </q-item-section>
           <q-item-section>
-            <q-item-label header>{{ t('cookbook') }}</q-item-label>
+            <q-item-label header>{{ t('doc') }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="showTermsDialog = true">
+        <q-item clickable :to="'/legal-notice'">
           <q-item-section avatar>
             <q-icon name="fa-solid fa-gavel" size="xs" />
           </q-item-section>
           <q-item-section>
-            <q-item-label header>{{ t('terms_and_conditions') }}</q-item-label>
+            <q-item-label header>{{ t('legal_notice') }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
-      <markdown-dialog
-        v-model="showTermsDialog"
-        :text="locale === 'fr' ? TermsConditionsFr : TermsConditionsEn"
-      />
     </q-drawer>
 
     <q-page-container v-if="authStore.isAuthenticated">
@@ -130,16 +126,12 @@
 <script setup lang="ts">
 import { Cookies } from 'quasar'
 import { locales } from 'boot/i18n'
-import MarkdownDialog from 'src/components/MarkdownDialog.vue'
-import TermsConditionsEn from 'src/assets/docs/en/terms-conditions.md'
-import TermsConditionsFr from 'src/assets/docs/fr/terms-conditions.md'
 
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const router = useRouter()
 
 const leftDrawerOpen = ref(false)
-const showTermsDialog = ref(false)
 
 const username = computed(() => authStore.profile?.email)
 const localeOptions = computed(() => {

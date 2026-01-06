@@ -45,6 +45,11 @@ a:hover.modus {
   color: #01983b;
 }
 
+.q-markdown--heading-h2,
+.q-markdown--heading-h3 {
+  margin-top: 0 !important;
+}
+
 .text-help {
   color: $grey-6;
 }
