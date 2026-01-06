@@ -73,5 +73,11 @@ const modeOptions = computed<Option[]>(() => [
     ],
   },
   { value: 'train', label: t('form.mode.train'), icon: 'train' },
+  {
+    value: 'other',
+    label: t('form.mode.other'),
+    icon: '/icons/scooter.svg',
+    hint: t('form.mode.other_hint'),
+  },
 ])
 </script>

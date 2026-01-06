@@ -78,6 +78,8 @@ export default {
       pub_train: 'Public transport and train',
       car_moto: 'Car and motorcycle/scooter',
       boat: 'Boat',
+      other: 'Other',
+      other_hint: 'Kick-scooter, rollerblades, skateboard, hoverboard...',
       combined: 'How do you usually get to your workplace?',
     },
     intermodality: 'Which modes of transport do you use?',

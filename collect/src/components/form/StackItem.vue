@@ -27,7 +27,7 @@
                   >{{ `${withPosition ? idx + 1 + ' - ' : ''}` }}{{ getOption(sel)?.label }}</span
                 >
               </div>
-              <q-item-label v-if="getOption(sel)?.hint" class="text-h6">
+              <q-item-label v-if="getOption(sel)?.hint" class="text-h6 on-right">
                 {{ getOption(sel)?.hint }}
               </q-item-label>
             </q-item-section>
@@ -44,13 +44,22 @@
             :id="option.value"
             draggable="true"
             @dragstart="onDragStart"
-            :icon="option.icon"
             :title="option.label"
             color="secondary"
             size="xl"
             class="on-right on-left q-mb-md"
             @click="onAdd(option)"
-          />
+          >
+            <q-img
+              v-if="option.icon?.endsWith('.svg')"
+              :src="option.icon"
+              style="width: 40px; height: 40px"
+              no-spinner
+              no-transition
+              class="icon-white"
+            />
+            <q-icon v-else :name="option.icon" color="white" size="lg" />
+          </q-btn>
           <q-btn
             v-else
             :id="option.value"
@@ -75,6 +84,7 @@
                       :src="child.icon"
                       style="width: 40px; height: 40px"
                       no-spinner
+                      no-transition
                       class="icon-primary"
                     />
                     <q-icon v-else :name="child.icon" color="primary" size="lg" />
@@ -249,5 +259,8 @@ function onDropInsert(e: DragEvent, index: number) {
 }
 .icon-primary {
   filter: invert(26%) sepia(77%) saturate(3932%) hue-rotate(140deg) brightness(102%) contrast(99%);
+}
+.icon-white {
+  filter: invert(100%);
 }
 </style>
