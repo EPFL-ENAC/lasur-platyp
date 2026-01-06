@@ -255,7 +255,7 @@ async function loadPois(categories: string[]) {
     bbox,
   })
   if (data) {
-    showPois(data)
+    showPois(categories, data)
   }
   loadingPois.value = false
 }
@@ -309,7 +309,7 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
   })
 }
 
-function showPois(geojson: GeoJSON.FeatureCollection) {
+function showPois(categories: string[], geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
   const sources: { [key: string]: GeoJSON.FeatureCollection } = {}
   // set a color property based on category
@@ -339,6 +339,7 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
   })
   // add a layer per category
   Object.entries(sources).forEach(([cat, data]) => {
+    if (!categories.includes(cat)) return
     const layerId = `pois-layer-${cat}`
     if (map.value?.getSource(layerId)) {
       ;(map.value?.getSource(layerId) as GeoJSONSource).setData(data)
@@ -368,7 +369,8 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
 function onShowPoisMap(name: string) {
   if (!map.value) return
   const layerId = `pois-layer-${name}`
-  const hasLayer = map.value.getLayer(layerId) !== undefined
+  const layer = map.value.getLayer(layerId)
+  const hasLayer = layer !== undefined
   if (!hasLayer) {
     // load POIs in the current map bbox
     if (map.value) {
