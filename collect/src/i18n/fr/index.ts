@@ -94,15 +94,16 @@ export default {
       days_per_week: 'Jours par semaine',
     },
     intermodality_pro: 'Quel est le principal mode de transport que vous utilisez ?',
-    intermodality_pro_hint: 'Décrivez un ou plusieurs trajets professionnels typiques.',
+    intermodality_pro_hint: 'Décrivez un ou plusieurs déplacements professionnels typiques.',
     journey_pro: {
-      label_idx: 'Trajet professionnel #{index}',
-      hint: "Sélectionnez l'aire de destination et le principal mode de transport d'un trajet professionnel typique.",
-      add: 'Ajouter un trajet',
-      remove: 'Supprimer le trajet',
+      label_idx: 'Déplacement professionnel #{index}',
+      hint: "Sélectionnez l'aire de destination et le principal mode de transport d'un déplacement professionnel typique.",
+      add: 'Ajouter un déplacement',
+      remove: 'Supprimer le déplacement',
       days_per_year: 'Jours par année',
     },
-    travel_pro: 'Effectuez-vous des déplacements professionnels ?',
+    travel_pro:
+      'Effectuez-vous des déplacements dans la journée dans le cadre de votre travail (déplacements professionnels) ?',
     days_per_month: 'En jours par mois',
     freq_mod_pro:
       'Combien de fois par mois utilisez-vous ces modes pour vos déplacements professionnels ?',
