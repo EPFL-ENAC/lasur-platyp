@@ -57,12 +57,6 @@
             :rules="[(val) => !val || /^(http|https):/.test(val) || t('valid_url_required')]"
             class="q-mb-md"
           />
-          <employer-actions-input
-            v-model="selected.actions"
-            :company="selected"
-            :label="t('company.actions')"
-            class="q-mt-lg"
-          />
         </q-form>
       </q-card-section>
 
@@ -78,7 +72,6 @@
 
 <script setup lang="ts">
 import type { Company } from 'src/models'
-import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
 import { notifyError } from 'src/utils/notify'
 
 interface DialogProps {

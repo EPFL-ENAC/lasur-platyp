@@ -103,17 +103,8 @@ class ModalTypoService:
         """Get employer actions for a record"""
         url = f"{self.url}/modal-typo/empl"
 
-        # get company/campaign actions
-        actions = company.actions if company.actions else {}
-        if campaign.actions:
-            # campaign actions replaces company actions if actions are not empty lists
-            has_actions = False
-            for key, value in campaign.actions.items():
-                if len(value) > 0:
-                    has_actions = True
-                    break
-            if has_actions:
-                actions = campaign.actions
+        # get campaign actions
+        actions = campaign.actions if campaign.actions else {}
 
         # check if custom actions are applied and change id for locale label
         if custom_actions and len(custom_actions) > 0:
