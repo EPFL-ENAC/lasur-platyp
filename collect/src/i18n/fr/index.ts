@@ -51,7 +51,7 @@ export default {
       disabled: 'Carte de stationnement pour personne à mobilité réduite',
       none: 'Aucune contrainte particulière',
     },
-    equipments: 'De quels équipements de mobilité disposez-vous ?',
+    equipments: 'De quels équipements de mobilité disposez-vous pour vos déplacements quotidiens ?',
     equipments_option: {
       bike: 'Vélo',
       upt_subs: 'Abonnement de transports publics urbains',

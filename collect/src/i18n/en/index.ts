@@ -52,7 +52,7 @@ export default {
       disabled: 'Parking card for people with reduced mobility',
       none: 'No particular constraints',
     },
-    equipments: 'Which of the following equipments do you have access to?',
+    equipments: 'Which of the following equipments do you have access to for your daily commute?',
     equipments_option: {
       bike: 'Bicycle',
       upt_subs: 'Urban public transport subscription',
