@@ -60,18 +60,6 @@
           actionsStore.items.length
         }}</q-badge>
       </q-btn>
-      <div v-if="company?.actions">
-        <div class="row q-col-gutter-md q-mb-md">
-          <div class="col-12 col-md-6">
-            <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
-            <fields-list :items="actionItems" :dbobject="formattedActions" />
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
-            <fields-list :items="actionProItems" :dbobject="formattedActions" />
-          </div>
-        </div>
-      </div>
       <div class="text-h6 q-mb-sm">{{ t('campaigns') }}</div>
       <company-campaigns v-if="company" :company="company" />
     </div>
@@ -94,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Company, EmployerActions } from 'src/models'
+import type { Company } from 'src/models'
 import type { Service } from 'src/stores/services'
 import CompanyCampaigns from 'src/components/company/CompanyCampaigns.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
@@ -104,11 +92,10 @@ import FieldsList from 'src/components/FieldsList.vue'
 import CompanyDialog from 'src/components/company/CompanyDialog.vue'
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import { notifySuccess, notifyError } from 'src/utils/notify'
-import { actionItems, actionProItems } from 'src/utils/options'
 
 const route = useRoute()
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const authStore = useAuthStore()
 const services = useServices()
 const service = services.make('company') as Service<Company>
@@ -124,30 +111,6 @@ const showChartsDialog = ref(false)
 const isCompanyAdmin = computed(() => {
   if (!company.value) return false
   return authStore.isAdmin || company.value.administrators?.includes(authStore.profile?.email || '')
-})
-
-const formattedActions = computed(() => {
-  const allActions: EmployerActions = {}
-  if (company.value?.actions) {
-    Object.keys(company.value.actions).forEach((group) => {
-      allActions[group] =
-        company.value?.actions && company.value.actions[group]
-          ? company.value.actions[group].map((action) => {
-              // check action can be parsed as a number
-              const actionId = parseInt(action, 10)
-              if (!isNaN(actionId)) {
-                const labels = actionsStore.items.find((a) => a.id === actionId)?.labels
-                if (labels) {
-                  return labels[locale.value] || labels.en || action
-                }
-                return action
-              }
-              return t(`actions.${action}`)
-            })
-          : []
-    })
-  }
-  return allActions
 })
 
 const items: FieldItem[] = [

@@ -60,8 +60,8 @@ export interface Company extends Entity {
   info_url?: string
   campaings?: Campaign[]
   custom_actions?: CompanyAction[]
-  actions?: EmployerActions
 }
+
 export interface AppUser {
   id?: string
   username: string
