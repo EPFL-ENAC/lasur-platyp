@@ -3,7 +3,7 @@ export interface ParticipantData {
     age_class: string
     employment_rate: number
     remote_work_rate: number
-    company_vehicle: boolean
+    company_vehicle?: boolean
   }
 }
 
@@ -35,7 +35,7 @@ export interface RecordData {
   age_class: string
   employment_rate: number
   remote_work_rate: number
-  company_vehicle: boolean | null
+  company_vehicle?: boolean
   travel_time: number
   equipments: string[]
   constraints: string[]
