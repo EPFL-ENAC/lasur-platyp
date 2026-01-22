@@ -86,6 +86,7 @@ class CampaignBase(Entity):
     actions: Optional[EmployerActions] = Field(
         default=None, sa_column=Column(JSON))
     open_workplaces: bool = Field(default=False)
+    nb_employees: Optional[int] = Field(default=None)
 
 
 class Campaign(CampaignBase, table=True):

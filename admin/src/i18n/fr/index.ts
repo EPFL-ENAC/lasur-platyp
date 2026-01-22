@@ -38,6 +38,9 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette entreprise (si différent du lien d'information de l'entreprise).",
+    nb_employees: "Nombre d'employé.e.s",
+    nb_employees_hint:
+      "Fournissez le nombre d'employé.e.s travaillant dans cette entreprise ou sur le(s) lieu(x) de travail associé(s) à cette campagne. Cette information est utilisée pour contextualiser les statistiques de mobilité.",
     csv_missing_columns:
       'Le fichier CSV téléversé est manquant les colonnes requises suivantes : {columns}.',
     import_workplaces_hint:
@@ -130,6 +133,10 @@ export default {
     title: 'Rapport de mobilité',
     no_charts_to_export: 'Aucun graphique à exporter en PDF.',
     charts_height: 'Hauteur des graphiques',
+    records_count: "Nombre d'enregistrements",
+    in_progress: 'En cours',
+    completed: 'Terminé',
+    pending: 'En attente',
     nb_employees: "Nombre d'employé.e.s",
     percent_employees: "% d'employé.e.s",
     total: 'N : {count}',

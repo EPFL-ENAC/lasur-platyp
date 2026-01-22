@@ -66,6 +66,15 @@
                 class="q-mb-md"
               />
               <q-input
+                filled
+                v-model.number="selected.nb_employees"
+                type="number"
+                :min="0"
+                :label="t('campaign.nb_employees')"
+                :hint="t('campaign.nb_employees_hint')"
+                class="q-mb-md"
+              />
+              <q-input
                 v-if="editMode"
                 filled
                 v-model="selected.slug"
@@ -312,6 +321,10 @@ async function onSave() {
   if (!validWorkplaces.value) {
     notifyError(t('campaign.workplaces.required'))
     return
+  }
+  // check it is valid number as empty input field returns ''
+  if (typeof selected.value.nb_employees !== 'number') {
+    delete selected.value.nb_employees
   }
   selected.value.start_date =
     selected.value.start_date === '' ? undefined : selected.value.start_date

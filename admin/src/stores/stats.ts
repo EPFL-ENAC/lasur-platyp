@@ -1,4 +1,4 @@
-import type { Emissions, Frequencies, Links, Stats } from 'src/models'
+import type { CampaignStats, Emissions, Frequencies, Links, Stats } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -56,11 +56,36 @@ export const useStats = defineStore('stats', () => {
     })
   }
 
+  async function getCampaignStats(campaignId: number) {
+    loading.value = true
+    return authStore.updateToken().then(() => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      }
+      return api
+        .get(`/stats/campaign/${campaignId}`, {
+          ...config,
+        })
+        .then((res) => {
+          return res.data as CampaignStats
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+        .finally(() => {
+          loading.value = false
+        })
+    })
+  }
+
   return {
     frequencies,
     emissions,
     links,
     loading,
     loadStats,
+    getCampaignStats,
   }
 })

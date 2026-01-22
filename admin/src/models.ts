@@ -40,6 +40,7 @@ export interface Campaign extends Entity {
   contact_email?: string
   contact_name?: string
   info_url?: string
+  nb_employees?: number
   company_id?: number
   actions?: EmployerActions
   workplaces?: Workplace[]
@@ -163,4 +164,20 @@ export interface PoisParams {
 
 export interface IsochronesModes {
   [key: string]: string[]
+}
+
+export interface WeeklyStats {
+  week: string
+  created: number
+  completed: number
+}
+
+export interface CampaignStats {
+  name: string
+  company_id?: number
+  campaign_id?: number
+  nb_employees?: number
+  completed_records: number
+  total_records: number
+  weekly?: WeeklyStats[]
 }

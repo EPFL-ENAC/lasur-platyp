@@ -105,6 +105,22 @@ class CampaignInfo(BaseModel):
     open_workplaces: bool = False
 
 
+class WeeklyStats(BaseModel):
+    week: str
+    created: int
+    completed: int
+
+
+class CampaignStats(BaseModel):
+    name: str
+    company_id: Optional[int] = None
+    campaign_id: Optional[int] = None
+    nb_employees: Optional[int] = None
+    completed_records: int = 0
+    total_records: int = 0
+    weekly: Optional[List[WeeklyStats]] = None
+
+
 class Frequency(BaseModel):
     value: Optional[str] = None
     count: Optional[int] = None

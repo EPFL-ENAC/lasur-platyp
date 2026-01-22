@@ -28,6 +28,7 @@
       class="q-mb-md on-right"
       @click="onShowStats"
     />
+    <campaign-charts :item="item" />
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-md-6">
         <fields-list :items="items1" :dbobject="item" />
@@ -168,6 +169,7 @@
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar'
 import type { Campaign, Company, EmployerActions } from 'src/models'
+import CampaignCharts from 'src/components/charts/CampaignCharts.vue'
 import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
 import CompanyCampaignParticipants from 'src/components/company/CompanyCampaignParticipants.vue'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
@@ -273,6 +275,10 @@ const items1: FieldItem[] = [
             },
           ]
         : [],
+  },
+  {
+    field: 'nb_employees',
+    label: 'campaign.nb_employees',
   },
 ]
 

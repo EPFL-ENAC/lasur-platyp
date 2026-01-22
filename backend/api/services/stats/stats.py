@@ -1,5 +1,7 @@
+import logging
 import pandas as pd
-from api.models.query import Stats
+from api.models.domain import Campaign
+from api.models.query import Stats, CampaignStats, WeeklyStats
 from api.services.stats.emissions import EmissionsService
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.links import LinksService
@@ -51,6 +53,48 @@ class StatsService:
             pro_mode_frequencies=pro_mode_frequencies,
             pro_mode_emissions=pro_mode_emissions,
             pro_mode_links=pro_mode_links
+        )
+
+    def compute_campaign_stats(self, campaign: Campaign, df: pd.DataFrame) -> CampaignStats:
+        """Compute statistics for a campaign."""
+        if (len(df) == 0):
+            return CampaignStats(
+                name=campaign.name,
+                company_id=campaign.company_id,
+                campaign_id=campaign.id,
+                nb_employees=campaign.nb_employees,
+                completed_records=0,
+                total_records=0,
+                weekly=[]
+            )
+        completed = self._preprocess_dataframe(df)
+        # Count the number of created records per business week
+        created_per_week = df.resample('W', on='created_at').size()
+        logging.debug(f"Created per week: {created_per_week}")
+        # Count the number of completed records per business week
+        completed_per_week = completed.resample('W', on='updated_at').size()
+        logging.debug(f"Completed per week: {completed_per_week}")
+        # Merge created and completed per week into a single DataFrame
+        stats_df = pd.DataFrame({
+            'created': created_per_week,
+            'completed': completed_per_week
+        }).fillna(0)
+        logging.debug(f"Stats per week:\n{stats_df}")
+        return CampaignStats(
+            name=campaign.name,
+            company_id=campaign.company_id,
+            campaign_id=campaign.id,
+            nb_employees=campaign.nb_employees,
+            completed_records=len(completed),
+            total_records=len(df),
+            weekly=[
+                WeeklyStats(
+                    week=str(index.date()),
+                    created=row['created'],
+                    completed=row['completed']
+                )
+                for index, row in stats_df.iterrows()
+            ]
         )
 
     def _preprocess_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
