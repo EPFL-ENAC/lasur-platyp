@@ -37,6 +37,9 @@ export default {
     info_url: 'Information link',
     info_url_hint:
       'Provide a link to more information about the company mobility options (if different from the company information link).',
+    nb_employees: 'Number of employees',
+    nb_employees_hint:
+      'Provide the number of employees working in this company or at the workplace(s) associated with this campaign. This information is used to contextualize the mobility statistics.',
     csv_missing_columns:
       'The uploaded CSV file is missing the following required columns: {columns}.',
     import_workplaces_hint:
@@ -128,6 +131,10 @@ export default {
     title: 'Mobility report',
     no_charts_to_export: 'No charts to export as PDF.',
     charts_height: 'Charts height',
+    records_count: 'Records count',
+    in_progress: 'In Progress',
+    completed: 'Completed',
+    pending: 'Pending',
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',
     total: 'N: {count}',

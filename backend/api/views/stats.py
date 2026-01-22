@@ -1,10 +1,13 @@
+import logging
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
-from api.models.query import Stats, LocationFilter
+from api.models.query import Stats, CampaignStats, LocationFilter, WeeklyStats
 from api.services.records import RecordService
+from api.services.campaigns import CampaignService
 from api.services.stats.stats import StatsService
 from enacit4r_sql.utils.query import validate_params, ValidationError, paramAsDict
+import pandas as pd
 
 router = APIRouter()
 
@@ -31,3 +34,18 @@ async def compute_all_statistics(
         return StatsService().compute_stats(df)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
+
+
+@router.get("/campaign/{id}", response_model_exclude_none=True)
+async def compute_campaign_statistics(
+    id: int,
+    user: User = Depends(kc_service.get_user_info()),
+    session: AsyncSession = Depends(get_session),
+) -> CampaignStats:
+    """Compute statistics for a campaign"""
+    campaign = await CampaignService(session).get(id, user)
+    service = RecordService(session)
+    df = await service.get_dataframe(
+        {"campaign_id": id}, flat=True, user=user)
+    stats_service = StatsService()
+    return stats_service.compute_campaign_stats(campaign, df)
