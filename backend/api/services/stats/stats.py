@@ -70,16 +70,16 @@ class StatsService:
         completed = self._preprocess_dataframe(df)
         # Count the number of created records per business week
         created_per_week = df.resample('W', on='created_at').size()
-        logging.info(f"Created per week: {created_per_week}")
+        logging.debug(f"Created per week: {created_per_week}")
         # Count the number of completed records per business week
         completed_per_week = completed.resample('W', on='updated_at').size()
-        logging.info(f"Completed per week: {completed_per_week}")
+        logging.debug(f"Completed per week: {completed_per_week}")
         # Merge created and completed per week into a single DataFrame
         stats_df = pd.DataFrame({
             'created': created_per_week,
             'completed': completed_per_week
         }).fillna(0)
-        logging.info(f"Stats per week:\n{stats_df}")
+        logging.debug(f"Stats per week:\n{stats_df}")
         return CampaignStats(
             name=campaign.name,
             company_id=campaign.company_id,

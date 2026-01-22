@@ -1,13 +1,11 @@
-import logging
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
-from api.models.query import Stats, CampaignStats, LocationFilter, WeeklyStats
+from api.models.query import Stats, CampaignStats, LocationFilter
 from api.services.records import RecordService
 from api.services.campaigns import CampaignService
 from api.services.stats.stats import StatsService
 from enacit4r_sql.utils.query import validate_params, ValidationError, paramAsDict
-import pandas as pd
 
 router = APIRouter()
 

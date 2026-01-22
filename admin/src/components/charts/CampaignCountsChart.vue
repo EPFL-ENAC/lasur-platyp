@@ -53,7 +53,7 @@ function initChartOptions() {
     { value: completed.value, name: t('stats.completed') },
     { value: inProgress.value, name: t('stats.in_progress') },
   ]
-  if (nbEmployees.value) {
+  if (nbEmployees.value > total.value) {
     data.push({ value: nbEmployees.value - total.value, name: t('stats.pending') })
   }
 
