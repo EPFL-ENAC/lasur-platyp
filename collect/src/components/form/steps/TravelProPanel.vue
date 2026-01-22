@@ -2,6 +2,7 @@
   <ToggleItem
     :label="t('form.travel_pro')"
     v-model="survey.record.data.travel_pro"
+    required
     :left-label="t('form.no')"
     :right-label="t('form.yes')"
   />
