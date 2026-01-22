@@ -35,7 +35,7 @@ export const useCollector = defineStore('collector', () => {
 
           employment_rate: 100,
           remote_work_rate: 40,
-          company_vehicle: false,
+          company_vehicle: null,
           travel_time: 5,
           equipments: [],
           constraints: [],

@@ -9,7 +9,12 @@
         @click="selected = false"
         >{{ leftLabel }}</span
       >
-      <q-toggle v-model="selected" color="primary" size="80px" />
+      <q-toggle
+        v-model="selected"
+        color="primary"
+        :toggle-indeterminate="required !== true"
+        size="80px"
+      />
       <span
         class="text-h4 q-mt-md q-ml-lg cursor-pointer"
         :class="selected ? 'text-white' : 'text-grey-6'"
