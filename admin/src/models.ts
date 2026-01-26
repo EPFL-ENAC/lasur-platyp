@@ -84,6 +84,14 @@ export interface ParticipantData {
   company_vehicle: boolean
 }
 
+export interface RecordData {
+  [key: string]: number | string | string[] | boolean
+}
+
+export interface RecordTypo {
+  [key: string]: RecordData
+}
+
 export interface Record {
   id: number
   token: string
@@ -93,9 +101,8 @@ export interface Record {
   updated_by?: string
   company_id: number
   campaign_id: number
-
-  data?: { [key: string]: number | string | string[] | boolean }
-  typo?: { [key: string]: { [key: string]: number | string | string[] | boolean } }
+  data?: RecordData
+  typo?: RecordTypo
   comments?: string
 }
 

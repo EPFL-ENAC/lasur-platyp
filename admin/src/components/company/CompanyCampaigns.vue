@@ -62,6 +62,7 @@ import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.
 const { t } = useI18n()
 const authStore = useAuthStore()
 const campaignsStore = useCampaigns()
+const router = useRouter()
 
 interface Props {
   company: Company
@@ -84,6 +85,11 @@ watch(
   () => campaignsStore.items,
   () => {
     const ids = campaignsStore.items.map((item) => item.id + '')
+    const queryCampaign = router.currentRoute.value.query.campaign as string | undefined
+    if (queryCampaign && ids.includes(queryCampaign)) {
+      tab.value = queryCampaign
+      return
+    }
     if (tab.value === undefined || (ids.length > 0 && !ids.includes(tab.value))) {
       tab.value = campaigns.value.length ? campaigns.value[0]?.id + '' : ''
     }

@@ -383,7 +383,12 @@ export default {
       commerce: 'Commerce',
     },
     minutes: '{count} min',
-    raw_data: "Données brutes de l'enquête",
+    raw_data: 'Données enregistrées',
+    data: 'Données collectées',
+    typo: 'Données de typologie modale',
+    typo_reco: 'Recommandations',
+    typo_reco_pro: 'Recommandations (professionnel)',
+    typo_reco_actions: 'Actions recommandées',
   },
   draw_mode: {
     simple_select_hint:
@@ -510,4 +515,6 @@ export default {
   valid_email_required: 'Une adresse email valide est requise',
   valid_url_required: 'Une URL valide est requise (commençant par http:// ou https://)',
   your_role: 'Votre rôle est: {role}',
+  created_at: 'Ajouté le',
+  updated_at: 'Mis à jour le',
 }
