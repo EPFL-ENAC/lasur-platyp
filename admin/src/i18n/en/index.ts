@@ -381,7 +381,12 @@ export default {
       commerce: 'Commerce',
     },
     minutes: '{count} min',
-    raw_data: 'Raw data',
+    raw_data: 'Recorded data',
+    data: 'Collected data',
+    typo: 'Typology modal data',
+    typo_reco: 'Recommendations',
+    typo_reco_pro: 'Recommendations (professional)',
+    typo_reco_actions: 'Recommended actions',
   },
   draw_mode: {
     simple_select_hint:
@@ -503,4 +508,6 @@ export default {
   valid_email_required: 'A valid email address is required',
   valid_url_required: 'A valid URL is required (starting with http:// or https://)',
   your_role: 'Your role is: {role}',
+  created_at: 'Created at',
+  updated_at: 'Updated at',
 }
