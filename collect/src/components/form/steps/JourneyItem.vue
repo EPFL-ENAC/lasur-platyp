@@ -53,7 +53,7 @@ const modeOptions = computed<Option[]>(() => [
     label: t('form.mode.bike'),
     icon: 'directions_bike',
     children: [
-      { value: 'bike', label: t('form.mode.bike'), icon: 'directions_bike' },
+      { value: 'bike', label: t('form.mode.bike'), icon: 'pedal_bike' },
       { value: 'ebike', label: t('form.mode.ebike'), icon: 'electric_bike' },
     ],
   },

@@ -33,7 +33,18 @@
     <div v-if="survey.stepName === 'freq_mod_pro'">
       <ProJourneysPanel
         v-model="survey.record.data.freq_mod_pro_journeys"
-        :modes="['walking', 'bike', 'pub', 'moto', 'car', 'train', 'boat', 'plane']"
+        :modes="[
+          'walking',
+          'bike',
+          'cargo',
+          'pub',
+          'moto',
+          'car',
+          'truck',
+          'train',
+          'boat',
+          'plane',
+        ]"
       />
     </div>
     <div v-if="survey.stepName === 'importance'">
