@@ -38,7 +38,15 @@ defineOptions({
 })
 
 export interface Props {
-  value: string | number | boolean | null | undefined | unknown | Record<string, unknown>
+  value:
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | unknown
+    | unknown[]
+    | Record<string, unknown>
 }
 defineProps<Props>()
 </script>

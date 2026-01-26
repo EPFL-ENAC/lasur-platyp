@@ -383,7 +383,7 @@ export default {
     minutes: '{count} min',
     raw_data: 'Recorded data',
     data: 'Collected data',
-    typo: 'Typology modal data',
+    typo: 'Modal typology data',
     typo_reco: 'Recommendations',
     typo_reco_pro: 'Recommendations (professional)',
     typo_reco_actions: 'Recommended actions',

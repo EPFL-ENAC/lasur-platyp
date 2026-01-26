@@ -205,14 +205,24 @@ function onInit() {
     .then((data: Record) => {
       record.value = data
       if (data.company_id) {
-        companyService.get(data.company_id + '').then((compData: Company) => {
-          company.value = compData
-        })
+        companyService
+          .get(data.company_id + '')
+          .then((compData: Company) => {
+            company.value = compData
+          })
+          .catch(() => {
+            console.warn('Could not load company for record display: ', data.company_id)
+          })
       }
       if (data.campaign_id) {
-        campaignService.get(data.campaign_id + '').then((campData: Campaign) => {
-          campaign.value = campData
-        })
+        campaignService
+          .get(data.campaign_id + '')
+          .then((campData: Campaign) => {
+            campaign.value = campData
+          })
+          .catch(() => {
+            console.warn('Could not load campaign for record display: ', data.campaign_id)
+          })
       }
     })
     .catch(() => {
