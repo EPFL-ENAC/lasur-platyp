@@ -75,6 +75,7 @@ export default {
       moto: 'La moto / le scooter',
       car: 'La voiture',
       carpool: 'Le covoiturage',
+      truck: "Le camion / l'utilitaire",
       plane: "L'avion",
       pub_train: 'Les transports publics (y compris le train)',
       car_moto: 'La voiture ou la moto',

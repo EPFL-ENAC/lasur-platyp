@@ -23,7 +23,7 @@
           <q-img
             v-if="option.icon?.endsWith('.svg')"
             :src="option.icon"
-            style="width: 40px; height: 40px"
+            style="width: 45px; height: 45px"
             no-spinner
             no-transition
             class="icon-white"
@@ -91,3 +91,9 @@ function onSelect(option: Option | undefined) {
   journey.value.mode = option.value
 }
 </script>
+
+<style lang="scss">
+.icon-white {
+  filter: invert(100%);
+}
+</style>
