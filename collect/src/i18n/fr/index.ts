@@ -69,6 +69,7 @@ export default {
       walking: 'La marche (>10 min.)',
       bike: 'Le vélo',
       ebike: 'Le vélo à assistance électrique',
+      cargo: 'Le vélo cargo',
       pub: 'Les transports publics urbains',
       train: 'Le train',
       moto: 'La moto / le scooter',

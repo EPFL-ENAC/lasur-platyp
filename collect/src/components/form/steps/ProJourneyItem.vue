@@ -11,16 +11,25 @@
         class="q-mb-xl"
       />
     </div>
-    <div class="row justify-center q-mt-lg" style="max-width: 400px; margin: auto">
+    <div class="row justify-center q-mt-lg" style="max-width: 500px; margin: auto">
       <template v-for="option in modeOptions" :key="option.value">
         <q-btn
-          :icon="option.icon"
           :title="option.label"
           :color="journey.mode === option.value ? 'accent' : 'secondary'"
           size="xl"
           class="on-right on-left q-mb-md"
           @click="onSelect(option)"
-        />
+        >
+          <q-img
+            v-if="option.icon?.endsWith('.svg')"
+            :src="option.icon"
+            style="width: 40px; height: 40px"
+            no-spinner
+            no-transition
+            class="icon-white"
+          />
+          <q-icon v-else :name="option.icon" color="white" size="lg" />
+        </q-btn>
       </template>
     </div>
     <NumberItem
@@ -65,10 +74,12 @@ const journey = computed({
 const modeOptions = computed<Option[]>(() =>
   [
     { value: 'walking', label: t('form.mode.walking'), icon: 'directions_walk' },
-    { value: 'bike', label: t('form.mode.bike'), icon: 'directions_bike' },
+    { value: 'bike', label: t('form.mode.bike'), icon: 'pedal_bike' },
+    { value: 'cargo', label: t('form.mode.cargo'), icon: '/icons/cargo_bike.svg' },
     { value: 'pub', label: t('form.mode.pub'), icon: 'directions_bus' },
     { value: 'moto', label: t('form.mode.moto'), icon: 'two_wheeler' },
     { value: 'car', label: t('form.mode.car'), icon: 'directions_car' },
+    { value: 'truck', label: t('form.mode.truck'), icon: 'local_shipping' },
     { value: 'train', label: t('form.mode.train'), icon: 'train' },
     { value: 'boat', label: t('form.mode.boat'), icon: 'directions_boat' },
     { value: 'plane', label: t('form.mode.plane'), icon: 'flight' },

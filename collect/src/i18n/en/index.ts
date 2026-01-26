@@ -69,6 +69,7 @@ export default {
       walking: 'Walking (>10 min.)',
       bike: 'Bicycle',
       ebike: 'Electric bicycle',
+      cargo: 'Cargo bike',
       pub: 'Public transport',
       train: 'Train',
       moto: 'Motorcycle/scooter',
