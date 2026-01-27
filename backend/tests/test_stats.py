@@ -18,7 +18,7 @@ def assert_frequencies_equal(result: Frequencies, expected: Frequencies):
 
 
 def assert_emissions_equal(result: Emissions, expected: Emissions):
-    assert result.field == expected.field
+    assert result.mode == expected.mode
     assert result.total == expected.total
     assert result.distances == expected.distances
     assert result.journeys == expected.journeys
@@ -285,17 +285,17 @@ def test_compute_modes_emissions():
 
     # print(result)
     expected = [
-        Emissions(field='bike', total=30, distances=6728.72,
+        Emissions(mode='bike', total=30, distances=6728.72,
                   journeys=2430, emissions=151.304),
-        Emissions(field='pub', total=30, distances=20859.321,
+        Emissions(mode='pub', total=30, distances=20859.321,
                   journeys=3690, emissions=2243.077),
-        Emissions(field='moto', total=30, distances=6837.789,
+        Emissions(mode='moto', total=30, distances=6837.789,
                   journeys=1620, emissions=2469.62),
-        Emissions(field='carpool', total=30, distances=4605.723,
+        Emissions(mode='carpool', total=30, distances=4605.723,
                   journeys=270, emissions=214.166),
-        Emissions(field='car', total=30, distances=15839.606,
+        Emissions(mode='car', total=30, distances=15839.606,
                   journeys=2970, emissions=15023.343),
-        Emissions(field='train', total=30, distances=2122.997,
+        Emissions(mode='train', total=30, distances=2122.997,
                   journeys=1080, emissions=82.563)
     ]
     assert len(result) == len(expected)
@@ -311,15 +311,15 @@ def test_compute_modes_pro_emissions():
 
     # print(result)
     expected = [
-        Emissions(field='bike', total=7, distances=153.654,
+        Emissions(mode='bike', total=7, distances=153.654,
                   journeys=2, emissions=0.922),
-        Emissions(field='moto', total=7, distances=546.692,
+        Emissions(mode='moto', total=7, distances=546.692,
                   journeys=4, emissions=84.737),
-        Emissions(field='car', total=7, distances=1259.281,
+        Emissions(mode='car', total=7, distances=1259.281,
                   journeys=6, emissions=234.226),
-        Emissions(field='train', total=7, distances=5651.081,
+        Emissions(mode='train', total=7, distances=5651.081,
                   journeys=22, emissions=45.209),
-        Emissions(field='plane', total=7, distances=41811.232,
+        Emissions(mode='plane', total=7, distances=41811.232,
                   journeys=10, emissions=10996.354)
     ]
     assert len(result) == len(expected)
