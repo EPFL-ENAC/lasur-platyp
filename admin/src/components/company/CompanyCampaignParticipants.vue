@@ -33,6 +33,16 @@
           icon="add"
           @click="onAdd"
         />
+        <q-btn
+          outline
+          size="sm"
+          color="info"
+          :label="t('download_csv')"
+          :disable="loading"
+          icon="download"
+          class="on-right"
+          @click="onDownload"
+        />
         <q-space />
         <q-input dense debounce="300" v-model="filter" clearable>
           <template v-slot:append>
@@ -101,7 +111,7 @@
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar'
-import type { Campaign, Participant } from 'src/models'
+import type { Campaign, Participant, Company } from 'src/models'
 import type { PaginationOptions } from 'src/utils/pagination'
 import { notifyError, notifyInfo } from 'src/utils/notify'
 import ParticipantDialog from 'src/components/ParticipantDialog.vue'
@@ -109,12 +119,14 @@ import { DefaultAlignment, type Query } from 'src/components/models'
 import { makePaginationRequestHandler } from 'src/utils/pagination'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import { collectUrl } from 'src/boot/api'
+import Papa from 'papaparse'
 
 const { t } = useI18n()
 const participantsStore = useParticipants()
 
 interface Props {
   campaign: Campaign
+  company: Company
 }
 const props = defineProps<Props>()
 
@@ -263,5 +275,48 @@ function onTokenCopy(item: Participant) {
   if (!item.token) return
   copyToClipboard(`${collectUrl}/go/${item.token}`)
   notifyInfo(t('link_copied'))
+}
+
+function onDownload() {
+  loading.value = true
+  const query: Query = {
+    $sort: ['identifier', false],
+  }
+  query.filter = {
+    campaign_id: { $eq: props.campaign.id },
+  }
+  if (filter.value) {
+    query.filter = {
+      $and: [query.filter, { identifier: { $ilike: `%${filter.value}%` } }],
+    }
+  }
+  participantsStore.service
+    .find(query)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .then((result: any) => {
+      const csvContent = Papa.unparse(
+        result.data.map((p: Participant) => ({
+          identifier: p.identifier,
+          token: p.token,
+          url: `${collectUrl}/go/${p.token}`,
+          status: p.status,
+          age_class: p.data?.age_class,
+          employment_rate: p.data?.employment_rate,
+          remote_work_rate: p.data?.remote_work_rate,
+          company_vehicle: p.data?.company_vehicle,
+        })),
+      )
+      const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${csvContent}`)
+      const link = document.createElement('a')
+      link.setAttribute('href', encodedUri)
+      link.setAttribute('download', `${props.company.name}_${props.campaign.name}_participants.csv`)
+      document.body.appendChild(link) // Required for FF
+      link.click()
+      document.body.removeChild(link)
+    })
+    .catch(notifyError)
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>

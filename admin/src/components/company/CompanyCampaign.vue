@@ -141,7 +141,7 @@
         <div class="text-hint q-mb-md">
           {{ t('participants_individual_hint') }}
         </div>
-        <company-campaign-participants :campaign="item" />
+        <company-campaign-participants :campaign="item" :company="props.company" />
       </div>
     </div>
     <company-campaign-dialog
