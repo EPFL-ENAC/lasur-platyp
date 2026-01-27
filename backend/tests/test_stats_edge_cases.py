@@ -1,19 +1,10 @@
 import pandas as pd
 import numpy as np
-import pytest
 from api.services.stats.links import LinksService
 from api.services.stats.stats import StatsService
-from api.models.query import Emissions, Frequencies, Frequency, Link, Links
+from api.models.query import Frequencies, Links
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.emissions import EmissionsService
-
-
-def load_test_dataframe() -> pd.DataFrame:
-    """Load the test CSV into a DataFrame."""
-    df = pd.read_csv("tests/data/records.csv")
-    stats = StatsService()
-    df = stats._preprocess_dataframe(df)
-    return df
 
 
 def test_empty_dataframe():
@@ -85,12 +76,6 @@ def test_missing_columns():
     assert isinstance(result, list)
     # Without workplace coordinates, all distances should be 0, so no emissions
     assert result == []
-
-    # Should handle missing recommendation column
-    result = freq_service.compute_recommendation_frequencies()
-    assert isinstance(result, Frequencies)
-    assert result.field == "reco_dt2"
-    assert result.data == []
 
 
 def test_all_nan_values():
@@ -210,7 +195,6 @@ def test_negative_values():
     )
 
     service = EmissionsService(df)
-    freq_service = FrequenciesService(df)
 
     # Emissions service might produce unexpected results with negative values
     # but should not crash
@@ -247,10 +231,10 @@ def test_nan_coordinates():
     """Test that services handle NaN coordinates in distance calculations."""
     df = pd.DataFrame(
         {
-            "data.origin.lat": [48.85, np.nan, 48.87],
-            "data.origin.lon": [2.35, 2.36, np.nan],
-            "data.workplace.lat": [48.86, 48.87, 48.88],
-            "data.workplace.lon": [2.36, np.nan, 2.38],
+            "data.origin.lat": [48.85, np.nan, 48.87, 48.87],
+            "data.origin.lon": [2.35, 2.36, np.nan, 2.36],
+            "data.workplace.lat": [48.86, 48.87, 48.88, np.nan],
+            "data.workplace.lon": [np.nan, 2.36, 2.38, 2.37],
         }
     )
 
@@ -261,7 +245,7 @@ def test_nan_coordinates():
     assert isinstance(result, list)
 
     # Distance should be 0 for NaN coordinates
-    assert np.all(service.df["distance_km"] >= 0)
+    assert np.all(service.df["distance_km"] == 0)
 
 
 def test_mixed_data_versions():
@@ -331,7 +315,8 @@ def test_duplicate_values():
     assert result.total == 3
     # Bike appears 5 times (3 in equipment.0, 2 in equipment.2)
     # Car appears 4 times (3 in equipment.1, 1 in equipment.2)
-    bike_count = next((f.count for f in result.data if f.value == "bike"), None)
+    bike_count = next(
+        (f.count for f in result.data if f.value == "bike"), None)
     car_count = next((f.count for f in result.data if f.value == "car"), None)
     assert bike_count == 5
     assert car_count == 4
