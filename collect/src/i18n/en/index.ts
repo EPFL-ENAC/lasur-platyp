@@ -172,6 +172,7 @@ export default {
     cargo: 'Cargo bike',
     boat: 'Boat',
     elec_moto: 'Electric motorcycle/scooter',
+    elec_truck: 'Electric truck/van',
     walking: 'Walking',
     bike: 'Bike',
     pub: 'Public transport',
