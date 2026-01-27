@@ -125,7 +125,15 @@ class BaseStatsService:
 
     def _calculate_distance_home_to_work(self, row):
         """Calculate distance from home to workplace for a record."""
-        if pd.isna(row['data.origin.lat']) or pd.isna(row['data.origin.lon']) or pd.isna(row['data.workplace.lat']) or pd.isna(row['data.workplace.lon']):
+        with_origin_lat = 'data.origin.lat' in row and not pd.isna(
+            row['data.origin.lat'])
+        with_origin_lon = 'data.origin.lon' in row and not pd.isna(
+            row['data.origin.lon'])
+        with_work_lat = 'data.workplace.lat' in row and not pd.isna(
+            row['data.workplace.lat'])
+        with_work_lon = 'data.workplace.lon' in row and not pd.isna(
+            row['data.workplace.lon'])
+        if not (with_origin_lat and with_origin_lon and with_work_lat and with_work_lon):
             return 0
         origin_lat = float(row['data.origin.lat'])
         origin_lon = float(row['data.origin.lon'])
