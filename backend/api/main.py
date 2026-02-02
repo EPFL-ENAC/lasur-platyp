@@ -1,5 +1,8 @@
 from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from api.config import config
 from api.db import get_session, AsyncSession
 from logging import basicConfig, INFO, DEBUG
@@ -17,7 +20,12 @@ from api.views.isochrones import router as isochrones_router
 
 basicConfig(level=DEBUG)
 
+# Rate limiting configuration
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(root_path=config.PATH_PREFIX)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 origins = ["*"]
 
@@ -32,6 +40,7 @@ app.add_middleware(
 
 class HealthCheck(BaseModel):
     """Response model to validate and return when performing a health check."""
+
     status: str = "OK"
 
 
@@ -57,6 +66,7 @@ async def get_health(
         raise HTTPException(status_code=500, detail=f"DB Error: {e}")
 
     return HealthCheck(status="OK")
+
 
 app.include_router(
     companies_router,
