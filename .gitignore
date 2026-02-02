@@ -10,3 +10,5 @@ node_modules
 .secrets
 .data
 data-dev
+AGENTS.md
+.serena/
