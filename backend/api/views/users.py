@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
 from api.auth import kc_service, User, kc_admin_service
 from api.config import config
-from api.main import limiter
+from api.rate_limit import limiter
 
 router = APIRouter()
 

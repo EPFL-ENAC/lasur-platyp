@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Depends, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from api.config import config
 from api.db import get_session, AsyncSession
@@ -17,11 +16,9 @@ from api.views.users import router as users_router
 from api.views.collect import router as collect_router
 from api.views.stats import router as stats_router
 from api.views.isochrones import router as isochrones_router
+from api.rate_limit import limiter
 
 basicConfig(level=DEBUG)
-
-# Rate limiting configuration
-limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(root_path=config.PATH_PREFIX)
 app.state.limiter = limiter
