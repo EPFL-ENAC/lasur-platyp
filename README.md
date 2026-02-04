@@ -23,6 +23,8 @@ KEYCLOAK_REALM=LASUR
 KEYCLOAK_URL=https://enac-it-sso.epfl.ch
 KEYCLOAK_API_ID=local-api
 KEYCLOAK_API_SECRET=xxxxx
+# Rate limits
+RATE_LIMIT_USERS_REGISTER="5/minute"
 # LASUR web services
 LASUR_API_URL=https://lasur-ws.epfl.ch
 LASUR_API_KEY=xxxxx

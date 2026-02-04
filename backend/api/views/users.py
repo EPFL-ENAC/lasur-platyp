@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
 from api.auth import kc_service, User, kc_admin_service
 from api.config import config
+from api.main import limiter
 
 router = APIRouter()
 
@@ -11,10 +12,8 @@ async def find(user: User = Depends(kc_service.require_admin())):
     """Get users"""
     app_users = await kc_admin_service.get_users()
     return AppUserResult(
-        skip=0,
-        limit=len(app_users),
-        total=len(app_users),
-        data=app_users)
+        skip=0, limit=len(app_users), total=len(app_users), data=app_users
+    )
 
 
 @router.get("/{id}", response_model=AppUser, response_model_exclude_none=True)
@@ -30,7 +29,9 @@ async def delete(id: str, user: User = Depends(kc_service.require_admin())):
 
 
 @router.post("/", response_model=AppUser, response_model_exclude_none=True)
-async def create(item: AppUserDraft, user: User = Depends(kc_service.require_admin())) -> AppUser:
+async def create(
+    item: AppUserDraft, user: User = Depends(kc_service.require_admin())
+) -> AppUser:
     """Create a user"""
     actions = ["UPDATE_PASSWORD"]
     if config.KEYCLOAK_TOTP:
@@ -42,7 +43,8 @@ async def create(item: AppUserDraft, user: User = Depends(kc_service.require_adm
 
 
 @router.post("/_register", response_model=AppUser, response_model_exclude_none=True)
-async def register(item: AppUserDraft) -> AppUser:
+@limiter.limit(config.RATE_LIMIT_USERS_REGISTER)
+async def register(request: Request, item: AppUserDraft) -> AppUser:
     """User self-registration"""
     # check user does not exist
     try:
@@ -73,9 +75,7 @@ async def register(item: AppUserDraft) -> AppUser:
 
 @router.put("/{id}", response_model=AppUser, response_model_exclude_none=True)
 async def update(
-    id: str,
-    item: AppUser,
-    user: User = Depends(kc_service.require_admin())
+    id: str, item: AppUser, user: User = Depends(kc_service.require_admin())
 ) -> AppUser:
     """Update a user by id"""
     if id != item.id:
@@ -85,9 +85,7 @@ async def update(
 
 @router.put("/{id}/password")
 async def update_password(
-    id: str,
-    payload: AppUserPassword,
-    user: User = Depends(kc_service.require_admin())
+    id: str, payload: AppUserPassword, user: User = Depends(kc_service.require_admin())
 ) -> None:
     """Set a temporary user password by id"""
     if payload.password is None:
