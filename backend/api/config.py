@@ -25,6 +25,8 @@ class Config(BaseSettings):
     LASUR_API_KEY: str = ""
     LASUR_OSM_SOURCE: str = "geneva-greater-area.osm.pbf"
 
+    RATE_LIMIT_USERS_REGISTER: str = "5/minute"
+
     PATH_PREFIX: str = "/api"
 
     @model_validator(mode="before")

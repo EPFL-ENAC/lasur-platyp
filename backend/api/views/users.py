@@ -43,7 +43,7 @@ async def create(
 
 
 @router.post("/_register", response_model=AppUser, response_model_exclude_none=True)
-@limiter.limit("5/minute")
+@limiter.limit(config.RATE_LIMIT_USERS_REGISTER)
 async def register(request: Request, item: AppUserDraft) -> AppUser:
     """User self-registration"""
     # check user does not exist
