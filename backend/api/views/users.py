@@ -1,12 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
 from api.auth import kc_service, User, kc_admin_service
 from api.config import config
+from api.main import limiter
 
 router = APIRouter()
-limiter = Limiter(key_func=get_remote_address)
 
 
 @router.get("/", response_model=AppUserResult, response_model_exclude_none=True)
