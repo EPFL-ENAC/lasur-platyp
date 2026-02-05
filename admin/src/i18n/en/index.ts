@@ -56,6 +56,22 @@ export default {
       workplaces_list: 'List of known workplaces',
     },
   },
+  docs: {
+    title: 'Documentation',
+    hint: 'Find here all the documentation to help you use the Mobility Toolkit administration interface.',
+    company_profile: {
+      title: 'How to manage my company profile',
+      caption: 'Learn how to update your company information and settings',
+    },
+    campaign_management: {
+      title: 'How to create a campaign',
+      caption: 'Learn the basics of creating and managing campaigns',
+    },
+    participants_management: {
+      title: 'How to manage participants',
+      caption: 'A guide to adding, editing, and removing participants',
+    },
+  },
   role: {
     'platyp-user': 'User',
     'platyp-admin': 'Administrator',
@@ -66,6 +82,10 @@ export default {
     employment_rate: 'Employment Rate',
     remote_work_rate: 'Remote Work Rate',
     company_vehicle: 'Company Vehicle',
+    status: {
+      open: 'Open',
+      completed: 'Completed',
+    },
   },
   actions: {
     personnal: 'Personal',

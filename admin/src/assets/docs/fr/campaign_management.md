@@ -1,107 +1,107 @@
-## Campaign Management
+## Gestion des campagnes
 
-Campaigns are time-bound mobility surveys or initiatives within a company. Each company can have multiple campaigns.
+Les campagnes sont des enquêtes ou initiatives de mobilité limitées dans le temps au sein d'une entreprise. Chaque entreprise peut avoir plusieurs campagnes.
 
-### Campaign Settings
+### Paramètres de la campagne
 
-#### Basic Information
+#### Informations de base
 
-- **Name** (_required_): Campaign identifier
-- **Description**: Overview of the campaign purpose
-- **Start Date**: When the campaign begins
-- **End Date**: When the campaign closes
-- **Slug**: Unique URL identifier (auto-generated, e.g., "acme-corp-spring-2024-mobility-vx7k")
+- **Nom** (_obligatoire_) : Identifiant de la campagne
+- **Description** : Présentation de l'objectif de la campagne
+- **Date de début** : Date de lancement de la campagne
+- **Date de fin** : Date de clôture de la campagne
+- **Slug** : Identifiant unique pour l'URL (généré automatiquement, ex. : "acme-corp-printemps-2024-mobilite-vx7k")
 
-#### Contact Information
+#### Informations de contact
 
-Campaigns can override company-level contact information:
+Les campagnes peuvent remplacer les informations de contact définies au niveau de l'entreprise :
 
-- **Contact Name**: Campaign-specific contact person
-- **Contact Email**: Campaign-specific email address
-- **Information URL**: Campaign-specific information link
+- **Nom du contact** : Personne de contact spécifique à la campagne
+- **Email du contact** : Adresse email spécifique à la campagne
+- **URL d'information** : Lien d'information spécifique à la campagne
 
-If these fields are left empty, the campaign will use the company's contact information.
+Si ces champs sont laissés vides, la campagne utilisera les informations de contact de l'entreprise.
 
-#### Workplaces
+#### Lieux de travail
 
-Campaigns must define how workplace locations are handled:
+Les campagnes doivent définir la gestion des lieux de travail :
 
-**Open Workplaces:**
+**Lieux de travail ouverts :**
 
-- If enabled, participants can enter any workplace address when completing the survey
-- Useful for companies with many locations or flexible work arrangements
+- Si activé, les participants peuvent saisir n'importe quelle adresse de lieu de travail lors du remplissage du questionnaire
+- Utile pour les entreprises avec de nombreux sites ou des modalités de travail flexibles
 
-**Defined Workplaces:**
+**Lieux de travail définis :**
 
-- Create a list of specific workplace locations
-- Each workplace requires:
-  - **Name**: Identifier for the workplace (e.g., "Logistic Hub 12", "Downtown Office")
-  - **Address**: Full street address
-  - **Coordinates**: Latitude and longitude (auto-filled when address is validated)
-- Participants select from this list during the survey
+- Créez une liste de lieux de travail spécifiques
+- Chaque lieu de travail nécessite :
+  - **Nom** : Identifiant du lieu (ex. : "Plateforme Logistique 12", "Bureau Centre-ville")
+  - **Adresse** : Adresse complète
+  - **Coordonnées** : Latitude et longitude (remplies automatiquement lors de la validation de l'adresse)
+- Les participants choisissent dans cette liste lors du questionnaire
 
-**Important:** At least one of these options must be configured:
+**Important :** Au moins une de ces options doit être configurée :
 
-- Either enable "Open workplaces", OR
-- Define at least one specific workplace location
+- Soit activer "Lieux de travail ouverts", OU
+- Définir au moins un lieu de travail spécifique
 
-**Bulk Import:**
+**Import en masse :**
 
-- Upload a CSV file to add multiple workplaces at once
-- Required CSV columns: name, address, lat, lon
-- Use the "Upload CSV" button in the workplaces tab
+- Importez un fichier CSV pour ajouter plusieurs lieux de travail en une fois
+- Colonnes CSV requises : name, address, lat, lon
+- Utilisez le bouton "Importer CSV" dans l'onglet des lieux de travail
 
-#### Campaign-Specific Measures
+#### Mesures spécifiques à la campagne
 
-By default, campaigns inherit the employer measures defined at the company level. However, you can enable campaign-specific measures:
+Par défaut, les campagnes héritent des mesures employeur définies au niveau de l'entreprise. Cependant, vous pouvez activer des mesures spécifiques à la campagne :
 
-1. Toggle "With employer measures specific to this campaign"
-2. Select measures specific to this campaign
-3. This is useful for:
-   - Pilot programs testing new initiatives
-   - Seasonal measures
-   - Location-specific measures
-   - Limited-time benefits
+1. Activez "Avec des mesures employeur spécifiques à cette campagne"
+2. Sélectionnez les mesures propres à cette campagne
+3. Utile pour :
+   - Pilotes testant de nouvelles initiatives
+   - Mesures saisonnières
+   - Mesures spécifiques à un site
+   - Avantages à durée limitée
 
-## Best Practices
+## Bonnes pratiques
 
-### When Configuring Measures
+### Lors de la configuration des mesures
 
-1. **Review measures regularly**: Update as new initiatives launch or old ones end
-2. **Consider both personal and professional travel**: Many companies focus on commuting but professional travel is equally important
-3. **Be specific with custom measures**: Clear, descriptive labels help participants understand available options
+1. **Révisez régulièrement les mesures** : Mettez à jour lors du lancement de nouvelles initiatives ou de la fin d'anciennes
+2. **Considérez les déplacements personnels et professionnels** : Beaucoup d'entreprises se concentrent sur les trajets domicile-travail, mais les déplacements professionnels sont tout aussi importants
+3. **Soyez précis avec les mesures personnalisées** : Des libellés clairs et descriptifs aident les participants à comprendre les options disponibles
 
-### When Setting Up Campaigns
+### Lors de la création des campagnes
 
-1. **Choose meaningful names**: Include the year or season for clarity
-2. **Set realistic end dates**: Allow sufficient time for participation
-3. **Define workplaces carefully**: Accurate locations enable better travel time and emissions calculations
-4. **Consider campaign-specific measures**: Use them to test new initiatives before company-wide rollout
+1. **Choisissez des noms explicites** : Incluez l'année ou la saison pour plus de clarté
+2. **Fixez des dates de fin réalistes** : Laissez suffisamment de temps pour la participation
+3. **Définissez soigneusement les lieux de travail** : Des localisations précises permettent de meilleurs calculs de temps de trajet et d'émissions
+4. **Envisagez des mesures spécifiques à la campagne** : Utilisez-les pour tester de nouvelles initiatives avant un déploiement à l'échelle de l'entreprise
 
-## Common Issues and Solutions
+## Problèmes courants et solutions
 
-### "Location is required, make sure address is valid"
+### "La localisation est requise, assurez-vous que l'adresse est valide"
 
-**Problem:** Workplace address cannot be validated
-**Solution:**
+**Problème :** L'adresse du lieu de travail ne peut pas être validée
+**Solution :**
 
-- Ensure the address is complete and accurate
-- Try a more specific address format
-- Verify coordinates are being populated
+- Vérifiez que l'adresse est complète et correcte
+- Essayez un format d'adresse plus précis
+- Vérifiez que les coordonnées sont bien renseignées
 
-### "At least one workplace must be defined for the campaign"
+### "Au moins un lieu de travail doit être défini pour la campagne"
 
-**Problem:** Campaign has no workplace configuration
-**Solution:**
+**Problème :** La campagne n'a pas de configuration de lieu de travail
+**Solution :**
 
-- Either enable "Open workplaces", OR
-- Add at least one workplace with a valid address
+- Soit activer "Lieux de travail ouverts", OU
+- Ajouter au moins un lieu de travail avec une adresse valide
 
-### Custom measures not appearing
+### Les mesures personnalisées n'apparaissent pas
 
-**Problem:** Custom measure was created but doesn't show in dropdowns
-**Solution:**
+**Problème :** Une mesure personnalisée a été créée mais n'apparaît pas dans les listes déroulantes
+**Solution :**
 
-- Refresh the company editor
-- Verify the measure has labels in both languages
-- Check that the correct group was selected
+- Rafraîchissez l'éditeur d'entreprise
+- Vérifiez que la mesure possède des libellés dans les deux langues
+- Vérifiez que le bon groupe a été sélectionné

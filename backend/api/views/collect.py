@@ -134,6 +134,13 @@ async def saveComments(
     recordService = RecordService(session)
     record = await recordService.get_by_token(token)
     record.comments = data.comments
+    try:
+        participantService = ParticipantService(session)
+        participant = await participantService.get_by_token(token)
+        participant.status = "completed"
+        await participantService.update(participant.id, participant)
+    except:
+        pass
     return await recordService.update(record.id, record)
 
 

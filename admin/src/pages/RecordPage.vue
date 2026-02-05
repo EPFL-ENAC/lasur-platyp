@@ -159,6 +159,7 @@ const items = computed<FieldItem[]>(() => {
       field: 'updated_at',
       format: (val) => new Date(val.updated_at).toLocaleString(),
     },
+    { field: 'comments', label: 'comments' },
   ]
 })
 const items1 = computed<FieldItem[]>(() => {

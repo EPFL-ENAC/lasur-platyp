@@ -1,202 +1,202 @@
-## Creating a Company Entry
+## Création d'une fiche entreprise
 
-To create a new company, administrators need to provide essential information about the organization and configure mobility-related settings.
+Pour créer une nouvelle entreprise, les administrateurs doivent fournir les informations essentielles sur l'organisation et configurer les paramètres liés à la mobilité.
 
-### Required Fields
+### Champs obligatoires
 
-- **Name** (_required_): The company's name as it will appear throughout the system
+- **Nom** (_obligatoire_) : Nom de l'entreprise tel qu'il apparaîtra dans tout le système
 
-### Optional Fields
+### Champs optionnels
 
-- **Administrators**: Email addresses of users who will have administrative access to this company's data
-- **Contact Name**: Name of the primary mobility contact person within the company
-- **Contact Email**: Email address for the mobility contact (must be a valid email format)
-- **Information URL**: A link to more information about the company's mobility options (must start with http:// or https://)
+- **Administrateurs** : Adresses email des utilisateurs ayant un accès administrateur aux données de cette entreprise
+- **Nom du contact** : Nom de la personne de contact principale pour la mobilité au sein de l'entreprise
+- **Email du contact** : Adresse email du contact mobilité (doit être au format email valide)
+- **URL d'information** : Lien vers plus d'informations sur les options de mobilité de l'entreprise (doit commencer par http:// ou https://)
 
-## Company Settings
+## Paramètres de l'entreprise
 
-### Administrators
+### Administrateurs
 
-Administrators are users who have full access to manage the company's mobility campaigns, participants, and data.
+Les administrateurs sont des utilisateurs ayant un accès complet pour gérer les campagnes de mobilité, les participants et les données de l'entreprise.
 
-**How to add administrators:**
+**Comment ajouter des administrateurs :**
 
-- Enter the email address of each administrator in the administrators field
-- Press Enter after each email to add it to the list
-- Multiple administrators can be assigned to a single company
-- Administrators can view and modify all company campaigns and participant data
+- Saisissez l'adresse email de chaque administrateur dans le champ dédié
+- Appuyez sur Entrée après chaque email pour l'ajouter à la liste
+- Plusieurs administrateurs peuvent être assignés à une même entreprise
+- Les administrateurs peuvent consulter et modifier toutes les campagnes et données de participants de l'entreprise
 
-**Purpose:**
+**Objectif :**
 
-- Enables decentralized management of mobility campaigns
-- Allows company representatives to manage their own mobility initiatives
-- Provides secure access control to company-specific data
+- Permet une gestion décentralisée des campagnes de mobilité
+- Autorise les représentants de l'entreprise à gérer leurs propres initiatives
+- Garantit un contrôle d'accès sécurisé aux données spécifiques de l'entreprise
 
-### Contact Information
+### Informations de contact
 
-Contact information helps participants and system users know who to reach out to for mobility-related questions.
+Les informations de contact permettent aux participants et utilisateurs du système de savoir à qui s'adresser pour toute question liée à la mobilité.
 
-**Contact Name:**
+**Nom du contact :**
 
-- The name of the person responsible for mobility coordination within the company
-- This information may be shared with campaign participants
+- Nom de la personne responsable de la coordination mobilité dans l'entreprise
+- Cette information peut être partagée avec les participants aux campagnes
 
-**Contact Email:**
+**Email du contact :**
 
-- Must be a valid email address
-- Used for mobility-related communications
-- Can be displayed to participants in campaigns
+- Doit être une adresse email valide
+- Utilisée pour les communications liées à la mobilité
+- Peut être affichée aux participants dans les campagnes
 
-**Information URL:**
+**URL d'information :**
 
-- Provides a link to additional company mobility resources
-- Could link to:
-  - Internal mobility policies
-  - Sustainable transport initiatives
-  - Employee transportation benefits
-  - Company-specific mobility guidelines
+- Fournit un lien vers des ressources supplémentaires sur la mobilité de l'entreprise
+- Peut pointer vers :
+  - Politiques internes de mobilité
+  - Initiatives de transport durable
+  - Avantages pour les déplacements des employés
+  - Directives spécifiques à l'entreprise
 
-## Employer Measures
+## Mesures employeur
 
-Employer measures are actions taken by the company to facilitate and encourage sustainable mobility among employees. These measures are categorized by transport mode and trip purpose (personal commute vs. professional travel).
+Les mesures employeur sont des actions mises en place par l'entreprise pour faciliter et encourager la mobilité durable des salariés. Ces mesures sont catégorisées par mode de transport et par type de déplacement (trajet domicile-travail vs. déplacement professionnel).
 
-### Personal Commute Measures
+### Mesures pour les trajets domicile-travail
 
-These measures help employees with their daily commute to and from work.
+Ces mesures aident les salariés dans leurs déplacements quotidiens entre leur domicile et le lieu de travail.
 
-#### Global Measures
+#### Mesures globales
 
-- **Sustainable mobility budget**: Financial support for sustainable transport options
-- **Ability to work from home**: Regular work-from-home arrangements
-- **Ability to work remotely**: Options to work from remote locations
-- **Ability to work remotely occasionally**: Flexible occasional remote work
+- **Budget mobilité durable** : Soutien financier pour des options de transport durable
+- **Possibilité de télétravail** : Organisation régulière du travail à domicile
+- **Possibilité de travail à distance** : Options pour travailler depuis d'autres lieux
+- **Possibilité de travail à distance occasionnel** : Télétravail flexible et ponctuel
 
-#### Public Transport Measures
+#### Mesures transports publics
 
-- **Public transport (UNIRESO) pass**: Local public transport subscription
-- **Léman express pass**: Regional express train pass
+- **Abonnement transports publics (UNIRESO)** : Abonnement local de transports publics
+- **Abonnement Léman express** : Abonnement au train express régional
 
-#### Train Measures
+#### Mesures train
 
-- **Train pass (general pass)**: Full Swiss rail network access
-- **Train pass (1/2 fare plus)**: Enhanced half-fare card with benefits
-- **Train pass (1/2 fare)**: Standard half-fare card
+- **Abonnement général** : Accès à l'ensemble du réseau ferroviaire suisse
+- **Abonnement demi-tarif plus** : Carte demi-tarif améliorée avec avantages
+- **Abonnement demi-tarif** : Carte demi-tarif standard
 
-#### Inter-modality Measures
+#### Mesures intermodalité
 
-- **Park and Ride pass**: Access to park-and-ride facilities
-- **Shuttle from the nearest train station**: Company-provided shuttle service
-- **Velo-station pass**: Access to bicycle parking facilities at stations
+- **Abonnement P+R** : Accès aux parkings relais
+- **Navette depuis la gare la plus proche** : Service de navette fourni par l'entreprise
+- **Abonnement vélo-station** : Accès aux parkings vélos en gare
 
-#### Bicycle Measures
+#### Mesures vélo
 
-- **Subsidy for the purchase of a bicycle/e-bike**: Financial support for bike purchases
-- **Showers, lockers and changing rooms**: Facilities to freshen up after cycling
-- **Secure bicycle parking**: Protected bike storage at workplace
-- **E-bike battery charging**: Infrastructure to charge electric bikes
-- **Subsidy for the purchase of bicycle safety and comfort gear**: Support for helmets, lights, etc.
-- **Setting up cycling courses at the workplace**: Education and training for cyclists
+- **Subvention à l'achat d'un vélo/vélo électrique** : Aide financière à l'achat d'un vélo
+- **Douches, vestiaires et casiers** : Infrastructures pour se changer après le trajet à vélo
+- **Parking vélo sécurisé** : Stationnement protégé pour vélos sur le lieu de travail
+- **Recharge de batterie vélo électrique** : Infrastructure pour recharger les vélos électriques
+- **Subvention à l'achat d'équipements de sécurité et de confort vélo** : Soutien pour casques, lumières, etc.
+- **Organisation de cours vélo sur site** : Sensibilisation et formation à la pratique du vélo
 
-#### Carpooling Measures
+#### Mesures covoiturage
 
-- **Reimbursement of car-pooling journeys**: Financial incentive for carpooling
-- **Connection to nearby colleagues to facilitate car-pooling**: Matchmaking service
-- **Parking spots reserved for car-pooling**: Dedicated parking spaces
+- **Remboursement des trajets en covoiturage** : Incitation financière au covoiturage
+- **Mise en relation avec des collègues proches** : Service de mise en relation
+- **Places de parking réservées au covoiturage** : Emplacements dédiés
 
-#### Electric Vehicle Measures
+#### Mesures véhicules électriques
 
-- **EV charging at the workplace**: Electric vehicle charging infrastructure
-- **Mobility car-pooling pass**: Access to shared mobility services
+- **Recharge de véhicules électriques sur site** : Infrastructure de recharge sur le lieu de travail
+- **Abonnement mobilité partagée** : Accès à des services de mobilité partagée
 
-### Professional Travel Measures
+### Mesures pour les déplacements professionnels
 
-These measures support sustainable mobility for business trips and professional travel.
+Ces mesures soutiennent la mobilité durable lors des déplacements professionnels et des voyages d'affaires.
 
-#### Global Professional Measures
+#### Mesures professionnelles globales
 
-- **Workplace videoconferencing system**: Technology to reduce long-distance travel needs
+- **Système de visioconférence sur site** : Technologie pour limiter les déplacements longue distance
 
-#### Professional Bicycle Measures
+#### Mesures vélo professionnelles
 
-- **E-bike fleet for professional trips**: Company bikes available for business use
+- **Flotte de vélos électriques pour les déplacements professionnels** : Vélos mis à disposition pour les usages professionnels
 
-#### Professional Public Transport Measures
+#### Mesures transports publics professionnels
 
-- **Public transport (UNIRESO) pass**: Local public transport for business trips
-- **Reimbursement of public transport tickets for business travel**: Cost coverage
+- **Abonnement transports publics (UNIRESO)** : Abonnement local pour les déplacements professionnels
+- **Remboursement des billets de transports publics pour les déplacements professionnels** : Prise en charge des coûts
 
-#### Professional Train Measures
+#### Mesures train professionnelles
 
-- **Train pass (general pass)**: Full rail network access for business travel
-- **Obligation to use train where possible**: Policy requiring train use for business journeys
-- **Reimbursement of train tickets for business travel**: Cost coverage
+- **Abonnement général** : Accès au réseau ferroviaire pour les déplacements professionnels
+- **Obligation d'utiliser le train lorsque possible** : Politique imposant l'usage du train pour les déplacements professionnels
+- **Remboursement des billets de train pour les déplacements professionnels** : Prise en charge des coûts
 
-#### Professional Electric Vehicle Measures
+#### Mesures véhicules électriques professionnelles
 
-- **EV fleet for professional trips**: Company electric vehicles for business use
+- **Flotte de véhicules électriques pour les déplacements professionnels** : Véhicules électriques mis à disposition pour les usages professionnels
 
-### How to Configure Measures
+### Comment configurer les mesures
 
-1. When creating or editing a company, scroll to the "Employer measures" section
-2. Use the tabs to switch between "Personal" and "Professional" measures
-3. For each transport mode category, select the applicable measures from the dropdown
-4. Multiple measures can be selected within each category
-5. Clear selections using the X button if measures are no longer applicable
+1. Lors de la création ou de la modification d'une entreprise, faites défiler jusqu'à la section "Mesures employeur"
+2. Utilisez les onglets pour basculer entre les mesures "Personnelles" et "Professionnelles"
+3. Pour chaque catégorie de mode de transport, sélectionnez les mesures applicables dans la liste déroulante
+4. Plusieurs mesures peuvent être sélectionnées dans chaque catégorie
+5. Effacez les sélections à l'aide du bouton X si les mesures ne sont plus applicables
 
-## Custom Measures
+## Mesures personnalisées
 
-Companies may have unique mobility initiatives that aren't covered by the standard measures. Custom measures allow you to define company-specific actions.
+Certaines entreprises peuvent avoir des initiatives de mobilité spécifiques qui ne sont pas couvertes par les mesures standards. Les mesures personnalisées permettent de définir des actions propres à l'entreprise.
 
-### Creating Custom Measures
+### Création de mesures personnalisées
 
-1. Click the "Custom measures" button when editing a company
-2. Select the appropriate group for your custom measure:
+1. Cliquez sur le bouton "Mesures personnalisées" lors de la modification d'une entreprise
+2. Sélectionnez le groupe approprié pour votre mesure personnalisée :
 
-   - Global measures
-   - Public transport measures
-   - Train measures
-   - Inter-modality measures
-   - Bicycle measures
-   - Carpooling measures
-   - Electric vehicle measures
-   - Professional measures (various categories)
+   - Mesures globales
+   - Mesures transports publics
+   - Mesures train
+   - Mesures intermodalité
+   - Mesures vélo
+   - Mesures covoiturage
+   - Mesures véhicules électriques
+   - Mesures professionnelles (diverses catégories)
 
-3. Provide labels in both English and French
-4. Click "Add" to create the custom measure
+3. Fournissez des libellés en français et en anglais
+4. Cliquez sur "Ajouter" pour créer la mesure personnalisée
 
-### Using Custom Measures
+### Utilisation des mesures personnalisées
 
-Once created, custom measures appear alongside standard measures in the employer measures selection dropdowns. They can be selected for the company or for specific campaigns.
+Une fois créées, les mesures personnalisées apparaissent avec les mesures standards dans les listes déroulantes de sélection des mesures employeur. Elles peuvent être sélectionnées pour l'entreprise ou pour des campagnes spécifiques.
 
-**Use cases for custom measures:**
+**Cas d'usage des mesures personnalisées :**
 
-- Company-specific benefits not covered by standard options
-- Pilot programs or temporary initiatives
-- Location-specific measures (e.g., company-run ferry service)
-- Specialized equipment or facilities
+- Avantages spécifiques à l'entreprise non couverts par les options standards
+- Programmes pilotes ou initiatives temporaires
+- Mesures spécifiques à un site (ex. : service de navette fluviale interne)
+- Équipements ou infrastructures spécialisés
 
-## Best Practices
+## Bonnes pratiques
 
-### When Creating a Company
+### Lors de la création d'une entreprise
 
-1. **Provide complete contact information**: This helps participants get answers to their questions
-2. **Add multiple administrators**: Ensures continuity if one administrator is unavailable
-3. **Select all applicable measures**: Accurate measure selection leads to better recommendations
-4. **Use custom measures sparingly**: Only create custom measures for truly unique initiatives
+1. **Fournissez des informations de contact complètes** : Cela aide les participants à obtenir des réponses à leurs questions
+2. **Ajoutez plusieurs administrateurs** : Garantit la continuité en cas d'indisponibilité d'un administrateur
+3. **Sélectionnez toutes les mesures applicables** : Une sélection précise permet de meilleures recommandations
+4. **Utilisez les mesures personnalisées avec parcimonie** : Créez-les uniquement pour des initiatives réellement uniques
 
-### When Configuring Measures
+### Lors de la configuration des mesures
 
-1. **Review measures regularly**: Update as new initiatives launch or old ones end
-2. **Consider both personal and professional travel**: Many companies focus on commuting but professional travel is equally important
-3. **Be specific with custom measures**: Clear, descriptive labels help participants understand available options
+1. **Révisez régulièrement les mesures** : Mettez à jour lors du lancement de nouvelles initiatives ou de la fin d'anciennes
+2. **Considérez les déplacements personnels et professionnels** : Beaucoup d'entreprises se concentrent sur les trajets domicile-travail, mais les déplacements professionnels sont tout aussi importants
+3. **Soyez précis avec les mesures personnalisées** : Des libellés clairs et descriptifs aident les participants à comprendre les options disponibles
 
-## Common Issues and Solutions
+## Problèmes courants et solutions
 
-### Custom measures not appearing
+### Les mesures personnalisées n'apparaissent pas
 
-**Problem:** Custom measure was created but doesn't show in dropdowns
-**Solution:**
+**Problème :** Une mesure personnalisée a été créée mais n'apparaît pas dans les listes déroulantes
+**Solution :**
 
-- Refresh the company editor
-- Verify the measure has labels in both languages
-- Check that the correct group was selected
+- Rafraîchissez l'éditeur d'entreprise
+- Vérifiez que la mesure possède des libellés dans les deux langues
+- Vérifiez que le bon groupe a été sélectionné

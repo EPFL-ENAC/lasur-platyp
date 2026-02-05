@@ -79,7 +79,16 @@
       </template>
       <template v-slot:body-cell-action="props">
         <q-td :props="props">
-          <q-btn color="grey-8" size="12px" flat dense round icon="edit" @click="onEdit(props.row)">
+          <q-btn
+            v-if="props.row.status === 'open'"
+            color="grey-8"
+            size="12px"
+            flat
+            dense
+            round
+            icon="edit"
+            @click="onEdit(props.row)"
+          >
           </q-btn>
           <q-btn
             color="grey-8"
@@ -168,6 +177,7 @@ const columns = computed(() => {
       label: t('status'),
       align: DefaultAlignment,
       field: 'status',
+      format: (val: string) => t(`participant.status.${val}`),
       sortable: true,
     },
     //{
@@ -304,6 +314,8 @@ function onDownload() {
           employment_rate: p.data?.employment_rate,
           remote_work_rate: p.data?.remote_work_rate,
           company_vehicle: p.data?.company_vehicle,
+          created_at: p.created_at,
+          updated_at: p.updated_at,
         })),
       )
       const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${csvContent}`)

@@ -57,6 +57,22 @@ export default {
       workplaces_list: 'Liste des lieux de travail connus',
     },
   },
+  docs: {
+    title: 'Documentation',
+    hint: 'Trouvez des guides et des ressources pour vous aider à utiliser le Toolkit Mobilité.',
+    company_profile: {
+      title: 'Comment gérer le profil de votre entreprise',
+      caption: 'Apprenez à mettre à jour les informations et les paramètres de votre entreprise',
+    },
+    campaign_management: {
+      title: 'Comment créer une campagne',
+      caption: 'Apprenez les bases de la création et de la gestion des campagnes',
+    },
+    participants_management: {
+      title: 'Comment gérer les participants',
+      caption: 'Un guide pour ajouter, modifier et supprimer des participants',
+    },
+  },
   role: {
     'platyp-user': 'Utilisateur',
     'platyp-admin': 'Administrateur',
@@ -67,6 +83,10 @@ export default {
     employment_rate: "Taux d'emploi",
     remote_work_rate: 'Taux de télétravail',
     company_vehicle: 'Véhicule de fonction',
+    status: {
+      open: 'Ouvert',
+      completed: 'Terminé',
+    },
   },
   actions: {
     personnal: 'Personnel',
