@@ -15,7 +15,7 @@ async def find(
     select: str = Query(None),
     sort: str = Query(None),
     range: str = Query("[0,99]"),
-    user: User = Depends(kc_service.get_user_info()),
+    user: User = Depends(kc_service.require_admin()),
     session: AsyncSession = Depends(get_session),
 ) -> RecordResult:
     """Search for records"""
@@ -28,7 +28,7 @@ async def find(
 
 @router.get("/{id}", response_model=Record, response_model_exclude_none=True)
 async def get(id: int,
-              user: User = Depends(kc_service.get_user_info()),
+              user: User = Depends(kc_service.require_admin()),
               session: AsyncSession = Depends(get_session)) -> Record:
     """Get a record by id"""
     return await RecordService(session).get(id, user)
@@ -38,7 +38,7 @@ async def get(id: int,
 async def delete(
     id: int,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.get_user_info())
+    user: User = Depends(kc_service.require_admin())
 ) -> Record:
     """Delete a record by id"""
     return await RecordService(session).delete(id, user)
@@ -49,7 +49,7 @@ async def compute_flat(
     filter: str = Query(None),
     completed: bool = Query(
         False, description="Whether to include only completed records"),
-    user: User = Depends(kc_service.get_user_info()),
+    user: User = Depends(kc_service.require_admin()),
     session: AsyncSession = Depends(get_session),
 ) -> Response:
     """Query records in flat format as a CSV"""

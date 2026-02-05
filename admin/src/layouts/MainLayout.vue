@@ -76,7 +76,7 @@
             <q-item-label header>{{ t('companies') }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable :to="'/records'">
+        <q-item v-if="authStore.isAdmin" clickable :to="'/records'">
           <q-item-section avatar>
             <q-icon name="fa-brands fa-wpforms" size="xs" />
           </q-item-section>
