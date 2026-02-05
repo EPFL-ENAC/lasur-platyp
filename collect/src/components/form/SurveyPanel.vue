@@ -160,6 +160,15 @@ function nextStep() {
       return
     }
   }
+  if (survey.stepName === 'employment') {
+    if (
+      survey.record.data.company_vehicle === undefined ||
+      survey.record.data.company_vehicle === null
+    ) {
+      notifyError(t('form.error.company_vehicle'))
+      return
+    }
+  }
   if (survey.stepName === 'places') {
     if (
       survey.record.data.workplace?.lat === undefined ||

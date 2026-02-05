@@ -6,6 +6,7 @@ export default {
     error: {
       terms_conditions: 'Veuillez accepter les conditions générales pour continuer',
       confidentiality: 'Veuillez accepter la politique de confidentialité pour continuer',
+      company_vehicle: 'Veuillez indiquer si vous avez un véhicule de fonction',
       origin: 'Veuillez entrer un point de départ',
       workplace: 'Veuillez entrer un lieu de travail',
       journey_mode: 'Veuillez spécifier au moins un mode de transport pour chaque trajet',

@@ -23,6 +23,7 @@
       :left-label="t('form.no')"
       :right-label="t('form.yes')"
       v-model="survey.record.data.company_vehicle"
+      required
       class="q-mb-lg"
     />
   </div>

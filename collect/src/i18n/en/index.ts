@@ -6,6 +6,7 @@ export default {
     error: {
       terms_conditions: 'Please accept the terms and conditions to continue',
       confidentiality: 'Please accept the privacy policy to continue',
+      company_vehicle: 'Please indicate if you have a company vehicle',
       origin: 'Please enter a starting point',
       workplace: 'Please enter a workplace location',
       journey_mode: 'Please specify at least one mode of transport for each journey',
