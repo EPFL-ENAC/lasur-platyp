@@ -53,13 +53,20 @@
                   <div class="col-12 col-md-6">
                     <div class="text-bold q-mb-sm">{{ t('record.typo_reco') }}</div>
                     <fields-list :items="typoRecoItems" :dbobject="record?.typo?.reco" />
+                    <div class="text-bold q-mb-sm q-mt-lg">{{ t('record.typo_reco_actions') }}</div>
+                    <fields-list
+                      :items="typoRecoActionsItems"
+                      :dbobject="record?.typo?.reco_actions"
+                    />
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="text-bold q-mb-sm">{{ t('record.typo_reco_pro') }}</div>
                     <fields-list :items="typoRecoProItems" :dbobject="record?.typo?.reco_pro" />
-                    <div class="text-bold q-mb-sm q-mt-lg">{{ t('record.typo_reco_actions') }}</div>
+                    <div class="text-bold q-mb-sm q-mt-lg">
+                      {{ t('record.typo_reco_pro_actions') }}
+                    </div>
                     <fields-list
-                      :items="typoRecoActionsItems"
+                      :items="typoRecoProActionsItems"
                       :dbobject="record?.typo?.reco_actions"
                     />
                   </div>
@@ -187,7 +194,16 @@ const dataItems2 = computed<FieldItem[]>(() => {
 
 const typoRecoItems = computed<FieldItem[]>(() => {
   return record.value?.typo?.reco
-    ? Object.keys(record.value.typo.reco).map((key) => ({ field: key }))
+    ? Object.keys(record.value.typo.reco)
+        .filter((key) => !['access', 'scores'].includes(key))
+        .map((key) => ({ field: key }))
+    : []
+})
+const typoRecoActionsItems = computed<FieldItem[]>(() => {
+  return record.value?.typo?.reco_actions
+    ? Object.keys(record.value.typo.reco_actions)
+        .filter((key) => !key.includes('_pro'))
+        .map((key) => ({ field: key }))
     : []
 })
 const typoRecoProItems = computed<FieldItem[]>(() => {
@@ -195,9 +211,11 @@ const typoRecoProItems = computed<FieldItem[]>(() => {
     ? Object.keys(record.value.typo.reco_pro).map((key) => ({ field: key }))
     : []
 })
-const typoRecoActionsItems = computed<FieldItem[]>(() => {
+const typoRecoProActionsItems = computed<FieldItem[]>(() => {
   return record.value?.typo?.reco_actions
-    ? Object.keys(record.value.typo.reco_actions).map((key) => ({ field: key }))
+    ? Object.keys(record.value.typo.reco_actions)
+        .filter((key) => key.includes('_pro'))
+        .map((key) => ({ field: key }))
     : []
 })
 function onInit() {

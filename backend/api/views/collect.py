@@ -168,6 +168,11 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
             company, campaign, custom_actions, locale, reco["reco_dt2"], reco_pro["reco_pros"])
         response["reco_actions"] = actions
     record.typo = response
+    # remove access and scores from record.typo.reco
+    if "reco" in record.typo and "access" in record.typo["reco"]:
+        del record.typo["reco"]["access"]
+    if "reco" in record.typo and "scores" in record.typo["reco"]:
+        del record.typo["reco"]["scores"]
     record.comments = None  # clear comments
     await recordService.update(record.id, record)
     return response

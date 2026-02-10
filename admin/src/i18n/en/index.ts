@@ -407,6 +407,7 @@ export default {
     typo_reco: 'Recommendations',
     typo_reco_pro: 'Recommendations (professional)',
     typo_reco_actions: 'Recommended actions',
+    typo_reco_pro_actions: 'Recommended actions (professional)',
   },
   draw_mode: {
     simple_select_hint:

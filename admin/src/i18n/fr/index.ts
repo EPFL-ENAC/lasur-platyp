@@ -409,6 +409,7 @@ export default {
     typo_reco: 'Recommandations',
     typo_reco_pro: 'Recommandations (professionnel)',
     typo_reco_actions: 'Actions recommandées',
+    typo_reco_pro_actions: 'Actions recommandées (professionnel)',
   },
   draw_mode: {
     simple_select_hint:
