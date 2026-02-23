@@ -287,18 +287,18 @@ def test_compute_modes_emissions():
 
     # print(result)
     expected = [
-        Emissions(mode='bike', total=30, distances=6728.72,
-                  journeys=2430, emissions=151.304),
-        Emissions(mode='pub', total=30, distances=20859.321,
-                  journeys=3690, emissions=2243.077),
-        Emissions(mode='moto', total=30, distances=6837.789,
+        Emissions(mode='bike', total=30, distances=2693.855,
+                  journeys=2520, emissions=151.304),
+        Emissions(mode='pub', total=30, distances=20522.579,
+                  journeys=3690, emissions=2496.472),
+        Emissions(mode='moto', total=30, distances=6272.711,
                   journeys=1620, emissions=2469.62),
-        Emissions(mode='carpool', total=30, distances=4605.723,
-                  journeys=270, emissions=214.166),
-        Emissions(mode='car', total=30, distances=15839.606,
-                  journeys=2970, emissions=15023.343),
-        Emissions(mode='train', total=30, distances=2122.997,
-                  journeys=1080, emissions=82.563)
+        Emissions(mode='car', total=30, distances=15427.775,
+                  journeys=2970, emissions=15166.121),
+        Emissions(mode='train', total=30, distances=1250.259,
+                  journeys=1080, emissions=82.563),
+        Emissions(mode='carpool', total=30, distances=2302.862,
+                journeys=270, emissions=214.166),
     ]
     assert len(result) == len(expected)
     for res_emission, exp_emission in zip(result, expected):
