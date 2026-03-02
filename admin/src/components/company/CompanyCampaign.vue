@@ -85,6 +85,7 @@
                 <a
                   :href="`https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <q-icon name="location_on" class="q-mr-xs" />
                   <span>{{ formatCoordinates(wp.lat, wp.lon) }}</span>
@@ -186,7 +187,7 @@ import CompanyCampaignParticipants from 'src/components/company/CompanyCampaignP
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
-import IsochronesMap from '../IsochronesMap.vue'
+import IsochronesMap from 'src/components/IsochronesMap.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
 import { collectUrl } from 'src/boot/api'
