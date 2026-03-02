@@ -77,27 +77,38 @@
           <span class="q-mt-xs">{{ t('campaign.workplaces.open_workplaces') }}</span>
         </div>
         <q-list separator class="fields-list">
-          <q-item v-for="(wp, index) in visibleWorkplaces" :key="index">
-            <q-item-section :style="`max-width: 200px`">
-              <q-item-label>
-                <div class="text-overline text-grey-6">{{ wp.name }}</div>
-              </q-item-label>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                <div>{{ wp.address }}</div>
-                <div class="q-mt-sm">
-                  <a
-                    :href="`https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`"
-                    target="_blank"
-                  >
-                    <q-icon name="location_on" class="q-mr-xs" />
-                    <span>{{ formatCoordinates(wp.lat, wp.lon) }}</span>
-                  </a>
+          <div v-for="(wp, index) in visibleWorkplaces" :key="index" class="workplace">
+            <div class="text-overline text-grey-6 workplace-name">{{ wp.name }}</div>
+            <div class="workplace-address">
+              <div>{{ wp.address }}</div>
+              <div class="q-mt-sm">
+                <a
+                  :href="`https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`"
+                  target="_blank"
+                >
+                  <q-icon name="location_on" class="q-mr-xs" />
+                  <span>{{ formatCoordinates(wp.lat, wp.lon) }}</span>
+                </a>
+              </div>
+            </div>
+            <div class="workplace-isochrone">
+              <q-expansion-item
+                :label="t('campaign.workplaces.show_isochrone')"
+                icon="map"
+                expand-icon="expand_more"
+                header-class="bg-grey-3"
+              >
+                <div class="q-pa-sm">
+                  <isochrones-map
+                    :mapId="`map-workplace-${index}`"
+                    :center="[wp.lon, wp.lat]"
+                    :reco="wp.address"
+                    height="400px"
+                  />
                 </div>
-              </q-item-label>
-            </q-item-section>
-          </q-item>
+              </q-expansion-item>
+            </div>
+          </div>
         </q-list>
         <div class="row q-mt-sm">
           <q-btn
@@ -175,6 +186,7 @@ import CompanyCampaignParticipants from 'src/components/company/CompanyCampaignP
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
+import IsochronesMap from '../IsochronesMap.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
 import { collectUrl } from 'src/boot/api'
@@ -364,3 +376,32 @@ function onDownloadWorkplaces() {
   document.body.removeChild(link)
 }
 </script>
+
+<style scoped>
+
+.workplace {
+  padding: 1rem 0.5rem;
+
+  display: grid;
+  grid-template-areas:
+    'workplace-name workplace-address'
+    'workplace-isochrone workplace-isochrone';
+  
+  gap: 1rem;
+
+  border-bottom: 1px solid lightgrey;
+}
+
+.workplace-name {
+  grid-area: workplace-name;
+}
+
+.workplace-address {
+  grid-area: workplace-address;
+}
+
+.workplace-isochrone {
+  grid-area: workplace-isochrone;
+}
+
+</style>

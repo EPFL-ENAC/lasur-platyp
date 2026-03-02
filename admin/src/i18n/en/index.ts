@@ -54,6 +54,7 @@ export default {
       open_workplaces_hint:
         'If enabled, participants will be able to select any workplace when filling the survey.',
       workplaces_list: 'List of known workplaces',
+      show_isochrone: 'Show isochrone',
     },
   },
   docs: {
