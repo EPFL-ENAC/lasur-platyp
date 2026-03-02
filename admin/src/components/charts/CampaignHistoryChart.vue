@@ -42,10 +42,14 @@ use([
 
 const props = defineProps<Props>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
+
+watch(locale, () => {
+  initChartOptions()
+})
 
 onMounted(() => {
   initChartOptions()
