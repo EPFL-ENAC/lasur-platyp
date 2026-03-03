@@ -44,6 +44,15 @@
             <q-badge color="accent" :label="props.row.administrators.length || 0" />
           </q-td>
         </template>
+        <template v-slot:body-cell-can_be_cited="props">
+          <q-td :props="props">
+            <q-icon
+              :name="props.row.can_be_cited ? 'check_circle' : 'cancel'"
+              :color="props.row.can_be_cited ? 'positive' : 'negative'"
+              size="sm"
+            />
+          </q-td>
+        </template>
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
@@ -138,7 +147,7 @@ const columns = computed(() => {
       required: true,
       label: t('company.can_be_cited'),
       align: DefaultAlignment,
-      field: (row: Company) => (row.can_be_cited ? '✅' : '❌'),
+      field: 'can_be_cited',
       sortable: true,
     },
     {
