@@ -76,7 +76,7 @@
           />
           <span class="q-mt-xs">{{ t('campaign.workplaces.open_workplaces') }}</span>
         </div>
-        <q-list separator class="fields-list">
+        <div>
           <div v-for="(wp, index) in visibleWorkplaces" :key="index" class="workplace">
             <div class="text-overline text-grey-6 workplace-name">{{ wp.name }}</div>
             <div class="workplace-address">
@@ -110,7 +110,8 @@
               </q-expansion-item>
             </div>
           </div>
-        </q-list>
+        </div>
+        
         <div class="row q-mt-sm">
           <q-btn
             v-if="hasMoreWorkplaces"
