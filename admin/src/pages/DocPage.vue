@@ -41,12 +41,12 @@ import BestPracticesEn from 'src/assets/docs/en/organisations/best_practices.md'
 import BestPracticesFr from 'src/assets/docs/fr/organisations/best_practices.md'
 import CommonIssuesEn from 'src/assets/docs/en/organisations/common_issues.md'
 import CommonIssuesFr from 'src/assets/docs/fr/organisations/common_issues.md'
-import CampainSettingsEn from 'src/assets/docs/en/campaigns/settings.md'
-import CampainSettingsFr from 'src/assets/docs/fr/campaigns/settings.md'
-import CampainCommonIssuesEn from 'src/assets/docs/en/campaigns/common_issues.md'
-import CampainCommonIssuesFr from 'src/assets/docs/fr/campaigns/common_issues.md'
-import CampainBestPracticesEn from 'src/assets/docs/en/campaigns/best_practices.md'
-import CampainBestPracticesFr from 'src/assets/docs/fr/campaigns/best_practices.md'
+import CampaignSettingsEn from 'src/assets/docs/en/campaigns/settings.md'
+import CampaignSettingsFr from 'src/assets/docs/fr/campaigns/settings.md'
+import CampaignCommonIssuesEn from 'src/assets/docs/en/campaigns/common_issues.md'
+import CampaignCommonIssuesFr from 'src/assets/docs/fr/campaigns/common_issues.md'
+import CampaignBestPracticesEn from 'src/assets/docs/en/campaigns/best_practices.md'
+import CampaignBestPracticesFr from 'src/assets/docs/fr/campaigns/best_practices.md'
 import ParticipantsSettingsEn from 'src/assets/docs/en/participants/settings.md'
 import ParticipantsSettingsFr from 'src/assets/docs/fr/participants/settings.md'
 import ParticipantsCommonIssuesEn from 'src/assets/docs/en/participants/common_issues.md'
@@ -106,23 +106,23 @@ const sections = computed<DocSection[]>(() => [
     ],
   },
   {
-    title: t('docs.campaings.title'),
-    description: t('docs.campaings.description'),
+    title: t('docs.campaigns.title'),
+    description: t('docs.campaigns.description'),
     entries: [
       {
-        title: t('docs.campaings.settings.title'),
-        caption: t('docs.campaings.settings.caption'),
-        markdown: locale.value === 'fr' ? CampainSettingsFr : CampainSettingsEn,
+        title: t('docs.campaigns.settings.title'),
+        caption: t('docs.campaigns.settings.caption'),
+        markdown: locale.value === 'fr' ? CampaignSettingsFr : CampaignSettingsEn,
       },
       {
-        title: t('docs.campaings.common_issues.title'),
-        caption: t('docs.campaings.common_issues.caption'),
-        markdown: locale.value === 'fr' ? CampainCommonIssuesFr : CampainCommonIssuesEn,
+        title: t('docs.campaigns.common_issues.title'),
+        caption: t('docs.campaigns.common_issues.caption'),
+        markdown: locale.value === 'fr' ? CampaignCommonIssuesFr : CampaignCommonIssuesEn,
       },
       {
-        title: t('docs.campaings.best_practices.title'),
-        caption: t('docs.campaings.best_practices.caption'),
-        markdown: locale.value === 'fr' ? CampainBestPracticesFr : CampainBestPracticesEn,
+        title: t('docs.campaigns.best_practices.title'),
+        caption: t('docs.campaigns.best_practices.caption'),
+        markdown: locale.value === 'fr' ? CampaignBestPracticesFr : CampaignBestPracticesEn,
       },
     ],
   },
@@ -150,7 +150,7 @@ const sections = computed<DocSection[]>(() => [
 ])
 </script>
 
-<style>
+<style scoped>
 .bordered {
   border: 1px solid #ccc;
 }

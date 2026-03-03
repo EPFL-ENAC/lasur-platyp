@@ -62,18 +62,6 @@ export default {
   docs: {
     title: 'Documentation',
     hint: 'Find here all the documentation to help you use the Mobility Toolkit administration interface.',
-    company_profile: {
-      title: 'How to manage my organisation profile',
-      caption: 'Learn how to update your organisation information and settings',
-    },
-    campaign_management: {
-      title: 'How to create a campaign',
-      caption: 'Learn the basics of creating and managing campaigns',
-    },
-    participants_management: {
-      title: 'How to manage participants',
-      caption: 'A guide to adding, editing, and removing participants',
-    },
     organisations: {
       title: 'Organisations',
       create: {
@@ -101,7 +89,7 @@ export default {
         caption: 'Solutions to frequently encountered problems',
       }
     },
-    campaings: {
+    campaigns: {
       title: 'Campaigns',
       description: 'Campaigns are time-bound mobility surveys or initiatives within an organisation. Each organisation can have multiple campaigns.',
       settings: {

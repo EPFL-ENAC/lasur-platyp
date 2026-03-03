@@ -10,7 +10,7 @@
 ### When Sharing Survey Links
 
 1. **Protect token confidentiality**: Each token is unique and should only be shared with the corresponding participant
-2. **Use secure communication channels**: Send tokens through your company's approved communication methods
+2. **Use secure communication channels**: Send tokens through your organisation's approved communication methods
 3. **Include context**: Explain the campaign purpose when sharing the survey link
 4. **Set clear deadlines**: Communicate when the campaign ends
 

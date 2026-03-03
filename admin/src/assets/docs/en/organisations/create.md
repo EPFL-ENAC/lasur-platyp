@@ -1,6 +1,6 @@
 ## Creating an Organisation Entry
 
-To create a new organisation, administrators need to provide essential information about the organization and configure mobility-related settings.
+To create a new organisation, administrators need to provide essential information about the organisation and configure mobility-related settings.
 
 ### Required Fields
 

@@ -63,18 +63,6 @@ export default {
   docs: {
     title: 'Documentation',
     hint: 'Trouvez des guides et des ressources pour vous aider à utiliser le Toolkit Mobilité.',
-    company_profile: {
-      title: 'Comment gérer le profil de votre organisation',
-      caption: 'Apprenez à mettre à jour les informations et les paramètres de votre organisation',
-    },
-    campaign_management: {
-      title: 'Comment créer une campagne',
-      caption: 'Apprenez les bases de la création et de la gestion des campagnes',
-    },
-    participants_management: {
-      title: 'Comment gérer les participants',
-      caption: 'Un guide pour ajouter, modifier et supprimer des participants',
-    },
     organisations: {
       title: 'Organisations',
       create: {
@@ -102,7 +90,7 @@ export default {
         caption: 'Conseils pour structurer votre organisation et vos campagnes de manière efficace',
       },
     },
-    campaings: {
+    campaigns: {
       title: 'Campagnes',
       description: 'Les campagnes sont des enquêtes ou initiatives de mobilité limitées dans le temps au sein d\'une organisation. Chaque organisation peut avoir plusieurs campagnes.',
       settings: {
