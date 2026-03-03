@@ -44,6 +44,15 @@
             <q-badge color="accent" :label="props.row.administrators.length || 0" />
           </q-td>
         </template>
+        <template v-slot:body-cell-can_be_cited="props">
+          <q-td :props="props">
+            <q-icon
+              :name="props.row.can_be_cited ? 'check_circle' : 'cancel'"
+              :color="props.row.can_be_cited ? 'positive' : 'negative'"
+              size="sm"
+            />
+          </q-td>
+        </template>
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
@@ -131,6 +140,14 @@ const columns = computed(() => {
       label: t('company.administrators'),
       align: DefaultAlignment,
       field: 'administrators',
+      sortable: true,
+    },
+    {
+      name: 'can_be_cited',
+      required: true,
+      label: t('company.can_be_cited'),
+      align: DefaultAlignment,
+      field: 'can_be_cited',
       sortable: true,
     },
     {
@@ -226,7 +243,7 @@ function fetchFromServer(
 const onRequest = makePaginationRequestHandler(fetchFromServer, pagination)
 
 function onAdd() {
-  selected.value = { name: '', administrators: [] }
+  selected.value = { name: '', can_be_cited: true, administrators: [] }
   showEditDialog.value = true
 }
 

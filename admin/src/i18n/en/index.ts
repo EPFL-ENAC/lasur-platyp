@@ -19,6 +19,8 @@ export default {
     contact_info: 'Contact Information',
     info_url: 'Information link',
     info_url_hint: 'Provide a link to more information about the company mobility options.',
+    can_be_cited: 'Can be cited as a Mobilyse user',
+    can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of Mobilyse',
   },
   campaign: {
     label: 'Campaign',

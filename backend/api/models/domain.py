@@ -39,6 +39,7 @@ class EmployerActions(BaseModel):
 
 class CompanyBase(Entity):
     administrators: Optional[List[str]] = Field(default=None)
+    can_be_cited: bool = Field(default=True, nullable=False)
 
 
 class Company(CompanyBase, table=True):
