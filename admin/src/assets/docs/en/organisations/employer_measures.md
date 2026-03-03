@@ -79,7 +79,7 @@ These measures support sustainable mobility for business trips and professional 
 
 ### How to Configure Measures
 
-1. When creating or editing a organisation, scroll to the "Employer measures" section
+1. When creating or editing an organisation, scroll to the "Employer measures" section
 2. Use the tabs to switch between "Personal" and "Professional" measures
 3. For each transport mode category, select the applicable measures from the dropdown
 4. Multiple measures can be selected within each category

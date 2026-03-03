@@ -9,7 +9,7 @@
         class="q-mb-xl"
       />
       <div>
-        <div v-for="section in sections" :key="section.title" bordered class="q-mb-md">
+        <div v-for="section in sections" :key="section.title" class="q-mb-md">
           <h6 class="text-h6 q-mb-xs">{{ section.title }}</h6>
           <p class="q-mb-md">{{ section.description ?? '' }}</p>
 
@@ -112,7 +112,7 @@ const sections = computed<DocSection[]>(() => [
       {
         title: t('docs.campaings.settings.title'),
         caption: t('docs.campaings.settings.caption'),
-        markdown: locale.value === 'fr' ? CampainSettingsEn : CampainSettingsFr,
+        markdown: locale.value === 'fr' ? CampainSettingsFr : CampainSettingsEn,
       },
       {
         title: t('docs.campaings.common_issues.title'),

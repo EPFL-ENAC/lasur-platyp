@@ -70,7 +70,7 @@
                 v-model="terms_and_conditions_accepted"
                 :label="t('terms_and_conditions_accept') + ' *'"
               />
-              <q-btn flat no-caps class="text-hint q-mb-md" href="https://modus-ge.ch/toolkit-cgu" target="_blank">
+              <q-btn flat no-caps class="text-hint q-mb-md" href="https://modus-ge.ch/toolkit-cgu" target="_blank" ref="noopener noreferrer">
                 {{ t('terms_and_conditions_show') }}
               </q-btn>
             </q-form>
@@ -113,10 +113,6 @@
           </q-card-actions>
         </q-card>
       </q-page>
-      <markdown-dialog
-        v-model="showTermsDialog"
-        :text="locale === 'fr' ? TermsConditionsFr : TermsConditionsEn"
-      />
     </q-page-container>
   </q-layout>
 </template>
@@ -128,9 +124,6 @@ import type { AppUser } from 'src/models'
 import { notifyError, notifySuccess } from 'src/utils/notify'
 import { generatePassword } from 'src/utils/generate'
 import { locales } from 'boot/i18n'
-import MarkdownDialog from 'src/components/MarkdownDialog.vue'
-import TermsConditionsEn from 'src/assets/docs/en/terms-conditions.md'
-import TermsConditionsFr from 'src/assets/docs/fr/terms-conditions.md'
 
 const $q = useQuasar()
 const { t, locale } = useI18n()
@@ -144,7 +137,6 @@ const showPassword = ref(false)
 const selected = ref<AppUser>({
   email: '',
 } as AppUser)
-const showTermsDialog = ref(false)
 
 const localeOptions = computed(() => {
   return locales.map((key) => ({

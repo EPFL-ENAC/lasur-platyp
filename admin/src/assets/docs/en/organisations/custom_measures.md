@@ -4,7 +4,7 @@ Companies may have unique mobility initiatives that aren't covered by the standa
 
 ### Creating Custom Measures
 
-1. Click the "Custom measures" button when editing a organisation
+1. Click the "Custom measures" button when editing an organisation
 2. Select the appropriate group for your custom measure:
 
    - Global measures
