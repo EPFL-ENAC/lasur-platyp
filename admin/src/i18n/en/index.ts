@@ -3,22 +3,22 @@ export default {
     brand: 'Mobility Toolkit',
   },
   company: {
-    label: 'Company',
+    label: 'Organisation',
     actions: 'Employer measures',
     custom_actions: 'Custom measures',
     custom_actions_hint:
       'Add or remove custom employer measures that will facilitate employees mobility. These measures are grouped per transport mode or are global.',
     administrators: 'Administrators',
     administrators_hint:
-      'Provide the email address of the administrators for this company (type Enter to add entry).',
+      'Provide the email address of the administrators for this organisation (type Enter to add entry).',
     contact_name: 'Contact Name',
-    contact_name_hint: 'Provide the name of the contact person for mobility in this company.',
+    contact_name_hint: 'Provide the name of the contact person for mobility in this organisation.',
     contact_email: 'Contact Email',
     contact_email_hint:
-      'Provide the email address of the contact person for mobility in this company.',
+      'Provide the email address of the contact person for mobility in this organisation.',
     contact_info: 'Contact Information',
     info_url: 'Information link',
-    info_url_hint: 'Provide a link to more information about the company mobility options.',
+    info_url_hint: 'Provide a link to more information about the organisation mobility options.',
     can_be_cited: 'Can be cited as a Mobilyse user',
     can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of Mobilyse',
   },
@@ -31,17 +31,17 @@ export default {
     with_actions: 'With employer measures specific to this campaign',
     contact_name: 'Contact Name',
     contact_name_hint:
-      'Provide the name of the contact person for mobility in this company (if different from the company contact).',
+      'Provide the name of the contact person for mobility in this organisation (if different from the organisation contact).',
     contact_email: 'Contact Email',
     contact_email_hint:
-      'Provide the email address of the contact person for mobility in this company (if different from the company contact).',
+      'Provide the email address of the contact person for mobility in this organisation (if different from the organisation contact).',
     contact_info: 'Contact Information',
     info_url: 'Information link',
     info_url_hint:
-      'Provide a link to more information about the company mobility options (if different from the company information link).',
+      'Provide a link to more information about the organisation mobility options (if different from the organisation information link).',
     nb_employees: 'Number of employees',
     nb_employees_hint:
-      'Provide the number of employees working in this company or at the workplace(s) associated with this campaign. This information is used to contextualize the mobility statistics.',
+      'Provide the number of employees working in this organisation or at the workplace(s) associated with this campaign. This information is used to contextualize the mobility statistics.',
     csv_missing_columns:
       'The uploaded CSV file is missing the following required columns: {columns}.',
     import_workplaces_hint:
@@ -63,8 +63,8 @@ export default {
     title: 'Documentation',
     hint: 'Find here all the documentation to help you use the Mobility Toolkit administration interface.',
     company_profile: {
-      title: 'How to manage my company profile',
-      caption: 'Learn how to update your company information and settings',
+      title: 'How to manage my organisation profile',
+      caption: 'Learn how to update your organisation information and settings',
     },
     campaign_management: {
       title: 'How to create a campaign',
@@ -74,6 +74,65 @@ export default {
       title: 'How to manage participants',
       caption: 'A guide to adding, editing, and removing participants',
     },
+    organisations: {
+      title: 'Organisations',
+      create: {
+        title: 'How to create an organisation',
+        caption: 'Learn how to create a new organisation in the Mobility Toolkit',
+      },
+      settings: {
+        title: 'How to manage organisation settings',
+        caption: 'Learn how to update your organisation settings and preferences',
+      },
+      employer_measures: {
+        title: 'How to manage employer measures',
+        caption: 'Learn how to manage employer measures for your organisation',
+      },
+      custom_measures: {
+        title: 'How to manage custom measures',
+        caption: 'Learn how to manage custom measures for your organisation',
+      },
+      best_practices: {
+        title: 'Best practices for using the Mobility Toolkit',
+        caption: 'Tips and recommendations to make the most of the Mobility Toolkit for your organisation',
+      },
+      common_issues: {
+        title: 'Common issues and troubleshooting',
+        caption: 'Solutions to frequently encountered problems',
+      }
+    },
+    campaings: {
+      title: 'Campaigns',
+      description: 'Campaigns are time-bound mobility surveys or initiatives within an organisation. Each organisation can have multiple campaigns.',
+      settings: {
+        title: 'How to manage campaign settings',
+        caption: 'Learn how to create and update your campaign settings and preferences',
+      },
+      common_issues: {
+        title: 'Common issues and troubleshooting',
+        caption: 'Solutions to frequently encountered problems related to campaign management',
+      },
+      best_practices: {
+        title: 'Best practices for campaign management',
+        caption: 'Tips and recommendations to make the most of the campaign features in the Mobility Toolkit',
+      },
+    },
+    participants: {
+      title: 'Participants',
+      description: 'Participants are employees or members of an organisation who complete mobility surveys within a campaign. Each campaign maintains its own list of participants identified by a unique identifier that references the organisation\'s external participant registry.',
+      settings: {
+        title: 'How to manage participants',
+         caption: 'Learn how to add, edit, and remove participants in your campaigns',
+      },
+      common_issues: {
+        title: 'Common issues and troubleshooting',
+        caption: 'Solutions to frequently encountered problems related to participant management',
+      },
+       best_practices: {
+         title: 'Best practices for participant management',
+         caption: 'Tips and recommendations to effectively manage participants in your campaigns',
+       },
+    }
   },
   role: {
     'platyp-user': 'User',

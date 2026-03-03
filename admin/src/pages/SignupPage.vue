@@ -70,7 +70,7 @@
                 v-model="terms_and_conditions_accepted"
                 :label="t('terms_and_conditions_accept') + ' *'"
               />
-              <q-btn flat no-caps class="text-hint q-mb-md" @click="showTermsDialog = true">
+              <q-btn flat no-caps class="text-hint q-mb-md" href="https://modus-ge.ch/toolkit-cgu" target="_blank">
                 {{ t('terms_and_conditions_show') }}
               </q-btn>
             </q-form>

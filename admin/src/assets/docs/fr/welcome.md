@@ -11,7 +11,7 @@ L'utilisation simple de l'outil et le faible coût d'entrée (totalement gratuit
 - Cibler les aides à la mobilité des collaborateur·trice·s
 - Améliorer le bien-être au travail et la santé des collaborateur·gtrice·s
 - Engager une démarche RSE améliorant l'attractivité de l'organisation
-- Calculer et monitorer le bilan carbone de l'entreprise pour la mobilité (scope 3, catégories 6 et 7)
+- Calculer et monitorer le bilan carbone de l'organisation pour la mobilité (scope 3, catégories 6 et 7)
 
 **En tant que collaborateur·trice, pourquoi répondre au questionnaire de 10min ?**
 
