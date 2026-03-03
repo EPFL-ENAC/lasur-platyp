@@ -20,6 +20,8 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette entreprise.",
+    can_be_cited: 'Peut être citée comme utilisateur de Mobilyse',
+    can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de Mobilyse',
   },
   campaign: {
     label: 'Campagne',
@@ -55,7 +57,7 @@ export default {
       open_workplaces_hint:
         "Si activé, les participants pourront sélectionner n'importe quel lieu de travail lors du remplissage de l'enquête.",
       workplaces_list: 'Liste des lieux de travail connus',
-      show_isochrone: 'Afficher le\'isochrone',
+      show_isochrone: 'Afficher l\'isochrone',
     },
   },
   docs: {

@@ -56,6 +56,7 @@ export interface CompanyAction {
 
 export interface Company extends Entity {
   administrators: string[]
+  can_be_cited: boolean
   contact_email?: string
   contact_name?: string
   info_url?: string

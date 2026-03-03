@@ -57,6 +57,13 @@
             :rules="[(val) => !val || /^(http|https):/.test(val) || t('valid_url_required')]"
             class="q-mb-md"
           />
+          <q-toggle
+            v-model="selected.can_be_cited"
+            :label="t('company.can_be_cited_toggle')"
+            :true-value="false"
+            :false-value="true"
+            class="q-mb-md"
+          />
         </q-form>
       </q-card-section>
 
@@ -90,6 +97,7 @@ const form = ref()
 const showDialog = ref(props.modelValue)
 const selected = ref<Company>({
   name: '',
+  can_be_cited: true,
 } as Company)
 const editMode = ref(false)
 

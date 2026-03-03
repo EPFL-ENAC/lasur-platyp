@@ -134,6 +134,14 @@ const columns = computed(() => {
       sortable: true,
     },
     {
+      name: 'can_be_cited',
+      required: true,
+      label: t('company.can_be_cited'),
+      align: DefaultAlignment,
+      field: (row: Company) => (row.can_be_cited ? '✅' : '❌'),
+      sortable: true,
+    },
+    {
       name: 'updated_at',
       required: true,
       label: t('last_modified'),
@@ -226,7 +234,7 @@ function fetchFromServer(
 const onRequest = makePaginationRequestHandler(fetchFromServer, pagination)
 
 function onAdd() {
-  selected.value = { name: '', administrators: [] }
+  selected.value = { name: '', can_be_cited: true, administrators: [] }
   showEditDialog.value = true
 }
 
