@@ -33,7 +33,7 @@ use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, G
 
 const props = defineProps<Props>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
@@ -43,6 +43,10 @@ const inProgress = computed(() => total.value - completed.value)
 const nbEmployees = computed(() => props.stats.nb_employees || 0)
 
 onMounted(() => {
+  initChartOptions()
+})
+
+watch(locale, () => {
   initChartOptions()
 })
 

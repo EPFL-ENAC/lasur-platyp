@@ -31,7 +31,7 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const stats = useStats()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
@@ -68,7 +68,7 @@ watch(
   },
 )
 
-watch([() => props.percent, () => props.height], () => {
+watch([() => props.percent, () => props.height, locale], () => {
   if (!stats.loading) {
     initChartOptions()
   }

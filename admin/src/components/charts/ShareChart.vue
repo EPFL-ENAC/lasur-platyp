@@ -32,7 +32,7 @@ import {
 import type { Frequencies } from 'src/models'
 import { MODE_COLORS } from './commons'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
@@ -65,7 +65,7 @@ watch(
   },
 )
 
-watch([() => props.height], () => {
+watch([() => props.height, locale], () => {
   if (!stats.loading) {
     initChartOptions()
   }

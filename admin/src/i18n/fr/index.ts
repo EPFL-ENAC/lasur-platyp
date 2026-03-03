@@ -55,6 +55,7 @@ export default {
       open_workplaces_hint:
         "Si activé, les participants pourront sélectionner n'importe quel lieu de travail lors du remplissage de l'enquête.",
       workplaces_list: 'Liste des lieux de travail connus',
+      show_isochrone: 'Afficher le\'isochrone',
     },
   },
   docs: {
