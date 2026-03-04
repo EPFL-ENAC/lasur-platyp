@@ -189,6 +189,9 @@ export default {
         none: 'Aucune contrainte',
       },
     },
+    homeLocationHeatmap: {
+      title: 'Répartition géographique des lieux de résidence',
+    },
     travel_time: {
       title: 'Temps de trajet',
       xaxis: 'Temps (min)',

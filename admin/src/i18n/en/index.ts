@@ -187,6 +187,9 @@ export default {
         none: 'No constraint',
       },
     },
+    homeLocationHeatmap: {
+      title: 'Geographical distribution of home locations',
+    },
     travel_time: {
       title: 'Travel time',
       xaxis: 'Time (min)',

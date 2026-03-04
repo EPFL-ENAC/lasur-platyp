@@ -29,6 +29,7 @@ async def compute_all_statistics(
             workplace_filter = LocationFilter.model_validate(
                 workplace_filter, by_alias=True)
             df = service.filter_by_workplace_location(df, workplace_filter)
+        
         return StatsService().compute_stats(df)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")

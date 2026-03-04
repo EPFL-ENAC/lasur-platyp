@@ -7,6 +7,9 @@
       <frequencies-chart type="constraints" :percent="percent" :height="height" />
     </div>
     <div class="item">
+      <location-chart />
+    </div>
+    <div class="item">
       <frequencies-chart
         type="travel_time"
         :xaxis="t('stats.travel_time.xaxis')"
@@ -67,6 +70,7 @@
 <script setup lang="ts">
 import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
 import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
+import LocationChart from 'src/components/charts/LocationChart.vue'
 import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
 import RecoEmissionsChart from 'src/components/charts/RecoEmissionsChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'

@@ -5,6 +5,7 @@ from api.models.query import Stats, CampaignStats, WeeklyStats
 from api.services.stats.emissions import EmissionsService
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.links import LinksService
+from api.services.stats.locations import LocationsService
 
 
 class StatsService:
@@ -33,6 +34,9 @@ class StatsService:
         mode_links = links_stats.compute_mode_reco_links()
         pro_mode_links = links_stats.compute_mode_reco_pro_links()
 
+        locations_stats = LocationsService(df)
+        home_location_heatmap = locations_stats.compute_home_location_heatmap()
+
         return Stats(
             total=len(df),
             # individual
@@ -52,7 +56,9 @@ class StatsService:
             ],
             pro_mode_frequencies=pro_mode_frequencies,
             pro_mode_emissions=pro_mode_emissions,
-            pro_mode_links=pro_mode_links
+            pro_mode_links=pro_mode_links,
+
+            home_location_heatmap=home_location_heatmap
         )
 
     def compute_campaign_stats(self, campaign: Campaign, df: pd.DataFrame) -> CampaignStats:

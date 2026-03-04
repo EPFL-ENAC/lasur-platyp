@@ -148,6 +148,7 @@ export interface Stats {
   pro_mode_frequencies: Frequencies[] | null
   pro_mode_emissions: Emissions[] | null
   pro_mode_links: Links | null
+  home_location_heatmap: { [hexId: string]: number } | null
 }
 
 export interface IsochronesParams {
