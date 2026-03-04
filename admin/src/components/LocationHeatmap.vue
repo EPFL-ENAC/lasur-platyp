@@ -30,7 +30,6 @@ interface Props {
   height?: string
   zoom?: number
   mapId: string
-  labelClass?: string
 }
 const props = defineProps<Props>()
 

@@ -37,7 +37,6 @@ const data = computed(() => {
 })
 
 const hasData = computed(() => {
-  console.log('Data for location heatmap:', data.value)
   return !!data.value && Object.keys(data.value).length > 0
 })
 </script>
