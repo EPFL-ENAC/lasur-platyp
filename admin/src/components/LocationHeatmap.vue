@@ -37,6 +37,12 @@ const props = defineProps<Props>()
 const map = ref<Map>()
 
 onMounted(onInit)
+onUnmounted(() => {
+  if (map.value) {
+    map.value.remove()
+    map.value = undefined
+  }
+})
 
 watch(() => props.data, () => {
   if (map.value) {

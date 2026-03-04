@@ -36,6 +36,7 @@ class StatsService:
 
         locations_stats = LocationsService(df)
         home_location_heatmap = locations_stats.compute_home_location_heatmap()
+        workplace_location_heatmap = locations_stats.compute_workplace_location_heatmap()
 
         return Stats(
             total=len(df),
@@ -58,7 +59,8 @@ class StatsService:
             pro_mode_emissions=pro_mode_emissions,
             pro_mode_links=pro_mode_links,
 
-            home_location_heatmap=home_location_heatmap
+            home_location_heatmap=home_location_heatmap,
+            workplace_location_heatmap=workplace_location_heatmap
         )
 
     def compute_campaign_stats(self, campaign: Campaign, df: pd.DataFrame) -> CampaignStats:

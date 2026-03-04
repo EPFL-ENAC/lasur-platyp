@@ -190,6 +190,9 @@ export default {
     homeLocationHeatmap: {
       title: 'Geographical distribution of home locations',
     },
+    workplaceLocationHeatmap: {
+      title: 'Geographical distribution of workplace locations',
+    },
     travel_time: {
       title: 'Travel time',
       xaxis: 'Time (min)',

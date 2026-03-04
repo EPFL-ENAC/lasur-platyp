@@ -1,16 +1,16 @@
 <template>
-  <div class="title q-mb-md">{{ t('stats.homeLocationHeatmap.title') }}</div>
+  <div class="title q-mb-md">{{ props.title }}</div>
   <div>
     <div v-if="!hasData" class="no-data">
       {{ t('stats.no_data') }}
     </div>
     <location-heatmap
       v-else
-      :data="stats.homeLocationsHeatmap"
+      :data="data"
       :center="[7.4474, 46.9481]"
       :zoom="5"
       :height="`${props.height}px`"
-      map-id="home-locations-heatmap"
+      :map-id="id"
     />
   </div>
 </template>
@@ -22,14 +22,23 @@ const { t } = useI18n()
 const stats = useStats()
 
 interface Props {
+  kind: 'home' | 'workplace'
+  title: string
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
+const id = ref(`location-heatmap-${props.kind}-${crypto.randomUUID()}`)
+
+const data = computed(() => {
+  return props.kind === 'home' ? stats.homeLocationsHeatmap : stats.workplaceLocationsHeatmap
+})
+
 const hasData = computed(() => {
-  return !!stats.homeLocationsHeatmap && Object.keys(stats.homeLocationsHeatmap).length > 0
+  console.log('Data for location heatmap:', data.value)
+  return !!data.value && Object.keys(data.value).length > 0
 })
 </script>
 

@@ -7,7 +7,10 @@
       <frequencies-chart type="constraints" :percent="percent" :height="height" />
     </div>
     <div class="item">
-      <location-chart />
+      <location-chart :title="t('stats.homeLocationHeatmap.title')" kind="home" :height="height" />
+    </div>
+    <div class="item">
+      <location-chart :title="t('stats.workplaceLocationHeatmap.title')" kind="workplace" :height="height" />
     </div>
     <div class="item">
       <frequencies-chart

@@ -192,6 +192,9 @@ export default {
     homeLocationHeatmap: {
       title: 'Répartition géographique des lieux de résidence',
     },
+    workplaceLocationHeatmap: {
+      title: 'Répartition géographique des lieux de travail',
+    },
     travel_time: {
       title: 'Temps de trajet',
       xaxis: 'Temps (min)',
