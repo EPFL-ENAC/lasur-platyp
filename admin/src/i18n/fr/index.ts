@@ -189,11 +189,11 @@ export default {
         none: 'Aucune contrainte',
       },
     },
-    homeLocationHeatmap: {
-      title: 'Répartition géographique des lieux de résidence',
-    },
-    workplaceLocationHeatmap: {
-      title: 'Répartition géographique des lieux de travail',
+    locationsHeatmap: {
+      title: 'Répartition géographique des lieux de résidence et de travail',
+      home: 'Résidence',
+      workplace: 'Travail',
+      all: 'Tous',
     },
     travel_time: {
       title: 'Temps de trajet',

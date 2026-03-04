@@ -4,14 +4,30 @@
     <div v-if="!hasData" class="no-data">
       {{ t('stats.no_data') }}
     </div>
-    <location-heatmap
-      v-else
-      :data="data"
-      :center="[7.4474, 46.9481]"
-      :zoom="5"
-      :height="`${props.height}px`"
-      :map-id="id"
-    />
+    <div v-else class="with-data">
+      <div class="toolbar q-pa-sm">
+        <q-btn-toggle
+          v-model="kind"
+          :options="[
+            { label: t('stats.locationsHeatmap.home'), value: 'home' },
+            { label: t('stats.locationsHeatmap.workplace'), value: 'workplace' },
+            { label: t('stats.locationsHeatmap.all'), value: 'all' },
+          ]"
+          toggle-color="primary"
+          color="white"
+          text-color="black"
+          size="sm"
+          class="q-mb-md"
+        />
+      </div>
+      <location-heatmap
+        :data="data"
+        :center="[7.4474, 46.9481]"
+        :zoom="5"
+        :height="`${props.height}px`"
+        :map-id="id"
+      />
+    </div>
   </div>
 </template>
 
@@ -22,7 +38,6 @@ const { t } = useI18n()
 const stats = useStats()
 
 interface Props {
-  kind: 'home' | 'workplace'
   title: string
   height?: number
 }
@@ -30,10 +45,18 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
-const id = ref(`location-heatmap-${props.kind}-${crypto.randomUUID()}`)
+const kind = ref<'home' | 'workplace' | 'all'>('all')
+
+const id = ref(`location-heatmap-${crypto.randomUUID()}`)
 
 const data = computed(() => {
-  return props.kind === 'home' ? stats.homeLocationsHeatmap : stats.workplaceLocationsHeatmap
+  if (kind.value === 'home') {
+    return stats.homeLocationsHeatmap
+  } else if (kind.value === 'workplace') {
+    return stats.workplaceLocationsHeatmap
+  }
+  
+  return stats.allLocationsHeatmap
 })
 
 const hasData = computed(() => {
@@ -48,6 +71,16 @@ const hasData = computed(() => {
   font-weight: 600;
   color: #454545;
   text-align: center;
+}
+
+.with-data {
+  position: relative;
+}
+
+.toolbar {
+  position: absolute;
+  top: 0;
+  z-index: 100;
 }
 
 </style>

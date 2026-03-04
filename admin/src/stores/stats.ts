@@ -13,6 +13,13 @@ export const useStats = defineStore('stats', () => {
   const loading = ref(false)
   const homeLocationsHeatmap = ref<H3Heatmap>({})
   const workplaceLocationsHeatmap = ref<H3Heatmap>({})
+  const allLocationsHeatmap = computed(() => {
+    const combined: H3Heatmap = { ...homeLocationsHeatmap.value }
+    for (const [hexId, count] of Object.entries(workplaceLocationsHeatmap.value)) {
+      combined[hexId] = (combined[hexId] || 0) + count
+    }
+    return combined
+  })
 
   async function loadStats(filter: Filter | undefined = undefined) {
     loading.value = true
@@ -92,6 +99,7 @@ export const useStats = defineStore('stats', () => {
     links,
     homeLocationsHeatmap,
     workplaceLocationsHeatmap,
+    allLocationsHeatmap,
     loading,
     loadStats,
     getCampaignStats,

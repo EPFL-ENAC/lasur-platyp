@@ -187,11 +187,11 @@ export default {
         none: 'No constraint',
       },
     },
-    homeLocationHeatmap: {
-      title: 'Geographical distribution of home locations',
-    },
-    workplaceLocationHeatmap: {
-      title: 'Geographical distribution of workplace locations',
+    locationsHeatmap: {
+      title: 'Geographical distribution of home and workplace locations',
+      home: 'Home',
+      workplace: 'Workplace',
+      all: 'All',
     },
     travel_time: {
       title: 'Travel time',
