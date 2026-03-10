@@ -26,7 +26,7 @@ export interface ProJourney {
   mode: string
   days: number
   is_company_vehicle?: boolean | undefined
-  has_to_carry_heavy_equipment?: boolean
+  constraints: string[]
   hex_id: string | undefined
 }
 

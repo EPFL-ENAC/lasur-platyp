@@ -62,6 +62,7 @@ function onAddJourney() {
     days: 1,
     mode: '',
     hex_id: undefined,
+    constraints: [],
   })
 }
 

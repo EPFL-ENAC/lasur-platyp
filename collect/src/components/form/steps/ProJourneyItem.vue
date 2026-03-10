@@ -48,7 +48,7 @@
         :label="t('form.journey_pro.has_to_carry_heavy_equipment')"
         :left-label="t('form.no')"
         :right-label="t('form.yes')"
-        v-model="journey.has_to_carry_heavy_equipment"
+        v-model="hasHeavyEquipment"
         required
         class="q-mb-lg"
         color="accent"
@@ -110,6 +110,19 @@ const modeOptions = computed<Option[]>(() =>
 )
 
 const canBeCompanyVehicle = computed(() => ['bike', 'cargo', 'car', 'truck', 'moto'].includes(journey.value.mode))
+
+const hasHeavyEquipment = computed({
+  get: () => journey.value.constraints?.includes("heavy") ?? false,
+  set: (val: boolean) => {
+    const current = new Set(journey.value.constraints || []);
+    if (val) {
+      current.add("heavy");
+    } else {
+      current.delete("heavy");
+    }
+    journey.value.constraints = Array.from(current);
+  },
+});
 
 function onSelect(option: Option | undefined) {
   if (!option) return
