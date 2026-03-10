@@ -112,13 +112,13 @@ const modeOptions = computed<Option[]>(() =>
 const canBeCompanyVehicle = computed(() => ['bike', 'cargo', 'car', 'truck', 'moto'].includes(journey.value.mode))
 
 const hasHeavyEquipment = computed({
-  get: () => journey.value.constraints?.includes("heavy") ?? false,
+  get: () => journey.value.constraints?.includes('heavy') ?? false,
   set: (val: boolean) => {
     const current = new Set(journey.value.constraints || []);
     if (val) {
-      current.add("heavy");
+      current.add('heavy')
     } else {
-      current.delete("heavy");
+      current.delete('heavy')
     }
     journey.value.constraints = Array.from(current);
   },
