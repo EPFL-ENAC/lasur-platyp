@@ -32,6 +32,28 @@
         </q-btn>
       </template>
     </div>
+    <div v-if="canBeCompanyVehicle">
+      <ToggleItem
+        :label="t('form.journey_pro.is_company_vehicle.label')"
+        :left-label="t('form.journey_pro.is_company_vehicle.option.private_vehicle')"
+        :right-label="t('form.journey_pro.is_company_vehicle.option.company_vehicle')"
+        v-model="journey.is_company_vehicle"
+        required
+        class="q-mb-lg"
+        color="accent"
+      />
+    </div>
+    <div v-if="journey.mode">
+      <ToggleItem
+        :label="t('form.journey_pro.has_to_carry_heavy_equipment')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="journey.has_to_carry_heavy_equipment"
+        required
+        class="q-mb-lg"
+        color="accent"
+      />
+    </div>
     <NumberItem
       :label="t('form.journey_pro.days_per_year')"
       v-model="journey.days"
@@ -48,6 +70,7 @@
 <script setup lang="ts">
 import PlaceItem from 'src/components/form/PlaceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
+import ToggleItem from 'src/components/form/ToggleItem.vue'
 import type { Option } from 'src/components/form/models'
 import type { ProJourney } from 'src/models'
 
@@ -85,6 +108,8 @@ const modeOptions = computed<Option[]>(() =>
     { value: 'plane', label: t('form.mode.plane'), icon: 'flight' },
   ].filter((opt) => props.modes.includes(opt.value)),
 )
+
+const canBeCompanyVehicle = computed(() => ['bike', 'cargo', 'car', 'truck', 'moto'].includes(journey.value.mode))
 
 function onSelect(option: Option | undefined) {
   if (!option) return
