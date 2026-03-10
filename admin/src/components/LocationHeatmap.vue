@@ -19,13 +19,20 @@ type H3HeatmapData = {
   [hexId: string]: number
 };
 
+interface Workplace {
+  lat: number
+  lon: number
+}
+
 interface HeatmapGeoJSON {
   shape: GeoJSON.FeatureCollection<GeoJSON.Polygon, { value: number }>
+  workplaces: GeoJSON.FeatureCollection<GeoJSON.Point> | null
   boundingBox: LngLatBounds
 }
 
 interface Props {
   data: H3HeatmapData
+  workplaces?: Workplace[]
   center: [number, number]
   height?: string
   zoom?: number
@@ -43,12 +50,19 @@ onUnmounted(() => {
   }
 })
 
-watch(() => props.data, () => {
+watch([() => props.data, () => props.workplaces], () => {
   if (map.value) {
     const source = map.value.getSource('heatmap-data') as GeoJSONSource
+    const workplaceSource = map.value.getSource('workplace-data') as GeoJSONSource
     if (source) {
       const geoJson = makeGeoJSON()
       source.setData(geoJson.shape)
+      if (workplaceSource) {
+        workplaceSource.setData(geoJson.workplaces ?? {
+          type: 'FeatureCollection',
+          features: []
+        })
+      }
       map.value.fitBounds(geoJson.boundingBox, { padding: 20, duration: 500 })
     }
   }
@@ -75,8 +89,26 @@ function makeGeoJSON(): HeatmapGeoJSON {
     }),
   }
 
+  const workplaceFeatures: GeoJSON.Feature<GeoJSON.Point>[] = (props.workplaces || []).map(
+    (wp) => {
+      boundingBox.extend([wp.lon, wp.lat])
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [wp.lon, wp.lat]
+        },
+        properties: {},
+      }
+    },
+  )
+
   return {
     shape,
+    workplaces: {
+      type: 'FeatureCollection',
+      features: workplaceFeatures
+    },
     boundingBox,
   }
 }
@@ -127,7 +159,31 @@ function onInit() {
         'fill-opacity': 0.6,
         'fill-outline-color': '#ffffff'
       }
-    });
+    })
+
+
+    map.value.addSource('workplace-data', {
+      type: 'geojson',
+      data: geoJson.workplaces ?? {
+        type: 'FeatureCollection',
+        features: []
+      }
+    })
+
+    console.log(geoJson)
+
+    // 3. Workplace Circle Layer (The dot)
+    map.value.addLayer({
+      id: 'workplace-dots',
+      type: 'circle',
+      source: 'workplace-data',
+      paint: {
+        'circle-radius': 5,
+        'circle-color': '#EF4444',
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#FFFFFF',
+      },
+    })
 
     map.value.fitBounds(geoJson.boundingBox, { padding: 20, duration: 500 })
   })

@@ -12,14 +12,7 @@ export const useStats = defineStore('stats', () => {
   const links = ref<{ [key: string]: Links }>({} as { [key: string]: Links })
   const loading = ref(false)
   const homeLocationsHeatmap = ref<H3Heatmap>({})
-  const workplaceLocationsHeatmap = ref<H3Heatmap>({})
-  const allLocationsHeatmap = computed(() => {
-    const combined: H3Heatmap = { ...homeLocationsHeatmap.value }
-    for (const [hexId, count] of Object.entries(workplaceLocationsHeatmap.value)) {
-      combined[hexId] = (combined[hexId] || 0) + count
-    }
-    return combined
-  })
+  const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
 
   async function loadStats(filter: Filter | undefined = undefined) {
     loading.value = true
@@ -27,7 +20,7 @@ export const useStats = defineStore('stats', () => {
     emissions.value = {}
     links.value = {}
     homeLocationsHeatmap.value = {}
-    workplaceLocationsHeatmap.value = {}
+    workplaceLocations.value = []
     return loadAllStats(filter).finally(() => {
       loading.value = false
     })
@@ -61,7 +54,7 @@ export const useStats = defineStore('stats', () => {
           emissions.value['freq_mod_pro'] = stats.pro_mode_emissions || []
           links.value['mod_reco_pro'] = stats.pro_mode_links || { total: 0, data: [] }
           homeLocationsHeatmap.value = stats.home_location_heatmap || {}
-          workplaceLocationsHeatmap.value = stats.workplace_location_heatmap || {}
+          workplaceLocations.value = stats.workplace_locations || []
         })
         .catch((err) => {
           console.error(err)
@@ -98,8 +91,7 @@ export const useStats = defineStore('stats', () => {
     emissions,
     links,
     homeLocationsHeatmap,
-    workplaceLocationsHeatmap,
-    allLocationsHeatmap,
+    workplaceLocations,
     loading,
     loadStats,
     getCampaignStats,

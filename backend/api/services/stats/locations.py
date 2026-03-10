@@ -16,6 +16,11 @@ class LocationsService(BaseStatsService):
         """Compute a heatmap of workplace locations using H3 hexagons."""
         return self._compute_location_heatmap("data.workplace.lat", "data.workplace.lon", resolution, min_count)
 
+    def get_workplaces(self) -> list[dict]:
+        """Get a list of unique workplaces with their coordinates."""
+        workplaces = self.df[["data.workplace.lat", "data.workplace.lon"]].dropna().drop_duplicates()
+        return workplaces.rename(columns={"data.workplace.lat": "lat", "data.workplace.lon": "lon"}).to_dict(orient="records")
+
     def _compute_location_heatmap(self, lat_col: str, lon_col: str, resolution: int = 8, min_count: int = 0) -> dict[str, int]:
         """Compute a heatmap of locations using H3 hexagons."""
         self.df["hex_id"] = [
