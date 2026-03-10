@@ -3,23 +3,23 @@ export default {
     brand: 'Toolkit Mobilité',
   },
   company: {
-    label: 'Entreprise',
+    label: 'Organisation',
     actions: 'Mesures employeur',
     custom_actions: 'Mesures spécifiques',
     custom_actions_hint:
-      'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des employés. Ces mesures sont regroupées par mode de transport ou sont globales.',
+      'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des collaborateur·trice·s. Ces mesures sont regroupées par mode de transport ou sont globales.',
     administrators: 'Administrateurs',
     administrators_hint:
-      "L'adresse email des administrateurs pour cette entreprise (tapez Entrée pour ajouter une entrée).",
+      "L'adresse email des administrateurs pour cette organisation (tapez Entrée pour ajouter une entrée).",
     contact_name: 'Nom du contact',
-    contact_name_hint: 'Le nom de la personne de contact pour la mobilité dans cette entreprise.',
+    contact_name_hint: 'Le nom de la personne de contact pour la mobilité dans cette organisation.',
     contact_email: 'Email du contact',
     contact_email_hint:
-      "L'adresse email de la personne de contact pour la mobilité dans cette entreprise.",
+      "L'adresse email de la personne de contact pour la mobilité dans cette organisation.",
     contact_info: 'Informations de contact',
     info_url: "Lien d'information",
     info_url_hint:
-      "Un lien vers plus d'informations sur les options de mobilité de cette entreprise.",
+      "Un lien vers plus d'informations sur les options de mobilité de cette organisation.",
     can_be_cited: 'Peut être citée comme utilisateur de Mobilyse',
     can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de Mobilyse',
   },
@@ -32,17 +32,17 @@ export default {
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
     contact_name: 'Nom du contact',
     contact_name_hint:
-      "Le nom de la personne de contact pour la mobilité dans cette entreprise (si différent du contact de l'entreprise).",
+      "Le nom de la personne de contact pour la mobilité dans cette organisation (si différent du contact de l'organisation).",
     contact_email: 'Email du contact',
     contact_email_hint:
-      "L'adresse email de la personne de contact pour la mobilité dans cette entreprise (si différent du contact de l'entreprise).",
+      "L'adresse email de la personne de contact pour la mobilité dans cette organisation (si différent du contact de l'organisation).",
     contact_info: 'Informations de contact',
     info_url: "Lien d'information",
     info_url_hint:
-      "Un lien vers plus d'informations sur les options de mobilité de cette entreprise (si différent du lien d'information de l'entreprise).",
-    nb_employees: "Nombre d'employé.e.s",
+      "Un lien vers plus d'informations sur les options de mobilité de cette organisation (si différent du lien d'information de l'organisation).",
+    nb_employees: "Nombre de collaborateur·trice·s",
     nb_employees_hint:
-      "Fournissez le nombre d'employé.e.s travaillant dans cette entreprise ou sur le(s) lieu(x) de travail associé(s) à cette campagne. Cette information est utilisée pour contextualiser les statistiques de mobilité.",
+      "Fournissez le nombre de collaborateur·trice·s travaillant dans cette organisation ou sur le(s) lieu(x) de travail associé(s) à cette campagne. Cette information est utilisée pour contextualiser les statistiques de mobilité.",
     csv_missing_columns:
       'Le fichier CSV téléversé est manquant les colonnes requises suivantes : {columns}.',
     import_workplaces_hint:
@@ -63,18 +63,65 @@ export default {
   docs: {
     title: 'Documentation',
     hint: 'Trouvez des guides et des ressources pour vous aider à utiliser le Toolkit Mobilité.',
-    company_profile: {
-      title: 'Comment gérer le profil de votre entreprise',
-      caption: 'Apprenez à mettre à jour les informations et les paramètres de votre entreprise',
+    organisations: {
+      title: 'Organisations',
+      create: {
+        title: 'Comment créer une organisation',
+        caption: 'Un guide pour créer une organisation et gérer ses campagnes',
+      },
+      settings: {
+        title: 'Comment gérer les paramètres d\'une organisation',
+        caption: 'Un guide pour mettre à jour les informations et les paramètres d\'une organisation',
+      },
+      employer_measures: {
+        title: 'Comment gérer les aides mobilité de l\'employeur par défaut ?',
+        caption: 'Un guide pour gérer les aides employeur pour votre organisation',
+      },
+      custom_measures: {
+        title: 'Comment ajouter des aides personnalisées ?',
+        caption: 'Un guide pour gérer les aides personnalisées pour votre organisation',
+      },
+      common_issues: {
+        title: 'Problèmes courants',
+        caption: 'Solutions aux problèmes fréquemment rencontrés lors de la gestion d\'une organisation',
+      },
+      best_practices: {
+        title: 'Bonnes pratiques pour la création d\'organisation',
+        caption: 'Conseils pour structurer votre organisation et vos campagnes de manière efficace',
+      },
     },
-    campaign_management: {
-      title: 'Comment créer une campagne',
-      caption: 'Apprenez les bases de la création et de la gestion des campagnes',
+    campaigns: {
+      title: 'Campagnes',
+      description: 'Les campagnes sont des enquêtes ou initiatives de mobilité limitées dans le temps au sein d\'une organisation. Chaque organisation peut avoir plusieurs campagnes.',
+      settings: {
+        title: 'Comment gérer les paramètres d\'une campagne',
+        caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
+      },
+      common_issues: {
+        title: 'Problèmes courants',
+        caption: 'Solutions aux problèmes fréquemment rencontrés lors de la gestion d\'une campagne',
+      },
+      best_practices: {
+        title: 'Bonnes pratiques pour la gestion des campagnes',
+        caption: 'Conseils et recommandations pour tirer le meilleur parti des fonctionnalités de campagne dans le Toolkit Mobilité',
+      },
     },
-    participants_management: {
-      title: 'Comment gérer les participants',
-      caption: 'Un guide pour ajouter, modifier et supprimer des participants',
-    },
+    participants: {
+      title: 'Participants',
+      description: 'Les participants sont des collaborateur·trice·s ou des membres d\'une organisation qui répondent aux enquêtes de mobilité dans le cadre d\'une campagne. Chaque campagne maintient sa propre liste de participants identifiés par un identifiant unique qui fait référence au registre externe des participants de l\'organisation.',
+      settings: {
+        title: 'Comment gérer les participants',
+        caption: 'Apprenez à ajouter, modifier et supprimer des participants dans une campagne',
+      },
+      common_issues: {
+        title: 'Problèmes courants',
+        caption: 'Solutions aux problèmes fréquemment rencontrés lors de la gestion des participants',
+      },
+       best_practices: {
+        title: 'Bonnes pratiques pour la gestion des participants',
+        caption: 'Conseils et recommandations pour gérer efficacement les participants dans vos campagnes de mobilité',
+       },
+    }
   },
   role: {
     'platyp-user': 'Utilisateur',
@@ -160,8 +207,8 @@ export default {
     in_progress: 'En cours',
     completed: 'Terminé',
     pending: 'En attente',
-    nb_employees: "Nombre d'employé.e.s",
-    percent_employees: "% d'employé.e.s",
+    nb_employees: "Nombre de collaborateur·trice·s",
+    percent_employees: "% de collaborateur·trice·s",
     total: 'N : {count}',
     no_data: 'Aucune donnée disponible',
     equipments: {
@@ -437,7 +484,7 @@ export default {
     invalid_email: 'Une adresse email valide est requise.',
     form_invalid: 'Certains champs sont invalides.',
     loading_company:
-      "Erreur lors du chargement de l'entreprise. Il se peut qu'elle n'existe pas ou que vous n'y ayez pas accès.",
+      "Erreur lors du chargement de l'organisation. Il se peut qu'elle n'existe pas ou que vous n'y ayez pas accès.",
     loading_record:
       "Erreur lors du chargement de l'enregistrement. Il peut ne pas exister ou vous n'y avez pas accès.",
     pdf_export_failed: "Erreur lors de l'exportation du PDF. Veuillez réessayer plus tard.",
@@ -456,9 +503,9 @@ export default {
   download: 'Télécharger',
   records: 'Enregistrements',
   close: 'Fermer',
-  companies: 'Entreprises',
-  company_campaign: 'Entreprise (campagne)',
-  company_removed: 'Entreprise supprimée',
+  companies: 'Organisations',
+  company_campaign: 'Organisation (campagne)',
+  company_removed: 'Organisation supprimée',
   content: 'Contenu',
   doc: 'Documentation',
   dashboard: 'Tableau de bord',
@@ -478,7 +525,7 @@ export default {
   help: 'Aide',
   identifier: 'Identifiant',
   introduction_text:
-    "Bienvenue dans l'interface d'administration de Mobility Toolkit. Utilisez le menu pour naviguer à travers les différentes sections et gérer les entreprises, les campagnes, les utilisateurs, et consulter les statistiques de mobilité.",
+    "Bienvenue dans l'interface d'administration de Mobility Toolkit. Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateurs, et consulter les statistiques de mobilité.",
   label_en: 'Libellé (EN)',
   label_fr: 'Libellé (FR)',
   last_modified: 'Dernière modification',
@@ -509,8 +556,8 @@ export default {
     "Êtes-vous sûr de vouloir supprimer la campagne '{name}' et toutes les données personnelles associées des participants?",
   remove_campaign: 'Supprimer la campagne',
   remove_company_text:
-    "Êtes-vous sûr de vouloir supprimer l'entreprise '{name}' et toutes les campagnes associées et les données personnelles des participants?",
-  remove_company: "Supprimer l'entreprise",
+    "Êtes-vous sûr de vouloir supprimer l'organisation '{name}' et toutes les campagnes associées et les données personnelles des participants?",
+  remove_company: "Supprimer l'organisation",
   remove_participant_text:
     "Êtes-vous sûr de vouloir supprimer le participant '{identifier}' et toutes les données personnelles associées?",
   remove_participant: 'Supprimer le participant',

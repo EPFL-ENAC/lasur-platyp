@@ -142,7 +142,7 @@ export default {
       financial_support: 'Une aide financière',
       work_flexibility: 'Une plus grande flexibilité au travail (horaires, télétravail, etc.)',
       collective_changes:
-        "Des changements collectifs (communication de l'entreprise, participation de collègues, etc.)",
+        "Des changements collectifs (communication de l'organisation, participation de collègues, etc.)",
       work_environment:
         "Des aménagements sur le lieu de travail (douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.)",
       other: 'Autre',

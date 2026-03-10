@@ -134,7 +134,7 @@ export default {
     change_levers_option: {
       financial_support: 'Financial support',
       work_flexibility: 'Greater flexibility at work (schedules, remote working, etc.)',
-      collective_changes: 'Collective changes (company communication, colleague involvement, etc.)',
+      collective_changes: 'Collective changes (organisation communication, colleague involvement, etc.)',
       work_environment:
         'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points, etc.)',
       other: 'Other',
