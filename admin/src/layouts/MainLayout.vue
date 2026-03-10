@@ -121,7 +121,7 @@
       <router-view />
     </q-page-container>
 
-    <q-dialog v-model="showDataProtectionNotice">
+    <q-dialog v-if="authStore.isAuthenticated" v-model="showDataProtectionNotice">
       <q-card>
         <q-card-section>
           <div class="text-h6">{{ t('data_protection_notice.title') }}</div>

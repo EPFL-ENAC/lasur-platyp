@@ -1,8 +1,19 @@
 export const useDataProtectionStore = defineStore('dataProtection', () => {
-  const doNotShowNotice = ref(localStorage.getItem('doNotShowDataProtectionNotice') === 'true')
+  const STORAGE_KEY = "doNotShowDataProtectionNotice";
+
+  const getStoredValue = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(STORAGE_KEY) === "true";
+    }
+    return false;
+  };
+
+  const doNotShowNotice = ref(getStoredValue())
 
   watch(doNotShowNotice, (newValue) => {
-    localStorage.setItem('doNotShowDataProtectionNotice', newValue.toString())
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, newValue.toString())
+    }
   })
 
   return {

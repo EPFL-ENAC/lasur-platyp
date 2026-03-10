@@ -480,7 +480,7 @@ export default {
   data_protection_notice: {
     title: 'Notice sur la protection des données',
     content:
-      'En cas de faible nombre de réponses, il est possible que vous puissiez connaître l\'identité des répondants. Il est alors de votre responsabilité de respecter les réglementations en vigueur en termes de protection des données.',
+      "En cas de faible nombre de réponses, il est possible que vous puissiez connaître l'identité des répondants. Il est alors de votre responsabilité de respecter les réglementations en vigueur en termes de protection des données.",
   },
   error: {
     accept_terms_and_conditions: 'Vous devez accepter les termes et conditions.',
@@ -595,5 +595,5 @@ export default {
   your_role: 'Votre rôle est: {role}',
   created_at: 'Ajouté le',
   updated_at: 'Mis à jour le',
-  do_not_show_again: "Ne plus afficher",
+  do_not_show_again: 'Ne plus afficher',
 }
