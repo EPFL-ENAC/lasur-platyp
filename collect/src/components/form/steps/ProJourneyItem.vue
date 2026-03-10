@@ -114,6 +114,9 @@ const canBeCompanyVehicle = computed(() => ['bike', 'cargo', 'car', 'truck', 'mo
 function onSelect(option: Option | undefined) {
   if (!option) return
   journey.value.mode = option.value
+  if (!canBeCompanyVehicle.value) {
+    journey.value.is_company_vehicle = undefined
+  }
 }
 </script>
 

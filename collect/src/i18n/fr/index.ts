@@ -107,7 +107,7 @@ export default {
       is_company_vehicle: {
         label: 'Le véhicule utilisé en général est...',
         option: {
-          company_vehicle: 'Celui de l’entreprise',
+          company_vehicle: "Celui de l'entreprise",
           private_vehicle: 'Mon véhicule privé',
         },
       },
