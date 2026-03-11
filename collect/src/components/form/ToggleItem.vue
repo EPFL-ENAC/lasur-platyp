@@ -11,7 +11,7 @@
       >
       <q-toggle
         v-model="selected"
-        color="primary"
+        :color="props.color ?? 'primary'"
         :toggle-indeterminate="required !== true"
         size="80px"
       />
@@ -33,6 +33,7 @@ interface Props {
   rightLabel?: string
   hint?: string
   required?: boolean
+  color?: string
 }
 
 const props = defineProps<Props>()
@@ -42,4 +43,5 @@ const selected = computed({
   get: () => props.modelValue,
   set: (val: boolean) => emit('update:modelValue', val),
 })
+
 </script>

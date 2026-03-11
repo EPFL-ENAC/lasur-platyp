@@ -104,6 +104,14 @@ export default {
       add: 'Ajouter un déplacement',
       remove: 'Supprimer le déplacement',
       days_per_year: 'Jours par année',
+      is_company_vehicle: {
+        label: 'Le véhicule utilisé en général est...',
+        option: {
+          company_vehicle: "Celui de l'entreprise",
+          private_vehicle: 'Mon véhicule privé',
+        },
+      },
+      has_to_carry_heavy_equipment: 'La plupart du temps, je dois porter du matériel lourd ou volumineux pour ce déplacement professionnel',
     },
     travel_pro:
       'Effectuez-vous des déplacements dans la journée dans le cadre de votre travail (déplacements professionnels) ?',
