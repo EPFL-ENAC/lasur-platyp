@@ -23,19 +23,24 @@ class LocationsService(BaseStatsService):
 
     def _compute_location_heatmap(self, lat_col: str, lon_col: str, resolution: int = 8, min_count: int = 0) -> dict[str, int]:
         """Compute a heatmap of locations using H3 hexagons."""
-        self.df["hex_id"] = [
-            h3.latlng_to_cell(lat, lon, resolution) 
-            for lat, lon in zip(self.df[lat_col], self.df[lon_col])
+        # Early return if dataframe is empty or required columns are missing
+        if self.df.empty or lat_col not in self.df.columns or lon_col not in self.df.columns:
+            return {}
+        
+        # Work on a filtered view with non-null coordinates to avoid errors in h3.latlng_to_cell
+        location_df = self.df[[lat_col, lon_col]].dropna(subset=[lat_col, lon_col])
+        if location_df.empty:
+            return {}
+        
+        hex_ids = [
+            h3.latlng_to_cell(lat, lon, resolution)
+            for lat, lon in zip(location_df[lat_col], location_df[lon_col])
         ]
         # Group by hex_id and count occurrences
-        counts = self.df["hex_id"].value_counts()
-        
+        counts = pd.Series(hex_ids).value_counts()
         # Filter out hexagons with counts below the minimum
         if min_count > 0:
             counts = counts[counts >= min_count]
-        
-        if self.df.empty:
-            return {}
         
         return counts.to_dict()
 
