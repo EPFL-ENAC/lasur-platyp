@@ -474,6 +474,11 @@ export default {
       hint: 'Draw an area to only filter workplaces within that area.',
     },
   },
+  data_protection_notice: {
+    title: 'Data Protection Notice',
+    content:
+      'If there are only a few responses, you may be able to identify the respondents. It is then your responsibility to comply with the applicable data protection regulations.',
+  },
   error: {
     accept_terms_and_conditions: 'You must accept the terms and conditions.',
     registration_failed: 'Registration failed. Please try again later.',
@@ -583,4 +588,5 @@ export default {
   your_role: 'Your role is: {role}',
   created_at: 'Created at',
   updated_at: 'Updated at',
+  do_not_show_again: 'Do not show again',
 }
