@@ -119,7 +119,7 @@ export default {
     importance_rel: 'Fiabilité / ponctualité',
     importance_comfort: 'Confort du trajet',
     importance_most: 'Possibilité de mettre à profit le temps de trajet',
-    importance_env: 'Environnement (réduction du la pollution)',
+    importance_env: 'Environnement (réduction de la pollution)',
     needs: 'Pensez-vous que les modes suivants sont adaptés pour votre mobilité quotidienne ?',
     needs_hint: 'Sur une échelle de 1 (pas du tout adapté) à 5 (tout à fait adapté)',
     comments:
@@ -149,6 +149,11 @@ export default {
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
     final: 'Vos réponses ont été enregistrées, merci de votre participation !',
+    final_rewards: {
+      title: "L'organisation offre des récompenses pour les participants à ce questionnaire",
+      download: 'Télécharger votre attestation de participation',
+      participation_id: 'ID de votre participation : {id}',
+    },
   },
   main_mode: {
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',

@@ -122,6 +122,7 @@ export interface CampaignInfo {
   info_url?: string
   workplaces: AddressLocation[]
   open_workplaces?: boolean
+  rewards_message?: { [key: string]: string }
 }
 
 export interface IsochronesParams {

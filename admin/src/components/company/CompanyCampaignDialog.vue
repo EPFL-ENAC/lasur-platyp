@@ -123,18 +123,41 @@
                   </q-icon>
                 </template>
               </q-input>
-              <q-toggle
-                v-model="withActions"
-                :label="t('campaign.with_actions')"
-                @update:model-value="onWithActionsChanged"
-              />
-              <employer-actions-input
-                v-if="withActions"
-                v-model="selected.actions"
-                :company="props.company"
-                :label="t('company.actions')"
-                class="q-mt-lg"
-              />
+              <div>
+                <q-toggle
+                  v-model="withActions"
+                  :label="t('campaign.with_actions')"
+                  @update:model-value="onWithActionsChanged"
+                />
+                <employer-actions-input
+                  v-if="withActions"
+                  v-model="selected.actions"
+                  :company="props.company"
+                  :label="t('company.actions')"
+                  class="q-mt-lg"
+                />
+              </div>
+              <div>
+                <q-toggle
+                  v-model="withRewards"
+                  :label="t('campaign.rewards.toggle')"
+                  @update:model-value="onWithRewardsChanged"
+                />
+                <p class="text-hint q-mb-md">{{ t('campaign.rewards.hint') }}</p>
+
+                <div v-if="selected.rewards_message">
+                  <template v-for="locale in availableLocales" :key="locale">
+                    <q-input
+                      v-if="withRewards"
+                      filled
+                      type="textarea"
+                      v-model="selected.rewards_message[locale]"
+                      :label="t('campaign.rewards.message_placeholder', {},  { locale }) + ` (${locale.toUpperCase()})`"
+                      class="q-mb-md"
+                    />
+                  </template>
+                </div>
+              </div>
             </q-tab-panel>
             <q-tab-panel name="workplaces">
               <div class="text-hint q-mb-md">
@@ -244,7 +267,7 @@ interface DialogProps {
 const props = defineProps<DialogProps>()
 const emit = defineEmits(['update:modelValue', 'saved'])
 
-const { t } = useI18n()
+const { t, availableLocales } = useI18n()
 const campaignsStore = useCampaigns()
 
 const form = ref()
@@ -253,6 +276,7 @@ const selected = ref<Campaign>({
   name: '',
 } as Campaign)
 const withActions = ref(false)
+const withRewards = ref(false)
 const editMode = ref(false)
 const tab = ref('general')
 
@@ -294,6 +318,10 @@ function onInit() {
         ? selected.value.actions[key].length > 0
         : false,
     ).length > 0
+  
+  withRewards.value = !!selected.value.rewards_message
+
+
   editMode.value = selected.value.id !== undefined
   if (editMode.value && !selected.value.slug) {
     selected.value.slug = generateSlug()
@@ -351,6 +379,21 @@ async function onSave() {
 function onWithActionsChanged(value: boolean) {
   if (!value) {
     selected.value.actions = {}
+  }
+}
+
+function onWithRewardsChanged(value: boolean) {
+  if (value) {
+    if (!selected.value.rewards_message) {
+      selected.value.rewards_message = {}
+    }
+    availableLocales.forEach((locale) => {
+      if (!selected.value.rewards_message || !selected.value.rewards_message[locale]) {
+        selected.value.rewards_message![locale] = t('campaign.rewards.default_message', {}, { locale })
+      }
+    })
+  } else {
+    selected.value.rewards_message = undefined
   }
 }
 

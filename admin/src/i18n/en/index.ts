@@ -29,6 +29,13 @@ export default {
       'Unique identifier for the campaign URL (e.g., "spring-2024-mobility-survey"). Only letters, numbers, hyphens and underscores are allowed.',
     description: 'Description',
     with_actions: 'With employer measures specific to this campaign',
+    rewards: {
+      toggle: 'I want to reward participants.',
+      hint:
+        "Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a \"certificate\" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).",
+      default_message: "Congratulations and thank you for your participation in the Mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able to claim your reward.",
+      message_placeholder: 'Message for participants'
+    },
     contact_name: 'Contact Name',
     contact_name_hint:
       'Provide the name of the contact person for mobility in this organisation (if different from the organisation contact).',

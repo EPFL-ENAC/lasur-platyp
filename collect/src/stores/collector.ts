@@ -9,6 +9,7 @@ export const VERSION = '2.0.0'
 export const useCollector = defineStore('collector', () => {
   const info = ref<CampaignInfo>({} as CampaignInfo)
   const token = ref<string | null>(null)
+  const recordId = ref<number | null>(null)
   const loading = ref<boolean>(false)
 
   async function loadInfo(tkOrSlug: string): Promise<CampaignInfo> {
@@ -76,9 +77,9 @@ export const useCollector = defineStore('collector', () => {
   async function save(tkOrSlug: string, record: Record) {
     token.value = null
     //loading.value = true
-    return api.post(`/collect/record/${tkOrSlug}`, record).finally(() => {
-      //loading.value = false
-    })
+    const response = await api.post(`/collect/record/${tkOrSlug}`, record)
+    recordId.value = response.data.id
+    return response.data
   }
 
   async function loadTypo(record: Record, locale: string) {
@@ -100,6 +101,7 @@ export const useCollector = defineStore('collector', () => {
     return api
       .put(`/collect/record/${record.token}/comments`, { comments: record.data.comments })
       .then((response) => {
+        recordId.value = response.data.id
         return response.data
       })
       .finally(() => {
@@ -111,6 +113,7 @@ export const useCollector = defineStore('collector', () => {
     info,
     token,
     loading,
+    recordId,
     loadInfo,
     load,
     save,

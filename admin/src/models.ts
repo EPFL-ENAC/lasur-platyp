@@ -43,6 +43,7 @@ export interface Campaign extends Entity {
   nb_employees?: number
   company_id?: number
   actions?: EmployerActions
+  rewards_message?: { [locale: string]: string } | undefined
   workplaces?: Workplace[]
   open_workplaces?: boolean
 }

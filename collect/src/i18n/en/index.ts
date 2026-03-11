@@ -141,6 +141,11 @@ export default {
     },
     change_other_levers_specify: 'Please specify what other measures would help you',
     final: 'Your answers have been registered, thank you for your participation!',
+    final_rewards: {
+      title: 'The organisation offers rewards for answering this survey',
+      download: 'Download attestation of participation',
+      participation_id: 'Your participation ID: {id}',
+    },
   },
   main_mode: {
     walking: 'At present, you mainly walk to get to your workplace.',

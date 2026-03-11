@@ -42,7 +42,8 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
         contact_name=campaign.contact_name if campaign.contact_name else company.contact_name,
         info_url=campaign.info_url if campaign.info_url else company.info_url,
         workplaces=campaign.workplaces,
-        open_workplaces=campaign.open_workplaces
+        open_workplaces=campaign.open_workplaces,
+        rewards_message=campaign.rewards_message
     )
 
 
@@ -176,7 +177,6 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
     record.comments = None  # clear comments
     await recordService.update(record.id, record)
     return response
-
 
 def _check_campaign(campaign: Campaign):
     """Check if campaign has a valid time frame

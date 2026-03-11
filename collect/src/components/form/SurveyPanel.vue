@@ -145,7 +145,7 @@ const collector = useCollector()
 
 onMounted(() => {
   if (survey.tokenOrSlug) {
-    void collector.loadInfo(survey.record.token)
+    void collector.loadInfo(survey.tokenOrSlug)
   }
 })
 
@@ -261,15 +261,15 @@ function handleSwipe(dir: any) {
 }
 
 function onSave() {
-  if (survey.tokenOrSlug) {
-    if (survey.record.data.change?.levers?.includes('other') === false) {
-      survey.record.data.change.other_levers = undefined
-    }
-    if (survey.record.data.change2?.levers?.includes('other') === false) {
-      survey.record.data.change2.other_levers = undefined
-    }
-    void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+  if (!survey.tokenOrSlug) return
+  
+  if (survey.record.data.change?.levers?.includes('other') === false) {
+    survey.record.data.change.other_levers = undefined
   }
+  if (survey.record.data.change2?.levers?.includes('other') === false) {
+    survey.record.data.change2.other_levers = undefined
+  }
+  void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
 }
 
 function onSendComments() {

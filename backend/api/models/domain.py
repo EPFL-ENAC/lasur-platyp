@@ -86,6 +86,7 @@ class CampaignBase(Entity):
     info_url: Optional[str] = Field(default=None)
     actions: Optional[EmployerActions] = Field(
         default=None, sa_column=Column(JSON))
+    rewards_message: Optional[Dict[str, str]] = Field(default=None, sa_column=Column(JSON))
     open_workplaces: bool = Field(default=False)
     nb_employees: Optional[int] = Field(default=None)
 
