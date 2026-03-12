@@ -234,6 +234,12 @@ export default {
         none: 'No constraint',
       },
     },
+    locationsHeatmap: {
+      title: 'Geographical distribution of home and workplace locations',
+      home: 'Home',
+      workplace: 'Workplace',
+      all: 'All',
+    },
     travel_time: {
       title: 'Travel time',
       xaxis: 'Time (min)',

@@ -171,6 +171,9 @@ class Stats(BaseModel):
     pro_mode_frequencies: Optional[List[Frequencies]] = None
     pro_mode_emissions: Optional[List[Emissions]] = None
     pro_mode_links: Optional[Links] = None
+    home_location_heatmap: Optional[Dict[str, int]] = None
+    workplace_locations: Optional[List[dict]] = None
+    workplace_location_heatmap: Optional[Dict[str, int]] = None
 
 
 class GeoWithin(BaseModel):

@@ -236,6 +236,12 @@ export default {
         none: 'Aucune contrainte',
       },
     },
+    locationsHeatmap: {
+      title: 'Répartition géographique des lieux de résidence et de travail',
+      home: 'Résidence',
+      workplace: 'Travail',
+      all: 'Tous',
+    },
     travel_time: {
       title: 'Temps de trajet',
       xaxis: 'Temps (min)',
