@@ -3,6 +3,7 @@ import pandas as pd
 from api.models.domain import Campaign
 from api.models.query import Stats, CampaignStats, WeeklyStats
 from api.services.stats.emissions import EmissionsService
+from api.services.stats.energy import EnergyService
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.links import LinksService
 from api.services.stats.locations import LocationsService
@@ -30,6 +31,12 @@ class StatsService:
         pro_mode_emissions = emissions_stats.compute_modes_pro_emissions()
         # pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(apply_reco=True)
 
+        energy_stats = EnergyService(df)
+        mode_energy = energy_stats.compute_modes_energy(apply_reco=False)
+        reco_mode_energy = energy_stats.compute_modes_energy(apply_reco=True)
+        journey_energy_current = energy_stats.compute_journey_energy(apply_reco=False)
+        journey_energy_reco = energy_stats.compute_journey_energy(apply_reco=True)
+
         links_stats = LinksService(df)
         mode_links = links_stats.compute_mode_reco_links()
         pro_mode_links = links_stats.compute_mode_reco_pro_links()
@@ -51,6 +58,10 @@ class StatsService:
             mode_frequencies=mode_frequencies,
             mode_emissions=mode_emissions,
             reco_mode_emissions=reco_mode_emissions,
+            mode_energy=mode_energy,
+            reco_mode_energy=reco_mode_energy,
+            journey_energy_current=journey_energy_current,
+            journey_energy_reco=journey_energy_reco,
             mode_links=mode_links,
             # professional
             pro_frequencies=[

@@ -160,6 +160,33 @@ class Links(BaseModel):
     data: List[Link] = []
 
 
+class JourneyEnergyLeg(BaseModel):
+    """Energy expenditure for a single journey leg (per person)."""
+    token: str
+    journey_id: str
+    mode: str
+    days: int
+    travel_time: float
+    energy_kcal: float
+    is_intermodal: bool = False
+
+
+class EnergyExpenditure(BaseModel):
+    """Aggregated energy expenditure per mode."""
+    mode: str
+    total: int
+    total_time: float
+    journeys: int
+    energy_kcal: float
+    avg_daily_kcal: float
+
+
+class EnergyByJourney(BaseModel):
+    """Energy expenditure broken down by journey legs."""
+    total: int
+    data: List[JourneyEnergyLeg] = []
+
+
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
@@ -174,6 +201,10 @@ class Stats(BaseModel):
     home_location_heatmap: Optional[Dict[str, int]] = None
     workplace_locations: Optional[List[dict]] = None
     workplace_location_heatmap: Optional[Dict[str, int]] = None
+    mode_energy: Optional[List[EnergyExpenditure]] = None
+    reco_mode_energy: Optional[List[EnergyExpenditure]] = None
+    journey_energy_current: Optional[EnergyByJourney] = None
+    journey_energy_reco: Optional[EnergyByJourney] = None
 
 
 class GeoWithin(BaseModel):

@@ -22,35 +22,9 @@ MODE_EMISSIONS = {
     'marche': 0,
     'covoit': 93,
     'avoid': 0,
+    'other': 45.7,
     'inter': 56.72391025641025  # Mean intermodality emissions calculated from dataset
 }
-
-# TODO: Define actual MET (Metabolic Equivalent of Task) values per mode
-# MET values represent energy expenditure multiples of resting metabolic rate
-# Reference: https://en.wikipedia.org/wiki/Metabolic_equivalent_of_task
-MODE_MET = {
-    'walking': 0,  # TODO: Add MET value (typically ~3.5)
-    'bike': 0,     # TODO: Add MET value (typically ~6.8)
-    'ebike': 0,    # TODO: Add MET value (typically ~4.5)
-    'pub': 0,      # TODO: Add MET value (minimal, ~1.5)
-    'moto': 0,     # TODO: Add MET value (minimal, ~1.5)
-    'elec_moto': 0,  # TODO: Add MET value (minimal, ~1.5)
-    'carpool': 0,  # TODO: Add MET value (minimal, ~1.5)
-    'car': 0,      # TODO: Add MET value (minimal, ~1.5)
-    'train': 0,    # TODO: Add MET value (minimal, ~1.5)
-    'boat': 0,     # TODO: Add MET value (minimal, ~1.5)
-    'plane': 0,    # TODO: Add MET value (minimal, ~1.5)
-    'elec': 0,     # TODO: Add MET value (minimal, ~1.5)
-    'vae': 0,      # TODO: Add MET value (typically ~4.5)
-    'cargo': 0,    # TODO: Add MET value (typically ~6.8)
-    'tpu': 0,      # TODO: Add MET value (minimal, ~1.5)
-    'velo': 0,     # TODO: Add MET value (typically ~6.8)
-    'marche': 0,   # TODO: Add MET value (typically ~3.5)
-    'covoit': 0,   # TODO: Add MET value (minimal, ~1.5)
-    'avoid': 0,    # TODO: Add MET value
-    'inter': 0,    # TODO: Add MET value (calculated as mean)
-}
-
 
 class EmissionsService(BaseStatsService):
 
