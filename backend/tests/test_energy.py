@@ -89,14 +89,14 @@ def test_calculate_intermodal_time_fractions_with_train():
     train_fraction = result_df[result_df['mode'] == 'train']['time_fraction'].iloc[0]
     bike_fraction = result_df[result_df['mode'] == 'bike']['time_fraction'].iloc[0]
 
-    # Walking gets 5 min (5/60 = 0.0833)
-    # Remaining: 55 min = 0.9167 fraction
-    # Train gets 50% + 50% / 2 of remaining = 0.9167 * 0.75 = 0.6875
-    # Bike gets 50% / 2 of remaining = 0.9167 * 0.25 = 0.2292
+    # Walking gets 10 min (10/60 = 0.1667 fraction)
+    # Remaining: 50 min = 0.8333 fraction
+    # Train gets 50% + 50% / 2 of remaining = 0.8333 * 0.75 = 0.625
+    # Bike gets 50% / 2 of remaining = 0.8333 * 0.25 = 0.2083
 
-    assert abs(walking_fraction - 5/60) < 0.01 
-    assert train_fraction == (60-5)/60 * (0.5 + 0.5 / 2)
-    assert bike_fraction == (60-5)/60 * (0.5 / 2)
+    assert abs(walking_fraction - 10/60) < 0.01 
+    assert train_fraction == (60-10)/60 * (0.5 + 0.5 / 2)
+    assert bike_fraction == (60-10)/60 * (0.5 / 2)
     
     # Fractions should sum to 1.0 for the journey
     assert 'time_fraction' in result_df.columns
@@ -138,9 +138,9 @@ def test_calculate_intermodal_time_fractions_short_journey():
     # Create sample with very short time
     sample_df = pd.DataFrame([
         {'token': 'test1', 'journey': '0', 'mode': 'walking', 'is_intermodal': True, 'is_walking': True, 
-         'has_train': False, 'n_modes': 2, 'n_walking': 1, 'travel_time': 5.0, 'days': 5},
+         'has_train': False, 'n_modes': 2, 'n_walking': 1, 'travel_time': 7.0, 'days': 5},
         {'token': 'test1', 'journey': '0', 'mode': 'bike', 'is_intermodal': True, 'is_walking': False, 
-         'has_train': False, 'n_modes': 2, 'n_walking': 1, 'travel_time': 5.0, 'days': 5}
+         'has_train': False, 'n_modes': 2, 'n_walking': 1, 'travel_time': 7.0, 'days': 5}
     ])
     
     result_df = service._calculate_intermodal_time_fractions(sample_df)
@@ -150,7 +150,7 @@ def test_calculate_intermodal_time_fractions_short_journey():
     
     # Walking should still get reasonable fraction
     walking_fraction = result_df[result_df['mode'] == 'walking']['time_fraction'].iloc[0]
-    assert walking_fraction > 0
+    assert walking_fraction == 1.0  # All time should be allocated to walking since it's less than 10 min
 
 
 def test_compute_modes_energy():

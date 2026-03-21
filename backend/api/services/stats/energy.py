@@ -153,7 +153,7 @@ class EnergyService(BaseStatsService):
         Allocate travel time to modes in intermodal journeys.
         
         Logic from notebook (cell 69):
-        1. Walking legs: Fixed 5 minutes per leg
+        1. Walking legs: Fixed 10 minutes per leg
         2. Train (if present): start with 50% of remaining time
         3. All non-walking modes: Equal split of remaining time
         
@@ -171,14 +171,14 @@ class EnergyService(BaseStatsService):
             if total_time == 0:
                 return 0.0
             
-            # Walking: 5 min per leg
+            # Walking: 10 min per leg
             if row['is_walking']:
-                walk_time_min = min(5, total_time)
+                walk_time_min = min(10, total_time)
                 return walk_time_min / total_time
             
             # Calculate remaining time after walking legs
             walk_legs = row.get('n_walking', 0)
-            walk_total_min = min(walk_legs * 5, total_time)
+            walk_total_min = min(walk_legs * 10, total_time)
             remaining_time = total_time - walk_total_min
             
             if remaining_time <= 0:
