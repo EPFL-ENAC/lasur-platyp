@@ -22,7 +22,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
 import { cellToBoundary } from 'h3-js'
 import type { GradientScale } from 'src/utils/colors'
-import { H3Heatmap } from 'src/models'
+import type { H3Heatmap } from 'src/models'
 
 interface Dot {
   lat: number
