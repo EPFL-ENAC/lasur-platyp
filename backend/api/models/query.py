@@ -206,19 +206,20 @@ class BehaviorChangeMotivation(BaseModel):
 class BehaviorChangeByMode(BaseModel):
     """Behavior change stats for a specific mode or aggregated group."""
     mode: str  # e.g., "velo", "train", "Autres", "Total"
-    total_responses: int
-    motivation_responses: int  # may differ from total if some didn't answer
-    levers_responses: int  # count of individual lever selections
-    levers: List[BehaviorChangeLever]
-    motivation: List[BehaviorChangeMotivation]
-    other_levers: List[str] = []  # free-text responses
+    response_count: int  # number of people who answered this question type
+    levers: List[BehaviorChangeLever] = []  # empty if this is motivation-only data
+    motivation: List[BehaviorChangeMotivation] = []  # empty if this is lever-only data
 
 
 class BehaviorChangeStats(BaseModel):
     """Complete behavior change statistics."""
-    total_responses: int
-    aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
-    by_mode: List[BehaviorChangeByMode]
+    total_lever_responses: int  # total people who answered lever questions
+    total_motivation_responses: int  # total people who answered motivation question
+    lever_aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
+    motivation_aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
+    by_mode_levers: List[BehaviorChangeByMode]
+    by_mode_motivation: List[BehaviorChangeByMode]
+    other_levers: List[str] = []  # free-text responses from all modes
 
 
 class Stats(BaseModel):

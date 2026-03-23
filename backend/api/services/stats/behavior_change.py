@@ -42,56 +42,129 @@ class BehaviorChangeService(BaseStatsService):
         
         if len(df_filtered) == 0:
             return BehaviorChangeStats(
-                total_responses=0,
-                aggregation_type='all_aggregated',
-                by_mode=[]
+                total_lever_responses=0,
+                total_motivation_responses=0,
+                lever_aggregation_type='all_aggregated',
+                motivation_aggregation_type='all_aggregated',
+                by_mode_levers=[],
+                by_mode_motivation=[],
+                other_levers=[]
             )
         
-        total_responses = len(df_filtered)
+        # Count actual responses per mode (not just recommendations)
+        lever_counts_per_mode = self._count_lever_responses_per_mode(df_filtered)
+        motivation_counts_per_mode = self._count_motivation_responses_per_mode(df_filtered)
         
-        # Determine aggregation strategy based on the 10-answer threshold
-        aggregation_type, mode_groups = self._determine_aggregation_strategy(df_filtered)
+        total_lever_responses = sum(lever_counts_per_mode.values())
+        total_motivation_responses = sum(motivation_counts_per_mode.values())
         
-        # Compute stats for each group
-        by_mode = []
-        for mode_name, mode_df in mode_groups.items():
-            by_mode.append(self._compute_mode_stats(mode_name, mode_df))
+        # Determine independent aggregation strategies
+        lever_agg_type, lever_mode_groups = self._determine_aggregation_strategy(
+            df_filtered, lever_counts_per_mode
+        )
+        motivation_agg_type, motivation_mode_groups = self._determine_aggregation_strategy(
+            df_filtered, motivation_counts_per_mode
+        )
         
-        # Add total summary if we're splitting by mode
-        if aggregation_type in ['mode_split', 'mixed']:
-            by_mode.append(self._compute_mode_stats('Total', df_filtered))
+        # Compute stats for each metric independently
+        by_mode_levers = self._compute_mode_stats_for_levers(
+            df_filtered, lever_mode_groups, lever_agg_type
+        )
+        by_mode_motivation = self._compute_mode_stats_for_motivation(
+            df_filtered, motivation_mode_groups, motivation_agg_type
+        )
+        
+        # Extract all other_levers text responses
+        other_levers = self._extract_other_levers(df_filtered)
         
         return BehaviorChangeStats(
-            total_responses=total_responses,
-            aggregation_type=aggregation_type,
-            by_mode=by_mode
+            total_lever_responses=total_lever_responses,
+            total_motivation_responses=total_motivation_responses,
+            lever_aggregation_type=lever_agg_type,
+            motivation_aggregation_type=motivation_agg_type,
+            by_mode_levers=by_mode_levers,
+            by_mode_motivation=by_mode_motivation,
+            other_levers=other_levers
         )
     
     def _filter_valid_data(self) -> pd.DataFrame:
-        """Filter to rows with valid recommendation (already done by preprocessing)."""
+        """Filter to rows with valid recommendation."""
         if self.reco_col not in self.df.columns:
             return pd.DataFrame()
         return self.df[self.df[self.reco_col].notna()].copy()
     
+    def _count_lever_responses_per_mode(self, df: pd.DataFrame) -> Dict[str, int]:
+        """
+        Count how many people per mode answered at least one lever question.
+        
+        Returns:
+            Dict mapping mode name to count of people who answered lever questions
+        """
+        lever_cols = [col for col in df.columns if col.startswith('data.change.levers.')]
+        
+        if not lever_cols:
+            return {}
+        
+        # For each row, check if they answered at least one lever question
+        def has_lever_response(row):
+            for col in lever_cols:
+                val = row[col]
+                if pd.notna(val) and val != '' and val != 0.0 and val != '0.0':
+                    return True
+            return False
+        
+        df_with_lever = df[df.apply(has_lever_response, axis=1)]
+        
+        if len(df_with_lever) == 0:
+            return {}
+        
+        return df_with_lever[self.reco_col].value_counts().to_dict()
+    
+    def _count_motivation_responses_per_mode(self, df: pd.DataFrame) -> Dict[str, int]:
+        """
+        Count how many people per mode answered the motivation question.
+        
+        Returns:
+            Dict mapping mode name to count of people who answered motivation
+        """
+        if 'data.change.motivation' not in df.columns:
+            return {}
+        
+        motivation_series = df['data.change.motivation']
+        # Filter out empty values
+        mask = motivation_series.notna() & (motivation_series != 0.0)
+        df_with_motivation = df[mask]
+        
+        if len(df_with_motivation) == 0:
+            return {}
+        
+        return df_with_motivation[self.reco_col].value_counts().to_dict()
+    
     def _determine_aggregation_strategy(
-        self, df: pd.DataFrame
+        self, df: pd.DataFrame, mode_counts: Dict[str, int]
     ) -> Tuple[str, Dict[str, pd.DataFrame]]:
         """
-        Determine how to aggregate the data based on response counts.
+        Determine how to aggregate data based on response counts.
+        
+        Args:
+            df: Full dataframe
+            mode_counts: Dict of mode -> response count for this metric
         
         Returns:
             aggregation_type: 'all_aggregated', 'mode_split', or 'mixed'
             mode_groups: dict mapping mode name to filtered dataframe
         """
-        mode_counts = df[self.reco_col].value_counts()
-        total = len(df)
+        if not mode_counts:
+            return 'all_aggregated', {'Tous modes': df}
+        
+        total = sum(mode_counts.values())
         
         # Case 1: Less than 10 total responses - aggregate everything
         if total < 10:
             return 'all_aggregated', {'Tous modes': df}
         
         # Case 2: At least 10 responses total
-        modes_above_threshold = mode_counts[mode_counts >= 10]
+        modes_above_threshold = {mode: count for mode, count in mode_counts.items() if count >= 10}
         
         if len(modes_above_threshold) == 0:
             # No individual mode has 10+ responses
@@ -101,35 +174,70 @@ class BehaviorChangeService(BaseStatsService):
         mode_groups = {}
         
         # Add individual modes with >= 10 responses
-        for mode in modes_above_threshold.index:
+        for mode in modes_above_threshold.keys():
             mode_groups[mode] = df[df[self.reco_col] == mode]
         
         # Aggregate remaining modes into "Autres"
-        modes_below = mode_counts[mode_counts < 10].index
+        modes_below = [mode for mode, count in mode_counts.items() if count < 10]
         if len(modes_below) > 0:
             other_df = df[df[self.reco_col].isin(modes_below)]
             mode_groups['Autres'] = other_df
         
         return 'mixed', mode_groups
     
-    def _compute_mode_stats(
-        self, mode_name: str, df: pd.DataFrame
-    ) -> BehaviorChangeByMode:
-        """Compute behavior change stats for a given mode/group."""
+    def _compute_mode_stats_for_levers(
+        self, df: pd.DataFrame, mode_groups: Dict[str, pd.DataFrame], agg_type: str
+    ) -> List[BehaviorChangeByMode]:
+        """Compute lever statistics for each mode group."""
         
-        levers, levers_responses = self._compute_levers(df)
-        motivation, motivation_responses = self._compute_motivation(df)
-        other_levers = self._extract_other_levers(df)
+        by_mode = []
+        for mode_name, mode_df in mode_groups.items():
+            levers, response_count = self._compute_levers(mode_df)
+            by_mode.append(BehaviorChangeByMode(
+                mode=mode_name,
+                response_count=response_count,
+                levers=levers,
+                motivation=[]  # Empty for lever-only data
+            ))
         
-        return BehaviorChangeByMode(
-            mode=mode_name,
-            total_responses=len(df),
-            motivation_responses=motivation_responses,
-            levers_responses=levers_responses,
-            levers=levers,
-            motivation=motivation,
-            other_levers=other_levers
-        )
+        # Add Total summary if we're splitting by mode
+        if agg_type in ['mode_split', 'mixed']:
+            levers, response_count = self._compute_levers(df)
+            by_mode.append(BehaviorChangeByMode(
+                mode='Total',
+                response_count=response_count,
+                levers=levers,
+                motivation=[]
+            ))
+        
+        return by_mode
+    
+    def _compute_mode_stats_for_motivation(
+        self, df: pd.DataFrame, mode_groups: Dict[str, pd.DataFrame], agg_type: str
+    ) -> List[BehaviorChangeByMode]:
+        """Compute motivation statistics for each mode group."""
+        
+        by_mode = []
+        for mode_name, mode_df in mode_groups.items():
+            motivation, response_count = self._compute_motivation(mode_df)
+            by_mode.append(BehaviorChangeByMode(
+                mode=mode_name,
+                response_count=response_count,
+                levers=[],  # Empty for motivation-only data
+                motivation=motivation
+            ))
+        
+        # Add Total summary if we're splitting by mode
+        if agg_type in ['mode_split', 'mixed']:
+            motivation, response_count = self._compute_motivation(df)
+            by_mode.append(BehaviorChangeByMode(
+                mode='Total',
+                response_count=response_count,
+                levers=[],
+                motivation=motivation
+            ))
+        
+        return by_mode
     
     def _compute_levers(
         self, df: pd.DataFrame
@@ -139,11 +247,22 @@ class BehaviorChangeService(BaseStatsService):
         
         Returns:
             levers: List of BehaviorChangeLever objects
-            total_selections: Total number of lever selections (not unique responses)
+            response_count: Number of people who answered at least one lever question
         """
         lever_cols = [col for col in df.columns if col.startswith('data.change.levers.')]
         
-        # Collect all lever selections
+        # Count unique people who answered at least one lever
+        def has_lever_response(row):
+            for col in lever_cols:
+                val = row[col]
+                if pd.notna(val) and val != '' and val != 0.0 and val != '0.0':
+                    return True
+            return False
+        
+        people_with_levers = df[df.apply(has_lever_response, axis=1)]
+        response_count = len(people_with_levers)
+        
+        # Collect all lever selections for percentages
         all_levers = []
         for col in lever_cols:
             selections = df[col].dropna()
@@ -179,7 +298,7 @@ class BehaviorChangeService(BaseStatsService):
                 percentage=percentage
             ))
         
-        return levers, total
+        return levers, response_count
     
     def _compute_motivation(
         self, df: pd.DataFrame
@@ -189,7 +308,7 @@ class BehaviorChangeService(BaseStatsService):
         
         Returns:
             motivation: List of BehaviorChangeMotivation objects
-            total_responses: Total number of motivation responses
+            response_count: Number of people who answered the motivation question
         """
         if 'data.change.motivation' not in df.columns:
             return [
@@ -206,7 +325,9 @@ class BehaviorChangeService(BaseStatsService):
         # Filter out 0.0 values (empty placeholders)
         motivation_series = motivation_series[motivation_series != 0.0]
         
-        if len(motivation_series) == 0:
+        response_count = len(motivation_series)
+        
+        if response_count == 0:
             return [
                 BehaviorChangeMotivation(
                     level=level,
@@ -219,12 +340,11 @@ class BehaviorChangeService(BaseStatsService):
         
         motivation_series = motivation_series.astype(int)
         motivation_counts = motivation_series.value_counts()
-        total = len(motivation_series)
         
         motivation_list = []
         for level in self.MOTIVATION_LEVELS:
             count = motivation_counts.get(level, 0)
-            percentage = round((count / total * 100), 2) if total > 0 else 0.0
+            percentage = round((count / response_count * 100), 2) if response_count > 0 else 0.0
             motivation_list.append(BehaviorChangeMotivation(
                 level=level,
                 label=self.MOTIVATION_LABELS[level],
@@ -232,7 +352,7 @@ class BehaviorChangeService(BaseStatsService):
                 percentage=percentage
             ))
         
-        return motivation_list, total
+        return motivation_list, response_count
     
     def _extract_other_levers(self, df: pd.DataFrame) -> List[str]:
         """Extract free-text responses from data.change.other_levers."""
