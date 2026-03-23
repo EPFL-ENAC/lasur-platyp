@@ -7,6 +7,7 @@ from api.services.stats.energy import EnergyService
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.links import LinksService
 from api.services.stats.locations import LocationsService
+from api.services.stats.behavior_change import BehaviorChangeService
 
 
 class StatsService:
@@ -46,6 +47,9 @@ class StatsService:
         # workplace_location_heatmap = locations_stats.compute_workplace_location_heatmap()
         workplace_locations = locations_stats.get_workplaces()
 
+        behavior_change_stats = BehaviorChangeService(df)
+        behavior_change = behavior_change_stats.compute_behavior_change_stats()
+
         return Stats(
             total=len(df),
             # individual
@@ -72,7 +76,8 @@ class StatsService:
             pro_mode_links=pro_mode_links,
 
             home_location_heatmap=home_location_heatmap,
-            workplace_locations=workplace_locations
+            workplace_locations=workplace_locations,
+            behavior_change=behavior_change
         )
 
     def compute_campaign_stats(self, campaign: Campaign, df: pd.DataFrame) -> CampaignStats:

@@ -187,6 +187,40 @@ class EnergyByJourney(BaseModel):
     data: List[JourneyEnergyLeg] = []
 
 
+class BehaviorChangeLever(BaseModel):
+    """Individual lever/measure category that helps adopt recommendations."""
+    category: str  # finance, flexibility, collective, environment, other
+    label: str  # French display label
+    count: int
+    percentage: float  # stored with 2 decimals
+
+
+class BehaviorChangeMotivation(BaseModel):
+    """Individual motivation level for adopting recommendations."""
+    level: int  # 1-5
+    label: str  # French label (e.g., "Très motivé·e")
+    count: int
+    percentage: float  # stored with 2 decimals
+
+
+class BehaviorChangeByMode(BaseModel):
+    """Behavior change stats for a specific mode or aggregated group."""
+    mode: str  # e.g., "velo", "train", "Autres", "Total"
+    total_responses: int
+    motivation_responses: int  # may differ from total if some didn't answer
+    levers_responses: int  # count of individual lever selections
+    levers: List[BehaviorChangeLever]
+    motivation: List[BehaviorChangeMotivation]
+    other_levers: List[str] = []  # free-text responses
+
+
+class BehaviorChangeStats(BaseModel):
+    """Complete behavior change statistics."""
+    total_responses: int
+    aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
+    by_mode: List[BehaviorChangeByMode]
+
+
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
@@ -205,6 +239,7 @@ class Stats(BaseModel):
     reco_mode_energy: Optional[List[EnergyExpenditure]] = None
     journey_energy_current: Optional[EnergyByJourney] = None
     journey_energy_reco: Optional[EnergyByJourney] = None
+    behavior_change: Optional[BehaviorChangeStats] = None
 
 
 class GeoWithin(BaseModel):
