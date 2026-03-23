@@ -261,45 +261,124 @@ def test_motivation_multiple_modes_above_threshold():
     assert autres_stats.response_count == 5
 
 
-# ===== Tests for independent aggregation =====
+# ===== Tests for unified aggregation (Option A) =====
 
 def test_independent_aggregation_different_splits():
     """
-    Test that levers and motivation can have different mode groupings.
-    E.g., velo shows individually for motivation but is aggregated for levers.
+    Test unified aggregation strategy: a mode is shown individually if it reaches
+    >=10 responses for EITHER levers OR motivation (Option A).
+    
+    In this test:
+    - velo: 15 motivation, 8 levers -> shown individually (motivation >= 10)
+    - train: 5 motivation, 12 levers -> shown individually (levers >= 10)
+    - tpu: 3 motivation, 4 levers -> aggregated (neither >= 10)
     """
     df = create_test_dataframe_with_behavior_change(
         mode_counts={'velo': 20, 'train': 20, 'tpu': 10},
         motivations={
-            'velo': [5] * 15,  # 15 motivation responses for velo (>= 10, split)
-            'train': [4] * 5,  # 5 motivation responses for train (< 10, aggregate)
-            'tpu': [3] * 3  # 3 motivation responses for tpu (< 10, aggregate)
+            'velo': [5] * 15,  # 15 motivation responses for velo (>= 10)
+            'train': [4] * 5,  # 5 motivation responses for train (< 10)
+            'tpu': [3] * 3  # 3 motivation responses for tpu (< 10)
         },
         levers={
-            'velo': ['finance'] * 8,  # 8 lever responses for velo (< 10, aggregate)
-            'train': ['flexibility'] * 12,  # 12 lever responses for train (>= 10, split)
-            'tpu': ['environment'] * 4  # 4 lever responses for tpu (< 10, aggregate)
+            'velo': ['finance'] * 8,  # 8 lever responses for velo (< 10)
+            'train': ['flexibility'] * 12,  # 12 lever responses for train (>= 10)
+            'tpu': ['environment'] * 4  # 4 lever responses for tpu (< 10)
         }
     )
     
     service = BehaviorChangeService(df)
     result = service.compute_behavior_change_stats()
     
-    # Motivation: velo split individually, train+tpu aggregated into Autres
+    # Both metrics use unified aggregation: velo and train shown individually, tpu aggregated
     assert result.motivation_aggregation_type == 'mixed'
-    assert len(result.by_mode_motivation) == 3  # velo, Autres, Total
+    assert result.lever_aggregation_type == 'mixed'
+    
+    # Motivation: velo and train individually, tpu in Autres, plus Total
+    assert len(result.by_mode_motivation) == 4  # velo, train, Autres, Total
     motivation_modes = [m.mode for m in result.by_mode_motivation]
     assert 'velo' in motivation_modes
+    assert 'train' in motivation_modes
     assert 'Autres' in motivation_modes
     assert 'Total' in motivation_modes
     
-    # Levers: train split individually, velo+tpu aggregated into Autres
-    assert result.lever_aggregation_type == 'mixed'
-    assert len(result.by_mode_levers) == 3  # train, Autres, Total
+    # Levers: same grouping as motivation (unified strategy)
+    assert len(result.by_mode_levers) == 4  # velo, train, Autres, Total
     lever_modes = [m.mode for m in result.by_mode_levers]
+    assert 'velo' in lever_modes
     assert 'train' in lever_modes
     assert 'Autres' in lever_modes
     assert 'Total' in lever_modes
+
+
+def test_unified_aggregation_option_a_edge_cases():
+    """
+    Comprehensive test for Option A: Show mode individually if EITHER 
+    lever count >= 10 OR motivation count >= 10.
+    
+    Test scenarios:
+    1. bike: 12 levers, 7 motivation -> Individual (levers >= 10)
+    2. train: 6 levers, 15 motivation -> Individual (motivation >= 10)
+    3. car: 11 levers, 11 motivation -> Individual (both >= 10)
+    4. walk: 8 levers, 9 motivation -> Aggregated (neither >= 10)
+    5. bus: 5 levers, 3 motivation -> Aggregated (neither >= 10)
+    """
+    df = create_test_dataframe_with_behavior_change(
+        mode_counts={'bike': 20, 'train': 20, 'car': 20, 'walk': 20, 'bus': 20},
+        levers={
+            'bike': ['finance'] * 12,      # 12 >= 10 -> Individual
+            'train': ['flexibility'] * 6,  # 6 < 10, but motivation >= 10
+            'car': ['environment'] * 11,   # 11 >= 10 -> Individual
+            'walk': ['finance'] * 8,       # 8 < 10
+            'bus': ['flexibility'] * 5     # 5 < 10
+        },
+        motivations={
+            'bike': [5] * 7,    # 7 < 10, but levers >= 10
+            'train': [4] * 15,  # 15 >= 10 -> Individual
+            'car': [3] * 11,    # 11 >= 10 -> Individual
+            'walk': [2] * 9,    # 9 < 10
+            'bus': [1] * 3      # 3 < 10
+        }
+    )
+    
+    service = BehaviorChangeService(df)
+    result = service.compute_behavior_change_stats()
+    
+    # Aggregation type should be mixed
+    assert result.lever_aggregation_type == 'mixed'
+    assert result.motivation_aggregation_type == 'mixed'
+    
+    # Check modes: bike, train, car individually; walk+bus in Autres; plus Total
+    assert len(result.by_mode_levers) == 5  # bike, train, car, Autres, Total
+    lever_modes = [m.mode for m in result.by_mode_levers]
+    assert 'bike' in lever_modes
+    assert 'train' in lever_modes
+    assert 'car' in lever_modes
+    assert 'Autres' in lever_modes
+    assert 'Total' in lever_modes
+    
+    # Same for motivation
+    assert len(result.by_mode_motivation) == 5
+    motivation_modes = [m.mode for m in result.by_mode_motivation]
+    assert 'bike' in motivation_modes
+    assert 'train' in motivation_modes
+    assert 'car' in motivation_modes
+    assert 'Autres' in motivation_modes
+    assert 'Total' in motivation_modes
+    
+    # Verify response counts
+    bike_levers = next(m for m in result.by_mode_levers if m.mode == 'bike')
+    assert bike_levers.response_count == 12
+    
+    train_motivation = next(m for m in result.by_mode_motivation if m.mode == 'train')
+    assert train_motivation.response_count == 15
+    
+    # Verify Autres aggregates walk and bus
+    autres_levers = next(m for m in result.by_mode_levers if m.mode == 'Autres')
+    assert autres_levers.response_count == 13  # 8 + 5
+    
+    autres_motivation = next(m for m in result.by_mode_motivation if m.mode == 'Autres')
+    assert autres_motivation.response_count == 12  # 9 + 3
 
 
 # ===== Tests for percentages and counts =====

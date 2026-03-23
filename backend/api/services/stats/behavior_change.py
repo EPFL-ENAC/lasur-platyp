@@ -58,20 +58,17 @@ class BehaviorChangeService(BaseStatsService):
         total_lever_responses = sum(lever_counts_per_mode.values())
         total_motivation_responses = sum(motivation_counts_per_mode.values())
         
-        # Determine independent aggregation strategies
-        lever_agg_type, lever_mode_groups = self._determine_aggregation_strategy(
-            df_filtered, lever_counts_per_mode
-        )
-        motivation_agg_type, motivation_mode_groups = self._determine_aggregation_strategy(
-            df_filtered, motivation_counts_per_mode
+        # Determine unified aggregation strategy based on EITHER metric reaching threshold
+        agg_type, mode_groups = self._determine_unified_aggregation_strategy(
+            df_filtered, lever_counts_per_mode, motivation_counts_per_mode
         )
         
-        # Compute stats for each metric independently
+        # Compute stats for each metric using the unified aggregation
         by_mode_levers = self._compute_mode_stats_for_levers(
-            df_filtered, lever_mode_groups, lever_agg_type
+            df_filtered, mode_groups, agg_type
         )
         by_mode_motivation = self._compute_mode_stats_for_motivation(
-            df_filtered, motivation_mode_groups, motivation_agg_type
+            df_filtered, mode_groups, agg_type
         )
         
         # Extract all other_levers text responses
@@ -80,8 +77,8 @@ class BehaviorChangeService(BaseStatsService):
         return BehaviorChangeStats(
             total_lever_responses=total_lever_responses,
             total_motivation_responses=total_motivation_responses,
-            lever_aggregation_type=lever_agg_type,
-            motivation_aggregation_type=motivation_agg_type,
+            lever_aggregation_type=agg_type,
+            motivation_aggregation_type=agg_type,
             by_mode_levers=by_mode_levers,
             by_mode_motivation=by_mode_motivation,
             other_levers=other_levers
@@ -139,6 +136,69 @@ class BehaviorChangeService(BaseStatsService):
             return {}
         
         return df_with_motivation[self.reco_col].value_counts().to_dict()
+    
+    def _determine_unified_aggregation_strategy(
+        self,
+        df: pd.DataFrame,
+        lever_counts: Dict[str, int],
+        motivation_counts: Dict[str, int]
+    ) -> Tuple[str, Dict[str, pd.DataFrame]]:
+        """
+        Determine unified aggregation strategy based on EITHER metric reaching threshold.
+        
+        A mode is shown individually if it has >=10 responses for EITHER levers OR motivation.
+        
+        Args:
+            df: Full dataframe
+            lever_counts: Dict of mode -> lever response count
+            motivation_counts: Dict of mode -> motivation response count
+        
+        Returns:
+            aggregation_type: 'all_aggregated', 'mode_split', or 'mixed'
+            mode_groups: dict mapping mode name to filtered dataframe
+        """
+        # Combine all modes that appear in either count dict
+        all_modes = set(lever_counts.keys()) | set(motivation_counts.keys())
+        
+        if not all_modes:
+            return 'all_aggregated', {'Tous modes': df}
+        
+        # Calculate total responses (use max to avoid double-counting)
+        total_lever = sum(lever_counts.values())
+        total_motivation = sum(motivation_counts.values())
+        total_responses = max(total_lever, total_motivation)
+        
+        # Case 1: Less than 10 total responses in either metric - aggregate everything
+        if total_responses < 10:
+            return 'all_aggregated', {'Tous modes': df}
+        
+        # Case 2: Check which modes meet threshold (>=10 in EITHER metric)
+        modes_above_threshold = {}
+        for mode in all_modes:
+            lever_count = lever_counts.get(mode, 0)
+            motivation_count = motivation_counts.get(mode, 0)
+            # Mode qualifies if EITHER metric has >=10 responses
+            if lever_count >= 10 or motivation_count >= 10:
+                modes_above_threshold[mode] = max(lever_count, motivation_count)
+        
+        if len(modes_above_threshold) == 0:
+            # No individual mode has 10+ responses in either metric
+            return 'all_aggregated', {'Tous modes': df}
+        
+        # Case 3: Mixed - some modes above, some below threshold
+        mode_groups = {}
+        
+        # Add individual modes with >= 10 responses in either metric
+        for mode in modes_above_threshold.keys():
+            mode_groups[mode] = df[df[self.reco_col] == mode]
+        
+        # Aggregate remaining modes into "Autres"
+        modes_below = all_modes - set(modes_above_threshold.keys())
+        if len(modes_below) > 0:
+            other_df = df[df[self.reco_col].isin(list(modes_below))]
+            mode_groups['Autres'] = other_df
+        
+        return 'mixed', mode_groups
     
     def _determine_aggregation_strategy(
         self, df: pd.DataFrame, mode_counts: Dict[str, int]
