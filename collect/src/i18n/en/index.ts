@@ -104,6 +104,14 @@ export default {
       add: 'Add journey',
       remove: 'Remove journey',
       days_per_year: 'Days per year',
+      is_company_vehicle: {
+        label: 'The vehicle used in general is...',
+        option: {
+          company_vehicle: 'The one from the company',
+          private_vehicle: 'My private vehicle',
+        },
+      },
+      has_to_carry_heavy_equipment: 'Most of the time, I have to carry heavy or bulky equipment for this professional journey',
     },
     travel_pro: 'Do you have to travel as part of your work?',
     days_per_month: 'In days per month',
@@ -134,7 +142,7 @@ export default {
     change_levers_option: {
       financial_support: 'Financial support',
       work_flexibility: 'Greater flexibility at work (schedules, remote working, etc.)',
-      collective_changes: 'Collective changes (company communication, colleague involvement, etc.)',
+      collective_changes: 'Collective changes (organisation communication, colleague involvement, etc.)',
       work_environment:
         'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points, etc.)',
       other: 'Other',

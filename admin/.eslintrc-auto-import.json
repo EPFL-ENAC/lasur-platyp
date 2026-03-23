@@ -108,6 +108,7 @@
     "useActions": true,
     "useStats": true,
     "useIsochrones": true,
-    "CATEGORY_TAGS": true
+    "CATEGORY_TAGS": true,
+    "useDataProtectionStore": true
   }
 }

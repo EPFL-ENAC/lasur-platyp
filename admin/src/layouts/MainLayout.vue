@@ -120,6 +120,26 @@
     <q-page-container v-if="authStore.isAuthenticated">
       <router-view />
     </q-page-container>
+
+    <q-dialog v-if="authStore.isAuthenticated" v-model="showDataProtectionNotice">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{ t('data_protection_notice.title') }}</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          {{ t('data_protection_notice.content') }}
+        </q-card-section>
+
+        <q-card-actions>
+          <q-toggle v-model="dataProtection.doNotShowNotice" :label="t('do_not_show_again')" />
+        </q-card-actions>
+
+        <q-card-actions align="right">
+          <q-btn flat :label="t('close')" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -127,11 +147,13 @@
 import { Cookies } from 'quasar'
 import { locales } from 'boot/i18n'
 
+const dataProtection = useDataProtectionStore()
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const router = useRouter()
 
 const leftDrawerOpen = ref(false)
+const showDataProtectionNotice = ref(!dataProtection.doNotShowNotice)
 
 const username = computed(() => authStore.profile?.email)
 const localeOptions = computed(() => {

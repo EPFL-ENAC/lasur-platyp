@@ -60,7 +60,7 @@ export interface Company extends Entity {
   contact_email?: string
   contact_name?: string
   info_url?: string
-  campaings?: Campaign[]
+  campaigns?: Campaign[]
   custom_actions?: CompanyAction[]
 }
 

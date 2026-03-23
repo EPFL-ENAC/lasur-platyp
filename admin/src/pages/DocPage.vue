@@ -9,15 +9,18 @@
         class="q-mb-xl"
       />
       <div>
-        <q-list v-for="entry in entries" :key="entry.title" bordered class="bg-grey-3 q-mb-md">
-          <q-expansion-item expand-separator :label="entry.title" :caption="entry.caption">
+        <div v-for="section in sections" :key="section.title" class="q-mb-md">
+          <h6 class="text-h6 q-mb-xs">{{ section.title }}</h6>
+          <p class="q-mb-md">{{ section.description ?? '' }}</p>
+
+          <q-expansion-item v-for="entry in section.entries" :key="entry.title" expand-separator :label="entry.title" :caption="entry.caption" class="bg-grey-3 bordered q-mb-sm">
             <q-card>
               <q-card-section>
                 <q-markdown v-if="entry.markdown" :src="entry.markdown" no-heading-anchor-links />
               </q-card-section>
             </q-card>
           </q-expansion-item>
-        </q-list>
+        </div>
       </div>
     </div>
   </q-page>
@@ -26,30 +29,129 @@
 <script setup lang="ts">
 import WelcomeEn from 'src/assets/docs/en/welcome.md'
 import WelcomeFr from 'src/assets/docs/fr/welcome.md'
-import CompanyProfileEn from 'src/assets/docs/en/company_profile.md'
-import CompanyProfileFr from 'src/assets/docs/fr/company_profile.md'
-import CampaignManagementEn from 'src/assets/docs/en/campaign_management.md'
-import CampaignManagementFr from 'src/assets/docs/fr/campaign_management.md'
-import ParticipantsManagementEn from 'src/assets/docs/en/participants_management.md'
-import ParticipantsManagementFr from 'src/assets/docs/fr/participants_management.md'
+import CreateEn from 'src/assets/docs/en/organisations/create.md'
+import CreateFr from 'src/assets/docs/fr/organisations/create.md'
+import OrgSettingsEn from 'src/assets/docs/en/organisations/settings.md'
+import OrgSettingsFr from 'src/assets/docs/fr/organisations/settings.md'
+import EmployerMeasuresEn from 'src/assets/docs/en/organisations/employer_measures.md'
+import EmployerMeasuresFr from 'src/assets/docs/fr/organisations/employer_measures.md'
+import CustomMeasuresEn from 'src/assets/docs/en/organisations/custom_measures.md'
+import CustomMeasuresFr from 'src/assets/docs/fr/organisations/custom_measures.md'
+import BestPracticesEn from 'src/assets/docs/en/organisations/best_practices.md'
+import BestPracticesFr from 'src/assets/docs/fr/organisations/best_practices.md'
+import CommonIssuesEn from 'src/assets/docs/en/organisations/common_issues.md'
+import CommonIssuesFr from 'src/assets/docs/fr/organisations/common_issues.md'
+import CampaignSettingsEn from 'src/assets/docs/en/campaigns/settings.md'
+import CampaignSettingsFr from 'src/assets/docs/fr/campaigns/settings.md'
+import CampaignCommonIssuesEn from 'src/assets/docs/en/campaigns/common_issues.md'
+import CampaignCommonIssuesFr from 'src/assets/docs/fr/campaigns/common_issues.md'
+import CampaignBestPracticesEn from 'src/assets/docs/en/campaigns/best_practices.md'
+import CampaignBestPracticesFr from 'src/assets/docs/fr/campaigns/best_practices.md'
+import ParticipantsSettingsEn from 'src/assets/docs/en/participants/settings.md'
+import ParticipantsSettingsFr from 'src/assets/docs/fr/participants/settings.md'
+import ParticipantsCommonIssuesEn from 'src/assets/docs/en/participants/common_issues.md'
+import ParticipantsCommonIssuesFr from 'src/assets/docs/fr/participants/common_issues.md'
+import ParticipantsBestPracticesEn from 'src/assets/docs/en/participants/best_practices.md'
+import ParticipantsBestPracticesFr from 'src/assets/docs/fr/participants/best_practices.md'
+
 
 const { locale, t } = useI18n()
 
-const entries = computed(() => [
+interface DocEntry {
+  title: string
+  caption: string
+  markdown: string
+}
+
+interface DocSection {
+  title: string
+  description?: string
+  entries: DocEntry[]
+}
+
+const sections = computed<DocSection[]>(() => [
   {
-    title: t('docs.company_profile.title'),
-    caption: t('docs.company_profile.caption'),
-    markdown: locale.value === 'fr' ? CompanyProfileFr : CompanyProfileEn,
+    title: t('docs.organisations.title'),
+    entries: [
+      {
+        title: t('docs.organisations.create.title'),
+        caption: t('docs.organisations.create.caption'),
+        markdown: locale.value === 'fr' ? CreateFr : CreateEn,
+      },
+      {
+        title: t('docs.organisations.settings.title'),
+        caption: t('docs.organisations.settings.caption'),
+        markdown: locale.value === 'fr' ? OrgSettingsFr : OrgSettingsEn,
+      },
+      {
+        title: t('docs.organisations.employer_measures.title'),
+        caption: t('docs.organisations.employer_measures.caption'),
+        markdown: locale.value === 'fr' ? EmployerMeasuresFr : EmployerMeasuresEn,
+      },
+      {
+        title: t('docs.organisations.custom_measures.title'),
+        caption: t('docs.organisations.custom_measures.caption'),
+        markdown: locale.value === 'fr' ? CustomMeasuresFr : CustomMeasuresEn,
+      },
+      {
+        title: t('docs.organisations.common_issues.title'),
+        caption: t('docs.organisations.common_issues.caption'),
+        markdown: locale.value === 'fr' ? CommonIssuesFr : CommonIssuesEn,
+      },
+      {
+        title: t('docs.organisations.best_practices.title'),
+        caption: t('docs.organisations.best_practices.caption'),
+        markdown: locale.value === 'fr' ? BestPracticesFr : BestPracticesEn,
+      },
+    ],
   },
   {
-    title: t('docs.campaign_management.title'),
-    caption: t('docs.campaign_management.caption'),
-    markdown: locale.value === 'fr' ? CampaignManagementFr : CampaignManagementEn,
+    title: t('docs.campaigns.title'),
+    description: t('docs.campaigns.description'),
+    entries: [
+      {
+        title: t('docs.campaigns.settings.title'),
+        caption: t('docs.campaigns.settings.caption'),
+        markdown: locale.value === 'fr' ? CampaignSettingsFr : CampaignSettingsEn,
+      },
+      {
+        title: t('docs.campaigns.common_issues.title'),
+        caption: t('docs.campaigns.common_issues.caption'),
+        markdown: locale.value === 'fr' ? CampaignCommonIssuesFr : CampaignCommonIssuesEn,
+      },
+      {
+        title: t('docs.campaigns.best_practices.title'),
+        caption: t('docs.campaigns.best_practices.caption'),
+        markdown: locale.value === 'fr' ? CampaignBestPracticesFr : CampaignBestPracticesEn,
+      },
+    ],
   },
   {
-    title: t('docs.participants_management.title'),
-    caption: t('docs.participants_management.caption'),
-    markdown: locale.value === 'fr' ? ParticipantsManagementFr : ParticipantsManagementEn,
+    title: t('docs.participants.title'),
+    description: t('docs.participants.description'),
+    entries: [
+      {
+        title: t('docs.participants.settings.title'),
+        caption: t('docs.participants.settings.caption'),
+        markdown: locale.value === 'fr' ? ParticipantsSettingsFr : ParticipantsSettingsEn,
+      },
+      {
+        title: t('docs.participants.common_issues.title'),
+        caption: t('docs.participants.common_issues.caption'),
+        markdown: locale.value === 'fr' ? ParticipantsCommonIssuesFr : ParticipantsCommonIssuesEn,
+      },
+      {
+        title: t('docs.participants.best_practices.title'),
+        caption: t('docs.participants.best_practices.caption'),
+        markdown: locale.value === 'fr' ? ParticipantsBestPracticesFr : ParticipantsBestPracticesEn,
+      },
+    ],
   },
 ])
 </script>
+
+<style scoped>
+.bordered {
+  border: 1px solid #ccc;
+}
+</style>
