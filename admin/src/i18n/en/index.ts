@@ -483,7 +483,16 @@ export default {
   data_protection_notice: {
     title: 'Data Protection Notice',
     content:
-      'If there are only a few responses, you may be able to identify the respondents. It is then your responsibility to comply with the applicable data protection regulations.',
+      `The report you are about to receive as part of the campaign launched via the Mobilyse tool contains aggregated data derived from responses provided voluntarily and anonymously by your employees.
+
+However, depending on the size of your company and the structure of the responses, it cannot be ruled out that certain aggregated data may, directly or indirectly, allow one or more individuals to be identified.
+In this case, the report may contain personal data, which is subject to applicable data protection legislation (such as the Federal Data Protection Act, or the GDPR if employees are based in the EU).
+
+By agreeing to receive this report, you undertake to process it in accordance with these legal provisions, in particular by ensuring the confidentiality of the data and by avoiding any use that would allow the individual identification of an employee without a valid legal basis.
+
+Furthermore, we recommend that you adapt your processing register accordingly.
+
+*Last updated: March 2026*`,
   },
   error: {
     accept_terms_and_conditions: 'You must accept the terms and conditions.',

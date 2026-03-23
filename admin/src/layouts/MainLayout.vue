@@ -127,8 +127,11 @@
           <div class="text-h6">{{ t('data_protection_notice.title') }}</div>
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
-          {{ t('data_protection_notice.content') }}
+        <q-card-section class="q-py-none">
+          <q-markdown
+             :src="t('data_protection_notice.content')"
+             no-heading-anchor-links
+           />
         </q-card-section>
 
         <q-card-actions>
