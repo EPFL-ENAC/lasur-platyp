@@ -166,8 +166,6 @@ function onInit() {
       },
     })
 
-    console.log(geoJson)
-
     // 3. Workplace Circle Layer (The dot)
     map.value.addLayer({
       id: 'workplace-dots',
