@@ -160,20 +160,89 @@ class Links(BaseModel):
     data: List[Link] = []
 
 
+class JourneyEnergyLeg(BaseModel):
+    """Energy expenditure for a single journey leg (per person)."""
+    token: str
+    journey_id: str
+    mode: str
+    days: int
+    travel_time: float
+    energy_kcal: float
+    is_intermodal: bool = False
+
+
+class EnergyExpenditure(BaseModel):
+    """Aggregated energy expenditure per mode."""
+    mode: str
+    total: int
+    total_time: float
+    journeys: int
+    energy_kcal: float
+    avg_daily_kcal: float
+
+
+class EnergyByJourney(BaseModel):
+    """Energy expenditure broken down by journey legs."""
+    total: int
+    data: List[JourneyEnergyLeg] = []
+
+
+class BehaviorChangeLever(BaseModel):
+    """Individual lever/measure category that helps adopt recommendations."""
+    category: str  # finance, flexibility, collective, environment, other
+    label: str  # French display label
+    count: int
+    percentage: float  # stored with 2 decimals
+
+
+class BehaviorChangeMotivation(BaseModel):
+    """Individual motivation level for adopting recommendations."""
+    level: int  # 1-5
+    label: str  # French label (e.g., "Très motivé·e")
+    count: int
+    percentage: float  # stored with 2 decimals
+
+
+class BehaviorChangeByMode(BaseModel):
+    """Behavior change stats for a specific mode or aggregated group."""
+    mode: str  # e.g., "velo", "train", "Autres", "Total"
+    response_count: int  # number of people who answered this question type
+    levers: List[BehaviorChangeLever] = []  # empty if this is motivation-only data
+    motivation: List[BehaviorChangeMotivation] = []  # empty if this is lever-only data
+
+
+class BehaviorChangeStats(BaseModel):
+    """Complete behavior change statistics."""
+    total_lever_responses: int  # total people who answered lever questions
+    total_motivation_responses: int  # total people who answered motivation question
+    lever_aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
+    motivation_aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
+    by_mode_levers: List[BehaviorChangeByMode]
+    by_mode_motivation: List[BehaviorChangeByMode]
+    other_levers: List[str] = []  # free-text responses from all modes
+
+
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
     mode_frequencies: Optional[List[Frequencies]] = None
     mode_emissions: Optional[List[Emissions]] = None
     reco_mode_emissions: Optional[List[Emissions]] = None
+    mode_emission_reductions: Optional[List[EmissionReductions]] = None
     mode_links: Optional[Links] = None
     pro_frequencies: Optional[List[Frequencies]] = None
     pro_mode_frequencies: Optional[List[Frequencies]] = None
     pro_mode_emissions: Optional[List[Emissions]] = None
+    pro_mode_emission_reductions: Optional[List[EmissionReductions]] = None
     pro_mode_links: Optional[Links] = None
     home_location_heatmap: Optional[Dict[str, int]] = None
     workplace_locations: Optional[List[dict]] = None
     workplace_location_heatmap: Optional[Dict[str, int]] = None
+    mode_energy: Optional[List[EnergyExpenditure]] = None
+    reco_mode_energy: Optional[List[EnergyExpenditure]] = None
+    journey_energy_current: Optional[EnergyByJourney] = None
+    journey_energy_reco: Optional[EnergyByJourney] = None
+    behavior_change: Optional[BehaviorChangeStats] = None
 
 
 class GeoWithin(BaseModel):
