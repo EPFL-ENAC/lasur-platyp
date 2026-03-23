@@ -191,8 +191,8 @@ export default {
     },
     locationsHeatmap: {
       title: 'Répartition géographique des lieux de résidence et de travail',
-      home: 'Résidence',
-      workplace: 'Travail',
+      households: 'Lieux de domicile',
+      workplaces: 'Lieux de travail enregistrés',
       all: 'Tous',
     },
     travel_time: {

@@ -1,5 +1,12 @@
 <template>
-  <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapview" />
+  <div class="map-container" :style="`--t-height: ${height || '400px'}`">
+    <div :id="mapId" class="mapview"></div>
+    
+    <!-- Legend Overlay -->
+    <div class="map-legend">
+      <slot />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -14,12 +21,13 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
 import { cellToBoundary } from 'h3-js'
+import type { GradientScale } from 'src/utils/colors';
 
 type H3HeatmapData = {
   [hexId: string]: number
 };
 
-interface Workplace {
+interface Dot {
   lat: number
   lon: number
 }
@@ -31,8 +39,9 @@ interface HeatmapGeoJSON {
 }
 
 interface Props {
-  data: H3HeatmapData
-  workplaces?: Workplace[]
+  h3Heatmap: H3HeatmapData
+  dots?: Dot[]
+  heatmapGradient: GradientScale
   center: [number, number]
   height?: string
   zoom?: number
@@ -50,7 +59,7 @@ onUnmounted(() => {
   }
 })
 
-watch([() => props.data, () => props.workplaces], () => {
+watch([() => props.h3Heatmap, () => props.dots], () => {
   if (map.value) {
     const source = map.value.getSource('heatmap-data') as GeoJSONSource
     const workplaceSource = map.value.getSource('workplace-data') as GeoJSONSource
@@ -72,7 +81,7 @@ function makeGeoJSON(): HeatmapGeoJSON {
   const boundingBox = new LngLatBounds()
   const shape: GeoJSON.FeatureCollection<GeoJSON.Polygon, { value: number }> = {
     type: 'FeatureCollection',
-    features: Object.entries(props.data).map(([hexId, value]) => {
+    features: Object.entries(props.h3Heatmap).map(([hexId, value]) => {
       const boundary = cellToBoundary(hexId, true)
       boundary.forEach(coord => boundingBox.extend(coord))
       
@@ -89,7 +98,7 @@ function makeGeoJSON(): HeatmapGeoJSON {
     }),
   }
 
-  const workplaceFeatures: GeoJSON.Feature<GeoJSON.Point>[] = (props.workplaces || []).map(
+  const workplaceFeatures: GeoJSON.Feature<GeoJSON.Point>[] = (props.dots || []).map(
     (wp) => {
       boundingBox.extend([wp.lon, wp.lat])
       return {
@@ -146,16 +155,7 @@ function onInit() {
       source: 'heatmap-data',
       paint: {
         // Color the hexagons based on the 'value' property
-        'fill-color': [
-          'interpolate',
-          ['linear'],
-          ['get', 'value'],
-          0, '#440154', // Dark Purple (Low)
-          25, '#3b528b', // Blue
-          50, '#21918c', // Teal/Green
-          75, '#5ec962', // Light Green
-          100, '#fde725'  // Yellow (High)
-        ],
+        'fill-color': props.heatmapGradient.toMapLibreExpression('value'),
         'fill-opacity': 0.6,
         'fill-outline-color': '#ffffff'
       }
@@ -193,40 +193,33 @@ function onInit() {
 </script>
 
 <style scoped>
-.mapview {
+.map-container {
   position: relative;
-  z-index: 1;
-  width: var(--t-width);
+  width: 100%;
   height: var(--t-height);
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
+.mapview {
+  width: 100%;
+  height: 100%;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  /* Start or end with opacity 0 for the fade effect */
-}
-
-.container {
-  position: relative;
-  /* Needed for absolute children */
-}
-
-.layers {
+.map-legend {
   position: absolute;
-  z-index: 10;
-  top: 10px;
-  left: 10px;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  z-index: 2;
+  background: white;
+  padding: 12px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  font-family: sans-serif;
+  font-size: 12px;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
 }
 
-.colors {
-  position: absolute;
-  z-index: 10;
-  bottom: 10px;
-  left: 10px;
-}
 </style>

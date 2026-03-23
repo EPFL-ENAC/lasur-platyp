@@ -189,9 +189,8 @@ export default {
     },
     locationsHeatmap: {
       title: 'Geographical distribution of home and workplace locations',
-      home: 'Home',
-      workplace: 'Workplace',
-      all: 'All',
+      households: 'Households',
+      workplaces: 'Workplaces',
     },
     travel_time: {
       title: 'Travel time',
