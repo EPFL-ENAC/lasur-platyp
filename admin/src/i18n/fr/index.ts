@@ -193,7 +193,6 @@ export default {
       title: 'Répartition géographique des lieux de résidence et de travail',
       households: 'Lieux de domicile',
       workplaces: 'Lieux de travail enregistrés',
-      all: 'Tous',
     },
     travel_time: {
       title: 'Temps de trajet',
