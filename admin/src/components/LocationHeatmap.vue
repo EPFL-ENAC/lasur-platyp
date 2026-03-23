@@ -1,7 +1,7 @@
 <template>
   <div class="map-container" :style="`--t-height: ${height || '400px'}`">
     <div :id="mapId" class="mapview"></div>
-    
+
     <!-- Legend Overlay -->
     <div class="map-legend">
       <slot />
@@ -21,11 +21,8 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
 import { cellToBoundary } from 'h3-js'
-import type { GradientScale } from 'src/utils/colors';
-
-type H3HeatmapData = {
-  [hexId: string]: number
-};
+import type { GradientScale } from 'src/utils/colors'
+import { H3Heatmap } from 'src/models'
 
 interface Dot {
   lat: number
@@ -39,7 +36,7 @@ interface HeatmapGeoJSON {
 }
 
 interface Props {
-  h3Heatmap: H3HeatmapData
+  h3Heatmap: H3Heatmap
   dots?: Dot[]
   heatmapGradient: GradientScale
   center: [number, number]
@@ -67,10 +64,12 @@ watch([() => props.h3Heatmap, () => props.dots], () => {
       const geoJson = makeGeoJSON()
       source.setData(geoJson.shape)
       if (workplaceSource) {
-        workplaceSource.setData(geoJson.workplaces ?? {
-          type: 'FeatureCollection',
-          features: []
-        })
+        workplaceSource.setData(
+          geoJson.workplaces ?? {
+            type: 'FeatureCollection',
+            features: [],
+          },
+        )
       }
       map.value.fitBounds(geoJson.boundingBox, { padding: 20, duration: 500 })
     }
@@ -83,8 +82,8 @@ function makeGeoJSON(): HeatmapGeoJSON {
     type: 'FeatureCollection',
     features: Object.entries(props.h3Heatmap).map(([hexId, value]) => {
       const boundary = cellToBoundary(hexId, true)
-      boundary.forEach(coord => boundingBox.extend(coord))
-      
+      boundary.forEach((coord) => boundingBox.extend(coord))
+
       return {
         type: 'Feature',
         geometry: {
@@ -98,25 +97,23 @@ function makeGeoJSON(): HeatmapGeoJSON {
     }),
   }
 
-  const workplaceFeatures: GeoJSON.Feature<GeoJSON.Point>[] = (props.dots || []).map(
-    (wp) => {
-      boundingBox.extend([wp.lon, wp.lat])
-      return {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [wp.lon, wp.lat]
-        },
-        properties: {},
-      }
-    },
-  )
+  const workplaceFeatures: GeoJSON.Feature<GeoJSON.Point>[] = (props.dots || []).map((wp) => {
+    boundingBox.extend([wp.lon, wp.lat])
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [wp.lon, wp.lat],
+      },
+      properties: {},
+    }
+  })
 
   return {
     shape,
     workplaces: {
       type: 'FeatureCollection',
-      features: workplaceFeatures
+      features: workplaceFeatures,
     },
     boundingBox,
   }
@@ -148,7 +145,7 @@ function onInit() {
     map.value.addSource('heatmap-data', {
       type: 'geojson',
       data: geoJson.shape,
-    });
+    })
     map.value.addLayer({
       id: 'heatmap-layer',
       type: 'fill',
@@ -157,17 +154,16 @@ function onInit() {
         // Color the hexagons based on the 'value' property
         'fill-color': props.heatmapGradient.toMapLibreExpression('value'),
         'fill-opacity': 0.6,
-        'fill-outline-color': '#ffffff'
-      }
+        'fill-outline-color': '#ffffff',
+      },
     })
-
 
     map.value.addSource('workplace-data', {
       type: 'geojson',
       data: geoJson.workplaces ?? {
         type: 'FeatureCollection',
-        features: []
-      }
+        features: [],
+      },
     })
 
     console.log(geoJson)
@@ -187,9 +183,7 @@ function onInit() {
 
     map.value.fitBounds(geoJson.boundingBox, { padding: 20, duration: 500 })
   })
-
 }
-
 </script>
 
 <style scoped>
@@ -221,5 +215,4 @@ function onInit() {
   gap: 8px;
   min-width: 150px;
 }
-
 </style>

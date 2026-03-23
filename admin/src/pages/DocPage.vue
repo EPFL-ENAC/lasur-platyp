@@ -13,7 +13,14 @@
           <h6 class="text-h6 q-mb-xs">{{ section.title }}</h6>
           <p class="q-mb-md">{{ section.description ?? '' }}</p>
 
-          <q-expansion-item v-for="entry in section.entries" :key="entry.title" expand-separator :label="entry.title" :caption="entry.caption" class="bg-grey-3 bordered q-mb-sm">
+          <q-expansion-item
+            v-for="entry in section.entries"
+            :key="entry.title"
+            expand-separator
+            :label="entry.title"
+            :caption="entry.caption"
+            class="bg-grey-3 bordered q-mb-sm"
+          >
             <q-card>
               <q-card-section>
                 <q-markdown v-if="entry.markdown" :src="entry.markdown" no-heading-anchor-links />
@@ -53,7 +60,6 @@ import ParticipantsCommonIssuesEn from 'src/assets/docs/en/participants/common_i
 import ParticipantsCommonIssuesFr from 'src/assets/docs/fr/participants/common_issues.md'
 import ParticipantsBestPracticesEn from 'src/assets/docs/en/participants/best_practices.md'
 import ParticipantsBestPracticesFr from 'src/assets/docs/fr/participants/best_practices.md'
-
 
 const { locale, t } = useI18n()
 

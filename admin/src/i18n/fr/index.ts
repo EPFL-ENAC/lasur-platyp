@@ -21,7 +21,8 @@ export default {
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette organisation.",
     can_be_cited: 'Peut être citée comme utilisateur de Mobilyse',
-    can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de Mobilyse',
+    can_be_cited_toggle:
+      'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de Mobilyse',
   },
   campaign: {
     label: 'Campagne',
@@ -40,9 +41,9 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette organisation (si différent du lien d'information de l'organisation).",
-    nb_employees: "Nombre de collaborateur·trice·s",
+    nb_employees: 'Nombre de collaborateur·trice·s',
     nb_employees_hint:
-      "Fournissez le nombre de collaborateur·trice·s travaillant dans cette organisation ou sur le(s) lieu(x) de travail associé(s) à cette campagne. Cette information est utilisée pour contextualiser les statistiques de mobilité.",
+      'Fournissez le nombre de collaborateur·trice·s travaillant dans cette organisation ou sur le(s) lieu(x) de travail associé(s) à cette campagne. Cette information est utilisée pour contextualiser les statistiques de mobilité.',
     csv_missing_columns:
       'Le fichier CSV téléversé est manquant les colonnes requises suivantes : {columns}.',
     import_workplaces_hint:
@@ -57,7 +58,7 @@ export default {
       open_workplaces_hint:
         "Si activé, les participants pourront sélectionner n'importe quel lieu de travail lors du remplissage de l'enquête.",
       workplaces_list: 'Liste des lieux de travail connus',
-      show_isochrone: 'Afficher l\'isochrone',
+      show_isochrone: "Afficher l'isochrone",
     },
   },
   docs: {
@@ -70,11 +71,12 @@ export default {
         caption: 'Un guide pour créer une organisation et gérer ses campagnes',
       },
       settings: {
-        title: 'Comment gérer les paramètres d\'une organisation',
-        caption: 'Un guide pour mettre à jour les informations et les paramètres d\'une organisation',
+        title: "Comment gérer les paramètres d'une organisation",
+        caption:
+          "Un guide pour mettre à jour les informations et les paramètres d'une organisation",
       },
       employer_measures: {
-        title: 'Comment gérer les aides mobilité de l\'employeur par défaut ?',
+        title: "Comment gérer les aides mobilité de l'employeur par défaut ?",
         caption: 'Un guide pour gérer les aides employeur pour votre organisation',
       },
       custom_measures: {
@@ -83,45 +85,51 @@ export default {
       },
       common_issues: {
         title: 'Problèmes courants',
-        caption: 'Solutions aux problèmes fréquemment rencontrés lors de la gestion d\'une organisation',
+        caption:
+          "Solutions aux problèmes fréquemment rencontrés lors de la gestion d'une organisation",
       },
       best_practices: {
-        title: 'Bonnes pratiques pour la création d\'organisation',
+        title: "Bonnes pratiques pour la création d'organisation",
         caption: 'Conseils pour structurer votre organisation et vos campagnes de manière efficace',
       },
     },
     campaigns: {
       title: 'Campagnes',
-      description: 'Les campagnes sont des enquêtes ou initiatives de mobilité limitées dans le temps au sein d\'une organisation. Chaque organisation peut avoir plusieurs campagnes.',
+      description:
+        "Les campagnes sont des enquêtes ou initiatives de mobilité limitées dans le temps au sein d'une organisation. Chaque organisation peut avoir plusieurs campagnes.",
       settings: {
-        title: 'Comment gérer les paramètres d\'une campagne',
+        title: "Comment gérer les paramètres d'une campagne",
         caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
       },
       common_issues: {
         title: 'Problèmes courants',
-        caption: 'Solutions aux problèmes fréquemment rencontrés lors de la gestion d\'une campagne',
+        caption: "Solutions aux problèmes fréquemment rencontrés lors de la gestion d'une campagne",
       },
       best_practices: {
         title: 'Bonnes pratiques pour la gestion des campagnes',
-        caption: 'Conseils et recommandations pour tirer le meilleur parti des fonctionnalités de campagne dans le Toolkit Mobilité',
+        caption:
+          'Conseils et recommandations pour tirer le meilleur parti des fonctionnalités de campagne dans le Toolkit Mobilité',
       },
     },
     participants: {
       title: 'Participants',
-      description: 'Les participants sont des collaborateur·trice·s ou des membres d\'une organisation qui répondent aux enquêtes de mobilité dans le cadre d\'une campagne. Chaque campagne maintient sa propre liste de participants identifiés par un identifiant unique qui fait référence au registre externe des participants de l\'organisation.',
+      description:
+        "Les participants sont des collaborateur·trice·s ou des membres d'une organisation qui répondent aux enquêtes de mobilité dans le cadre d'une campagne. Chaque campagne maintient sa propre liste de participants identifiés par un identifiant unique qui fait référence au registre externe des participants de l'organisation.",
       settings: {
         title: 'Comment gérer les participants',
         caption: 'Apprenez à ajouter, modifier et supprimer des participants dans une campagne',
       },
       common_issues: {
         title: 'Problèmes courants',
-        caption: 'Solutions aux problèmes fréquemment rencontrés lors de la gestion des participants',
+        caption:
+          'Solutions aux problèmes fréquemment rencontrés lors de la gestion des participants',
       },
-       best_practices: {
+      best_practices: {
         title: 'Bonnes pratiques pour la gestion des participants',
-        caption: 'Conseils et recommandations pour gérer efficacement les participants dans vos campagnes de mobilité',
-       },
-    }
+        caption:
+          'Conseils et recommandations pour gérer efficacement les participants dans vos campagnes de mobilité',
+      },
+    },
   },
   role: {
     'platyp-user': 'Utilisateur',
@@ -207,8 +215,8 @@ export default {
     in_progress: 'En cours',
     completed: 'Terminé',
     pending: 'En attente',
-    nb_employees: "Nombre de collaborateur·trice·s",
-    percent_employees: "% de collaborateur·trice·s",
+    nb_employees: 'Nombre de collaborateur·trice·s',
+    percent_employees: '% de collaborateur·trice·s',
     total: 'N : {count}',
     no_data: 'Aucune donnée disponible',
     equipments: {

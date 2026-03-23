@@ -20,7 +20,8 @@ export default {
     info_url: 'Information link',
     info_url_hint: 'Provide a link to more information about the organisation mobility options.',
     can_be_cited: 'Can be cited as a Mobilyse user',
-    can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of Mobilyse',
+    can_be_cited_toggle:
+      'I do not want the Modus Foundation to cite the name of my organisation as a user of Mobilyse',
   },
   campaign: {
     label: 'Campaign',
@@ -82,16 +83,18 @@ export default {
       },
       best_practices: {
         title: 'Best practices for using the Mobility Toolkit',
-        caption: 'Tips and recommendations to make the most of the Mobility Toolkit for your organisation',
+        caption:
+          'Tips and recommendations to make the most of the Mobility Toolkit for your organisation',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems',
-      }
+      },
     },
     campaigns: {
       title: 'Campaigns',
-      description: 'Campaigns are time-bound mobility surveys or initiatives within an organisation. Each organisation can have multiple campaigns.',
+      description:
+        'Campaigns are time-bound mobility surveys or initiatives within an organisation. Each organisation can have multiple campaigns.',
       settings: {
         title: 'How to manage campaign settings',
         caption: 'Learn how to create and update your campaign settings and preferences',
@@ -102,25 +105,27 @@ export default {
       },
       best_practices: {
         title: 'Best practices for campaign management',
-        caption: 'Tips and recommendations to make the most of the campaign features in the Mobility Toolkit',
+        caption:
+          'Tips and recommendations to make the most of the campaign features in the Mobility Toolkit',
       },
     },
     participants: {
       title: 'Participants',
-      description: 'Participants are employees or members of an organisation who complete mobility surveys within a campaign. Each campaign maintains its own list of participants identified by a unique identifier that references the organisation\'s external participant registry.',
+      description:
+        "Participants are employees or members of an organisation who complete mobility surveys within a campaign. Each campaign maintains its own list of participants identified by a unique identifier that references the organisation's external participant registry.",
       settings: {
         title: 'How to manage participants',
-         caption: 'Learn how to add, edit, and remove participants in your campaigns',
+        caption: 'Learn how to add, edit, and remove participants in your campaigns',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems related to participant management',
       },
-       best_practices: {
-         title: 'Best practices for participant management',
-         caption: 'Tips and recommendations to effectively manage participants in your campaigns',
-       },
-    }
+      best_practices: {
+        title: 'Best practices for participant management',
+        caption: 'Tips and recommendations to effectively manage participants in your campaigns',
+      },
+    },
   },
   role: {
     'platyp-user': 'User',

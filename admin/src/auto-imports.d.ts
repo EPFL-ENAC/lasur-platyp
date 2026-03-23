@@ -79,10 +79,10 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuthStore: typeof import('./stores/auth')['useAuthStore']
   const useCampaigns: typeof import('./stores/campaigns')['useCampaigns']
-  const useCounterStore: typeof import('./stores/example-store')['useCounterStore']
+  const useCounterStore: (typeof import('./stores/example-store'))['useCounterStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
-  const useDataProtectionStore: typeof import('./stores/dataProtection')['useDataProtectionStore']
+  const useDataProtectionStore: (typeof import('./stores/dataProtection'))['useDataProtectionStore']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useId: typeof import('vue')['useId']
   const useIsochrones: typeof import('./stores/isochrones')['useIsochrones']
@@ -194,7 +194,6 @@ declare module 'vue' {
     readonly useCampaigns: UnwrapRef<typeof import('./stores/campaigns')['useCampaigns']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useDataProtectionStore: UnwrapRef<typeof import('./stores/dataProtection')['useDataProtectionStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useIsochrones: UnwrapRef<typeof import('./stores/isochrones')['useIsochrones']>

@@ -20,14 +20,28 @@
         </div>
         <div class="legend-item">
           <span class="legend-swatch">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 726 628">
-              <polygon points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314" :fill="gradient.colorAt(0)" :stroke="gradient.colorAt(0)" stroke-width="4"/>
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              height="16"
+              width="16"
+              viewBox="0 0 726 628"
+            >
+              <polygon
+                points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314"
+                :fill="gradient.colorAt(0)"
+                :stroke="gradient.colorAt(0)"
+                stroke-width="4"
+              />
             </svg>
           </span>
           <span class="legend-label">{{ t('stats.locationsHeatmap.households') }}</span>
         </div>
         <div class="gradient-container">
-          <div class="gradient-bar" :style="{ background: gradient.toCSSGradient('to right') }"></div>
+          <div
+            class="gradient-bar"
+            :style="{ background: gradient.toCSSGradient('to right') }"
+          ></div>
           <div class="gradient-labels">
             <span>1</span>
             <span>>100</span>
@@ -58,20 +72,20 @@ const gradient = new GradientScale([
   { value: 25, color: '#3b528b' }, // Blue
   { value: 50, color: '#21918c' }, // Teal/Green
   { value: 75, color: '#5ec962' }, // Light Green
-  { value: 100, color: '#fde725' }  // Yellow (High)
+  { value: 100, color: '#fde725' }, // Yellow (High)
 ])
 
 const id = ref(`location-heatmap-${crypto.randomUUID()}`)
 
 const hasData = computed(() => {
-  const hasHeatmapData = !!stats.homeLocationsHeatmap && Object.keys(stats.homeLocationsHeatmap).length > 0
+  const hasHeatmapData =
+    !!stats.homeLocationsHeatmap && Object.keys(stats.homeLocationsHeatmap).length > 0
   const hasWorkplaceData = !!stats.workplaceLocations && stats.workplaceLocations.length > 0
   return hasHeatmapData || hasWorkplaceData
 })
 </script>
 
 <style scoped>
-
 .title {
   font-size: 16px;
   font-weight: 600;
@@ -127,5 +141,4 @@ const hasData = computed(() => {
   font-size: 10px;
   font-weight: bold;
 }
-
 </style>

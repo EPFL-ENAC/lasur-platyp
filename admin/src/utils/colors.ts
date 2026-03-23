@@ -16,8 +16,14 @@ export class GradientScale {
   /**
    * Returns the expression for MapLibre's 'fill-color' paint property
    */
-  toMapLibreExpression(propertyName: string = 'value'): DataDrivenPropertyValueSpecification<string> {
-    const expression: DataDrivenPropertyValueSpecification<string> = ['interpolate', ['linear'], ['get', propertyName]]
+  toMapLibreExpression(
+    propertyName: string = 'value',
+  ): DataDrivenPropertyValueSpecification<string> {
+    const expression: DataDrivenPropertyValueSpecification<string> = [
+      'interpolate',
+      ['linear'],
+      ['get', propertyName],
+    ]
 
     this.stops.forEach((stop) => {
       expression.push(stop.value)
@@ -38,8 +44,7 @@ export class GradientScale {
 
     const cssStops = this.stops.map((stop) => {
       // Calculate percentage relative to the min/max values
-      const percentage =
-        range === 0 ? 0 : ((stop.value - min) / range) * 100
+      const percentage = range === 0 ? 0 : ((stop.value - min) / range) * 100
       return `${stop.color} ${percentage}%`
     })
 
@@ -57,7 +62,8 @@ export class GradientScale {
     if (value <= this.stops[0]!.value) return this.stops[0]!.color
 
     // If value is above the last stop, return the last color
-    if (value >= this.stops[this.stops.length - 1]!.value) return this.stops[this.stops.length - 1]!.color
+    if (value >= this.stops[this.stops.length - 1]!.value)
+      return this.stops[this.stops.length - 1]!.color
 
     // Find the two stops between which the value falls
     for (let i = 0; i < this.stops.length - 1; i++) {
