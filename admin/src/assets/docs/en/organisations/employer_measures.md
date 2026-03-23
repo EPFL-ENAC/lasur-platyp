@@ -84,4 +84,3 @@ These measures support sustainable mobility for business trips and professional 
 3. For each transport mode category, select the applicable measures from the dropdown
 4. Multiple measures can be selected within each category
 5. Clear selections using the X button if measures are no longer applicable
-

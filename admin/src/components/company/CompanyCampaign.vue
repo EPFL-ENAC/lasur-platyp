@@ -111,7 +111,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="row q-mt-sm">
           <q-btn
             v-if="hasMoreWorkplaces"
@@ -380,7 +380,6 @@ function onDownloadWorkplaces() {
 </script>
 
 <style scoped>
-
 .workplace {
   padding: 1rem 0.5rem;
 
@@ -388,7 +387,7 @@ function onDownloadWorkplaces() {
   grid-template-areas:
     'workplace-name workplace-address'
     'workplace-isochrone workplace-isochrone';
-  
+
   gap: 1rem;
 
   border-bottom: 1px solid lightgrey;
@@ -405,5 +404,4 @@ function onDownloadWorkplaces() {
 .workplace-isochrone {
   grid-area: workplace-isochrone;
 }
-
 </style>
