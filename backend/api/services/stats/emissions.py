@@ -113,6 +113,58 @@ class EmissionsService(BaseStatsService):
 
         return results
 
+    def compute_modes_pro_emission_reductions(
+        self, 
+        include_negative: bool = False
+    ) -> list[EmissionReductions]:
+        """
+        Compute CO2 emission reductions for professional travel.
+        
+        Calculates savings when professional travel recommendations are applied,
+        grouped by recommended mode.
+        
+        Key differences from commute reductions:
+        - Uses per-journey recommendations (typo.reco_pro.reco_pros.{i})
+        - No intermodality (professional travel is single-mode)
+        - Annual frequency (days * 2, not days * 2 * 45)
+        - Distances calculated to H3 hex locations
+        - 'avoid' recommendations have 0 emissions (maximum savings)
+        
+        Args:
+            include_negative: If True, includes cases where recommendations
+                             increase emissions. If False (default), only
+                             includes positive reductions.
+        
+        Returns:
+            List of EmissionReductions objects, one per recommended mode
+            
+        Example:
+            If someone has:
+            - Journey 0: plane (12 kgCO2) → train (1 kgCO2) = 11 kg saved
+            - Journey 1: car (5 kgCO2) → train (0.2 kgCO2) = 4.8 kg saved
+            Results: [EmissionReductions(mode='train', reduced=15.8)]
+        """
+        df_v2 = self._get_records_v2()
+        if df_v2.empty:
+            return []
+        
+        results = self._compute_mode_pro_emission_reductions_v2(
+            df_v2, include_negative
+        )
+        
+        # Finalize totals
+        for reduction in results:
+            reduction.total = len(df_v2)
+            reduction.reduced = round(reduction.reduced, 3)
+        
+        # Filter based on include_negative parameter
+        if include_negative:
+            results = [e for e in results if e.reduced != 0]
+        else:
+            results = [e for e in results if e.reduced > 0]
+        
+        return results
+
     #
     # Internal functions
     #
@@ -808,6 +860,124 @@ class EmissionsService(BaseStatsService):
             reduced=reduction_total
         )]
 
+    def _compute_mode_pro_emission_reductions_v2(
+        self, 
+        df: pd.DataFrame, 
+        include_negative: bool = False
+    ) -> list[EmissionReductions]:
+        """
+        Compute professional travel CO2 emission reductions for V2 data.
+        
+        Based on viz_v2.ipynb logic (cells 31-32):
+        - For each professional journey: calculate current vs reco emissions
+        - Accumulate savings per recommended mode
+        - Professional journeys use annual frequency (no * 45 multiplier)
+        
+        Formula per journey:
+            current_emissions = distance * MODE_EMISSIONS[current_mode] * days * 2 / 1000
+            reco_emissions = distance * MODE_EMISSIONS[reco_mode] * days * 2 / 1000
+            savings = current_emissions - reco_emissions
+        
+        Args:
+            df: DataFrame with V2 records
+            include_negative: Whether to include negative savings
+            
+        Returns:
+            List of EmissionReductions objects
+        """
+        if len(df) == 0:
+            return []
+        
+        # Extract professional journey columns
+        col_days = df.columns[df.columns.str.contains(
+            r'^data\.freq_mod_pro_journeys\..*\.days$', regex=True)]
+        
+        if len(col_days) == 0:
+            return []
+        
+        # Dictionary to accumulate savings per recommended mode
+        savings_by_reco = {}
+        
+        # Process each journey index (0, 1, 2, ...)
+        for i in range(len(col_days)):
+            col_mode_i = f'data.freq_mod_pro_journeys.{i}.mode'
+            col_reco_i = f'typo.reco_pro.reco_pros.{i}'
+            col_hexid_i = f'data.freq_mod_pro_journeys.{i}.hex_id'
+            col_days_i = f'data.freq_mod_pro_journeys.{i}.days'
+            
+            # Skip if columns don't exist
+            if (col_mode_i not in df.columns or 
+                col_reco_i not in df.columns or
+                col_hexid_i not in df.columns or
+                col_days_i not in df.columns):
+                continue
+            
+            # Process each row (person)
+            for idx, row in df.iterrows():
+                current_mode = row.get(col_mode_i)
+                reco_mode = row.get(col_reco_i)
+                days = row.get(col_days_i)
+                hex_id = row.get(col_hexid_i)
+                
+                # Skip if missing data or no recommendation (per user requirement #3)
+                if (pd.isna(current_mode) or 
+                    pd.isna(reco_mode) or 
+                    pd.isna(days) or 
+                    days <= 0 or 
+                    pd.isna(hex_id)):
+                    continue
+                
+                # Get workplace coordinates
+                workplace_lat = row.get('data.workplace.lat')
+                workplace_lon = row.get('data.workplace.lon')
+                
+                if pd.isna(workplace_lat) or pd.isna(workplace_lon):
+                    continue
+                
+                # Calculate distance to H3 hex (uses existing method)
+                distance_km = self._calculate_distance_to_h3(
+                    float(workplace_lat),
+                    float(workplace_lon),
+                    hex_id,
+                    current_mode
+                )
+                
+                # Get emission factors with mode name normalization (per user requirement #1)
+                current_mode_normalized = self._normalize_mode_value(current_mode)
+                reco_mode_normalized = self._normalize_mode_value(reco_mode)
+                
+                current_emission_factor = MODE_EMISSIONS.get(current_mode_normalized, 0)
+                reco_emission_factor = MODE_EMISSIONS.get(reco_mode_normalized, 0)
+                
+                # Calculate emissions
+                # Formula: distance * emission_factor * days * 2 / 1000
+                # Note: No * 45 for professional travel (annual frequency, not weekly)
+                current_emissions = (
+                    distance_km * current_emission_factor * days * 2 / 1000
+                )
+                reco_emissions = (
+                    distance_km * reco_emission_factor * days * 2 / 1000
+                )
+                
+                # Calculate savings (positive = reduction, negative = increase)
+                savings = current_emissions - reco_emissions
+                
+                # Accumulate by recommended mode
+                if reco_mode_normalized not in savings_by_reco:
+                    savings_by_reco[reco_mode_normalized] = 0.0
+                savings_by_reco[reco_mode_normalized] += savings
+        
+        # Convert to EmissionReductions objects
+        results = []
+        for mode, reduced in savings_by_reco.items():
+            results.append(EmissionReductions(
+                mode=mode,
+                total=len(df),
+                reduced=float(reduced)
+            ))
+        
+        return results
+
     def _compute_mode_pro_emissions_v2(self, df: pd.DataFrame, mode: str, apply_reco: bool = False) -> list[Emissions]:
         """
         Compute all CO2 emissions from professional travel for a specific mode.
@@ -894,3 +1064,26 @@ class EmissionsService(BaseStatsService):
             'vae': 'ebike'
         })
         return df[column]
+
+    def _normalize_mode_value(self, mode_value: str) -> str:
+        """
+        Normalize a single mode value.
+        
+        Helper for normalizing mode names without needing a DataFrame column.
+        Applies same mapping as _normalize_mode_name for consistency.
+        
+        Args:
+            mode_value: Raw mode string (e.g., 'velo', 'tpu', 'marche')
+            
+        Returns:
+            Normalized mode string (e.g., 'bike', 'pub', 'walking')
+        """
+        mode_map = {
+            'covoit': 'carpool',
+            'velo': 'bike',
+            'marche': 'walking',
+            'tpu': 'pub',
+            'vae': 'ebike'
+        }
+        return mode_map.get(mode_value, mode_value)
+
