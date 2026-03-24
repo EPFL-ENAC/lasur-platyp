@@ -493,17 +493,16 @@ export default {
   data_protection_notice: {
     title: 'Notice sur la protection des données',
     content:
-      `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil Mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateurs.
+      `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 
-Cependant, en fonction de la taille de votre entreprise et de la structure des réponses, il n’est pas exclu que certaines données agrégées permettent, directement ou indirectement, d’identifier une ou plusieurs personnes.
-Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des employés sont établis dans l’UE).
+Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n’est pas exclu que certaines données agrégées permettent, directement ou indirectement, d’identifier une ou plusieurs personnes.
+Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l’UE).
 
-En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l’identification individuelle d’un collaborateur sans base légale valable.
+En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l’identification individuelle d’une collaboratrice ou d'un collaborateur sans base légale valable.
 
 Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en conséquence.
 
 *Dernière mise à jour : mars 2026*`,
-      // "Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil Mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateurs. \n\n Cependant, en fonction de la taille de votre entreprise et de la structure des réponses, il n’est pas exclu que certaines données agrégées permettent, directement ou indirectement, d’identifier une ou plusieurs personnes. \n\n Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des employés sont établis dans l’UE). \n\n En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l’identification individuelle d’un collaborateur sans base légale valable. \n\n Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en conséquence. \n\n Dernière mise à jour : mars 2026",
   },
   error: {
     accept_terms_and_conditions: 'Vous devez accepter les termes et conditions.',
