@@ -207,14 +207,14 @@ function nextStep() {
   }
   survey.incStep()
   if (survey.tokenOrSlug) {
-    void collector.loadInfo(survey.record.token)
+    void collector.loadInfo(survey.tokenOrSlug)
     if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
       survey.record.data.comments = ''
       collector
         .save(survey.tokenOrSlug, survey.record)
         .then(() => {
-          void collector.loadInfo(survey.record.token)
+          void collector.loadInfo(survey.tokenOrSlug!)
           return collector.loadTypo(survey.record, locale.value)
         })
         .then((resp) => {
