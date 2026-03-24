@@ -25,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import jsPDF from 'jspdf'
 import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
 
 const { t, locale } = useI18n()
@@ -36,7 +35,8 @@ onMounted(() => {
   survey.finish()
 })
 
-function downloadPdf() {
+async function downloadPdf() {
+  const jsPDF = (await import('jspdf')).default
   const doc = new jsPDF()
 
   const pageWidth = doc.internal.pageSize.getWidth()

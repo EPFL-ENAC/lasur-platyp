@@ -152,7 +152,7 @@
                       filled
                       type="textarea"
                       v-model="selected.rewards_message[locale]"
-                      :label="t('campaign.rewards.message_placeholder', {},  { locale }) + ` (${locale.toUpperCase()})`"
+                      :label="t('campaign.rewards.message_placeholder', {}, { locale }) + ` (${locale.toUpperCase()})`"
                       class="q-mb-md"
                     />
                   </template>

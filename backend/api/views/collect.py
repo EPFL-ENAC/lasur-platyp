@@ -18,13 +18,16 @@ router = APIRouter()
 @router.get("/info/{tokenOrSlug}", response_model=CampaignInfo, response_model_exclude_none=True)
 async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) -> CampaignInfo:
     """Get campaign info by participant token or campaign slug"""
+
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
+    
     try:
         campaign = await CampaignService(session).get_by_slug(tokenOrSlug)
     except:
         campaign = None
+    
     if not campaign:
         try:
             cr = await RecordService(session).get_by_token(tokenOrSlug)
@@ -32,8 +35,10 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
                 campaign = await CampaignService(session).get(cr.campaign_id)
         except:
             campaign = None
+    
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
+    
     company = await CompanyService(session).get(campaign.company_id)
     return CampaignInfo(
         name=campaign.name,
@@ -78,6 +83,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         cr = await RecordService(session).get_by_token(tokenOrSlug)
     except:
         cr = None  # 404 if not found
+    
     if cr is not None:
         campaign = await CampaignService(session).get(cr.campaign_id)
         _check_campaign(campaign)

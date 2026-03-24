@@ -19,8 +19,8 @@ export default {
     contact_info: 'Contact Information',
     info_url: 'Information link',
     info_url_hint: 'Provide a link to more information about the organisation mobility options.',
-    can_be_cited: 'Can be cited as a Mobilyse user',
-    can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of Mobilyse',
+    can_be_cited: 'Can be cited as a mobilyse user',
+    can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of mobilyse',
   },
   campaign: {
     label: 'Campaign',
@@ -32,8 +32,8 @@ export default {
     rewards: {
       toggle: 'I want to reward participants.',
       hint:
-        "Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a \"certificate\" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).",
-      default_message: "Congratulations and thank you for your participation in the Mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able to claim your reward.",
+        'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a \"certificate\" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
+      default_message: 'Congratulations and thank you for your participation in the mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able to claim your reward.',
       message_placeholder: 'Message for participants'
     },
     contact_name: 'Contact Name',

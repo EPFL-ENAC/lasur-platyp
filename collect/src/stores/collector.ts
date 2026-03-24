@@ -64,6 +64,9 @@ export const useCollector = defineStore('collector', () => {
 
           ...cr.data,
         }
+
+        recordId.value = cr.id
+
         return {
           token: cr.token,
           data,

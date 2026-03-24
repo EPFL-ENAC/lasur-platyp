@@ -20,8 +20,8 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette organisation.",
-    can_be_cited: 'Peut être citée comme utilisateur de Mobilyse',
-    can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de Mobilyse',
+    can_be_cited: 'Peut être citée comme utilisateur de mobilyse',
+    can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de mobilyse',
   },
   campaign: {
     label: 'Campagne',
