@@ -44,6 +44,12 @@
       />
     </div>
     <div class="item">
+      <reco-share-chart
+        reco="reco_mod"
+        :height="height"
+      />
+    </div>
+    <div class="item">
       <frequencies-stack-chart
         type="freq_mod_pro"
         :groups="['local', 'national', 'europe', 'inter']"
@@ -73,6 +79,7 @@ import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.v
 import LocationChart from 'src/components/charts/LocationChart.vue'
 import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
 import RecoEmissionsChart from 'src/components/charts/RecoEmissionsChart.vue'
+import RecoShareChart from 'src/components/charts/RecoShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
 

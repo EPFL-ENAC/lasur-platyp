@@ -14,6 +14,17 @@
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
+
+  <div>
+    <p>{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
+    <p v-if="total > 5">{{ t(`stats.emissions_${props.reco}.texts.specific`, { 
+      currentEmissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions, 0) || 0),
+      newEmissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions, 0) || 0),
+      cheeseburgers: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 18.8)),
+      smartphones: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 80.2)),
+      streaming_hours: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1_000_000 / 50)),
+     }) }}</p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -30,7 +41,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { toMaxDecimals } from 'src/utils/numbers'
-// import { MODE_COLORS } from './commons'
+import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -50,6 +61,8 @@ const props = withDefaults(defineProps<Props>(), {
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
+const currentEmissions = ref(0)
+const newEmissions = ref(0)
 
 watch([() => stats.loading], () => {
   if (stats.loading) {
@@ -99,18 +112,17 @@ function initChartOptions() {
     .map((item) => item.mode)
 
   // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
-  const currentEmissions = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
+  currentEmissions.value = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
   const categoryEmissions: { [key: string]: number } = {}
   recoEmissions.forEach((item) => {
     categoryEmissions[item.mode] = item.emissions
   })
-  const savedEmissions =
-    currentEmissions - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
+  newEmissions.value = currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
 
   const categoriesLabels = [
     keyLabel('current'),
     ...categories.map((cat) => keyLabel(cat)),
-    keyLabel('saved'),
+    keyLabel('postSaving'),
   ]
 
   total.value = emissions[0]?.total || 0
@@ -159,6 +171,9 @@ function initChartOptions() {
       axisLabel: {
         rotate: 30,
       },
+      name: t(`stats.emissions_${props.reco}.xaxis`) || '',
+      nameLocation: 'middle',
+      nameGap: 90,
     },
     yAxis: {
       name: props.yaxis || '',
@@ -191,7 +206,7 @@ function initChartOptions() {
               }
               sum += categoryEmissions[c] || 0
             }
-            return currentEmissions - sum - (categoryEmissions[cat] || 0)
+            return currentEmissions.value - sum - (categoryEmissions[cat] || 0)
           }),
           0,
         ],
@@ -211,9 +226,24 @@ function initChartOptions() {
           },
         },
         data: [
-          currentEmissions,
-          ...categories.map((cat) => categoryEmissions[cat] || 0),
-          savedEmissions,
+          {
+            value: currentEmissions.value,
+            itemStyle: {
+              color: '#000',
+            }
+          },
+          ...categories.map((cat) => ({
+            value: categoryEmissions[cat] || 0,
+            itemStyle: {
+              color: MODE_COLORS[cat] || MODE_COLORS.default || '#ccc',
+            },
+          })),
+          {
+            value: newEmissions.value,
+            itemStyle: {
+              color: '#000',
+            },
+          },
         ],
       },
     ],

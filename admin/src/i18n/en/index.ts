@@ -341,9 +341,9 @@ export default {
       },
     },
     emissions_reco_mod: {
-      title: 'CO₂ emissions per recommended mode of transport',
-      yaxis: 'CO₂ emissions (kgCO₂eq)',
-      xaxis: 'Journeys per year',
+      title: 'Potential for reducing commuter emissions',
+      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
+      xaxis: 'Recommended mode',
       labels: {
         walking: 'Walking',
         bike: 'Bicycle',
@@ -362,8 +362,39 @@ export default {
         journeys: 'Number of journeys',
         distances: 'Total distance',
         current: 'Current',
-        saved: 'Saved',
+        postSaving: 'Total after recommandations',
       },
+      texts: {
+        default: "This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.",
+        specific: 'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO2 / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : https://impactco2.fr/doc].'
+      }
+    },
+    emissions_reco_share: {
+      title: "Share of CO₂ emissions reduction per recommended mode of transport",
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle',
+        ebike: 'Electric bike',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        emissions: 'Total CO₂ emissions',
+        journeys: 'Number of journeys',
+        distances: 'Total distance',
+        current: 'Current',
+        postSaving: 'Total after recommandations',
+      },
+      texts: {
+        default: 'This chart shows the share of CO₂ emissions reduction per recommended mode of transport.',
+        specific: "{percentage}% of potential reduction depend on the main recommendation for mode {mode}."
+      }
     },
     emissions_freq_mod_pro: {
       title: 'CO₂ emissions per mode of transport (professional)',
@@ -411,7 +442,7 @@ export default {
       },
       texts: {
         default: 'This chart shows which modes of transport have been recommended (on the right) based on the mode currently in use (on the left).',
-        specific: 'The {mode} appears to be the mode of transport with the highest potential for modal shift.'
+        specific: 'The mode "{mode}" appears to be the mode of transport with the highest potential for modal shift.'
       }
     },
     mod_reco_pro: {

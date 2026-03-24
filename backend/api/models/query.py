@@ -160,6 +160,15 @@ class Links(BaseModel):
     data: List[Link] = []
 
 
+class Recommendation(BaseModel):
+    target: str = ""
+    value: int = 0
+
+
+class StatLinks(Links):
+    most_recommended_target: Recommendation
+
+
 class JourneyEnergyLeg(BaseModel):
     """Energy expenditure for a single journey leg (per person)."""
     token: str
@@ -229,12 +238,12 @@ class Stats(BaseModel):
     mode_emissions: Optional[List[Emissions]] = None
     reco_mode_emissions: Optional[List[Emissions]] = None
     mode_emission_reductions: Optional[List[EmissionReductions]] = None
-    mode_links: Optional[Links] = None
+    mode_links: Optional[StatLinks] = None
     pro_frequencies: Optional[List[Frequencies]] = None
     pro_mode_frequencies: Optional[List[Frequencies]] = None
     pro_mode_emissions: Optional[List[Emissions]] = None
     pro_mode_emission_reductions: Optional[List[EmissionReductions]] = None
-    pro_mode_links: Optional[Links] = None
+    pro_mode_links: Optional[StatLinks] = None
     home_location_heatmap: Optional[Dict[str, int]] = None
     workplace_locations: Optional[List[dict]] = None
     workplace_location_heatmap: Optional[Dict[str, int]] = None

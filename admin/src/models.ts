@@ -137,6 +137,13 @@ export interface Links {
   data: Link[]
 }
 
+export interface StatLinks extends Links {
+  most_recommended_target: {
+    target: string
+    value: number
+  } | null
+}
+
 export type H3Heatmap = { [hexId: string]: number }
 
 export interface Stats {
@@ -145,11 +152,11 @@ export interface Stats {
   mode_frequencies: Frequencies[] | null
   mode_emissions: Emissions[] | null
   reco_mode_emissions: Emissions[] | null
-  mode_links: Links | null
+  mode_links: StatLinks | null
   pro_frequencies: Frequencies[] | null
   pro_mode_frequencies: Frequencies[] | null
   pro_mode_emissions: Emissions[] | null
-  pro_mode_links: Links | null
+  pro_mode_links: StatLinks | null
   home_location_heatmap: H3Heatmap | null
   workplace_locations: { lat: number; lon: number }[] | null
 }

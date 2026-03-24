@@ -1,4 +1,4 @@
-import type { CampaignStats, Emissions, Frequencies, H3Heatmap, Links, Stats } from 'src/models'
+import type { CampaignStats, Emissions, Frequencies, H3Heatmap, StatLinks, Stats } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -9,7 +9,7 @@ export const useStats = defineStore('stats', () => {
     {} as { [key: string]: Frequencies },
   )
   const emissions = ref<{ [key: string]: Emissions[] }>({} as { [key: string]: Emissions[] })
-  const links = ref<{ [key: string]: Links }>({} as { [key: string]: Links })
+  const links = ref<{ [key: string]: StatLinks }>({} as { [key: string]: StatLinks })
   const loading = ref(false)
   const homeLocationsHeatmap = ref<H3Heatmap>({})
   const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
@@ -46,13 +46,13 @@ export const useStats = defineStore('stats', () => {
           frequencies.value['freq_mod'] = stats.mode_frequencies || []
           emissions.value['freq_mod'] = stats.mode_emissions || []
           emissions.value['reco_mod'] = stats.reco_mode_emissions || []
-          links.value['mod_reco'] = stats.mode_links || { total: 0, data: [] }
+          links.value['mod_reco'] = stats.mode_links || { total: 0, data: [], most_recommended_target: null }
           stats.pro_frequencies?.forEach((freq) => {
             frequencies.value[freq.field] = freq
           })
           frequencies.value['freq_mod_pro'] = stats.pro_mode_frequencies || []
           emissions.value['freq_mod_pro'] = stats.pro_mode_emissions || []
-          links.value['mod_reco_pro'] = stats.pro_mode_links || { total: 0, data: [] }
+          links.value['mod_reco_pro'] = stats.pro_mode_links || { total: 0, data: [], most_recommended_target: null }
           homeLocationsHeatmap.value = stats.home_location_heatmap || {}
           workplaceLocations.value = stats.workplace_locations || []
         })
