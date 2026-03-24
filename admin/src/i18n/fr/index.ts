@@ -414,6 +414,10 @@ export default {
         velo: 'Vélo',
         cargo: 'Vélo cargo',
       },
+      texts: {
+        default: 'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+        specific: 'Le {mode} semble être le mode de transport comportant le potentiel de report modal le plus élevé.'
+      }
     },
     mod_reco_pro: {
       title: 'Recommandations de changement modal (professionnel)',

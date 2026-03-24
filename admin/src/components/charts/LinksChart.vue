@@ -1,14 +1,21 @@
 <template>
   <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
+    <template
       v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="stats.loading"
-    />
+    >
+      <e-charts
+        ref="chart"
+        autoresize
+        :init-options="initOptions"
+        :option="option"
+        :update-options="updateOptions"
+        :loading="stats.loading"
+      />
+      <div>
+        <p>{{ t(`stats.${props.type}.texts.default`) }}</p>
+        <p>{{ t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommended.name) }) }}</p>
+      </div>
+    </template>
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
@@ -44,9 +51,18 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
+interface RecommendedMode {
+  name: string
+  value: number
+}
+
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
+const mostRecommended = ref<RecommendedMode>({
+  name: '',
+  value: -Infinity
+})
 
 watch(
   () => stats.loading,
@@ -96,10 +112,24 @@ function initChartOptions() {
     target: keyLabel(item.target) + recoSuffix,
     value: item.value,
   }))
+
+  const recommendations: Record<string, number> = {};
+
   const nodes = new Set<string>()
   links.data.forEach((item) => {
     nodes.add(item.source)
     nodes.add(item.target + '_reco')
+
+    recommendations[item.target] = (recommendations[item.target] ?? 0) + item.value
+  })
+
+  Object.entries(recommendations).forEach(([mode, value]) => {
+    if (value > mostRecommended.value.value) {
+      mostRecommended.value = {
+        name: mode,
+        value,
+      }
+    }
   })
 
   const newOption: EChartsOption = {

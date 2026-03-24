@@ -409,6 +409,10 @@ export default {
         velo: 'Bike',
         cargo: 'Cargo bike',
       },
+      texts: {
+        default: 'This chart shows which modes of transport have been recommended (on the right) based on the mode currently in use (on the left).',
+        specific: 'The {mode} appears to be the mode of transport with the highest potential for modal shift.'
+      }
     },
     mod_reco_pro: {
       title: 'Modal shift recommendations (professional)',
