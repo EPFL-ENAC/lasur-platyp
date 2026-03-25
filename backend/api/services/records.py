@@ -53,7 +53,8 @@ class RecordService(EntityService):
         count = (await self.session.exec(count_query)).one()
         return count
 
-    async def get(self, id: int, user: User = None) -> Record:
+    # TODO: strip email_hash should probably be done via the require_admin_or_perm mechanism
+    async def get(self, id: int, user: User = None, strip_email_hash: bool = False) -> Record:
         """Get a record by id"""
         res = await self.session.exec(
             select(Record).where(
@@ -62,11 +63,16 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
+    
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
+        
+        if strip_email_hash and entity.email_hash:
+            entity.email_hash = None
+        
         return entity
 
-    async def get_by_token(self, token: str) -> Record:
+    async def get_by_token(self, token: str, strip_email_hash: bool = False) -> Record:
         """Get a record by token"""
         res = await self.session.exec(
             select(Record).where(
@@ -75,6 +81,10 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
+        
+        if strip_email_hash and entity.email_hash:
+            entity.email_hash = None
+        
         return entity
 
     async def delete(self, id: int, user: User = None) -> Record:
@@ -92,7 +102,7 @@ class RecordService(EntityService):
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> RecordResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None, strip_email_hash: bool = False) -> RecordResult:
         """Get all records matching filter and range"""
         if user is not None and not is_admin(user):
             permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
@@ -124,6 +134,10 @@ class RecordService(EntityService):
         # Execute query
         results = await self.session.exec(query)
         entities = results.all()
+        if strip_email_hash:
+            for entity in entities:
+                if entity.email_hash:
+                    entity.email_hash = None
 
         return RecordResult(
             total=total_count,

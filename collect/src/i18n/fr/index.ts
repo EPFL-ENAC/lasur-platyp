@@ -13,6 +13,7 @@ export default {
       journey_days: 'Veuillez spécifier le nombre de jours par semaine pour chaque trajet',
       pro_journey_mode: 'Veuillez spécifier le mode de transport pour chaque trajet',
       pro_journey_hex_id: 'Veuillez spécifier la destination pour chaque trajet',
+      invalid_email: 'Veuillez entrer une adresse email valide',
     },
     agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
     agreement_hint:
@@ -148,6 +149,12 @@ export default {
       other: 'Autre',
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
+    email: {
+      title: 'Suivi longitudinal des participant·e·s (optionnel)',
+      text: `En renseignant votre email, vous permettez à votre organisation de suivre l'évolution des pratiques et désirs de mobilité. Grâce a cela, en réutilisant mobilyse une prochaine fois, elle pourra comprendre ce qui a fonctionné ou non dans les aides pour votre mobilité et ainsi vous accompagner plus efficacement.
+Important : votre email est crypté instantanément et n'est jamais stocké par mobilyse. Nous garantissons que personne n'a, en aucun cas, accès à celui-ci.`,
+      label: 'Votre adresse email (optionnelle)',
+    },
     final: 'Vos réponses ont été enregistrées, merci de votre participation !',
     final_rewards: {
       title: "L'organisation offre des récompenses pour les participants à ce questionnaire",

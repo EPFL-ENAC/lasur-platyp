@@ -30,7 +30,7 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
     
     if not campaign:
         try:
-            cr = await RecordService(session).get_by_token(tokenOrSlug)
+            cr = await RecordService(session).get_by_token(tokenOrSlug, strip_email_hash=True)
             if cr:
                 campaign = await CampaignService(session).get(cr.campaign_id)
         except:
@@ -80,7 +80,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
     # 2. this is a participant's token: try to get the record in case it was already saved
     cr = None
     try:
-        cr = await RecordService(session).get_by_token(tokenOrSlug)
+        cr = await RecordService(session).get_by_token(tokenOrSlug, strip_email_hash=True)
     except:
         cr = None  # 404 if not found
     
@@ -117,6 +117,7 @@ async def createOrUpdate(
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
+    
     campaign = None
     if tokenOrSlug != item.token:
         # this is a campaign's slug
@@ -125,6 +126,7 @@ async def createOrUpdate(
         # this is a participant's token
         participant = await ParticipantService(session).get_by_token(tokenOrSlug)
         campaign = await CampaignService(session).get(participant.campaign_id)
+
     return await RecordService(session).createOrUpdate(item, campaign)
 
 
@@ -139,7 +141,7 @@ async def saveComments(
         raise HTTPException(
             status_code=400, detail="Missing token")
     recordService = RecordService(session)
-    record = await recordService.get_by_token(token)
+    record = await recordService.get_by_token(token, strip_email_hash=True)
     record.comments = data.comments
     try:
         participantService = ParticipantService(session)
@@ -158,7 +160,7 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
         raise HTTPException(
             status_code=400, detail="Missing token")
     recordService = RecordService(session)
-    record = await recordService.get_by_token(token)
+    record = await recordService.get_by_token(token, strip_email_hash=True)
     response = {}
     service = ModalTypoService()
     reco = service.get_recommendation_multi(record)

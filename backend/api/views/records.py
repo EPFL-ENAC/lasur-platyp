@@ -21,7 +21,7 @@ async def find(
     """Search for records"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await RecordService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
+        return await RecordService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user, strip_email_hash=True)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -31,7 +31,7 @@ async def get(id: int,
               user: User = Depends(kc_service.require_admin()),
               session: AsyncSession = Depends(get_session)) -> Record:
     """Get a record by id"""
-    return await RecordService(session).get(id, user)
+    return await RecordService(session).get(id, user, strip_email_hash=True)
 
 
 @router.delete("/{id}", response_model=Record, response_model_exclude_none=True)

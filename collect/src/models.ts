@@ -68,6 +68,7 @@ export interface Record {
   data: RecordData
   typo: Recommendation | null
   token: string
+  email_hash: string | null
 }
 
 export interface Recommendation {

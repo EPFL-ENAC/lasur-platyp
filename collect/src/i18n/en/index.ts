@@ -13,6 +13,7 @@ export default {
       journey_days: 'Please specify the number of days per week for each journey',
       pro_journey_mode: 'Please specify the mode of transport for each journey',
       pro_journey_hex_id: 'Please specify the destination for each journey',
+      invalid_email: 'Please enter a valid email address',
     },
     agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
     agreement_hint:
@@ -140,6 +141,12 @@ export default {
       other: 'Other',
     },
     change_other_levers_specify: 'Please specify what other measures would help you',
+    email: {
+      title: 'Longitudinal following of participants (optional)',
+      text: `By providing your email, you allow your organization to track the evolution of mobility practices and desires. By reusing mobilyse at a later time, it will be able to understand what worked or not in the measures for your mobility and thus support you more effectively.
+Important: your email is encrypted instantly and is never stored by mobilyse. We guarantee that no one has, in any case, access to it.`,
+      label: 'Your email address (optional)',
+    },
     final: 'Your answers have been registered, thank you for your participation!',
     final_rewards: {
       title: 'The organisation offers rewards for answering this survey',
