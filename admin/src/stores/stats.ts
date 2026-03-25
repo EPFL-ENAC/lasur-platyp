@@ -1,4 +1,4 @@
-import type { CampaignStats, Emissions, Frequencies, Links, Stats } from 'src/models'
+import type { CampaignStats, Emissions, Frequencies, H3Heatmap, Links, Stats } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -11,12 +11,16 @@ export const useStats = defineStore('stats', () => {
   const emissions = ref<{ [key: string]: Emissions[] }>({} as { [key: string]: Emissions[] })
   const links = ref<{ [key: string]: Links }>({} as { [key: string]: Links })
   const loading = ref(false)
+  const homeLocationsHeatmap = ref<H3Heatmap>({})
+  const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
 
   async function loadStats(filter: Filter | undefined = undefined) {
     loading.value = true
     frequencies.value = {}
     emissions.value = {}
     links.value = {}
+    homeLocationsHeatmap.value = {}
+    workplaceLocations.value = []
     return loadAllStats(filter).finally(() => {
       loading.value = false
     })
@@ -49,6 +53,8 @@ export const useStats = defineStore('stats', () => {
           frequencies.value['freq_mod_pro'] = stats.pro_mode_frequencies || []
           emissions.value['freq_mod_pro'] = stats.pro_mode_emissions || []
           links.value['mod_reco_pro'] = stats.pro_mode_links || { total: 0, data: [] }
+          homeLocationsHeatmap.value = stats.home_location_heatmap || {}
+          workplaceLocations.value = stats.workplace_locations || []
         })
         .catch((err) => {
           console.error(err)
@@ -84,6 +90,8 @@ export const useStats = defineStore('stats', () => {
     frequencies,
     emissions,
     links,
+    homeLocationsHeatmap,
+    workplaceLocations,
     loading,
     loadStats,
     getCampaignStats,

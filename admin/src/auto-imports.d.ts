@@ -79,7 +79,7 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuthStore: typeof import('./stores/auth')['useAuthStore']
   const useCampaigns: typeof import('./stores/campaigns')['useCampaigns']
-  const useCounterStore: typeof import('./stores/example-store')['useCounterStore']
+  const useCounterStore: (typeof import('./stores/example-store'))['useCounterStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useDataProtectionStore: typeof import('./stores/dataProtection')['useDataProtectionStore']

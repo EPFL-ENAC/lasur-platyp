@@ -32,6 +32,28 @@
         </q-btn>
       </template>
     </div>
+    <div v-if="canBeCompanyVehicle">
+      <ToggleItem
+        :label="t('form.journey_pro.is_company_vehicle.label')"
+        :left-label="t('form.journey_pro.is_company_vehicle.option.private_vehicle')"
+        :right-label="t('form.journey_pro.is_company_vehicle.option.company_vehicle')"
+        v-model="journey.is_company_vehicle"
+        required
+        class="q-mb-lg"
+        color="accent"
+      />
+    </div>
+    <div v-if="journey.mode">
+      <ToggleItem
+        :label="t('form.journey_pro.has_to_carry_heavy_equipment')"
+        :left-label="t('form.no')"
+        :right-label="t('form.yes')"
+        v-model="hasHeavyEquipment"
+        required
+        class="q-mb-lg"
+        color="accent"
+      />
+    </div>
     <NumberItem
       :label="t('form.journey_pro.days_per_year')"
       v-model="journey.days"
@@ -48,6 +70,7 @@
 <script setup lang="ts">
 import PlaceItem from 'src/components/form/PlaceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
+import ToggleItem from 'src/components/form/ToggleItem.vue'
 import type { Option } from 'src/components/form/models'
 import type { ProJourney } from 'src/models'
 
@@ -86,9 +109,27 @@ const modeOptions = computed<Option[]>(() =>
   ].filter((opt) => props.modes.includes(opt.value)),
 )
 
+const canBeCompanyVehicle = computed(() => ['bike', 'cargo', 'car', 'truck', 'moto'].includes(journey.value.mode))
+
+const hasHeavyEquipment = computed({
+  get: () => journey.value.constraints?.includes('heavy') ?? false,
+  set: (val: boolean) => {
+    const current = new Set(journey.value.constraints || []);
+    if (val) {
+      current.add('heavy')
+    } else {
+      current.delete('heavy')
+    }
+    journey.value.constraints = Array.from(current);
+  },
+});
+
 function onSelect(option: Option | undefined) {
   if (!option) return
   journey.value.mode = option.value
+  if (!canBeCompanyVehicle.value) {
+    journey.value.is_company_vehicle = undefined
+  }
 }
 </script>
 

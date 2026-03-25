@@ -140,3 +140,163 @@ class BaseStatsService:
         work_lat = float(row['data.workplace.lat'])
         work_lon = float(row['data.workplace.lon'])
         return self._calculate_distance(origin_lat, origin_lon, work_lat, work_lon)
+
+    def _build_journey_dataframe(self, df: pd.DataFrame) -> pd.DataFrame | None:
+        """
+        Extract journey data from freq_mod_journeys columns.
+        
+        Extracts journey information from data.freq_mod_journeys.*.days columns
+        and returns a DataFrame with journey-level information.
+        
+        Args:
+            df: DataFrame with V2 records containing freq_mod_journeys data
+            
+        Returns:
+            DataFrame with columns ['token', 'journey', 'days', 'dist', 'travel_time'] or None if no data
+        """
+        col_days = df.columns[df.columns.str.contains(
+            r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
+        
+        if len(col_days) == 0:
+            return None
+        
+        journeys_list = []
+        for idx, row in df.iterrows():
+            for col in col_days:
+                days = row[col]
+                if pd.notna(days) and days > 0:
+                    # Extract journey number from column name
+                    journey_id = col.split('.')[2]
+                    journeys_list.append({
+                        'token': row.get('token', idx),
+                        'journey': journey_id,
+                        'days': days,
+                        'dist': row['distance_km'],
+                        'travel_time': row.get('data.travel_time', 0)
+                    })
+        
+        if len(journeys_list) == 0:
+            return None
+        
+        return pd.DataFrame(journeys_list)
+
+    def _build_modes_dataframe(self, df: pd.DataFrame) -> pd.DataFrame | None:
+        """
+        Extract mode data from freq_mod_journeys columns.
+        
+        Extracts mode information from data.freq_mod_journeys.*.modes.* columns
+        and returns a DataFrame with mode-level information.
+        
+        NOTE: Mode names are NOT normalized here to preserve the original behavior
+        where intermodality calculations use raw mode names. Normalization happens
+        later in the aggregation step.
+        
+        Args:
+            df: DataFrame with V2 records containing freq_mod_journeys data
+            
+        Returns:
+            DataFrame with columns ['token', 'journey', 'mode'] or None if no data
+        """
+        modes_list = []
+        for idx, row in df.iterrows():
+            for col in df.columns:
+                if '.freq_mod_journeys.' in col and '.modes.' in col:
+                    mode_val = row[col]
+                    if pd.notna(mode_val):
+                        parts = col.split('.')
+                        journey_id = parts[2]
+                        modes_list.append({
+                            'token': row.get('token', idx),
+                            'journey': journey_id,
+                            'mode': mode_val
+                        })
+        
+        if len(modes_list) == 0:
+            return None
+        
+        return pd.DataFrame(modes_list)
+
+    def _calculate_intermodality_attributes(self, combined_df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Calculate intermodality attributes for each journey.
+        
+        Determines whether each journey is intermodal (uses multiple non-walking modes)
+        and whether it includes train travel.
+        
+        Args:
+            combined_df: DataFrame with journeys and modes merged
+            
+        Returns:
+            DataFrame with added columns: ['has_train', 'n_modes', 'is_intermodal', 'is_walking_intermodal']
+        """
+        combined_df['is_train'] = combined_df['mode'] == 'train'
+        combined_df['is_walking'] = combined_df['mode'].isin(['walking', 'marche'])
+        
+        journey_info = combined_df.groupby(['token', 'journey']).agg({
+            'is_train': 'any',
+            'mode': 'count',
+            'is_walking': 'sum'
+        }).rename(columns={'is_train': 'has_train', 'mode': 'n_modes', 'is_walking': 'n_walking'}).reset_index()
+        
+        # is_intermodal = n_modes - sum(is_walking) > 1
+        journey_info['is_intermodal'] = (journey_info['n_modes'] - journey_info['n_walking']) > 1
+        # specific treatment for walking + bike or walking + train + walking, which are a specific type of intermodality for MET
+        journey_info['is_walking_intermodal'] = (journey_info['n_walking'] > 0) & ((journey_info['n_modes'] - journey_info['n_walking']) >= 1)
+        
+        # Join back to combined df
+        combined_df = combined_df.merge(
+            journey_info[['token', 'journey', 'has_train', 'n_modes', 'is_intermodal', 'is_walking_intermodal']], 
+            on=['token', 'journey'], 
+            how='left'
+        )
+        
+        return combined_df
+
+    def _build_journey_attributes(self, df: pd.DataFrame) -> pd.DataFrame | None:
+        """
+        Orchestrator function to build complete journey attributes dataframe.
+        
+        Combines journey extraction, mode extraction, and intermodality calculation
+        into a single enriched dataframe.
+        
+        Args:
+            df: DataFrame with V2 records
+            
+        Returns:
+            Enriched DataFrame with all journey attributes or None if no data
+            Columns: ['token', 'journey', 'days', 'dist', 'mode', 'is_train', 
+                     'is_walking', 'has_train', 'n_modes', 'is_intermodal', 'is_walking_intermodal']
+        """
+        # Step 1: Build journeys dataframe
+        journeys_df = self._build_journey_dataframe(df)
+        if journeys_df is None:
+            return None
+        
+        # Step 2: Build modes dataframe
+        modes_df = self._build_modes_dataframe(df)
+        if modes_df is None:
+            return None
+        
+        # Step 3: Join journeys and modes
+        combined_df = journeys_df.merge(modes_df, on=['token', 'journey'], how='inner')
+        
+        if len(combined_df) == 0:
+            return None
+        
+        # Step 4: Calculate intermodality attributes
+        combined_df = self._calculate_intermodality_attributes(combined_df)
+        
+        return combined_df
+
+    def _normalize_mode_name(self, df: pd.DataFrame, column: str) -> str:
+        """Normalize mode naming, because recommendations use different terms."""
+        if column not in df.columns:
+            return df[column]
+        df[column] = df[column].replace({
+            'covoit': 'carpool',
+            'velo': 'bike',
+            'marche': 'walking',
+            'tpu': 'pub',
+            'vae': 'ebike'
+        })
+        return df[column]

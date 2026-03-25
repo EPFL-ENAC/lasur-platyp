@@ -12,4 +12,3 @@
 2. **Fixez des dates de fin réalistes** : Laissez suffisamment de temps pour la participation
 3. **Définissez soigneusement les lieux de travail** : Des localisations précises permettent de meilleurs calculs de temps de trajet et d'émissions
 4. **Envisagez des mesures spécifiques à la campagne** : Utilisez-les pour tester de nouvelles initiatives avant un déploiement à l'échelle de l'organisation
-

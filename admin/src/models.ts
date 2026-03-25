@@ -138,6 +138,8 @@ export interface Links {
   data: Link[]
 }
 
+export type H3Heatmap = { [hexId: string]: number }
+
 export interface Stats {
   total: number
   frequencies: Frequencies[] | null
@@ -149,6 +151,8 @@ export interface Stats {
   pro_mode_frequencies: Frequencies[] | null
   pro_mode_emissions: Emissions[] | null
   pro_mode_links: Links | null
+  home_location_heatmap: H3Heatmap | null
+  workplace_locations: { lat: number; lon: number }[] | null
 }
 
 export interface IsochronesParams {

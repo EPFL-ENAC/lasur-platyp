@@ -1,9 +1,11 @@
 import pandas as pd
 from api.services.stats.links import LinksService
+from api.services.stats.locations import LocationsService
 from api.services.stats.stats import StatsService
 from api.models.query import Emissions, Frequencies, Frequency, Link, Links
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.emissions import EmissionsService
+import h3
 
 
 def assert_frequencies_equal(result: Frequencies, expected: Frequencies):
@@ -285,18 +287,18 @@ def test_compute_modes_emissions():
 
     # print(result)
     expected = [
-        Emissions(mode='bike', total=30, distances=6728.72,
-                  journeys=2430, emissions=151.304),
-        Emissions(mode='pub', total=30, distances=20859.321,
-                  journeys=3690, emissions=2243.077),
-        Emissions(mode='moto', total=30, distances=6837.789,
+        Emissions(mode='bike', total=30, distances=2693.855,
+                  journeys=2520, emissions=151.304),
+        Emissions(mode='pub', total=30, distances=20522.579,
+                  journeys=3690, emissions=2496.472),
+        Emissions(mode='moto', total=30, distances=6272.711,
                   journeys=1620, emissions=2469.62),
-        Emissions(mode='carpool', total=30, distances=4605.723,
-                  journeys=270, emissions=214.166),
-        Emissions(mode='car', total=30, distances=15839.606,
-                  journeys=2970, emissions=15023.343),
-        Emissions(mode='train', total=30, distances=2122.997,
-                  journeys=1080, emissions=82.563)
+        Emissions(mode='car', total=30, distances=15427.775,
+                  journeys=2970, emissions=15166.121),
+        Emissions(mode='train', total=30, distances=1250.259,
+                  journeys=1080, emissions=82.563),
+        Emissions(mode='carpool', total=30, distances=2302.862,
+                journeys=270, emissions=214.166),
     ]
     assert len(result) == len(expected)
     for res_emission, exp_emission in zip(result, expected):
@@ -389,3 +391,37 @@ def test_compute_mode_reco_pro_links():
         ]
     )
     assert_links_equal(result, expected)
+
+
+def test_compute_home_location_heatmap():
+    df = pd.DataFrame(
+        {
+            "data.origin.lat": [
+                48.8566,
+                48.8567,
+                48.8566,
+                45.7640,
+            ],
+            "data.origin.lon": [
+                2.3522,
+                2.3523,
+                2.3522,
+                4.8357,
+            ],
+        }
+    )
+
+    service = LocationsService(df)
+    result = service.compute_home_location_heatmap(resolution=8)
+
+    paris_hex_1 = h3.latlng_to_cell(48.8566, 2.3522, 8)
+    paris_hex_2 = h3.latlng_to_cell(48.8567, 2.3523, 8)
+    lyon_hex = h3.latlng_to_cell(45.7640, 4.8357, 8)
+
+    expected = {}
+    expected[paris_hex_1] = expected.get(paris_hex_1, 0) + 1
+    expected[paris_hex_2] = expected.get(paris_hex_2, 0) + 1
+    expected[paris_hex_1] = expected.get(paris_hex_1, 0) + 1
+    expected[lyon_hex] = expected.get(lyon_hex, 0) + 1
+
+    assert result == expected

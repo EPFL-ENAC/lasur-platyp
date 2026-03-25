@@ -89,16 +89,18 @@ export default {
       },
       best_practices: {
         title: 'Best practices for using the Mobility Toolkit',
-        caption: 'Tips and recommendations to make the most of the Mobility Toolkit for your organisation',
+        caption:
+          'Tips and recommendations to make the most of the Mobility Toolkit for your organisation',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems',
-      }
+      },
     },
     campaigns: {
       title: 'Campaigns',
-      description: 'Campaigns are time-bound mobility surveys or initiatives within an organisation. Each organisation can have multiple campaigns.',
+      description:
+        'Campaigns are time-bound mobility surveys or initiatives within an organisation. Each organisation can have multiple campaigns.',
       settings: {
         title: 'How to manage campaign settings',
         caption: 'Learn how to create and update your campaign settings and preferences',
@@ -109,25 +111,27 @@ export default {
       },
       best_practices: {
         title: 'Best practices for campaign management',
-        caption: 'Tips and recommendations to make the most of the campaign features in the Mobility Toolkit',
+        caption:
+          'Tips and recommendations to make the most of the campaign features in the Mobility Toolkit',
       },
     },
     participants: {
       title: 'Participants',
-      description: 'Participants are employees or members of an organisation who complete mobility surveys within a campaign. Each campaign maintains its own list of participants identified by a unique identifier that references the organisation\'s external participant registry.',
+      description:
+        "Participants are employees or members of an organisation who complete mobility surveys within a campaign. Each campaign maintains its own list of participants identified by a unique identifier that references the organisation's external participant registry.",
       settings: {
         title: 'How to manage participants',
-         caption: 'Learn how to add, edit, and remove participants in your campaigns',
+        caption: 'Learn how to add, edit, and remove participants in your campaigns',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems related to participant management',
       },
-       best_practices: {
-         title: 'Best practices for participant management',
-         caption: 'Tips and recommendations to effectively manage participants in your campaigns',
-       },
-    }
+      best_practices: {
+        title: 'Best practices for participant management',
+        caption: 'Tips and recommendations to effectively manage participants in your campaigns',
+      },
+    },
   },
   role: {
     'platyp-user': 'User',
@@ -240,6 +244,11 @@ export default {
         disabled: 'Parking card for people\nwith reduced mobility',
         none: 'No constraint',
       },
+    },
+    locationsHeatmap: {
+      title: 'Geographical distribution of home and workplace locations',
+      households: 'Households',
+      workplaces: 'Workplaces',
     },
     travel_time: {
       title: 'Travel time',
@@ -481,6 +490,20 @@ export default {
       hint: 'Draw an area to only filter workplaces within that area.',
     },
   },
+  data_protection_notice: {
+    title: 'Data Protection Notice',
+    content:
+      `The report you are about to receive as part of the campaign launched via the Mobilyse tool contains aggregated data derived from responses provided voluntarily and anonymously by your employees.
+
+However, depending on the size of your company and the structure of the responses, it cannot be ruled out that certain aggregated data may, directly or indirectly, allow one or more individuals to be identified.
+In this case, the report may contain personal data, which is subject to applicable data protection legislation (such as the Federal Data Protection Act, or the GDPR if employees are based in the EU).
+
+By agreeing to receive this report, you undertake to process it in accordance with these legal provisions, in particular by ensuring the confidentiality of the data and by avoiding any use that would allow the individual identification of an employee without a valid legal basis.
+
+Furthermore, we recommend that you adapt your processing register accordingly.
+
+*Last updated: March 2026*`,
+  },
   error: {
     accept_terms_and_conditions: 'You must accept the terms and conditions.',
     registration_failed: 'Registration failed. Please try again later.',
@@ -590,4 +613,5 @@ export default {
   your_role: 'Your role is: {role}',
   created_at: 'Created at',
   updated_at: 'Updated at',
+  do_not_show_again: 'Do not show again',
 }
