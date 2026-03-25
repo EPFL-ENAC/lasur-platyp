@@ -24,6 +24,8 @@ export const useCollector = defineStore('collector', () => {
   async function load(tkOrSlug: string): Promise<Record> {
     // token.value = null
     loading.value = true
+    recordId.value = null
+
     return api
       .get(`/collect/record/${tkOrSlug}`)
       .then((response) => {
@@ -66,7 +68,7 @@ export const useCollector = defineStore('collector', () => {
           ...cr.data,
         }
 
-        recordId.value = cr.id
+        recordId.value = cr.id ?? null
 
         return {
           token: cr.token,
@@ -81,17 +83,22 @@ export const useCollector = defineStore('collector', () => {
   async function save(tkOrSlug: string, record: Record, plainEmail: string | null = null) {
     // token.value = null
     // loading.value = true
+    recordId.value = null
+
     if (plainEmail) {
       record.email_hash = await hashEmail(plainEmail)
     }
+    
     const response = await api.post(`/collect/record/${tkOrSlug}`, record)
-    recordId.value = response.data.id
+    recordId.value = response.data.id ?? null
     return response.data
   }
 
   async function loadTypo(record: Record, locale: string) {
     // token.value = null
     loading.value = true
+    recordId.value = null
+
     return api
       .get(`/collect/record/${record.token}/typo`, { params: { locale } })
       .then((response) => {
@@ -105,10 +112,12 @@ export const useCollector = defineStore('collector', () => {
   async function saveComments(record: Record) {
     // token.value = null
     loading.value = true
+    recordId.value = null
+
     return api
       .put(`/collect/record/${record.token}/comments`, { comments: record.data.comments })
       .then((response) => {
-        recordId.value = response.data.id
+        recordId.value = response.data.id ?? null
         return response.data
       })
       .finally(() => {

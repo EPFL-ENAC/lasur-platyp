@@ -7,7 +7,7 @@
       <div class="text-h5 text-center q-mb-md">
         {{ t('form.final_rewards.title') }}
       </div>
-      <p>{{ collector.info.rewards_message[locale] }}</p>
+      <p>{{ collector.info.rewards_message?.[locale] }}</p>
 
       <div class="row justify-center q-mt-lg">
         <q-btn
@@ -36,7 +36,7 @@ onMounted(() => {
 })
 
 async function downloadPdf() {
-  const jsPDF = (await import('jspdf')).default
+  const { jsPDF } = await import('jspdf')
   const doc = new jsPDF()
 
   const pageWidth = doc.internal.pageSize.getWidth()
