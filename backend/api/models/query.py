@@ -196,6 +196,28 @@ class EnergyByJourney(BaseModel):
     data: List[JourneyEnergyLeg] = []
 
 
+class JourneyEnergyGainsByMode(BaseModel):
+    """Energy gain (reduction) thanks to a specific mode if recommendations were followed."""
+    mode: str
+    added_kcal: float
+
+
+class JourneyEnergyGains(BaseModel):
+    """Energy gain (reduction) for a journey leg if recommendations were followed."""
+    total: float
+    gains_per_mode: List[JourneyEnergyGainsByMode] = []
+    current_above_who_count: int = 0
+    reco_above_who_count: int = 0
+
+
+class JourneyEnergyStats(BaseModel):
+    """Complete energy expenditure statistics."""
+    current: EnergyByJourney
+    reco: EnergyByJourney
+    gains: JourneyEnergyGains
+    
+
+
 class BehaviorChangeLever(BaseModel):
     """Individual lever/measure category that helps adopt recommendations."""
     category: str  # finance, flexibility, collective, environment, other
@@ -249,8 +271,7 @@ class Stats(BaseModel):
     workplace_location_heatmap: Optional[Dict[str, int]] = None
     mode_energy: Optional[List[EnergyExpenditure]] = None
     reco_mode_energy: Optional[List[EnergyExpenditure]] = None
-    journey_energy_current: Optional[EnergyByJourney] = None
-    journey_energy_reco: Optional[EnergyByJourney] = None
+    journey_energy_stats: Optional[JourneyEnergyStats] = None
     behavior_change: Optional[BehaviorChangeStats] = None
 
 

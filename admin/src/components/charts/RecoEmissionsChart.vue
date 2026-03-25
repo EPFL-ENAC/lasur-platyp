@@ -17,13 +17,16 @@
 
   <div>
     <p>{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
-    <p v-if="total > 5">{{ t(`stats.emissions_${props.reco}.texts.specific`, { 
-      currentEmissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions, 0) || 0),
-      newEmissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions, 0) || 0),
-      cheeseburgers: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 18.8)),
-      smartphones: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 80.2)),
-      streaming_hours: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1_000_000 / 50)),
-     }) }}</p>
+    <q-markdown
+      v-if="total > 5"
+      :src="t(`stats.emissions_${props.reco}.texts.specific`, { 
+        currentEmissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions, 0) || 0),
+        newEmissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions, 0) || 0),
+        cheeseburgers: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 18.8)),
+        smartphones: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 80.2)),
+        streaming_hours: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1_000_000 / 50)),
+      })"
+     />
   </div>
 </template>
 

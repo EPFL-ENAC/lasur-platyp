@@ -366,7 +366,7 @@ export default {
       },
       texts: {
         default: "This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.",
-        specific: 'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO2 / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : https://impactco2.fr/doc].'
+        specific: 'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO2 / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].'
       }
     },
     emissions_reco_share: {
@@ -472,6 +472,43 @@ export default {
         cargo: 'Cargo bike',
       },
     },
+    energy_journey: {
+      title_current: "Potential Physical Activity Diagram by Currently Used Mode",
+      title_reco: "Potential Physical Activity Diagram following Recommendations",
+      title_share: "Modes with the Most Potential for Increased Physical Activity",
+      yaxis: 'Energy expenditure (kcal)',
+      xaxis: 'Participants (sorted by energy expenditure)',
+      whoMin: 'WHO minimum recommended physical activity',
+      participantsAverage: 'Average physical activity expenditure of participants',
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle (or electric bike)',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        unknown: 'Unknown',
+        covoit: 'Carpooling',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        marche: 'Walking',
+        tpu: 'Public transport',
+        vae: 'Electric bike',
+        velo: 'Bike',
+        cargo: 'Cargo bike',
+      },
+      texts: {
+        default: "The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person.",
+        specific: "If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person, and {count} more people will exceed the daily physical activity recommendations of the WHO.",
+        default_share: "This chart shows which modes of transport have the most potential for increased physical activity.",
+        specific_share: "{percentage}% of the improvement in physical activity among participants would come from {mode}."
+
+      }
+    }
   },
   record: {
     reco: 'Recommended mode of transport: {mode}',

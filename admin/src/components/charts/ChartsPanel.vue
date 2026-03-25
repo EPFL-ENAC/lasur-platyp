@@ -50,6 +50,23 @@
       />
     </div>
     <div class="item">
+      <journey-energy-chart
+        type="current"
+        :height="height"
+      />
+    </div>
+    <div class="item">
+      <journey-energy-chart
+        type="reco"
+        :height="height"
+      />
+    </div>
+    <div class="item">
+      <journey-energy-share-chart
+        :height="height"
+      />
+    </div>
+    <div class="item">
       <frequencies-stack-chart
         type="freq_mod_pro"
         :groups="['local', 'national', 'europe', 'inter']"
@@ -82,6 +99,8 @@ import RecoEmissionsChart from 'src/components/charts/RecoEmissionsChart.vue'
 import RecoShareChart from 'src/components/charts/RecoShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
+import JourneyEnergyChart from './JourneyEnergyChart.vue'
+import JourneyEnergyShareChart from './JourneyEnergyShareChart.vue'
 
 interface Props {
   height: number

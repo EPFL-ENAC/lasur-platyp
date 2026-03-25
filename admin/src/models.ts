@@ -144,6 +144,43 @@ export interface StatLinks extends Links {
   } | null
 }
 
+export interface JourneyEnergyData {
+  days: number
+  energy_kcal: number
+  is_intermodal: boolean
+  journey_id: string
+  mode: string
+  token: string
+  travel_time: number
+}
+export interface JourneyEnergy {
+  total: number
+  data: JourneyEnergyData[]
+}
+export interface JourneyEnergyGainsByMode {
+  mode: string
+  added_kcal: number
+}
+export interface JourneyEnergyGains {
+  total: number
+  gains_per_mode: JourneyEnergyGainsByMode[]
+  current_above_who_count: number
+  reco_above_who_count: number
+}
+export interface JourneyEnergyStats {
+  current: JourneyEnergy
+  reco: JourneyEnergy
+  gains: JourneyEnergyGains
+}
+
+export function makeDefaultJourneyEnergyStats(): JourneyEnergyStats {
+  return {
+    current: { total: 0, data: [] },
+    reco: { total: 0, data: [] },
+    gains: { total: 0, gains_per_mode: [], current_above_who_count: 0, reco_above_who_count: 0 }
+  }
+}
+
 export type H3Heatmap = { [hexId: string]: number }
 
 export interface Stats {
@@ -159,6 +196,7 @@ export interface Stats {
   pro_mode_links: StatLinks | null
   home_location_heatmap: H3Heatmap | null
   workplace_locations: { lat: number; lon: number }[] | null
+  journey_energy_stats: JourneyEnergyStats | null
 }
 
 export interface IsochronesParams {

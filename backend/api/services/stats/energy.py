@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from api.models.query import EnergyExpenditure, JourneyEnergyLeg, EnergyByJourney
+from api.models.query import EnergyExpenditure, JourneyEnergyGains, JourneyEnergyGainsByMode, JourneyEnergyLeg, EnergyByJourney, JourneyEnergyStats
 from api.services.stats.commons import BaseStatsService, MODES
 
 # MET values (Metabolic Equivalent of Task) in kcal/hr for 70kg average person
@@ -143,6 +143,28 @@ class EnergyService(BaseStatsService):
             return self._compute_journey_energy_reco_v2(df_v2)
         else:
             return self._compute_journey_energy_v2(df_v2)
+    
+    def compute_journey_energy_stats(self) -> JourneyEnergyStats:
+        """
+        Compute energy for current and recommended modes to calculate gains.
+        
+        Returns:
+            Tuple of (current_energy_by_journey, reco_energy_by_journey)
+        """
+        df_v2 = self._get_records_v2()
+        
+        if df_v2.empty:
+            empty_result = EnergyByJourney(total=len(self.df), data=[])
+            return empty_result, empty_result
+        
+        current_energy = self._compute_journey_energy_v2(df_v2)
+        reco_energy = self._compute_journey_energy_reco_v2(df_v2)
+        
+        return JourneyEnergyStats(
+            current=current_energy,
+            reco=reco_energy,
+            gains=self._compute_journey_energy_gains(current_energy, reco_energy)
+        )
 
     #
     # Internal functions
@@ -521,4 +543,65 @@ class EnergyService(BaseStatsService):
         return EnergyByJourney(
             total=len(df),
             data=legs
+        )
+    
+    def _compute_journey_energy_gains(self, current: EnergyByJourney, reco: EnergyByJourney) -> JourneyEnergyGains:
+        """
+        Compute energy gains (reductions) for each mode by comparing current and recommended journeys.
+        
+        Args:
+            current: EnergyByJourney for current modes
+            reco: EnergyByJourney for recommended modes
+        Returns:
+            JourneyEnergyGains object with total gain and breakdown by mode
+        """
+
+        who_recommendation = 150
+
+        def energy_per_journey(leg: JourneyEnergyLeg) -> float:
+            if leg.days == 0:
+                return 0
+            
+            return leg.energy_kcal / ((leg.days * 2) / 5 * 45)
+
+        # Aggregate energy by mode for current and reco
+        current_energy_by_mode = {}
+        current_energy_per_token = {}
+        for leg in current.data:
+            energy = energy_per_journey(leg)
+            current_energy_by_mode[leg.mode] = current_energy_by_mode.get(leg.mode, 0) + energy
+            current_energy_per_token[leg.token] = current_energy_per_token.get(leg.token, 0) + energy
+                
+        current_above_who_count = sum(1 for energy in current_energy_per_token.values() if energy >= who_recommendation)
+                
+        reco_energy_by_mode = {}
+        reco_energy_per_token = {}
+        for leg in reco.data:
+            energy = energy_per_journey(leg)
+            reco_energy_by_mode[leg.mode] = reco_energy_by_mode.get(leg.mode, 0) + energy
+            reco_energy_per_token[leg.token] = reco_energy_per_token.get(leg.token, 0) + energy
+        
+        reco_above_who_count = sum(1 for energy in reco_energy_per_token.values() if energy >= who_recommendation)
+
+        # Calculate gains per mode
+        gains_per_mode = []
+        all_modes = set(current_energy_by_mode.keys()) | set(reco_energy_by_mode.keys())
+
+        for mode in all_modes:
+            current_energy = current_energy_by_mode.get(mode, 0)
+            reco_energy = reco_energy_by_mode.get(mode, 0)
+            gain = reco_energy - current_energy
+
+            gains_per_mode.append(JourneyEnergyGainsByMode(
+                mode=mode,
+                added_kcal=gain
+            ))
+        
+        total_gain = sum(g.added_kcal for g in gains_per_mode)
+        
+        return JourneyEnergyGains(
+            total=total_gain,
+            gains_per_mode=gains_per_mode,
+            current_above_who_count=current_above_who_count,
+            reco_above_who_count=reco_above_who_count
         )

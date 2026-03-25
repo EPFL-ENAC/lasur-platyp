@@ -371,7 +371,7 @@ export default {
       },
       texts: {
         default: "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
-        specific: 'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : https://impactco2.fr/doc].'
+        specific: 'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].'
       }
     },
     emissions_reco_share: {
@@ -476,6 +476,42 @@ export default {
         velo: 'Vélo',
         cargo: 'Vélo cargo',
       },
+    },
+    energy_journey: {
+      title_current: "Diagramme de potentiel d'activité physique par mode utilisé actuellement",
+      title_reco: "Diagramme de potentiel d'activité physique en suivant les recommandations",
+      title_share: "Modes ayant le plus de potentiel d'activité physique à gagner",
+      yaxis: 'Énergie dépensée (kcal)',
+      xaxis: 'Participant·e·s (trié·e·s par énergie dépensée)',
+      whoMin: 'Activité physique minimum recommandée par l’OMS',
+      participantsAverage: 'Activité physique moyenne des participants',
+      labels: {
+        walking: 'Marche',
+        bike: 'Vélo (mécanique ou électrique)',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        unknown: 'Inconnu',
+        covoit: 'Covoiturage',
+        elec: 'Voiture électrique',
+        inter: 'Intermodalité',
+        marche: 'Marche',
+        tpu: 'Transports publics',
+        vae: 'Vélo à assistance électrique',
+        velo: 'Vélo',
+        cargo: 'Vélo cargo',
+      },
+      texts: {
+        default: "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers.",
+        specific: "Si les recommandations sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers, et {count} personnes supplémentaires passeront au-dessus des recommendations d'activité physique journalière de l'OMS.",
+        default_share: "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
+        specific_share: "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}."
+      }
     },
   },
   record: {

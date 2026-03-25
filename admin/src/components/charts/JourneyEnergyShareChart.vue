@@ -10,16 +10,20 @@
       :loading="stats.loading"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_reco_share.title`) }}</div>
+      <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
   <div>
-    <p>{{ t(`stats.emissions_reco_share.texts.default`) }}</p>
-    <p v-if="biggestEmission">
-      {{ t(`stats.emissions_reco_share.texts.specific`, { percentage: toMaxDecimals(biggestEmission.percentage || 0, 2), mode: keyLabel(biggestEmission.mode) }) }}
-    </p>
+    <p>{{ t(`stats.energy_journey.texts.default_share`) }}</p>
+    <q-markdown
+      v-if="total > 5 && biggestShare"
+      :src="t(`stats.energy_journey.texts.specific_share`, {
+        percentage: new Intl.NumberFormat().format(toMaxDecimals(biggestShare.percentage, 2) || 0),
+        mode: keyLabel(biggestShare.mode)
+      })"
+     />
   </div>
 </template>
 
@@ -45,42 +49,20 @@ const stats = useStats()
 use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  reco: string
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
-interface PercentageEmission {
+interface AddedEnergyShare {
     mode: string
     percentage: number
 }
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
-
-const totalSavings = computed(() => {
-  const recoEmissions = stats.emissions?.[props.reco] || []
-  return recoEmissions.reduce((sum, item) => sum + item.emissions, 0)
-})
-
-const biggestEmission = computed<PercentageEmission | null>(() => {
-  if (total.value < 5) return null
-  if (!stats.emissions || !stats.emissions[props.reco]) return null
-
-  const recoEmissions = stats.emissions[props.reco] || []
-  if (recoEmissions.length === 0) return null
-
-  let biggest: PercentageEmission | null = null
-  recoEmissions.forEach((item) => {
-    const percentage = totalSavings.value > 0 ? (item.emissions / totalSavings.value) * 100 : 0
-    if (!biggest || percentage > biggest.percentage) {
-      biggest = { mode: item.mode, percentage }
-    }
-  })
-  return biggest
-})
+const biggestShare = ref<AddedEnergyShare | null>(null);
 
 watch([() => stats.loading], () => {
   if (stats.loading) {
@@ -112,16 +94,26 @@ function keyLabel(key: string) {
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.emissions || !stats.emissions[props.reco]) {
-    return
-  }
 
-  const recoEmissions = stats.emissions[props.reco] || []
-  if (recoEmissions.length === 0) {
-    return
-  }
+  const rawData = stats.journeyEnergyStats.gains?.gains_per_mode || [];
+  total.value = rawData.length;
+  
+  if (total.value === 0) return;
 
-  total.value = recoEmissions[0]?.total || 0
+  const filtered = rawData.filter(item => item.added_kcal > 0)
+  const sumPositiveEnergy = filtered.reduce((sum, item) => sum + item.added_kcal, 0)
+
+  biggestShare.value = {
+    mode: '',
+    percentage: 0,
+  };
+  filtered.forEach((item) => {
+    const percentage = sumPositiveEnergy > 0 ? (item.added_kcal / sumPositiveEnergy) * 100 : 0
+    if (!biggestShare.value || percentage > biggestShare.value.percentage) {
+      biggestShare.value = { mode: item.mode, percentage }
+    }
+  })
+  
   const newOption: EChartsOption = {
     grid: {
       left: '40',
@@ -151,7 +143,7 @@ function initChartOptions() {
         const val = new Intl.NumberFormat().format(
           toMaxDecimals(p.value as number, 2) || 0
         );
-        return `${p.name}<br/><b>${val} kgCO₂eq</b> (${p.percent}%)`;
+        return `${p.name}<br/><b>${val} kcal</b> (${p.percent}%)`;
       },
     },
     legend: {
@@ -161,7 +153,7 @@ function initChartOptions() {
     },
     series: [
       {
-        name: 'Emissions',
+        name: 'Added kcal',
         type: 'pie',
         radius: '70%',
         top: 'middle',
@@ -176,9 +168,9 @@ function initChartOptions() {
             return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 2) || 0)
           },
         },
-        data: recoEmissions.map((item) => ({
+        data: filtered.map((item) => ({
           name: keyLabel(item.mode),
-          value: item.emissions,
+          value: item.added_kcal,
         })),
       },
     ],

@@ -37,8 +37,7 @@ class StatsService:
         energy_stats = EnergyService(df)
         mode_energy = energy_stats.compute_modes_energy(apply_reco=False)
         reco_mode_energy = energy_stats.compute_modes_energy(apply_reco=True)
-        journey_energy_current = energy_stats.compute_journey_energy(apply_reco=False)
-        journey_energy_reco = energy_stats.compute_journey_energy(apply_reco=True)
+        journey_energy_stats = energy_stats.compute_journey_energy_stats()
 
         links_stats = LinksService(df)
         mode_links = links_stats.compute_mode_reco_links()
@@ -65,11 +64,13 @@ class StatsService:
             mode_emissions=mode_emissions,
             reco_mode_emissions=reco_mode_emissions,
             mode_emission_reductions=mode_emission_reductions,
+
             mode_energy=mode_energy,
             reco_mode_energy=reco_mode_energy,
-            journey_energy_current=journey_energy_current,
-            journey_energy_reco=journey_energy_reco,
+            journey_energy_stats=journey_energy_stats,
+
             mode_links=mode_links,
+
             # professional
             pro_frequencies=[
                 pro_recommendations

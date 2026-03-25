@@ -1,4 +1,4 @@
-import type { CampaignStats, Emissions, Frequencies, H3Heatmap, StatLinks, Stats } from 'src/models'
+import { makeDefaultJourneyEnergyStats, type CampaignStats, type Emissions, type Frequencies, type H3Heatmap, type JourneyEnergyStats, type StatLinks, type Stats } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -13,6 +13,7 @@ export const useStats = defineStore('stats', () => {
   const loading = ref(false)
   const homeLocationsHeatmap = ref<H3Heatmap>({})
   const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
+  const journeyEnergyStats = ref<JourneyEnergyStats>({} as JourneyEnergyStats)
 
   async function loadStats(filter: Filter | undefined = undefined) {
     loading.value = true
@@ -55,6 +56,7 @@ export const useStats = defineStore('stats', () => {
           links.value['mod_reco_pro'] = stats.pro_mode_links || { total: 0, data: [], most_recommended_target: null }
           homeLocationsHeatmap.value = stats.home_location_heatmap || {}
           workplaceLocations.value = stats.workplace_locations || []
+          journeyEnergyStats.value = stats.journey_energy_stats || makeDefaultJourneyEnergyStats()
         })
         .catch((err) => {
           console.error(err)
@@ -92,6 +94,7 @@ export const useStats = defineStore('stats', () => {
     links,
     homeLocationsHeatmap,
     workplaceLocations,
+    journeyEnergyStats,
     loading,
     loadStats,
     getCampaignStats,
