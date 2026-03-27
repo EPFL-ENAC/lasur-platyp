@@ -85,16 +85,6 @@ watch([() => stats.loading, () => props.height, locale], () => {
 onMounted(() => {
   initChartOptions();
 });
-
-/**
- * Replicates the logic:
- * energy_per_journey = energy_kcal / (days * 2 / 5 * 45)
- */
-function calculateEnergyPerJourney(energyKcal: number, days: number): number {
-  if (days <= 0) return 0;
-  return energyKcal / ((days * 2) / 5 * 45);
-}
-
 function initChartOptions() {
   option.value = {};
 
@@ -111,12 +101,11 @@ function initChartOptions() {
   const modesSet = new Set<string>();
 
   rawData.forEach((item: JourneyEnergyData) => {
-    const energy = calculateEnergyPerJourney(item.energy_kcal, item.days);
     if (!tokenMap[item.token]) {
       tokenMap[item.token] = {};
     }
     tokenMap[item.token]![item.mode] =
-      (tokenMap[item.token]![item.mode] || 0) + energy;
+      (tokenMap[item.token]![item.mode] || 0) + item.energy_kcal;
     modesSet.add(item.mode);
   });
 

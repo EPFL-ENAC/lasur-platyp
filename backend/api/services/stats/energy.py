@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from api.models.query import EnergyExpenditure, JourneyEnergyGains, JourneyEnergyGainsByMode, JourneyEnergyLeg, EnergyByJourney, JourneyEnergyStats
 from api.services.stats.commons import BaseStatsService, MODES
+from pydantic import BaseModel
 
 # MET values (Metabolic Equivalent of Task) in kcal/hr for 70kg average person
 # Based on Compendium of Physical Activities: https://pacompendium.com/adult-compendium/
@@ -455,13 +456,15 @@ class EnergyService(BaseStatsService):
         # Build journey legs list
         legs = []
         for _, row in df_combined.iterrows():
+            energy_kcal = float(row['energy_kcal'])
+            
             legs.append(JourneyEnergyLeg(
                 token=str(row['token']),
                 journey_id=str(row['journey']),
                 mode=row['mode_normalized'],
                 days=int(row['days']),
                 travel_time=float(row['travel_time'] * row['time_fraction']),
-                energy_kcal=float(row['energy_kcal']),
+                energy_kcal=energy_kcal,
                 is_intermodal=bool(row['is_intermodal'])
             ))
         
@@ -557,18 +560,34 @@ class EnergyService(BaseStatsService):
         """
 
         who_recommendation = 150
+        
+        legs_by_token = {}
+        for leg in current.data:
+            if leg.token not in legs_by_token:
+                legs_by_token[leg.token] = LegPerToken(token=leg.token)
+            legs_by_token[leg.token].current_legs.append(leg)
+        
+        for leg in reco.data:
+            if leg.token not in legs_by_token:
+                legs_by_token[leg.token] = LegPerToken(token=leg.token)
+            legs_by_token[leg.token].reco_leg = leg
 
-        def energy_per_journey(leg: JourneyEnergyLeg) -> float:
-            if leg.days == 0:
-                return 0
-            
-            return leg.energy_kcal / ((leg.days * 2) / 5 * 45)
+        current_above_who_count = sum(1 for leg in legs_by_token.values() if leg.current_energy() >= who_recommendation)
+        reco_above_who_count = sum(1 for leg in legs_by_token.values() if leg.reco_energy() >= who_recommendation)
 
+        gains_per_mode_dict = {}
+        for leg in legs_by_token.values():
+            if leg.reco_leg:
+                gains_per_mode_dict[leg.reco_leg.mode] = gains_per_mode_dict.get(leg.reco_leg.mode, 0) + leg.gain()
+        
+        gains_per_mode = [JourneyEnergyGainsByMode(mode=mode, added_kcal=gain) for mode, gain in gains_per_mode_dict.items()]
+        
+        """
         # Aggregate energy by mode for current and reco
         current_energy_by_mode = {}
         current_energy_per_token = {}
         for leg in current.data:
-            energy = energy_per_journey(leg)
+            energy = energy_per_journey(leg.energy_kcal, leg.days)
             current_energy_by_mode[leg.mode] = current_energy_by_mode.get(leg.mode, 0) + energy
             current_energy_per_token[leg.token] = current_energy_per_token.get(leg.token, 0) + energy
                 
@@ -596,7 +615,8 @@ class EnergyService(BaseStatsService):
                 mode=mode,
                 added_kcal=gain
             ))
-        
+        """
+
         total_gain = sum(g.added_kcal for g in gains_per_mode)
         
         return JourneyEnergyGains(
@@ -605,3 +625,20 @@ class EnergyService(BaseStatsService):
             current_above_who_count=current_above_who_count,
             reco_above_who_count=reco_above_who_count
         )
+
+
+class LegPerToken(BaseModel):
+    token: str
+    current_legs: list[JourneyEnergyLeg] = []
+    reco_leg: JourneyEnergyLeg | None = None # recommendations are always only one mode
+
+    def current_energy(self):
+        return sum(leg.energy_kcal for leg in self.current_legs)
+
+    def reco_energy(self):
+        if not self.reco_leg:
+            return 0
+        return self.reco_leg.energy_kcal
+
+    def gain(self):
+        return self.reco_energy() - self.current_energy()

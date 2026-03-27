@@ -14,6 +14,20 @@
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
+
+  <div>
+    <q-markdown
+      v-if="emissionItems"
+      :src="t(`stats.emissions_${props.type}.texts.specific`, { 
+        firstPercent: toMaxDecimals(emissionItems.first.percent || 0, 2),
+        firstMode: keyLabel(emissionItems.first.mode),
+        firstEmissions: toMaxDecimals(emissionItems.first.emissions || 0, 2),
+        secondPercent: toMaxDecimals(emissionItems.second.percent || 0, 2),
+        secondMode: keyLabel(emissionItems.second.mode),
+        remainingEmissions: toMaxDecimals(emissionItems.remaining || 0, 2),
+      })"
+     />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +44,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { MODE_COLORS } from './commons'
+import { toMaxDecimals } from 'src/utils/numbers'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -45,6 +60,12 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
+
+interface EmissionItem {
+  percent: number
+  mode: string
+  emissions: number
+}
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
@@ -64,6 +85,35 @@ watch([() => props.height, locale], () => {
 
 onMounted(() => {
   initChartOptions()
+})
+
+const globalAnswersThreshold = 10
+const perModeAnswersThreshold = 3
+
+const emissionItems = computed(() => {
+  if (!stats.emissions || !stats.emissions[props.type]) return null
+  if (total.value < globalAnswersThreshold) return null
+
+  const emissions = stats.emissions[props.type] || []
+  const totalEmissions = emissions.reduce((sum, item) => sum + item.emissions, 0)
+
+  const twoBiggestEmissions: EmissionItem[] = emissions
+    .filter(item => item.emissions > 0 && item.total >= perModeAnswersThreshold) // Ask : filter before or after sorting ? if before, we might miss some modes that have high emissions but low number of answers. If after, we might include modes with high emissions but that are not representative (low number of answers)
+    .map(item => ({
+      mode: item.mode,
+      emissions: item.emissions,
+      percent: totalEmissions > 0 ? (item.emissions / totalEmissions) * 100 : 0
+    }))
+    .sort((a, b) => b.emissions - a.emissions)
+    .slice(0, 2)
+  
+  if (twoBiggestEmissions.length === 0) return null // Ask : exit condition ?
+
+  return {
+    first: twoBiggestEmissions[0]!,
+    second: twoBiggestEmissions[1]!,
+    remaining: emissions.slice(1).reduce((sum, item) => sum + item.emissions, 0) // Ask : slice from 1 or 2 ?
+  }
 })
 
 function keyLabel(key: string) {

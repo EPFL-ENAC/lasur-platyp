@@ -344,6 +344,9 @@ export default {
         journeys: 'Nombre de trajets',
         distances: 'Distance totale',
       },
+      texts: {
+        specific: "{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kg CO₂, contre moins de {remainingEmissions}kg / trajet pour les autres."
+      }
     },
     emissions_reco_mod: {
       title: 'Potentiel de réduction sur les émissions pendulaires',
@@ -421,6 +424,38 @@ export default {
         journeys: 'Nombre de trajets',
         distances: 'Distance totale',
       },
+      texts: {
+        specific: "{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kg CO₂, contre moins de {remainingEmissions}kg / trajet pour les autres."
+      }
+    },
+    emissions_reco_mod_pro: {
+      title: 'Potentiel de réduction sur les émissions pendulaires (professionnel)',
+      yaxis: 'Émissions évitées (kgCO₂eq)',
+      xaxis: 'Mode recommandé',
+      labels: {
+        walking: 'Marche',
+        bike: 'Vélo',
+        ebike: 'Vélo électrique',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        elec: 'Véhicule électrique',
+        inter: 'Intermodalité',
+        emissions: 'Émissions CO₂ totales',
+        journeys: 'Nombre de trajets',
+        distances: 'Distance totale',
+        current: 'Actuel',
+        postSaving: 'Total après recommendations',
+      },
+      texts: {
+        default: "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        specific: 'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].'
+      }
     },
     mod_reco: {
       title: 'Recommandations de changement modal',
@@ -458,6 +493,7 @@ export default {
         bike: 'Vélo (mécanique ou électrique)',
         pub: 'Transports publics urbains',
         train: 'Train',
+        truck: 'Camion',
         moto: 'Moto / scooter',
         elec_moto: 'Moto / scooter électrique',
         elec_truck: 'Camion / utilitaire électrique',
@@ -476,6 +512,10 @@ export default {
         velo: 'Vélo',
         cargo: 'Vélo cargo',
       },
+      texts: {
+        default: 'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+        specific: 'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.'
+      }
     },
     energy_journey: {
       title_current: "Diagramme de potentiel d'activité physique par mode utilisé actuellement",
@@ -513,6 +553,112 @@ export default {
         specific_share: "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}."
       }
     },
+    behavior_change_levers: {
+      title: 'Mesures aidant à adopter les recommandations',
+      labels: {
+        finance: 'Aides financières',
+        flexibility: 'Flexibilité',
+        collective: 'Changement collectif',
+        environment: 'Aménagement environnement',
+        other: 'Autre',
+
+        walking: 'Marche',
+        bike: 'Vélo (mécanique ou électrique)',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        unknown: 'Inconnu',
+        covoit: 'Covoiturage',
+        elec: 'Voiture électrique',
+        inter: 'Intermodalité',
+        marche: 'Marche',
+        tpu: 'Transports publics',
+        vae: 'Vélo à assistance électrique',
+        velo: 'Vélo',
+        cargo: 'Vélo cargo',
+        allModes: 'Tous les modes'
+      },
+      texts: {
+        default: "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
+        specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}."
+      }
+    },
+    behavior_change_motivation: {
+      title: "Volonté d'adopter les recommandations",
+      labels: {
+        l1: 'Pas intéressé·e',
+        l2: 'Plutôt pas',
+        l3: 'Neutre',
+        l4: 'Plutôt motivé·e',
+        l5: 'Très motivé·e',
+
+        walking: 'Marche',
+        bike: 'Vélo (mécanique ou électrique)',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        unknown: 'Inconnu',
+        covoit: 'Covoiturage',
+        elec: 'Voiture électrique',
+        inter: 'Intermodalité',
+        marche: 'Marche',
+        tpu: 'Transports publics',
+        vae: 'Vélo à assistance électrique',
+        velo: 'Vélo',
+        cargo: 'Vélo cargo',
+        allModes: 'Tous les modes'
+      },
+      texts: {
+        default: "Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.",
+        specific: "Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites."
+      }
+    },
+    equipments_by_recommendations: {
+      title: 'Équipements par recommandations',
+      labels: {
+        walking: 'Marche',
+        bike: 'Vélo',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        unknown: 'Inconnu',
+        ev: 'Véhicule électrique',
+        ebike: 'Vélo à assistance électrique',
+
+        covoit: 'Covoiturage',
+        elec: 'Voiture électrique',
+        mob_subs: "Abo. de mobilité",
+        train_subs: 'Abo. de train',
+        upt_subs: 'Abo. de transports publics',
+        inter: 'Intermodalité',
+        marche: 'Marche',
+        tpu: 'Transports publics',
+        vae: 'Vélo à assistance électrique',
+        velo: 'Vélo',
+        cargo: 'Vélo cargo',
+
+        allModes: 'Tous les modes'
+      },
+      texts: {
+        default: "Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou si il serait pertinent de les aider à y avoir accès.",
+        specific: "Par exemple, {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation."
+      }
+    }
   },
   record: {
     reco: 'Mode de transport recommandé : {mode}',

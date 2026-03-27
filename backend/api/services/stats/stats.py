@@ -8,6 +8,7 @@ from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.links import LinksService
 from api.services.stats.locations import LocationsService
 from api.services.stats.behavior_change import BehaviorChangeService
+from api.services.stats.equipments import EquipmentsService
 
 
 class StatsService:
@@ -15,6 +16,18 @@ class StatsService:
     def compute_stats(self, df: pd.DataFrame) -> Stats:
         """Compute all statistics for equipments, constraints, travel_time, and recommendations."""
         df = self._preprocess_dataframe(df)
+
+        print("\n\n\n\n")
+        print(df.columns, end="\n\n\n\n")
+
+        print(df["data.equipments.0"], end="\n\n")
+        print(df["data.equipments.1"], end="\n\n")
+        print(df["data.equipments.2"], end="\n\n\n\n")
+
+        print(df["typo.reco.reco_dt2.0"], end="\n\n")
+        print(df["typo.reco.reco_dt2.1"], end="\n\n")
+
+        print("\n\n\n\n")
 
         freq_stats = FrequenciesService(df)
         equipments = freq_stats.compute_equipments_frequencies()
@@ -30,7 +43,7 @@ class StatsService:
         reco_mode_emissions = emissions_stats.compute_modes_emissions(
             apply_reco=True)
         pro_mode_emissions = emissions_stats.compute_modes_pro_emissions()
-        # pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(apply_reco=True)
+        pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(apply_reco=True)
         mode_emission_reductions = emissions_stats.compute_modes_emission_reductions()
         pro_mode_emission_reductions = emissions_stats.compute_modes_pro_emission_reductions()
 
@@ -45,11 +58,15 @@ class StatsService:
 
         locations_stats = LocationsService(df)
         home_location_heatmap = locations_stats.compute_home_location_heatmap()
-        # workplace_location_heatmap = locations_stats.compute_workplace_location_heatmap()
         workplace_locations = locations_stats.get_workplaces()
 
         behavior_change_stats = BehaviorChangeService(df)
         behavior_change = behavior_change_stats.compute_behavior_change_stats()
+
+        equipments_stats_service = EquipmentsService(df)
+        equipments_stats = equipments_stats_service.compute_equipments_stats()
+
+        print("\n\n\n\n")
 
         return Stats(
             total=len(df),
@@ -77,12 +94,16 @@ class StatsService:
             ],
             pro_mode_frequencies=pro_mode_frequencies,
             pro_mode_emissions=pro_mode_emissions,
+            pro_reco_mode_emissions=pro_reco_mode_emissions,
             pro_mode_emission_reductions=pro_mode_emission_reductions,
             pro_mode_links=pro_mode_links,
 
             home_location_heatmap=home_location_heatmap,
             workplace_locations=workplace_locations,
-            behavior_change=behavior_change
+            
+            behavior_change=behavior_change,
+
+            equipments_stats=equipments_stats
         )
 
     def compute_campaign_stats(self, campaign: Campaign, df: pd.DataFrame) -> CampaignStats:

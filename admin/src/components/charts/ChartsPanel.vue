@@ -88,6 +88,31 @@
     <div class="item">
       <links-chart type="mod_reco_pro" :height="height" />
     </div>
+    <div class="item">
+      <reco-emissions-chart
+        type="freq_mod_pro"
+        reco="reco_mod_pro"
+        :yaxis="t('stats.emissions_reco_mod.yaxis')"
+        :height="height"
+      />
+    </div>
+    <div class="item">
+      <behavior-change-chart
+        :height="height"
+        type="levers"
+      />
+    </div>
+    <div class="item">
+      <behavior-change-chart
+        :height="height"
+        type="motivation"
+      />
+    </div>
+    <div class="item">
+      <equipment-recommendation-matrix-chart
+        :height="height"
+      />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -101,6 +126,8 @@ import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
 import JourneyEnergyChart from './JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from './JourneyEnergyShareChart.vue'
+import BehaviorChangeChart from './BehaviorChangeChart.vue'
+import EquipmentRecommendationMatrixChart from './EquipmentRecommendationMatrixChart.vue'
 
 interface Props {
   height: number

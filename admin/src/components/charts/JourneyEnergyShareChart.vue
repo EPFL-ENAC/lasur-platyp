@@ -88,7 +88,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_reco_share.labels.${shortKey(key)}`)
+  return t(`stats.energy_journey.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
@@ -96,7 +96,9 @@ function initChartOptions() {
   total.value = 0
 
   const rawData = stats.journeyEnergyStats.gains?.gains_per_mode || [];
-  total.value = rawData.length;
+  total.value = stats.journeyEnergyStats.gains?.total || 0;
+  
+   if (total.value === 0) return;
   
   if (total.value === 0) return;
 
@@ -125,7 +127,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_reco_share.title`),
+      text: t(`stats.energy_journey.title_share`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
