@@ -120,7 +120,7 @@ function transformMatrixToData(matrix: EquipmentRecommendationMatrix) {
     equipmentLabels.forEach((eqLabel, eqIdx) => {
       const value = row[eqLabel as keyof EquipmentPerRecommendation];
       // ECharts Heatmap format: [xAxisIndex, yAxisIndex, value]
-      if (value !== 0) data.push([recIdx, eqIdx, value]);
+      if (value !== 0) data.push([eqIdx, recIdx, value]);
     });
   });
 
@@ -162,27 +162,25 @@ function initChartOptions() {
       },
     },
     // 4. ADD: xAxis and yAxis are REQUIRED for heatmap
-    xAxis: {
+    yAxis: {
       type: 'category',
-      position: 'top',
       data: recommendationLabels.map(l => keyLabel(l)),
       splitArea: { show: true },
       axisLabel: {
         interval: 0,
-        align: 'center',
-        verticalAlign: 'bottom',
+        align: 'right',
         margin: 10,
       }
     },
-    yAxis: {
+    xAxis: {
       type: 'category',
+      position: 'top',
       data: equipmentLabels.map(l => keyLabel(l)),
       splitArea: { show: true },
       axisLabel: {
         interval: 0,
-        rotate: 30,
-        align: 'right',
-        width: 100,
+        align: 'center',
+        width: 80,
         overflow: 'break',
       }
     },
@@ -202,10 +200,11 @@ function initChartOptions() {
       trigger: "item",
       formatter: function (params: CallbackDataParams | CallbackDataParams[]) {
         const p = Array.isArray(params) ? params[0] : params
-        if (!p) return ''
+        if (!p || !p.value) return ''
+        console.log(p)
 
         const val = new Intl.NumberFormat().format(
-          toMaxDecimals(p.value as number, 2) || 0
+          toMaxDecimals((p.value as [number, number, number])[2], 2) || 0
         );
         return `${p.name}<br/><b>${val} kgCO₂eq</b> (${p.percent}%)`;
       },
