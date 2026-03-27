@@ -254,7 +254,7 @@ export default {
       xaxis: 'Temps (min)',
     },
     reco_dt2: {
-      title: 'recommandations',
+      title: 'Recommandations',
       labels: {
         covoit: 'Covoiturage',
         elec: 'Voiture électrique',
@@ -268,7 +268,7 @@ export default {
       },
     },
     reco_pros: {
-      title: 'recommandations (professional)',
+      title: 'Recommandations (professionnel)',
       labels: {
         avoid: 'Éviter le déplacement',
         bike: 'Vélo (mécanique ou électrique)',
@@ -645,7 +645,7 @@ export default {
           'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
       },
     },
-    equipments_by_recommandations: {
+    equipments_by_recommendations: {
       title: 'Équipements par recommandations',
       tooltip: `{count} des participant·e·s qui ont obtenu la recommandation "{reco}" sont équipés avec "{equipment}".<br />
       Cela représente {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".
@@ -822,7 +822,7 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   password_temp_hint:
     "Mot de passe temporaire que l'utilisateur mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
   password: 'Mot de passe',
-  recommandations: 'recommandations',
+  recommendations: 'recommandations',
   remove_campaign_text:
     "Êtes-vous sûr de vouloir supprimer la campagne '{name}' et toutes les données personnelles associées des participants?",
   remove_campaign: 'Supprimer la campagne',
