@@ -156,6 +156,7 @@ export interface JourneyEnergyData {
 export interface JourneyEnergy {
   total: number
   data: JourneyEnergyData[]
+  average_energy_per_unique_token?: number | null
 }
 export interface JourneyEnergyGainsByMode {
   mode: string
@@ -177,121 +178,139 @@ export function makeDefaultJourneyEnergyStats(): JourneyEnergyStats {
   return {
     current: { total: 0, data: [] },
     reco: { total: 0, data: [] },
-    gains: { total: 0, gains_per_mode: [], current_above_who_count: 0, reco_above_who_count: 0 }
+    gains: { total: 0, gains_per_mode: [], current_above_who_count: 0, reco_above_who_count: 0 },
   }
 }
 
 export interface BehaviorChangeLever {
-  category: string;
-  label: string;
-  count: number;
-  percentage: number;
+  category: string
+  count: number
+  percentage: number
 }
 
 export interface BehaviorChangeMotivation {
-  level: number;
-  label: string;
-  count: number;
-  percentage: number;
+  level: number
+  count: number
+  percentage: number
 }
 
 export interface BehaviorChangeByModeBase {
-  mode: string;
-  response_count: number;
+  mode: string
+  response_count: number
 }
 
 export interface BehaviorChangeByModeLever extends BehaviorChangeByModeBase {
-  levers: BehaviorChangeLever[];
+  levers: BehaviorChangeLever[]
 }
 
 export interface BehaviorChangeByModeMotivation extends BehaviorChangeByModeBase {
-  motivations: BehaviorChangeMotivation[];
+  motivations: BehaviorChangeMotivation[]
 }
 
 export interface BehaviorChangeStatsBase {
-  total_responses: number;
-  aggregation_type: string;
+  total_responses: number
+  aggregation_type: string
 }
 
 export interface BehaviorChangeStatsLever extends BehaviorChangeStatsBase {
-  by_mode_levers: BehaviorChangeByModeLever[];
+  by_mode_levers: BehaviorChangeByModeLever[]
 }
 
 export interface BehaviorChangeStatsMotivation extends BehaviorChangeStatsBase {
-  by_mode_motivation: BehaviorChangeByModeMotivation[];
+  by_mode_motivation: BehaviorChangeByModeMotivation[]
 }
 
 export interface BehaviorChangeStats {
-  levers: BehaviorChangeStatsLever;
-  motivation: BehaviorChangeStatsMotivation;
-  other_levers: string[];
+  levers: BehaviorChangeStatsLever
+  motivation: BehaviorChangeStatsMotivation
+  other_levers: string[]
 }
 
 export function makeDefaultBehaviorChangeStats(): BehaviorChangeStats {
   return {
     levers: {
       total_responses: 0,
-      aggregation_type: "all_aggregated",
-      by_mode_levers: []
+      aggregation_type: 'all_aggregated',
+      by_mode_levers: [],
     },
     motivation: {
       total_responses: 0,
-      aggregation_type: "all_aggregated",
-      by_mode_motivation: []
+      aggregation_type: 'all_aggregated',
+      by_mode_motivation: [],
     },
-    other_levers: []
+    other_levers: [],
   }
 }
 
 export interface EquipmentPerRecommendation {
-  bike: number;
-  ebike: number;
-  upt_subs: number;
-  train_subs: number;
-  mob_subs: number;
-  moto: number;
-  car: number;
-  ev: number;
+  bike: number
+  ebike: number
+  upt_subs: number
+  train_subs: number
+  mob_subs: number
+  moto: number
+  car: number
+  ev: number
+  inter: number
+
+  total: number
 }
 
 export interface EquipmentRecommendationMatrix {
-  marche: EquipmentPerRecommendation;
-  velo: EquipmentPerRecommendation;
-  vae: EquipmentPerRecommendation;
-  cargo: EquipmentPerRecommendation;
-  train: EquipmentPerRecommendation;
-  tpu: EquipmentPerRecommendation;
-  covoit: EquipmentPerRecommendation;
-  elec: EquipmentPerRecommendation;
-  inter: EquipmentPerRecommendation;
+  marche: EquipmentPerRecommendation
+  velo: EquipmentPerRecommendation
+  vae: EquipmentPerRecommendation
+  cargo: EquipmentPerRecommendation
+  train: EquipmentPerRecommendation
+  tpu: EquipmentPerRecommendation
+  covoit: EquipmentPerRecommendation
+  elec: EquipmentPerRecommendation
+  inter: EquipmentPerRecommendation
 }
 
 export const recommendationLabels = [
-  "marche",
-  "velo",
-  "vae",
-  "cargo",
-  "train",
-  "tpu",
-  "covoit",
-  "elec",
-  "inter",
-] as const;
+  'marche',
+  'velo',
+  'vae',
+  'cargo',
+  'train',
+  'tpu',
+  'covoit',
+  'elec',
+  'inter',
+] as const
+
+export const recommendationLabelsReversed = recommendationLabels.toReversed()
 
 export const equipmentLabels = [
-  "bike",
-  "ebike",
-  "upt_subs",
-  "train_subs",
-  "mob_subs",
-  "moto",
-  "car",
-  "ev",
-] as const;
+  'bike',
+  'ebike',
+  'upt_subs',
+  'train_subs',
+  'mob_subs',
+  'moto',
+  'car',
+  'ev',
+  'inter',
+] as const
+
+export const recommendationToEquipmentMap: {
+  [key in (typeof recommendationLabels)[number]]: (typeof equipmentLabels)[number] | null
+} = {
+  marche: null,
+  velo: 'bike',
+  vae: 'ebike',
+  cargo: null,
+  train: 'train_subs',
+  tpu: 'upt_subs',
+  covoit: null,
+  elec: 'ev',
+  inter: null,
+}
 
 export interface EquipmentsStats {
-  total: number;
-  equipment_recommendation_matrix: EquipmentRecommendationMatrix;
+  total: number
+  equipment_recommendation_matrix: EquipmentRecommendationMatrix
 }
 
 export type H3Heatmap = { [hexId: string]: number }

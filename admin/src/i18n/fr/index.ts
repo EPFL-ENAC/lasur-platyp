@@ -254,7 +254,7 @@ export default {
       xaxis: 'Temps (min)',
     },
     reco_dt2: {
-      title: 'Recommendations',
+      title: 'recommandations',
       labels: {
         covoit: 'Covoiturage',
         elec: 'Voiture électrique',
@@ -268,7 +268,7 @@ export default {
       },
     },
     reco_pros: {
-      title: 'Recommendations (professional)',
+      title: 'recommandations (professional)',
       labels: {
         avoid: 'Éviter le déplacement',
         bike: 'Vélo (mécanique ou électrique)',
@@ -345,8 +345,9 @@ export default {
         distances: 'Distance totale',
       },
       texts: {
-        specific: "{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kg CO₂, contre moins de {remainingEmissions}kg / trajet pour les autres."
-      }
+        specific:
+          "{carMotoJourneysPercentage}% des trajets des répondant·es sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO2 annuelles pour l'entreprise.",
+      },
     },
     emissions_reco_mod: {
       title: 'Potentiel de réduction sur les émissions pendulaires',
@@ -370,12 +371,14 @@ export default {
         journeys: 'Nombre de trajets',
         distances: 'Distance totale',
         current: 'Actuel',
-        postSaving: 'Total après recommendations',
+        postSaving: 'Total après recommandations',
       },
       texts: {
-        default: "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
-        specific: 'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].'
-      }
+        default:
+          "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        specific:
+          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
     },
     emissions_reco_share: {
       title: "Répartition de l'évolution",
@@ -397,12 +400,13 @@ export default {
         journeys: 'Nombre de trajets',
         distances: 'Distance totale',
         current: 'Actuel',
-        postSaving: 'Total après recommendations',
+        postSaving: 'Total après recommandations',
       },
       texts: {
         default: 'Ici est affichée la part de réduction due à chaque mode recommandé.',
-        specific: "{percentage}% de réduction potentielle dépendent d'une recommendation principale {mode}."
-      }
+        specific:
+          "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
+      },
     },
     emissions_freq_mod_pro: {
       title: 'Émissions CO₂ par mode de transport (professionnel)',
@@ -425,8 +429,9 @@ export default {
         distances: 'Distance totale',
       },
       texts: {
-        specific: "{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kg CO₂, contre moins de {remainingEmissions}kg / trajet pour les autres."
-      }
+        specific:
+          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kg CO₂, contre moins de {remainingEmissions}kg / trajet pour les autres.',
+      },
     },
     emissions_reco_mod_pro: {
       title: 'Potentiel de réduction sur les émissions pendulaires (professionnel)',
@@ -450,18 +455,21 @@ export default {
         journeys: 'Nombre de trajets',
         distances: 'Distance totale',
         current: 'Actuel',
-        postSaving: 'Total après recommendations',
+        postSaving: 'Total après recommandations',
       },
       texts: {
-        default: "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
-        specific: 'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].'
-      }
+        default:
+          "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        specific:
+          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
     },
     mod_reco: {
       title: 'Recommandations de changement modal',
       labels: {
         walking: 'Marche',
         bike: 'Vélo (mécanique ou électrique)',
+        ebike: 'Vélo électrique',
         pub: 'Transports publics urbains',
         train: 'Train',
         moto: 'Moto / scooter',
@@ -479,11 +487,14 @@ export default {
         vae: 'Vélo à assistance électrique',
         velo: 'Vélo',
         cargo: 'Vélo cargo',
+        other: 'Autre',
       },
       texts: {
-        default: 'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
-        specific: 'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.'
-      }
+        default:
+          'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+        specific:
+          'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.',
+      },
     },
     mod_reco_pro: {
       title: 'Recommandations de changement modal (professionnel)',
@@ -491,6 +502,7 @@ export default {
         avoid: 'Éviter le déplacement',
         walking: 'Marche',
         bike: 'Vélo (mécanique ou électrique)',
+        ebike: 'Vélo électrique',
         pub: 'Transports publics urbains',
         train: 'Train',
         truck: 'Camion',
@@ -511,11 +523,14 @@ export default {
         vae: 'Vélo à assistance électrique',
         velo: 'Vélo',
         cargo: 'Vélo cargo',
+        other: 'Autre',
       },
       texts: {
-        default: 'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
-        specific: 'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.'
-      }
+        default:
+          'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+        specific:
+          'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.',
+      },
     },
     energy_journey: {
       title_current: "Diagramme de potentiel d'activité physique par mode utilisé actuellement",
@@ -547,11 +562,15 @@ export default {
         cargo: 'Vélo cargo',
       },
       texts: {
-        default: "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers.",
-        specific: "Si les recommandations sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers, et {count} personnes supplémentaires passeront au-dessus des recommendations d'activité physique journalière de l'OMS.",
-        default_share: "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
-        specific_share: "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}."
-      }
+        default:
+          "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers.",
+        specific:
+          "Si les recommandations sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers, et {count} personnes supplémentaires passeront au-dessus des recommandations d'activité physique journalière de l'OMS.",
+        default_share:
+          "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
+        specific_share:
+          "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
+      },
     },
     behavior_change_levers: {
       title: 'Mesures aidant à adopter les recommandations',
@@ -581,12 +600,13 @@ export default {
         vae: 'Vélo à assistance électrique',
         velo: 'Vélo',
         cargo: 'Vélo cargo',
-        allModes: 'Tous les modes'
+        allModes: 'Tous les modes',
       },
       texts: {
-        default: "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
-        specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}."
-      }
+        default:
+          "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
+        specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",
+      },
     },
     behavior_change_motivation: {
       title: "Volonté d'adopter les recommandations",
@@ -616,15 +636,21 @@ export default {
         vae: 'Vélo à assistance électrique',
         velo: 'Vélo',
         cargo: 'Vélo cargo',
-        allModes: 'Tous les modes'
+        allModes: 'Tous les modes',
       },
       texts: {
-        default: "Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.",
-        specific: "Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites."
-      }
+        default:
+          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
+        specific:
+          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
+      },
     },
-    equipments_by_recommendations: {
+    equipments_by_recommandations: {
       title: 'Équipements par recommandations',
+      tooltip: `{count} des participant·e·s qui ont obtenu la recommandation "{reco}" sont équipés avec "{equipment}".<br />
+      Cela représente {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".
+      `,
+      simpleMode: 'Mode simple',
       labels: {
         walking: 'Marche',
         bike: 'Vélo',
@@ -642,7 +668,7 @@ export default {
 
         covoit: 'Covoiturage',
         elec: 'Voiture électrique',
-        mob_subs: "Abo. de mobilité",
+        mob_subs: 'Abo. de mobilité',
         train_subs: 'Abo. de train',
         upt_subs: 'Abo. de transports publics',
         inter: 'Intermodalité',
@@ -652,13 +678,15 @@ export default {
         velo: 'Vélo',
         cargo: 'Vélo cargo',
 
-        allModes: 'Tous les modes'
+        allModes: 'Tous les modes',
       },
       texts: {
-        default: "Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou si il serait pertinent de les aider à y avoir accès.",
-        specific: "Par exemple, {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation."
-      }
-    }
+        default:
+          'Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou si il serait pertinent de les aider à y avoir accès.',
+        specific:
+          'Par exemple, {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation.',
+      },
+    },
   },
   record: {
     reco: 'Mode de transport recommandé : {mode}',
@@ -709,8 +737,7 @@ export default {
   },
   data_protection_notice: {
     title: 'Notice sur la protection des données',
-    content:
-      `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
+    content: `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 
 Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n’est pas exclu que certaines données agrégées permettent, directement ou indirectement, d’identifier une ou plusieurs personnes.
 Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l’UE).
@@ -795,7 +822,7 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   password_temp_hint:
     "Mot de passe temporaire que l'utilisateur mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
   password: 'Mot de passe',
-  recommendations: 'Recommendations',
+  recommandations: 'recommandations',
   remove_campaign_text:
     "Êtes-vous sûr de vouloir supprimer la campagne '{name}' et toutes les données personnelles associées des participants?",
   remove_campaign: 'Supprimer la campagne',

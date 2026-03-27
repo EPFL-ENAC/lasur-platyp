@@ -19,14 +19,22 @@
     <p>{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
     <q-markdown
       v-if="total > 5"
-      :src="t(`stats.emissions_${props.reco}.texts.specific`, { 
-        currentEmissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions, 0) || 0),
-        newEmissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions, 0) || 0),
-        cheeseburgers: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 18.8)),
-        smartphones: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1000 / 80.2)),
-        streaming_hours: new Intl.NumberFormat().format(Math.round((currentEmissions - newEmissions) * 1_000_000 / 50)),
-      })"
-     />
+      :src="
+        t(`stats.emissions_${props.reco}.texts.specific`, {
+          currentEmissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions, 0) || 0),
+          newEmissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions, 0) || 0),
+          cheeseburgers: new Intl.NumberFormat().format(
+            Math.round(((currentEmissions - newEmissions) * 1000) / 18.8),
+          ),
+          smartphones: new Intl.NumberFormat().format(
+            Math.round(((currentEmissions - newEmissions) * 1000) / 80.2),
+          ),
+          streaming_hours: new Intl.NumberFormat().format(
+            Math.round(((currentEmissions - newEmissions) * 1_000_000) / 50),
+          ),
+        })
+      "
+    />
   </div>
 </template>
 
@@ -120,7 +128,8 @@ function initChartOptions() {
   recoEmissions.forEach((item) => {
     categoryEmissions[item.mode] = item.emissions
   })
-  newEmissions.value = currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
+  newEmissions.value =
+    currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
 
   const categoriesLabels = [
     keyLabel('current'),
@@ -233,7 +242,7 @@ function initChartOptions() {
             value: currentEmissions.value,
             itemStyle: {
               color: '#000',
-            }
+            },
           },
           ...categories.map((cat) => ({
             value: categoryEmissions[cat] || 0,

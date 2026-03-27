@@ -46,7 +46,6 @@ export const CATEGORY_COLORS: { [key: string]: string } = {
   default: '#ccc',
 }
 
-
 export const MOTIVATION_COLORS: { [key: string]: string } = {
   1: '#ff0000',
   2: '#ff8800',
@@ -54,4 +53,3 @@ export const MOTIVATION_COLORS: { [key: string]: string } = {
   4: '#aaff00',
   5: '#00c000',
 }
-

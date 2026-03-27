@@ -23,7 +23,7 @@ class EquipmentsService(BaseStatsService):
     
     def _compute_equipments_reco_matrix(self, df) -> EquipmentRecommendationMatrix:
         equip_cols = [f"data.equipments.{i}" for i in range(3)]
-        rec_cols = [f"typo.reco.reco_dt2.{i}" for i in range(2)]
+        rec_cols = [f"typo.reco.reco_dt2.{i}" for i in range(1)]
 
         matrix = EquipmentRecommendationMatrix()
 
@@ -37,6 +37,19 @@ class EquipmentsService(BaseStatsService):
                         if pd.notna(equip):
                             current_value = getattr(getattr(matrix, reco), equip, 0)
                             setattr(getattr(matrix, reco), equip, current_value + 1)
-            
+                    
+                    # intermodal equipment
+                    has_pt_or_train = any(pd.notna(row_data[col]) and row_data[col] in ["train_subs", "upt_subs"] for col in equip_cols)
+                    has_bike_ebike = any(pd.notna(row_data[col]) and row_data[col] in ["bike", "ebike"] for col in equip_cols)
+
+                    if has_pt_or_train and has_bike_ebike:
+                        current_value = getattr(getattr(matrix, "inter"), "inter", 0)
+                        setattr(getattr(matrix, "inter"), "inter", current_value + 1)
+
+        for recommendation in matrix.model_fields.keys():
+            total_count = (df[rec_cols] == recommendation).any(axis=1).sum()
+            reco_obj = getattr(matrix, recommendation)
+            reco_obj.total = int(total_count)
+        
         return matrix
 

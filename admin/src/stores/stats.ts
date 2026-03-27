@@ -1,4 +1,16 @@
-import { type BehaviorChangeStats, makeDefaultBehaviorChangeStats, makeDefaultJourneyEnergyStats, type CampaignStats, type Emissions, type Frequencies, type H3Heatmap, type JourneyEnergyStats, type StatLinks, type Stats, type EquipmentsStats } from 'src/models'
+import {
+  type BehaviorChangeStats,
+  makeDefaultBehaviorChangeStats,
+  makeDefaultJourneyEnergyStats,
+  type CampaignStats,
+  type Emissions,
+  type Frequencies,
+  type H3Heatmap,
+  type JourneyEnergyStats,
+  type StatLinks,
+  type Stats,
+  type EquipmentsStats,
+} from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -49,14 +61,22 @@ export const useStats = defineStore('stats', () => {
           frequencies.value['freq_mod'] = stats.mode_frequencies || []
           emissions.value['freq_mod'] = stats.mode_emissions || []
           emissions.value['reco_mod'] = stats.reco_mode_emissions || []
-          links.value['mod_reco'] = stats.mode_links || { total: 0, data: [], most_recommended_target: null }
+          links.value['mod_reco'] = stats.mode_links || {
+            total: 0,
+            data: [],
+            most_recommended_target: null,
+          }
           stats.pro_frequencies?.forEach((freq) => {
             frequencies.value[freq.field] = freq
           })
           frequencies.value['freq_mod_pro'] = stats.pro_mode_frequencies || []
           emissions.value['freq_mod_pro'] = stats.pro_mode_emissions || []
           emissions.value['reco_mod_pro'] = stats.pro_reco_mode_emissions || []
-          links.value['mod_reco_pro'] = stats.pro_mode_links || { total: 0, data: [], most_recommended_target: null }
+          links.value['mod_reco_pro'] = stats.pro_mode_links || {
+            total: 0,
+            data: [],
+            most_recommended_target: null,
+          }
           homeLocationsHeatmap.value = stats.home_location_heatmap || {}
           workplaceLocations.value = stats.workplace_locations || []
           journeyEnergyStats.value = stats.journey_energy_stats || makeDefaultJourneyEnergyStats()

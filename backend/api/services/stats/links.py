@@ -177,6 +177,13 @@ class LinksService(BaseStatsService):
         value_per_target: dict[str, int] = {}
         for link in links.data:
             value_per_target[link.target] = value_per_target.get(link.target, 0) + link.value
+        
+        if not value_per_target:
+            return StatLinks(
+                data=links.data,
+                total=links.total,
+                most_recommended_target=None,
+            )
 
         most_recommended_target = max(value_per_target, key=value_per_target.get)
         most_recommended = Recommendation(

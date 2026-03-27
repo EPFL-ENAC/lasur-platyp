@@ -1,3 +1,5 @@
+from dataclasses import Field
+
 import pandas as pd
 import numpy as np
 from api.models.query import EnergyExpenditure, JourneyEnergyGains, JourneyEnergyGainsByMode, JourneyEnergyLeg, EnergyByJourney, JourneyEnergyStats
@@ -150,13 +152,17 @@ class EnergyService(BaseStatsService):
         Compute energy for current and recommended modes to calculate gains.
         
         Returns:
-            Tuple of (current_energy_by_journey, reco_energy_by_journey)
+            JourneyEnergyStats object with current, recommended, and gain information
         """
         df_v2 = self._get_records_v2()
         
         if df_v2.empty:
             empty_result = EnergyByJourney(total=len(self.df), data=[])
-            return empty_result, empty_result
+            return JourneyEnergyStats(
+                current=empty_result,
+                reco=empty_result,
+                gains=JourneyEnergyGains(total=0, gains_per_mode=[])
+            )
         
         current_energy = self._compute_journey_energy_v2(df_v2)
         reco_energy = self._compute_journey_energy_reco_v2(df_v2)
@@ -465,8 +471,12 @@ class EnergyService(BaseStatsService):
                 is_intermodal=bool(row['is_intermodal'])
             ))
         
+        energy_grouped_summed = df_combined.groupby('token')['energy_kcal'].sum().reset_index() if not df_combined.empty else None
+        average_energy_per_unique_token = energy_grouped_summed['energy_kcal'].mean() if energy_grouped_summed is not None and not energy_grouped_summed.empty else None
+        
         return EnergyByJourney(
             total=len(df),
+            average_energy_per_unique_token=average_energy_per_unique_token,
             data=legs
         )
 
@@ -499,6 +509,8 @@ class EnergyService(BaseStatsService):
         legs = []
         reco_field = 'typo.reco.reco_dt2.0'
         
+        total_energy = 0
+
         for token in df['token'].unique() if 'token' in df.columns else range(len(df)):
             token_journeys = journeys_df[journeys_df['token'] == token]
             
@@ -527,6 +539,8 @@ class EnergyService(BaseStatsService):
             # Calculate energy for this recommendation
             met_factor = MODE_MET.get(reco_mode_normalized, 0)
             energy_kcal = met_factor * travel_time / 60 * total_days * 2 / 5
+
+            total_energy += energy_kcal
             
             # Create a journey leg for each journey day combination
             # We'll create one synthetic leg per token representing their recommended mode
@@ -540,8 +554,11 @@ class EnergyService(BaseStatsService):
                 is_intermodal=False  # Recommendations are single-mode
             ))
         
+        length = len(df['token'].unique() if 'token' in df.columns else df)
+
         return EnergyByJourney(
             total=len(df),
+            average_energy_per_unique_token=total_energy / length if length > 0 else None,
             data=legs
         )
     
@@ -626,7 +643,7 @@ class EnergyService(BaseStatsService):
 
 class LegPerToken(BaseModel):
     token: str
-    current_legs: list[JourneyEnergyLeg] = []
+    current_legs: list[JourneyEnergyLeg] = Field(default_factory=list)
     reco_leg: JourneyEnergyLeg | None = None # recommendations are always only one mode
 
     def current_energy(self):

@@ -17,7 +17,11 @@
 
   <div>
     <p>{{ t(`stats.${props.type}.texts.default`) }}</p>
-    <p v-if="mostRecommendedTarget">{{ t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) }) }}</p>
+    <p v-if="mostRecommendedTarget">
+      {{
+        t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
+      }}
+    </p>
   </div>
 </template>
 

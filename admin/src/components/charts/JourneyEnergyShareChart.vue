@@ -19,11 +19,15 @@
     <p>{{ t(`stats.energy_journey.texts.default_share`) }}</p>
     <q-markdown
       v-if="total > 5 && biggestShare"
-      :src="t(`stats.energy_journey.texts.specific_share`, {
-        percentage: new Intl.NumberFormat().format(toMaxDecimals(biggestShare.percentage, 2) || 0),
-        mode: keyLabel(biggestShare.mode)
-      })"
-     />
+      :src="
+        t(`stats.energy_journey.texts.specific_share`, {
+          percentage: new Intl.NumberFormat().format(
+            toMaxDecimals(biggestShare.percentage, 2) || 0,
+          ),
+          mode: keyLabel(biggestShare.mode),
+        })
+      "
+    />
   </div>
 </template>
 
@@ -31,7 +35,7 @@
 import ECharts from 'vue-echarts'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { CustomChart } from 'echarts/charts'
+import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { initOptions, updateOptions } from './commons'
 import {
@@ -46,7 +50,7 @@ import type { CallbackDataParams } from 'echarts/types/dist/shared'
 
 const { t, locale } = useI18n()
 const stats = useStats()
-use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   height?: number
@@ -56,13 +60,13 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface AddedEnergyShare {
-    mode: string
-    percentage: number
+  mode: string
+  percentage: number
 }
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
-const biggestShare = ref<AddedEnergyShare | null>(null);
+const biggestShare = ref<AddedEnergyShare | null>(null)
 
 watch([() => stats.loading], () => {
   if (stats.loading) {
@@ -95,27 +99,26 @@ function initChartOptions() {
   option.value = {}
   total.value = 0
 
-  const rawData = stats.journeyEnergyStats.gains?.gains_per_mode || [];
-  total.value = stats.journeyEnergyStats.gains?.total || 0;
-  
-   if (total.value === 0) return;
-  
-  if (total.value === 0) return;
+  const rawData = stats.journeyEnergyStats.gains?.gains_per_mode || []
 
-  const filtered = rawData.filter(item => item.added_kcal > 0)
+  if (rawData.length === 0) return
+
+  const filtered = rawData.filter((item) => item.added_kcal > 0)
+  total.value = filtered.length
+
   const sumPositiveEnergy = filtered.reduce((sum, item) => sum + item.added_kcal, 0)
 
   biggestShare.value = {
     mode: '',
     percentage: 0,
-  };
+  }
   filtered.forEach((item) => {
     const percentage = sumPositiveEnergy > 0 ? (item.added_kcal / sumPositiveEnergy) * 100 : 0
     if (!biggestShare.value || percentage > biggestShare.value.percentage) {
       biggestShare.value = { mode: item.mode, percentage }
     }
   })
-  
+
   const newOption: EChartsOption = {
     grid: {
       left: '40',
@@ -137,15 +140,13 @@ function initChartOptions() {
       },
     },
     tooltip: {
-      trigger: "item",
+      trigger: 'item',
       formatter: function (params: CallbackDataParams | CallbackDataParams[]) {
         const p = Array.isArray(params) ? params[0] : params
         if (!p) return ''
 
-        const val = new Intl.NumberFormat().format(
-          toMaxDecimals(p.value as number, 2) || 0
-        );
-        return `${p.name}<br/><b>${val} kcal</b> (${p.percent}%)`;
+        const val = new Intl.NumberFormat().format(toMaxDecimals(p.value as number, 2) || 0)
+        return `${p.name}<br/><b>${val} kcal</b> (${p.percent}%)`
       },
     },
     legend: {

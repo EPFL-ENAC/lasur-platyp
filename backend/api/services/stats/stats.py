@@ -17,18 +17,6 @@ class StatsService:
         """Compute all statistics for equipments, constraints, travel_time, and recommendations."""
         df = self._preprocess_dataframe(df)
 
-        print("\n\n\n\n")
-        print(df.columns, end="\n\n\n\n")
-
-        print(df["data.equipments.0"], end="\n\n")
-        print(df["data.equipments.1"], end="\n\n")
-        print(df["data.equipments.2"], end="\n\n\n\n")
-
-        print(df["typo.reco.reco_dt2.0"], end="\n\n")
-        print(df["typo.reco.reco_dt2.1"], end="\n\n")
-
-        print("\n\n\n\n")
-
         freq_stats = FrequenciesService(df)
         equipments = freq_stats.compute_equipments_frequencies()
         constraints = freq_stats.compute_constraints_frequencies()
@@ -65,8 +53,6 @@ class StatsService:
 
         equipments_stats_service = EquipmentsService(df)
         equipments_stats = equipments_stats_service.compute_equipments_stats()
-
-        print("\n\n\n\n")
 
         return Stats(
             total=len(df),

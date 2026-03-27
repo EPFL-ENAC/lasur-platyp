@@ -14,7 +14,7 @@
         {{ t(`stats.energy_journey.title_${props.type}`) }}
       </div>
       <div class="text-subtitle1 text-grey-8 text-center">
-        {{ t("stats.no_data") }}
+        {{ t('stats.no_data') }}
       </div>
     </div>
   </div>
@@ -23,30 +23,32 @@
     <p>{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown
       v-if="total > 5"
-      :src="t(`stats.energy_journey.texts.specific`, {
-        added_energy: new Intl.NumberFormat().format(toMaxDecimals(addedEnergy, 2) || 0),
-        count: new Intl.NumberFormat().format(newHealthyParticipants || 0)
-      })"
-     />
+      :src="
+        t(`stats.energy_journey.texts.specific`, {
+          added_energy: new Intl.NumberFormat().format(toMaxDecimals(addedEnergy, 2) || 0),
+          count: new Intl.NumberFormat().format(newHealthyParticipants || 0),
+        })
+      "
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import ECharts from "vue-echarts";
-import type { EChartsOption, SeriesOption } from "echarts";
-import { use } from "echarts/core";
-import { BarChart, LineChart } from "echarts/charts";
-import { SVGRenderer } from "echarts/renderers";
+import ECharts from 'vue-echarts'
+import type { EChartsOption, SeriesOption } from 'echarts'
+import { use } from 'echarts/core'
+import { BarChart, LineChart } from 'echarts/charts'
+import { SVGRenderer } from 'echarts/renderers'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
-  MarkLineComponent
-} from "echarts/components";
-import { initOptions, updateOptions, MODE_COLORS } from "./commons";
-import type { JourneyEnergyData } from "src/models";
-import { toMaxDecimals } from "src/utils/numbers";
+  MarkLineComponent,
+} from 'echarts/components'
+import { initOptions, updateOptions, MODE_COLORS } from './commons'
+import type { JourneyEnergyData } from 'src/models'
+import { toMaxDecimals } from 'src/utils/numbers'
 
 // Register ECharts modules
 use([
@@ -57,168 +59,167 @@ use([
   TooltipComponent,
   LegendComponent,
   GridComponent,
-  MarkLineComponent
-]);
+  MarkLineComponent,
+])
 
 interface Props {
-  type: "current" | "reco";
-  xaxis?: string;
-  yaxis?: string;
-  height?: number;
+  type: 'current' | 'reco'
+  xaxis?: string
+  yaxis?: string
+  height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
-});
+})
 
-const { t, locale } = useI18n();
-const stats = useStats();
+const { t, locale } = useI18n()
+const stats = useStats()
 
-const option = ref<EChartsOption>({});
-const total = ref(0);
-const addedEnergy = ref(0);
-const newHealthyParticipants = ref(0);
+const option = ref<EChartsOption>({})
+const total = ref(0)
+const addedEnergy = ref(0)
+const newHealthyParticipants = ref(0)
 
 watch([() => stats.loading, () => props.height, locale], () => {
-  initChartOptions();
-});
+  initChartOptions()
+})
 
 onMounted(() => {
-  initChartOptions();
-});
+  initChartOptions()
+})
 function initChartOptions() {
-  option.value = {};
+  option.value = {}
 
-  const rawData = stats.journeyEnergyStats[props.type]?.data || [];
-  total.value = rawData.length;
-  
-  if (total.value === 0) return;
+  const rawData = stats.journeyEnergyStats[props.type]?.data || []
+  total.value = rawData.length
 
-  addedEnergy.value = stats.journeyEnergyStats.gains.total;
-  newHealthyParticipants.value = stats.journeyEnergyStats.gains.reco_above_who_count - stats.journeyEnergyStats.gains.current_above_who_count;
+  if (total.value === 0) return
 
-  // 1. Group and Transform data (like the Python logic)
-  const tokenMap: Record<string, Record<string, number>> = {};
-  const modesSet = new Set<string>();
+  const averageEnergyExpenditurePerToken =
+    stats.journeyEnergyStats[props.type]?.average_energy_per_unique_token || 0
+  addedEnergy.value =
+    (stats.journeyEnergyStats.reco.average_energy_per_unique_token ?? 0) -
+    (stats.journeyEnergyStats.current.average_energy_per_unique_token ?? 0)
+  newHealthyParticipants.value =
+    stats.journeyEnergyStats.gains.reco_above_who_count -
+    stats.journeyEnergyStats.gains.current_above_who_count
+
+  const tokenMap: Record<string, Record<string, number>> = {}
+  const modesSet = new Set<string>()
 
   rawData.forEach((item: JourneyEnergyData) => {
     if (!tokenMap[item.token]) {
-      tokenMap[item.token] = {};
+      tokenMap[item.token] = {}
     }
-    tokenMap[item.token]![item.mode] =
-      (tokenMap[item.token]![item.mode] || 0) + item.energy_kcal;
-    modesSet.add(item.mode);
-  });
+    tokenMap[item.token]![item.mode] = (tokenMap[item.token]![item.mode] || 0) + item.energy_kcal
+    modesSet.add(item.mode)
+  })
 
   // 2. Sort tokens by total energy (descending)
   const sortedTokens = Object.keys(tokenMap).sort((a, b) => {
-    const totalA = Object.values(tokenMap[a]!).reduce((s, v) => s + v, 0);
-    const totalB = Object.values(tokenMap[b]!).reduce((s, v) => s + v, 0);
-    return totalB - totalA;
-  });
+    const totalA = Object.values(tokenMap[a]!).reduce((s, v) => s + v, 0)
+    const totalB = Object.values(tokenMap[b]!).reduce((s, v) => s + v, 0)
+    return totalB - totalA
+  })
 
-  const modes = Array.from(modesSet);
+  const modes = Array.from(modesSet)
 
   // 3. Create Series (one series per mode for stacking)
   const series: SeriesOption[] = modes.map((mode) => {
     return {
       name: t(`stats.energy_journey.labels.${mode}`),
-      type: "bar",
-      stack: "total", // This enables the stacking
-      emphasis: { focus: "series" },
+      type: 'bar',
+      stack: 'total', // This enables the stacking
+      emphasis: { focus: 'series' },
       itemStyle: {
-        color: MODE_COLORS[mode] || MODE_COLORS["default"] || "#000000",
+        color: MODE_COLORS[mode] || MODE_COLORS['default'] || '#000000',
       },
       data: sortedTokens.map((token) => {
-        const value = tokenMap[token]![mode] || 0;
-        return parseFloat(value.toFixed(2));
+        const value = tokenMap[token]![mode] || 0
+        return parseFloat(value.toFixed(2))
       }),
-    };
-  });
-
-  const averageEnergyExpenditurePerToken = Object.values(tokenMap).reduce((sum, modeValues) => {
-    const tokenTotal = Object.values(modeValues).reduce((s, v) => s + v, 0);
-    return sum + tokenTotal;
-  }, 0) / sortedTokens.length;
+    }
+  })
 
   // 4. Set Chart Options
   option.value = {
     grid: {
-      left: "5%",
-      right: "5%",
-      bottom: "20%",
-      top: "60px",
+      left: '5%',
+      right: '5%',
+      bottom: '20%',
+      top: '60px',
       containLabel: true,
     },
     title: {
       text: t(`stats.energy_journey.title_${props.type}`),
-      left: "center",
+      left: 'center',
       textStyle: { fontSize: 16 },
     },
     tooltip: {
-      trigger: "axis",
-      axisPointer: { type: "shadow" },
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
       valueFormatter(value) {
-        return `${toMaxDecimals(value as number, 2)} kcal`;
+        return `${toMaxDecimals(value as number, 2)} kcal`
       },
     },
     legend: {
       bottom: 0,
-      icon: "circle",
+      icon: 'circle',
       data: [
-        ...modes.map(mode => ({
+        ...modes.map((mode) => ({
           name: t(`stats.energy_journey.labels.${mode}`),
-          icon: "circle"
+          icon: 'circle',
         })),
         {
           name: t(`stats.energy_journey.whoMin`),
           icon: 'rect',
-          itemStyle: { color: "black" }
+          itemStyle: { color: 'black' },
         },
         {
           name: t(`stats.energy_journey.participantsAverage`),
           icon: 'rect',
-          itemStyle: { color: "#d32f2f" }
-        }
-      ]
+          itemStyle: { color: '#d32f2f' },
+        },
+      ],
     },
     xAxis: {
-      type: "category",
+      type: 'category',
       data: sortedTokens.map((_, i) => `#${i + 1}`), // Truncate tokens for display
       name: props.xaxis || t(`stats.energy_journey.xaxis`),
-      nameLocation: "middle",
+      nameLocation: 'middle',
       nameGap: 30,
     },
     yAxis: {
-      type: "value",
+      type: 'value',
       name: t(`stats.energy_journey.yaxis`),
-      nameLocation: "middle",
+      nameLocation: 'middle',
       nameGap: 40,
     },
     series: [
       ...series,
       {
-        type: "line",
+        type: 'line',
         name: t(`stats.energy_journey.whoMin`),
-        color: "black",
-        symbol: "none",
-        silent: true,   // Doesn't intercept mouse events
+        color: 'black',
+        symbol: 'none',
+        silent: true, // Doesn't intercept mouse events
         data: sortedTokens.map(() => 150), // Constant value for the line
         lineStyle: {
           width: 0, // Hide the line itself
         },
         markLine: {
-          symbol: ["none", "none"], // Remove arrows
+          symbol: ['none', 'none'], // Remove arrows
           label: {
             show: true,
-            position: "insideEndTop",
-            formatter: "150 kcal",
+            position: 'insideEndTop',
+            formatter: '150 kcal',
             distance: 10,
-            fontWeight: "bold",
-            color: "black",
+            fontWeight: 'bold',
+            color: 'black',
           },
           lineStyle: {
-            color: "black",
-            type: "dashed",
+            color: 'black',
+            type: 'dashed',
             width: 2,
             opacity: 0.8,
           },
@@ -231,30 +232,30 @@ function initChartOptions() {
         },
       },
       {
-        type: "line",
+        type: 'line',
         name: t(`stats.energy_journey.participantsAverage`),
-        symbol: "none",
+        symbol: 'none',
         silent: true,
         data: sortedTokens.map(() => averageEnergyExpenditurePerToken),
         itemStyle: {
-          color: "#d32f2f",
+          color: '#d32f2f',
         },
         lineStyle: {
-          opacity: 0
+          opacity: 0,
         },
         markLine: {
-          symbol: ["none", "none"], // Remove arrows
+          symbol: ['none', 'none'], // Remove arrows
           label: {
             show: true,
-            position: "insideEndTop",
+            position: 'insideEndTop',
             formatter: `${toMaxDecimals(averageEnergyExpenditurePerToken, 2)} kcal`,
             distance: 10,
-            fontWeight: "bold",
-            color: "#d32f2f",
+            fontWeight: 'bold',
+            color: '#d32f2f',
           },
           lineStyle: {
-            color: "#d32f2f", // Red line
-            type: "dashed",
+            color: '#d32f2f', // Red line
+            type: 'dashed',
             width: 2,
             opacity: 0.8,
           },
@@ -265,8 +266,8 @@ function initChartOptions() {
           ],
           z: 1001,
         },
-      }
+      },
     ],
-  };
+  }
 }
 </script>

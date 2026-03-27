@@ -44,27 +44,16 @@
       />
     </div>
     <div class="item">
-      <reco-share-chart
-        reco="reco_mod"
-        :height="height"
-      />
+      <reco-share-chart reco="reco_mod" :height="height" />
     </div>
     <div class="item">
-      <journey-energy-chart
-        type="current"
-        :height="height"
-      />
+      <journey-energy-chart type="current" :height="height" />
     </div>
     <div class="item">
-      <journey-energy-chart
-        type="reco"
-        :height="height"
-      />
+      <journey-energy-chart type="reco" :height="height" />
     </div>
     <div class="item">
-      <journey-energy-share-chart
-        :height="height"
-      />
+      <journey-energy-share-chart :height="height" />
     </div>
     <div class="item">
       <frequencies-stack-chart
@@ -97,21 +86,13 @@
       />
     </div>
     <div class="item">
-      <behavior-change-chart
-        :height="height"
-        type="levers"
-      />
+      <behavior-change-chart :height="height" type="levers" />
     </div>
     <div class="item">
-      <behavior-change-chart
-        :height="height"
-        type="motivation"
-      />
+      <behavior-change-chart :height="height" type="motivation" />
     </div>
     <div class="item">
-      <equipment-recommendation-matrix-chart
-        :height="height"
-      />
+      <equipment-recommendation-matrix-chart :height="height" />
     </div>
   </div>
 </template>

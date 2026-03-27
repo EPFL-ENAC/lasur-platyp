@@ -1,14 +1,22 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="stats.loading"
-    />
+  <div :style="`height: ${height}px; width: 100%; position: relative;`">
+    <template v-if="total > 0">
+      <e-charts
+        ref="chart"
+        autoresize
+        :init-options="initOptions"
+        :option="option"
+        :update-options="updateOptions"
+        :loading="stats.loading"
+      />
+      <div class="options">
+        <q-toggle
+          v-model="simpleMode"
+          :label="t('stats.equipments_by_recommendations.simpleMode')"
+          color="primary"
+        />
+      </div>
+    </template>
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.equipments_by_recommendations.title`) }}</div>
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
@@ -35,16 +43,30 @@ import {
   TooltipComponent,
   LegendComponent,
   GridComponent,
-  VisualMapComponent
+  VisualMapComponent,
 } from 'echarts/components'
 import { toMaxDecimals } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
-import { equipmentLabels, type EquipmentPerRecommendation, type EquipmentRecommendationMatrix, recommendationLabels } from 'src/models'
+import {
+  equipmentLabels,
+  type EquipmentPerRecommendation,
+  type EquipmentRecommendationMatrix,
+  recommendationLabelsReversed,
+  recommendationToEquipmentMap,
+} from 'src/models'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 const stats = useStats()
-use([SVGRenderer, HeatmapChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent, VisualMapComponent])
+use([
+  SVGRenderer,
+  HeatmapChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  VisualMapComponent,
+])
 
 interface Props {
   height?: number
@@ -56,13 +78,23 @@ const props = withDefaults(defineProps<Props>(), {
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
+const simpleMode = ref(false)
+
+const recommendationLabelsFiltered = computed(() => {
+  if (!simpleMode.value) {
+    return recommendationLabelsReversed
+  }
+
+  return recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r])
+})
+
 watch([() => stats.loading], () => {
   if (stats.loading) {
     initChartOptions()
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, simpleMode], () => {
   if (!stats.loading) {
     initChartOptions()
   }
@@ -75,25 +107,33 @@ onMounted(() => {
 const analysisText = computed(() => {
   if (!stats.equipmentsStats) return null
 
-  const threshold = 0 // 5
-  let smallestReco: keyof EquipmentRecommendationMatrix = recommendationLabels[0]
-  let smallestEquipment: keyof EquipmentPerRecommendation = equipmentLabels[0]
-  let smallestValue = stats.equipmentsStats.equipment_recommendation_matrix[smallestReco as keyof EquipmentRecommendationMatrix][smallestEquipment as keyof EquipmentPerRecommendation]
-  
-  for (const rec of recommendationLabels) {
-    for (const eq of equipmentLabels) {
-      const value = stats.equipmentsStats.equipment_recommendation_matrix[rec as keyof EquipmentRecommendationMatrix][eq as keyof EquipmentPerRecommendation]
+  const threshold = 5
+  let smallestReco: keyof EquipmentRecommendationMatrix | null = null
+  let smallestValue = Infinity
+
+  for (const rec of recommendationLabelsFiltered.value) {
+    const eq = recommendationToEquipmentMap[rec as keyof EquipmentRecommendationMatrix]
+
+    if (eq) {
+      const value =
+        stats.equipmentsStats.equipment_recommendation_matrix[
+          rec as keyof EquipmentRecommendationMatrix
+        ][eq as keyof EquipmentPerRecommendation]
       if (value < smallestValue && value > threshold) {
         smallestValue = value
         smallestReco = rec
-        smallestEquipment = eq
       }
     }
   }
 
-  const smallestRecoContent = stats.equipmentsStats.equipment_recommendation_matrix[smallestReco as keyof EquipmentRecommendationMatrix]
-  const sumOfSmallestReco = Object.values(smallestRecoContent).reduce((sum, val) => sum + val, 0)
-  const percentage = sumOfSmallestReco > 0 ? (smallestValue / sumOfSmallestReco) * 100 : 0
+  if (!smallestReco) return null
+
+  const smallestRecoContent =
+    stats.equipmentsStats.equipment_recommendation_matrix[
+      smallestReco as keyof EquipmentRecommendationMatrix
+    ]
+  const percentage =
+    smallestRecoContent.total > 0 ? (smallestValue / smallestRecoContent.total) * 100 : 0
 
   return {
     percentage: toMaxDecimals(percentage, 2),
@@ -113,18 +153,39 @@ function keyLabel(key: string) {
 }
 
 function transformMatrixToData(matrix: EquipmentRecommendationMatrix) {
-  const data: [number, number, number][] = [];
+  const data: [number, number, number][] = []
 
-  recommendationLabels.forEach((recLabel, recIdx) => {
-    const row = matrix[recLabel as keyof EquipmentRecommendationMatrix];
+  recommendationLabelsFiltered.value.forEach((recLabel, recIdx) => {
+    const row = matrix[recLabel as keyof EquipmentRecommendationMatrix]
     equipmentLabels.forEach((eqLabel, eqIdx) => {
-      const value = row[eqLabel as keyof EquipmentPerRecommendation];
-      // ECharts Heatmap format: [xAxisIndex, yAxisIndex, value]
-      if (value !== 0) data.push([eqIdx, recIdx, value]);
-    });
-  });
+      if (simpleMode.value && eqLabel !== recommendationToEquipmentMap[recLabel]) {
+        return
+      }
 
-  return data;
+      const count = row[eqLabel as keyof EquipmentPerRecommendation]
+      // ECharts Heatmap format: [xAxisIndex, yAxisIndex, value]
+      if (count !== 0) {
+        const percent = (count / row.total) * 100
+        data.push([eqIdx, recIdx, percent])
+      }
+    })
+  })
+
+  return data
+}
+
+function matrixPositionToLabels(
+  x: number,
+  y: number,
+): {
+  recommendation: keyof EquipmentRecommendationMatrix
+  equipment: keyof EquipmentPerRecommendation
+} | null {
+  const recommendation = recommendationLabelsFiltered.value[y]
+  const equipment = equipmentLabels[x]
+  if (!recommendation || !equipment) return null
+
+  return { recommendation, equipment }
 }
 
 function initChartOptions() {
@@ -138,7 +199,6 @@ function initChartOptions() {
   total.value = stats.equipmentsStats.total
 
   const data = transformMatrixToData(stats.equipmentsStats.equipment_recommendation_matrix)
-  const max = data.reduce((max, item) => item[2] > max ? item[2] : max, 0)
 
   // total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {
@@ -149,7 +209,6 @@ function initChartOptions() {
       bottom: '30',
       containLabel: true,
     },
-    animation: false,
     height: props.height - 100,
     title: {
       text: t(`stats.equipments_by_recommendations.title`),
@@ -164,49 +223,69 @@ function initChartOptions() {
     // 4. ADD: xAxis and yAxis are REQUIRED for heatmap
     yAxis: {
       type: 'category',
-      data: recommendationLabels.map(l => keyLabel(l)),
+      data: recommendationLabelsFiltered.value.map((l) => {
+        const reco =
+          stats.equipmentsStats!.equipment_recommendation_matrix[
+            l as keyof EquipmentRecommendationMatrix
+          ]
+        return `${keyLabel(l)} (${reco.total})`
+      }),
       splitArea: { show: true },
       axisLabel: {
         interval: 0,
         align: 'right',
         margin: 10,
-      }
+      },
     },
     xAxis: {
       type: 'category',
       position: 'top',
-      data: equipmentLabels.map(l => keyLabel(l)),
+      data: equipmentLabels.map((l) => keyLabel(l)),
       splitArea: { show: true },
       axisLabel: {
         interval: 0,
         align: 'center',
         width: 80,
         overflow: 'break',
-      }
+      },
     },
     // 5. ADD: VisualMap provides the color scale
     visualMap: {
       min: 0,
-      max,
+      max: 100,
       calculable: true,
       orient: 'horizontal',
       left: 'center',
       bottom: '0%',
       inRange: {
-        color: ['#cfc', '#0a0'] // Adjust colors to your theme
-      }
+        color: ['#cfc', '#0a0'], // Adjust colors to your theme
+      },
     },
     tooltip: {
-      trigger: "item",
+      trigger: 'item',
       formatter: function (params: CallbackDataParams | CallbackDataParams[]) {
         const p = Array.isArray(params) ? params[0] : params
-        if (!p || !p.value) return ''
-        console.log(p)
+        if (!p || !p.value || !stats.equipmentsStats) return ''
 
-        const val = new Intl.NumberFormat().format(
-          toMaxDecimals((p.value as [number, number, number])[2], 2) || 0
-        );
-        return `${p.name}<br/><b>${val} kgCO₂eq</b> (${p.percent}%)`;
+        const v = p.value as [number, number, number]
+        if (v[2] === 0) return ''
+        const labels = matrixPositionToLabels(v[0], v[1])
+        if (!labels) return ''
+        const formatter = new Intl.NumberFormat()
+
+        const reco = keyLabel(labels.recommendation)
+        const equipment = keyLabel(labels.equipment)
+        const count =
+          stats.equipmentsStats.equipment_recommendation_matrix[labels.recommendation][
+            labels.equipment
+          ]
+
+        return t(`stats.equipments_by_recommendations.tooltip`, {
+          reco,
+          equipment,
+          count: formatter.format(count),
+          percentage: formatter.format(toMaxDecimals(v[2], 2) || 0),
+        })
       },
     },
     series: [
@@ -215,8 +294,24 @@ function initChartOptions() {
         type: 'heatmap',
         label: {
           show: true,
+          formatter: function (params) {
+            if (!params.value || (params.value as [number, number, number])[2] === 0) {
+              return ''
+            }
+            const labels = matrixPositionToLabels(
+              (params.value as [number, number, number])[0],
+              (params.value as [number, number, number])[1],
+            )
+            if (!labels) return ''
+            const count =
+              stats.equipmentsStats!.equipment_recommendation_matrix[labels.recommendation][
+                labels.equipment
+              ]
+
+            return `${new Intl.NumberFormat().format(count)} (${new Intl.NumberFormat().format(toMaxDecimals((params.value as [number, number, number])[2], 2) || 0)}%)`
+          },
         },
-        data
+        data,
       },
     ],
   }
@@ -227,3 +322,11 @@ function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
 }
 </script>
+
+<style scoped>
+.options {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>

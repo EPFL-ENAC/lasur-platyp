@@ -20,7 +20,7 @@
     <q-markdown
       v-if="total > 5"
       :src="t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues)"
-     />
+    />
   </div>
 </template>
 
@@ -28,7 +28,7 @@
 import ECharts from 'vue-echarts'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
-import { CustomChart } from 'echarts/charts'
+import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { CATEGORY_COLORS, initOptions, MOTIVATION_COLORS, updateOptions } from './commons'
 import {
@@ -42,10 +42,10 @@ import type { CallbackDataParams } from 'echarts/types/dist/shared'
 
 const { t, locale } = useI18n()
 const stats = useStats()
-use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  type: "levers" | "motivation"
+  type: 'levers' | 'motivation'
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -57,13 +57,15 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 
 const descriptionValues = computed(() => {
-  if (props.type === "levers") {
+  if (props.type === 'levers') {
     const levers = stats.behaviorChange.levers
     if (!levers) {
       return {}
     }
-    
-    const mostNeededLever = levers.by_mode_levers.flatMap(item => item.levers.map(lever => ({ ...lever, mode: item.mode }))).sort((a, b) => b.count - a.count)[0]
+
+    const mostNeededLever = levers.by_mode_levers
+      .flatMap((item) => item.levers.map((lever) => ({ ...lever, mode: item.mode })))
+      .sort((a, b) => b.count - a.count)[0]
     if (!mostNeededLever) {
       return {}
     }
@@ -78,11 +80,14 @@ const descriptionValues = computed(() => {
     return {}
   }
 
-  const motivatedByMode = motivation.by_mode_motivation.map(item => {
-    return item.motivations.filter(m => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
+  const motivatedByMode = motivation.by_mode_motivation.map((item) => {
+    return item.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
   })
   return {
-    percentage: toMaxDecimals(motivatedByMode.reduce((sum, p) => sum + p, 0) / motivatedByMode.length, 2)
+    percentage: toMaxDecimals(
+      motivatedByMode.reduce((sum, p) => sum + p, 0) / motivatedByMode.length,
+      2,
+    ),
   }
 })
 
@@ -117,12 +122,10 @@ function initChartOptions() {
   option.value = {}
   total.value = 0
 
-  const behaviorChangeData = stats.behaviorChange.levers
-  if (!behaviorChangeData) {
+  const opt = props.type === 'levers' ? leversOptions() : motivationOptions()
+  if (!opt) {
     return
   }
-  
-  const opt = props.type === "levers" ? leversOptions() : motivationOptions()
 
   total.value = opt.total
 
@@ -151,7 +154,7 @@ function initChartOptions() {
     },
     legend: {
       show: true,
-      bottom: 16
+      bottom: 16,
     },
     xAxis: {
       type: 'value',
@@ -168,16 +171,14 @@ function initChartOptions() {
 function leversOptions() {
   const behaviorChangeData = stats.behaviorChange.levers
   if (!behaviorChangeData) {
-    return {
-      series: [],
-      categories: [],
-      total: 0
-    }
+    return null
   }
-  const allCategories = new Set<string>(behaviorChangeData.by_mode_levers.flatMap(item => item.levers.map(lever => lever.category)))
+  const allCategories = new Set<string>(
+    behaviorChangeData.by_mode_levers.flatMap((item) => item.levers.map((lever) => lever.category)),
+  )
 
   return {
-    series: Array.from(allCategories).map(category => ({
+    series: Array.from(allCategories).map((category) => ({
       name: keyLabel(category),
       type: 'bar',
       stack: 'total',
@@ -191,32 +192,28 @@ function leversOptions() {
           return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 2) || 0)
         },
       },
-      data: behaviorChangeData.by_mode_levers.map(item => {
-        const lever = item.levers.find(l => l.category === category)
+      data: behaviorChangeData.by_mode_levers.map((item) => {
+        const lever = item.levers.find((l) => l.category === category)
         return lever ? lever.count : 0
       }),
       itemStyle: {
-        color: CATEGORY_COLORS[category] || "#ccc",
+        color: CATEGORY_COLORS[category] || '#ccc',
       },
     })) as SeriesOption[],
-    categories: behaviorChangeData.by_mode_levers.map(item => keyLabel(item.mode)),
-    total: behaviorChangeData.total_responses
+    categories: behaviorChangeData.by_mode_levers.map((item) => keyLabel(item.mode)),
+    total: behaviorChangeData.total_responses,
   }
 }
 
 function motivationOptions() {
   const behaviorChangeData = stats.behaviorChange.motivation
   if (!behaviorChangeData) {
-    return {
-      series: [],
-      categories: [],
-      total: 0
-    }
+    return null
   }
   const levels = [1, 2, 3, 4, 5]
 
   return {
-    series: levels.map(level => ({
+    series: levels.map((level) => ({
       name: keyLabel(`l${level.toString()}`),
       type: 'bar',
       stack: 'total',
@@ -230,16 +227,16 @@ function motivationOptions() {
           return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 2) || 0)
         },
       },
-      data: behaviorChangeData.by_mode_motivation.map(item => {
-        const lever = item.motivations.find(l => l.level === level)
+      data: behaviorChangeData.by_mode_motivation.map((item) => {
+        const lever = item.motivations.find((l) => l.level === level)
         return lever ? lever.count : 0
       }),
       itemStyle: {
-        color: MOTIVATION_COLORS[level] || "#ccc",
+        color: MOTIVATION_COLORS[level] || '#ccc',
       },
     })) as SeriesOption[],
-    categories: behaviorChangeData.by_mode_motivation.map(item => keyLabel(item.mode)),
-    total: behaviorChangeData.total_responses
+    categories: behaviorChangeData.by_mode_motivation.map((item) => keyLabel(item.mode)),
+    total: behaviorChangeData.total_responses,
   }
 }
 

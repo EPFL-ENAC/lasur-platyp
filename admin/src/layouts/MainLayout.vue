@@ -128,10 +128,7 @@
         </q-card-section>
 
         <q-card-section class="q-py-none">
-          <q-markdown
-             :src="t('data_protection_notice.content')"
-             no-heading-anchor-links
-           />
+          <q-markdown :src="t('data_protection_notice.content')" no-heading-anchor-links />
         </q-card-section>
 
         <q-card-actions>

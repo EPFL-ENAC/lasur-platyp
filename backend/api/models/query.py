@@ -166,7 +166,7 @@ class Recommendation(BaseModel):
 
 
 class StatLinks(Links):
-    most_recommended_target: Recommendation
+    most_recommended_target: Optional[Recommendation] = None
 
 
 class JourneyEnergyLeg(BaseModel):
@@ -194,6 +194,7 @@ class EnergyByJourney(BaseModel):
     """Energy expenditure broken down by journey legs."""
     total: int
     data: List[JourneyEnergyLeg] = []
+    average_energy_per_unique_token: Optional[float] = None
 
 
 class JourneyEnergyGainsByMode(BaseModel):
@@ -272,6 +273,9 @@ class EquipmentPerRecommendation(BaseModel):
     moto: int = 0
     car: int = 0
     ev: int = 0
+    inter: int = 0
+
+    total: int = 0
 
 
 class EquipmentRecommendationMatrix(BaseModel):

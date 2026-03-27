@@ -18,7 +18,12 @@
   <div>
     <p>{{ t(`stats.emissions_reco_share.texts.default`) }}</p>
     <p v-if="biggestEmission">
-      {{ t(`stats.emissions_reco_share.texts.specific`, { percentage: toMaxDecimals(biggestEmission.percentage || 0, 2), mode: keyLabel(biggestEmission.mode) }) }}
+      {{
+        t(`stats.emissions_reco_share.texts.specific`, {
+          percentage: toMaxDecimals(biggestEmission.percentage || 0, 2),
+          mode: keyLabel(biggestEmission.mode),
+        })
+      }}
     </p>
   </div>
 </template>
@@ -27,7 +32,7 @@
 import ECharts from 'vue-echarts'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { CustomChart } from 'echarts/charts'
+import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { initOptions, updateOptions } from './commons'
 import {
@@ -42,7 +47,7 @@ import type { CallbackDataParams } from 'echarts/types/dist/shared'
 
 const { t, locale } = useI18n()
 const stats = useStats()
-use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   reco: string
@@ -53,8 +58,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface PercentageEmission {
-    mode: string
-    percentage: number
+  mode: string
+  percentage: number
 }
 
 const option = ref<EChartsOption>({})
@@ -143,15 +148,13 @@ function initChartOptions() {
       },
     },
     tooltip: {
-      trigger: "item",
+      trigger: 'item',
       formatter: function (params: CallbackDataParams | CallbackDataParams[]) {
         const p = Array.isArray(params) ? params[0] : params
         if (!p) return ''
 
-        const val = new Intl.NumberFormat().format(
-          toMaxDecimals(p.value as number, 2) || 0
-        );
-        return `${p.name}<br/><b>${val} kgCO₂eq</b> (${p.percent}%)`;
+        const val = new Intl.NumberFormat().format(toMaxDecimals(p.value as number, 2) || 0)
+        return `${p.name}<br/><b>${val} kgCO₂eq</b> (${p.percent}%)`
       },
     },
     legend: {
