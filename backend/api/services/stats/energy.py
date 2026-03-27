@@ -1,10 +1,8 @@
-from dataclasses import Field
-
 import pandas as pd
 import numpy as np
 from api.models.query import EnergyExpenditure, JourneyEnergyGains, JourneyEnergyGainsByMode, JourneyEnergyLeg, EnergyByJourney, JourneyEnergyStats
 from api.services.stats.commons import BaseStatsService, MODES
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # MET values (Metabolic Equivalent of Task) in kcal/hr for 70kg average person
 # Based on Compendium of Physical Activities: https://pacompendium.com/adult-compendium/
@@ -595,41 +593,6 @@ class EnergyService(BaseStatsService):
                 gains_per_mode_dict[leg.reco_leg.mode] = gains_per_mode_dict.get(leg.reco_leg.mode, 0) + leg.gain()
         
         gains_per_mode = [JourneyEnergyGainsByMode(mode=mode, added_kcal=gain) for mode, gain in gains_per_mode_dict.items()]
-        
-        """
-        # Aggregate energy by mode for current and reco
-        current_energy_by_mode = {}
-        current_energy_per_token = {}
-        for leg in current.data:
-            energy = energy_per_journey(leg.energy_kcal, leg.days)
-            current_energy_by_mode[leg.mode] = current_energy_by_mode.get(leg.mode, 0) + energy
-            current_energy_per_token[leg.token] = current_energy_per_token.get(leg.token, 0) + energy
-                
-        current_above_who_count = sum(1 for energy in current_energy_per_token.values() if energy >= who_recommendation)
-                
-        reco_energy_by_mode = {}
-        reco_energy_per_token = {}
-        for leg in reco.data:
-            energy = energy_per_journey(leg)
-            reco_energy_by_mode[leg.mode] = reco_energy_by_mode.get(leg.mode, 0) + energy
-            reco_energy_per_token[leg.token] = reco_energy_per_token.get(leg.token, 0) + energy
-        
-        reco_above_who_count = sum(1 for energy in reco_energy_per_token.values() if energy >= who_recommendation)
-
-        # Calculate gains per mode
-        gains_per_mode = []
-        all_modes = set(current_energy_by_mode.keys()) | set(reco_energy_by_mode.keys())
-
-        for mode in all_modes:
-            current_energy = current_energy_by_mode.get(mode, 0)
-            reco_energy = reco_energy_by_mode.get(mode, 0)
-            gain = reco_energy - current_energy
-
-            gains_per_mode.append(JourneyEnergyGainsByMode(
-                mode=mode,
-                added_kcal=gain
-            ))
-        """
 
         total_gain = sum(g.added_kcal for g in gains_per_mode)
         

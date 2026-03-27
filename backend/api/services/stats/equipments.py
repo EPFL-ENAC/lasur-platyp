@@ -13,6 +13,13 @@ class EquipmentsService(BaseStatsService):
         df = self._get_records_v2()
 
         total = len(df)
+
+        if total == 0:
+            return EquipmentsStats(
+                total=0,
+                equipment_recommendation_matrix=EquipmentRecommendationMatrix()
+            )
+        
         equipment_recommendation_matrix = self._compute_equipments_reco_matrix(df)
 
         return EquipmentsStats(

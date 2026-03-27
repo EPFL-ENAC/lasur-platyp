@@ -33,13 +33,13 @@
       :src="
         t(`stats.emissions_${props.type}.texts.specific`, {
           firstPercent: toMaxDecimals(
-            emissionItemsPro.first.emissions / emissionItemsPro.total || 0,
+            emissionItemsPro.first.emissions / emissionItemsPro.total * 100,
             2,
           ),
           firstMode: keyLabel(emissionItemsPro.first.mode),
           firstEmissions: toMaxDecimals(emissionItemsPro.first.emissions || 0, 2),
           secondPercent: toMaxDecimals(
-            emissionItemsPro.second.emissions / emissionItemsPro.total || 0,
+            emissionItemsPro.second.emissions / emissionItemsPro.total * 100,
             2,
           ),
           secondMode: keyLabel(emissionItemsPro.second.mode),
@@ -120,6 +120,10 @@ const emissionItems = computed(() => {
   const combinedJourneys = (carEmissions?.journeys || 0) + (motoEmissions?.journeys || 0)
   const combinedEmissions = (carEmissions?.emissions || 0) + (motoEmissions?.emissions || 0)
 
+  if (allJourneys === 0 || allEmissions === 0) {
+    return null
+  }
+
   return {
     carMotoJourneysPercentage: (combinedJourneys / allJourneys) * 100,
     carMotoEmissionsPercentage: (combinedEmissions / allEmissions) * 100,
@@ -152,7 +156,7 @@ const emissionItemsPro = computed(() => {
     first: planeEmissions,
     second: carEmissions,
     total: totalEmissions,
-    remaining: emissions.slice(1).reduce((sum, item) => sum + item.emissions, 0), // Ask : slice from 1 or 2 ?
+    remaining: totalEmissions - planeEmissions.emissions // purpusely not carEmissions.emissions
   }
 })
 
