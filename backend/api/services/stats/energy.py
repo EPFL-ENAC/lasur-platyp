@@ -227,24 +227,21 @@ class EnergyService(BaseStatsService):
         self, 
         journey_df: pd.DataFrame, 
         met_factors: dict[str, float],
-        frequency_weeks: int = 45
     ) -> pd.DataFrame:
         """
         Calculate energy expenditure for journeys.
         
-        Formula: kcal = MET_value * (travel_time_minutes / 60) * days * 2 * frequency_weeks / 5
+        Formula: kcal = MET_value * (travel_time_minutes / 60) * days * 2 / 5
         Where:
         - MET_value: kcal/hr for the mode
         - travel_time/60: converts minutes to hours
         - days: frequency per week
         - * 2: round trip
-        - * frequency_weeks: weeks per year (default 45)
         - / 5: average per weekday
         
         Args:
             journey_df: DataFrame with journey attributes
             met_factors: Dictionary mapping mode names to MET values
-            frequency_weeks: Number of weeks per year (default 45)
             
         Returns:
             DataFrame with added 'energy_kcal' column
@@ -259,7 +256,7 @@ class EnergyService(BaseStatsService):
             journey_df['met_factor'] *
             journey_df['time_fraction'] *
             journey_df['travel_time'] / 60 *  # minutes to hours
-            journey_df['days'] * 2 * frequency_weeks / 5
+            journey_df['days'] * 2 / 5
         )
         
         return journey_df
@@ -388,11 +385,11 @@ class EnergyService(BaseStatsService):
         reco_df['met_factor'] = reco_df['reco_mode'].map(MODE_MET).fillna(0)
         
         # Step 4: Calculate energy
-        # Formula: MET * travel_time/60 * total_days * 2 * 45 / 5
+        # Formula: MET * travel_time/60 * total_days * 2 / 5
         reco_df['energy_kcal'] = (
             reco_df['met_factor'] *
             reco_df['travel_time'] / 60 *
-            reco_df['total_days'] * 2 * 45 / 5
+            reco_df['total_days'] * 2 / 5
         )
         
         # Step 5: Aggregate by recommended mode
@@ -529,7 +526,7 @@ class EnergyService(BaseStatsService):
             
             # Calculate energy for this recommendation
             met_factor = MODE_MET.get(reco_mode_normalized, 0)
-            energy_kcal = met_factor * travel_time / 60 * total_days * 2 * 45 / 5
+            energy_kcal = met_factor * travel_time / 60 * total_days * 2 / 5
             
             # Create a journey leg for each journey day combination
             # We'll create one synthetic leg per token representing their recommended mode
