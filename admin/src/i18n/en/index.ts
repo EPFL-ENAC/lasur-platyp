@@ -65,6 +65,36 @@ export default {
       workplaces_list: 'List of known workplaces',
       show_isochrone: 'Show isochrone',
     },
+    email_template: {
+      buttonText: 'Email template',
+      modalTitle: 'Email template for {campaign}',
+      contactEmail: 'Contact email',
+      contactName: 'Contact name',
+      surveyLink: 'Survey link',
+      defaultContactEmail: 'CONTACT_EMAIL',
+      defaultContactName: 'CONTACT_NAME',
+      template: `Dear colleagues,
+
+Mobilyse is a tool developed by the Modus Foundation and EPFL to help organisations tailor the help they provide to their employees for daily mobility. We wish to use this tool to understand how best to support you in your daily mobility, whether for commuting or for business trips. 🚲🚃🚶🚈 To do so, we need to better understand your travel habits and aspirations and therefore invite you to participate in the following survey. It will take no more than 10 minutes and will provide you with travel suggestions straight away:
+
+[{surveyLink}]({surveyLink})
+
+Why take part?
+
+- Receive travel recommendations tailored to your situation (available transport services, distances, constraints, your opinion on modes of transport, your priorities, etc.) ✅
+- Find out about the mobility support measures your organisation provides for encouraging sustainable mobility 🎯
+- Share your opinion on the support provided for your mobility, and help improve it 🙋
+- Contribute to improving a free, open-access tool 🎁
+
+The survey is anonymous and no personal data will be recorded. 🔐 Please note that you can select the language (FR/EN) in the top right-hand corner. To find out more about mobilyse, please visit: https://modus-ge.ch/project/mobilyse/.
+
+Thank you for your valuable contribution ! If you have any questions, please contact: [{contactEmail}](mailto:{contactEmail}).
+
+{contactName}`,
+      copyTemplate: 'Copy email template',
+      copyTemplateSuccess: 'Email template copied to clipboard',
+      copyTemplateError: 'Error copying email template. Please try again.',
+    },
   },
   docs: {
     title: 'Documentation',

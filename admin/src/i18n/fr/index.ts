@@ -66,6 +66,36 @@ export default {
       workplaces_list: 'Liste des lieux de travail connus',
       show_isochrone: "Afficher l'isochrone",
     },
+    email_template: {
+      buttonText: "Modèle d'email",
+      modalTitle: "Modèle d'email pour {campaign}",
+      contactEmail: 'Contact email',
+      contactName: 'Contact name',
+      surveyLink: 'Survey link',
+      defaultContactEmail: 'EMAIL_DE_CONTACT',
+      defaultContactName: 'NOM_DE_CONTACT',
+      template: `Chères collaboratrices, chers collaborateurs,
+
+Mobilyse est un outil proposé par la Fondation Modus et l'EPFL pour aider les organisations à adapter les aides à la mobilité proposées aux collaboratrices et collaborateurs. Nous utilisons aujourd'hui cet outil pour comprendre comment vous accompagner au mieux dans votre mobilité quotidienne, que ce soit vos déplacements domicile-travail ou vos déplacements professionnels (dans le cadre de vos fonctions). 🚲🚃🚶🚈 Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10 minutes maximum et vous l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
+
+[{surveyLink}]({surveyLink})
+
+Pourquoi participer ?
+
+- Obtenir des recommandations pour vos déplacements basées sur votre situation (desserte en transports, distances, contraintes, votre avis sur les modes de transport, vos priorités…) ✅
+- Connaître les aides adaptées que votre organisation met en place pour vous 🎯
+- Donner votre avis sur l’accompagnement proposé pour votre mobilité, et aider ainsi à le faire évoluer 🙋
+- Contribuer à l’amélioration d’un outil gratuit et open access 🎁
+
+Le questionnaire est anonyme et aucune donnée personnelle n’est enregistrée. 🔐 A noter, vous pouvez sélectionner la langue (FR/EN) en haut à droite. Pour en savoir plus sur mobilyse, vous pouvez vous rendre ici : https://modus-ge.ch/project/mobilyse/.
+
+Nous vous remercions pour votre précieuse collaboration ! En cas de question, n’hésitez pas à contacter : [{contactEmail}](mailto:{contactEmail}).
+
+{contactName}`,
+      copyTemplate: "Copier le modèle d'email",
+      copyTemplateSuccess: "Modèle d'email copié dans le presse-papiers",
+      copyTemplateError: "Erreur lors de la copie du modèle d'email. Veuillez réessayer.",
+    },
   },
   docs: {
     title: 'Documentation',

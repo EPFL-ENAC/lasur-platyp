@@ -57,7 +57,7 @@
       </template>
       <template v-slot:body-cell-token="props">
         <q-td :props="props">
-          <a :href="`${collectUrl}/go/${props.row.token}`" target="_blank"
+          <a :href="makeSurveyLink(props.row.token!)" target="_blank"
             >{{ props.row.token }} <q-icon name="open_in_new"></q-icon
           ></a>
           <q-btn
@@ -127,8 +127,8 @@ import ParticipantDialog from 'src/components/ParticipantDialog.vue'
 import { DefaultAlignment, type Query } from 'src/components/models'
 import { makePaginationRequestHandler } from 'src/utils/pagination'
 import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import { collectUrl } from 'src/boot/api'
 import Papa from 'papaparse'
+import { makeSurveyLink } from 'src/utils/links'
 
 const { t } = useI18n()
 const participantsStore = useParticipants()
@@ -283,7 +283,7 @@ function onRemove() {
 
 function onTokenCopy(item: Participant) {
   if (!item.token) return
-  copyToClipboard(`${collectUrl}/go/${item.token}`)
+  copyToClipboard(makeSurveyLink(item.token))
   notifyInfo(t('link_copied'))
 }
 
@@ -308,7 +308,7 @@ function onDownload() {
         result.data.map((p: Participant) => ({
           identifier: p.identifier,
           token: p.token,
-          url: `${collectUrl}/go/${p.token}`,
+          url: makeSurveyLink(p.token!),
           status: p.status,
           age_class: p.data?.age_class,
           employment_rate: p.data?.employment_rate,
