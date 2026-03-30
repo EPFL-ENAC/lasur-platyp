@@ -11,6 +11,9 @@ export default {
     administrators: 'Administrateurs',
     administrators_hint:
       "L'adresse email des administrateurs pour cette organisation (tapez Entrée pour ajouter une entrée).",
+    mobility_advisors: 'Conseiller·ère mobilité',
+    mobility_advisors_hint:
+      "L'adresse email des conseiller·ère·s mobilité pour cette organisation (tapez Entrée pour ajouter une entrée).",
     contact_name: 'Nom du contact',
     contact_name_hint: 'Le nom de la personne de contact pour la mobilité dans cette organisation.',
     contact_email: 'Email du contact',

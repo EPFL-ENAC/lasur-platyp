@@ -30,6 +30,19 @@
             new-value-mode="add-unique"
             class="q-mb-md"
           />
+          <q-select
+            filled
+            v-model="selected.mobility_advisors"
+            :label="t('company.mobility_advisors')"
+            :hint="t('company.mobility_advisors_hint')"
+            use-input
+            use-chips
+            multiple
+            hide-dropdown-icon
+            input-debounce="0"
+            new-value-mode="add-unique"
+            class="q-mb-md"
+          />
           <q-input
             filled
             v-model="selected.contact_name"

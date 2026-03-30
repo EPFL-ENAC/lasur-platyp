@@ -122,6 +122,11 @@ const items: FieldItem[] = [
     label: 'company.administrators',
     format: (company: Company) => company.administrators?.join(', '),
   },
+  {
+    field: 'mobility_advisors',
+    label: 'company.mobility_advisors',
+    format: (company: Company) => company.mobility_advisors?.join(', '),
+  },
 ]
 
 const items2: FieldItem[] = [
