@@ -44,6 +44,18 @@
       />
     </div>
     <div class="item">
+      <reco-share-chart reco="reco_mod" :height="height" />
+    </div>
+    <div class="item">
+      <journey-energy-chart type="current" :height="height" />
+    </div>
+    <div class="item">
+      <journey-energy-chart type="reco" :height="height" />
+    </div>
+    <div class="item">
+      <journey-energy-share-chart :height="height" />
+    </div>
+    <div class="item">
       <frequencies-stack-chart
         type="freq_mod_pro"
         :groups="['local', 'national', 'europe', 'inter']"
@@ -65,6 +77,23 @@
     <div class="item">
       <links-chart type="mod_reco_pro" :height="height" />
     </div>
+    <div class="item">
+      <reco-emissions-chart
+        type="freq_mod_pro"
+        reco="reco_mod_pro"
+        :yaxis="t('stats.emissions_reco_mod.yaxis')"
+        :height="height"
+      />
+    </div>
+    <div class="item">
+      <behavior-change-chart :height="height" type="levers" />
+    </div>
+    <div class="item">
+      <behavior-change-chart :height="height" type="motivation" />
+    </div>
+    <div class="item">
+      <equipment-recommendation-matrix-chart :height="height" />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -73,8 +102,13 @@ import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.v
 import LocationChart from 'src/components/charts/LocationChart.vue'
 import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
 import RecoEmissionsChart from 'src/components/charts/RecoEmissionsChart.vue'
+import RecoShareChart from 'src/components/charts/RecoShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
+import JourneyEnergyChart from './JourneyEnergyChart.vue'
+import JourneyEnergyShareChart from './JourneyEnergyShareChart.vue'
+import BehaviorChangeChart from './BehaviorChangeChart.vue'
+import EquipmentRecommendationMatrixChart from './EquipmentRecommendationMatrixChart.vue'
 
 interface Props {
   height: number

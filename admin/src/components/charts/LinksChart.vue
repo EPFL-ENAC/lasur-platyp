@@ -14,6 +14,15 @@
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
+
+  <div>
+    <p>{{ t(`stats.${props.type}.texts.default`) }}</p>
+    <p v-if="mostRecommendedTarget">
+      {{
+        t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
+      }}
+    </p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +38,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Links } from 'src/models'
+import type { StatLinks } from 'src/models'
 import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
@@ -67,6 +76,14 @@ onMounted(() => {
   initChartOptions()
 })
 
+const mostRecommendedTarget = computed(() => {
+  if (total.value < 5) return null
+  const links = stats.links?.[props.type]
+  if (!links) return null
+
+  return links.most_recommended_target
+})
+
 function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {
     return 'N/A'
@@ -86,16 +103,17 @@ function initChartOptions() {
     return
   }
 
-  const links = stats.links[props.type] as Links
+  const links = stats.links[props.type] as StatLinks
   if (links.data.length === 0) {
     return
   }
-  total.value = links.total || 0
+  total.value = links.total ?? 0
   const linksData = links.data.map((item) => ({
     source: keyLabel(item.source),
     target: keyLabel(item.target) + recoSuffix,
     value: item.value,
   }))
+
   const nodes = new Set<string>()
   links.data.forEach((item) => {
     nodes.add(item.source)

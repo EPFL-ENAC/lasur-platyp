@@ -1,4 +1,16 @@
-import type { CampaignStats, Emissions, Frequencies, H3Heatmap, Links, Stats } from 'src/models'
+import {
+  type BehaviorChangeStats,
+  makeDefaultBehaviorChangeStats,
+  makeDefaultJourneyEnergyStats,
+  type CampaignStats,
+  type Emissions,
+  type Frequencies,
+  type H3Heatmap,
+  type JourneyEnergyStats,
+  type StatLinks,
+  type Stats,
+  type EquipmentsStats,
+} from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
 
@@ -9,10 +21,13 @@ export const useStats = defineStore('stats', () => {
     {} as { [key: string]: Frequencies },
   )
   const emissions = ref<{ [key: string]: Emissions[] }>({} as { [key: string]: Emissions[] })
-  const links = ref<{ [key: string]: Links }>({} as { [key: string]: Links })
+  const links = ref<{ [key: string]: StatLinks }>({} as { [key: string]: StatLinks })
   const loading = ref(false)
   const homeLocationsHeatmap = ref<H3Heatmap>({})
   const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
+  const journeyEnergyStats = ref<JourneyEnergyStats>({} as JourneyEnergyStats)
+  const behaviorChange = ref<BehaviorChangeStats>({} as BehaviorChangeStats)
+  const equipmentsStats = ref<EquipmentsStats | null>(null)
 
   async function loadStats(filter: Filter | undefined = undefined) {
     loading.value = true
@@ -46,15 +61,27 @@ export const useStats = defineStore('stats', () => {
           frequencies.value['freq_mod'] = stats.mode_frequencies || []
           emissions.value['freq_mod'] = stats.mode_emissions || []
           emissions.value['reco_mod'] = stats.reco_mode_emissions || []
-          links.value['mod_reco'] = stats.mode_links || { total: 0, data: [] }
+          links.value['mod_reco'] = stats.mode_links || {
+            total: 0,
+            data: [],
+            most_recommended_target: null,
+          }
           stats.pro_frequencies?.forEach((freq) => {
             frequencies.value[freq.field] = freq
           })
           frequencies.value['freq_mod_pro'] = stats.pro_mode_frequencies || []
           emissions.value['freq_mod_pro'] = stats.pro_mode_emissions || []
-          links.value['mod_reco_pro'] = stats.pro_mode_links || { total: 0, data: [] }
+          emissions.value['reco_mod_pro'] = stats.pro_reco_mode_emissions || []
+          links.value['mod_reco_pro'] = stats.pro_mode_links || {
+            total: 0,
+            data: [],
+            most_recommended_target: null,
+          }
           homeLocationsHeatmap.value = stats.home_location_heatmap || {}
           workplaceLocations.value = stats.workplace_locations || []
+          journeyEnergyStats.value = stats.journey_energy_stats || makeDefaultJourneyEnergyStats()
+          behaviorChange.value = stats.behavior_change || makeDefaultBehaviorChangeStats()
+          equipmentsStats.value = stats.equipments_stats || null
         })
         .catch((err) => {
           console.error(err)
@@ -88,10 +115,13 @@ export const useStats = defineStore('stats', () => {
 
   return {
     frequencies,
+    behaviorChange,
     emissions,
     links,
     homeLocationsHeatmap,
     workplaceLocations,
+    journeyEnergyStats,
+    equipmentsStats,
     loading,
     loadStats,
     getCampaignStats,

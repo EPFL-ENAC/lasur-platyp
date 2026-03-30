@@ -160,6 +160,15 @@ class Links(BaseModel):
     data: List[Link] = []
 
 
+class Recommendation(BaseModel):
+    target: str = ""
+    value: int = 0
+
+
+class StatLinks(Links):
+    most_recommended_target: Optional[Recommendation] = None
+
+
 class JourneyEnergyLeg(BaseModel):
     """Energy expenditure for a single journey leg (per person)."""
     token: str
@@ -185,12 +194,34 @@ class EnergyByJourney(BaseModel):
     """Energy expenditure broken down by journey legs."""
     total: int
     data: List[JourneyEnergyLeg] = []
+    average_energy_per_unique_token: Optional[float] = None
+
+
+class JourneyEnergyGainsByMode(BaseModel):
+    """Energy gain (reduction) thanks to a specific mode if recommendations were followed."""
+    mode: str
+    added_kcal: float
+
+
+class JourneyEnergyGains(BaseModel):
+    """Energy gain (reduction) for a journey leg if recommendations were followed."""
+    total: float
+    gains_per_mode: List[JourneyEnergyGainsByMode] = []
+    current_above_who_count: int = 0
+    reco_above_who_count: int = 0
+
+
+class JourneyEnergyStats(BaseModel):
+    """Complete energy expenditure statistics."""
+    current: EnergyByJourney
+    reco: EnergyByJourney
+    gains: JourneyEnergyGains
+    
 
 
 class BehaviorChangeLever(BaseModel):
     """Individual lever/measure category that helps adopt recommendations."""
     category: str  # finance, flexibility, collective, environment, other
-    label: str  # French display label
     count: int
     percentage: float  # stored with 2 decimals
 
@@ -198,29 +229,69 @@ class BehaviorChangeLever(BaseModel):
 class BehaviorChangeMotivation(BaseModel):
     """Individual motivation level for adopting recommendations."""
     level: int  # 1-5
-    label: str  # French label (e.g., "Très motivé·e")
     count: int
     percentage: float  # stored with 2 decimals
 
 
-class BehaviorChangeByMode(BaseModel):
+class BehaviorChangeByModeBase(BaseModel):
     """Behavior change stats for a specific mode or aggregated group."""
     mode: str  # e.g., "velo", "train", "Autres", "Total"
     response_count: int  # number of people who answered this question type
-    levers: List[BehaviorChangeLever] = []  # empty if this is motivation-only data
-    motivation: List[BehaviorChangeMotivation] = []  # empty if this is lever-only data
+
+
+class BehaviorChangeByModeLever(BehaviorChangeByModeBase):
+    levers: List[BehaviorChangeLever] = []
+
+class BehaviorChangeByModeMotivation(BehaviorChangeByModeBase):
+    motivations: List[BehaviorChangeMotivation] = []
+
+
+class BehaviorChangeStatsBase(BaseModel):
+    total_responses: int
+    aggregation_type: str # "all_aggregated", "mode_split", or "mixed"
+
+class BehaviorChangeStatsLever(BehaviorChangeStatsBase):
+    by_mode_levers: List[BehaviorChangeByModeLever]
+
+class BehaviorChangeStatsMotivation(BehaviorChangeStatsBase):
+    by_mode_motivation: List[BehaviorChangeByModeMotivation] = []
 
 
 class BehaviorChangeStats(BaseModel):
     """Complete behavior change statistics."""
-    total_lever_responses: int  # total people who answered lever questions
-    total_motivation_responses: int  # total people who answered motivation question
-    lever_aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
-    motivation_aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
-    by_mode_levers: List[BehaviorChangeByMode]
-    by_mode_motivation: List[BehaviorChangeByMode]
+    levers: BehaviorChangeStatsLever
+    motivation: BehaviorChangeStatsMotivation
     other_levers: List[str] = []  # free-text responses from all modes
 
+
+class EquipmentPerRecommendation(BaseModel):
+    bike: int = 0
+    ebike: int = 0
+    upt_subs: int = 0
+    train_subs: int = 0
+    mob_subs: int = 0
+    moto: int = 0
+    car: int = 0
+    ev: int = 0
+    inter: int = 0
+
+    total: int = 0
+
+
+class EquipmentRecommendationMatrix(BaseModel):
+    marche: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    velo: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    vae: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    cargo: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    train: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    tpu: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    covoit: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    elec: EquipmentPerRecommendation = EquipmentPerRecommendation()
+    inter: EquipmentPerRecommendation = EquipmentPerRecommendation()
+
+class EquipmentsStats(BaseModel):
+    total: int
+    equipment_recommendation_matrix: EquipmentRecommendationMatrix
 
 class Stats(BaseModel):
     total: int = 0
@@ -229,20 +300,21 @@ class Stats(BaseModel):
     mode_emissions: Optional[List[Emissions]] = None
     reco_mode_emissions: Optional[List[Emissions]] = None
     mode_emission_reductions: Optional[List[EmissionReductions]] = None
-    mode_links: Optional[Links] = None
+    mode_links: Optional[StatLinks] = None
     pro_frequencies: Optional[List[Frequencies]] = None
     pro_mode_frequencies: Optional[List[Frequencies]] = None
     pro_mode_emissions: Optional[List[Emissions]] = None
+    pro_reco_mode_emissions: Optional[List[Emissions]] = None
     pro_mode_emission_reductions: Optional[List[EmissionReductions]] = None
-    pro_mode_links: Optional[Links] = None
+    pro_mode_links: Optional[StatLinks] = None
     home_location_heatmap: Optional[Dict[str, int]] = None
     workplace_locations: Optional[List[dict]] = None
     workplace_location_heatmap: Optional[Dict[str, int]] = None
     mode_energy: Optional[List[EnergyExpenditure]] = None
     reco_mode_energy: Optional[List[EnergyExpenditure]] = None
-    journey_energy_current: Optional[EnergyByJourney] = None
-    journey_energy_reco: Optional[EnergyByJourney] = None
+    journey_energy_stats: Optional[JourneyEnergyStats] = None
     behavior_change: Optional[BehaviorChangeStats] = None
+    equipments_stats: Optional[EquipmentsStats] = None
 
 
 class GeoWithin(BaseModel):

@@ -14,6 +14,17 @@
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
+
+  <div>
+    <q-markdown
+      v-if="emissionItemsLabels"
+      :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"
+    />
+    <q-markdown
+      v-else-if="emissionItemsProLabels"
+      :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsProLabels)"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +41,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { MODE_COLORS } from './commons'
+import { toMaxDecimals } from 'src/utils/numbers'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -64,6 +76,89 @@ watch([() => props.height, locale], () => {
 
 onMounted(() => {
   initChartOptions()
+})
+
+const globalAnswersThreshold = 10
+const perModeAnswersThreshold = 3
+
+const emissionItems = computed(() => {
+  if (props.type.includes('pro')) {
+    return null
+  }
+  if (!stats.emissions || !stats.emissions[props.type]) return null
+  if (total.value < globalAnswersThreshold) return null
+
+  const emissions = stats.emissions[props.type] || []
+
+  const carEmissions = emissions.find((item) => item.mode === 'car')
+  const motoEmissions = emissions.find((item) => item.mode === 'moto')
+  const allJourneys = emissions.reduce((sum, item) => sum + item.journeys, 0)
+  const allEmissions = emissions.reduce((sum, item) => sum + item.emissions, 0)
+  const combinedJourneys = (carEmissions?.journeys || 0) + (motoEmissions?.journeys || 0)
+  const combinedEmissions = (carEmissions?.emissions || 0) + (motoEmissions?.emissions || 0)
+
+  if (allJourneys === 0 || allEmissions === 0) {
+    return null
+  }
+
+  return {
+    carMotoJourneysPercentage: (combinedJourneys / allJourneys) * 100,
+    carMotoEmissionsPercentage: (combinedEmissions / allEmissions) * 100,
+  }
+})
+
+const emissionItemsLabels = computed(() => {
+  const ei = emissionItems.value
+  if (!ei) return null
+
+  return {
+    carMotoJourneysPercentage: toMaxDecimals(ei.carMotoJourneysPercentage || 0, 2),
+    carMotoEmissionsPercentage: toMaxDecimals(ei.carMotoEmissionsPercentage || 0, 2),
+  }
+})
+
+const emissionItemsPro = computed(() => {
+  if (!props.type.includes('pro')) {
+    return null
+  }
+  if (!stats.emissions || !stats.emissions[props.type]) return null
+  if (total.value < globalAnswersThreshold) return null
+
+  const emissions = stats.emissions[props.type] || []
+
+  const planeEmissions = emissions.find((item) => item.mode === 'plane')
+  const carEmissions = emissions.find((item) => item.mode === 'car')
+  if (!planeEmissions || !carEmissions) return null
+  if (
+    planeEmissions.total < perModeAnswersThreshold ||
+    carEmissions.total < perModeAnswersThreshold
+  ) {
+    return null
+  }
+
+  const totalEmissions = emissions.reduce((sum, item) => sum + item.emissions, 0)
+  if (totalEmissions === 0) return null
+
+  return {
+    first: planeEmissions,
+    second: carEmissions,
+    total: totalEmissions,
+    remaining: totalEmissions - planeEmissions.emissions // purpusely not carEmissions.emissions
+  }
+})
+
+const emissionItemsProLabels = computed(() => {
+  const eip = emissionItemsPro.value
+  if (!eip) return null
+
+  return {
+    firstPercent: toMaxDecimals(eip.first.emissions / eip.total * 100, 2),
+    firstMode: keyLabel(eip.first.mode),
+    firstEmissions: toMaxDecimals(eip.first.emissions || 0, 2),
+    secondPercent: toMaxDecimals(eip.second.emissions / eip.total * 100, 2),
+    secondMode: keyLabel(eip.second.mode),
+    remainingEmissions: toMaxDecimals(eip.remaining || 0, 2),
+  }
 })
 
 function keyLabel(key: string) {

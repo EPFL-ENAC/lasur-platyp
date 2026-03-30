@@ -1,5 +1,5 @@
 import pandas as pd
-from api.models.query import Link, Links
+from api.models.query import Link, Links, Recommendation, StatLinks
 from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO_V1
 
 
@@ -8,7 +8,7 @@ class LinksService(BaseStatsService):
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
 
-    def compute_mode_reco_links(self) -> Links:
+    def compute_mode_reco_links(self) -> StatLinks:
         """Compute all mode recommendation links from a DataFrame of records."""
         # v1: legacy data version
         df_v1 = self._get_records_v1()
@@ -21,9 +21,9 @@ class LinksService(BaseStatsService):
             links_v2 = self._compute_mode_reco_links_v2(df_v2)
 
         # merge links of same source and target
-        return self._merge_links(links_v1, links_v2)
+        return self._compute_stats_for_links(self._merge_links(links_v1, links_v2))
 
-    def compute_mode_reco_pro_links(self) -> Links:
+    def compute_mode_reco_pro_links(self) -> StatLinks:
         """Compute all mode recommendation links from a DataFrame of records."""
         # v1: legacy data version
         df_v1 = self._get_records_v1()
@@ -36,7 +36,7 @@ class LinksService(BaseStatsService):
             links_v2 = self._compute_mode_reco_pro_links_v2(df_v2)
 
         # merge links of same source and target
-        return self._merge_links(links_v1, links_v2)
+        return self._compute_stats_for_links(self._merge_links(links_v1, links_v2))
 
     #
     # Internal functions
@@ -172,3 +172,27 @@ class LinksService(BaseStatsService):
             data=merged_data
         )
         return merged_links
+    
+    def _compute_stats_for_links(self, links: Links) -> StatLinks:
+        value_per_target: dict[str, int] = {}
+        for link in links.data:
+            value_per_target[link.target] = value_per_target.get(link.target, 0) + link.value
+        
+        if not value_per_target:
+            return StatLinks(
+                data=links.data,
+                total=links.total,
+                most_recommended_target=None,
+            )
+
+        most_recommended_target = max(value_per_target, key=value_per_target.get)
+        most_recommended = Recommendation(
+            target=most_recommended_target,
+            value=value_per_target[most_recommended_target]
+        )
+        
+        return StatLinks(
+            data=links.data,
+            total=links.total,
+            most_recommended_target=most_recommended
+        )

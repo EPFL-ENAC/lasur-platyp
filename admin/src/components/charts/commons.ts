@@ -37,3 +37,19 @@ export const MODE_COLORS: { [key: string]: string } = {
   boat: '#22cdf6',
   default: '#ccc',
 }
+
+export const CATEGORY_COLORS: { [key: string]: string } = {
+  collective: '#7030a0',
+  finance: '#caad2e',
+  environment: '#357165',
+  flexibility: '#22cdf6',
+  default: '#ccc',
+}
+
+export const MOTIVATION_COLORS: { [key: string]: string } = {
+  1: '#ff0000',
+  2: '#ff8800',
+  3: '#ffff00',
+  4: '#aaff00',
+  5: '#00c000',
+}
