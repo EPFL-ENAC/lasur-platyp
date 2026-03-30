@@ -2,13 +2,15 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/api'
 import type { Record, CampaignInfo } from 'src/models'
+import { hashEmail } from 'src/utils/hash'
 
 // Current version of the form data structure
 export const VERSION = '2.0.0'
 
 export const useCollector = defineStore('collector', () => {
   const info = ref<CampaignInfo>({} as CampaignInfo)
-  const token = ref<string | null>(null)
+  // const token = ref<string | null>(null)
+  const responseIdInCampaign = ref<number | null>(null)
   const loading = ref<boolean>(false)
 
   async function loadInfo(tkOrSlug: string): Promise<CampaignInfo> {
@@ -20,12 +22,14 @@ export const useCollector = defineStore('collector', () => {
   }
 
   async function load(tkOrSlug: string): Promise<Record> {
-    token.value = null
+    // token.value = null
     loading.value = true
+    responseIdInCampaign.value = null
+
     return api
       .get(`/collect/record/${tkOrSlug}`)
       .then((response) => {
-        token.value = tkOrSlug
+        // token.value = tkOrSlug
         const cr = response.data
         const data = {
           version: VERSION,
@@ -63,6 +67,9 @@ export const useCollector = defineStore('collector', () => {
 
           ...cr.data,
         }
+
+        responseIdInCampaign.value = cr.response_id_in_campaign ?? null
+
         return {
           token: cr.token,
           data,
@@ -73,17 +80,25 @@ export const useCollector = defineStore('collector', () => {
       })
   }
 
-  async function save(tkOrSlug: string, record: Record) {
-    token.value = null
-    //loading.value = true
-    return api.post(`/collect/record/${tkOrSlug}`, record).finally(() => {
-      //loading.value = false
-    })
+  async function save(tkOrSlug: string, record: Record, plainEmail: string | null = null) {
+    // token.value = null
+    // loading.value = true
+    responseIdInCampaign.value = null
+
+    if (plainEmail) {
+      record.email_hash = await hashEmail(plainEmail)
+    }
+    
+    const response = await api.post(`/collect/record/${tkOrSlug}`, record)
+    responseIdInCampaign.value = response.data.response_id_in_campaign ?? null
+    return response.data
   }
 
   async function loadTypo(record: Record, locale: string) {
-    token.value = null
+    // token.value = null
     loading.value = true
+    responseIdInCampaign.value = null
+
     return api
       .get(`/collect/record/${record.token}/typo`, { params: { locale } })
       .then((response) => {
@@ -95,11 +110,14 @@ export const useCollector = defineStore('collector', () => {
   }
 
   async function saveComments(record: Record) {
-    token.value = null
+    // token.value = null
     loading.value = true
+    responseIdInCampaign.value = null
+
     return api
       .put(`/collect/record/${record.token}/comments`, { comments: record.data.comments })
       .then((response) => {
+        responseIdInCampaign.value = response.data.response_id_in_campaign ?? null
         return response.data
       })
       .finally(() => {
@@ -109,8 +127,9 @@ export const useCollector = defineStore('collector', () => {
 
   return {
     info,
-    token,
+    // token,
     loading,
+    responseId: responseIdInCampaign,
     loadInfo,
     load,
     save,

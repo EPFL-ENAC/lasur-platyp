@@ -165,10 +165,11 @@ async function reset() {
 }
 
 function onStart() {
+  if (!survey.tokenOrSlug) return
   survey.started = true
   survey.step = 1
   tkSlug.value = ''
-  void collector.loadInfo(survey.record.token)
+  void collector.loadInfo(survey.tokenOrSlug)
 }
 
 function onLocaleSelection(localeOpt: { label: string; value: string }) {

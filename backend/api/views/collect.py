@@ -18,13 +18,16 @@ router = APIRouter()
 @router.get("/info/{tokenOrSlug}", response_model=CampaignInfo, response_model_exclude_none=True)
 async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) -> CampaignInfo:
     """Get campaign info by participant token or campaign slug"""
+
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
+    
     try:
         campaign = await CampaignService(session).get_by_slug(tokenOrSlug)
     except:
         campaign = None
+    
     if not campaign:
         try:
             cr = await RecordService(session).get_by_token(tokenOrSlug)
@@ -32,8 +35,10 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
                 campaign = await CampaignService(session).get(cr.campaign_id)
         except:
             campaign = None
+    
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
+    
     company = await CompanyService(session).get(campaign.company_id)
     return CampaignInfo(
         name=campaign.name,
@@ -42,7 +47,8 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
         contact_name=campaign.contact_name if campaign.contact_name else company.contact_name,
         info_url=campaign.info_url if campaign.info_url else company.info_url,
         workplaces=campaign.workplaces,
-        open_workplaces=campaign.open_workplaces
+        open_workplaces=campaign.open_workplaces,
+        rewards_message=campaign.rewards_message
     )
 
 
@@ -77,6 +83,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         cr = await RecordService(session).get_by_token(tokenOrSlug)
     except:
         cr = None  # 404 if not found
+    
     if cr is not None:
         campaign = await CampaignService(session).get(cr.campaign_id)
         _check_campaign(campaign)
@@ -110,6 +117,7 @@ async def createOrUpdate(
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
+    
     campaign = None
     if tokenOrSlug != item.token:
         # this is a campaign's slug
@@ -118,6 +126,7 @@ async def createOrUpdate(
         # this is a participant's token
         participant = await ParticipantService(session).get_by_token(tokenOrSlug)
         campaign = await CampaignService(session).get(participant.campaign_id)
+
     return await RecordService(session).createOrUpdate(item, campaign)
 
 
@@ -176,7 +185,6 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
     record.comments = None  # clear comments
     await recordService.update(record.id, record)
     return response
-
 
 def _check_campaign(campaign: Campaign):
     """Check if campaign has a valid time frame

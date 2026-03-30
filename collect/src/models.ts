@@ -70,6 +70,8 @@ export interface Record {
   data: RecordData
   typo: Recommendation | null
   token: string
+  email_hash: string | null
+  response_id_in_campaign: number | null
 }
 
 export interface Recommendation {
@@ -124,6 +126,7 @@ export interface CampaignInfo {
   info_url?: string
   workplaces: AddressLocation[]
   open_workplaces?: boolean
+  rewards_message?: { [key: string]: string }
 }
 
 export interface IsochronesParams {

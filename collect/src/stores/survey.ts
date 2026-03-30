@@ -29,6 +29,7 @@ export const useSurvey = defineStore(
       'recommendations',
       'change',
       'change2',
+      'email',
       'comments',
       'final',
     ]
@@ -41,6 +42,7 @@ export const useSurvey = defineStore(
     const recommendation = ref<Recommendation>({})
 
     const stepName = computed(() => stepNames[step.value - 1])
+    const previousStepName = computed(() => stepNames[step.value - 2])
 
     function init(cr: Record) {
       record.value = cr
@@ -232,6 +234,7 @@ export const useSurvey = defineStore(
       started,
       step,
       stepName,
+      previousStepName,
       timestamp,
       recommendation,
       init,

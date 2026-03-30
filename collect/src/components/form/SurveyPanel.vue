@@ -69,6 +69,9 @@
     <div v-if="survey.stepName === 'change2'">
       <Change2Panel @update:modelValue="onSave" />
     </div>
+    <div v-if="survey.stepName === 'email'">
+      <EmailPanel v-model="plainEmail" />
+    </div>
     <div v-if="survey.stepName === 'comments'">
       <SectionItem :label="t('form.comments')" class="q-mb-lg" />
       <q-input
@@ -135,6 +138,7 @@ import NeedsPanel from 'src/components/form/steps/NeedsPanel.vue'
 import RecommendationsPanel from 'src/components/form/steps/RecommendationsPanel.vue'
 import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
 import Change2Panel from 'src/components/form/steps/Change2Panel.vue'
+import EmailPanel from './steps/EmailPanel.vue'
 import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
 import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
 import { notifyError } from 'src/utils/notify'
@@ -143,9 +147,11 @@ const { t, locale } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
 
+const plainEmail = ref('')
+
 onMounted(() => {
   if (survey.tokenOrSlug) {
-    void collector.loadInfo(survey.record.token)
+    void collector.loadInfo(survey.tokenOrSlug)
   }
 })
 
@@ -205,16 +211,26 @@ function nextStep() {
       return
     }
   }
+  if (survey.stepName === 'email') {
+    if (plainEmail.value.trim() !== '') {
+      // Basic email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(plainEmail.value.trim())) {
+        notifyError(t('form.error.invalid_email'))
+        return
+      }
+    }
+  }
   survey.incStep()
   if (survey.tokenOrSlug) {
-    void collector.loadInfo(survey.record.token)
+    void collector.loadInfo(survey.tokenOrSlug)
     if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
       survey.record.data.comments = ''
       collector
-        .save(survey.tokenOrSlug, survey.record)
+        .save(survey.tokenOrSlug, survey.record, plainEmail.value)
         .then(() => {
-          void collector.loadInfo(survey.record.token)
+          void collector.loadInfo(survey.tokenOrSlug!)
           return collector.loadTypo(survey.record, locale.value)
         })
         .then((resp) => {
@@ -223,17 +239,19 @@ function nextStep() {
         })
         .catch(notifyError)
     } else if (survey.isBeforeStep('recommendations')) {
-      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+      void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.stepName === 'change') {
       if (survey.record.data.change === undefined) {
         survey.record.data.change = {}
       }
-      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+      void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.stepName === 'change2') {
       if (survey.record.data.change2 === undefined) {
         survey.record.data.change2 = {}
       }
-      void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+      void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
+    } else if (survey.previousStepName === 'email') { // step was just incremented, so we check previous step
+      void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     }
   }
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -261,15 +279,15 @@ function handleSwipe(dir: any) {
 }
 
 function onSave() {
-  if (survey.tokenOrSlug) {
-    if (survey.record.data.change?.levers?.includes('other') === false) {
-      survey.record.data.change.other_levers = undefined
-    }
-    if (survey.record.data.change2?.levers?.includes('other') === false) {
-      survey.record.data.change2.other_levers = undefined
-    }
-    void collector.save(survey.tokenOrSlug, survey.record).catch(console.error)
+  if (!survey.tokenOrSlug) return
+  
+  if (survey.record.data.change?.levers?.includes('other') === false) {
+    survey.record.data.change.other_levers = undefined
   }
+  if (survey.record.data.change2?.levers?.includes('other') === false) {
+    survey.record.data.change2.other_levers = undefined
+  }
+  void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
 }
 
 function onSendComments() {

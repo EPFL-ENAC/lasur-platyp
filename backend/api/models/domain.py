@@ -86,6 +86,7 @@ class CampaignBase(Entity):
     info_url: Optional[str] = Field(default=None)
     actions: Optional[EmployerActions] = Field(
         default=None, sa_column=Column(JSON))
+    rewards_message: Optional[Dict[str, str]] = Field(default=None, sa_column=Column(JSON))
     open_workplaces: bool = Field(default=False)
     nb_employees: Optional[int] = Field(default=None)
 
@@ -146,6 +147,7 @@ class RecordBase(SQLModel):
     data: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
     typo: Optional[Dict] = Field(default=None, sa_column=Column(JSON))
     comments: Optional[str] = Field(default=None)
+    email_hash: Optional[str] = Field(default=None)
     created_at: Optional[datetime] = Field(
         sa_column=TIMESTAMP(timezone=True), default=None)
     updated_at: Optional[datetime] = Field(
@@ -161,6 +163,7 @@ class Record(RecordBase, table=True):
     )
     campaign_id: int = Field(default=None, foreign_key="campaign.id")
     company_id: int = Field(default=None, foreign_key="company.id")
+    response_id_in_campaign: Optional[int] = Field(default=None)
 
 
 class DataEntryBase(Entity):

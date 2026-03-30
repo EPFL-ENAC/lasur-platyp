@@ -20,9 +20,8 @@ export default {
     info_url: "Lien d'information",
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette organisation.",
-    can_be_cited: 'Peut être citée comme utilisateur de Mobilyse',
-    can_be_cited_toggle:
-      'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de Mobilyse',
+    can_be_cited: 'Peut être citée comme utilisateur de mobilyse',
+    can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de mobilyse',
   },
   campaign: {
     label: 'Campagne',
@@ -31,6 +30,13 @@ export default {
       "Identifiant unique pour l'URL de la campagne (ex. 'printemps-2024-enquete-mobilite'). Seules les lettres, chiffres, tirets et underscores sont autorisés.",
     description: 'Description',
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
+    rewards: {
+      toggle: 'Je souhaite récompenser les participant·e·s.',
+      hint: 
+        "Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une \"attestation\" (document PDF) à la fin du remplissage du questionnaire à chaque répondant·e, qui prouvera sa participation. Le ou la répondant·e pourra alors transférer cette attestation auprès de la personne en charge d'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).",
+      default_message: "Bravo et merci pour votre participation à l'enquête mobilyse ! Vos réponses sont précieuses et nous permettront de mieux comprendre comment vous aider dans votre mobilité au quotidien. En téléchargeant ce document et en le transférant à [...], vous pourrez profiter de [...].",
+      message_placeholder: 'Message pour les participants'
+    },
     contact_name: 'Nom du contact',
     contact_name_hint:
       "Le nom de la personne de contact pour la mobilité dans cette organisation (si différent du contact de l'organisation).",

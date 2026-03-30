@@ -1,6 +1,6 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlalchemy import select, cast
+from sqlalchemy import select, cast, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import select
 from fastapi import HTTPException
@@ -62,8 +62,10 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
+    
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
+        
         return entity
 
     async def get_by_token(self, token: str) -> Record:
@@ -75,6 +77,7 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
+        
         return entity
 
     async def delete(self, id: int, user: User = None) -> Record:
@@ -144,13 +147,24 @@ class RecordService(EntityService):
 
     async def create(self, payload: RecordDraft, campaign: Campaign) -> Record:
         """Create a new record"""
+
+        query = select(func.count()).where(Record.campaign_id == campaign.id)
+        result = await self.session.execute(query)
+        current_count = result.scalar() or 0
+
         entity = Record(**payload.model_dump())
         entity.campaign_id = campaign.id
         entity.company_id = campaign.company_id
+
+        entity.response_id_in_campaign = current_count + 1
+        
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
+        
         self.session.add(entity)
         await self.session.commit()
+        await self.session.refresh(entity)
+        
         return entity
 
     async def update(self, id: int, payload: RecordDraft, campaign: Campaign = None) -> Record:

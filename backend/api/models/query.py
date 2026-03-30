@@ -73,6 +73,7 @@ class RecordRead(RecordBase):
     id: int
     campaign_id: Optional[int] = Field(default=None)
     company_id: Optional[int] = Field(default=None)
+    response_id_in_campaign: Optional[int] = Field(default=None)
 
 
 class RecordDraft(RecordBase):
@@ -103,6 +104,7 @@ class CampaignInfo(BaseModel):
     info_url: Optional[str] = None
     workplaces: List[WorkplaceRead] = []
     open_workplaces: bool = False
+    rewards_message: Optional[Dict[str, str]] = None
 
 
 class WeeklyStats(BaseModel):
