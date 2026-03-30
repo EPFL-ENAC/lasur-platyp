@@ -25,6 +25,12 @@ export default {
       "Un lien vers plus d'informations sur les options de mobilité de cette organisation.",
     can_be_cited: 'Peut être citée comme utilisateur de mobilyse',
     can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de mobilyse',
+    your_role: 'Votre rôle',
+    roles: {
+      admin: 'Administrateur',
+      mobility_advisor: 'Conseiller·ère mobilité',
+      none: 'Aucun',
+    },
   },
   campaign: {
     label: 'Campagne',

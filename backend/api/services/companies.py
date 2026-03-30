@@ -87,12 +87,12 @@ class CompanyService(EntityService):
         await self.delete_permissions(entity)
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CompanyResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None, special_permissions: str = "read") -> CompanyResult:
         """Get all companies matching filter and range"""
         # Add permission filter
         if user is not None and not is_admin(user):
-            # Restrict to companies the user has "read" permission on
-            permitted_ids = await self.list_permitted_ids(user, "read")
+            # Restrict to companies the user has good permissions on
+            permitted_ids = await self.list_permitted_ids(user, special_permissions)
             if filter is None:
                 filter = {}
             if permitted_ids:

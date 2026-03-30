@@ -24,6 +24,12 @@ export default {
     info_url_hint: 'Provide a link to more information about the organisation mobility options.',
     can_be_cited: 'Can be cited as a mobilyse user',
     can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of mobilyse',
+    your_role: 'Your role',
+    roles: {
+      admin: 'Administrator',
+      mobility_advisor: 'Mobility Advisor',
+      none: 'None',
+    },
   },
   campaign: {
     label: 'Campaign',

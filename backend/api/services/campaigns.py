@@ -103,11 +103,11 @@ class CampaignService(EntityService):
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CampaignResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None, special_permissions: str = "read") -> CampaignResult:
         """Get all campaigns matching filter and range"""
         # Add permission filter
         if user is not None and not is_admin(user):
-            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, special_permissions)
             if filter is None:
                 filter = {}
             if permitted_company_ids:

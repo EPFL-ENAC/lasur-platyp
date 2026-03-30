@@ -22,7 +22,7 @@ async def find(
     """Search for companies"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await CompanyService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
+        return await CompanyService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user, special_permissions="read-aggregated")
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 

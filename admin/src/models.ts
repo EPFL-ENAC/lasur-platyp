@@ -97,8 +97,8 @@ export interface RecordTypo {
 
 export interface Record {
   id: number
-  response_id?: number
   token: string
+  response_id_in_campaign?: number
   created_at?: string
   updated_at?: string
   created_by?: string
