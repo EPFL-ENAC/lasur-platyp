@@ -71,6 +71,7 @@ export interface Record {
   typo: Recommendation | null
   token: string
   email_hash: string | null
+  response_id_in_campaign: number | null
 }
 
 export interface Recommendation {

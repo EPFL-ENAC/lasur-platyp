@@ -30,7 +30,7 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
     
     if not campaign:
         try:
-            cr = await RecordService(session).get_by_token(tokenOrSlug, strip_email_hash=True)
+            cr = await RecordService(session).get_by_token(tokenOrSlug)
             if cr:
                 campaign = await CampaignService(session).get(cr.campaign_id)
         except:
@@ -80,7 +80,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
     # 2. this is a participant's token: try to get the record in case it was already saved
     cr = None
     try:
-        cr = await RecordService(session).get_by_token(tokenOrSlug, strip_email_hash=True)
+        cr = await RecordService(session).get_by_token(tokenOrSlug)
     except:
         cr = None  # 404 if not found
     
@@ -141,7 +141,7 @@ async def saveComments(
         raise HTTPException(
             status_code=400, detail="Missing token")
     recordService = RecordService(session)
-    record = await recordService.get_by_token(token, strip_email_hash=True)
+    record = await recordService.get_by_token(token)
     record.comments = data.comments
     try:
         participantService = ParticipantService(session)
@@ -160,7 +160,7 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
         raise HTTPException(
             status_code=400, detail="Missing token")
     recordService = RecordService(session)
-    record = await recordService.get_by_token(token, strip_email_hash=True)
+    record = await recordService.get_by_token(token)
     response = {}
     service = ModalTypoService()
     reco = service.get_recommendation_multi(record)

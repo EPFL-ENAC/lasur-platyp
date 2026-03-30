@@ -53,9 +53,9 @@ async function downloadPdf() {
 
   y += 20
 
-  if (collector.recordId) {
+  if (collector.responseId) {
     const participationText = t('form.final_rewards.participation_id', {
-      id: collector.recordId,
+      id: collector.responseId,
     })
     const wrappedParticipation = doc.splitTextToSize(participationText, maxWidth)
 

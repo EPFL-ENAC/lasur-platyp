@@ -10,7 +10,7 @@ export const VERSION = '2.0.0'
 export const useCollector = defineStore('collector', () => {
   const info = ref<CampaignInfo>({} as CampaignInfo)
   // const token = ref<string | null>(null)
-  const recordId = ref<number | null>(null)
+  const responseIdInCampaign = ref<number | null>(null)
   const loading = ref<boolean>(false)
 
   async function loadInfo(tkOrSlug: string): Promise<CampaignInfo> {
@@ -24,7 +24,7 @@ export const useCollector = defineStore('collector', () => {
   async function load(tkOrSlug: string): Promise<Record> {
     // token.value = null
     loading.value = true
-    recordId.value = null
+    responseIdInCampaign.value = null
 
     return api
       .get(`/collect/record/${tkOrSlug}`)
@@ -68,7 +68,7 @@ export const useCollector = defineStore('collector', () => {
           ...cr.data,
         }
 
-        recordId.value = cr.id ?? null
+        responseIdInCampaign.value = cr.response_id_in_campaign ?? null
 
         return {
           token: cr.token,
@@ -83,21 +83,21 @@ export const useCollector = defineStore('collector', () => {
   async function save(tkOrSlug: string, record: Record, plainEmail: string | null = null) {
     // token.value = null
     // loading.value = true
-    recordId.value = null
+    responseIdInCampaign.value = null
 
     if (plainEmail) {
       record.email_hash = await hashEmail(plainEmail)
     }
     
     const response = await api.post(`/collect/record/${tkOrSlug}`, record)
-    recordId.value = response.data.id ?? null
+    responseIdInCampaign.value = response.data.response_id_in_campaign ?? null
     return response.data
   }
 
   async function loadTypo(record: Record, locale: string) {
     // token.value = null
     loading.value = true
-    recordId.value = null
+    responseIdInCampaign.value = null
 
     return api
       .get(`/collect/record/${record.token}/typo`, { params: { locale } })
@@ -112,12 +112,12 @@ export const useCollector = defineStore('collector', () => {
   async function saveComments(record: Record) {
     // token.value = null
     loading.value = true
-    recordId.value = null
+    responseIdInCampaign.value = null
 
     return api
       .put(`/collect/record/${record.token}/comments`, { comments: record.data.comments })
       .then((response) => {
-        recordId.value = response.data.id ?? null
+        responseIdInCampaign.value = response.data.response_id_in_campaign ?? null
         return response.data
       })
       .finally(() => {
@@ -129,7 +129,7 @@ export const useCollector = defineStore('collector', () => {
     info,
     // token,
     loading,
-    recordId,
+    responseId: responseIdInCampaign,
     loadInfo,
     load,
     save,

@@ -163,6 +163,7 @@ class Record(RecordBase, table=True):
     )
     campaign_id: int = Field(default=None, foreign_key="campaign.id")
     company_id: int = Field(default=None, foreign_key="company.id")
+    response_id_in_campaign: Optional[int] = Field(default=None)
 
 
 class DataEntryBase(Entity):

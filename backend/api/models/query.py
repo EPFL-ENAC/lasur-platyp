@@ -73,6 +73,7 @@ class RecordRead(RecordBase):
     id: int
     campaign_id: Optional[int] = Field(default=None)
     company_id: Optional[int] = Field(default=None)
+    response_id_in_campaign: Optional[int] = Field(default=None)
 
 
 class RecordDraft(RecordBase):
