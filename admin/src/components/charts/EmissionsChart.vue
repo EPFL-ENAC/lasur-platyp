@@ -17,35 +17,12 @@
 
   <div>
     <q-markdown
-      v-if="emissionItems"
-      :src="
-        t(`stats.emissions_${props.type}.texts.specific`, {
-          carMotoJourneysPercentage: toMaxDecimals(emissionItems.carMotoJourneysPercentage || 0, 2),
-          carMotoEmissionsPercentage: toMaxDecimals(
-            emissionItems.carMotoEmissionsPercentage || 0,
-            2,
-          ),
-        })
-      "
+      v-if="emissionItemsLabels"
+      :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"
     />
     <q-markdown
-      v-else-if="emissionItemsPro"
-      :src="
-        t(`stats.emissions_${props.type}.texts.specific`, {
-          firstPercent: toMaxDecimals(
-            emissionItemsPro.first.emissions / emissionItemsPro.total * 100,
-            2,
-          ),
-          firstMode: keyLabel(emissionItemsPro.first.mode),
-          firstEmissions: toMaxDecimals(emissionItemsPro.first.emissions || 0, 2),
-          secondPercent: toMaxDecimals(
-            emissionItemsPro.second.emissions / emissionItemsPro.total * 100,
-            2,
-          ),
-          secondMode: keyLabel(emissionItemsPro.second.mode),
-          remainingEmissions: toMaxDecimals(emissionItemsPro.remaining || 0, 2),
-        })
-      "
+      v-else-if="emissionItemsProLabels"
+      :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsProLabels)"
     />
   </div>
 </template>
@@ -130,6 +107,16 @@ const emissionItems = computed(() => {
   }
 })
 
+const emissionItemsLabels = computed(() => {
+  const ei = emissionItems.value
+  if (!ei) return null
+
+  return {
+    carMotoJourneysPercentage: toMaxDecimals(ei.carMotoJourneysPercentage || 0, 2),
+    carMotoEmissionsPercentage: toMaxDecimals(ei.carMotoEmissionsPercentage || 0, 2),
+  }
+})
+
 const emissionItemsPro = computed(() => {
   if (!props.type.includes('pro')) {
     return null
@@ -157,6 +144,20 @@ const emissionItemsPro = computed(() => {
     second: carEmissions,
     total: totalEmissions,
     remaining: totalEmissions - planeEmissions.emissions // purpusely not carEmissions.emissions
+  }
+})
+
+const emissionItemsProLabels = computed(() => {
+  const eip = emissionItemsPro.value
+  if (!eip) return null
+
+  return {
+    firstPercent: toMaxDecimals(eip.first.emissions / eip.total * 100, 2),
+    firstMode: keyLabel(eip.first.mode),
+    firstEmissions: toMaxDecimals(eip.first.emissions || 0, 2),
+    secondPercent: toMaxDecimals(eip.second.emissions / eip.total * 100, 2),
+    secondMode: keyLabel(eip.second.mode),
+    remainingEmissions: toMaxDecimals(eip.remaining || 0, 2),
   }
 })
 

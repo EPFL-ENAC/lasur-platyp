@@ -22,13 +22,8 @@
   <div>
     <p>{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown
-      v-if="total > 5"
-      :src="
-        t(`stats.energy_journey.texts.specific`, {
-          added_energy: new Intl.NumberFormat().format(toMaxDecimals(addedEnergy, 2) || 0),
-          count: new Intl.NumberFormat().format(newHealthyParticipants || 0),
-        })
-      "
+      v-if="textLabels"
+      :src="t(`stats.energy_journey.texts.specific`, textLabels)"
     />
   </div>
 </template>
@@ -79,6 +74,15 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 const addedEnergy = ref(0)
 const newHealthyParticipants = ref(0)
+
+const textLabels = computed(() => {
+  if (total.value < 5) return null
+
+  return {
+    added_energy: new Intl.NumberFormat().format(toMaxDecimals(addedEnergy.value, 2) || 0),
+    count: new Intl.NumberFormat().format(newHealthyParticipants.value || 0),
+  }
+})
 
 watch([() => stats.loading, () => props.height, locale], () => {
   initChartOptions()

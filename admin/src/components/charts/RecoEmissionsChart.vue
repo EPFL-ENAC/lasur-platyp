@@ -18,22 +18,8 @@
   <div>
     <p>{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
     <q-markdown
-      v-if="total > 5"
-      :src="
-        t(`stats.emissions_${props.reco}.texts.specific`, {
-          currentEmissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions, 0) || 0),
-          newEmissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions, 0) || 0),
-          cheeseburgers: new Intl.NumberFormat().format(
-            Math.round(((currentEmissions - newEmissions) * 1000) / 18.8),
-          ),
-          smartphones: new Intl.NumberFormat().format(
-            Math.round(((currentEmissions - newEmissions) * 1000) / 80.2),
-          ),
-          streaming_hours: new Intl.NumberFormat().format(
-            Math.round(((currentEmissions - newEmissions) * 1_000_000) / 50),
-          ),
-        })
-      "
+      v-if="textLabels"
+      :src="t(`stats.emissions_${props.reco}.texts.specific`, textLabels)"
     />
   </div>
 </template>
@@ -74,6 +60,24 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 const currentEmissions = ref(0)
 const newEmissions = ref(0)
+
+const textLabels = computed(() => {
+  if (total.value < 5) return null
+
+  return {
+    current_emissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions.value, 0) || 0),
+    new_emissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions.value, 0) || 0),
+    cheeseburgers: new Intl.NumberFormat().format(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 18.8),
+    ),
+    smartphones: new Intl.NumberFormat().format(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 80.2),
+    ),
+    streaming_hours: new Intl.NumberFormat().format(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1_000_000) / 50),
+    ),
+  }
+})
 
 watch([() => stats.loading], () => {
   if (stats.loading) {
