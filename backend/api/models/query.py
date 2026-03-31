@@ -274,6 +274,7 @@ class EquipmentPerRecommendation(BaseModel):
     mob_subs: int = 0
     moto: int = 0
     car: int = 0
+    car_driver: int = 0
     ev: int = 0
     inter: int = 0
 

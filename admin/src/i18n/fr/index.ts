@@ -664,6 +664,7 @@ export default {
         train: 'Train',
         moto: 'Moto / scooter',
         car: 'Voiture',
+        car_driver: 'Voiture (en tant que conducteur)',
         carpool: 'Covoiturage',
         plane: 'Avion',
         pub_train: 'Transports publics (y compris le train)',

@@ -17,6 +17,8 @@ class StatsService:
         """Compute all statistics for equipments, constraints, travel_time, and recommendations."""
         df = self._preprocess_dataframe(df)
 
+        print(df.head())
+
         freq_stats = FrequenciesService(df)
         equipments = freq_stats.compute_equipments_frequencies()
         constraints = freq_stats.compute_constraints_frequencies()
