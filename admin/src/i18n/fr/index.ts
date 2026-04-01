@@ -391,7 +391,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          "{carMotoJourneysPercentage}% des trajets des répondant·es sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO2 annuelles pour l'entreprise.",
+          "{carMotoJourneysPercentage}% des trajets des répondant·es sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
       },
     },
     emissions_reco_mod: {
@@ -420,13 +420,74 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         default:
-          "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod: {
+      title: 'Potentiel de réduction sur les émissions pendulaires',
+      yaxis: 'Émissions évitées (kgCO₂eq)',
+      xaxis: 'Mode recommandé',
+      series: 'Réduction potentielle',
+      labels: {
+        walking: 'Marche',
+        bike: 'Vélo',
+        ebike: 'Vélo électrique',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        elec: 'Véhicule électrique',
+        inter: 'Intermodalité',
+        emissions: 'Émissions CO₂ totales',
+        journeys: 'Nombre de trajets',
+        distances: 'Distance totale',
+        current: 'Actuel',
+        postSaving: 'Total après recommandations',
+      },
+      texts: {
+        default:
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        specific:
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reco_share: {
       title: "Répartition de l'évolution",
+      labels: {
+        walking: 'Marche',
+        bike: 'Vélo',
+        ebike: 'Vélo électrique',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        elec: 'Véhicule électrique',
+        inter: 'Intermodalité',
+        emissions: 'Émissions CO₂ totales',
+        journeys: 'Nombre de trajets',
+        distances: 'Distance totale',
+        current: 'Actuel',
+        postSaving: 'Total après recommandations',
+      },
+      texts: {
+        default: 'Ici est affichée la part de réduction due à chaque mode recommandé.',
+        specific:
+          "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
+      },
+    },
+    emissions_reductions_share: {
+      title: "Répartition de l'évolution",
+      series: 'Réduction potentielle',
       labels: {
         walking: 'Marche',
         bike: 'Vélo',
@@ -479,7 +540,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     emissions_reco_mod_pro: {
-      title: 'Potentiel de réduction sur les émissions pendulaires (professionnel)',
+      title: 'Potentiel de réduction sur les émissions professionnelles',
       yaxis: 'Émissions évitées (kgCO₂eq)',
       xaxis: 'Mode recommandé',
       labels: {
@@ -504,9 +565,41 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         default:
-          "Ce graphe montre la diminution des émissions CO2 allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO2 / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod_pro: {
+      title: 'Potentiel de réduction sur les émissions professionnelles',
+      yaxis: 'Émissions évitées (kgCO₂eq)',
+      xaxis: 'Mode recommandé',
+      series: 'Réduction potentielle',
+      labels: {
+        walking: 'Marche',
+        bike: 'Vélo',
+        ebike: 'Vélo électrique',
+        pub: 'Transports publics urbains',
+        train: 'Train',
+        moto: 'Moto / scooter',
+        car: 'Voiture',
+        carpool: 'Covoiturage',
+        plane: 'Avion',
+        pub_train: 'Transports publics (y compris le train)',
+        car_moto: 'Voiture ou moto',
+        elec: 'Véhicule électrique',
+        inter: 'Intermodalité',
+        emissions: 'Émissions CO₂ totales',
+        journeys: 'Nombre de trajets',
+        distances: 'Distance totale',
+        current: 'Actuel',
+        postSaving: 'Total après recommandations',
+      },
+      texts: {
+        default:
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        specific:
+          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
@@ -737,7 +830,12 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     reco: 'Mode de transport recommandé : {mode}',
     isochrones: 'Isochrones',
     isochrones_hint: 'Temps de trajet avec le mode de transport recommandé.',
+    map_options: 'Options de la carte',
     modes: 'Modes de transport',
+    transit: 'Transports publics',
+    transit_options: {
+      show_lines: "Afficher les lignes de transports publics passant par l'isochrone",
+    },
     pois: "Points d'intérêt",
     mode: {
       walk: 'Marche',

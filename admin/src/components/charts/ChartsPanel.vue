@@ -36,15 +36,15 @@
       <links-chart type="mod_reco" :height="height" />
     </div>
     <div class="item">
-      <reco-emissions-chart
+      <emissions-reductions-chart
         type="freq_mod"
-        reco="reco_mod"
-        :yaxis="t('stats.emissions_reco_mod.yaxis')"
+        reduction-type="reductions_mod"
+        :yaxis="t('stats.emissions_reductions_mod.yaxis')"
         :height="height"
       />
     </div>
     <div class="item">
-      <reco-share-chart reco="reco_mod" :height="height" />
+      <emissions-reductions-share-chart reduction-type="reductions_mod" :height="height" />
     </div>
     <div class="item">
       <journey-energy-chart type="current" :height="height" />
@@ -78,10 +78,10 @@
       <links-chart type="mod_reco_pro" :height="height" />
     </div>
     <div class="item">
-      <reco-emissions-chart
+      <emissions-reductions-chart
         type="freq_mod_pro"
-        reco="reco_mod_pro"
-        :yaxis="t('stats.emissions_reco_mod.yaxis')"
+        reduction-type="reductions_mod_pro"
+        :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
         :height="height"
       />
     </div>
@@ -101,8 +101,8 @@ import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
 import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
 import LocationChart from 'src/components/charts/LocationChart.vue'
 import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
-import RecoEmissionsChart from 'src/components/charts/RecoEmissionsChart.vue'
-import RecoShareChart from 'src/components/charts/RecoShareChart.vue'
+import EmissionsReductionsChart from './EmissionsReductionsChart.vue'
+import EmissionsReductionsShareChart from './EmissionsReductionsShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
 import JourneyEnergyChart from './JourneyEnergyChart.vue'

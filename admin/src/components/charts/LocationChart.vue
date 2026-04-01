@@ -44,7 +44,7 @@
           ></div>
           <div class="gradient-labels">
             <span>1</span>
-            <span>>100</span>
+            <span>>{{ max }}</span>
           </div>
         </div>
       </location-heatmap>
@@ -67,13 +67,16 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
-const gradient = new GradientScale([
-  { value: 0, color: '#440154' }, // Dark Purple (Low)
-  { value: 25, color: '#3b528b' }, // Blue
-  { value: 50, color: '#21918c' }, // Teal/Green
-  { value: 75, color: '#5ec962' }, // Light Green
-  { value: 100, color: '#fde725' }, // Yellow (High)
-])
+const gradient = computed(() => {
+  const maxValue = max.value
+  return new GradientScale([
+    { value: 0, color: '#440154' }, // Dark Purple (Low)
+    { value: maxValue * 0.25, color: '#3b528b' }, // Blue
+    { value: maxValue * 0.5, color: '#21918c' }, // Teal/Green
+    { value: maxValue * 0.75, color: '#5ec962' }, // Light Green
+    { value: maxValue, color: '#fde725' }, // Yellow (High)
+  ])
+})
 
 const id = ref(`location-heatmap-${crypto.randomUUID()}`)
 
@@ -82,6 +85,11 @@ const hasData = computed(() => {
     !!stats.homeLocationsHeatmap && Object.keys(stats.homeLocationsHeatmap).length > 0
   const hasWorkplaceData = !!stats.workplaceLocations && stats.workplaceLocations.length > 0
   return hasHeatmapData || hasWorkplaceData
+})
+
+const max = computed(() => {
+  if (!stats.homeLocationsHeatmap) return 0
+  return Math.max(...Object.values(stats.homeLocationsHeatmap))
 })
 </script>
 

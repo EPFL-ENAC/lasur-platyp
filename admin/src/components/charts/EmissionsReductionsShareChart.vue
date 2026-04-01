@@ -10,16 +10,16 @@
       :loading="stats.loading"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_reco_share.title`) }}</div>
+      <div class="text-h6 text-center">{{ t(`stats.emissions_reductions_share.title`) }}</div>
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
   <div>
-    <p>{{ t(`stats.emissions_reco_share.texts.default`) }}</p>
+    <p>{{ t(`stats.emissions_reductions_share.texts.default`) }}</p>
     <p v-if="biggestEmission">
       {{
-        t(`stats.emissions_reco_share.texts.specific`, {
+        t(`stats.emissions_reductions_share.texts.specific`, {
           percentage: toMaxDecimals(biggestEmission.percentage || 0, 2),
           mode: keyLabel(biggestEmission.mode),
         })
@@ -50,7 +50,7 @@ const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  reco: string
+  reductionType: string
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -66,20 +66,20 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 
 const totalSavings = computed(() => {
-  const recoEmissions = stats.emissions?.[props.reco] || []
-  return recoEmissions.reduce((sum, item) => sum + item.emissions, 0)
+  const recoEmissions = stats.emissionsReductions?.[props.reductionType] || []
+  return recoEmissions.reduce((sum, item) => sum + item.reduced, 0)
 })
 
 const biggestEmission = computed<PercentageEmission | null>(() => {
   if (total.value < 5) return null
-  if (!stats.emissions || !stats.emissions[props.reco]) return null
+  if (!stats.emissionsReductions || !stats.emissionsReductions[props.reductionType]) return null
 
-  const recoEmissions = stats.emissions[props.reco] || []
+  const recoEmissions = stats.emissionsReductions[props.reductionType] || []
   if (recoEmissions.length === 0) return null
 
   let biggest: PercentageEmission | null = null
   recoEmissions.forEach((item) => {
-    const percentage = totalSavings.value > 0 ? (item.emissions / totalSavings.value) * 100 : 0
+    const percentage = totalSavings.value > 0 ? (item.reduced / totalSavings.value) * 100 : 0
     if (!biggest || percentage > biggest.percentage) {
       biggest = { mode: item.mode, percentage }
     }
@@ -111,17 +111,17 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_reco_share.labels.${shortKey(key)}`)
+  return t(`stats.emissions_reductions_share.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.emissions || !stats.emissions[props.reco]) {
+  if (!stats.emissionsReductions || !stats.emissionsReductions[props.reductionType]) {
     return
   }
 
-  const recoEmissions = stats.emissions[props.reco] || []
+  const recoEmissions = stats.emissionsReductions[props.reductionType] || []
   if (recoEmissions.length === 0) {
     return
   }
@@ -138,7 +138,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_reco_share.title`),
+      text: t(`stats.emissions_reductions_share.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -164,7 +164,7 @@ function initChartOptions() {
     },
     series: [
       {
-        name: 'Emissions',
+        name: t(`stats.emissions_reductions_share.series`) || '',
         type: 'pie',
         radius: '70%',
         top: 'middle',
@@ -181,7 +181,7 @@ function initChartOptions() {
         },
         data: recoEmissions.map((item) => ({
           name: keyLabel(item.mode),
-          value: item.emissions,
+          value: item.reduced,
         })),
       },
     ],

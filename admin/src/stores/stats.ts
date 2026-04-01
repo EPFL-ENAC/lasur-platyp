@@ -10,6 +10,7 @@ import {
   type StatLinks,
   type Stats,
   type EquipmentsStats,
+  type EmissionReduction,
 } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
@@ -21,6 +22,9 @@ export const useStats = defineStore('stats', () => {
     {} as { [key: string]: Frequencies },
   )
   const emissions = ref<{ [key: string]: Emissions[] }>({} as { [key: string]: Emissions[] })
+  const emissionsReductions = ref<{ [key: string]: EmissionReduction[] }>(
+    {} as { [key: string]: EmissionReduction[] },
+  )
   const links = ref<{ [key: string]: StatLinks }>({} as { [key: string]: StatLinks })
   const loading = ref(false)
   const homeLocationsHeatmap = ref<H3Heatmap>({})
@@ -61,6 +65,7 @@ export const useStats = defineStore('stats', () => {
           frequencies.value['freq_mod'] = stats.mode_frequencies || []
           emissions.value['freq_mod'] = stats.mode_emissions || []
           emissions.value['reco_mod'] = stats.reco_mode_emissions || []
+          emissionsReductions.value['reductions_mod'] = stats.mode_emission_reductions || []
           links.value['mod_reco'] = stats.mode_links || {
             total: 0,
             data: [],
@@ -72,6 +77,7 @@ export const useStats = defineStore('stats', () => {
           frequencies.value['freq_mod_pro'] = stats.pro_mode_frequencies || []
           emissions.value['freq_mod_pro'] = stats.pro_mode_emissions || []
           emissions.value['reco_mod_pro'] = stats.pro_reco_mode_emissions || []
+          emissionsReductions.value['reductions_mod_pro'] = stats.pro_mode_emission_reductions || []
           links.value['mod_reco_pro'] = stats.pro_mode_links || {
             total: 0,
             data: [],
@@ -117,6 +123,7 @@ export const useStats = defineStore('stats', () => {
     frequencies,
     behaviorChange,
     emissions,
+    emissionsReductions,
     links,
     homeLocationsHeatmap,
     workplaceLocations,

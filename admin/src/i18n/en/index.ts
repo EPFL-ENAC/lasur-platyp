@@ -386,7 +386,7 @@ Thank you for your valuable contribution ! If you have any questions, please con
       },
       texts: {
         specific:
-          "{carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing {carMotoEmissionsPercentage}% of the company's annual CO2 emissions.",
+          "{carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing {carMotoEmissionsPercentage}% of the company's annual CO₂ emissions.",
       },
     },
     emissions_reco_mod: {
@@ -417,11 +417,73 @@ Thank you for your valuable contribution ! If you have any questions, please con
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO2 / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod: {
+      title: 'Potential for reducing commuter emissions',
+      series: 'Potential reduction',
+      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
+      xaxis: 'Recommended mode',
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle',
+        ebike: 'Electric bike',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        emissions: 'Total CO₂ emissions',
+        journeys: 'Number of journeys',
+        distances: 'Total distance',
+        current: 'Current',
+        postSaving: 'Total after recommendations',
+      },
+      texts: {
+        default:
+          'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
+        specific:
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reco_share: {
       title: 'Share of CO₂ emissions reduction per recommended mode of transport',
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle',
+        ebike: 'Electric bike',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        emissions: 'Total CO₂ emissions',
+        journeys: 'Number of journeys',
+        distances: 'Total distance',
+        current: 'Current',
+        postSaving: 'Total after recommendations',
+      },
+      texts: {
+        default:
+          'This chart shows the share of CO₂ emissions reduction per recommended mode of transport.',
+        specific:
+          '{percentage}% of potential reduction depend on the main recommendation for mode {mode}.',
+      },
+    },
+    emissions_reductions_share: {
+      title: 'Share of CO₂ emissions reduction per recommended mode of transport',
+      series: 'Potential reduction',
       labels: {
         walking: 'Walking',
         bike: 'Bicycle',
@@ -475,7 +537,7 @@ Thank you for your valuable contribution ! If you have any questions, please con
       },
     },
     emissions_reco_mod_pro: {
-      title: 'Potential for reducing commuter emissions (professional)',
+      title: 'Potential for reducing professional emissions',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
@@ -502,7 +564,39 @@ Thank you for your valuable contribution ! If you have any questions, please con
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO2 / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod_pro: {
+      title: 'Potential for reducing professional emissions',
+      series: 'Potential reduction',
+      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
+      xaxis: 'Recommended mode',
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle',
+        ebike: 'Electric bike',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        emissions: 'Total CO₂ emissions',
+        journeys: 'Number of journeys',
+        distances: 'Total distance',
+        current: 'Current',
+        postSaving: 'Total after recommendations',
+      },
+      texts: {
+        default:
+          'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
+        specific:
+          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
@@ -733,6 +827,11 @@ Thank you for your valuable contribution ! If you have any questions, please con
     isochrones: 'Isochrones',
     isochrones_hint: 'Travel time with the recommended mode of transport.',
     modes: 'Transport modes',
+    map_options: 'Map options',
+    transit: 'Public transport',
+    transit_options: {
+      show_lines: 'Show lines passing through the isochrone'
+    },
     pois: 'Points of interest',
     mode: {
       walk: 'Walking',

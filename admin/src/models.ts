@@ -129,6 +129,12 @@ export interface Emissions {
   emissions: number
 }
 
+export interface EmissionReduction {
+  mode: string
+  total: number
+  reduced: number
+}
+
 export interface Link {
   source: string
   target: string
@@ -323,12 +329,14 @@ export interface Stats {
   frequencies: Frequencies[] | null
   mode_frequencies: Frequencies[] | null
   mode_emissions: Emissions[] | null
+  mode_emission_reductions: EmissionReduction[] | null
   reco_mode_emissions: Emissions[] | null
   mode_links: StatLinks | null
   pro_frequencies: Frequencies[] | null
   pro_mode_frequencies: Frequencies[] | null
   pro_mode_emissions: Emissions[] | null
   pro_reco_mode_emissions: Emissions[] | null
+  pro_mode_emission_reductions: EmissionReduction[] | null
   pro_mode_links: StatLinks | null
   home_location_heatmap: H3Heatmap | null
   workplace_locations: { lat: number; lon: number }[] | null
@@ -350,6 +358,7 @@ export interface IsochronesParams {
 export interface IsochronesData {
   isochrones: GeoJSON.FeatureCollection<GeoJSON.Geometry>
   pois: GeoJSON.FeatureCollection<GeoJSON.Geometry>
+  transit?: GeoJSON.FeatureCollection<GeoJSON.Geometry> | null
 }
 
 export interface PoisParams {
