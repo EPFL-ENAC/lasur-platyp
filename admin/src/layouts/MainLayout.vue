@@ -1,14 +1,14 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header v-if="authStore.isAuthenticated" bordered class="bg-white text-grey-10">
+    <q-header v-if="authStore.isAuthenticated" bordered class="bg-dark text-grey-10">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title>
-          <a href="https://modus-ge.ch/" target="_blank">
-            <img src="modus.svg" height="25px" />
+        <q-toolbar-title class="logos">
+          <a href="https://modus-ge.ch/" target="_blank" class="logo">
+            <img src="MOBILISE_LOGO-VIOLET.svg" height="32px" />
           </a>
-          <span class="text-primary text-bold on-right">{{ t('main.brand') }}</span>
+          <span class="text-secondary text-bold on-right">{{ t('main.brand') }}</span>
         </q-toolbar-title>
 
         <q-btn-dropdown flat dense :label="locale" class="on-left">
@@ -35,12 +35,12 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered class="bg-dark text-secondary">
       <q-list>
         <template v-if="authStore.isAuthenticated">
           <q-item @click="onLogout">
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-user" size="xs" />
+              <q-icon name="fa-solid fa-user" size="xs" color="secondary" />
             </q-item-section>
             <q-item-section>
               <q-item-label header>{{ username }}</q-item-label>
@@ -49,7 +49,7 @@
 
           <q-item clickable @click="onLogout">
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-right-from-bracket" size="xs" />
+              <q-icon name="fa-solid fa-right-from-bracket" size="xs" color="secondary" />
             </q-item-section>
             <q-item-section>
               <q-item-label header>{{ t('signout') }}</q-item-label>
@@ -85,9 +85,9 @@
           </q-item-section>
         </q-item>
 
-        <q-item-label v-if="authStore.isAdmin" class="text-h6" header>{{
-          t('administration')
-        }}</q-item-label>
+        <q-item-label v-if="authStore.isAdmin" class="text-h6" header>
+          {{ t('administration') }}
+        </q-item-label>
         <q-item v-if="authStore.isAdmin" clickable :to="'/users'">
           <q-item-section avatar>
             <q-icon name="fa-solid fa-users" size="xs" />
@@ -118,6 +118,9 @@
     </q-drawer>
 
     <q-page-container v-if="authStore.isAuthenticated">
+      <div class="background-container">
+        <img src="MOBILISE_PATTERN-VIOLET.svg" alt="Background pattern" class="background-pattern">
+      </div>
       <router-view />
     </q-page-container>
 
@@ -193,3 +196,43 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   Cookies.set('locale', localeOpt.value)
 }
 </script>
+
+<style scoped>
+
+.logos {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.background-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.background-pattern {
+  position: absolute;
+  
+  top: -10rem;
+  left: 15rem;
+  width: 100rem;
+  height: 200rem;
+  
+  object-fit: contain;
+  rotate: -40deg;
+
+  opacity: 0.1;
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+</style>

@@ -170,7 +170,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
         data: values,
         type: 'bar',
         barCategoryGap: '0',
-        color: '#008066',
+        color: '#FCC447',
       },
     ],
   }
@@ -237,7 +237,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       {
         data: values,
         type: 'bar',
-        color: '#008066',
+        color: '#FCC447',
       },
     ],
   }

@@ -1,8 +1,8 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md">{{ t('dashboard') }}</div>
+    <div class="text-h3 q-pa-md text-primary">{{ t('dashboard') }}</div>
     <q-separator />
-    <div v-if="authStore.isAdmin" class="bg-info text-white q-pt-sm q-pb-sm q-pl-md q-pr-md">
+    <div v-if="authStore.isAdmin" class="bg-secondary text-white q-pt-sm q-pb-sm q-pl-md q-pr-md">
       {{ t('your_role', { role: t('role.platyp-admin') }) }}
     </div>
     <div class="q-pa-md">
