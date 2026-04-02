@@ -120,27 +120,27 @@ async function copyAsRichText() {
   if (!el) return
 
   try {
-    const clipboard = navigator.clipboard;
+    const clipboard = navigator.clipboard
     // Try rich-text copy when supported
     if (
       typeof ClipboardItem !== 'undefined' &&
       clipboard &&
       typeof clipboard.write === 'function'
     ) {
-      const htmlBlob = new Blob([el.innerHTML], { type: 'text/html' });
-      const textBlob = new Blob([el.innerText], { type: 'text/plain' });
+      const htmlBlob = new Blob([el.innerHTML], { type: 'text/html' })
+      const textBlob = new Blob([el.innerText], { type: 'text/plain' })
       const data = [
         new ClipboardItem({
           'text/html': htmlBlob,
           'text/plain': textBlob,
         }),
-      ];
-      await clipboard.write(data);
+      ]
+      await clipboard.write(data)
     } else if (clipboard && typeof clipboard.writeText === 'function') {
       // Fallback: copy plain text only
-      await clipboard.writeText(el.innerText);
+      await clipboard.writeText(el.innerText)
     } else {
-      throw new Error('Clipboard API not supported in this browser/context');
+      throw new Error('Clipboard API not supported in this browser/context')
     }
 
     notifySuccess(t('campaign.email_template.copyTemplateSuccess'))

@@ -1,6 +1,6 @@
 <template>
   <div class="title q-mb-md">{{ props.title }}</div>
-  <div>
+  <div class="wrapper">
     <div v-if="!hasData" class="no-data">
       {{ t('stats.no_data') }}
     </div>
@@ -92,12 +92,17 @@ const max = computed(() => {
 
   const values = Object.values(stats.homeLocationsHeatmap)
   if (values.length === 0) return 0
-  
+
   return Math.max(...values)
 })
 </script>
 
 <style scoped>
+
+.wrapper {
+  width: 100%;
+}
+
 .title {
   font-size: 16px;
   font-weight: 600;

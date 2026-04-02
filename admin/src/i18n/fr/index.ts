@@ -148,9 +148,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
       },
       share_link: {
-        title: 'Comment partager le lien vers le questionaire ?',
+        title: 'Comment partager le lien vers le questionnaire ?',
         caption:
-          'Apprenez à partager le lien vers le questionaire de votre campagne auprès des participant·e·s',
+          'Apprenez à partager le lien vers le questionnaire de votre campagne auprès des participant·e·s',
       },
       isochrone: {
         title: "Comment et pourquoi afficher l'isochrone sur la carte ?",
@@ -162,7 +162,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Apprenez à analyser les résultats de votre campagne et à interpréter les statistiques',
       },
       reward: {
-        title: 'Comment récompenser les participant·e·s ayant répondu au questionaire ?',
+        title: 'Comment récompenser les participant·e·s ayant répondu au questionnaire ?',
         caption: 'Apprenez comment récompenser les participant·e·s de votre campagne',
       },
       common_issues: {

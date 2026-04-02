@@ -17,7 +17,9 @@
 
   <div>
     <p>{{ t('stats.travel_time.texts.default') }}</p>
-    <p>{{ t('stats.travel_time.texts.specific', { median: medianValue }) }}</p>
+    <p v-if="hasData && medianValue">
+      {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
+    </p>
   </div>
 </template>
 
@@ -84,17 +86,6 @@ onMounted(() => {
   initChartOptions()
 })
 
-function keyLabel(key: string) {
-  if (key === 'null' || key === 'None') {
-    return 'N/A'
-  }
-  // is integer ?
-  if (Number.isInteger(Number(key))) {
-    return key
-  }
-  return t(`stats.travel_time.labels.${key}`)
-}
-
 function initChartOptions() {
   option.value = {}
   total.value = 0
@@ -105,6 +96,50 @@ function initChartOptions() {
   const frequencies = stats.frequencies['travel_time'] as Frequencies
 
   initValuesChartOptions(frequencies)
+}
+
+function computeMedian(frequencies: Frequencies) {
+  const sortedData = frequencies.data.toSorted((a, b) => {
+    const valueA = Number(a.value)
+    const valueB = Number(b.value)
+    if (isNaN(valueA)) return 1
+    if (isNaN(valueB)) return -1
+    return valueA - valueB
+  })
+
+  const totalCount = sortedData.reduce((sum, item) => sum + item.count, 0);
+  if (totalCount === 0) return undefined;
+
+  const isEven = totalCount % 2 === 0;
+  const midPoint = totalCount / 2;
+
+  let cumulativeCount = 0;
+  let firstMiddleValue: number | null = null;
+
+  for (let i = 0; i < sortedData.length; i++) {
+    const element = sortedData[i]!;
+    cumulativeCount += element.count;
+
+    const n = Number(element.value);
+    const v = isNaN(n) ? 0 : n;
+
+    if (!isEven) {
+      if (cumulativeCount > midPoint) {
+        return v;
+      }
+    } else {
+      if (cumulativeCount === midPoint) {
+        firstMiddleValue = v;
+      } else if (cumulativeCount > midPoint) {
+        if (firstMiddleValue !== null) {
+          return (firstMiddleValue + v) / 2;
+        }
+        return v;
+      }
+    }
+  }
+
+  return undefined; // In case something goes wrong
 }
 
 function initValuesChartOptions(frequencies: Frequencies) {
@@ -120,25 +155,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
   )
   const categories = makeCategories(max, props.rangeStep)
 
-  const repeated = frequencies.data.flatMap((item) => {
-    const value = Number(item.value)
-    const count = item.count
-    if (isNaN(value) || isNaN(count)) {
-      return []
-    }
-    return Array(count).fill(value)
-  })
-  const sorted = repeated.toSorted((a, b) => a - b)
-
-  if (sorted.length > 0) {
-    const mid = Math.floor(sorted.length / 2)
-
-    if (sorted.length % 2 === 0) {
-      medianValue.value = (sorted[mid - 1] + sorted[mid]) / 2
-    } else {
-      medianValue.value = sorted[mid]
-    }
-  }
+  medianValue.value = computeMedian(frequencies) ?? null
 
   // foreach category find count in frequencies
   const values =

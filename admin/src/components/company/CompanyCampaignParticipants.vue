@@ -57,11 +57,7 @@
       </template>
       <template v-slot:body-cell-token="props">
         <q-td :props="props">
-          <a
-            :href="makeSurveyLink(props.row.token!)"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a :href="makeSurveyLink(props.row.token!)" target="_blank" rel="noopener noreferrer">
             {{ props.row.token }} <q-icon name="open_in_new"></q-icon>
           </a>
           <q-btn
