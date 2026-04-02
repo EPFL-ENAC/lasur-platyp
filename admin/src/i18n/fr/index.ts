@@ -640,7 +640,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: 'Recommandations de changement modal',
       labels: {
         walking: 'Marche',
-        bike: 'Vélo (mécanique ou électrique)',
+        bike: 'Vélo',
         ebike: 'Vélo électrique',
         pub: 'Transports publics urbains',
         train: 'Train',
@@ -673,7 +673,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       labels: {
         avoid: 'Éviter le déplacement',
         walking: 'Marche',
-        bike: 'Vélo (mécanique ou électrique)',
+        bike: 'Vélo',
         ebike: 'Vélo électrique',
         pub: 'Transports publics urbains',
         train: 'Train',
@@ -714,7 +714,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       participantsAverage: 'Activité physique moyenne des participants',
       labels: {
         walking: 'Marche',
-        bike: 'Vélo (mécanique ou électrique)',
+        bike: 'Vélo',
         pub: 'Transports publics urbains',
         train: 'Train',
         moto: 'Moto / scooter',
@@ -754,7 +754,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         other: 'Autre',
 
         walking: 'Marche',
-        bike: 'Vélo (mécanique ou électrique)',
+        bike: 'Vélo',
         pub: 'Transports publics urbains',
         train: 'Train',
         moto: 'Moto / scooter',
@@ -790,7 +790,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         l5: 'Très motivé·e',
 
         walking: 'Marche',
-        bike: 'Vélo (mécanique ou électrique)',
+        bike: 'Vélo',
         pub: 'Transports publics urbains',
         train: 'Train',
         moto: 'Moto / scooter',

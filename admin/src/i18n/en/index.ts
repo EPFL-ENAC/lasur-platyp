@@ -334,7 +334,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Recommendations (professional)',
       labels: {
         avoid: 'Avoid travel',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         covoit: 'Carpooling',
         elec: 'Electric vehicle',
         elec_moto: 'Electric motorcycle/scooter',
@@ -631,7 +631,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Modal shift recommendations',
       labels: {
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         ebike: 'Electric bike',
         pub: 'Public transport',
         train: 'Train',
@@ -664,7 +664,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       labels: {
         avoid: 'Avoid travel',
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         ebike: 'Electric bike',
         pub: 'Public transport',
         train: 'Train',
@@ -705,7 +705,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       participantsAverage: 'Average physical activity expenditure of participants',
       labels: {
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
@@ -745,7 +745,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         other: 'Other',
 
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
@@ -781,7 +781,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         l5: 'Very motivated',
 
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
