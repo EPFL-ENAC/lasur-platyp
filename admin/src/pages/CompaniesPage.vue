@@ -18,7 +18,7 @@
       >
         <template v-slot:top>
           <q-btn
-            size="sm"
+            size="md"
             color="primary"
             :disable="loading"
             :label="t('add')"
@@ -48,7 +48,7 @@
         </template>
         <template v-slot:body-cell-administrators="props">
           <q-td :props="props">
-            <q-badge color="accent" :label="props.row.administrators.length || 0" />
+            <q-badge color="primary" :label="props.row.administrators.length || 0" />
           </q-td>
         </template>
         <template v-slot:body-cell-can_be_cited="props">

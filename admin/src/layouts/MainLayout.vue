@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header v-if="authStore.isAuthenticated" bordered class="bg-dark text-grey-10">
+    <q-header v-if="authStore.isAuthenticated" bordered class="bg-primary-light text-grey-10">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
@@ -8,7 +8,6 @@
           <a href="https://modus-ge.ch/" target="_blank" class="logo">
             <img src="MOBILISE_LOGO-VIOLET.svg" height="32px" />
           </a>
-          <span class="text-secondary text-bold on-right">{{ t('main.brand') }}</span>
         </q-toolbar-title>
 
         <q-btn-dropdown flat dense :label="locale" class="on-left">
@@ -35,7 +34,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered class="bg-dark text-secondary">
+    <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered class="bg-primary-light text-secondary">
       <q-list>
         <template v-if="authStore.isAuthenticated">
           <q-item @click="onLogout">
@@ -216,6 +215,9 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   width: 100%;
   height: 100%;
   overflow: hidden;
+
+  pointer-events: none;
+  z-index: -1;
 }
 
 .background-pattern {
@@ -230,9 +232,6 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   rotate: -40deg;
 
   opacity: 0.1;
-
-  pointer-events: none;
-  z-index: -1;
 }
 
 </style>

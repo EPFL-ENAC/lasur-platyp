@@ -21,9 +21,8 @@
     <q-btn
       v-if="isCompanyAdmin"
       :label="t('report')"
-      outline
       size="sm"
-      color="info"
+      color="primary"
       icon="bar_chart"
       class="q-mb-md on-right"
       @click="onShowStats"
@@ -66,11 +65,10 @@
         <div class="text-h6 q-mb-md">
           {{ t('campaign.workplaces.title') }}
           <span v-if="workplacesCount > 0">
-            <q-badge color="info" class="on-right">{{ workplacesCount }}</q-badge>
+            <q-badge color="primary" class="on-right">{{ workplacesCount }}</q-badge>
             <q-btn
-              outline
               size="sm"
-              color="info"
+              color="primary"
               :label="t('download_csv')"
               icon="download"
               class="on-right"
@@ -154,7 +152,7 @@
           <q-btn
             v-if="item.slug"
             size="sm"
-            color="accent"
+            color="primary"
             icon-right="content_copy"
             :label="t('survey_link')"
             no-caps

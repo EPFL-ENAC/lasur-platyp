@@ -4,7 +4,7 @@
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t('reset_password') }}</div>
         <q-space />
-        <q-btn flat icon="close" color="primary" v-close-popup />
+        <q-btn flat icon="close" color="primary-dark" v-close-popup />
       </q-card-actions>
       <q-separator />
 

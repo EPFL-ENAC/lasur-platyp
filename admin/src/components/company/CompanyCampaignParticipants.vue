@@ -34,9 +34,8 @@
           @click="onAdd"
         />
         <q-btn
-          outline
           size="sm"
-          color="info"
+          color="primary"
           :label="t('download_csv')"
           :disable="loading"
           icon="download"

@@ -12,8 +12,8 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary: #01983b;
-$secondary: #016052;
+$primary: #FCC447;
+$secondary: #4D303F;
 $accent: #e6a21a;
 
 $dark: #1d1d1d;
@@ -23,3 +23,45 @@ $positive: #21ba45;
 $negative: #c10015;
 $info: #80a795;
 $warning: #e6a21a;
+
+$primary-light: #FFF5D4;
+$primary-semi-dark: #C4A253;
+$primary-dark: #BA8025;
+
+
+.text-primary-light {
+  color: $primary-light !important;
+}
+
+.bg-primary-light {
+  background-color: $primary-light !important;
+}
+
+.text-primary-dark {
+  color: $primary-dark !important;
+}
+
+.bg-primary-dark {
+  background-color: $primary-dark !important;
+}
+
+.text-primary-dark {
+  color: $primary-dark !important;
+}
+
+.bg-primary-dark {
+  background-color: $primary-dark !important;
+}
+
+.q-btn {
+    padding: 4px 8px !important;
+}
+
+.q-btn.bg-primary {
+    color: $secondary !important;
+    outline: 1px solid $primary-semi-dark !important;
+}
+
+.q-badge.bg-primary, .q-chip.bg-primary {
+    color: $secondary !important;
+}

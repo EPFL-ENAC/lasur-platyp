@@ -2,7 +2,7 @@
   <div>
     <q-btn
       v-if="isCompanyAdmin"
-      size="sm"
+      size="md"
       color="primary"
       :disable="campaignsStore.loading"
       :label="t('add')"

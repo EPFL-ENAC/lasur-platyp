@@ -118,13 +118,7 @@ export default defineConfig((ctx) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
-      config: {
-        brand: {
-          primary: '#FCC447',
-          dark: '#FFF5D4', // TODO ask Ben: hack the dark color to be the off-yellow of the design ?
-          secondary: '#4D303F',
-        }
-      },
+      config: {},
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack

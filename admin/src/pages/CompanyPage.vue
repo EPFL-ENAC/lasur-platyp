@@ -1,36 +1,35 @@
 <template>
   <q-page>
     <div class="text-h5 q-pa-md row">
-      <q-breadcrumbs gutter="sm">
+      <q-breadcrumbs gutter="sm" active-color="primary-dark">
         <q-breadcrumbs-el :label="t('companies')" to="/companies" />
         <q-breadcrumbs-el :label="company?.name" />
       </q-breadcrumbs>
       <q-btn
         v-if="isCompanyAdmin"
-        flat
-        dense
+        round
         size="sm"
         color="primary"
         icon="edit"
         class="on-right"
         @click="onEdit"
+        style="width: 32px;"
       />
       <q-btn
         v-if="isCompanyAdmin"
-        flat
-        dense
+        round
         size="sm"
         color="negative"
         icon="delete"
         class="q-ml-xs"
         @click="onShowRemove"
+        style="width: 32px;"
       />
       <q-btn
         v-if="isCompanyAdmin"
         :label="t('report')"
-        outline
         size="sm"
-        color="info"
+        color="primary"
         icon="bar_chart"
         class="on-right"
         @click="onShowStats"
@@ -60,7 +59,7 @@
           actionsStore.items.length
         }}</q-badge>
       </q-btn>
-      <div class="text-h6 q-mb-sm">{{ t('campaigns') }}</div>
+      <div class="text-h5 q-mt-lg q-mb-sm">{{ t('campaigns') }}</div>
       <company-campaigns v-if="company" :company="company" />
     </div>
     <company-dialog v-model="showDialog" :item="company" @saved="onSaved" />
