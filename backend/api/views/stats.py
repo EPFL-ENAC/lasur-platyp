@@ -42,7 +42,7 @@ async def compute_campaign_statistics(
     session: AsyncSession = Depends(get_session),
 ) -> CampaignStats:
     """Compute statistics for a campaign"""
-    campaign = await CampaignService(session).get(id, user)
+    campaign = await CampaignService(session).get(id, user, special_permissions="read-aggregated")
     service = RecordService(session)
     df = await service.get_dataframe(
         {"campaign_id": id}, flat=True, user=user, special_permissions="read-aggregated")

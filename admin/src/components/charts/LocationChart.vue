@@ -89,7 +89,11 @@ const hasData = computed(() => {
 
 const max = computed(() => {
   if (!stats.homeLocationsHeatmap) return 0
-  return Math.max(...Object.values(stats.homeLocationsHeatmap))
+
+  const values = Object.values(stats.homeLocationsHeatmap)
+  if (values.length === 0) return 0
+  
+  return Math.max(...values)
 })
 </script>
 

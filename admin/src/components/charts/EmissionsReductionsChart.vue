@@ -28,7 +28,7 @@
 import ECharts from 'vue-echarts'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { CustomChart } from 'echarts/charts'
+import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { initOptions, updateOptions } from './commons'
 import {
@@ -42,7 +42,7 @@ import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 const stats = useStats()
-use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   type: string

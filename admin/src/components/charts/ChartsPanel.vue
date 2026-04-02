@@ -97,21 +97,21 @@
   </div>
 </template>
 <script setup lang="ts">
-import EquipmentFrequenciesChart from './EquipmentFrequenciesChart.vue'
+import EquipmentFrequenciesChart from 'src/components/charts/EquipmentFrequenciesChart.vue'
 import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
 import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
 import TravelTimeFrequenciesChart from 'src/components/charts/TravelTimeFrequenciesChart.vue'
 import LocationChart from 'src/components/charts/LocationChart.vue'
 import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
-import EmissionsReductionsChart from './EmissionsReductionsChart.vue'
-import EmissionsReductionsShareChart from './EmissionsReductionsShareChart.vue'
+import EmissionsReductionsChart from 'src/components/charts/EmissionsReductionsChart.vue'
+import EmissionsReductionsShareChart from 'src/components/charts/EmissionsReductionsShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
-import ModesOfTransportShareChart from './ModesOfTransportShareChart.vue'
-import JourneyEnergyChart from './JourneyEnergyChart.vue'
-import JourneyEnergyShareChart from './JourneyEnergyShareChart.vue'
-import BehaviorChangeChart from './BehaviorChangeChart.vue'
-import EquipmentRecommendationMatrixChart from './EquipmentRecommendationMatrixChart.vue'
+import ModesOfTransportShareChart from 'src/components/charts/ModesOfTransportShareChart.vue'
+import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
+import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
+import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
+import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
 
 interface Props {
   height: number

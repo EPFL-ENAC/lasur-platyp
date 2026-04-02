@@ -378,6 +378,9 @@ function addTransitLinesToMap(geojson: GeoJSON.FeatureCollection) {
       'line-color': '#5a3fc0',
       'line-width': 2,
     },
+    layout: {
+      visibility: showTransitLines.value ? 'visible' : 'none',
+    },
   })
 }
 

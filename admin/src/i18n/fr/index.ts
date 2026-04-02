@@ -79,9 +79,9 @@ export default {
     email_template: {
       buttonText: "Modèle d'email",
       modalTitle: "Modèle d'email pour {campaign}",
-      contactEmail: 'Contact email',
-      contactName: 'Contact name',
-      surveyLink: 'Survey link',
+      contactEmail: 'Email de contact',
+      contactName: 'Nom du contact',
+      surveyLink: 'Lien vers le sondage',
       defaultContactEmail: 'EMAIL_DE_CONTACT',
       defaultContactName: 'NOM_DE_CONTACT',
       template: `Chères collaboratrices, chers collaborateurs,

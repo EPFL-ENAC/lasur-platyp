@@ -62,7 +62,7 @@ class CampaignService(EntityService):
         count = (await self.session.exec(text("select count(id) from campaign"))).scalar()
         return count
 
-    async def get(self, id: int, user: User = None) -> Campaign:
+    async def get(self, id: int, user: User = None, special_permissions: str = "read") -> Campaign:
         """Get a campaign by id"""
         res = await self.session.exec(
             select(Campaign)
@@ -73,7 +73,7 @@ class CampaignService(EntityService):
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
         if user is not None and not is_admin(user):
-            await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
+            await require_admin_or_perm(user, f"company:{entity.company_id}", special_permissions)
         return entity
 
     async def get_by_slug(self, slug: str) -> Campaign:
