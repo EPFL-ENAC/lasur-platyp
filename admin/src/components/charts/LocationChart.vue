@@ -98,7 +98,6 @@ const max = computed(() => {
 </script>
 
 <style scoped>
-
 .wrapper {
   width: 100%;
 }

@@ -17,10 +17,7 @@
       <frequencies-chart type="constraints" :percent="percent" :height="height" />
     </q-carousel-slide>
     <q-carousel-slide name="locations" class="column no-wrap flex-center item">
-      <location-chart
-        :title="t('stats.locationsHeatmap.title')"
-        :height="height"
-      />
+      <location-chart :title="t('stats.locationsHeatmap.title')" :height="height" />
     </q-carousel-slide>
     <q-carousel-slide name="travel_time" class="column no-wrap flex-center item">
       <travel-time-frequencies-chart
@@ -104,7 +101,10 @@
     <q-carousel-slide name="behaviors_motivation" class="column no-wrap flex-center item">
       <behavior-change-chart :height="height" type="motivation" />
     </q-carousel-slide>
-    <q-carousel-slide name="equipment_recommendation_matrix" class="column no-wrap flex-center item">
+    <q-carousel-slide
+      name="equipment_recommendation_matrix"
+      class="column no-wrap flex-center item"
+    >
       <equipment-recommendation-matrix-chart :height="height" />
     </q-carousel-slide>
   </q-carousel>

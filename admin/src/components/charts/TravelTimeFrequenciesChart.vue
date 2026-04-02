@@ -107,39 +107,39 @@ function computeMedian(frequencies: Frequencies) {
     return valueA - valueB
   })
 
-  const totalCount = sortedData.reduce((sum, item) => sum + item.count, 0);
-  if (totalCount === 0) return undefined;
+  const totalCount = sortedData.reduce((sum, item) => sum + item.count, 0)
+  if (totalCount === 0) return undefined
 
-  const isEven = totalCount % 2 === 0;
-  const midPoint = totalCount / 2;
+  const isEven = totalCount % 2 === 0
+  const midPoint = totalCount / 2
 
-  let cumulativeCount = 0;
-  let firstMiddleValue: number | null = null;
+  let cumulativeCount = 0
+  let firstMiddleValue: number | null = null
 
   for (let i = 0; i < sortedData.length; i++) {
-    const element = sortedData[i]!;
-    cumulativeCount += element.count;
+    const element = sortedData[i]!
+    cumulativeCount += element.count
 
-    const n = Number(element.value);
-    const v = isNaN(n) ? 0 : n;
+    const n = Number(element.value)
+    const v = isNaN(n) ? 0 : n
 
     if (!isEven) {
       if (cumulativeCount > midPoint) {
-        return v;
+        return v
       }
     } else {
       if (cumulativeCount === midPoint) {
-        firstMiddleValue = v;
+        firstMiddleValue = v
       } else if (cumulativeCount > midPoint) {
         if (firstMiddleValue !== null) {
-          return (firstMiddleValue + v) / 2;
+          return (firstMiddleValue + v) / 2
         }
-        return v;
+        return v
       }
     }
   }
 
-  return undefined; // In case something goes wrong
+  return undefined // In case something goes wrong
 }
 
 function initValuesChartOptions(frequencies: Frequencies) {
