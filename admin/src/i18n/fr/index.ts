@@ -1,6 +1,6 @@
 export default {
   main: {
-    brand: 'Toolkit Mobilité',
+    brand: 'Mobilyse',
   },
   company: {
     label: 'Organisation',
@@ -108,7 +108,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
   },
   docs: {
     title: 'Documentation',
-    hint: 'Trouvez des guides et des ressources pour vous aider à utiliser le Toolkit Mobilité.',
+    hint: 'Trouvez des guides et des ressources pour vous aider à utiliser mobilyse.',
     organisations: {
       title: 'Organisations',
       create: {
@@ -146,6 +146,22 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         title: "Comment gérer les paramètres d'une campagne",
         caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
       },
+      share_link: {
+        title: "Comment partager le lien vers le questionaire ?",
+        caption: "Apprenez à partager le lien vers le questionaire de votre campagne auprès des participant·e·s",
+      },
+      isochrone: {
+        title: "Comment et pourquoi afficher l'isochrone sur la carte ?",
+        caption: "Apprenez à afficher l'isochrone sur la carte",
+      },
+      analyse_results: {
+        title: "Comment analyser les résultats de la campagne ?",
+        caption: "Apprenez à analyser les résultats de votre campagne et à interpréter les statistiques",
+      },
+      reward: {
+        title: "Comment récompenser les participant·e·s ayant répondu au questionaire ?",
+        caption: "Apprenez comment récompenser les participant·e·s de votre campagne",
+      },
       common_issues: {
         title: 'Problèmes courants',
         caption: "Solutions aux problèmes fréquemment rencontrés lors de la gestion d'une campagne",
@@ -153,7 +169,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       best_practices: {
         title: 'Bonnes pratiques pour la gestion des campagnes',
         caption:
-          'Conseils et recommandations pour tirer le meilleur parti des fonctionnalités de campagne dans le Toolkit Mobilité',
+          'Conseils et recommandations pour tirer le meilleur parti des fonctionnalités de campagne dans Mobilyse',
       },
     },
     participants: {
@@ -264,6 +280,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     percent_employees: '% de collaborateur·trice·s',
     total: 'N : {count}',
     no_data: 'Aucune donnée disponible',
+    observed: 'Données des participant·e·s',
+    participants_median: 'Médiane des participant·e·s',
+    geneva_median: 'Médiane de la région de Genève',
     equipments: {
       title: 'Équipements de mobilité',
       labels: {
@@ -297,6 +316,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     travel_time: {
       title: 'Temps de trajet',
       xaxis: 'Temps (min)',
+      texts: {
+        default: 'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
+        specific: 'Le temps de trajet domicile-travail médian des répondant·es est de {median} minutes.'
+      }
     },
     reco_dt2: {
       title: 'Recommandations',
@@ -346,6 +369,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         pub_train: 'Transports publics (y compris le train)',
         car_moto: 'Voiture ou moto',
         combined: 'Combiné',
+      },
+      texts: {
+        default: 'Le mode Voiture est le mode le plus utilisé dans le canton de Genève (enquête MRMT, 2015).',
+        specific: 'Le mode {top_1} est le plus utilisé par les répondant·es, suivi de {top_2} et {top_3}.'
       },
     },
     freq_mod_pro: {
@@ -939,7 +966,7 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   help: 'Aide',
   identifier: 'Identifiant',
   introduction_text:
-    "Bienvenue dans l'interface d'administration de Mobility Toolkit. Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateurs, et consulter les statistiques de mobilité.",
+    "Bienvenue dans l'interface d'administration de Mobilyse. Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateurs, et consulter les statistiques de mobilité.",
   label_en: 'Libellé (EN)',
   label_fr: 'Libellé (FR)',
   last_modified: 'Dernière modification',

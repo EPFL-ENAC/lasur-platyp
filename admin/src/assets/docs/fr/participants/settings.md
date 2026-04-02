@@ -1,19 +1,3 @@
-### Ajouter des Participants
-
-Les participants sont ajoutés manuellement via la section participants de la campagne :
-
-1. Accédez à la section participants de la campagne
-2. Cliquez sur le bouton "Ajouter"
-3. Saisissez les informations du participant :
-   - **Identifiant** (_requis_) : Un identifiant unique qui fait référence au registre externe des participants de votre organisation (par ex., ID collaborateur·trice·s, numéro de badge)
-   - **Classe d'âge** (optionnel) : Sélectionnez parmi les tranches d'âge prédéfinies (16-17, 18-24, 26-44, 45-64, 65+)
-   - **Taux d'emploi** (optionnel) : Pourcentage d'emploi à temps plein (0-100%)
-   - **Taux de télétravail** (optionnel) : Pourcentage de temps de travail à distance (0-100%)
-   - **Véhicule de société** (optionnel) : Bouton à activer pour indiquer si le participant a accès à un véhicule de société
-4. Cliquez sur "Enregistrer" pour ajouter le participant
-
-**Important :** Le champ identifiant fait référence au système de registre des participants de votre organisation. Saisissez uniquement des identifiants qui existent dans votre système interne pour assurer un suivi approprié et la protection des données.
-
 ### Informations sur les Participants
 
 Chaque entrée de participant dans le tableau affiche :

@@ -54,6 +54,14 @@ import CampaignCommonIssuesEn from 'src/assets/docs/en/campaigns/common_issues.m
 import CampaignCommonIssuesFr from 'src/assets/docs/fr/campaigns/common_issues.md'
 import CampaignBestPracticesEn from 'src/assets/docs/en/campaigns/best_practices.md'
 import CampaignBestPracticesFr from 'src/assets/docs/fr/campaigns/best_practices.md'
+import CampaignShareLinkEn from 'src/assets/docs/en/campaigns/share_link.md'
+import CampaignShareLinkFr from 'src/assets/docs/fr/campaigns/share_link.md'
+import CampaignIsochroneEn from 'src/assets/docs/en/campaigns/display_isochrone.md'
+import CampaignIsochroneFr from 'src/assets/docs/fr/campaigns/display_isochrone.md'
+import CampaignAnalyseResultsEn from 'src/assets/docs/en/campaigns/analyse_results.md'
+import CampaignAnalyseResultsFr from 'src/assets/docs/fr/campaigns/analyse_results.md'
+import CampaignRewardEn from 'src/assets/docs/en/campaigns/reward.md'
+import CampaignRewardFr from 'src/assets/docs/fr/campaigns/reward.md'
 import ParticipantsSettingsEn from 'src/assets/docs/en/participants/settings.md'
 import ParticipantsSettingsFr from 'src/assets/docs/fr/participants/settings.md'
 import ParticipantsCommonIssuesEn from 'src/assets/docs/en/participants/common_issues.md'
@@ -119,6 +127,26 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.campaigns.settings.title'),
         caption: t('docs.campaigns.settings.caption'),
         markdown: locale.value === 'fr' ? CampaignSettingsFr : CampaignSettingsEn,
+      },
+      {
+        title: t('docs.campaigns.share_link.title'),
+        caption: t('docs.campaigns.share_link.caption'),
+        markdown: locale.value === 'fr' ? CampaignShareLinkFr : CampaignShareLinkEn,
+      },
+      {
+        title: t('docs.campaigns.isochrone.title'),
+        caption: t('docs.campaigns.isochrone.caption'),
+        markdown: locale.value === 'fr' ? CampaignIsochroneFr : CampaignIsochroneEn,
+      },
+      {
+        title: t('docs.campaigns.analyse_results.title'),
+        caption: t('docs.campaigns.analyse_results.caption'),
+        markdown: locale.value === 'fr' ? CampaignAnalyseResultsFr : CampaignAnalyseResultsEn,
+      },
+      {
+        title: t('docs.campaigns.reward.title'),
+        caption: t('docs.campaigns.reward.caption'),
+        markdown: locale.value === 'fr' ? CampaignRewardFr : CampaignRewardEn,
       },
       {
         title: t('docs.campaigns.common_issues.title'),

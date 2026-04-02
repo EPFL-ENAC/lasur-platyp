@@ -1,6 +1,6 @@
 ### A free tool to support you in your mobility strategy
 
-The aim of the Mobility Toolkit is to build an easy-to-use tool that enables any organisation to carry out a mobility analysis with a view to establishing or revising their mobility plan. The analysis focuses on both the mobility practices of collaborators and their desire for mobility, while taking into account personal and professional constraints.
+The aim of Mobilyse is to build an easy-to-use tool that enables any organisation to carry out a mobility analysis with a view to establishing or revising their mobility plan. The analysis focuses on both the mobility practices of collaborators and their desire for mobility, while taking into account personal and professional constraints.
 
 It is a way for organisations to target the most relevant assistance to implement for their collaborators and to periodically assess the alignment of this assistance with their actual needs.
 

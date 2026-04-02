@@ -1,6 +1,6 @@
 export default {
   main: {
-    brand: 'Mobility Toolkit',
+    brand: 'Mobilyse',
   },
   company: {
     label: 'Organisation',
@@ -107,12 +107,12 @@ Thank you for your valuable contribution ! If you have any questions, please con
   },
   docs: {
     title: 'Documentation',
-    hint: 'Find here all the documentation to help you use the Mobility Toolkit administration interface.',
+    hint: 'Find here all the documentation to help you use Mobilyse administration interface.',
     organisations: {
       title: 'Organisations',
       create: {
         title: 'How to create an organisation',
-        caption: 'Learn how to create a new organisation in the Mobility Toolkit',
+        caption: 'Learn how to create a new organisation in Mobilyse',
       },
       settings: {
         title: 'How to manage organisation settings',
@@ -127,9 +127,9 @@ Thank you for your valuable contribution ! If you have any questions, please con
         caption: 'Learn how to manage custom measures for your organisation',
       },
       best_practices: {
-        title: 'Best practices for using the Mobility Toolkit',
+        title: 'Best practices for using Mobilyse',
         caption:
-          'Tips and recommendations to make the most of the Mobility Toolkit for your organisation',
+          'Tips and recommendations to make the most of Mobilyse for your organisation',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
@@ -144,6 +144,22 @@ Thank you for your valuable contribution ! If you have any questions, please con
         title: 'How to manage campaign settings',
         caption: 'Learn how to create and update your campaign settings and preferences',
       },
+      share_link: {
+        title: "How to share the link to the survey?",
+        caption: "Learn how to share the link to the survey with collaborators",
+      },
+      isochrone: {
+        title: "How and why to display the isochrone on the map?",
+        caption: "Learn how and why to display the isochrone on the map",
+      },
+      analyse_results: {
+        title: "How to analyse the results of the campaign?",
+        caption: "Learn how to analyse the results of the campaign and interpret the statistics",
+      },
+      reward: {
+        title: "How to reward participants who have completed the survey?",
+        caption: "Learn how to reward participants who have completed the survey",
+      },
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems related to campaign management',
@@ -151,7 +167,7 @@ Thank you for your valuable contribution ! If you have any questions, please con
       best_practices: {
         title: 'Best practices for campaign management',
         caption:
-          'Tips and recommendations to make the most of the campaign features in the Mobility Toolkit',
+          'Tips and recommendations to make the most of the campaign features in Mobilyse',
       },
     },
     participants: {
@@ -259,6 +275,9 @@ Thank you for your valuable contribution ! If you have any questions, please con
     percent_employees: '% of employees',
     total: 'N: {count}',
     no_data: 'No data available',
+    observed: 'Data from participants',
+    participants_median: 'Participants median',
+    geneva_median: 'Geneva area median',
     equipments: {
       title: 'Mobility equipments',
       labels: {
@@ -292,6 +311,10 @@ Thank you for your valuable contribution ! If you have any questions, please con
     travel_time: {
       title: 'Travel time',
       xaxis: 'Time (min)',
+      texts: {
+        default: 'The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024)',
+        specific: 'The median travel time from home to work for participants is {median} minutes.'
+      }
     },
     reco_dt2: {
       title: 'Recommendations',
@@ -341,6 +364,10 @@ Thank you for your valuable contribution ! If you have any questions, please con
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
         combined: 'Combined',
+      },
+      texts: {
+        default: 'The mode Car is the most used in the Geneva canton (MRMT survey, 2015).',
+        specific: 'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.'
       },
     },
     freq_mod_pro: {
@@ -932,7 +959,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   help: 'Help',
   identifier: 'Identifier',
   introduction_text:
-    'Welcome to the Mobility Toolkit administration interface. Use the menu to navigate through the different sections and manage companies, campaigns, users, and view mobility statistics.',
+    'Welcome to Mobilyse administration interface. Use the menu to navigate through the different sections and manage companies, campaigns, users, and view mobility statistics.',
   label_en: 'Label (EN)',
   label_fr: 'Label (FR)',
   last_modified: 'Last Modified',

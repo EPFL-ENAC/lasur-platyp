@@ -1,6 +1,6 @@
 export default {
   main: {
-    brand: 'Toolkit Mobilité',
+    brand: 'Mobilyse',
   },
   form: {
     error: {
@@ -17,7 +17,7 @@ export default {
     },
     agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
     agreement_hint:
-      "Les CGU formalisent l'accord auquel vous consentez, entre vous et la Fondation Modus, en utilisant le toolkit mobilité. La politique de confidentialité vous explique à quoi servent les données récoltées et comment celles-ci sont traitées.",
+      "Les CGU formalisent l'accord auquel vous consentez, entre vous et la Fondation Modus, en utilisant Mobilyse. La politique de confidentialité vous explique à quoi servent les données récoltées et comment celles-ci sont traitées.",
     terms_conditions: "J'ai lu et accepte les CGU",
     terms_conditions_link: "Voir les conditions générales d'utilisation",
     confidentiality: "J'ai lu et accepte la politique de confidentialité",

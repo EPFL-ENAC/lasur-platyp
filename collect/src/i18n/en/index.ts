@@ -1,6 +1,6 @@
 export default {
   main: {
-    brand: 'Mobility Toolkit',
+    brand: 'Mobilyse',
   },
   form: {
     error: {
@@ -17,7 +17,7 @@ export default {
     },
     agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
     agreement_hint:
-      'The GTC formalizes the agreement to which you consent, between you and the Modus Foundation, by using the mobility toolkit. The confidentiality policy explains what the data collected is used for and how it is processed.',
+      'The GTC formalizes the agreement to which you consent, between you and the Modus Foundation, by using Mobilyse. The confidentiality policy explains what the data collected is used for and how it is processed.',
     terms_conditions: 'I have read and accept the GTC',
     terms_conditions_link: 'See the terms and conditions',
     confidentiality: 'I have read and accept the privacy policy',

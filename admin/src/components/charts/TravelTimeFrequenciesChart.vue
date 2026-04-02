@@ -1,0 +1,234 @@
+<template>
+  <div :style="`height: ${height}px; width: 100%;`">
+    <e-charts
+      v-if="hasData"
+      ref="chart"
+      autoresize
+      :init-options="initOptions"
+      :option="option"
+      :update-options="updateOptions"
+      :loading="stats.loading"
+    />
+    <div v-else>
+      <div class="text-h6 text-center">{{ t(`stats.travel_time.title`) }}</div>
+      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+    </div>
+  </div>
+
+  <div>
+    <p>{{ t('stats.travel_time.texts.default') }}</p>
+    <p>{{ t('stats.travel_time.texts.specific', { median: medianValue }) }}</p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import ECharts from 'vue-echarts'
+import type { EChartsOption } from 'echarts'
+import { use } from 'echarts/core'
+import { BarChart } from 'echarts/charts'
+import { SVGRenderer } from 'echarts/renderers'
+import { initOptions, updateOptions } from './commons'
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+} from 'echarts/components'
+import type { Frequencies } from 'src/models'
+
+const { t, locale } = useI18n()
+const stats = useStats()
+use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+
+interface Props {
+  type: string
+  xaxis?: string
+  yaxis?: string
+  rangeStep?: number
+  percent?: boolean
+  height?: number
+}
+const props = withDefaults(defineProps<Props>(), {
+  height: 400,
+})
+
+const chart = shallowRef(null)
+const option = ref<EChartsOption>({})
+const total = ref(0)
+const medianValue = ref<number | null>(null)
+
+const hasData = computed(() => {
+  if (!stats.frequencies || !stats.frequencies['travel_time']) {
+    return false
+  }
+  const frequencies = stats.frequencies['travel_time'] as Frequencies
+  return frequencies.data.length > 0
+})
+
+watch(
+  () => stats.loading,
+  () => {
+    if (stats.loading) {
+      initChartOptions()
+    }
+  },
+)
+
+watch([() => props.percent, () => props.height, locale], () => {
+  if (!stats.loading) {
+    initChartOptions()
+  }
+})
+
+onMounted(() => {
+  initChartOptions()
+})
+
+function keyLabel(key: string) {
+  if (key === 'null' || key === 'None') {
+    return 'N/A'
+  }
+  // is integer ?
+  if (Number.isInteger(Number(key))) {
+    return key
+  }
+  return t(`stats.travel_time.labels.${key}`)
+}
+
+function initChartOptions() {
+  option.value = {}
+  total.value = 0
+  if (!stats.frequencies || !stats.frequencies['travel_time']) {
+    return
+  }
+
+  const frequencies = stats.frequencies['travel_time'] as Frequencies
+
+  initValuesChartOptions(frequencies)
+}
+
+function initValuesChartOptions(frequencies: Frequencies) {
+  total.value = frequencies.total || 0
+
+  // find max value
+  const max = Math.max(
+    ...frequencies.data.map((item) => {
+      const value = Number(item.value)
+      return isNaN(value) ? 0 : value
+    }),
+    0,
+  )
+  const categories = makeCategories(max, props.rangeStep)
+
+  const repeated = frequencies.data.flatMap((item) => {
+    const value = Number(item.value)
+    const count = item.count
+    if (isNaN(value) || isNaN(count)) {
+      return []
+    }
+    return Array(count).fill(value)
+  })
+  const sorted = repeated.toSorted((a, b) => a - b)
+  
+  if (sorted.length > 0) {
+    const mid = Math.floor(sorted.length / 2)
+
+    if (sorted.length % 2 === 0) {
+      medianValue.value = (sorted[mid - 1] + sorted[mid]) / 2
+    } else {
+      medianValue.value = sorted[mid]
+    }
+  }
+
+  // foreach category find count in frequencies
+  const values =
+    categories?.map((category) => {
+      const item = frequencies.data.find((item) => item.value === `${category}`)
+      return item ? (props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count) : 0
+    }) || []
+  
+
+  const newOption: EChartsOption = {
+    grid: {
+      left: '40',
+      right: '20',
+      top: '80',
+      bottom: '40',
+      containLabel: true,
+    },
+    animation: false,
+    height: props.height - 100,
+    title: {
+      text: t(`stats.travel_time.title`),
+      subtext: t(`stats.total`, { count: total.value }),
+      left: 'center',
+      top: 0,
+      itemGap: 10,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+    },
+    legend: {
+      show: false,
+    },
+    xAxis: {
+      type: 'category',
+      name: props.xaxis || '',
+      nameGap: 30,
+      nameLocation: 'middle',
+      data: categories,
+    },
+    yAxis: {
+      name: props.yaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      nameLocation: 'middle',
+      nameGap: 30,
+      type: 'value',
+    },
+    series: [
+      {
+        data: values,
+        type: 'bar',
+        barCategoryGap: '0',
+        color: '#008066',
+        markLine:
+          medianValue.value !== null
+            ? {
+                symbol: 'none',
+                label: {
+                  show: true,
+                  formatter: `${t('stats.participants_median')}: ${medianValue.value}`,
+                },
+                tooltip: {
+                  formatter: `${t('stats.participants_median')}: ${medianValue.value}`,
+                },
+                lineStyle: {
+                  type: 'dashed',
+                  color: '#d32f2f',
+                  width: 2,
+                },
+                z: 10,
+                data: [
+                  {
+                    xAxis: `${medianValue.value}`,
+                  },
+                ],
+              }
+            : undefined as unknown as any,
+      },
+    ],
+  }
+  option.value = newOption
+}
+
+function makeCategories(max: number, step = 5) {
+  const arr = []
+  for (let i = 0; i <= max; i += step) {
+    arr.push(`${i}`)
+  }
+  return arr
+}
+</script>
