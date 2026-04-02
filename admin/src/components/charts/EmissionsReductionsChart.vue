@@ -65,7 +65,9 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    current_emissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions.value, 0) || 0),
+    current_emissions: new Intl.NumberFormat().format(
+      toMaxDecimals(currentEmissions.value, 0) || 0,
+    ),
     new_emissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions.value, 0) || 0),
     cheeseburgers: new Intl.NumberFormat().format(
       Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 18.8),
@@ -109,7 +111,11 @@ function keyLabel(key: string) {
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.emissions || !stats.emissions[props.type] || !stats.emissionsReductions[props.reductionType]) {
+  if (
+    !stats.emissions ||
+    !stats.emissions[props.type] ||
+    !stats.emissionsReductions[props.reductionType]
+  ) {
     return
   }
 
@@ -122,9 +128,7 @@ function initChartOptions() {
     return
   }
 
-  const categories = recoEmissions
-    .sort((a, b) => b.reduced - a.reduced)
-    .map((item) => item.mode)
+  const categories = recoEmissions.sort((a, b) => b.reduced - a.reduced).map((item) => item.mode)
 
   // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
   currentEmissions.value = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)

@@ -65,7 +65,9 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    current_emissions: new Intl.NumberFormat().format(toMaxDecimals(currentEmissions.value, 0) || 0),
+    current_emissions: new Intl.NumberFormat().format(
+      toMaxDecimals(currentEmissions.value, 0) || 0,
+    ),
     new_emissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions.value, 0) || 0),
     cheeseburgers: new Intl.NumberFormat().format(
       Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 18.8),

@@ -17,7 +17,7 @@ async def compute_all_statistics(
     session: AsyncSession = Depends(get_session),
 ) -> Stats:
     """Query all type of all statistics in records"""
-    try:        
+    try:
         filter_dict = paramAsDict(filter)
         workplace_filter = filter_dict.get('workplace_location', None)
         if 'workplace_location' in filter_dict:

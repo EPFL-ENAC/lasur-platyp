@@ -129,7 +129,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     return Array(count).fill(value)
   })
   const sorted = repeated.toSorted((a, b) => a - b)
-  
+
   if (sorted.length > 0) {
     const mid = Math.floor(sorted.length / 2)
 
@@ -146,7 +146,6 @@ function initValuesChartOptions(frequencies: Frequencies) {
       const item = frequencies.data.find((item) => item.value === `${category}`)
       return item ? (props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count) : 0
     }) || []
-  
 
   const newOption: EChartsOption = {
     grid: {

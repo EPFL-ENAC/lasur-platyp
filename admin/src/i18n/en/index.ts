@@ -23,7 +23,8 @@ export default {
     info_url: 'Information link',
     info_url_hint: 'Provide a link to more information about the organisation mobility options.',
     can_be_cited: 'Can be cited as a mobilyse user',
-    can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of mobilyse',
+    can_be_cited_toggle:
+      'I do not want the Modus Foundation to cite the name of my organisation as a user of mobilyse',
     your_role: 'Your role',
     roles: {
       admin: 'Administrator',
@@ -40,10 +41,10 @@ export default {
     with_actions: 'With employer measures specific to this campaign',
     rewards: {
       toggle: 'I want to reward participants.',
-      hint:
-        'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
-      default_message: 'Congratulations and thank you for your participation in the mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able get [...] as a reward.',
-      message_placeholder: 'Message for participants'
+      hint: 'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
+      default_message:
+        'Congratulations and thank you for your participation in the mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able get [...] as a reward.',
+      message_placeholder: 'Message for participants',
     },
     contact_name: 'Contact Name',
     contact_name_hint:
@@ -97,7 +98,7 @@ Why take part?
 
 The survey is anonymous and no personal data will be recorded. 🔐 Please note that you can select the language (FR/EN) in the top right-hand corner. To find out more about mobilyse, please visit: https://modus-ge.ch/project/mobilyse/.
 
-Thank you for your valuable contribution ! If you have any questions, please contact: [{contactEmail}](mailto:{contactEmail}).
+Thank you for your valuable contribution! If you have any questions, please contact: [{contactEmail}](mailto:{contactEmail}).
 
 {contactName}`,
       copyTemplate: 'Copy email template',
@@ -128,8 +129,7 @@ Thank you for your valuable contribution ! If you have any questions, please con
       },
       best_practices: {
         title: 'Best practices for using Mobilyse',
-        caption:
-          'Tips and recommendations to make the most of Mobilyse for your organisation',
+        caption: 'Tips and recommendations to make the most of Mobilyse for your organisation',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
@@ -145,20 +145,20 @@ Thank you for your valuable contribution ! If you have any questions, please con
         caption: 'Learn how to create and update your campaign settings and preferences',
       },
       share_link: {
-        title: "How to share the link to the survey?",
-        caption: "Learn how to share the link to the survey with collaborators",
+        title: 'How to share the link to the survey?',
+        caption: 'Learn how to share the link to the survey with collaborators',
       },
       isochrone: {
-        title: "How and why to display the isochrone on the map?",
-        caption: "Learn how and why to display the isochrone on the map",
+        title: 'How and why to display the isochrone on the map?',
+        caption: 'Learn how and why to display the isochrone on the map',
       },
       analyse_results: {
-        title: "How to analyse the results of the campaign?",
-        caption: "Learn how to analyse the results of the campaign and interpret the statistics",
+        title: 'How to analyse the results of the campaign?',
+        caption: 'Learn how to analyse the results of the campaign and interpret the statistics',
       },
       reward: {
-        title: "How to reward participants who have completed the survey?",
-        caption: "Learn how to reward participants who have completed the survey",
+        title: 'How to reward participants who have completed the survey?',
+        caption: 'Learn how to reward participants who have completed the survey',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
@@ -166,8 +166,7 @@ Thank you for your valuable contribution ! If you have any questions, please con
       },
       best_practices: {
         title: 'Best practices for campaign management',
-        caption:
-          'Tips and recommendations to make the most of the campaign features in Mobilyse',
+        caption: 'Tips and recommendations to make the most of the campaign features in Mobilyse',
       },
     },
     participants: {
@@ -312,9 +311,10 @@ Thank you for your valuable contribution ! If you have any questions, please con
       title: 'Travel time',
       xaxis: 'Time (min)',
       texts: {
-        default: 'The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024)',
-        specific: 'The median travel time from home to work for participants is {median} minutes.'
-      }
+        default:
+          'The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024)',
+        specific: 'The median travel time from home to work for participants is {median} minutes.',
+      },
     },
     reco_dt2: {
       title: 'Recommendations',
@@ -367,7 +367,8 @@ Thank you for your valuable contribution ! If you have any questions, please con
       },
       texts: {
         default: 'The mode Car is the most used in the Geneva canton (MRMT survey, 2015).',
-        specific: 'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.'
+        specific:
+          'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.',
       },
     },
     freq_mod_pro: {
@@ -857,7 +858,7 @@ Thank you for your valuable contribution ! If you have any questions, please con
     map_options: 'Map options',
     transit: 'Public transport',
     transit_options: {
-      show_lines: 'Show lines passing through the isochrone'
+      show_lines: 'Show lines passing through the isochrone',
     },
     pois: 'Points of interest',
     mode: {

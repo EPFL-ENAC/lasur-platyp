@@ -31,14 +31,11 @@
           <q-list>
             <q-item-label class="text-h6 q-ma-sm">{{ t('record.transit') }}</q-item-label>
             <q-item clickable>
-                <q-item-section>{{ t('record.transit_options.show_lines') }}</q-item-section>
-                <q-item-section side>
-                  <q-toggle
-                    v-model="showTransitLines"
-                    @update:model-value="toggleTransitLines"
-                  />
-                </q-item-section>
-              </q-item>
+              <q-item-section>{{ t('record.transit_options.show_lines') }}</q-item-section>
+              <q-item-section side>
+                <q-toggle v-model="showTransitLines" @update:model-value="toggleTransitLines" />
+              </q-item-section>
+            </q-item>
 
             <q-separator spaced />
             <q-item-label class="text-h6 q-ma-sm">{{ t('record.pois') }}</q-item-label>

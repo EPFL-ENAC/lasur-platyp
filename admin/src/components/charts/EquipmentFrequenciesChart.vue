@@ -1,7 +1,14 @@
 <template>
   <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts v-if="hasData" ref="chart" autoresize :init-options="initOptions" :option="option"
-      :update-options="updateOptions" :loading="stats.loading" />
+    <e-charts
+      v-if="hasData"
+      ref="chart"
+      autoresize
+      :init-options="initOptions"
+      :option="option"
+      :update-options="updateOptions"
+      :loading="stats.loading"
+    />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.equipments.title`) }}</div>
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
@@ -26,7 +33,15 @@ import type { Frequencies } from 'src/models'
 
 const { t, locale } = useI18n()
 const stats = useStats()
-use([SVGRenderer, BarChart, PictorialBarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([
+  SVGRenderer,
+  BarChart,
+  PictorialBarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
 
 interface Props {
   xaxis?: string
@@ -98,7 +113,7 @@ const MRMT_VALUES = {
   train_subs: 19,
   moto: 20,
   ebike: 15,
-  mob_subs: 3
+  mob_subs: 3,
 }
 
 function initLabelsChartOptions(frequencies: Frequencies) {
@@ -108,9 +123,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     .map((item) => ({
       key: item.value || 'null',
       name: keyLabel(item.value || 'null'),
-      value: props.percent
-        ? Number(((item.count / total.value) * 100).toFixed(2))
-        : item.count,
+      value: props.percent ? Number(((item.count / total.value) * 100).toFixed(2)) : item.count,
     }))
     .reverse()
 
@@ -122,7 +135,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     return mrmt ?? null
   })
 
-  if (categories.length === 0) return;
+  if (categories.length === 0) return
 
   const maxBarValue = values.length ? Math.max(...values) : 0
   const maxMrmtValue = mrmtValues.filter((v): v is number => v !== null).length
@@ -169,11 +182,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     xAxis: {
-      name:
-        props.xaxis ||
-        (props.percent
-          ? t('stats.percent_employees')
-          : t('stats.nb_employees')),
+      name: props.xaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 25,
       type: 'value',
@@ -181,23 +190,23 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     },
     series: [
       {
-        name: t("stats.observed"),
-        type: "bar",
+        name: t('stats.observed'),
+        type: 'bar',
         data: values,
         itemStyle: {
-          color: "#008066",
+          color: '#008066',
         },
       },
       {
-        name: "MRMT",
-        type: "pictorialBar",
-        symbol: "rect", // This creates the "line" marker
+        name: 'MRMT',
+        type: 'pictorialBar',
+        symbol: 'rect', // This creates the "line" marker
         symbolRepeat: false,
         symbolSize: [4, 32], // [width, height] - height slightly taller than bar
         symbolOffset: [0, 0],
-        symbolPosition: "end",
+        symbolPosition: 'end',
         itemStyle: {
-          color: "#FF5722", // Distinct color for the marker
+          color: '#FF5722', // Distinct color for the marker
         },
         data: mrmtValues,
         z: 3, // Ensure it's on top of the bars
@@ -207,5 +216,4 @@ function initLabelsChartOptions(frequencies: Frequencies) {
 
   option.value = newOption
 }
-
 </script>

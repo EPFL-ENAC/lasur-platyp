@@ -24,7 +24,8 @@ export default {
     info_url_hint:
       "Un lien vers plus d'informations sur les options de mobilité de cette organisation.",
     can_be_cited: 'Peut être citée comme utilisateur de mobilyse',
-    can_be_cited_toggle: 'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de mobilyse',
+    can_be_cited_toggle:
+      'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de mobilyse',
     your_role: 'Votre rôle',
     roles: {
       admin: 'Administrateur',
@@ -41,10 +42,10 @@ export default {
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
     rewards: {
       toggle: 'Je souhaite récompenser les participant·e·s.',
-      hint: 
-        "Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une \"attestation\" (document PDF) à la fin du remplissage du questionnaire à chaque répondant·e, qui prouvera sa participation. Le ou la répondant·e pourra alors transférer cette attestation auprès de la personne en charge d'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).",
-      default_message: "Bravo et merci pour votre participation à l'enquête mobilyse ! Vos réponses sont précieuses et nous permettront de mieux comprendre comment vous aider dans votre mobilité au quotidien. En téléchargeant ce document et en le transférant à [...], vous pourrez profiter de [...].",
-      message_placeholder: 'Message pour les participants'
+      hint: 'Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d\'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une "attestation" (document PDF) à la fin du remplissage du questionnaire à chaque répondant·e, qui prouvera sa participation. Le ou la répondant·e pourra alors transférer cette attestation auprès de la personne en charge d\'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).',
+      default_message:
+        "Bravo et merci pour votre participation à l'enquête mobilyse ! Vos réponses sont précieuses et nous permettront de mieux comprendre comment vous aider dans votre mobilité au quotidien. En téléchargeant ce document et en le transférant à [...], vous pourrez profiter de [...].",
+      message_placeholder: 'Message pour les participants',
     },
     contact_name: 'Nom du contact',
     contact_name_hint:
@@ -85,7 +86,7 @@ export default {
       defaultContactName: 'NOM_DE_CONTACT',
       template: `Chères collaboratrices, chers collaborateurs,
 
-Mobilyse est un outil proposé par la Fondation Modus et l'EPFL pour aider les organisations à adapter les aides à la mobilité proposées aux collaboratrices et collaborateurs. Nous utilisons aujourd'hui cet outil pour comprendre comment vous accompagner au mieux dans votre mobilité quotidienne, que ce soit vos déplacements domicile-travail ou vos déplacements professionnels (dans le cadre de vos fonctions). 🚲🚃🚶🚈 Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10 minutes maximum et vous l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
+Mobilyse est un outil proposé par la Fondation Modus et l'EPFL pour aider les organisations à adapter les aides à la mobilité proposées aux collaboratrices et collaborateurs. Nous utilisons aujourd'hui cet outil pour comprendre comment vous accompagner au mieux dans votre mobilité quotidienne, que ce soit vos déplacements domicile-travail ou vos déplacements professionnels (dans le cadre de vos fonctions). 🚲🚃🚶🚈 Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10 minutes maximum et l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
 
 [{surveyLink}]({surveyLink})
 
@@ -147,20 +148,22 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
       },
       share_link: {
-        title: "Comment partager le lien vers le questionaire ?",
-        caption: "Apprenez à partager le lien vers le questionaire de votre campagne auprès des participant·e·s",
+        title: 'Comment partager le lien vers le questionaire ?',
+        caption:
+          'Apprenez à partager le lien vers le questionaire de votre campagne auprès des participant·e·s',
       },
       isochrone: {
         title: "Comment et pourquoi afficher l'isochrone sur la carte ?",
         caption: "Apprenez à afficher l'isochrone sur la carte",
       },
       analyse_results: {
-        title: "Comment analyser les résultats de la campagne ?",
-        caption: "Apprenez à analyser les résultats de votre campagne et à interpréter les statistiques",
+        title: 'Comment analyser les résultats de la campagne ?',
+        caption:
+          'Apprenez à analyser les résultats de votre campagne et à interpréter les statistiques',
       },
       reward: {
-        title: "Comment récompenser les participant·e·s ayant répondu au questionaire ?",
-        caption: "Apprenez comment récompenser les participant·e·s de votre campagne",
+        title: 'Comment récompenser les participant·e·s ayant répondu au questionaire ?',
+        caption: 'Apprenez comment récompenser les participant·e·s de votre campagne',
       },
       common_issues: {
         title: 'Problèmes courants',
@@ -317,9 +320,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: 'Temps de trajet',
       xaxis: 'Temps (min)',
       texts: {
-        default: 'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
-        specific: 'Le temps de trajet domicile-travail médian des répondant·es est de {median} minutes.'
-      }
+        default:
+          'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
+        specific:
+          'Le temps de trajet domicile-travail médian des répondant·es est de {median} minutes.',
+      },
     },
     reco_dt2: {
       title: 'Recommandations',
@@ -371,8 +376,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         combined: 'Combiné',
       },
       texts: {
-        default: 'Le mode Voiture est le mode le plus utilisé dans le canton de Genève (enquête MRMT, 2015).',
-        specific: 'Le mode {top_1} est le plus utilisé par les répondant·es, suivi de {top_2} et {top_3}.'
+        default:
+          'Le mode Voiture est le mode le plus utilisé dans le canton de Genève (enquête MRMT, 2015).',
+        specific:
+          'Le mode {top_1} est le plus utilisé par les répondant·es, suivi de {top_2} et {top_3}.',
       },
     },
     freq_mod_pro: {

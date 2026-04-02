@@ -186,11 +186,7 @@
       :company="company"
       :campaign="item"
     />
-    <email-template-dialog
-      v-if="props.item"
-      v-model="showEmailTemplateDialog"
-      :campaign="item"
-    />
+    <email-template-dialog v-if="props.item" v-model="showEmailTemplateDialog" :campaign="item" />
   </div>
 </template>
 

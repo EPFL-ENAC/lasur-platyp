@@ -21,10 +21,7 @@
 
   <div>
     <p>{{ t(`stats.energy_journey.texts.default`) }}</p>
-    <q-markdown
-      v-if="textLabels"
-      :src="t(`stats.energy_journey.texts.specific`, textLabels)"
-    />
+    <q-markdown v-if="textLabels" :src="t(`stats.energy_journey.texts.specific`, textLabels)" />
   </div>
 </template>
 

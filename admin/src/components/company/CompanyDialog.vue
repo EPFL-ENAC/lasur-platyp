@@ -33,7 +33,8 @@
           />
           <q-select
             filled
-            v-model="selected.mobility_advisors"
+            :model-value="selected.mobility_advisors || []"
+            @update:model-value="(val) => (selected.mobility_advisors = val)"
             :label="t('company.mobility_advisors')"
             :hint="t('company.mobility_advisors_hint')"
             use-input
@@ -122,7 +123,10 @@ watch(
     if (value) {
       // deep copy
       selected.value = JSON.parse(JSON.stringify(props.item))
-      if (selected.value.administrators === undefined || selected.value.administrators.length === 0) {
+      if (
+        selected.value.administrators === undefined ||
+        selected.value.administrators.length === 0
+      ) {
         selected.value.administrators = authStore.profile?.email ? [authStore.profile.email] : []
       }
       editMode.value = selected.value.id !== undefined

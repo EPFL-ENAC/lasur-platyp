@@ -1,7 +1,14 @@
 <template>
   <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts v-if="hasData" ref="chart" autoresize :init-options="initOptions" :option="option"
-      :update-options="updateOptions" :loading="stats.loading" />
+    <e-charts
+      v-if="hasData"
+      ref="chart"
+      autoresize
+      :init-options="initOptions"
+      :option="option"
+      :update-options="updateOptions"
+      :loading="stats.loading"
+    />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.freq_mod.title`) }}</div>
       <div class="text-subtitle1 text-grey-8 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
@@ -11,7 +18,13 @@
   <div>
     <p>{{ t('stats.freq_mod.texts.default') }}</p>
     <p v-if="topModes.length === 3">
-      {{ t('stats.freq_mod.texts.specific', { top_1: topModes[0], top_2: topModes[1], top_3: topModes[2] }) }}
+      {{
+        t('stats.freq_mod.texts.specific', {
+          top_1: topModes[0],
+          top_2: topModes[1],
+          top_3: topModes[2],
+        })
+      }}
     </p>
   </div>
 </template>
@@ -91,7 +104,7 @@ const MRMT_VALUES = {
   walking: 20.7,
   pub: 21,
   moto: 8.2,
-  car: 36.5
+  car: 36.5,
 }
 
 function initChartOptions() {
@@ -100,7 +113,6 @@ function initChartOptions() {
   if (!stats.frequencies || !stats.frequencies['freq_mod']) {
     return
   }
-
 
   let dataset: { key: string; name: string; value: number; count: number }[] = []
   if (Array.isArray(stats.frequencies['freq_mod'])) {
@@ -126,7 +138,9 @@ function initChartOptions() {
     total.value = frequencies.total
   }
 
-  const sortedByValue = dataset.filter(item => item.count > 5).toSorted((a, b) => b.value - a.value)
+  const sortedByValue = dataset
+    .filter((item) => item.count > 5)
+    .toSorted((a, b) => b.value - a.value)
   topModes.value = sortedByValue.slice(0, 3).map((item) => item.name)
 
   // Extract category names and values for series
@@ -143,9 +157,7 @@ function initChartOptions() {
     value,
   }))
 
-  const mrmtColors = mrmtDataset.map(
-    (item) => MODE_COLORS[item.key] || '#ccc',
-  )
+  const mrmtColors = mrmtDataset.map((item) => MODE_COLORS[item.key] || '#ccc')
 
   const newOption: EChartsOption = {
     grid: {

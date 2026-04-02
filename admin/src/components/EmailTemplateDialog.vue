@@ -59,22 +59,24 @@
           <div :id="`email-content-${lang}`" class="q-pa-md bg-grey-1 rounded-borders">
             <q-markdown
               :src="
-                t('campaign.email_template.template', {
-                  surveyLink: surveyLink,
-                  contactEmail:
-                    contactEmail || t('campaign.email_template.defaultContactEmail'),
-                  contactName:
-                    contactName || t('campaign.email_template.defaultContactName'),
-                }, { locale: lang })
+                t(
+                  'campaign.email_template.template',
+                  {
+                    surveyLink: surveyLink,
+                    contactEmail: contactEmail || t('campaign.email_template.defaultContactEmail'),
+                    contactName: contactName || t('campaign.email_template.defaultContactName'),
+                  },
+                  { locale: lang },
+                )
               "
               no-heading-anchor-links
             />
           </div>
-      </q-tab-panel>
+        </q-tab-panel>
       </q-tab-panels>
-      
+
       <q-separator />
-    
+
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn
           color="primary"
@@ -88,53 +90,53 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign } from 'src/models';
-import { makeSurveyLink } from 'src/utils/links';
-import { notifyError, notifySuccess } from 'src/utils/notify';
+import type { Campaign } from 'src/models'
+import { makeSurveyLink } from 'src/utils/links'
+import { notifyError, notifySuccess } from 'src/utils/notify'
 
-const { t, locale } = useI18n();
+const { t, locale } = useI18n()
 
 const open = defineModel<boolean>({
   default: false,
-});
+})
 
 interface DialogProps {
-  campaign: Campaign;
+  campaign: Campaign
 }
 
-const props = defineProps<DialogProps>();
+const props = defineProps<DialogProps>()
 
-const tab = ref(locale.value.includes('fr') ? 'fr' : 'en');
-const contactEmail = ref(props.campaign.contact_email || '');
-const contactName = ref(props.campaign.contact_name || '');
+const tab = ref(locale.value.includes('fr') ? 'fr' : 'en')
+const contactEmail = ref(props.campaign.contact_email || '')
+const contactName = ref(props.campaign.contact_name || '')
 
 const surveyLink = computed(() => {
-  if (!props.campaign.slug) return '';
-  return makeSurveyLink(props.campaign.slug);
-});
+  if (!props.campaign.slug) return ''
+  return makeSurveyLink(props.campaign.slug)
+})
 
 async function copyAsRichText() {
-  const el = document.getElementById(`email-content-${tab.value}`);
-  if (!el) return;
+  const el = document.getElementById(`email-content-${tab.value}`)
+  if (!el) return
 
   try {
     // We create a blob of the HTML content
-    const htmlBlob = new Blob([el.innerHTML], { type: 'text/html' });
-    const textBlob = new Blob([el.innerText], { type: 'text/plain' });
+    const htmlBlob = new Blob([el.innerHTML], { type: 'text/html' })
+    const textBlob = new Blob([el.innerText], { type: 'text/plain' })
 
     const data = [
       new ClipboardItem({
         'text/html': htmlBlob,
         'text/plain': textBlob,
       }),
-    ];
+    ]
 
-    await navigator.clipboard.write(data);
+    await navigator.clipboard.write(data)
 
-    notifySuccess(t('campaign.email_template.copyTemplateSuccess'));
+    notifySuccess(t('campaign.email_template.copyTemplateSuccess'))
   } catch (err) {
-    console.error('Failed to copy: ', err);
-    notifyError(t('campaign.email_template.copyTemplateError'));
+    console.error('Failed to copy: ', err)
+    notifyError(t('campaign.email_template.copyTemplateError'))
   }
 }
 </script>

@@ -158,7 +158,7 @@ const columns = computed(() => {
       label: t('company.your_role'),
       align: DefaultAlignment,
       field: (row: Company) => t(`company.roles.${roleInThisCompany(row)}`),
-      sortable: true,
+      sortable: false,
     },
     {
       name: 'can_be_cited',
@@ -215,7 +215,10 @@ onMounted(() => {
 })
 
 function isAdminOfThisCompany(company: Company) {
-  return company.administrators?.includes(authStore.profile?.email || '')
+  if (authStore.isAdmin) return true
+  if (!company.administrators || !authStore.profile?.email) return false
+
+  return company.administrators?.includes(authStore.profile.email)
 }
 
 function roleInThisCompany(company: Company): 'admin' | 'mobility_advisor' | 'none' {
