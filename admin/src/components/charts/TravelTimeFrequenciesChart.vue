@@ -194,30 +194,6 @@ function initValuesChartOptions(frequencies: Frequencies) {
         type: 'bar',
         barCategoryGap: '0',
         color: '#008066',
-        markLine:
-          medianValue.value !== null
-            ? {
-                symbol: 'none',
-                label: {
-                  show: true,
-                  formatter: `${t('stats.participants_median')}: ${medianValue.value}`,
-                },
-                tooltip: {
-                  formatter: `${t('stats.participants_median')}: ${medianValue.value}`,
-                },
-                lineStyle: {
-                  type: 'dashed',
-                  color: '#d32f2f',
-                  width: 2,
-                },
-                z: 10,
-                data: [
-                  {
-                    xAxis: `${medianValue.value}`,
-                  },
-                ],
-              }
-            : undefined as unknown as any,
       },
     ],
   }

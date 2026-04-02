@@ -101,13 +101,15 @@ function initChartOptions() {
     return
   }
 
-  let dataset: { key: string; name: string; value: number }[] = []
+
+  let dataset: { key: string; name: string; value: number; count: number }[] = []
   if (Array.isArray(stats.frequencies['freq_mod'])) {
     dataset = (stats.frequencies['freq_mod'] as Frequencies[]).map((item: Frequencies) => {
       total.value = item.total
       return {
         key: shortKey(item.field),
         name: keyLabel(item.field),
+        count: item.data.reduce((a, b) => a + b.count, 0),
         value: item.data
           .map((d) => (d.sum === undefined ? d.count : d.sum))
           .reduce((a, b) => a + b, 0),
@@ -118,12 +120,13 @@ function initChartOptions() {
     dataset = frequencies.data.map((item) => ({
       key: shortKey(item.value),
       name: keyLabel(item.value),
+      count: item.count,
       value: item.sum === undefined ? item.count : item.sum,
     }))
     total.value = frequencies.total
   }
 
-  const sortedByValue = dataset.toSorted((a, b) => b.value - a.value)
+  const sortedByValue = dataset.filter(item => item.count > 5).toSorted((a, b) => b.value - a.value)
   topModes.value = sortedByValue.slice(0, 3).map((item) => item.name)
 
   // Extract category names and values for series
