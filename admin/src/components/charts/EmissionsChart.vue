@@ -143,7 +143,7 @@ const emissionItemsPro = computed(() => {
     first: planeEmissions,
     second: carEmissions,
     total: totalEmissions,
-    remaining: totalEmissions - planeEmissions.emissions // purpusely not carEmissions.emissions
+    remaining: totalEmissions - planeEmissions.emissions, // purpusely not carEmissions.emissions
   }
 })
 
@@ -152,10 +152,10 @@ const emissionItemsProLabels = computed(() => {
   if (!eip) return null
 
   return {
-    firstPercent: toMaxDecimals(eip.first.emissions / eip.total * 100, 2),
+    firstPercent: toMaxDecimals((eip.first.emissions / eip.total) * 100, 2),
     firstMode: keyLabel(eip.first.mode),
     firstEmissions: toMaxDecimals(eip.first.emissions || 0, 2),
-    secondPercent: toMaxDecimals(eip.second.emissions / eip.total * 100, 2),
+    secondPercent: toMaxDecimals((eip.second.emissions / eip.total) * 100, 2),
     secondMode: keyLabel(eip.second.mode),
     remainingEmissions: toMaxDecimals(eip.remaining || 0, 2),
   }

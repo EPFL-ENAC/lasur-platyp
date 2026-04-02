@@ -181,6 +181,8 @@ function onInit() {
 
     map.value.fitBounds(geoJson.boundingBox, { padding: 20, duration: 500 })
   })
+
+  map.value.resize()
 }
 </script>
 

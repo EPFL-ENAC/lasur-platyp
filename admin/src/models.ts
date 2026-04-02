@@ -57,6 +57,7 @@ export interface CompanyAction {
 
 export interface Company extends Entity {
   administrators: string[]
+  mobility_advisors?: string[]
   can_be_cited: boolean
   contact_email?: string
   contact_name?: string
@@ -96,8 +97,8 @@ export interface RecordTypo {
 
 export interface Record {
   id: number
-  response_id?: number
   token: string
+  response_id_in_campaign?: number
   created_at?: string
   updated_at?: string
   created_by?: string
@@ -126,6 +127,12 @@ export interface Emissions {
   distances: number
   journeys: number
   emissions: number
+}
+
+export interface EmissionReduction {
+  mode: string
+  total: number
+  reduced: number
 }
 
 export interface Link {
@@ -322,12 +329,14 @@ export interface Stats {
   frequencies: Frequencies[] | null
   mode_frequencies: Frequencies[] | null
   mode_emissions: Emissions[] | null
+  mode_emission_reductions: EmissionReduction[] | null
   reco_mode_emissions: Emissions[] | null
   mode_links: StatLinks | null
   pro_frequencies: Frequencies[] | null
   pro_mode_frequencies: Frequencies[] | null
   pro_mode_emissions: Emissions[] | null
   pro_reco_mode_emissions: Emissions[] | null
+  pro_mode_emission_reductions: EmissionReduction[] | null
   pro_mode_links: StatLinks | null
   home_location_heatmap: H3Heatmap | null
   workplace_locations: { lat: number; lon: number }[] | null
@@ -349,6 +358,7 @@ export interface IsochronesParams {
 export interface IsochronesData {
   isochrones: GeoJSON.FeatureCollection<GeoJSON.Geometry>
   pois: GeoJSON.FeatureCollection<GeoJSON.Geometry>
+  transit?: GeoJSON.FeatureCollection<GeoJSON.Geometry> | null
 }
 
 export interface PoisParams {

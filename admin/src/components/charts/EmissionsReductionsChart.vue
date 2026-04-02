@@ -10,16 +10,16 @@
       :loading="stats.loading"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.reco}.title`) }}</div>
+      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.reductionType}.title`) }}</div>
       <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
   <div>
-    <p>{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
+    <p>{{ t(`stats.emissions_${props.reductionType}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
-      :src="t(`stats.emissions_${props.reco}.texts.specific`, textLabels)"
+      :src="t(`stats.emissions_${props.reductionType}.texts.specific`, textLabels)"
     />
   </div>
 </template>
@@ -28,7 +28,7 @@
 import ECharts from 'vue-echarts'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { CustomChart } from 'echarts/charts'
+import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { initOptions, updateOptions } from './commons'
 import {
@@ -42,11 +42,11 @@ import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 const stats = useStats()
-use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   type: string
-  reco: string
+  reductionType: string
   yaxis?: string
   rangeStep?: number
   height?: number
@@ -105,13 +105,17 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_${props.reco}.labels.${shortKey(key)}`)
+  return t(`stats.emissions_${props.reductionType}.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.emissions || !stats.emissions[props.type] || !stats.emissions[props.reco]) {
+  if (
+    !stats.emissions ||
+    !stats.emissions[props.type] ||
+    !stats.emissionsReductions[props.reductionType]
+  ) {
     return
   }
 
@@ -119,20 +123,18 @@ function initChartOptions() {
   if (emissions.length === 0) {
     return
   }
-  const recoEmissions = stats.emissions[props.reco] || []
+  const recoEmissions = stats.emissionsReductions[props.reductionType] || []
   if (recoEmissions.length === 0) {
     return
   }
 
-  const categories = recoEmissions
-    .sort((a, b) => b.emissions - a.emissions)
-    .map((item) => item.mode)
+  const categories = recoEmissions.sort((a, b) => b.reduced - a.reduced).map((item) => item.mode)
 
   // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
   currentEmissions.value = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
   const categoryEmissions: { [key: string]: number } = {}
   recoEmissions.forEach((item) => {
-    categoryEmissions[item.mode] = item.emissions
+    categoryEmissions[item.mode] = item.reduced
   })
   newEmissions.value =
     currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
@@ -155,7 +157,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_${props.reco}.title`),
+      text: t(`stats.emissions_${props.reductionType}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -189,12 +191,12 @@ function initChartOptions() {
       axisLabel: {
         rotate: 30,
       },
-      name: t(`stats.emissions_${props.reco}.xaxis`) || '',
+      name: t(`stats.emissions_${props.reductionType}.xaxis`) || '',
       nameLocation: 'middle',
       nameGap: 90,
     },
     yAxis: {
-      name: props.yaxis || '',
+      name: t(`stats.emissions_${props.reductionType}.yaxis`) || '',
       nameLocation: 'middle',
       nameGap: 50,
       type: 'value',
@@ -230,7 +232,7 @@ function initChartOptions() {
         ],
       },
       {
-        name: 'Emissions',
+        name: t(`stats.emissions_${props.reductionType}.series`) || '',
         type: 'bar',
         stack: 'Total',
         label: {

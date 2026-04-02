@@ -1,19 +1,3 @@
-### Adding Participants
-
-Participants are added manually through the campaign's participants section:
-
-1. Navigate to the campaign's participants section
-2. Click "Add" button
-3. Enter the participant information:
-   - **Identifier** (_required_): A unique identifier that references your organisation's external participant registry (e.g., collaborator ID, badge number)
-   - **Age Class** (optional): Select from predefined age ranges (16-17, 18-24, 26-44, 45-64, 65+)
-   - **Employment Rate** (optional): Percentage of full-time employment (0-100%)
-   - **Remote Work Rate** (optional): Percentage of time working remotely (0-100%)
-   - **Company Vehicle** (optional): Toggle to indicate if participant has access to a company vehicle
-4. Click "Save" to add the participant
-
-**Important:** The identifier field references your organisation's own participant registry system. Only enter identifiers that exist in your internal system to ensure proper tracking and data privacy.
-
 ### Participant Information
 
 Each participant entry in the table displays:

@@ -1,12 +1,5 @@
 ## Best Practices
 
-### When Adding Participants
-
-1. **Use accurate identifiers**: Ensure identifiers match your internal participant registry
-2. **Provide complete demographic data**: Optional fields help improve survey analytics
-3. **Add participants before campaign start**: Have the complete list ready
-4. **Maintain identifier consistency**: Use the same format across all campaigns
-
 ### When Sharing Survey Links
 
 1. **Protect token confidentiality**: Each token is unique and should only be shared with the corresponding participant

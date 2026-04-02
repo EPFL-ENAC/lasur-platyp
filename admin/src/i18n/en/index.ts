@@ -1,6 +1,6 @@
 export default {
   main: {
-    brand: 'Mobility Toolkit',
+    brand: 'Mobilyse',
   },
   company: {
     label: 'Organisation',
@@ -11,6 +11,9 @@ export default {
     administrators: 'Administrators',
     administrators_hint:
       'Provide the email address of the administrators for this organisation (type Enter to add entry).',
+    mobility_advisors: 'Mobility Advisors',
+    mobility_advisors_hint:
+      'Provide the email address of the mobility advisors for this organisation (type Enter to add entry).',
     contact_name: 'Contact Name',
     contact_name_hint: 'Provide the name of the contact person for mobility in this organisation.',
     contact_email: 'Contact Email',
@@ -20,7 +23,14 @@ export default {
     info_url: 'Information link',
     info_url_hint: 'Provide a link to more information about the organisation mobility options.',
     can_be_cited: 'Can be cited as a mobilyse user',
-    can_be_cited_toggle: 'I do not want the Modus Foundation to cite the name of my organisation as a user of mobilyse',
+    can_be_cited_toggle:
+      'I do not want the Modus Foundation to cite the name of my organisation as a user of mobilyse',
+    your_role: 'Your role',
+    roles: {
+      admin: 'Administrator',
+      mobility_advisor: 'Mobility Advisor',
+      none: 'None',
+    },
   },
   campaign: {
     label: 'Campaign',
@@ -31,10 +41,10 @@ export default {
     with_actions: 'With employer measures specific to this campaign',
     rewards: {
       toggle: 'I want to reward participants.',
-      hint:
-        'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
-      default_message: 'Congratulations and thank you for your participation in the mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able get [...] as a reward.',
-      message_placeholder: 'Message for participants'
+      hint: 'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
+      default_message:
+        'Congratulations and thank you for your participation in the mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able get [...] as a reward.',
+      message_placeholder: 'Message for participants',
     },
     contact_name: 'Contact Name',
     contact_name_hint:
@@ -65,15 +75,45 @@ export default {
       workplaces_list: 'List of known workplaces',
       show_isochrone: 'Show isochrone',
     },
+    email_template: {
+      buttonText: 'Email template',
+      modalTitle: 'Email template for {campaign}',
+      contactEmail: 'Contact email',
+      contactName: 'Contact name',
+      surveyLink: 'Survey link',
+      defaultContactEmail: 'CONTACT_EMAIL',
+      defaultContactName: 'CONTACT_NAME',
+      template: `Dear colleagues,
+
+Mobilyse is a tool developed by the Modus Foundation and EPFL to help organisations tailor the help they provide to their employees for daily mobility. We wish to use this tool to understand how best to support you in your daily mobility, whether for commuting or for business trips. 🚲🚃🚶🚈 To do so, we need to better understand your travel habits and aspirations and therefore invite you to participate in the following survey. It will take no more than 10 minutes and will provide you with travel suggestions straight away:
+
+[{surveyLink}]({surveyLink})
+
+Why take part?
+
+- Receive travel recommendations tailored to your situation (available transport services, distances, constraints, your opinion on modes of transport, your priorities, etc.) ✅
+- Find out about the mobility support measures your organisation provides for encouraging sustainable mobility 🎯
+- Share your opinion on the support provided for your mobility, and help improve it 🙋
+- Contribute to improving a free, open-access tool 🎁
+
+The survey is anonymous and no personal data will be recorded. 🔐 Please note that you can select the language (FR/EN) in the top right-hand corner. To find out more about mobilyse, please visit: https://modus-ge.ch/project/mobilyse/.
+
+Thank you for your valuable contribution! If you have any questions, please contact: [{contactEmail}](mailto:{contactEmail}).
+
+{contactName}`,
+      copyTemplate: 'Copy email template',
+      copyTemplateSuccess: 'Email template copied to clipboard',
+      copyTemplateError: 'Error copying email template. Please try again.',
+    },
   },
   docs: {
     title: 'Documentation',
-    hint: 'Find here all the documentation to help you use the Mobility Toolkit administration interface.',
+    hint: 'Find here all the documentation to help you use Mobilyse administration interface.',
     organisations: {
       title: 'Organisations',
       create: {
         title: 'How to create an organisation',
-        caption: 'Learn how to create a new organisation in the Mobility Toolkit',
+        caption: 'Learn how to create a new organisation in Mobilyse',
       },
       settings: {
         title: 'How to manage organisation settings',
@@ -88,9 +128,8 @@ export default {
         caption: 'Learn how to manage custom measures for your organisation',
       },
       best_practices: {
-        title: 'Best practices for using the Mobility Toolkit',
-        caption:
-          'Tips and recommendations to make the most of the Mobility Toolkit for your organisation',
+        title: 'Best practices for using Mobilyse',
+        caption: 'Tips and recommendations to make the most of Mobilyse for your organisation',
       },
       common_issues: {
         title: 'Common issues and troubleshooting',
@@ -105,14 +144,29 @@ export default {
         title: 'How to manage campaign settings',
         caption: 'Learn how to create and update your campaign settings and preferences',
       },
+      share_link: {
+        title: 'How to share the link to the survey?',
+        caption: 'Learn how to share the link to the survey with collaborators',
+      },
+      isochrone: {
+        title: 'How and why to display the isochrone on the map?',
+        caption: 'Learn how and why to display the isochrone on the map',
+      },
+      analyse_results: {
+        title: 'How to analyse the results of the campaign?',
+        caption: 'Learn how to analyse the results of the campaign and interpret the statistics',
+      },
+      reward: {
+        title: 'How to reward participants who have completed the survey?',
+        caption: 'Learn how to reward participants who have completed the survey',
+      },
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems related to campaign management',
       },
       best_practices: {
         title: 'Best practices for campaign management',
-        caption:
-          'Tips and recommendations to make the most of the campaign features in the Mobility Toolkit',
+        caption: 'Tips and recommendations to make the most of the campaign features in Mobilyse',
       },
     },
     participants: {
@@ -220,6 +274,9 @@ export default {
     percent_employees: '% of employees',
     total: 'N: {count}',
     no_data: 'No data available',
+    observed: 'Data from participants',
+    participants_median: 'Participants median',
+    geneva_median: 'Geneva area median',
     equipments: {
       title: 'Mobility equipments',
       labels: {
@@ -253,6 +310,11 @@ export default {
     travel_time: {
       title: 'Travel time',
       xaxis: 'Time (min)',
+      texts: {
+        default:
+          'The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024)',
+        specific: 'The median travel time from home to work for participants is {median} minutes.',
+      },
     },
     reco_dt2: {
       title: 'Recommendations',
@@ -272,7 +334,7 @@ export default {
       title: 'Recommendations (professional)',
       labels: {
         avoid: 'Avoid travel',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         covoit: 'Carpooling',
         elec: 'Electric vehicle',
         elec_moto: 'Electric motorcycle/scooter',
@@ -302,6 +364,11 @@ export default {
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
         combined: 'Combined',
+      },
+      texts: {
+        default: 'The mode Car is the most used in the Geneva canton (MRMT survey, 2015).',
+        specific:
+          'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.',
       },
     },
     freq_mod_pro: {
@@ -347,7 +414,7 @@ export default {
       },
       texts: {
         specific:
-          "{carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing {carMotoEmissionsPercentage}% of the company's annual CO2 emissions.",
+          "{carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing {carMotoEmissionsPercentage}% of the company's annual CO₂ emissions.",
       },
     },
     emissions_reco_mod: {
@@ -378,11 +445,73 @@ export default {
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO2 / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod: {
+      title: 'Potential for reducing commuter emissions',
+      series: 'Potential reduction',
+      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
+      xaxis: 'Recommended mode',
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle',
+        ebike: 'Electric bike',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        emissions: 'Total CO₂ emissions',
+        journeys: 'Number of journeys',
+        distances: 'Total distance',
+        current: 'Current',
+        postSaving: 'Total after recommendations',
+      },
+      texts: {
+        default:
+          'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
+        specific:
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reco_share: {
       title: 'Share of CO₂ emissions reduction per recommended mode of transport',
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle',
+        ebike: 'Electric bike',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        emissions: 'Total CO₂ emissions',
+        journeys: 'Number of journeys',
+        distances: 'Total distance',
+        current: 'Current',
+        postSaving: 'Total after recommendations',
+      },
+      texts: {
+        default:
+          'This chart shows the share of CO₂ emissions reduction per recommended mode of transport.',
+        specific:
+          '{percentage}% of potential reduction depend on the main recommendation for mode {mode}.',
+      },
+    },
+    emissions_reductions_share: {
+      title: 'Share of CO₂ emissions reduction per recommended mode of transport',
+      series: 'Potential reduction',
       labels: {
         walking: 'Walking',
         bike: 'Bicycle',
@@ -436,7 +565,7 @@ export default {
       },
     },
     emissions_reco_mod_pro: {
-      title: 'Potential for reducing commuter emissions (professional)',
+      title: 'Potential for reducing professional emissions',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
@@ -463,14 +592,46 @@ export default {
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO2 / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod_pro: {
+      title: 'Potential for reducing professional emissions',
+      series: 'Potential reduction',
+      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
+      xaxis: 'Recommended mode',
+      labels: {
+        walking: 'Walking',
+        bike: 'Bicycle',
+        ebike: 'Electric bike',
+        pub: 'Public transport',
+        train: 'Train',
+        moto: 'Motorcycle/scooter',
+        car: 'Car',
+        carpool: 'Carpooling',
+        plane: 'Plane',
+        pub_train: 'Public transport and train',
+        car_moto: 'Car and motorcycle/scooter',
+        elec: 'Electric vehicle',
+        inter: 'Intermodality',
+        emissions: 'Total CO₂ emissions',
+        journeys: 'Number of journeys',
+        distances: 'Total distance',
+        current: 'Current',
+        postSaving: 'Total after recommendations',
+      },
+      texts: {
+        default:
+          'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
+        specific:
+          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
       title: 'Modal shift recommendations',
       labels: {
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         ebike: 'Electric bike',
         pub: 'Public transport',
         train: 'Train',
@@ -503,7 +664,7 @@ export default {
       labels: {
         avoid: 'Avoid travel',
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         ebike: 'Electric bike',
         pub: 'Public transport',
         train: 'Train',
@@ -544,7 +705,7 @@ export default {
       participantsAverage: 'Average physical activity expenditure of participants',
       labels: {
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
@@ -584,7 +745,7 @@ export default {
         other: 'Other',
 
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
@@ -620,7 +781,7 @@ export default {
         l5: 'Very motivated',
 
         walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
+        bike: 'Bicycle',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
@@ -695,6 +856,11 @@ export default {
     isochrones: 'Isochrones',
     isochrones_hint: 'Travel time with the recommended mode of transport.',
     modes: 'Transport modes',
+    map_options: 'Map options',
+    transit: 'Public transport',
+    transit_options: {
+      show_lines: 'Show lines passing through the isochrone',
+    },
     pois: 'Points of interest',
     mode: {
       walk: 'Walking',
@@ -795,7 +961,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   help: 'Help',
   identifier: 'Identifier',
   introduction_text:
-    'Welcome to the Mobility Toolkit administration interface. Use the menu to navigate through the different sections and manage companies, campaigns, users, and view mobility statistics.',
+    'Welcome to Mobilyse administration interface. Use the menu to navigate through the different sections and manage companies, campaigns, users, and view mobility statistics.',
   label_en: 'Label (EN)',
   label_fr: 'Label (FR)',
   last_modified: 'Last Modified',

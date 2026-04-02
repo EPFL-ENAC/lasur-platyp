@@ -152,7 +152,10 @@
                       filled
                       type="textarea"
                       v-model="selected.rewards_message[locale]"
-                      :label="t('campaign.rewards.message_placeholder', {}, { locale }) + ` (${locale.toUpperCase()})`"
+                      :label="
+                        t('campaign.rewards.message_placeholder', {}, { locale }) +
+                        ` (${locale.toUpperCase()})`
+                      "
                       class="q-mb-md"
                     />
                   </template>
@@ -318,9 +321,8 @@ function onInit() {
         ? selected.value.actions[key].length > 0
         : false,
     ).length > 0
-  
-  withRewards.value = !!selected.value.rewards_message
 
+  withRewards.value = !!selected.value.rewards_message
 
   editMode.value = selected.value.id !== undefined
   if (editMode.value && !selected.value.slug) {
@@ -389,7 +391,11 @@ function onWithRewardsChanged(value: boolean) {
     }
     availableLocales.forEach((locale) => {
       if (!selected.value.rewards_message || !selected.value.rewards_message[locale]) {
-        selected.value.rewards_message![locale] = t('campaign.rewards.default_message', {}, { locale })
+        selected.value.rewards_message![locale] = t(
+          'campaign.rewards.default_message',
+          {},
+          { locale },
+        )
       }
     })
   } else {

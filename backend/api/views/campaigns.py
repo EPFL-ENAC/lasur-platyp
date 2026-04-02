@@ -21,7 +21,7 @@ async def find(
     """Search for campaigns"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await CampaignService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
+        return await CampaignService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user, special_permissions="read-aggregated")
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 

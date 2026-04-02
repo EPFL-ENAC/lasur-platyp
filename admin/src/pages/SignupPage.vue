@@ -74,9 +74,9 @@
                 flat
                 no-caps
                 class="text-hint q-mb-md"
-                href="https://modus-ge.ch/toolkit-cgu"
+                href="https://modus-ge.ch/mobilyse-cgu-organisation"
                 target="_blank"
-                ref="noopener noreferrer"
+                rel="noopener noreferrer"
               >
                 {{ t('terms_and_conditions_show') }}
               </q-btn>

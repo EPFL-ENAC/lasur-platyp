@@ -62,7 +62,7 @@ class CampaignService(EntityService):
         count = (await self.session.exec(text("select count(id) from campaign"))).scalar()
         return count
 
-    async def get(self, id: int, user: User = None) -> Campaign:
+    async def get(self, id: int, user: User = None, special_permissions: str = "read") -> Campaign:
         """Get a campaign by id"""
         res = await self.session.exec(
             select(Campaign)
@@ -73,7 +73,7 @@ class CampaignService(EntityService):
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
         if user is not None and not is_admin(user):
-            await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
+            await require_admin_or_perm(user, f"company:{entity.company_id}", special_permissions)
         return entity
 
     async def get_by_slug(self, slug: str) -> Campaign:
@@ -103,11 +103,11 @@ class CampaignService(EntityService):
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CampaignResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None, special_permissions: str = "read") -> CampaignResult:
         """Get all campaigns matching filter and range"""
         # Add permission filter
         if user is not None and not is_admin(user):
-            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, special_permissions)
             if filter is None:
                 filter = {}
             if permitted_company_ids:

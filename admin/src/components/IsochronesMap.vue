@@ -19,7 +19,7 @@
     </div>
     <div class="container">
       <q-btn
-        :label="t('record.pois')"
+        :label="t('record.map_options')"
         icon="layers"
         color="white"
         text-color="grey-10"
@@ -29,6 +29,16 @@
       >
         <q-menu>
           <q-list>
+            <q-item-label class="text-h6 q-ma-sm">{{ t('record.transit') }}</q-item-label>
+            <q-item clickable>
+              <q-item-section>{{ t('record.transit_options.show_lines') }}</q-item-section>
+              <q-item-section side>
+                <q-toggle v-model="showTransitLines" @update:model-value="toggleTransitLines" />
+              </q-item-section>
+            </q-item>
+
+            <q-separator spaced />
+            <q-item-label class="text-h6 q-ma-sm">{{ t('record.pois') }}</q-item-label>
             <template v-for="pois in poisOptions" :key="pois.value">
               <q-item clickable>
                 <q-item-section>{{ pois.label }}</q-item-section>
@@ -117,6 +127,8 @@ const showPoisMap = ref<{ [key: string]: boolean }>({
   transport: false,
   commerce: false,
 })
+
+const showTransitLines = ref(true)
 
 onMounted(onInit)
 
@@ -212,6 +224,9 @@ async function loadIsochronesData() {
           if (selected.length > 0) {
             loadPois(selected)
           }
+        }
+        if (data.transit) {
+          addTransitLinesToMap(data.transit)
         }
       }
     })
@@ -342,6 +357,41 @@ function showPois(categories: string[], geojson: GeoJSON.FeatureCollection) {
       }
     }
   })
+}
+
+function addTransitLinesToMap(geojson: GeoJSON.FeatureCollection) {
+  if (!map.value) return
+  if (map.value.getSource('transit-lines')) {
+    ;(map.value.getSource('transit-lines') as GeoJSONSource).setData(geojson)
+    return
+  }
+
+  map.value.addSource('transit-lines', {
+    type: 'geojson',
+    data: geojson,
+  })
+  map.value.addLayer({
+    id: 'transit-lines-layer',
+    type: 'line',
+    source: 'transit-lines',
+    paint: {
+      'line-color': '#5a3fc0',
+      'line-width': 2,
+    },
+    layout: {
+      visibility: showTransitLines.value ? 'visible' : 'none',
+    },
+  })
+}
+
+function toggleTransitLines() {
+  if (map.value?.getLayer('transit-lines-layer')) {
+    map.value.setLayoutProperty(
+      'transit-lines-layer',
+      'visibility',
+      showTransitLines.value ? 'visible' : 'none',
+    )
+  }
 }
 
 function onShowPoisMap(name: string) {

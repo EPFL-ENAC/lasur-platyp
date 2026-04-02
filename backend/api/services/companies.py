@@ -87,12 +87,12 @@ class CompanyService(EntityService):
         await self.delete_permissions(entity)
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CompanyResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None, special_permissions: str = "read") -> CompanyResult:
         """Get all companies matching filter and range"""
         # Add permission filter
         if user is not None and not is_admin(user):
-            # Restrict to companies the user has "read" permission on
-            permitted_ids = await self.list_permitted_ids(user, "read")
+            # Restrict to companies the user has good permissions on
+            permitted_ids = await self.list_permitted_ids(user, special_permissions)
             if filter is None:
                 filter = {}
             if permitted_ids:
@@ -143,7 +143,7 @@ class CompanyService(EntityService):
                 entity.administrators.append(user.email)
         self.session.add(entity)
         await self.session.commit()
-        await self.apply_admin_permissions(entity)
+        await self.apply_permissions(entity)
         return entity
 
     async def update(self, id: int, payload: Company, user: User = None) -> Company:
@@ -170,10 +170,10 @@ class CompanyService(EntityService):
             elif user.email not in entity.administrators:
                 entity.administrators.append(user.email)
         await self.session.commit()
-        await self.apply_admin_permissions(entity)
+        await self.apply_permissions(entity)
         return entity
 
-    async def apply_admin_permissions(self, entity: Company):
+    async def apply_permissions(self, entity: Company):
         resource = self.as_resource(entity)
         acl_service = ACLService(self.session)
         # Note: permissions are only applied
@@ -181,6 +181,10 @@ class CompanyService(EntityService):
         if entity.administrators:
             for admin in entity.administrators:
                 await acl_service.apply_user_permission(resource, "*", admin)
+        
+        if entity.mobility_advisors:
+            for advisor in entity.mobility_advisors:
+                await acl_service.apply_user_permission(resource, "read-aggregated", advisor)
 
     async def delete_permissions(self, entity: Company):
         resource = self.as_resource(entity)

@@ -39,6 +39,7 @@ class EmployerActions(BaseModel):
 
 class CompanyBase(Entity):
     administrators: Optional[List[str]] = Field(default=None)
+    mobility_advisors: Optional[List[str]] = Field(default=None)
     can_be_cited: bool = Field(default=True, nullable=False)
 
 
@@ -50,6 +51,8 @@ class Company(CompanyBase, table=True):
         index=True,
     )
     administrators: Optional[List[str]] = Field(
+        default=None, sa_column=Column(JSON))
+    mobility_advisors: Optional[List[str]] = Field(
         default=None, sa_column=Column(JSON))
     contact_email: Optional[str] = Field(default=None)
     contact_name: Optional[str] = Field(default=None)

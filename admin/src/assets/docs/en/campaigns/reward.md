@@ -1,0 +1,3 @@
+**How can I reward participants who have completed the questionnaire?**
+
+To encourage employees to take part, we allow you to see who has completed the questionnaire. When creating (or managing) the campaign, by selecting the option ‘I wish to reward participants’, you enable them to download a certificate confirming their participation. They can then send this certificate to a manager responsible for awarding rewards. We recommend explaining in the information box and in the campaign email the procedure for participants to follow and the rewards you are offering. This feature can significantly improve the questionnaire response rate!

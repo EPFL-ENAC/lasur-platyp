@@ -34,9 +34,16 @@
         </template>
         <template v-slot:body-cell-name="props">
           <q-td :props="props">
-            <router-link :to="`/company/${props.row.id}`" class="modus">{{
-              props.row.name
-            }}</router-link>
+            <router-link
+              v-if="isAdminOfThisCompany(props.row)"
+              :to="`/company/${props.row.id}`"
+              class="modus"
+            >
+              {{ props.row.name }}
+            </router-link>
+            <span v-else class="modus">
+              {{ props.row.name }}
+            </span>
           </q-td>
         </template>
         <template v-slot:body-cell-administrators="props">
@@ -56,6 +63,7 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
+              v-if="isAdminOfThisCompany(props.row)"
               color="grey-8"
               size="12px"
               flat
@@ -66,6 +74,7 @@
             >
             </q-btn>
             <q-btn
+              v-if="isAdminOfThisCompany(props.row)"
               color="grey-8"
               size="12px"
               flat
@@ -76,6 +85,7 @@
             >
             </q-btn>
             <q-btn
+              v-if="isAdminOfThisCompany(props.row)"
               color="grey-8"
               size="12px"
               flat
@@ -143,6 +153,14 @@ const columns = computed(() => {
       sortable: true,
     },
     {
+      name: 'your_role',
+      required: true,
+      label: t('company.your_role'),
+      align: DefaultAlignment,
+      field: (row: Company) => t(`company.roles.${roleInThisCompany(row)}`),
+      sortable: false,
+    },
+    {
       name: 'can_be_cited',
       required: true,
       label: t('company.can_be_cited'),
@@ -195,6 +213,19 @@ const pagination = ref<PaginationOptions>({
 onMounted(() => {
   tableRef.value.requestServerInteraction()
 })
+
+function isAdminOfThisCompany(company: Company) {
+  if (authStore.isAdmin) return true
+  if (!company.administrators || !authStore.profile?.email) return false
+
+  return company.administrators?.includes(authStore.profile.email)
+}
+
+function roleInThisCompany(company: Company): 'admin' | 'mobility_advisor' | 'none' {
+  if (isAdminOfThisCompany(company)) return 'admin'
+  if (company.mobility_advisors?.includes(authStore.profile?.email || '')) return 'mobility_advisor'
+  return 'none'
+}
 
 function fetchFromServer(
   startRow: number,

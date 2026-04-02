@@ -1,12 +1,5 @@
 ## Bonnes Pratiques
 
-### Lors de l'Ajout de Participants
-
-1. **Utilisez des identifiants précis** : Assurez-vous que les identifiants correspondent à votre registre interne des participants
-2. **Fournissez des données démographiques complètes** : Les champs optionnels aident à améliorer les analyses de l'enquête
-3. **Ajoutez les participants avant le début de la campagne** : Préparez la liste complète à l'avance
-4. **Maintenez la cohérence des identifiants** : Utilisez le même format pour toutes les campagnes
-
 ### Lors du Partage des Liens d'Enquête
 
 1. **Protégez la confidentialité des jetons** : Chaque jeton est unique et ne doit être partagé qu'avec le participant correspondant

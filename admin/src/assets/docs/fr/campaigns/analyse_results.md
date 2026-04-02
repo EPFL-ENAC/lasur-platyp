@@ -1,0 +1,3 @@
+**Comment analyser les résultats d'une campagne**
+
+Les réponses au questionnaire sont accessibles dans le _Tableau de bord_ de Mobilyse. Vous pouvez suivre en direct l'évolution du nombre de participant·e·s au questionnaire. Des graphes et explications vous permettent d'analyser en direct ces réponses. Si besoin, vous pouvez aussi télécharger les données désagrégées (réponse par réponse) de la campagne pour aller plus loin dans l'analyse, en les transmettant par exemple à un bureau d'étude spécialisé dans la mobilité.

@@ -28,6 +28,16 @@
       class="q-mb-md on-right"
       @click="onShowStats"
     />
+    <q-btn
+      v-if="isCompanyAdmin"
+      :label="t('campaign.email_template.buttonText')"
+      outline
+      size="sm"
+      color="info"
+      icon="email"
+      class="q-mb-md on-right"
+      @click="onShowEmailTemplate"
+    />
     <campaign-charts :item="item" />
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-md-6">
@@ -171,11 +181,12 @@
       @confirm="onRemove"
     />
     <company-charts-dialog
-      v-if="company"
+      v-if="props.company"
       v-model="showChartsDialog"
       :company="company"
       :campaign="item"
     />
+    <email-template-dialog v-if="props.item" v-model="showEmailTemplateDialog" :campaign="item" />
   </div>
 </template>
 
@@ -189,12 +200,13 @@ import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import IsochronesMap from 'src/components/IsochronesMap.vue'
+import EmailTemplateDialog from 'src/components/EmailTemplateDialog.vue'
 import type { FieldItem } from 'src/components/FieldsList.vue'
 import { formatCoordinates } from 'src/utils/numbers'
-import { collectUrl } from 'src/boot/api'
 import { notifyInfo } from 'src/utils/notify'
 import { actionItems, actionProItems } from 'src/utils/options'
 import Papa from 'papaparse'
+import { makeSurveyLink } from 'src/utils/links'
 
 const { t, locale } = useI18n()
 const authStore = useAuthStore()
@@ -212,6 +224,7 @@ const SHOW_WORKPLACES_MIN = 5
 const showDialog = ref(false)
 const showRemoveDialog = ref(false)
 const showChartsDialog = ref(false)
+const showEmailTemplateDialog = ref(false)
 const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
 
 const isCompanyAdmin = computed(() => {
@@ -313,7 +326,7 @@ const items2: FieldItem[] = [
     links: () => [
       {
         label: `${props.item.slug}`,
-        to: `${collectUrl}/go/${props.item.slug}`,
+        to: makeSurveyLink(props.item.slug!),
         iconRight: 'open_in_new',
       },
     ],
@@ -341,12 +354,16 @@ function onRemove() {
 
 function onSurveyLinkCopy() {
   if (!props.item.slug) return
-  copyToClipboard(`${collectUrl}/go/${props.item.slug}`)
+  copyToClipboard(makeSurveyLink(props.item.slug!))
   notifyInfo(t('survey_link_copied'))
 }
 
 function onShowStats() {
   showChartsDialog.value = true
+}
+
+function onShowEmailTemplate() {
+  showEmailTemplateDialog.value = true
 }
 
 function onDownloadWorkplaces() {

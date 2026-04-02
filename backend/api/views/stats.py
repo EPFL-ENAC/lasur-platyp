@@ -24,7 +24,7 @@ async def compute_all_statistics(
             del filter_dict['workplace_location']
         validated = validate_params(filter_dict, None, None, None)
         service = RecordService(session)
-        df = await service.get_dataframe(validated["filter"], flat=True, user=user)
+        df = await service.get_dataframe(validated["filter"], flat=True, user=user, special_permissions="read-aggregated")
         if workplace_filter:
             workplace_filter = LocationFilter.model_validate(
                 workplace_filter, by_alias=True)
@@ -42,9 +42,9 @@ async def compute_campaign_statistics(
     session: AsyncSession = Depends(get_session),
 ) -> CampaignStats:
     """Compute statistics for a campaign"""
-    campaign = await CampaignService(session).get(id, user)
+    campaign = await CampaignService(session).get(id, user, special_permissions="read-aggregated")
     service = RecordService(session)
     df = await service.get_dataframe(
-        {"campaign_id": id}, flat=True, user=user)
+        {"campaign_id": id}, flat=True, user=user, special_permissions="read-aggregated")
     stats_service = StatsService()
     return stats_service.compute_campaign_stats(campaign, df)

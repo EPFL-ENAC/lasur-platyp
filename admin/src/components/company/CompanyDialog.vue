@@ -20,8 +20,23 @@
           <q-select
             filled
             v-model="selected.administrators"
-            :label="t('company.administrators')"
+            :label="t('company.administrators') + ' *'"
             :hint="t('company.administrators_hint')"
+            use-input
+            use-chips
+            multiple
+            hide-dropdown-icon
+            input-debounce="0"
+            new-value-mode="add-unique"
+            class="q-mb-md"
+            :rules="[(val) => (!!val && val.length > 0) || t('field_required')]"
+          />
+          <q-select
+            filled
+            :model-value="selected.mobility_advisors || []"
+            @update:model-value="(val) => (selected.mobility_advisors = val)"
+            :label="t('company.mobility_advisors')"
+            :hint="t('company.mobility_advisors_hint')"
             use-input
             use-chips
             multiple
@@ -90,6 +105,7 @@ const props = defineProps<DialogProps>()
 const emit = defineEmits(['update:modelValue', 'saved'])
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 const services = useServices()
 const service = services.make('company')
 
@@ -107,8 +123,11 @@ watch(
     if (value) {
       // deep copy
       selected.value = JSON.parse(JSON.stringify(props.item))
-      if (selected.value.administrators === undefined) {
-        selected.value.administrators = []
+      if (
+        selected.value.administrators === undefined ||
+        selected.value.administrators.length === 0
+      ) {
+        selected.value.administrators = authStore.profile?.email ? [authStore.profile.email] : []
       }
       editMode.value = selected.value.id !== undefined
     }

@@ -95,10 +95,10 @@ class RecordService(EntityService):
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> RecordResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None, special_permissions: str = "read") -> RecordResult:
         """Get all records matching filter and range"""
         if user is not None and not is_admin(user):
-            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, "read")
+            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, special_permissions)
             if filter is None:
                 filter = {}
             if permitted_company_ids:
@@ -188,18 +188,19 @@ class RecordService(EntityService):
         await self.session.commit()
         return entity
 
-    async def get_dataframe(self, filter: dict, flat: bool = False, user: User = None) -> pd.DataFrame:
+    async def get_dataframe(self, filter: dict, flat: bool = False, user: User = None, special_permissions: str = "read") -> pd.DataFrame:
         """Get a DataFrame representation of the records.
 
         Args:
             filter (dict): The filter criteria for the records.
             flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
             user (User, optional): The user requesting the data. Defaults to None.
+            special_permissions (str, optional): The special permissions for the user. Defaults to "read".
 
         Returns:
             pd.DataFrame: A DataFrame representation of the records.
         """
-        results = await self.find(filter, fields=[], sort=[], range=[], user=user)
+        results = await self.find(filter, fields=[], sort=[], range=[], user=user, special_permissions=special_permissions)
         # Read results into a pandas DataFrame
         df = pd.DataFrame([result.model_dump() for result in results.data])
         if not flat:
