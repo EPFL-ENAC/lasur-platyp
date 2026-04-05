@@ -2,26 +2,43 @@
   <div>
     <div class="row q-mb-md">
       <q-select
-        filled
         dense
         multiple
         emit-value
         map-options
         use-chips
+        rounded
+        outlined
+        color="secondary"
+        bg-color="white"
         v-model="companyFilter"
         :label="t('companies')"
         :options="companyOptions"
         style="min-width: 200px"
         @update:model-value="onFilter"
         class="on-left"
-      />
+      >
+        <template v-slot:option="{ itemProps, opt, selected }">
+          <q-item v-bind="itemProps">
+            <q-item-section>
+              <q-item-label>{{ opt.label }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-icon v-if="selected" name="check" />
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
       <q-select
-        filled
         dense
         multiple
         emit-value
         map-options
         use-chips
+        rounded
+        outlined
+        color="secondary"
+        bg-color="white"
         v-model="campaignFilter"
         :label="t('campaigns')"
         :options="campaignOptions"
@@ -29,49 +46,73 @@
         @update:model-value="onFilter"
         class="on-left"
       />
-      <q-btn size="sm" flat icon="map" @click="onMapFilter">
-        <q-badge v-if="areaCount > 0" color="orange" floating rounded />
-      </q-btn>
-      <q-btn
-        size="sm"
-        flat
-        :icon="layout === 'grid' ? 'slideshow' : 'grid_view'"
-        @click="layout = layout === 'grid' ? 'carousel' : 'grid'"
-      />
-      <q-btn
-        size="sm"
-        flat
-        icon="picture_as_pdf"
-        @click="onPDFExport"
-        :loading="exportingPDF"
-        :disable="stats.loading || exportingPDF"
-      />
-      <q-btn flat color="primary" icon="settings" size="sm">
-        <q-menu>
-          <q-list style="min-width: 100px">
-            <q-item>
-              <q-checkbox v-model="percent" :label="t('stats.percent_employees')" />
-            </q-item>
-            <q-item class="q-mb-md q-mr-sm">
-              <div style="width: 200px">
-                <div>{{ t('stats.charts_height') }}</div>
-                <q-slider
-                  v-model="height"
-                  :min="200"
-                  :max="600"
-                  :step="50"
-                  label
-                  switch-label-side
-                  style="max-width: 200px"
-                />
-              </div>
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
+      <q-btn-group unelevated outline class="bg-white">
+        <q-btn
+          class="right-border"
+          size="sm"
+          icon="map"
+          color="secondary"
+          outline
+          dense
+          :label="t('stats.filter_by_zone')"
+          no-caps
+          @click="onMapFilter"
+        >
+          <q-badge v-if="areaCount > 0" color="orange" floating rounded />
+        </q-btn>
+        <q-btn
+          class="right-border"
+          size="sm"
+          color="secondary"
+          outline
+          dense
+          :icon="layout === 'grid' ? 'slideshow' : 'grid_view'"
+          :label="layout === 'grid' ? t('stats.switch_to_carousel') : t('stats.switch_to_grid')"
+          no-caps
+          @click="layout = layout === 'grid' ? 'carousel' : 'grid'"
+        />
+        <q-btn
+          class="right-border"
+          size="sm"
+          color="secondary"
+          outline
+          dense
+          icon="picture_as_pdf"
+          :loading="exportingPDF"
+          :disable="stats.loading || exportingPDF"
+          :label="t('stats.pdf_report')"
+          no-caps
+          @click="onPDFExport"
+        />
+        <q-btn icon="settings" size="sm" color="secondary" outline>
+          <q-menu>
+            <q-list style="min-width: 100px">
+              <q-item>
+                <q-checkbox v-model="percent" :label="t('stats.percent_employees')" />
+              </q-item>
+              <q-item class="q-mb-md q-mr-sm">
+                <div style="width: 200px">
+                  <div>{{ t('stats.charts_height') }}</div>
+                  <q-slider
+                    v-model="height"
+                    :min="200"
+                    :max="600"
+                    :step="50"
+                    label
+                    switch-label-side
+                    style="max-width: 200px"
+                  />
+                </div>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </q-btn-group>
     </div>
     <div v-if="stats.loading">
-      <q-spinner-dots size="md" color="primary" />
+      <div class="spinner-container">
+        <q-spinner-dots size="64px" color="primary" />
+      </div>
     </div>
     <div v-else-if="layout === 'grid'">
       <charts-panel :percent="percent" :height="height" />
@@ -288,3 +329,14 @@ async function onPDFExport() {
   }
 }
 </script>
+
+<style scoped>
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+</style>

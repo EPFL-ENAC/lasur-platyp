@@ -28,6 +28,9 @@ $primary-light: #FFF5D4;
 $primary-semi-dark: #C4A253;
 $primary-dark: #BA8025;
 
+$secondary-ultra-light: #F3E9EE;
+$secondary-super-light: #DCC6CE;
+$secondary-light: #907181;
 
 .text-primary-light {
   color: $primary-light !important;
@@ -53,6 +56,10 @@ $primary-dark: #BA8025;
   background-color: $primary-dark !important;
 }
 
+.bg-secondary-ultra-light {
+  background-color: $secondary-ultra-light !important;
+}
+
 .q-btn {
     padding: 4px 8px !important;
 }
@@ -64,4 +71,45 @@ $primary-dark: #BA8025;
 
 .q-badge.bg-primary, .q-chip.bg-primary {
     color: $secondary !important;
+}
+
+.q-card {
+  border-radius: 1rem !important;
+  border: 1px solid $secondary-super-light !important;
+}
+
+.q-field--outlined:has(.text-secondary) .q-field__control::before {
+  border-color: $secondary-super-light !important;
+}
+
+.q-field--outlined:has(.text-secondary) .q-icon,
+.q-field--outlined:has(.text-secondary) .q-field__label {
+  color: $secondary-light !important;
+}
+
+.q-btn--outline.text-secondary::before {
+  border-color: $secondary-super-light !important;
+}
+
+.q-btn--outline.text-secondary.right-border {
+  border-right: 1px solid $secondary-super-light !important;
+}
+
+.q-dialog__inner > .q-card.dialog-md {
+  border-radius: 1rem !important;
+}
+
+.q-separator {
+  background-color: $secondary-super-light !important;
+}
+
+.q-table__container {
+  border: 1px solid $secondary-super-light !important;
+  border-radius: 1rem !important;
+}
+
+.q-tabs {
+  border-radius: 0.5rem !important;
+  border: 1px solid $secondary-super-light !important;
+  color: $secondary-light !important;
 }

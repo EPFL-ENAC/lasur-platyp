@@ -1,6 +1,24 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md">{{ t('companies') }}</div>
+    <div class="title-bar q-pa-md">
+      <div class="text-h4">{{ t('companies') }}</div>
+
+      <div class="title-toolbar">
+        <q-input dense outlined rounded label="Search" color="secondary" debounce="300" v-model="filter" clearable>
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <q-btn
+          size="md"
+          color="primary"
+          :disable="loading"
+          :label="t('add')"
+          icon="add"
+          @click="onAdd"
+        />
+      </div>
+    </div>
     <q-separator />
     <div class="q-pa-md">
       <q-table
@@ -12,30 +30,15 @@
         v-model:pagination="pagination"
         :loading="loading"
         :filter="filter"
+        table-header-class="bg-secondary-ultra-light text-secondary"
         binary-state-sort
         @request="onRequest"
         :rows-per-page-options="[10, 25, 50]"
       >
-        <template v-slot:top>
-          <q-btn
-            size="md"
-            color="primary"
-            :disable="loading"
-            :label="t('add')"
-            icon="add"
-            @click="onAdd"
-          />
-          <q-space />
-          <q-input dense debounce="300" v-model="filter" clearable>
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
         <template v-slot:body-cell-name="props">
           <q-td :props="props">
             <router-link
-              v-if="isAdminOfThisCompany(props.row)"
+              v-if="authStore.isAdminOfThisCompany(props.row)"
               :to="`/company/${props.row.id}`"
               class="modus"
             >
@@ -63,7 +66,7 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              v-if="isAdminOfThisCompany(props.row)"
+              v-if="authStore.isAdminOfThisCompany(props.row)"
               color="grey-8"
               size="12px"
               flat
@@ -74,7 +77,7 @@
             >
             </q-btn>
             <q-btn
-              v-if="isAdminOfThisCompany(props.row)"
+              v-if="authStore.isAdminOfThisCompany(props.row)"
               color="grey-8"
               size="12px"
               flat
@@ -85,7 +88,7 @@
             >
             </q-btn>
             <q-btn
-              v-if="isAdminOfThisCompany(props.row)"
+              v-if="authStore.isAdminOfThisCompany(props.row)"
               color="grey-8"
               size="12px"
               flat
@@ -157,7 +160,7 @@ const columns = computed(() => {
       required: true,
       label: t('company.your_role'),
       align: DefaultAlignment,
-      field: (row: Company) => t(`company.roles.${roleInThisCompany(row)}`),
+      field: (row: Company) => t(`company.roles.${authStore.roleInThisCompany(row)}`),
       sortable: false,
     },
     {
@@ -213,19 +216,6 @@ const pagination = ref<PaginationOptions>({
 onMounted(() => {
   tableRef.value.requestServerInteraction()
 })
-
-function isAdminOfThisCompany(company: Company) {
-  if (authStore.isAdmin) return true
-  if (!company.administrators || !authStore.profile?.email) return false
-
-  return company.administrators?.includes(authStore.profile.email)
-}
-
-function roleInThisCompany(company: Company): 'admin' | 'mobility_advisor' | 'none' {
-  if (isAdminOfThisCompany(company)) return 'admin'
-  if (company.mobility_advisors?.includes(authStore.profile?.email || '')) return 'mobility_advisor'
-  return 'none'
-}
 
 function fetchFromServer(
   startRow: number,

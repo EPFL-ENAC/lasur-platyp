@@ -97,7 +97,7 @@ watch(
 )
 
 function onInit() {
-  campaignsStore.company = props.company
+  campaignsStore.companyId = props.company.id
   campaignsStore.load().catch(notifyError)
 }
 

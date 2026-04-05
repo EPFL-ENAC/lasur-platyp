@@ -8,6 +8,7 @@
         :option="option"
         :update-options="updateOptions"
         :loading="stats.loading"
+        theme="platyp"
       />
       <div class="options">
         <q-toggle

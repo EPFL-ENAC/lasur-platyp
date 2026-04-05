@@ -1,6 +1,8 @@
 <template>
   <div>
-    <q-spinner-dots v-if="loading" size="md" />
+    <div v-if="loading" class="spinner-container">
+      <q-spinner-dots size="64px" color="primary" />
+    </div>
     <div class="row" v-if="!loading && hasRecords">
       <div class="col-12 col-md-4">
         <campaign-counts-chart v-if="campaignStats" :stats="campaignStats" :height="300" />
@@ -55,3 +57,14 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+</style>

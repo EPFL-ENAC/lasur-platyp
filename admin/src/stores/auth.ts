@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { keycloak } from 'src/boot/api'
 import type { KeycloakProfile } from 'keycloak-js'
+import type { Company } from 'src/models'
 
 export const useAuthStore = defineStore('auth', () => {
   const profile = ref<KeycloakProfile>()
@@ -69,6 +70,19 @@ export const useAuthStore = defineStore('auth', () => {
     })
   }
 
+  function isAdminOfThisCompany(company: Company) {
+    if (isAdmin.value) return true
+    if (!company.administrators || !profile.value?.email) return false
+
+    return company.administrators?.includes(profile.value.email)
+  }
+
+  function roleInThisCompany(company: Company): 'admin' | 'mobility_advisor' | 'none' {
+    if (isAdminOfThisCompany(company)) return 'admin'
+    if (company.mobility_advisors?.includes(profile.value?.email || '')) return 'mobility_advisor'
+    return 'none'
+  }
+
   return {
     isAuthenticated,
     isAdmin,
@@ -81,5 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     updateToken,
+    isAdminOfThisCompany,
+    roleInThisCompany
   }
 })

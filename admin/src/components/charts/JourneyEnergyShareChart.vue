@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      theme="platyp"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>

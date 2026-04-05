@@ -1,81 +1,73 @@
 <template>
   <div>
-    <q-btn
-      v-if="isCompanyAdmin"
-      size="sm"
-      color="secondary"
-      icon="edit"
-      class="q-mb-md"
-      @click="onEdit"
-    />
-    <q-btn
-      v-if="isCompanyAdmin"
-      flat
-      dense
-      size="sm"
-      color="negative"
-      icon="delete"
-      class="q-mb-md on-right"
-      @click="onShowRemove"
-    />
-    <q-btn
-      v-if="isCompanyAdmin"
-      :label="t('report')"
-      size="sm"
-      color="primary"
-      icon="bar_chart"
-      class="q-mb-md on-right"
-      @click="onShowStats"
-    />
-    <q-btn
-      v-if="isCompanyAdmin"
-      :label="t('campaign.email_template.buttonText')"
-      outline
-      size="sm"
-      color="info"
-      icon="email"
-      class="q-mb-md on-right"
-      @click="onShowEmailTemplate"
-    />
-    <campaign-charts :item="item" />
-    <div class="row q-col-gutter-md q-mb-md">
-      <div class="col-12 col-md-6">
-        <fields-list :items="items1" :dbobject="item" />
-      </div>
-      <div class="col-12 col-md-6">
-        <fields-list :items="items2" :dbobject="item" />
-      </div>
-    </div>
-    <div v-if="hasActions">
-      <div class="q-mb-sm">{{ t('company.actions') }}</div>
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-12 col-md-6">
-          <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
-          <fields-list :items="actionItems" :dbobject="formattedActions" />
-        </div>
-        <div class="col-12 col-md-6">
-          <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
-          <fields-list :items="actionProItems" :dbobject="formattedActions" />
-        </div>
-      </div>
-    </div>
+    <q-card flat class="q-ma-md">
+      <q-card-section>
+        <h5 class="text-h5 q-ma-none">{{ t('overview') }}</h5>
+      </q-card-section>
 
-    <div class="row q-col-gutter-md q-mb-md">
-      <div class="col-12 col-md-6">
-        <div class="text-h6 q-mb-md">
-          {{ t('campaign.workplaces.title') }}
-          <span v-if="workplacesCount > 0">
-            <q-badge color="primary" class="on-right">{{ workplacesCount }}</q-badge>
-            <q-btn
-              size="sm"
-              color="primary"
-              :label="t('download_csv')"
-              icon="download"
-              class="on-right"
-              @click="onDownloadWorkplaces"
-            />
-          </span>
+      <q-separator />
+      
+      <q-card-section>
+        <campaign-charts :item="item" />
+      </q-card-section>
+      
+      <q-separator />
+
+      <q-card-actions align="right">
+        <q-btn
+          v-if="isCompanyAdmin"
+          :label="t('report')"
+          size="sm"
+          color="primary"
+          icon="bar_chart"
+          @click="onShowStats"
+        />
+      </q-card-actions>
+    </q-card>
+    
+    <q-card flat class="q-ma-md">
+      <q-card-section>
+        <h5 class="text-h5 q-ma-none">{{ t('overview') }}</h5>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section>
+        <div class="row q-col-gutter-md q-mb-md">
+          <div class="col-12 col-md-6">
+            <fields-list :items="items1" :dbobject="item" />
+          </div>
+          <div class="col-12 col-md-6">
+            <fields-list :items="items2" :dbobject="item" />
+          </div>
         </div>
+        <div v-if="hasActions">
+          <div class="q-mb-sm">{{ t('company.actions') }}</div>
+          <div class="row q-col-gutter-md q-mb-md">
+            <div class="col-12 col-md-6">
+              <div class="text-hint q-mb-sm">{{ t('actions.personnal') }}</div>
+              <fields-list :items="actionItems" :dbobject="formattedActions" />
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="text-hint q-mb-sm">{{ t('actions.professional') }}</div>
+              <fields-list :items="actionProItems" :dbobject="formattedActions" />
+            </div>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+    
+    <q-card flat class="q-ma-md">
+      <q-card-section>
+        <h5 class="text-h5 q-ma-none">
+          {{ t('campaign.workplaces.title') }}
+          <q-badge color="primary" class="on-right">{{ workplacesCount }}</q-badge>
+        </h5>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section>
         <div>
           <q-icon
             :name="item.open_workplaces ? 'check_box' : 'check_box_outline_blank'"
@@ -119,7 +111,6 @@
             </div>
           </div>
         </div>
-
         <div class="row q-mt-sm">
           <q-btn
             v-if="hasMoreWorkplaces"
@@ -142,9 +133,31 @@
             @click="shownWorkplaces = SHOW_WORKPLACES_MIN"
           />
         </div>
-      </div>
-      <div class="col-12 col-md-6">
-        <div class="text-h6 q-mb-sm">{{ t('participants') }}</div>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-actions align="right">
+        <q-btn
+          v-if="workplacesCount > 0"
+          size="sm"
+          color="primary"
+          :label="t('download_csv')"
+          icon="download"
+          class="on-right"
+          @click="onDownloadWorkplaces"
+        />
+      </q-card-actions>
+    </q-card>
+
+    <q-card flat class="q-ma-md">
+      <q-card-section>
+        <h5 class="text-h5 q-ma-none">{{ t('participants') }}</h5>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section>
         <div class="text-hint q-mb-sm">
           {{ t('participants_campaign_hint') }}
         </div>
@@ -158,26 +171,24 @@
             no-caps
             @click="onSurveyLinkCopy"
           />
+          <q-btn
+            v-if="isCompanyAdmin"
+            :label="t('campaign.email_template.buttonText')"
+            outline
+            size="sm"
+            color="secondary"
+            icon="email"
+            class="q-ml-md"
+            @click="onShowEmailTemplate"
+          />
         </div>
         <div class="text-hint q-mb-md">
           {{ t('participants_individual_hint') }}
         </div>
         <company-campaign-participants :campaign="item" :company="props.company" />
-      </div>
-    </div>
-    <company-campaign-dialog
-      v-if="props.company"
-      v-model="showDialog"
-      :item="props.item"
-      :company="props.company"
-      @saved="onSaved"
-    />
-    <confirm-dialog
-      v-model="showRemoveDialog"
-      :title="t('remove_campaign')"
-      :text="t('remove_campaign_text', { name: props.item.name })"
-      @confirm="onRemove"
-    />
+      </q-card-section>
+    </q-card>
+
     <company-charts-dialog
       v-if="props.company"
       v-model="showChartsDialog"
@@ -192,9 +203,7 @@
 import { copyToClipboard } from 'quasar'
 import type { Campaign, Company, EmployerActions } from 'src/models'
 import CampaignCharts from 'src/components/charts/CampaignCharts.vue'
-import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
 import CompanyCampaignParticipants from 'src/components/company/CompanyCampaignParticipants.vue'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import IsochronesMap from 'src/components/IsochronesMap.vue'
@@ -208,7 +217,6 @@ import { makeSurveyLink } from 'src/utils/links'
 
 const { t, locale } = useI18n()
 const authStore = useAuthStore()
-const campaignsStore = useCampaigns()
 const actionsStore = useActions()
 
 interface Props {
@@ -219,8 +227,6 @@ const props = defineProps<Props>()
 
 const SHOW_WORKPLACES_MIN = 5
 
-const showDialog = ref(false)
-const showRemoveDialog = ref(false)
 const showChartsDialog = ref(false)
 const showEmailTemplateDialog = ref(false)
 const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
@@ -330,25 +336,6 @@ const items2: FieldItem[] = [
     ],
   },
 ]
-
-function onEdit() {
-  showDialog.value = true
-}
-
-function onSaved() {
-  campaignsStore.load()
-}
-
-function onShowRemove() {
-  showRemoveDialog.value = true
-}
-
-function onRemove() {
-  if (!props.item.id) return
-  campaignsStore.service.remove(props.item.id).then(() => {
-    campaignsStore.load()
-  })
-}
 
 function onSurveyLinkCopy() {
   if (!props.item.slug) return

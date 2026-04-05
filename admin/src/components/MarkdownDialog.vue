@@ -13,8 +13,8 @@
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('close')" color="primary" @click="onHide" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn :label="t('close')" color="primary" @click="onHide" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>

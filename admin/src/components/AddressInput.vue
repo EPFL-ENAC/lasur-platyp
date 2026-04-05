@@ -1,7 +1,9 @@
 <template>
   <div>
     <q-input
-      filled
+      outlined
+      rounded
+      color="secondary"
       v-model="addressLocation.address"
       :label="label"
       :hint="hint"

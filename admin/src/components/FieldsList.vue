@@ -42,7 +42,6 @@
         </q-item-label>
       </q-item-section>
     </q-item>
-    <q-separator />
   </q-list>
 </template>
 

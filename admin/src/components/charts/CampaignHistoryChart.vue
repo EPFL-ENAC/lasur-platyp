@@ -6,6 +6,7 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
+      theme="platyp"
     />
   </div>
 </template>

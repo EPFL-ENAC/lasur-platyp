@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      theme="platyp"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
@@ -170,7 +171,6 @@ function initValuesChartOptions(frequencies: Frequencies) {
         data: values,
         type: 'bar',
         barCategoryGap: '0',
-        color: '#FCC447',
       },
     ],
   }
@@ -237,7 +237,6 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       {
         data: values,
         type: 'bar',
-        color: '#FCC447',
       },
     ],
   }

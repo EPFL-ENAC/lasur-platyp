@@ -1,12 +1,12 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh LpR fFf">
     <q-header v-if="authStore.isAuthenticated" bordered class="bg-primary-light text-grey-10">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="logos">
           <a href="https://modus-ge.ch/" target="_blank" class="logo">
-            <img src="MOBILISE_LOGO-VIOLET.svg" height="32px" />
+            <img src="LOGO-VIOLET.svg" height="32px" />
           </a>
         </q-toolbar-title>
 
@@ -35,85 +35,86 @@
     </q-header>
 
     <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered class="bg-primary-light text-secondary">
-      <q-list>
-        <template v-if="authStore.isAuthenticated">
-          <q-item @click="onLogout">
+      <div class="nav-wrapper">
+        <q-list class="nav-list">
+          <q-item clickable :to="'/'" exact>
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-user" size="xs" color="secondary" />
+              <q-icon name="dashboard" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ username }}</q-item-label>
+              <q-item-label header>{{ t('dashboard') }}</q-item-label>
             </q-item-section>
           </q-item>
-
-          <q-item clickable @click="onLogout">
+          <q-item-label class="text-h6" header>{{ t('content') }}</q-item-label>
+          <q-item clickable :to="'/companies'">
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-right-from-bracket" size="xs" color="secondary" />
+              <q-icon name="fa-solid fa-building" size="sm" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('signout') }}</q-item-label>
+              <q-item-label header>{{ t('companies') }}</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item v-if="authStore.isAdmin" clickable :to="'/records'">
+            <q-item-section avatar>
+              <q-icon name="fa-brands fa-wpforms" size="sm" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label header>{{ t('records') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item-label v-if="authStore.isAdmin" class="text-h6" header>
+            {{ t('administration') }}
+          </q-item-label>
+          <q-item v-if="authStore.isAdmin" clickable :to="'/users'">
+            <q-item-section avatar>
+              <q-icon name="fa-solid fa-users" size="sm" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label header>{{ t('users') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item-label class="text-h6" header>{{ t('help') }}</q-item-label>
+          <q-item clickable :to="'/doc'">
+            <q-item-section avatar>
+              <q-icon name="fa-solid fa-book" size="sm" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label header>{{ t('doc') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item clickable :to="'/legal-notice'">
+            <q-item-section avatar>
+              <q-icon name="fa-solid fa-gavel" size="sm" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label header>{{ t('legal_notice') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
 
-          <q-separator />
-        </template>
+        <q-space />
 
-        <q-item clickable :to="'/'">
-          <q-item-section avatar>
-            <q-icon name="dashboard" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label header>{{ t('dashboard') }}</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item-label class="text-h6" header>{{ t('content') }}</q-item-label>
-        <q-item clickable :to="'/companies'">
-          <q-item-section avatar>
-            <q-icon name="fa-solid fa-building" size="xs" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label header>{{ t('companies') }}</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-if="authStore.isAdmin" clickable :to="'/records'">
-          <q-item-section avatar>
-            <q-icon name="fa-brands fa-wpforms" size="xs" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label header>{{ t('records') }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item-label v-if="authStore.isAdmin" class="text-h6" header>
-          {{ t('administration') }}
-        </q-item-label>
-        <q-item v-if="authStore.isAdmin" clickable :to="'/users'">
-          <q-item-section avatar>
-            <q-icon name="fa-solid fa-users" size="xs" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label header>{{ t('users') }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item-label class="text-h6" header>{{ t('help') }}</q-item-label>
-        <q-item clickable :to="'/doc'">
-          <q-item-section avatar>
-            <q-icon name="fa-solid fa-book" size="xs" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label header>{{ t('doc') }}</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable :to="'/legal-notice'">
-          <q-item-section avatar>
-            <q-icon name="fa-solid fa-gavel" size="xs" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label header>{{ t('legal_notice') }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+        <div v-if="authStore.isAuthenticated" class="q-pa-sm">
+          <div class="username-line">
+            <q-avatar size="60px" icon="fa-solid fa-user" />
+            <div>
+              <div class="text-body1">{{ username }}</div>
+              <div class="actions-bar">
+                <q-chip color="secondary" text-color="white" class="q-ma-none">{{ authStore.isAdmin ? t('role.platyp-admin') : t('role.platyp-user') }}</q-chip>
+                <q-btn
+                  color="secondary"
+                  size="sm"
+                  icon="fa-solid fa-right-from-bracket"
+                  class="auth-button"
+                  @click="onLogout"
+                >
+                  {{ t('signout') }}
+                </q-btn>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </q-drawer>
 
     <q-page-container v-if="authStore.isAuthenticated">
@@ -231,7 +232,42 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   object-fit: contain;
   rotate: -40deg;
 
-  opacity: 0.1;
+  opacity: 0.05;
+}
+
+.nav-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+:deep(.nav-list .q-item__section--avatar) {
+  padding-right: 0;
+  min-width: 24px;
+}
+
+:deep(.nav-list .q-item__label--header) {
+  color: var(--q-color-secondary);
+  font-size: 1rem;
+}
+
+.username-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+:deep(.auth-button .q-btn__content) {
+  gap: 0.5rem;
+  font-size: 0.65rem;
+}
+
+.actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
 }
 
 </style>

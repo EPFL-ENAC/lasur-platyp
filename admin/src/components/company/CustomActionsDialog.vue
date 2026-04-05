@@ -17,7 +17,9 @@
               <q-item-section>
                 <div class="q-mt-md">
                   <q-select
-                    filled
+                    outlined
+                    rounded
+                    color="secondary"
                     v-model="action.group"
                     :label="t('group')"
                     :options="actionGroupOptions"
@@ -28,7 +30,9 @@
                 </div>
                 <div>
                   <q-input
-                    filled
+                    outlined
+                    rounded
+                    color="secondary"
                     v-model="action.labelEn"
                     :label="t('label_en') + ' *'"
                     lazy-rules
@@ -37,7 +41,9 @@
                 </div>
                 <div>
                   <q-input
-                    filled
+                    outlined
+                    rounded
+                    color="secondary"
                     v-model="action.labelFr"
                     :label="t('label_fr') + ' *'"
                     lazy-rules
@@ -61,7 +67,9 @@
         </q-form>
         <q-toolbar>
           <q-select
-            filled
+            outlined
+            rounded
+            color="secondary"
             dense
             v-model="newAction.group"
             :label="t('group')"
@@ -84,8 +92,8 @@
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn outline :label="t('cancel')" color="secondary" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>

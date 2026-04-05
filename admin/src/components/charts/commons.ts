@@ -1,4 +1,4 @@
-import type { SetOptionOpts } from 'echarts'
+import { registerTheme, type SetOptionOpts } from 'echarts'
 
 export const initOptions: InitOptions = {
   renderer: 'svg',
@@ -6,6 +6,12 @@ export const initOptions: InitOptions = {
 export const updateOptions: SetOptionOpts = {
   notMerge: true,
 }
+registerTheme('platyp', {
+  textStyle: {
+    fontFamily: 'Nunito, sans-serif',
+  },
+  color: ['#FCC447']
+})
 
 /**
  * https://echarts.apache.org/en/api.html#echarts.init

@@ -4,21 +4,25 @@
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t(editMode ? 'edit' : 'add') }}</div>
         <q-space />
-        <q-btn flat icon="close" color="primary-dark" v-close-popup />
+        <q-btn flat icon="close" color="secondary" v-close-popup />
       </q-card-actions>
       <q-separator />
 
       <q-card-section>
         <q-form ref="form">
           <q-input
-            filled
+            outlined
+            rounded
+            color="secondary"
             v-model="selected.name"
             :label="t('name') + ' *'"
             lazy-rules
             :rules="[(val) => !!val || t('field_required')]"
           />
           <q-select
-            filled
+            outlined
+            rounded
+            color="secondary"
             v-model="selected.administrators"
             :label="t('company.administrators') + ' *'"
             :hint="t('company.administrators_hint')"
@@ -32,7 +36,9 @@
             :rules="[(val) => (!!val && val.length > 0) || t('field_required')]"
           />
           <q-select
-            filled
+            outlined
+            rounded
+            color="secondary"
             :model-value="selected.mobility_advisors || []"
             @update:model-value="(val) => (selected.mobility_advisors = val)"
             :label="t('company.mobility_advisors')"
@@ -46,14 +52,18 @@
             class="q-mb-md"
           />
           <q-input
-            filled
+            outlined
+            rounded
+            color="secondary"
             v-model="selected.contact_name"
             :label="t('company.contact_name')"
             :hint="t('company.contact_name_hint')"
             class="q-mb-md"
           />
           <q-input
-            filled
+            outlined
+            rounded
+            color="secondary"
             v-model="selected.contact_email"
             :label="t('company.contact_email')"
             :hint="t('company.contact_email_hint')"
@@ -64,7 +74,9 @@
             class="q-mb-md"
           />
           <q-input
-            filled
+            outlined
+            rounded
+            color="secondary"
             v-model="selected.info_url"
             :label="t('company.info_url')"
             :hint="t('company.info_url_hint')"
@@ -84,8 +96,8 @@
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn outline :label="t('cancel')" color="secondary" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>

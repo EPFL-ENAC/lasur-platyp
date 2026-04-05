@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md">{{ t('doc') }}</div>
+    <h4 class="text-h4 q-ma-none q-pa-md text-primary-dark">{{ t('doc') }}</h4>
     <q-separator />
     <div class="q-pa-md">
       <q-markdown
@@ -13,20 +13,23 @@
           <h6 class="text-h6 q-mb-xs">{{ section.title }}</h6>
           <p class="q-mb-md">{{ section.description ?? '' }}</p>
 
-          <q-expansion-item
-            v-for="entry in section.entries"
-            :key="entry.title"
-            expand-separator
-            :label="entry.title"
-            :caption="entry.caption"
-            class="bg-grey-3 bordered q-mb-sm"
-          >
-            <q-card>
-              <q-card-section>
+          <template v-for="entry in section.entries" :key="entry.title">
+            <q-separator />
+
+            <q-expansion-item
+              switch-toggle-side
+              :label="entry.title"
+              :caption="entry.caption"
+              class="bg-white"
+              :content-inset-level="1"
+              header-class="text-secondary"
+            >
+              <div class="q-pa-md">
                 <q-markdown v-if="entry.markdown" :src="entry.markdown" no-heading-anchor-links />
-              </q-card-section>
-            </q-card>
-          </q-expansion-item>
+              </div>
+            </q-expansion-item>
+          </template>
+          <q-separator />
         </div>
       </div>
     </div>
