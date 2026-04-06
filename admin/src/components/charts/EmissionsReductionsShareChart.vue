@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t(`stats.emissions_reductions_share.texts.default`) }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t(`stats.emissions_reductions_share.texts.default`) }}</p>
     <p v-if="biggestEmission">
       {{
         t(`stats.emissions_reductions_share.texts.specific`, {
@@ -35,7 +35,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
+import { initOptions, MODE_COLORS, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -184,6 +184,7 @@ function initChartOptions() {
           name: keyLabel(item.mode),
           value: item.reduced,
         })),
+        color: recoEmissions.map((item) => MODE_COLORS[item.mode] || '#FCC447'),
       },
     ],
   }

@@ -282,6 +282,24 @@ Thank you for your valuable contribution! If you have any questions, please cont
     observed: 'Data from participants',
     participants_median: 'Participants median',
     geneva_median: 'Geneva area median',
+    sections: {
+      mobility_analysis: {
+        title: 'Mobility analysis',
+        description: `The graphs below provide information on participants’ current mobility habits, including their use of transport modes, the equipment their posess, the constraints they face, and their geographical distribution.
+        
+Some environmental impacts have also been calculated:
+- on the environment, via greenhouse gas emissions calculated using mobi-tools factors [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
+- on participants’ health, via average daily energy expenditure (metabolic equivalent task) during their trips. The Swiss Confederation and the WHO recommend 150 minutes of moderate-intensity exercise (cycling/brisk walking) per week, equivalent to 150 kcal per day. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity) A lack of physical activity has a direct impact on physical and mental health (psychological and cognitive), and thus directly affects employees’ well-being, sick leave rates, productivity and the working atmosphere.`,
+      },
+      mobility_potentials: {
+        title: 'Mobility potentials',
+        description: `This section sets out the personalised recommendations suggested to participants. Mobilyse thus indicates which modes of transport are most likely to suit employees based on their habits, constraints, preferences, location, etc. Some graphs also illustrate the potential benefits in terms of greenhouse gas emissions and health, should all participants adopt these recommendations.`,
+      },
+      behavioural_changes: {
+        title: 'Encouraging behavioural changes',
+        description: `This final section provides information on participants’ willingness to follow the recommendations made to them, and on their needs or desires in order to bring about these behavioural changes. This can help guide your decisions and identify the mobility aids you might consider.`,
+      },
+    },
     equipments: {
       title: 'Mobility equipments',
       labels: {

@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t(`stats.energy_journey.texts.default_share`) }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default_share`) }}</p>
     <q-markdown
       v-if="total > 5 && biggestShare"
       :src="
@@ -38,7 +38,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
+import { initOptions, MODE_COLORS, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -176,6 +176,7 @@ function initChartOptions() {
           name: keyLabel(item.mode),
           value: item.added_kcal,
         })),
+        color: filtered.map((item) => MODE_COLORS[item.mode] || '#FCC447'),
       },
     ],
   }

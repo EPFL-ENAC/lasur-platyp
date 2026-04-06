@@ -24,8 +24,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t(`stats.equipments_by_recommendations.texts.default`) }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t(`stats.equipments_by_recommendations.texts.default`) }}</p>
     <p v-if="analysisText">
       {{ t(`stats.equipments_by_recommendations.texts.specific`, analysisText) }}
     </p>

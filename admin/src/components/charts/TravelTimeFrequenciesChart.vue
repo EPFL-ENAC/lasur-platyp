@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t('stats.travel_time.texts.default') }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t('stats.travel_time.texts.default') }}</p>
     <p v-if="hasData && medianValue">
       {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
     </p>
@@ -210,7 +210,6 @@ function initValuesChartOptions(frequencies: Frequencies) {
         data: values,
         type: 'bar',
         barCategoryGap: '0',
-        color: '#008066',
       },
     ],
   }

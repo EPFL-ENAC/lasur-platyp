@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
       :src="t(`stats.emissions_${props.reco}.texts.specific`, textLabels)"

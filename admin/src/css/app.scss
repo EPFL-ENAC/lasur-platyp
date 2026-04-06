@@ -183,3 +183,22 @@ li + li {
   border-radius: 0.5rem;
   margin: 0.25rem;
 }
+
+.q-markdown.compact {
+  line-height: 1.15;
+}
+
+.q-markdown.compact p {
+  margin-bottom: 0.75em;
+}
+
+.q-markdown.compact ul,
+.q-markdown.compact ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5em;
+}
+
+.q-markdown.compact li {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}

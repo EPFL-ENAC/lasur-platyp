@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="q-mt-md">
     <q-markdown
       v-if="emissionItemsLabels"
       :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"

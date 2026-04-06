@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t('stats.freq_mod.texts.default') }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t('stats.freq_mod.texts.default') }}</p>
     <p v-if="topModes.length === 3">
       {{
         t('stats.freq_mod.texts.specific', {

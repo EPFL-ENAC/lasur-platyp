@@ -20,8 +20,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t(`stats.energy_journey.texts.default`) }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown v-if="textLabels" :src="t(`stats.energy_journey.texts.specific`, textLabels)" />
   </div>
 </template>

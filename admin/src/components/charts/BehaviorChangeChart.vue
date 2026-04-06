@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t(`stats.behavior_change_${props.type}.texts.default`) }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t(`stats.behavior_change_${props.type}.texts.default`) }}</p>
     <q-markdown
       v-if="total > 5"
       :src="t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues)"

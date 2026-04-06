@@ -291,6 +291,24 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     observed: 'Données des participant·e·s',
     participants_median: 'Médiane des participant·e·s',
     geneva_median: 'Médiane de la région de Genève',
+    sections: {
+      mobility_analysis: {
+        title: 'Diagnostic de mobilité',
+        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s. Leur usage des modes de transport, leurs équipements, leurs contraintes et leur répartition géographique.
+        
+Certains impacts sont aussi calculés :
+- sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
+- sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
+      },
+      mobility_potentials: {
+        title: 'Potentiels de mobilité',
+        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux collaborateur·trice·s en fonction de leurs habitudes, contraintes, désirs, localisation... Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient ces recommandations.`,
+      },
+      behavioural_changes: {
+        title: 'Motiver les changements de comportement',
+        description: `Cette dernière section apporte des informations sur la volonté des participant·e·s de suivre ou non les recommandations qui leur ont été faites, et leurs besoins ou désirs pour déclencher ces changements de comportement. Cela peut permettre d'orienter vos décisions et de cibler les aides à la mobilité que vous pourriez envisager.`,
+      },
+    },
     equipments: {
       title: 'Équipements de mobilité',
       labels: {

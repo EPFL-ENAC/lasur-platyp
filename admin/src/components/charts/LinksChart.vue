@@ -16,8 +16,8 @@
     </div>
   </div>
 
-  <div>
-    <p>{{ t(`stats.${props.type}.texts.default`) }}</p>
+  <div class="q-mt-md">
+    <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
     <p v-if="mostRecommendedTarget">
       {{
         t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
