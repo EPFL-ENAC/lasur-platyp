@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_${props.type}.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <q-markdown
       v-if="emissionItemsLabels"
       :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"
@@ -59,6 +60,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = crypto.randomUUID()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -111,9 +113,13 @@ const emissionItemsLabels = computed(() => {
   const ei = emissionItems.value
   if (!ei) return null
 
+  const formatter = new Intl.NumberFormat(undefined, {
+    maximumFractionDigits: 2,
+  })
+
   return {
-    carMotoJourneysPercentage: toMaxDecimals(ei.carMotoJourneysPercentage || 0, 2),
-    carMotoEmissionsPercentage: toMaxDecimals(ei.carMotoEmissionsPercentage || 0, 2),
+    carMotoJourneysPercentage: formatter.format(ei.carMotoJourneysPercentage),
+    carMotoEmissionsPercentage: formatter.format(ei.carMotoEmissionsPercentage),
   }
 })
 
@@ -151,11 +157,15 @@ const emissionItemsProLabels = computed(() => {
   const eip = emissionItemsPro.value
   if (!eip) return null
 
+  const formatter = new Intl.NumberFormat(undefined, {
+    maximumFractionDigits: 2,
+  })
+
   return {
-    firstPercent: toMaxDecimals((eip.first.emissions / eip.total) * 100, 2),
+    firstPercent: formatter.format(eip.first.emissions / eip.total * 100),
     firstMode: keyLabel(eip.first.mode),
-    firstEmissions: toMaxDecimals(eip.first.emissions || 0, 2),
-    secondPercent: toMaxDecimals((eip.second.emissions / eip.total) * 100, 2),
+    firstEmissions: formatter.format((eip.first.emissions || 0) / eip.first.journeys),
+    secondPercent: formatter.format((eip.second.emissions / eip.total) * 100),
     secondMode: keyLabel(eip.second.mode),
     remainingEmissions: toMaxDecimals(eip.remaining || 0, 2),
   }

@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.energy_journey.texts.default_share`) }}</p>
     <q-markdown
       v-if="total > 5 && biggestShare"
@@ -64,6 +65,7 @@ interface AddedEnergyShare {
   percentage: number
 }
 
+const chartId = crypto.randomUUID()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const biggestShare = ref<AddedEnergyShare | null>(null)

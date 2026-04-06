@@ -8,6 +8,7 @@
         :option="option"
         :update-options="updateOptions"
         :loading="stats.loading"
+        :data-chart-id="chartId"
       />
       <div class="options">
         <q-toggle
@@ -23,7 +24,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.equipments_by_recommendations.texts.default`) }}</p>
     <p v-if="analysisText">
       {{ t(`stats.equipments_by_recommendations.texts.specific`, analysisText) }}
@@ -75,6 +76,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
+const chartId = crypto.randomUUID()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -85,7 +87,12 @@ const recommendationLabelsFiltered = computed(() => {
     return recommendationLabelsReversed
   }
 
-  return recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r])
+  const walking: 'marche' = 'marche' as const
+
+  return [
+    ...recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r]),
+    walking,
+  ] // we always want to show "marche" in simple mode, even if it's not in the mapping, because it's a common recommendation
 })
 
 watch([() => stats.loading], () => {
@@ -271,7 +278,9 @@ function initChartOptions() {
         if (v[2] === 0) return ''
         const labels = matrixPositionToLabels(v[0], v[1])
         if (!labels) return ''
-        const formatter = new Intl.NumberFormat()
+        const formatter = new Intl.NumberFormat(undefined, {
+          maximumFractionDigits: 2,
+        })
 
         const reco = keyLabel(labels.recommendation)
         const equipment = keyLabel(labels.equipment)
@@ -284,7 +293,7 @@ function initChartOptions() {
           reco,
           equipment,
           count: formatter.format(count),
-          percentage: formatter.format(toMaxDecimals(v[2], 2) || 0),
+          percentage: formatter.format(v[2] || 0),
         })
       },
     },
@@ -307,8 +316,12 @@ function initChartOptions() {
               stats.equipmentsStats!.equipment_recommendation_matrix[labels.recommendation][
                 labels.equipment
               ]
+            
+            const formatter = new Intl.NumberFormat(undefined, {
+              maximumFractionDigits: 2,
+            })
 
-            return `${new Intl.NumberFormat().format(count)} (${new Intl.NumberFormat().format(toMaxDecimals((params.value as [number, number, number])[2], 2) || 0)}%)`
+            return `${formatter.format(count)} (${formatter.format((params.value as [number, number, number])[2] || 0)}%)`
           },
         },
         data,

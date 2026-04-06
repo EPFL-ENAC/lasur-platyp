@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_${props.reco}.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
@@ -56,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = crypto.randomUUID()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const currentEmissions = ref(0)

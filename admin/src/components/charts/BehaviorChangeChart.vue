@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.behavior_change_${props.type}.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.behavior_change_${props.type}.texts.default`) }}</p>
     <q-markdown
       v-if="total > 5"
@@ -39,6 +40,8 @@ import {
 } from 'echarts/components'
 import { toMaxDecimals } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
+import { lowerCaseFirst } from 'src/utils/string'
+import { moveToEnd } from 'src/utils/arrays'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -53,6 +56,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = crypto.randomUUID()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -200,7 +204,7 @@ function leversOptions() {
         color: CATEGORY_COLORS[category] || '#ccc',
       },
     })) as SeriesOption[],
-    categories: behaviorChangeData.by_mode_levers.map((item) => keyLabel(item.mode)),
+    categories: getSortedModes(behaviorChangeData.by_mode_levers).map((mode) => keyLabel(mode)),
     total: behaviorChangeData.total_responses,
   }
 }
@@ -235,12 +239,23 @@ function motivationOptions() {
         color: MOTIVATION_COLORS[level] || '#ccc',
       },
     })) as SeriesOption[],
-    categories: behaviorChangeData.by_mode_motivation.map((item) => keyLabel(item.mode)),
+    categories: getSortedModes(behaviorChangeData.by_mode_motivation).map((mode) => keyLabel(mode)),
     total: behaviorChangeData.total_responses,
   }
 }
 
 function shortKey(key: string) {
-  return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+  return lowerCaseFirst(key.replace('freq_mod_pro_', '').replace('freq_mod_', ''))
+}
+
+function getSortedModes(data: { mode: string }[]) {
+  const modes = data.map((item) => item.mode)
+
+  moveToEnd(modes, 'Autres')
+  moveToEnd(modes, 'other')
+  moveToEnd(modes, 'Total')
+  moveToEnd(modes, 'allModes')
+
+  return modes
 }
 </script>

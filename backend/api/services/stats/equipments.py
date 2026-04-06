@@ -36,22 +36,25 @@ class EquipmentsService(BaseStatsService):
 
         for row in df.iterrows():
             row_data = row[1]
+
             for reco_col in rec_cols:
                 reco = row_data[reco_col]
+
                 if pd.notna(reco):
                     for equip_col in equip_cols:
                         equip = row_data[equip_col]
+
                         if pd.notna(equip):
                             current_value = getattr(getattr(matrix, reco), equip, 0)
                             setattr(getattr(matrix, reco), equip, current_value + 1)
                     
-                    # intermodal equipment
-                    has_pt_or_train = any(pd.notna(row_data[col]) and row_data[col] in ["train_subs", "upt_subs"] for col in equip_cols)
-                    has_bike_ebike = any(pd.notna(row_data[col]) and row_data[col] in ["bike", "ebike"] for col in equip_cols)
+            # intermodal equipment
+            has_pt_or_train = any(pd.notna(row_data[col]) and row_data[col] in ["train_subs", "upt_subs"] for col in equip_cols)
+            has_bike_ebike = any(pd.notna(row_data[col]) and row_data[col] in ["bike", "ebike"] for col in equip_cols)
 
-                    if has_pt_or_train and has_bike_ebike:
-                        current_value = getattr(getattr(matrix, "inter"), "inter", 0)
-                        setattr(getattr(matrix, "inter"), "inter", current_value + 1)
+            if has_pt_or_train and has_bike_ebike:
+                current_value = getattr(getattr(matrix, "inter"), "inter", 0)
+                setattr(getattr(matrix, "inter"), "inter", current_value + 1)
 
         for recommendation in matrix.model_fields.keys():
             total_count = (df[rec_cols] == recommendation).any(axis=1).sum()

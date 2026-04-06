@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_${props.reductionType}.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.emissions_${props.reductionType}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
@@ -56,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = crypto.randomUUID()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const currentEmissions = ref(0)
@@ -66,9 +68,11 @@ const textLabels = computed(() => {
 
   return {
     current_emissions: new Intl.NumberFormat().format(
-      toMaxDecimals(currentEmissions.value, 0) || 0,
+      (toMaxDecimals(currentEmissions.value, 0) || 0) / 1000, // convert from kg to tons
     ),
-    new_emissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions.value, 0) || 0),
+    new_emissions: new Intl.NumberFormat().format(
+      (toMaxDecimals(newEmissions.value, 0) || 0) / 1000
+    ),
     cheeseburgers: new Intl.NumberFormat().format(
       Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 18.8),
     ),

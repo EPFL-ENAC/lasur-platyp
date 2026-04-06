@@ -149,6 +149,8 @@ async function onPDFExport() {
     // Capture all visible charts
     for (let i = 0; i < chartContainers.length; i++) {
       const chart = chartContainers[i] as HTMLElement
+      const chartId = chart.getAttribute('data-chart-id')
+      const text = document.querySelector(`.chart-text[data-chart-id="${chartId}"]`) as HTMLElement
 
       // Skip if chart is not visible or has no dimensions
       if (chart.offsetWidth === 0 || chart.offsetHeight === 0) {
@@ -156,6 +158,7 @@ async function onPDFExport() {
       }
       const added = await makeChartPage(
         chart,
+        text?.innerText,
         doc,
         now,
         t('main.brand'),
