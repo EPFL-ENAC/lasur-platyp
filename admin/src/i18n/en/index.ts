@@ -285,7 +285,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     sections: {
       mobility_analysis: {
         title: 'Mobility analysis',
-        description: `The graphs below provide information on participants’ current mobility habits, including their use of transport modes, the equipment their posess, the constraints they face, and their geographical distribution.
+        description: `The graphs below provide information on participants’ current mobility habits, including their use of transport modes, the equipment their possess, the constraints they face, and their geographical distribution.
         
 Some environmental impacts have also been calculated:
 - on the environment, via greenhouse gas emissions calculated using mobi-tools factors [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
