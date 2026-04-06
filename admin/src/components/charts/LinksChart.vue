@@ -41,6 +41,7 @@ import {
 } from 'echarts/components'
 import type { StatLinks } from 'src/models'
 import { MODE_COLORS } from './commons'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -55,7 +56,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = crypto.randomUUID()
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 

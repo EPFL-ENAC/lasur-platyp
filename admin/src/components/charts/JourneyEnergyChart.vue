@@ -41,7 +41,8 @@ import {
 } from 'echarts/components'
 import { initOptions, updateOptions, MODE_COLORS } from './commons'
 import type { JourneyEnergyData } from 'src/models'
-import { toMaxDecimals } from 'src/utils/numbers'
+import { formatNumber } from 'src/utils/numbers'
+import { getRandomId } from 'src/utils/random'
 
 // Register ECharts modules
 use([
@@ -68,7 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
 const { t, locale } = useI18n()
 const stats = useStats()
 
-const chartId = crypto.randomUUID()
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const addedEnergy = ref(0)
@@ -78,8 +79,8 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    added_energy: new Intl.NumberFormat().format(toMaxDecimals(addedEnergy.value, 2) || 0),
-    count: new Intl.NumberFormat().format(newHealthyParticipants.value || 0),
+    added_energy: formatNumber(addedEnergy.value),
+    count: formatNumber(newHealthyParticipants.value || 0),
   }
 })
 
@@ -162,7 +163,7 @@ function initChartOptions() {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
       valueFormatter(value) {
-        return `${toMaxDecimals(value as number, 2)} kcal`
+        return `${formatNumber(value as number)} kcal`
       },
     },
     legend: {
@@ -251,7 +252,7 @@ function initChartOptions() {
           label: {
             show: true,
             position: 'insideEndTop',
-            formatter: `${toMaxDecimals(averageEnergyExpenditurePerToken, 2)} kcal`,
+            formatter: `${formatNumber(averageEnergyExpenditurePerToken)} kcal`,
             distance: 10,
             fontWeight: 'bold',
             color: '#d32f2f',

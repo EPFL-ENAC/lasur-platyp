@@ -47,7 +47,20 @@ export async function makeChartPage(
     const imgHeight = canvas.height
     const ratio = imgWidth / imgHeight
 
-    const heightOffset = 40
+    // Logic for Text Wrapping
+    let textLines: string[] = []
+    let textBlockHeight = 0
+    const lineHeight = 5 // Adjust based on font size
+
+    if (text) {
+      doc.setFontSize(10)
+      const safeText = toPdfSafeText(text)
+      // Split text to fit the maxWidth
+      textLines = doc.splitTextToSize(safeText, maxWidth)
+      textBlockHeight = textLines.length * lineHeight
+    }
+
+    const heightOffset = textBlockHeight + 10 // 10 for spacing between chart and text
 
     // Calculate dimensions to fit the page
     let finalHeight = maxHeight - heightOffset // margin for the text
@@ -63,8 +76,8 @@ export async function makeChartPage(
     const y = margin + 20 // (pageHeight - finalHeight) / 2
 
     doc.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight)
-    if (text) {
-      doc.text(toPdfSafeText(text), margin, pageHeight - margin - heightOffset)
+    if (textLines.length > 0) {
+      doc.text(textLines, margin, pageHeight - margin - heightOffset)
     }
     return true
   } catch (error) {
@@ -75,10 +88,10 @@ export async function makeChartPage(
 
 function toPdfSafeText(text: string) {
   return text
-    .normalize("NFKD")
+    .normalize('NFKD')
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"')
-    .replace(/[–—]/g, "-")
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/[–—]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
 }

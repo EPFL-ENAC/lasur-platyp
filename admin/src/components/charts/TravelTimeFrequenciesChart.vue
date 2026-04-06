@@ -38,6 +38,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -55,7 +56,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
-const chartId = crypto.randomUUID()
+const chartId = getRandomId()
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)

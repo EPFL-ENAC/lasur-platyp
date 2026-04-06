@@ -150,7 +150,7 @@ async function onPDFExport() {
     for (let i = 0; i < chartContainers.length; i++) {
       const chart = chartContainers[i] as HTMLElement
       const chartId = chart.getAttribute('data-chart-id')
-      const text = document.querySelector(`.chart-text[data-chart-id="${chartId}"]`) as HTMLElement
+      const text = document.querySelector<HTMLElement>(`.chart-text[data-chart-id="${chartId}"]`)
 
       // Skip if chart is not visible or has no dimensions
       if (chart.offsetWidth === 0 || chart.offsetHeight === 0) {

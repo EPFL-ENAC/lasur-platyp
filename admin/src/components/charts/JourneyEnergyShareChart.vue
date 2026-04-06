@@ -22,9 +22,7 @@
       v-if="total > 5 && biggestShare"
       :src="
         t(`stats.energy_journey.texts.specific_share`, {
-          percentage: new Intl.NumberFormat().format(
-            toMaxDecimals(biggestShare.percentage, 2) || 0,
-          ),
+          percentage: formatNumber(biggestShare.percentage),
           mode: keyLabel(biggestShare.mode),
         })
       "
@@ -45,8 +43,9 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { toMaxDecimals } from 'src/utils/numbers'
+import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
+import { getRandomId } from 'src/utils/random'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
@@ -65,7 +64,7 @@ interface AddedEnergyShare {
   percentage: number
 }
 
-const chartId = crypto.randomUUID()
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const biggestShare = ref<AddedEnergyShare | null>(null)
@@ -147,8 +146,7 @@ function initChartOptions() {
         const p = Array.isArray(params) ? params[0] : params
         if (!p) return ''
 
-        const val = new Intl.NumberFormat().format(toMaxDecimals(p.value as number, 2) || 0)
-        return `${p.name}<br/><b>${val} kcal</b> (${p.percent}%)`
+        return `${p.name}<br/><b>${formatNumber(p.value as number)} kcal</b> (${p.percent}%)`
       },
     },
     legend: {
@@ -170,7 +168,7 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 2) || 0)
+            return formatNumber(params.value as number)
           },
         },
         data: filtered.map((item) => ({

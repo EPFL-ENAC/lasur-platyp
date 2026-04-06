@@ -42,7 +42,8 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { MODE_COLORS } from './commons'
-import { toMaxDecimals } from 'src/utils/numbers'
+import { formatNumber } from 'src/utils/numbers'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -60,7 +61,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = crypto.randomUUID()
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -113,13 +114,9 @@ const emissionItemsLabels = computed(() => {
   const ei = emissionItems.value
   if (!ei) return null
 
-  const formatter = new Intl.NumberFormat(undefined, {
-    maximumFractionDigits: 2,
-  })
-
   return {
-    carMotoJourneysPercentage: formatter.format(ei.carMotoJourneysPercentage),
-    carMotoEmissionsPercentage: formatter.format(ei.carMotoEmissionsPercentage),
+    carMotoJourneysPercentage: formatNumber(ei.carMotoJourneysPercentage),
+    carMotoEmissionsPercentage: formatNumber(ei.carMotoEmissionsPercentage),
   }
 })
 
@@ -149,7 +146,7 @@ const emissionItemsPro = computed(() => {
     first: planeEmissions,
     second: carEmissions,
     total: totalEmissions,
-    remaining: totalEmissions - planeEmissions.emissions, // purpusely not carEmissions.emissions
+    withoutFirst: emissions.filter((item) => item.mode !== planeEmissions.mode),
   }
 })
 
@@ -157,17 +154,16 @@ const emissionItemsProLabels = computed(() => {
   const eip = emissionItemsPro.value
   if (!eip) return null
 
-  const formatter = new Intl.NumberFormat(undefined, {
-    maximumFractionDigits: 2,
-  })
+  const withoutFirstEmissions = eip.withoutFirst.reduce((sum, item) => sum + item.emissions, 0)
+  const withoutFirstJourneys = eip.withoutFirst.reduce((sum, item) => sum + item.journeys, 0)
 
   return {
-    firstPercent: formatter.format(eip.first.emissions / eip.total * 100),
+    firstPercent: formatNumber((eip.first.emissions / eip.total) * 100),
     firstMode: keyLabel(eip.first.mode),
-    firstEmissions: formatter.format((eip.first.emissions || 0) / eip.first.journeys),
-    secondPercent: formatter.format((eip.second.emissions / eip.total) * 100),
+    firstEmissions: formatNumber((eip.first.emissions || 0) / eip.first.journeys),
+    secondPercent: formatNumber((eip.second.emissions / eip.total) * 100),
     secondMode: keyLabel(eip.second.mode),
-    remainingEmissions: toMaxDecimals(eip.remaining || 0, 2),
+    remainingEmissions: formatNumber(withoutFirstEmissions / withoutFirstJourneys),
   }
 })
 
