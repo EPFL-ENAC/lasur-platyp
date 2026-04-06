@@ -12,8 +12,8 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary: #FCC447;
-$secondary: #4D303F;
+$primary: #fcc447;
+$secondary: #4d303f;
 $accent: #e6a21a;
 
 $dark: #1d1d1d;
@@ -24,12 +24,12 @@ $negative: #c10015;
 $info: #80a795;
 $warning: #e6a21a;
 
-$primary-light: #FFF5D4;
-$primary-semi-dark: #C4A253;
-$primary-dark: #BA8025;
+$primary-light: #fff5d4;
+$primary-semi-dark: #c4a253;
+$primary-dark: #ba8025;
 
-$secondary-ultra-light: #F3E9EE;
-$secondary-super-light: #DCC6CE;
+$secondary-ultra-light: #f3e9ee;
+$secondary-super-light: #dcc6ce;
 $secondary-light: #907181;
 
 .text-primary-light {
@@ -48,29 +48,22 @@ $secondary-light: #907181;
   background-color: $primary-dark !important;
 }
 
-.text-primary-dark {
-  color: $primary-dark !important;
-}
-
-.bg-primary-dark {
-  background-color: $primary-dark !important;
-}
-
 .bg-secondary-ultra-light {
   background-color: $secondary-ultra-light !important;
 }
 
 .q-btn {
-    padding: 4px 8px !important;
+  padding: 4px 8px !important;
 }
 
 .q-btn.bg-primary {
-    color: $secondary !important;
-    outline: 1px solid $primary-semi-dark !important;
+  color: $secondary !important;
+  outline: 1px solid $primary-semi-dark !important;
 }
 
-.q-badge.bg-primary, .q-chip.bg-primary {
-    color: $secondary !important;
+.q-badge.bg-primary,
+.q-chip.bg-primary {
+  color: $secondary !important;
 }
 
 .q-card {

@@ -15,7 +15,7 @@
         icon="delete"
         class="q-ml-xs"
         @click="onShowRemove"
-        style="width: 32px;"
+        style="width: 32px"
       />
     </div>
 
@@ -25,7 +25,7 @@
       </q-card-section>
 
       <q-separator />
-      
+
       <q-card-section>
         <div class="row q-col-gutter-md q-mb-md">
           <div class="col-12 col-md-6">
@@ -39,7 +39,7 @@
 
       <template v-if="isCompanyAdmin">
         <q-separator />
-  
+
         <q-card-actions align="right">
           <q-btn
             size="sm"
@@ -49,13 +49,7 @@
             :label="t('report_global')"
             @click="onShowStats"
           />
-          <q-btn
-            size="sm"
-            color="primary"
-            icon="edit"
-            :label="t('edit')"
-            @click="onEdit"
-          />
+          <q-btn size="sm" color="primary" icon="edit" :label="t('edit')" @click="onEdit" />
         </q-card-actions>
       </template>
     </q-card>
@@ -66,14 +60,12 @@
       </q-card-section>
 
       <q-separator />
-      
-      <q-card-section>
-        Some content ?
-      </q-card-section>
+
+      <q-card-section> Some content ? </q-card-section>
 
       <template v-if="isCompanyAdmin">
         <q-separator />
-  
+
         <q-card-actions align="right">
           <q-btn
             v-if="isCompanyAdmin"
@@ -83,9 +75,12 @@
             icon="settings"
             @click="onShowCustomActions"
           >
-            <q-badge v-if="actionsStore.items.length" color="white" class="text-secondary q-ml-sm">{{
-              actionsStore.items.length
-            }}</q-badge>
+            <q-badge
+              v-if="actionsStore.items.length"
+              color="white"
+              class="text-secondary q-ml-sm"
+              >{{ actionsStore.items.length }}</q-badge
+            >
           </q-btn>
         </q-card-actions>
       </template>
@@ -123,10 +118,7 @@
       <!-- Custom Body Slot to handle the link -->
       <template #body-cell-name="props">
         <q-td :props="props">
-          <router-link
-            :to="`/company/${id}/campaign/${props.row.id}`"
-            class="modus"
-          >
+          <router-link :to="`/company/${id}/campaign/${props.row.id}`" class="modus">
             {{ props.row.name }}
           </router-link>
         </q-td>
@@ -134,7 +126,7 @@
       <template v-slot:body-cell-action="props">
         <q-td :props="props">
           <q-btn
-            v-if="authStore.isAdminOfThisCompany(props.row)"
+            v-if="isCompanyAdmin"
             color="grey-8"
             size="12px"
             flat
@@ -144,7 +136,7 @@
             :to="`/company/${id}/campaign/${props.row.id}`"
           />
           <q-btn
-            v-if="authStore.isAdminOfThisCompany(props.row)"
+            v-if="isCompanyAdmin"
             color="grey-8"
             size="12px"
             flat
@@ -172,7 +164,7 @@
       @saved="onCustomActionsUpdated"
     />
     <company-charts-dialog v-if="company" v-model="showChartsDialog" :company="company" />
-    
+
     <company-campaign-dialog
       v-if="company && selectedCampaign"
       v-model="showCampaignDialog"
@@ -205,7 +197,7 @@ const service = services.make('company') as Service<Company>
 const actionsStore = useActions()
 const campaignsStore = useCampaigns()
 
-const id = computed(() => route.params.id === undefined ? undefined : Number(route.params.id))
+const id = computed(() => (route.params.id === undefined ? undefined : Number(route.params.id)))
 const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showDialog = ref(false)
@@ -216,7 +208,7 @@ const showCampaignDialog = ref(false)
 
 const isCompanyAdmin = computed(() => {
   if (!company.value) return false
-  return authStore.isAdmin || company.value.administrators?.includes(authStore.profile?.email || '')
+  return authStore.isAdminOfThisCompany(company.value)
 })
 
 const items: FieldItem[] = [
@@ -260,7 +252,7 @@ const items2: FieldItem[] = [
   },
 ]
 
-const campaigns = computed<Campaign[]>(() => campaignsStore.items || []);
+const campaigns = computed<Campaign[]>(() => campaignsStore.items || [])
 
 const columns = computed<QTableColumn[]>(() => {
   const cols: QTableColumn[] = [
@@ -278,7 +270,7 @@ const columns = computed<QTableColumn[]>(() => {
       align: 'right',
       sortable: true,
       // Optional: Format the date if needed
-      format: (val: string) => val ? new Date(val).toLocaleDateString() : '-'
+      format: (val: string) => (val ? new Date(val).toLocaleDateString() : '-'),
     },
     {
       name: 'end_date',
@@ -286,7 +278,7 @@ const columns = computed<QTableColumn[]>(() => {
       field: 'end_date',
       align: 'right',
       sortable: true,
-      format: (val: string) => val ? new Date(val).toLocaleDateString() : '-'
+      format: (val: string) => (val ? new Date(val).toLocaleDateString() : '-'),
     },
     {
       name: 'nb_employees',
@@ -301,8 +293,8 @@ const columns = computed<QTableColumn[]>(() => {
       label: t('campaign.workplaces.number'),
       field: (row: Campaign) => `${row.workplaces?.length || 0}`,
       align: 'right',
-      sortable: true
-    }
+      sortable: true,
+    },
   ]
 
   if (isCompanyAdmin.value) {
@@ -315,7 +307,7 @@ const columns = computed<QTableColumn[]>(() => {
   }
 
   return cols
-});
+})
 
 onMounted(() => {
   if (id.value === undefined) return

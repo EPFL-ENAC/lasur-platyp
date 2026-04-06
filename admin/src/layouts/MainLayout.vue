@@ -34,7 +34,13 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered class="bg-primary-light text-secondary">
+    <q-drawer
+      v-if="authStore.isAuthenticated"
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      class="bg-primary-light text-secondary"
+    >
       <div class="nav-wrapper">
         <q-list class="nav-list">
           <q-item clickable :to="'/'" exact>
@@ -100,7 +106,9 @@
             <div>
               <div class="text-body1">{{ username }}</div>
               <div class="actions-bar">
-                <q-chip color="secondary" text-color="white" class="q-ma-none">{{ authStore.isAdmin ? t('role.platyp-admin') : t('role.platyp-user') }}</q-chip>
+                <q-chip color="secondary" text-color="white" class="q-ma-none">{{
+                  authStore.isAdmin ? t('role.platyp-admin') : t('role.platyp-user')
+                }}</q-chip>
                 <q-btn
                   color="secondary"
                   size="sm"
@@ -119,7 +127,11 @@
 
     <q-page-container v-if="authStore.isAuthenticated">
       <div class="background-container">
-        <img src="MOBILISE_PATTERN-VIOLET.svg" alt="Background pattern" class="background-pattern">
+        <img
+          src="MOBILISE_PATTERN-VIOLET.svg"
+          alt="Background pattern"
+          class="background-pattern"
+        />
       </div>
       <router-view />
     </q-page-container>
@@ -198,7 +210,6 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 </script>
 
 <style scoped>
-
 .logos {
   display: flex;
   align-items: center;
@@ -223,12 +234,12 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 
 .background-pattern {
   position: absolute;
-  
+
   top: -10rem;
   left: 15rem;
   width: 100rem;
   height: 200rem;
-  
+
   object-fit: contain;
   rotate: -40deg;
 
@@ -269,5 +280,4 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   gap: 0.5rem;
   justify-content: space-between;
 }
-
 </style>

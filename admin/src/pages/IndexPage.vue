@@ -8,7 +8,14 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat icon="fa-solid fa-book" color="secondary" size="sm" :label="t('documentation')" to="/doc" />
+          <q-btn
+            flat
+            icon="fa-solid fa-book"
+            color="secondary"
+            size="sm"
+            :label="t('documentation')"
+            to="/doc"
+          />
         </q-card-actions>
       </q-card>
 

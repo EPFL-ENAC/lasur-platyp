@@ -25,7 +25,7 @@
           color="negative"
           icon="delete"
           @click="onShowRemove"
-          style="width: 32px;"
+          style="width: 32px"
         />
       </div>
     </div>
@@ -38,7 +38,7 @@
       :title="t('remove_campaign')"
       :text="t('remove_campaign_text', { name: campaign.name })"
       @confirm="onRemove"
-    />    
+    />
     <company-campaign-dialog
       v-if="company && campaign"
       v-model="showCampaignDialog"
@@ -62,12 +62,17 @@ const router = useRouter()
 const { t } = useI18n()
 const authStore = useAuthStore()
 const services = useServices()
-const service = services.make('company') as Service<Company>
+const companyService = services.make('company') as Service<Company>
+const campaignService = services.make('campaign') as Service<Campaign>
 const actionsStore = useActions()
 const campaignsStore = useCampaigns()
 
-const companyId = computed(() => route.params.companyId === undefined ? undefined : Number(route.params.companyId))
-const campaignId = computed(() => route.params.campaignId === undefined ? undefined : Number(route.params.campaignId))
+const companyId = computed(() =>
+  route.params.companyId === undefined ? undefined : Number(route.params.companyId),
+)
+const campaignId = computed(() =>
+  route.params.campaignId === undefined ? undefined : Number(route.params.campaignId),
+)
 const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showCampaignDialog = ref(false)
@@ -77,7 +82,9 @@ const isCompanyAdmin = computed(() => {
   return authStore.isAdmin || company.value.administrators?.includes(authStore.profile?.email || '')
 })
 
-const campaign = computed<Campaign | undefined>(() => campaignsStore.items?.find((c) => c.id === campaignId.value))
+const campaign = computed<Campaign | undefined>(() =>
+  campaignsStore.items?.find((c) => c.id === campaignId.value),
+)
 
 onMounted(() => {
   if (companyId.value === undefined) return
@@ -86,7 +93,7 @@ onMounted(() => {
 
 function onInit() {
   return Promise.all([
-    service
+    companyService
       .get(companyId.value + '')
       .then((data: Company) => {
         company.value = data
@@ -114,10 +121,10 @@ function onShowRemove() {
 }
 
 function onRemove() {
-  if (!company.value) return
-  service.remove(company.value.id + '').then(() => {
-    notifySuccess(t('company_removed'))
-    router.push('/companies')
+  if (!campaign.value || !company.value) return
+  campaignService.remove(campaign.value.id + '').then(() => {
+    notifySuccess(t('campaign_removed'))
+    router.push(`/company/${company.value!.id}`)
   })
 }
 

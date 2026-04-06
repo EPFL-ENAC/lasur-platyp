@@ -947,6 +947,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   companies: 'Companies',
   company_campaign: 'Company (campaign)',
   company_removed: 'Company removed',
+  campaign_removed: 'Campaign removed',
   content: 'Content',
   doc: 'Documentation',
   dashboard: 'Dashboard',

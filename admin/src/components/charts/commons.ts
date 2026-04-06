@@ -10,7 +10,7 @@ registerTheme('platyp', {
   textStyle: {
     fontFamily: 'Nunito, sans-serif',
   },
-  color: ['#FCC447']
+  color: ['#FCC447'],
 })
 
 /**

@@ -4,7 +4,7 @@
       <div class="text-h4">{{ t('companies') }}</div>
 
       <div class="title-toolbar">
-        <q-input dense outlined rounded label="Search" color="secondary" debounce="300" v-model="filter" clearable>
+        <q-input dense outlined rounded color="secondary" debounce="300" v-model="filter" clearable>
           <template v-slot:append>
             <q-icon name="search" />
           </template>

@@ -6,11 +6,11 @@
       </q-card-section>
 
       <q-separator />
-      
+
       <q-card-section>
         <campaign-charts :item="item" />
       </q-card-section>
-      
+
       <q-separator />
 
       <q-card-actions align="right">
@@ -24,7 +24,7 @@
         />
       </q-card-actions>
     </q-card>
-    
+
     <q-card flat class="q-ma-md">
       <q-card-section>
         <h5 class="text-h5 q-ma-none">{{ t('overview') }}</h5>
@@ -56,7 +56,7 @@
         </div>
       </q-card-section>
     </q-card>
-    
+
     <q-card flat class="q-ma-md">
       <q-card-section>
         <h5 class="text-h5 q-ma-none">

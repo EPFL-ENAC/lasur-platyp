@@ -96,6 +96,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     updateToken,
     isAdminOfThisCompany,
-    roleInThisCompany
+    roleInThisCompany,
   }
 })

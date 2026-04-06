@@ -10,8 +10,8 @@ export const useCampaigns = defineStore('campaigns', () => {
 
   async function load() {
     if (!companyId.value) return
-    console.log('Loading campaigns for company', companyId.value)
     loading.value = true
+
     return service
       .find({
         $limit: 100,
@@ -33,7 +33,7 @@ export const useCampaigns = defineStore('campaigns', () => {
   async function loadIfNeeded(id: number | undefined) {
     if (!id) return
     if (companyId.value === id && items.value.length > 0) return
-    
+
     companyId.value = id
     await load()
   }
@@ -44,6 +44,6 @@ export const useCampaigns = defineStore('campaigns', () => {
     loading,
     service,
     load,
-    loadIfNeeded
+    loadIfNeeded,
   }
 })

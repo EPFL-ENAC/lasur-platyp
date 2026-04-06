@@ -21,7 +21,15 @@
             @click="onAdd"
           />
           <q-space />
-          <q-input dense outlined rounded color="secondary" debounce="300" v-model="filter" clearable>
+          <q-input
+            dense
+            outlined
+            rounded
+            color="secondary"
+            debounce="300"
+            v-model="filter"
+            clearable
+          >
             <template v-slot:append>
               <q-icon name="search" />
             </template>

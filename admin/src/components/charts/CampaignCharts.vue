@@ -59,12 +59,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 .spinner-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 300px;
 }
-
 </style>

@@ -960,6 +960,7 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   companies: 'Organisations',
   company_campaign: 'Organisation (campagne)',
   company_removed: 'Organisation supprimée',
+  campaign_removed: 'Campagne supprimée',
   content: 'Contenu',
   doc: 'Documentation',
   dashboard: 'Tableau de bord',

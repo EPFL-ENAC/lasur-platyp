@@ -20,32 +20,27 @@
 
 @font-face {
   font-family: Nunito;
-  src:
-    url('fonts/Nunito-VariableFont_wght.ttf') format('truetype');
+  src: url('fonts/Nunito-VariableFont_wght.ttf') format('truetype');
   font-style: normal;
   font-display: swap; /* Controls how the font is displayed while loading */
 }
 @font-face {
   font-family: Nunito;
-  src:
-    url('fonts/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
+  src: url('fonts/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
   font-style: italic;
 }
 
 @font-face {
   font-family: Outfit;
-  src:
-    url('fonts/Outfit-VariableFont_wght.ttf') format('truetype');
+  src: url('fonts/Outfit-VariableFont_wght.ttf') format('truetype');
   font-display: swap; /* Controls how the font is displayed while loading */
 }
 
 @font-face {
   font-family: SpaceGrotesk;
-  src:
-    url('fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+  src: url('fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
   font-display: swap; /* Controls how the font is displayed while loading */
 }
-
 
 body {
   font-family: Nunito, Helvetica, Arial, sans-serif;
