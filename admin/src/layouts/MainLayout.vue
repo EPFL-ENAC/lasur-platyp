@@ -5,7 +5,7 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="logos">
-          <a href="https://modus-ge.ch/" target="_blank" class="logo">
+          <a href="https://modus-ge.ch/" target="_blank" class="logo" rel="noopener noreferrer">
             <img src="LOGO-VIOLET.svg" height="32px" />
           </a>
         </q-toolbar-title>
@@ -129,7 +129,7 @@
       <div class="background-container">
         <img
           src="MOBILISE_PATTERN-VIOLET.svg"
-          alt="Background pattern"
+          aria-hidden="true"
           class="background-pattern"
         />
       </div>

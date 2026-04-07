@@ -24,6 +24,7 @@
           size="sm"
           color="negative"
           icon="delete"
+          :aria-label="t('remove')"
           @click="onShowRemove"
           style="width: 32px"
         />
@@ -56,6 +57,7 @@ import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import CompanyCampaign from 'src/components/company/CompanyCampaign.vue'
 import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
 import { notifySuccess, notifyError } from 'src/utils/notify'
+import { checkUrlParamNumber } from 'src/utils/numbers'
 
 const route = useRoute()
 const router = useRouter()
@@ -67,19 +69,15 @@ const campaignService = services.make('campaign') as Service<Campaign>
 const actionsStore = useActions()
 const campaignsStore = useCampaigns()
 
-const companyId = computed(() =>
-  route.params.companyId === undefined ? undefined : Number(route.params.companyId),
-)
-const campaignId = computed(() =>
-  route.params.campaignId === undefined ? undefined : Number(route.params.campaignId),
-)
+const companyId = computed(() => checkUrlParamNumber(route.params.companyId))
+const campaignId = computed(() => checkUrlParamNumber(route.params.campaignId))
 const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showCampaignDialog = ref(false)
 
 const isCompanyAdmin = computed(() => {
   if (!company.value) return false
-  return authStore.isAdmin || company.value.administrators?.includes(authStore.profile?.email || '')
+  return authStore.isAdminOfThisCompany(company.value)
 })
 
 const campaign = computed<Campaign | undefined>(() =>
@@ -92,6 +90,8 @@ onMounted(() => {
 })
 
 function onInit() {
+  if (!companyId.value) return
+  
   return Promise.all([
     companyService
       .get(companyId.value + '')
@@ -125,7 +125,7 @@ function onRemove() {
   campaignService.remove(campaign.value.id + '').then(() => {
     notifySuccess(t('campaign_removed'))
     router.push(`/company/${company.value!.id}`)
-  })
+  }).catch(notifyError)
 }
 
 function onCampaignSaved() {

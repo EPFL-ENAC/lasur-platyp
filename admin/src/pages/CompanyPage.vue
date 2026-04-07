@@ -13,9 +13,9 @@
         size="sm"
         color="negative"
         icon="delete"
+        :aria-label="t('remove')"
         class="q-ml-xs"
         @click="onShowRemove"
-        style="width: 32px"
       />
     </div>
 
@@ -79,8 +79,9 @@
               v-if="actionsStore.items.length"
               color="white"
               class="text-secondary q-ml-sm"
-              >{{ actionsStore.items.length }}</q-badge
             >
+              {{ actionsStore.items.length }}
+            </q-badge>
           </q-btn>
         </q-card-actions>
       </template>
@@ -133,6 +134,7 @@
             dense
             round
             icon="visibility"
+            :aria-label="t('view')"
             :to="`/company/${id}/campaign/${props.row.id}`"
           />
           <q-btn
@@ -143,6 +145,7 @@
             dense
             round
             icon="edit"
+            :aria-label="t('edit')"
             @click="onEditCampaign(props.row)"
           />
         </q-td>
@@ -187,6 +190,7 @@ import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import { notifySuccess, notifyError } from 'src/utils/notify'
 import type { QTableColumn } from 'quasar'
+import { checkUrlParamNumber } from 'src/utils/numbers'
 
 const route = useRoute()
 const router = useRouter()
@@ -197,7 +201,7 @@ const service = services.make('company') as Service<Company>
 const actionsStore = useActions()
 const campaignsStore = useCampaigns()
 
-const id = computed(() => (route.params.id === undefined ? undefined : Number(route.params.id)))
+const id = computed(() => checkUrlParamNumber(route.params.id))
 const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showDialog = ref(false)
@@ -315,6 +319,8 @@ onMounted(() => {
 })
 
 function onInit() {
+  if (!id.value) return
+  
   return Promise.all([
     service
       .get(id.value + '')

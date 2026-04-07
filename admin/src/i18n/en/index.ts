@@ -972,6 +972,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   data: 'Data',
   download_csv: 'Download CSV',
   overview: 'Overview',
+  view: 'View',
   edit: 'Edit',
   email: 'Email',
   enabled: 'Enabled',

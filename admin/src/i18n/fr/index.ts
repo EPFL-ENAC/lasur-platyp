@@ -985,6 +985,7 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   data: 'Données',
   download_csv: 'Télécharger CSV',
   overview: 'Vue d’ensemble',
+  view: 'Voir',
   edit: 'Editer',
   email: 'Email',
   enabled: 'Activé',
