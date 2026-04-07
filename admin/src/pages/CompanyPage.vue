@@ -2,7 +2,7 @@
   <q-page>
     <div class="title-bar q-pa-md">
       <div class="text-h4 row">
-        <q-breadcrumbs gutter="sm" active-color="primary-dark">
+        <q-breadcrumbs gutter="sm" active-color="title">
           <q-breadcrumbs-el :label="t('companies')" to="/companies" />
           <q-breadcrumbs-el :label="company?.name" />
         </q-breadcrumbs>
@@ -44,7 +44,7 @@
           <q-btn
             size="sm"
             outline
-            color="secondary"
+            color="field"
             icon="bar_chart"
             :label="t('report_global')"
             @click="onShowStats"
@@ -128,7 +128,7 @@
         <q-td :props="props">
           <q-btn
             v-if="isCompanyAdmin"
-            color="grey-8"
+            color="foreground"
             size="12px"
             flat
             dense
@@ -139,7 +139,7 @@
           />
           <q-btn
             v-if="isCompanyAdmin"
-            color="grey-8"
+            color="foreground"
             size="12px"
             flat
             dense

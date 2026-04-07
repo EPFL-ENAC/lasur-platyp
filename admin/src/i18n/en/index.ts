@@ -1053,4 +1053,5 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   created_at: 'Created at',
   updated_at: 'Updated at',
   do_not_show_again: 'Do not show again',
+  dark_mode: 'Dark mode',
 }

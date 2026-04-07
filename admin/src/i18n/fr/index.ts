@@ -1068,4 +1068,5 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   created_at: 'Ajouté le',
   updated_at: 'Mis à jour le',
   do_not_show_again: 'Ne plus afficher',
+  dark_mode: 'Mode sombre',
 }

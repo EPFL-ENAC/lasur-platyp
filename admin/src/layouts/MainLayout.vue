@@ -1,16 +1,16 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-header v-if="authStore.isAuthenticated" bordered class="bg-primary-light text-grey-10">
+    <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav text-grey-10">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn flat dense round color="foreground" icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="logos">
           <a href="https://modus-ge.ch/" target="_blank" class="logo" rel="noopener noreferrer">
-            <img src="LOGO-VIOLET.svg" height="32px" />
+            <img :src="$q.dark.isActive ? 'LOGO-JAUNE.svg' : 'LOGO-VIOLET.svg'" height="32px" />
           </a>
         </q-toolbar-title>
 
-        <q-btn-dropdown flat dense :label="locale" class="on-left">
+        <q-btn-dropdown flat dense color="foreground" :label="locale" class="on-left">
           <q-list>
             <q-item
               clickable
@@ -39,7 +39,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="bg-primary-light text-secondary"
+      class="bg-nav text-foreground"
     >
       <div class="nav-wrapper">
         <q-list class="nav-list">
@@ -100,17 +100,23 @@
 
         <q-space />
 
+        <q-toggle
+          :model-value="$q.dark.isActive"
+          @update:model-value="(e) => $q.dark.set(e)"
+          :label="t('dark_mode')"
+        />
+
         <div v-if="authStore.isAuthenticated" class="q-pa-sm">
           <div class="username-line">
             <q-avatar size="60px" icon="fa-solid fa-user" />
             <div>
               <div class="text-body1">{{ username }}</div>
               <div class="actions-bar">
-                <q-chip color="secondary" text-color="white" class="q-ma-none">{{
+                <q-chip color="foreground" text-color="white" class="q-ma-none">{{
                   authStore.isAdmin ? t('role.platyp-admin') : t('role.platyp-user')
                 }}</q-chip>
                 <q-btn
-                  color="secondary"
+                  color="foreground"
                   size="sm"
                   icon="fa-solid fa-right-from-bracket"
                   class="auth-button"
@@ -128,7 +134,7 @@
     <q-page-container v-if="authStore.isAuthenticated">
       <div class="background-container">
         <img
-          src="MOBILISE_PATTERN-VIOLET.svg"
+          :src="$q.dark.isActive ? 'PATTERN-BLANC.svg' : 'PATTERN-VIOLET.svg'"
           aria-hidden="true"
           class="background-pattern"
         />
@@ -159,13 +165,14 @@
 </template>
 
 <script setup lang="ts">
-import { Cookies } from 'quasar'
+import { Cookies, useQuasar } from 'quasar'
 import { locales } from 'boot/i18n'
 
 const dataProtection = useDataProtectionStore()
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const router = useRouter()
+const $q = useQuasar()
 
 const leftDrawerOpen = ref(false)
 const showDataProtectionNotice = ref(!dataProtection.doNotShowNotice)

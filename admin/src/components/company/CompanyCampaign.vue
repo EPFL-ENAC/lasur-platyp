@@ -78,7 +78,7 @@
         </div>
         <div>
           <div v-for="(wp, index) in visibleWorkplaces" :key="index" class="workplace">
-            <div class="text-overline text-grey-6 workplace-name">{{ wp.name }}</div>
+            <div class="text-overline text-half-muted workplace-name">{{ wp.name }}</div>
             <div class="workplace-address">
               <div>{{ wp.address }}</div>
               <div class="q-mt-sm">
@@ -97,7 +97,7 @@
                 :label="t('campaign.workplaces.show_isochrone')"
                 icon="map"
                 expand-icon="expand_more"
-                header-class="bg-grey-3"
+                header-class="bg-super-muted"
               >
                 <div class="q-pa-sm">
                   <isochrones-map
@@ -176,7 +176,7 @@
             :label="t('campaign.email_template.buttonText')"
             outline
             size="sm"
-            color="secondary"
+            color="field"
             icon="email"
             class="q-ml-md"
             @click="onShowEmailTemplate"
@@ -392,7 +392,7 @@ function onDownloadWorkplaces() {
 
   gap: 1rem;
 
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid var(--secondary-border-color);
 }
 
 .workplace-name {

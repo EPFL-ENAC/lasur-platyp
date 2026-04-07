@@ -8,13 +8,13 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
-      theme="platyp"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
     <div v-else>
       <div class="text-h6 text-center">
         {{ t(`stats.energy_journey.title_${props.type}`) }}
       </div>
-      <div class="text-subtitle1 text-grey-8 text-center">
+      <div class="text-subtitle1 text-foreground text-center">
         {{ t('stats.no_data') }}
       </div>
     </div>
@@ -42,6 +42,7 @@ import {
 import { initOptions, updateOptions, MODE_COLORS } from './commons'
 import type { JourneyEnergyData } from 'src/models'
 import { toMaxDecimals } from 'src/utils/numbers'
+import { useQuasar } from 'quasar'
 
 // Register ECharts modules
 use([
@@ -66,6 +67,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 const stats = useStats()
 
 const option = ref<EChartsOption>({})
@@ -217,10 +219,8 @@ function initChartOptions() {
             formatter: '150 kcal',
             distance: 10,
             fontWeight: 'bold',
-            color: 'black',
           },
           lineStyle: {
-            color: 'black',
             type: 'dashed',
             width: 2,
             opacity: 0.8,

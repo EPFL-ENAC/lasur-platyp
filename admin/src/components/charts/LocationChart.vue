@@ -109,6 +109,10 @@ const max = computed(() => {
   text-align: center;
 }
 
+:global(.body--dark .title) {
+  color: var(--q-primary) !important;
+}
+
 .with-data {
   position: relative;
 }

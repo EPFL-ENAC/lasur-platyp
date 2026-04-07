@@ -8,11 +8,11 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
-      theme="platyp"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
@@ -43,9 +43,11 @@ import {
 } from 'echarts/components'
 import { MODE_COLORS } from './commons'
 import { toMaxDecimals } from 'src/utils/numbers'
+import { useQuasar } from 'quasar'
 
 const { t, locale } = useI18n()
 const stats = useStats()
+const $q = useQuasar()
 use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
@@ -69,7 +71,7 @@ watch([() => stats.loading], () => {
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => $q.dark.isActive], () => {
   if (!stats.loading) {
     initChartOptions()
   }
@@ -185,6 +187,8 @@ function initChartOptions() {
     return
   }
 
+  const labelColor = $q.dark.isActive ? '#fffcf4' : '#000000'
+
   let ubound = 0
   const dataset = emissions
     .sort((a, b) => {
@@ -281,6 +285,7 @@ function initChartOptions() {
               y: yValue ? pxValY - 10 : pxBaseY + 14,
               textAlign: 'center',
               textVerticalAlign: 'middle',
+              fill: labelColor,
             },
             silent: true, // don't intercept mouse events
           }

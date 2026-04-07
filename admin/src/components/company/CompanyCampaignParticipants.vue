@@ -60,7 +60,7 @@
             {{ props.row.token }} <q-icon name="open_in_new"></q-icon>
           </a>
           <q-btn
-            color="grey-8"
+            color="foreground"
             size="12px"
             flat
             dense
@@ -80,7 +80,7 @@
         <q-td :props="props">
           <q-btn
             v-if="props.row.status === 'open'"
-            color="grey-8"
+            color="foreground"
             size="12px"
             flat
             dense
@@ -90,7 +90,7 @@
           >
           </q-btn>
           <q-btn
-            color="grey-8"
+            color="foreground"
             size="12px"
             flat
             dense

@@ -6,7 +6,7 @@
     <q-item v-for="item in visibleItems" :key="item.field">
       <q-item-section :style="`max-width: ${maxWidth}px`">
         <q-item-label>
-          <div class="text-overline text-grey-6">{{ t(item.label ? item.label : item.field) }}</div>
+          <div class="text-overline text-muted">{{ t(item.label ? item.label : item.field) }}</div>
           <div v-if="item.hint" class="text-hint">{{ t(item.hint) }}</div>
         </q-item-label>
       </q-item-section>

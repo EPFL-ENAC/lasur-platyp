@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="q-mb-sm text-grey-8">{{ label }}</div>
+    <div class="q-mb-sm text-foreground">{{ label }}</div>
     <div>{{ hint }}</div>
     <q-tabs
       v-model="tab"

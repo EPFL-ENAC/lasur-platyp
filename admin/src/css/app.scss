@@ -53,19 +53,35 @@ a {
   color: black;
 }
 
+.body--dark a {
+  color: white;
+}
+
 a.q-markdown--link,
 a.modus {
   text-decoration: underline;
-  text-decoration-color: $primary-dark;
+  text-decoration-color: $brand-yellow-800;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
   color: black;
 }
 
+.body--dark a.q-markdown--link,
+.body--dark a.modus {
+  text-decoration-color: $brand-yellow-300;
+  color: white;
+}
+
 a:hover.q-markdown--link,
 a:hover.modus {
   text-decoration: underline;
-  color: $primary-dark;
+  color: $brand-yellow-800;
+}
+
+a:hover.q-markdown--link,
+a:hover.modus {
+  text-decoration: underline;
+  color: $brand-yellow-300;
 }
 
 .q-markdown--heading-h2,

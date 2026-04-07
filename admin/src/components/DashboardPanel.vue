@@ -9,8 +9,8 @@
         use-chips
         rounded
         outlined
-        color="secondary"
-        bg-color="white"
+        color="field"
+        bg-color="field"
         v-model="companyFilter"
         :label="t('companies')"
         :options="companyOptions"
@@ -37,8 +37,8 @@
         use-chips
         rounded
         outlined
-        color="secondary"
-        bg-color="white"
+        color="field"
+        bg-color="field"
         v-model="campaignFilter"
         :label="t('campaigns')"
         :options="campaignOptions"
@@ -46,12 +46,12 @@
         @update:model-value="onFilter"
         class="on-left"
       />
-      <q-btn-group unelevated outline class="bg-white">
+      <q-btn-group unelevated outline class="bg-field">
         <q-btn
           class="right-border"
           size="sm"
           icon="map"
-          color="secondary"
+          color="field"
           outline
           dense
           :label="t('stats.filter_by_zone')"
@@ -63,7 +63,7 @@
         <q-btn
           class="right-border"
           size="sm"
-          color="secondary"
+          color="field"
           outline
           dense
           :icon="layout === 'grid' ? 'slideshow' : 'grid_view'"
@@ -74,7 +74,7 @@
         <q-btn
           class="right-border"
           size="sm"
-          color="secondary"
+          color="field"
           outline
           dense
           icon="picture_as_pdf"
@@ -84,7 +84,7 @@
           no-caps
           @click="onPDFExport"
         />
-        <q-btn icon="settings" size="sm" color="secondary" outline>
+        <q-btn icon="settings" size="sm" color="field" outline>
           <q-menu>
             <q-list style="min-width: 100px">
               <q-item>

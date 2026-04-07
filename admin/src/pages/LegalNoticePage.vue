@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <h4 class="text-h4 q-pa-md q-ma-none text-primary-dark">{{ t('legal_notice') }}</h4>
+    <h4 class="text-h4 q-pa-md q-ma-none text-title">{{ t('legal_notice') }}</h4>
     <q-separator />
     <div class="q-pa-md">
       <q-markdown

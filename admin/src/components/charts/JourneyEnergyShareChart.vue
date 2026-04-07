@@ -8,11 +8,11 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
-      theme="platyp"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
@@ -47,9 +47,11 @@ import {
 } from 'echarts/components'
 import { toMaxDecimals } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
+import { useQuasar } from 'quasar'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 

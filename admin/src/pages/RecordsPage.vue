@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <h4 class="text-h4 q-ma-none q-pa-md text-primary-dark">{{ t('records') }}</h4>
+    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('records') }}</h4>
     <q-separator />
 
     <div class="q-pa-md">
@@ -112,7 +112,7 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -122,7 +122,7 @@
             >
             </q-btn>
             <q-btn
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense

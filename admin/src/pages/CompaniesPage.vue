@@ -1,10 +1,10 @@
 <template>
   <q-page>
     <div class="title-bar q-pa-md">
-      <div class="text-h4">{{ t('companies') }}</div>
+      <div class="text-h4 text-title">{{ t('companies') }}</div>
 
       <div class="title-toolbar">
-        <q-input dense outlined rounded color="secondary" debounce="300" v-model="filter" clearable>
+        <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -67,7 +67,7 @@
           <q-td :props="props">
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -78,7 +78,7 @@
             </q-btn>
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -89,7 +89,7 @@
             </q-btn>
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense
