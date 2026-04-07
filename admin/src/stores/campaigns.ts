@@ -9,7 +9,7 @@ export const useCampaigns = defineStore('campaigns', () => {
   const loading = ref(false)
 
   async function load() {
-    if (!companyId.value) return
+    if (companyId.value === undefined) return
     loading.value = true
 
     return service
@@ -30,8 +30,8 @@ export const useCampaigns = defineStore('campaigns', () => {
       })
   }
 
-  async function loadIfNeeded(id: number | undefined) {
-    if (!id) return
+  async function loadIfNeeded(id: number | undefined | null) {
+    if (id === null || id === undefined) return
     if (companyId.value === id && items.value.length > 0) return
 
     companyId.value = id

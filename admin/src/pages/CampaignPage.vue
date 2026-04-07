@@ -85,13 +85,13 @@ const campaign = computed<Campaign | undefined>(() =>
 )
 
 onMounted(() => {
-  if (companyId.value === undefined) return
+  if (companyId.value === null) return
   onInit()
 })
 
 function onInit() {
   if (!companyId.value) return
-  
+
   return Promise.all([
     companyService
       .get(companyId.value + '')
@@ -122,10 +122,16 @@ function onShowRemove() {
 
 function onRemove() {
   if (!campaign.value || !company.value) return
-  campaignService.remove(campaign.value.id + '').then(() => {
-    notifySuccess(t('campaign_removed'))
-    router.push(`/company/${company.value!.id}`)
-  }).catch(notifyError)
+  campaignService
+    .remove(campaign.value.id + '')
+    .then(() => {
+      return campaignsStore.load()
+    })
+    .then(() => {
+      notifySuccess(t('campaign_removed'))
+      router.push(`/company/${company.value!.id}`)
+    })
+    .catch(notifyError)
 }
 
 function onCampaignSaved() {

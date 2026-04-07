@@ -12,7 +12,9 @@
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-foreground text-foreground text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-foreground text-center">
+        {{ t('stats.no_data') }}
+      </div>
     </div>
   </div>
 </template>

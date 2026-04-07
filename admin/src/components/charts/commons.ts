@@ -14,10 +14,10 @@ registerTheme('platyp', {
   },
   markLine: {
     lineStyle: {
-      color: "black", // Your default color
+      color: 'black', // Your default color
     },
     label: {
-      color: "black", // Matching the label color to the line
+      color: 'black', // Matching the label color to the line
     },
   },
   color: [getCssVar('primary')],
@@ -33,7 +33,7 @@ registerTheme('platyp-dark', {
     },
     subtextStyle: {
       color: '#bca2b0',
-    }
+    },
   },
   legend: {
     textStyle: {
@@ -48,13 +48,13 @@ registerTheme('platyp-dark', {
     label: {
       color: '#fffcf4',
       fill: '#fffcf4',
-    }
+    },
   },
   line: {
     label: {
       color: '#fffcf4',
       fill: '#fffcf4',
-    }
+    },
   },
   markLine: {
     lineStyle: {

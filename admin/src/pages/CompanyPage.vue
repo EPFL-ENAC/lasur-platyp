@@ -75,11 +75,7 @@
             icon="settings"
             @click="onShowCustomActions"
           >
-            <q-badge
-              v-if="actionsStore.items.length"
-              color="white"
-              class="text-secondary q-ml-sm"
-            >
+            <q-badge v-if="actionsStore.items.length" color="white" class="text-secondary q-ml-sm">
               {{ actionsStore.items.length }}
             </q-badge>
           </q-btn>
@@ -314,13 +310,13 @@ const columns = computed<QTableColumn[]>(() => {
 })
 
 onMounted(() => {
-  if (id.value === undefined) return
+  if (id.value === null) return
   onInit()
 })
 
 function onInit() {
   if (!id.value) return
-  
+
   return Promise.all([
     service
       .get(id.value + '')

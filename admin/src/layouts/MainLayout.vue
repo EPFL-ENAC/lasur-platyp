@@ -2,7 +2,15 @@
   <q-layout view="hHh LpR fFf">
     <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav text-grey-10">
       <q-toolbar>
-        <q-btn flat dense round color="foreground" icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn
+          flat
+          dense
+          round
+          color="foreground"
+          icon="menu"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+        />
 
         <q-toolbar-title class="logos">
           <a href="https://modus-ge.ch/" target="_blank" class="logo" rel="noopener noreferrer">

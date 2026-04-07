@@ -34,7 +34,7 @@ interface Props {
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 const props = defineProps<Props>()
-  
+
 const { t, locale } = useI18n()
 const $q = useQuasar()
 
