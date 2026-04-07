@@ -9,6 +9,7 @@
       :update-options="updateOptions"
       :loading="stats.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_${props.type}.title`) }}</div>
@@ -16,7 +17,7 @@
     </div>
   </div>
 
-  <div class="q-mt-md">
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
     <q-markdown
       v-if="emissionItemsLabels"
       :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"
@@ -42,8 +43,9 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { MODE_COLORS } from './commons'
-import { toMaxDecimals } from 'src/utils/numbers'
 import { useQuasar } from 'quasar'
+import { formatNumber } from 'src/utils/numbers'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -62,6 +64,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -115,8 +118,8 @@ const emissionItemsLabels = computed(() => {
   if (!ei) return null
 
   return {
-    carMotoJourneysPercentage: toMaxDecimals(ei.carMotoJourneysPercentage || 0, 2),
-    carMotoEmissionsPercentage: toMaxDecimals(ei.carMotoEmissionsPercentage || 0, 2),
+    carMotoJourneysPercentage: formatNumber(ei.carMotoJourneysPercentage),
+    carMotoEmissionsPercentage: formatNumber(ei.carMotoEmissionsPercentage),
   }
 })
 
@@ -146,7 +149,7 @@ const emissionItemsPro = computed(() => {
     first: planeEmissions,
     second: carEmissions,
     total: totalEmissions,
-    remaining: totalEmissions - planeEmissions.emissions, // purpusely not carEmissions.emissions
+    withoutFirst: emissions.filter((item) => item.mode !== planeEmissions.mode),
   }
 })
 
@@ -154,13 +157,16 @@ const emissionItemsProLabels = computed(() => {
   const eip = emissionItemsPro.value
   if (!eip) return null
 
+  const withoutFirstEmissions = eip.withoutFirst.reduce((sum, item) => sum + item.emissions, 0)
+  const withoutFirstJourneys = eip.withoutFirst.reduce((sum, item) => sum + item.journeys, 0)
+
   return {
-    firstPercent: toMaxDecimals((eip.first.emissions / eip.total) * 100, 2),
+    firstPercent: formatNumber((eip.first.emissions / eip.total) * 100),
     firstMode: keyLabel(eip.first.mode),
-    firstEmissions: toMaxDecimals(eip.first.emissions || 0, 2),
-    secondPercent: toMaxDecimals((eip.second.emissions / eip.total) * 100, 2),
+    firstEmissions: formatNumber((eip.first.emissions || 0) / eip.first.journeys),
+    secondPercent: formatNumber((eip.second.emissions / eip.total) * 100),
     secondMode: keyLabel(eip.second.mode),
-    remainingEmissions: toMaxDecimals(eip.remaining || 0, 2),
+    remainingEmissions: formatNumber(withoutFirstEmissions / withoutFirstJourneys),
   }
 })
 

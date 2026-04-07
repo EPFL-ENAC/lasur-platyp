@@ -738,6 +738,7 @@ Certains impacts sont aussi calculés :
       labels: {
         walking: 'Marche',
         bike: 'Vélo',
+        ebike: 'Vélo électrique',
         pub: 'Transports publics urbains',
         train: 'Train',
         moto: 'Moto / scooter',
@@ -755,6 +756,7 @@ Certains impacts sont aussi calculés :
         vae: 'Vélo à assistance électrique',
         velo: 'Vélo',
         cargo: 'Vélo cargo',
+        other: 'Autre',
       },
       texts: {
         default:
@@ -775,6 +777,8 @@ Certains impacts sont aussi calculés :
         collective: 'Changement collectif',
         environment: 'Aménagement environnement',
         other: 'Autre',
+        autres: 'Autres',
+        total: 'Total',
 
         walking: 'Marche',
         bike: 'Vélo',
@@ -832,6 +836,8 @@ Certains impacts sont aussi calculés :
         velo: 'Vélo',
         cargo: 'Vélo cargo',
         allModes: 'Tous les modes',
+        autres: 'Autres',
+        total: 'Total',
       },
       texts: {
         default:

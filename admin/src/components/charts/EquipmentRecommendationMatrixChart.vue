@@ -9,6 +9,7 @@
         :update-options="updateOptions"
         :loading="stats.loading"
         :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
+        :data-chart-id="chartId"
       />
       <div class="options">
         <q-toggle
@@ -24,7 +25,7 @@
     </div>
   </div>
 
-  <div class="q-mt-md">
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
     <p class="q-mb-xs">{{ t(`stats.equipments_by_recommendations.texts.default`) }}</p>
     <p v-if="analysisText">
       {{ t(`stats.equipments_by_recommendations.texts.specific`, analysisText) }}
@@ -46,7 +47,7 @@ import {
   GridComponent,
   VisualMapComponent,
 } from 'echarts/components'
-import { toMaxDecimals } from 'src/utils/numbers'
+import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import {
   equipmentLabels,
@@ -56,6 +57,7 @@ import {
   recommendationToEquipmentMap,
 } from 'src/models'
 import { useQuasar } from 'quasar'
+import { getRandomId } from 'src/utils/random'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
@@ -78,6 +80,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -88,7 +91,9 @@ const recommendationLabelsFiltered = computed(() => {
     return recommendationLabelsReversed
   }
 
-  return recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r])
+  const walking: 'marche' = 'marche' as const
+
+  return [...recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r]), walking] // we always want to show "marche" in simple mode, even if it's not in the mapping, because it's a common recommendation
 })
 
 watch([() => stats.loading], () => {
@@ -139,7 +144,7 @@ const analysisText = computed(() => {
     smallestRecoContent.total > 0 ? (smallestValue / smallestRecoContent.total) * 100 : 0
 
   return {
-    percentage: toMaxDecimals(percentage, 2),
+    percentage: formatNumber(percentage),
     mode: keyLabel(smallestReco),
   }
 })
@@ -274,7 +279,6 @@ function initChartOptions() {
         if (v[2] === 0) return ''
         const labels = matrixPositionToLabels(v[0], v[1])
         if (!labels) return ''
-        const formatter = new Intl.NumberFormat()
 
         const reco = keyLabel(labels.recommendation)
         const equipment = keyLabel(labels.equipment)
@@ -286,8 +290,8 @@ function initChartOptions() {
         return t(`stats.equipments_by_recommendations.tooltip`, {
           reco,
           equipment,
-          count: formatter.format(count),
-          percentage: formatter.format(toMaxDecimals(v[2], 2) || 0),
+          count: formatNumber(count),
+          percentage: formatNumber(v[2] || 0),
         })
       },
     },
@@ -311,7 +315,7 @@ function initChartOptions() {
                 labels.equipment
               ]
 
-            return `${new Intl.NumberFormat().format(count)} (${new Intl.NumberFormat().format(toMaxDecimals((params.value as [number, number, number])[2], 2) || 0)}%)`
+            return `${formatNumber(count)} (${formatNumber((params.value as [number, number, number])[2] || 0)}%)`
           },
         },
         data,

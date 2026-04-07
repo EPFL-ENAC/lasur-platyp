@@ -9,6 +9,7 @@
       :update-options="updateOptions"
       :loading="stats.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_reductions_share.title`) }}</div>
@@ -16,12 +17,12 @@
     </div>
   </div>
 
-  <div class="q-mt-md">
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
     <p class="q-mb-xs">{{ t(`stats.emissions_reductions_share.texts.default`) }}</p>
     <p v-if="biggestEmission">
       {{
         t(`stats.emissions_reductions_share.texts.specific`, {
-          percentage: toMaxDecimals(biggestEmission.percentage || 0, 2),
+          percentage: formatNumber(biggestEmission.percentage || 0),
           mode: keyLabel(biggestEmission.mode),
         })
       }}
@@ -42,9 +43,10 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { toMaxDecimals } from 'src/utils/numbers'
+import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { useQuasar } from 'quasar'
+import { getRandomId } from 'src/utils/random'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
@@ -65,6 +67,7 @@ interface PercentageEmission {
   percentage: number
 }
 
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -156,7 +159,7 @@ function initChartOptions() {
         const p = Array.isArray(params) ? params[0] : params
         if (!p) return ''
 
-        const val = new Intl.NumberFormat().format(toMaxDecimals(p.value as number, 2) || 0)
+        const val = formatNumber(p.value as number)
         return `${p.name}<br/><b>${val} kgCO₂eq</b> (${p.percent}%)`
       },
     },
@@ -179,7 +182,7 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 2) || 0)
+            return formatNumber(params.value as number)
           },
         },
         data: recoEmissions.map((item) => ({

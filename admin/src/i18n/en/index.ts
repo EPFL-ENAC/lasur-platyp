@@ -729,6 +729,7 @@ Some environmental impacts have also been calculated:
       labels: {
         walking: 'Walking',
         bike: 'Bicycle',
+        ebike: 'Electric bike',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
@@ -746,6 +747,7 @@ Some environmental impacts have also been calculated:
         vae: 'Electric bike',
         velo: 'Bike',
         cargo: 'Cargo bike',
+        other: 'Other',
       },
       texts: {
         default:
@@ -766,6 +768,8 @@ Some environmental impacts have also been calculated:
         collective: 'Collective measures',
         environment: 'Environmental improvements',
         other: 'Other',
+        autres: 'Other',
+        total: 'Total',
 
         walking: 'Walking',
         bike: 'Bicycle',
@@ -823,6 +827,8 @@ Some environmental impacts have also been calculated:
         velo: 'Bike',
         cargo: 'Cargo bike',
         allModes: 'All modes',
+        autres: 'Other',
+        total: 'Total',
       },
       texts: {
         default:

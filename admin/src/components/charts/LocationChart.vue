@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import { GradientScale } from 'src/utils/colors'
 import LocationHeatmap from '../LocationHeatmap.vue'
+import { getRandomId } from 'src/utils/random'
 
 const { t } = useI18n()
 const stats = useStats()
@@ -78,7 +79,7 @@ const gradient = computed(() => {
   ])
 })
 
-const id = ref(`location-heatmap-${crypto.randomUUID()}`)
+const id = ref(`location-heatmap-${getRandomId()}`)
 
 const hasData = computed(() => {
   const hasHeatmapData =

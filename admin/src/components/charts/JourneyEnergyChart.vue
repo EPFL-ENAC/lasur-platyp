@@ -9,6 +9,7 @@
       :update-options="updateOptions"
       :loading="stats.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">
@@ -20,7 +21,7 @@
     </div>
   </div>
 
-  <div class="q-mt-md">
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown v-if="textLabels" :src="t(`stats.energy_journey.texts.specific`, textLabels)" />
   </div>
@@ -41,8 +42,9 @@ import {
 } from 'echarts/components'
 import { initOptions, updateOptions, MODE_COLORS } from './commons'
 import type { JourneyEnergyData } from 'src/models'
-import { toMaxDecimals } from 'src/utils/numbers'
 import { useQuasar } from 'quasar'
+import { formatNumber } from 'src/utils/numbers'
+import { getRandomId } from 'src/utils/random'
 
 // Register ECharts modules
 use([
@@ -70,6 +72,7 @@ const { t, locale } = useI18n()
 const $q = useQuasar()
 const stats = useStats()
 
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const addedEnergy = ref(0)
@@ -79,8 +82,8 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    added_energy: new Intl.NumberFormat().format(toMaxDecimals(addedEnergy.value, 2) || 0),
-    count: new Intl.NumberFormat().format(newHealthyParticipants.value || 0),
+    added_energy: formatNumber(addedEnergy.value),
+    count: formatNumber(newHealthyParticipants.value || 0),
   }
 })
 
@@ -150,7 +153,7 @@ function initChartOptions() {
     grid: {
       left: '5%',
       right: '5%',
-      bottom: '20%',
+      bottom: '25%',
       top: '60px',
       containLabel: true,
     },
@@ -163,7 +166,7 @@ function initChartOptions() {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
       valueFormatter(value) {
-        return `${toMaxDecimals(value as number, 2)} kcal`
+        return `${formatNumber(value as number)} kcal`
       },
     },
     legend: {
@@ -250,7 +253,7 @@ function initChartOptions() {
           label: {
             show: true,
             position: 'insideEndTop',
-            formatter: `${toMaxDecimals(averageEnergyExpenditurePerToken, 2)} kcal`,
+            formatter: `${formatNumber(averageEnergyExpenditurePerToken)} kcal`,
             distance: 10,
             fontWeight: 'bold',
             color: '#d32f2f',
