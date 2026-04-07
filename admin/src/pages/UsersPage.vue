@@ -25,7 +25,7 @@
             dense
             outlined
             rounded
-            color="secondary"
+            color="field"
             debounce="300"
             v-model="filter"
             clearable

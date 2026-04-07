@@ -3,7 +3,7 @@
     <q-input
       outlined
       rounded
-      color="secondary"
+      color="field"
       v-model="selected.name"
       :label="t('campaign.workplaces.name') + ' *'"
       :hint="t('campaign.workplaces.name_hint')"

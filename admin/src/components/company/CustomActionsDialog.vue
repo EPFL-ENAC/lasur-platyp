@@ -19,7 +19,7 @@
                   <q-select
                     outlined
                     rounded
-                    color="secondary"
+                    color="field"
                     v-model="action.group"
                     :label="t('group')"
                     :options="actionGroupOptions"
@@ -32,7 +32,7 @@
                   <q-input
                     outlined
                     rounded
-                    color="secondary"
+                    color="field"
                     v-model="action.labelEn"
                     :label="t('label_en') + ' *'"
                     lazy-rules
@@ -43,7 +43,7 @@
                   <q-input
                     outlined
                     rounded
-                    color="secondary"
+                    color="field"
                     v-model="action.labelFr"
                     :label="t('label_fr') + ' *'"
                     lazy-rules
@@ -69,7 +69,7 @@
           <q-select
             outlined
             rounded
-            color="secondary"
+            color="field"
             dense
             v-model="newAction.group"
             :label="t('group')"
@@ -93,7 +93,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn outline :label="t('cancel')" color="secondary" v-close-popup />
+        <q-btn outline :label="t('cancel')" color="field" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>

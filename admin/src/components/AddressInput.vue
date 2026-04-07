@@ -3,7 +3,7 @@
     <q-input
       outlined
       rounded
-      color="secondary"
+      color="field"
       v-model="addressLocation.address"
       :label="label"
       :hint="hint"

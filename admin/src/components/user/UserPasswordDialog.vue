@@ -12,7 +12,7 @@
         <q-input
           outlined
           rounded
-          color="secondary"
+          color="field"
           v-model="password"
           :type="showPassword ? 'text' : 'password'"
           autocomplete="new-password"
@@ -41,7 +41,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn outline :label="t('cancel')" color="secondary" v-close-popup />
+        <q-btn outline :label="t('cancel')" color="field" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" :disable="!isValid" />
       </q-card-actions>
     </q-card>

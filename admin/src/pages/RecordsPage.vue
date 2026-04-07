@@ -38,7 +38,7 @@
           <q-select
             outlined
             rounded
-            color="secondary"
+            color="field"
             dense
             multiple
             emit-value
@@ -54,7 +54,7 @@
           <q-select
             outlined
             rounded
-            color="secondary"
+            color="field"
             dense
             multiple
             emit-value
@@ -71,7 +71,7 @@
             dense
             outlined
             rounded
-            color="secondary"
+            color="field"
             debounce="300"
             v-model="filter"
             clearable

@@ -19,7 +19,7 @@
         dense
         no-caps
         class="text-grey"
-        active-color="secondary"
+        active-color="field"
         active-bg-color="grey-4"
         indicator-color="primary"
         align="left"

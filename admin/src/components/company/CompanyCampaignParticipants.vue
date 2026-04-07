@@ -3,7 +3,7 @@
     <div v-if="rows?.length < 1">
       <q-btn
         size="sm"
-        color="secondary"
+        color="field"
         :disable="loading"
         :label="t('add')"
         icon="add"
@@ -27,7 +27,7 @@
       <template v-slot:top>
         <q-btn
           size="sm"
-          color="secondary"
+          color="field"
           :disable="loading"
           :label="t('add')"
           icon="add"

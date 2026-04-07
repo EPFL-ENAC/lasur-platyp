@@ -4,7 +4,7 @@
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t(editMode ? 'edit' : 'add') }}</div>
         <q-space />
-        <q-btn flat icon="close" color="secondary" v-close-popup />
+        <q-btn flat icon="close" color="field" v-close-popup />
       </q-card-actions>
       <q-separator />
 
@@ -13,7 +13,7 @@
           <q-input
             outlined
             rounded
-            color="secondary"
+            color="field"
             v-model="selected.name"
             :label="t('name') + ' *'"
             lazy-rules
@@ -22,7 +22,7 @@
           <q-select
             outlined
             rounded
-            color="secondary"
+            color="field"
             v-model="selected.administrators"
             :label="t('company.administrators') + ' *'"
             :hint="t('company.administrators_hint')"
@@ -38,7 +38,7 @@
           <q-select
             outlined
             rounded
-            color="secondary"
+            color="field"
             :model-value="selected.mobility_advisors || []"
             @update:model-value="(val) => (selected.mobility_advisors = val)"
             :label="t('company.mobility_advisors')"
@@ -54,7 +54,7 @@
           <q-input
             outlined
             rounded
-            color="secondary"
+            color="field"
             v-model="selected.contact_name"
             :label="t('company.contact_name')"
             :hint="t('company.contact_name_hint')"
@@ -63,7 +63,7 @@
           <q-input
             outlined
             rounded
-            color="secondary"
+            color="field"
             v-model="selected.contact_email"
             :label="t('company.contact_email')"
             :hint="t('company.contact_email_hint')"
@@ -76,7 +76,7 @@
           <q-input
             outlined
             rounded
-            color="secondary"
+            color="field"
             v-model="selected.info_url"
             :label="t('company.info_url')"
             :hint="t('company.info_url_hint')"
@@ -97,7 +97,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn outline :label="t('cancel')" color="secondary" v-close-popup />
+        <q-btn outline :label="t('cancel')" color="field" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>

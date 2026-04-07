@@ -4,7 +4,7 @@
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t(editMode ? 'edit' : 'add') }}</div>
         <q-space />
-        <q-btn flat icon="close" color="secondary" v-close-popup />
+        <q-btn flat icon="close" color="field" v-close-popup />
       </q-card-actions>
       <q-separator />
 
@@ -14,7 +14,7 @@
             v-model="tab"
             dense
             no-caps
-            active-color="secondary"
+            active-color="field"
             active-bg-color="white"
             active-class="tab-active"
             indicator-color="transparent"
@@ -33,7 +33,7 @@
               <q-input
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model="selected.name"
                 :label="t('name') + ' *'"
                 lazy-rules
@@ -42,7 +42,7 @@
               <q-input
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model="selected.contact_name"
                 :label="t('campaign.contact_name')"
                 :hint="t('campaign.contact_name_hint')"
@@ -51,7 +51,7 @@
               <q-input
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model="selected.contact_email"
                 :label="t('campaign.contact_email')"
                 :hint="t('campaign.contact_email_hint')"
@@ -65,7 +65,7 @@
               <q-input
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model="selected.info_url"
                 :label="t('campaign.info_url')"
                 :hint="t('campaign.info_url_hint')"
@@ -76,7 +76,7 @@
               <q-input
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model.number="selected.nb_employees"
                 type="number"
                 :min="0"
@@ -88,7 +88,7 @@
                 v-if="editMode"
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model="selected.slug"
                 :label="t('campaign.slug') + ' *'"
                 :hint="t('campaign.slug_hint')"
@@ -107,7 +107,7 @@
               <q-input
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model="selected.start_date"
                 :label="t('start_date')"
                 class="q-mb-md"
@@ -127,7 +127,7 @@
               <q-input
                 outlined
                 rounded
-                color="secondary"
+                color="field"
                 v-model="selected.end_date"
                 :label="t('end_date')"
                 class="q-mb-md"
@@ -172,7 +172,7 @@
                       v-if="withRewards"
                       outlined
                       rounded
-                      color="secondary"
+                      color="field"
                       type="textarea"
                       v-model="selected.rewards_message[locale]"
                       :label="
@@ -251,7 +251,7 @@
                   v-if="selected.workplaces && selected.workplaces.length > 0"
                   outline
                   size="sm"
-                  color="secondary"
+                  color="field"
                   :label="t('download_csv')"
                   icon="download"
                   class="on-right"
@@ -269,7 +269,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn outline color="secondary" :label="t('cancel')" v-close-popup />
+        <q-btn outline color="field" :label="t('cancel')" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>

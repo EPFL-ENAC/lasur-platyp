@@ -14,7 +14,7 @@
 
         <q-toolbar-title class="logos">
           <a href="https://modus-ge.ch/" target="_blank" class="logo" rel="noopener noreferrer">
-            <img :src="$q.dark.isActive ? 'LOGO-JAUNE.svg' : 'LOGO-VIOLET.svg'" height="32px" />
+            <img :src="$q.dark.isActive ? '/admin/LOGO-JAUNE.svg' : '/admin/LOGO-VIOLET.svg'" height="32px" />
           </a>
         </q-toolbar-title>
 
@@ -37,7 +37,7 @@
           </q-list>
         </q-btn-dropdown>
         <a href="https://www.epfl.ch" target="_blank">
-          <img src="EPFL.svg" height="20px" class="on-left" />
+          <img src="/admin/EPFL.svg" height="20px" class="on-left" />
         </a>
       </q-toolbar>
     </q-header>
@@ -51,57 +51,57 @@
     >
       <div class="nav-wrapper">
         <q-list class="nav-list">
-          <q-item clickable :to="'/'" exact>
+          <q-item class="text-foreground" clickable :to="'/'" exact dense>
             <q-item-section avatar>
               <q-icon name="dashboard" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('dashboard') }}</q-item-label>
+              <q-item-label header class="text-foreground text-weight-medium q-pl-sm q-py-sm">{{ t('dashboard') }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item-label class="text-h6" header>{{ t('content') }}</q-item-label>
-          <q-item clickable :to="'/companies'">
+          <q-item-label class="text-caption text-weight-bold text-foreground q-mt-xs q-pb-xs" header>{{ t('content') }}</q-item-label>
+          <q-item class="text-foreground" clickable :to="'/companies'" dense>
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-building" size="sm" />
+              <q-icon name="fa-solid fa-building" size="xs" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('companies') }}</q-item-label>
+              <q-item-label header class="text-foreground text-weight-medium q-pl-sm q-py-sm">{{ t('companies') }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-if="authStore.isAdmin" clickable :to="'/records'">
+          <q-item v-if="authStore.isAdmin" class="text-foreground" clickable :to="'/records'" dense>
             <q-item-section avatar>
-              <q-icon name="fa-brands fa-wpforms" size="sm" />
+              <q-icon name="fa-brands fa-wpforms" size="xs" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('records') }}</q-item-label>
+              <q-item-label header class="text-foreground text-weight-medium q-pl-sm q-py-sm">{{ t('records') }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item-label v-if="authStore.isAdmin" class="text-h6" header>
+          <q-item-label v-if="authStore.isAdmin" class="text-caption text-weight-bold text-foreground q-mt-xs q-pb-xs" header>
             {{ t('administration') }}
           </q-item-label>
-          <q-item v-if="authStore.isAdmin" clickable :to="'/users'">
+          <q-item v-if="authStore.isAdmin" class="text-foreground" clickable :to="'/users'" dense>
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-users" size="sm" />
+              <q-icon name="fa-solid fa-users" size="xs" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('users') }}</q-item-label>
+              <q-item-label header class="text-foreground text-weight-medium q-pl-sm q-py-sm">{{ t('users') }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item-label class="text-h6" header>{{ t('help') }}</q-item-label>
-          <q-item clickable :to="'/doc'">
+          <q-item-label class="text-caption text-weight-bold text-foreground q-mt-xs q-pb-xs" header>{{ t('help') }}</q-item-label>
+          <q-item class="text-foreground" clickable :to="'/doc'" dense>
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-book" size="sm" />
+              <q-icon name="fa-solid fa-book" size="xs" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('doc') }}</q-item-label>
+              <q-item-label header class="text-foreground text-weight-medium q-pl-sm q-py-sm">{{ t('doc') }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item clickable :to="'/legal-notice'">
+          <q-item class="text-foreground" clickable :to="'/legal-notice'" dense>
             <q-item-section avatar>
-              <q-icon name="fa-solid fa-gavel" size="sm" />
+              <q-icon name="fa-solid fa-gavel" size="xs" />
             </q-item-section>
             <q-item-section>
-              <q-item-label header>{{ t('legal_notice') }}</q-item-label>
+              <q-item-label header class="text-foreground text-weight-medium q-pl-sm q-py-sm">{{ t('legal_notice') }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -142,7 +142,7 @@
     <q-page-container v-if="authStore.isAuthenticated">
       <div class="background-container">
         <img
-          :src="$q.dark.isActive ? 'PATTERN-BLANC.svg' : 'PATTERN-VIOLET.svg'"
+          :src="$q.dark.isActive ? '/admin/PATTERN-BLANC.svg' : '/admin/PATTERN-VIOLET.svg'"
           aria-hidden="true"
           class="background-pattern"
         />
@@ -271,11 +271,6 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 :deep(.nav-list .q-item__section--avatar) {
   padding-right: 0;
   min-width: 24px;
-}
-
-:deep(.nav-list .q-item__label--header) {
-  color: var(--q-color-secondary);
-  font-size: 1rem;
 }
 
 .username-line {

@@ -79,7 +79,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn outline :label="t('cancel')" color="secondary" v-close-popup />
+        <q-btn outline :label="t('cancel')" color="field" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
