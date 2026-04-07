@@ -8,10 +8,11 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 </template>
@@ -30,8 +31,10 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
+import { useQuasar } from 'quasar'
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 const stats = useStats()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
@@ -170,7 +173,6 @@ function initValuesChartOptions(frequencies: Frequencies) {
         data: values,
         type: 'bar',
         barCategoryGap: '0',
-        color: '#008066',
       },
     ],
   }
@@ -237,7 +239,6 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       {
         data: values,
         type: 'bar',
-        color: '#008066',
       },
     ],
   }

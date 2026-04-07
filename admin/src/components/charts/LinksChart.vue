@@ -8,16 +8,17 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
       :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
-  <div class="chart-text" :data-chart-id="chartId">
-    <p>{{ t(`stats.${props.type}.texts.default`) }}</p>
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+    <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
     <p v-if="mostRecommendedTarget">
       {{
         t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
@@ -41,9 +42,11 @@ import {
 } from 'echarts/components'
 import type { StatLinks } from 'src/models'
 import { MODE_COLORS } from './commons'
+import { useQuasar } from 'quasar'
 import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 const stats = useStats()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 

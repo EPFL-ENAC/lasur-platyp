@@ -1,25 +1,212 @@
 // Quasar SCSS (& Sass) Variables
 // --------------------------------------------------
-// To customize the look and feel of this app, you can override
-// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
 
-// Check documentation for full list of Quasar variables
+$brand-yellow-25: #fffcf4;
+$brand-yellow-50: #fef8e7;
+$brand-yellow-100: #fdf1cf;
+$brand-yellow-200: #fbe29f;
+$brand-yellow-300: #f8d36f;
+$brand-yellow-400: #f3c65f;
+$brand-yellow-500: #e2b24a;
+$brand-yellow-600: #c79232;
+$brand-yellow-700: #9f7324;
+$brand-yellow-800: #77561c;
+$brand-yellow-900: #4f3913;
+$brand-yellow-950: #2c1f09;
 
-// Your own variables (that are declared here) and Quasar's own
-// ones will be available out of the box in your .vue/.scss/.sass files
+$brand-purple-25: #f9f9f9;
+$brand-purple-50: #f7f7f7;
+$brand-purple-100: #dcc2cf;
+$brand-purple-200: #bca2b0;
+$brand-purple-300: #a28594;
+$brand-purple-400: #88697a;
+$brand-purple-500: #6d5162;
+$brand-purple-600: #573e4d;
+$brand-purple-700: #49313e;
+$brand-purple-800: #382430;
+$brand-purple-900: #291823;
+$brand-purple-950: #0c0e12;
 
-// It's highly recommended to change the default colors
-// to match your app's branding.
-// Tip: Use the "Theme Builder" on Quasar's documentation website.
-
-$primary: #01983b;
-$secondary: #016052;
+$primary: $brand-yellow-500;
+$secondary: $brand-purple-600;
 $accent: #e6a21a;
 
-$dark: #1d1d1d;
-$dark-page: #121212;
+$dark: $brand-purple-800;
+$dark-page: $brand-purple-800;
 
 $positive: #21ba45;
 $negative: #c10015;
 $info: #80a795;
 $warning: #e6a21a;
+
+$primary-light: #fff5d4;
+$primary-semi-dark: #c4a253;
+$primary-dark: #ba8025;
+$secondary-light: #907181;
+
+$button-border-radius: 8px;
+
+// Theme Tokens
+body {
+  --nav-bg: #{$brand-yellow-100};
+  --foreground-color: #{$brand-purple-600};
+  --foreground-bg: #{$brand-purple-600};
+  --title-color: #{$brand-yellow-700};
+  --field-color: #{$brand-purple-600};
+  --field-label-color: #{$brand-purple-600};
+  --field-bg: #{'white'};
+  --secondary-border-color: #{$brand-purple-200};
+  --muted-color: #{$brand-purple-300};
+  --half-muted-color: #{$brand-purple-400};
+  --super-muted-color: #{$brand-purple-100};
+  --hint-color: #{$brand-purple-400};
+}
+
+body.body--dark {
+  --nav-bg: #{$brand-purple-600};
+  --foreground-color: #{$brand-yellow-500};
+  --foreground-bg: #{$brand-yellow-500};
+  --title-color: #{$brand-yellow-500};
+  --field-color: #{$brand-yellow-50};
+  --field-label-color: #{$brand-yellow-50};
+  --field-bg: #{$brand-purple-600};
+  --secondary-border-color: #{$brand-purple-300};
+  --muted-color: #{$brand-purple-300};
+  --half-muted-color: #{$brand-purple-200};
+  --super-muted-color: #{$brand-purple-400};
+  --hint-color: #{$brand-purple-200};
+}
+
+// Global Class Definitions
+.bg-nav {
+  background-color: var(--nav-bg) !important;
+}
+
+.text-foreground {
+  color: var(--foreground-color) !important;
+}
+
+.bg-foreground {
+  background-color: var(--foreground-bg) !important;
+}
+
+.text-muted {
+  color: var(--muted-color) !important;
+}
+
+.bg-muted {
+  background-color: var(--muted-color) !important;
+}
+
+.text-half-muted {
+  color: var(--half-muted-color) !important;
+}
+
+.bg-half-muted {
+  background-color: var(--half-muted-color) !important;
+}
+
+.text-super-muted {
+  color: var(--super-muted-color) !important;
+}
+
+.bg-super-muted {
+  background-color: var(--super-muted-color) !important;
+}
+
+.text-title {
+  color: var(--title-color) !important;
+}
+
+.text-field {
+  color: var(--field-color) !important;
+}
+
+.bg-field {
+  background-color: var(--field-bg) !important;
+}
+
+// Quasar Overrides using variables
+
+.text-primary-light {
+  color: $primary-light !important;
+}
+
+.bg-primary-light {
+  background-color: $primary-light !important;
+}
+
+.text-primary-dark {
+  color: $primary-dark !important;
+}
+
+.bg-primary-dark {
+  background-color: $primary-dark !important;
+}
+
+.bg-secondary-ultra-light {
+  background-color: $brand-purple-100 !important;
+}
+
+.q-btn {
+  padding: 4px 8px !important;
+}
+
+.q-btn.bg-primary {
+  color: $secondary !important;
+  outline: 1px solid $primary-semi-dark !important;
+}
+
+.q-badge.bg-primary,
+.q-chip.bg-primary {
+  color: $secondary !important;
+}
+
+.q-card {
+  border-radius: 1rem !important;
+  border: 1px solid var(--secondary-border-color) !important;
+}
+
+.q-field--outlined:has(.text-field) .q-field__control::before {
+  border-color: var(--secondary-border-color) !important;
+}
+
+.q-field--outlined:has(.text-field) .q-icon,
+.q-field--outlined:has(.text-field) .q-field__label {
+  color: var(--field-label-color) !important;
+}
+
+.q-btn--outline.text-field::before {
+  border-color: var(--secondary-border-color) !important;
+}
+
+.q-btn--outline.text-field.right-border {
+  border-right: 1px solid var(--secondary-border-color) !important;
+}
+
+.q-dialog__inner > .q-card.dialog-md {
+  border-radius: 1rem !important;
+}
+
+.q-separator {
+  background-color: var(--secondary-border-color) !important;
+}
+
+.q-table__container {
+  border: 1px solid var(--secondary-border-color) !important;
+  border-radius: 1rem !important;
+}
+
+.q-tabs {
+  border-radius: 0.5rem !important;
+  border: 1px solid var(--secondary-border-color) !important;
+  color: $secondary-light !important;
+}
+
+.text-hint {
+  color: var(--hint-color) !important;
+}
+
+.body--dark .text-title a {
+  color: var(--title-color) !important;
+}

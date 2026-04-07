@@ -4,13 +4,15 @@
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t('reset_password') }}</div>
         <q-space />
-        <q-btn flat icon="close" color="primary" v-close-popup />
+        <q-btn flat icon="close" color="primary-dark" v-close-popup />
       </q-card-actions>
       <q-separator />
 
       <q-card-section>
         <q-input
-          filled
+          outlined
+          rounded
+          color="field"
           v-model="password"
           :type="showPassword ? 'text' : 'password'"
           autocomplete="new-password"
@@ -38,8 +40,8 @@
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn outline :label="t('cancel')" color="field" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" :disable="!isValid" />
       </q-card-actions>
     </q-card>

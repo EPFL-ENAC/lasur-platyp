@@ -56,7 +56,7 @@
         </q-menu>
       </q-btn>
       <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapview" />
-      <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders">
+      <div class="colors q-pa-sm bg-white text-foreground text-caption rounded-borders">
         <div class="row q-gutter-sm">
           <div
             v-for="cutoff in selectedModeCutoffSec"
@@ -115,7 +115,7 @@ const poisOptions = computed(() =>
   ['food', 'education', 'service', 'health', 'leisure', 'transport', 'commerce'].map((cat) => ({
     label: t(`record.categories.${cat}`),
     value: cat,
-    color: categoryToColor(cat)?.name || 'grey-8',
+    color: categoryToColor(cat)?.name || 'foreground',
   })),
 )
 const showPoisMap = ref<{ [key: string]: boolean }>({

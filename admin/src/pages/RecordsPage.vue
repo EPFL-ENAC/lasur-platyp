@@ -1,11 +1,13 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md">{{ t('records') }}</div>
+    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('records') }}</h4>
     <q-separator />
+
     <div class="q-pa-md">
       <q-table
         flat
         ref="tableRef"
+        table-header-class="bg-secondary-ultra-light text-secondary"
         :rows="rows"
         :columns="columns"
         row-key="id"
@@ -34,7 +36,9 @@
           </q-btn-dropdown>
           <q-space />
           <q-select
-            filled
+            outlined
+            rounded
+            color="field"
             dense
             multiple
             emit-value
@@ -48,7 +52,9 @@
             @update:model-value="onFilter"
           />
           <q-select
-            filled
+            outlined
+            rounded
+            color="field"
             dense
             multiple
             emit-value
@@ -61,7 +67,7 @@
             style="min-width: 200px"
             @update:model-value="onFilter"
           />
-          <q-input dense debounce="300" v-model="filter" clearable>
+          <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -98,7 +104,7 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -108,7 +114,7 @@
             >
             </q-btn>
             <q-btn
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense

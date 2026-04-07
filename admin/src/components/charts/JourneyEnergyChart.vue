@@ -8,20 +8,21 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
       :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">
         {{ t(`stats.energy_journey.title_${props.type}`) }}
       </div>
-      <div class="text-subtitle1 text-grey-8 text-center">
+      <div class="text-subtitle1 text-foreground text-center">
         {{ t('stats.no_data') }}
       </div>
     </div>
   </div>
 
-  <div class="chart-text" :data-chart-id="chartId">
-    <p>{{ t(`stats.energy_journey.texts.default`) }}</p>
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+    <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown v-if="textLabels" :src="t(`stats.energy_journey.texts.specific`, textLabels)" />
   </div>
 </template>
@@ -41,6 +42,7 @@ import {
 } from 'echarts/components'
 import { initOptions, updateOptions, MODE_COLORS } from './commons'
 import type { JourneyEnergyData } from 'src/models'
+import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
 import { getRandomId } from 'src/utils/random'
 
@@ -67,6 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 const stats = useStats()
 
 const chartId = getRandomId()
@@ -219,10 +222,8 @@ function initChartOptions() {
             formatter: '150 kcal',
             distance: 10,
             fontWeight: 'bold',
-            color: 'black',
           },
           lineStyle: {
-            color: 'black',
             type: 'dashed',
             width: 2,
             opacity: 0.8,

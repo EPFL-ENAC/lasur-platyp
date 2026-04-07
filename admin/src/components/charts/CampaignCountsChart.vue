@@ -6,6 +6,7 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
   </div>
 </template>
@@ -24,6 +25,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { CampaignStats } from 'src/models'
+import { useQuasar } from 'quasar'
 
 interface Props {
   stats: CampaignStats
@@ -34,6 +36,7 @@ use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, G
 const props = defineProps<Props>()
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})

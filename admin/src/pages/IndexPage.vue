@@ -1,19 +1,24 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md">{{ t('dashboard') }}</div>
-    <q-separator />
-    <div v-if="authStore.isAdmin" class="bg-info text-white q-pt-sm q-pb-sm q-pl-md q-pr-md">
-      {{ t('your_role', { role: t('role.platyp-admin') }) }}
-    </div>
+    <div class="text-h3 q-pa-md text-title">{{ t('dashboard') }}</div>
     <div class="q-pa-md">
-      <q-card>
-        <q-banner class="bg-grey-2 q-mb-md">
+      <q-card flat class="q-mb-lg">
+        <q-card-section>
           {{ t('introduction_text') }}
-          <template v-slot:action>
-            <q-btn flat icon="fa-solid fa-book" size="sm" :label="t('documentation')" to="/doc" />
-          </template>
-        </q-banner>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            icon="fa-solid fa-book"
+            color="foreground"
+            size="sm"
+            :label="t('documentation')"
+            to="/doc"
+          />
+        </q-card-actions>
       </q-card>
+
       <div class="text-h6 q-mb-sm">{{ t('statistics') }}</div>
       <dashboard-panel />
     </div>
@@ -24,5 +29,4 @@
 import DashboardPanel from 'src/components/DashboardPanel.vue'
 
 const { t } = useI18n()
-const authStore = useAuthStore()
 </script>

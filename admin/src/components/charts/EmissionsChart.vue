@@ -8,15 +8,16 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
       :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
-  <div class="chart-text" :data-chart-id="chartId">
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
     <q-markdown
       v-if="emissionItemsLabels"
       :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"
@@ -42,11 +43,13 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { MODE_COLORS } from './commons'
+import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
 import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
+const $q = useQuasar()
 use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
@@ -71,7 +74,7 @@ watch([() => stats.loading], () => {
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => $q.dark.isActive], () => {
   if (!stats.loading) {
     initChartOptions()
   }
@@ -190,6 +193,8 @@ function initChartOptions() {
     return
   }
 
+  const labelColor = $q.dark.isActive ? '#fffcf4' : '#000000'
+
   let ubound = 0
   const dataset = emissions
     .sort((a, b) => {
@@ -286,6 +291,7 @@ function initChartOptions() {
               y: yValue ? pxValY - 10 : pxBaseY + 14,
               textAlign: 'center',
               textVerticalAlign: 'middle',
+              fill: labelColor,
             },
             silent: true, // don't intercept mouse events
           }

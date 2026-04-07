@@ -6,6 +6,7 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
   </div>
 </template>
@@ -25,6 +26,7 @@ import {
   DataZoomComponent,
 } from 'echarts/components'
 import type { CampaignStats } from 'src/models'
+import { useQuasar } from 'quasar'
 
 interface Props {
   stats: CampaignStats
@@ -43,6 +45,7 @@ use([
 const props = defineProps<Props>()
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})

@@ -1,4 +1,5 @@
-import type { SetOptionOpts } from 'echarts'
+import { registerTheme, type SetOptionOpts } from 'echarts'
+import { getCssVar } from 'quasar'
 
 export const initOptions: InitOptions = {
   renderer: 'svg',
@@ -6,6 +7,65 @@ export const initOptions: InitOptions = {
 export const updateOptions: SetOptionOpts = {
   notMerge: true,
 }
+
+registerTheme('platyp', {
+  textStyle: {
+    fontFamily: 'Nunito, sans-serif',
+  },
+  markLine: {
+    lineStyle: {
+      color: 'black', // Your default color
+    },
+    label: {
+      color: 'black', // Matching the label color to the line
+    },
+  },
+  color: [getCssVar('primary')],
+})
+registerTheme('platyp-dark', {
+  textStyle: {
+    fontFamily: 'Nunito, sans-serif',
+    color: '#bca2b0',
+  },
+  title: {
+    textStyle: {
+      color: getCssVar('primary'),
+    },
+    subtextStyle: {
+      color: '#bca2b0',
+    },
+  },
+  legend: {
+    textStyle: {
+      color: '#fffcf4',
+    },
+  },
+  label: {
+    color: '#fffcf4',
+    fill: '#fffcf4',
+  },
+  bar: {
+    label: {
+      color: '#fffcf4',
+      fill: '#fffcf4',
+    },
+  },
+  line: {
+    label: {
+      color: '#fffcf4',
+      fill: '#fffcf4',
+    },
+  },
+  markLine: {
+    lineStyle: {
+      color: getCssVar('primary'), // Your default color
+    },
+    label: {
+      color: getCssVar('primary'), // Matching the label color to the line
+    },
+  },
+  color: [getCssVar('primary')],
+})
 
 /**
  * https://echarts.apache.org/en/api.html#echarts.init

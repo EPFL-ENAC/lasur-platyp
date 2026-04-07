@@ -1,100 +1,150 @@
 <template>
-  <div class="grid-container">
-    <div class="item">
-      <equipment-frequencies-chart :percent="percent" :height="height" />
-    </div>
-    <div class="item">
-      <frequencies-chart type="constraints" :percent="percent" :height="height" />
-    </div>
-    <div class="item">
-      <location-chart :title="t('stats.locationsHeatmap.title')" :height="height" />
-    </div>
-    <div class="item">
-      <travel-time-frequencies-chart
-        type="travel_time"
-        :xaxis="t('stats.travel_time.xaxis')"
-        :range-step="5"
-        :percent="percent"
-        :height="height"
+  <q-card flat class="q-my-md">
+    <q-expansion-item
+      :label="t('stats.sections.mobility_analysis.title')"
+      header-class="text-h5"
+      :default-opened="true"
+      expand-icon-toggle
+    >
+      <q-markdown
+        class="compact text-caption q-px-md q-pb-md q-mt-sm"
+        :src="t('stats.sections.mobility_analysis.description')"
       />
-    </div>
-    <div class="item">
-      <modes-of-transport-share-chart :height="height" />
-    </div>
-    <div class="item">
-      <emissions-chart
-        type="freq_mod"
-        :xaxis="t('stats.emissions_freq_mod.xaxis')"
-        :yaxis="t('stats.emissions_freq_mod.yaxis')"
-        :height="height"
+      <q-separator />
+      <q-card-section>
+        <div class="grid-container">
+          <div>
+            <equipment-frequencies-chart :percent="percent" :height="height" />
+          </div>
+          <div>
+            <frequencies-chart type="constraints" :percent="percent" :height="height" />
+          </div>
+          <div>
+            <location-chart :title="t('stats.locationsHeatmap.title')" :height="height" />
+          </div>
+          <div>
+            <travel-time-frequencies-chart
+              type="travel_time"
+              :xaxis="t('stats.travel_time.xaxis')"
+              :range-step="5"
+              :percent="percent"
+              :height="height"
+            />
+          </div>
+          <div>
+            <modes-of-transport-share-chart :height="height" />
+          </div>
+          <div>
+            <emissions-chart
+              type="freq_mod"
+              :xaxis="t('stats.emissions_freq_mod.xaxis')"
+              :yaxis="t('stats.emissions_freq_mod.yaxis')"
+              :height="height"
+            />
+          </div>
+          <div>
+            <journey-energy-chart type="current" :height="height" />
+          </div>
+          <div>
+            <frequencies-stack-chart
+              type="freq_mod_pro"
+              :groups="['local', 'national', 'europe', 'inter']"
+              :xaxis="t('stats.freq_mod_pro.xaxis')"
+              :height="height"
+            />
+          </div>
+          <div>
+            <emissions-chart
+              type="freq_mod_pro"
+              :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
+              :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
+              :height="height"
+            />
+          </div>
+        </div>
+      </q-card-section>
+    </q-expansion-item>
+  </q-card>
+
+  <q-card flat class="q-my-md">
+    <q-expansion-item
+      :label="t('stats.sections.mobility_potentials.title')"
+      header-class="text-h5"
+      :default-opened="true"
+      expand-icon-toggle
+    >
+      <q-markdown
+        class="compact text-caption q-px-md q-pb-md q-mt-sm"
+        :src="t('stats.sections.mobility_potentials.description')"
       />
-    </div>
-    <div class="item">
-      <share-chart type="reco_dt2" :height="height" />
-    </div>
-    <div class="item">
-      <links-chart type="mod_reco" :height="height" />
-    </div>
-    <div class="item">
-      <emissions-reductions-chart
-        type="freq_mod"
-        reduction-type="reductions_mod"
-        :yaxis="t('stats.emissions_reductions_mod.yaxis')"
-        :height="height"
+      <q-separator />
+
+      <q-card-section>
+        <div class="grid-container">
+          <div>
+            <share-chart type="reco_dt2" :height="height" />
+          </div>
+          <div>
+            <links-chart type="mod_reco" :height="height" />
+          </div>
+          <div>
+            <emissions-reductions-chart
+              type="freq_mod"
+              reduction-type="reductions_mod"
+              :yaxis="t('stats.emissions_reductions_mod.yaxis')"
+              :height="height"
+            />
+          </div>
+          <div>
+            <emissions-reductions-chart
+              type="freq_mod_pro"
+              reduction-type="reductions_mod_pro"
+              :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
+              :height="height"
+            />
+          </div>
+          <div>
+            <emissions-reductions-share-chart reduction-type="reductions_mod" :height="height" />
+          </div>
+          <div>
+            <journey-energy-chart type="reco" :height="height" />
+          </div>
+          <div>
+            <journey-energy-share-chart :height="height" />
+          </div>
+        </div>
+      </q-card-section>
+    </q-expansion-item>
+  </q-card>
+
+  <q-card flat class="q-my-md">
+    <q-expansion-item
+      :label="t('stats.sections.behavioural_changes.title')"
+      header-class="text-h5"
+      :default-opened="true"
+      expand-icon-toggle
+    >
+      <q-markdown
+        class="compact text-caption q-px-md q-pb-md q-mt-sm"
+        :src="t('stats.sections.behavioural_changes.description')"
       />
-    </div>
-    <div class="item">
-      <emissions-reductions-share-chart reduction-type="reductions_mod" :height="height" />
-    </div>
-    <div class="item">
-      <journey-energy-chart type="current" :height="height" />
-    </div>
-    <div class="item">
-      <journey-energy-chart type="reco" :height="height" />
-    </div>
-    <div class="item">
-      <journey-energy-share-chart :height="height" />
-    </div>
-    <div class="item">
-      <frequencies-stack-chart
-        type="freq_mod_pro"
-        :groups="['local', 'national', 'europe', 'inter']"
-        :xaxis="t('stats.freq_mod_pro.xaxis')"
-        :height="height"
-      />
-    </div>
-    <div class="item">
-      <emissions-chart
-        type="freq_mod_pro"
-        :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
-        :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
-        :height="height"
-      />
-    </div>
-    <div class="item">
-      <share-chart type="reco_pros" :height="height" />
-    </div>
-    <div class="item">
-      <links-chart type="mod_reco_pro" :height="height" />
-    </div>
-    <div class="item">
-      <emissions-reductions-chart
-        type="freq_mod_pro"
-        reduction-type="reductions_mod_pro"
-        :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
-        :height="height"
-      />
-    </div>
-    <div class="item">
-      <behavior-change-chart :height="height" type="levers" />
-    </div>
-    <div class="item">
-      <behavior-change-chart :height="height" type="motivation" />
-    </div>
-    <div class="item">
-      <equipment-recommendation-matrix-chart :height="height" />
-    </div>
-  </div>
+      <q-separator />
+
+      <q-card-section>
+        <div class="grid-container">
+          <div>
+            <behavior-change-chart :height="height" type="levers" />
+          </div>
+          <div>
+            <behavior-change-chart :height="height" type="motivation" />
+          </div>
+          <div>
+            <equipment-recommendation-matrix-chart :height="height" />
+          </div>
+        </div>
+      </q-card-section>
+    </q-expansion-item>
+  </q-card>
 </template>
 <script setup lang="ts">
 import EquipmentFrequenciesChart from 'src/components/charts/EquipmentFrequenciesChart.vue'
@@ -123,16 +173,10 @@ defineProps<Props>()
 const { t } = useI18n()
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  gap: 16px;
-}
-.item {
-  background: #fafafa;
-  padding: 16px;
-  border: 1px solid #eee;
-  border-radius: 4px;
+  gap: 2rem;
 }
 </style>

@@ -8,16 +8,19 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
       :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.freq_mod.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-foreground text-center">
+        {{ t('stats.no_data') }}
+      </div>
     </div>
   </div>
 
-  <div class="chart-text" :data-chart-id="chartId">
-    <p>{{ t('stats.freq_mod.texts.default') }}</p>
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+    <p class="q-mb-xs">{{ t('stats.freq_mod.texts.default') }}</p>
     <p v-if="topModes.length === 3">
       {{
         t('stats.freq_mod.texts.specific', {
@@ -45,9 +48,11 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
 import { MODE_COLORS } from './commons'
+import { useQuasar } from 'quasar'
 import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 

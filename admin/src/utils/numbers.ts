@@ -35,3 +35,11 @@ export function toMaxDecimals(x: number | null, n: number): number | null {
   }
   return +x.toFixed(n)
 }
+
+export function checkUrlParamNumber(param: string | string[] | null | undefined): number | null {
+  if (!param || Array.isArray(param)) {
+    return null
+  }
+  const num = Number(param)
+  return Number.isFinite(num) ? num : null
+}

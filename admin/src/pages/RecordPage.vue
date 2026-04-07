@@ -1,7 +1,7 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md row">
-      <q-breadcrumbs gutter="sm">
+    <div class="text-h4 q-pa-md row">
+      <q-breadcrumbs gutter="sm" active-color="title">
         <q-breadcrumbs-el :label="t('records')" to="/records" />
         <q-breadcrumbs-el :label="record?.token" />
       </q-breadcrumbs>

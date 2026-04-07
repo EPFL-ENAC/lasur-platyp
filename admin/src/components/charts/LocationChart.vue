@@ -105,9 +105,13 @@ const max = computed(() => {
 
 .title {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: bold;
   color: #454545;
   text-align: center;
+}
+
+:global(.body--dark .title) {
+  color: var(--q-primary) !important;
 }
 
 .with-data {

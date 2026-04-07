@@ -8,16 +8,17 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
       :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
+      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
-  <div class="chart-text" :data-chart-id="chartId">
-    <p>{{ t(`stats.energy_journey.texts.default_share`) }}</p>
+  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+    <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default_share`) }}</p>
     <q-markdown
       v-if="total > 5 && biggestShare"
       :src="
@@ -36,7 +37,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
+import { initOptions, MODE_COLORS, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -45,10 +46,12 @@ import {
 } from 'echarts/components'
 import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
+import { useQuasar } from 'quasar'
 import { getRandomId } from 'src/utils/random'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
+const $q = useQuasar()
 const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
@@ -175,6 +178,7 @@ function initChartOptions() {
           name: keyLabel(item.mode),
           value: item.added_kcal,
         })),
+        color: filtered.map((item) => MODE_COLORS[item.mode] || '#FCC447'),
       },
     ],
   }

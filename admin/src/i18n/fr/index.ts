@@ -66,6 +66,7 @@ export default {
       'Téléversez un fichier CSV pour ajouter/mette à jour plusieurs lieux de travail à la campagne en une seule fois. Le fichier doit contenir les colonnes suivantes : name, address, lat, lon.',
     workplaces: {
       title: 'Lieux de travail',
+      number: 'Nombre de lieux de travail',
       hint: 'Déclarez les lieux de travail associés à cette campagne : soit les lieux de travail peuvent être déclarés par le participant ou au moins un est requis.',
       name: 'Nom',
       name_hint: 'Nom du lieu de travail (ex. "Hub logistique 12").',
@@ -279,6 +280,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     in_progress: 'En cours',
     completed: 'Terminé',
     pending: 'En attente',
+    filter_by_zone: 'Filtrer par zone',
+    switch_to_carousel: 'Passer en vue carrousel',
+    switch_to_grid: 'Passer en vue grille',
+    pdf_report: 'Rapport PDF',
     nb_employees: 'Nombre de collaborateur·trice·s',
     percent_employees: '% de collaborateur·trice·s',
     total: 'N : {count}',
@@ -286,6 +291,24 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     observed: 'Données des participant·e·s',
     participants_median: 'Médiane des participant·e·s',
     geneva_median: 'Médiane de la région de Genève',
+    sections: {
+      mobility_analysis: {
+        title: 'Diagnostic de mobilité',
+        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s. Leur usage des modes de transport, leurs équipements, leurs contraintes et leur répartition géographique.
+        
+Certains impacts sont aussi calculés :
+- sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
+- sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
+      },
+      mobility_potentials: {
+        title: 'Potentiels de mobilité',
+        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux collaborateur·trice·s en fonction de leurs habitudes, contraintes, désirs, localisation... Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient ces recommandations.`,
+      },
+      behavioural_changes: {
+        title: 'Motiver les changements de comportement',
+        description: `Cette dernière section apporte des informations sur la volonté des participant·e·s de suivre ou non les recommandations qui leur ont été faites, et leurs besoins ou désirs pour déclencher ces changements de comportement. Cela peut permettre d'orienter vos décisions et de cibler les aides à la mobilité que vous pourriez envisager.`,
+      },
+    },
     equipments: {
       title: 'Équipements de mobilité',
       labels: {
@@ -961,11 +984,14 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   companies: 'Organisations',
   company_campaign: 'Organisation (campagne)',
   company_removed: 'Organisation supprimée',
+  campaign_removed: 'Campagne supprimée',
   content: 'Contenu',
   doc: 'Documentation',
   dashboard: 'Tableau de bord',
   data: 'Données',
   download_csv: 'Télécharger CSV',
+  overview: 'Vue d’ensemble',
+  view: 'Voir',
   edit: 'Editer',
   email: 'Email',
   enabled: 'Activé',
@@ -1022,6 +1048,8 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   remove_user: "Supprimer l'utilisateur",
   remove: 'Supprimer',
   report: 'Rapport',
+  report_global: 'Rapport global',
+  report_campaign: 'Rapport de campagne',
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
   select: 'Sélectionner',
@@ -1046,4 +1074,5 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   created_at: 'Ajouté le',
   updated_at: 'Mis à jour le',
   do_not_show_again: 'Ne plus afficher',
+  dark_mode: 'Mode sombre',
 }

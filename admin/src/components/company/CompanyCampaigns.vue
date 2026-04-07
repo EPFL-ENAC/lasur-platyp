@@ -2,7 +2,7 @@
   <div>
     <q-btn
       v-if="isCompanyAdmin"
-      size="sm"
+      size="md"
       color="primary"
       :disable="campaignsStore.loading"
       :label="t('add')"
@@ -19,7 +19,7 @@
         dense
         no-caps
         class="text-grey"
-        active-color="secondary"
+        active-color="field"
         active-bg-color="grey-4"
         indicator-color="primary"
         align="left"
@@ -97,7 +97,7 @@ watch(
 )
 
 function onInit() {
-  campaignsStore.company = props.company
+  campaignsStore.companyId = props.company.id
   campaignsStore.load().catch(notifyError)
 }
 

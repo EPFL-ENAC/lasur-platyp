@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="q-mb-sm text-grey-8">{{ label }}</div>
+    <div class="q-mb-sm text-foreground">{{ label }}</div>
     <div>{{ hint }}</div>
     <q-tabs
       v-model="tab"
       dense
       no-caps
       class="text-grey"
-      active-color="secondary"
+      active-color="field"
       active-bg-color="grey-4"
       indicator-color="primary"
       align="left"

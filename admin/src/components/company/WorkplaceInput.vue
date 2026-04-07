@@ -1,7 +1,9 @@
 <template>
   <div>
     <q-input
-      filled
+      outlined
+      rounded
+      color="field"
       v-model="selected.name"
       :label="t('campaign.workplaces.name') + ' *'"
       :hint="t('campaign.workplaces.name_hint')"

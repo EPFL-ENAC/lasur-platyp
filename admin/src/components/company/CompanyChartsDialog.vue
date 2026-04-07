@@ -26,8 +26,8 @@
           <q-spinner-dots color="primary" size="50px" />
         </div>
       </q-card-section>
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('close')" color="secondary" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn :label="t('close')" color="primary" v-close-popup />
       </q-card-actions>
     </q-card>
     <area-dialog
