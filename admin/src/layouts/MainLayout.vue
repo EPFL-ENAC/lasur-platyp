@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav text-grey-10">
+    <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav">
       <q-toolbar>
         <q-btn
           flat

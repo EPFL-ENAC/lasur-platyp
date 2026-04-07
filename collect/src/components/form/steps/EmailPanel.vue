@@ -1,8 +1,9 @@
 <template>
   <div>
     <SectionItem :label="t('form.email.title')" label-class="text-h4" class="q-mb-md" />
-    <q-card class="bg-primary q-mb-xl">
-      <q-card-section class="q-pa-sm">
+
+    <q-card flat class="q-mb-xl">
+      <q-card-section>
         <q-markdown class="text-h6" :src="t(`form.email.text`)" />
       </q-card-section>
       <q-card-section>
@@ -10,8 +11,9 @@
           v-model="email"
           :label="t('form.email.label')"
           class="q-mb-lg text-h6"
-          bg-color="green-3"
-          filled
+          color="field"
+          outlined
+          rounded
         />
       </q-card-section>
     </q-card>

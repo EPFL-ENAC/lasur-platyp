@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md" :class="labelClass">{{ label }}</div>
+    <div :class="labelClass">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="row justify-center">
       <q-btn
@@ -95,4 +95,6 @@ function increment2() {
   const newValue = value + (props.step2 ? props.step2 : 5)
   emit('update:modelValue', props.max !== undefined && newValue > props.max ? props.max : newValue)
 }
+
+const labelClass = computed(() => props.labelClass || 'text-h4')
 </script>

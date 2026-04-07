@@ -29,7 +29,7 @@ $brand-purple-950: #0c0e12;
 
 $primary: $brand-yellow-500;
 $secondary: $brand-purple-600;
-$accent: #e6a21a;
+$accent: $brand-yellow-500;
 
 $dark: $brand-purple-800;
 $dark-page: $brand-purple-800;
@@ -38,11 +38,6 @@ $positive: #21ba45;
 $negative: #c10015;
 $info: #80a795;
 $warning: #e6a21a;
-
-$primary-light: #fff5d4;
-$primary-semi-dark: #c4a253;
-$primary-dark: #ba8025;
-$secondary-light: #907181;
 
 $button-border-radius: 8px;
 
@@ -128,22 +123,6 @@ body.body--dark {
 
 // Quasar Overrides using variables
 
-.text-primary-light {
-  color: $primary-light !important;
-}
-
-.bg-primary-light {
-  background-color: $primary-light !important;
-}
-
-.text-primary-dark {
-  color: $primary-dark !important;
-}
-
-.bg-primary-dark {
-  background-color: $primary-dark !important;
-}
-
 .bg-secondary-ultra-light {
   background-color: $brand-purple-100 !important;
 }
@@ -154,7 +133,7 @@ body.body--dark {
 
 .q-btn.bg-primary {
   color: $secondary !important;
-  outline: 1px solid $primary-semi-dark !important;
+  outline: 1px solid $brand-yellow-600 !important;
 }
 
 .q-badge.bg-primary,
@@ -200,7 +179,7 @@ body.body--dark {
 .q-tabs {
   border-radius: 0.5rem !important;
   border: 1px solid var(--secondary-border-color) !important;
-  color: $secondary-light !important;
+  color: $brand-purple-300 !important;
 }
 
 .text-hint {

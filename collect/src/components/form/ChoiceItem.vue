@@ -10,10 +10,10 @@
               <template v-for="option in group" :key="option.value">
                 <q-item
                   :active="isSelected(option)"
-                  active-class="bg-teal-1 text-grey-8"
+                  active-class="bg-primary text-secondary"
                   v-ripple
                   clickable
-                  class="rounded-borders q-mb-md bg-primary text-green-3"
+                  class="rounded-borders q-mb-md"
                   @click="onOption(option)"
                 >
                   <q-item-section>
@@ -113,3 +113,13 @@ function onOption(option: Option) {
   }
 }
 </script>
+
+<style scoped>
+
+.q-item {
+  background: var(--field-bg);
+  color: var(--foreground-color);
+  border: 1px solid var(--secondary-border-color);
+}
+
+</style>

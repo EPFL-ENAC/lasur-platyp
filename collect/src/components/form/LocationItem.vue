@@ -17,8 +17,10 @@
               v-model="addressLocation.address"
               type="text"
               class="on-right on-left"
-              bg-color="green-3"
-              filled
+              color="field"
+              bg-color="field"
+              outlined
+              rounded
               dense
               :placeholder="t('type_enter_to_lookup_address')"
               @keyup.enter="onSuggestAddress"

@@ -1,5 +1,5 @@
 <template>
-  <q-page class="bg-secondary text-white">
+  <q-page>
     <q-linear-progress
       v-if="survey.started"
       size="10px"

@@ -26,7 +26,7 @@ body {
 
 a {
   text-decoration: none;
-  color: $green-6;
+  color: $primary;
 }
 
 a.q-markdown--link,
@@ -35,15 +35,15 @@ a.modus {
   text-decoration-color: #333;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
-  color: #016052;
+  color: $primary;
   font-weight: 600;
 }
 
 a:hover.q-markdown--link,
 a:hover.modus {
   text-decoration: underline;
-  text-decoration-color: #016052;
-  color: #016052;
+  text-decoration-color: $primary;
+  color: $primary;
 }
 
 .q-markdown--link-external:after {
@@ -127,4 +127,12 @@ li + li {
 .q-field__bottom {
   font-size: 16px;
   color: white;
+}
+
+.bordered-secondary {
+  border: 1px solid var(--secondary-border-color) !important;
+}
+
+.rounded-borders {
+  border-radius: 1rem !important;
 }

@@ -5,7 +5,7 @@
     </div>
     <div class="text-h6 q-mb-md">{{ t('form.intermodality_hint') }}</div>
     <template v-for="(journey, idx) in survey.record.data.freq_mod_journeys" :key="idx">
-      <q-card class="bg-primary q-mb-md">
+      <q-card flat class="q-mb-md">
         <q-card-section>
           <q-toolbar>
             <div class="on-left text-h6 q-pt-xs">{{ t('form.journey.hint') }}</div>
@@ -26,7 +26,7 @@
         </q-card-section>
       </q-card>
     </template>
-    <q-btn icon="add" :label="t('form.journey.add')" color="accent" @click="onAddJourney" />
+    <q-btn icon="add" :label="t('form.journey.add')" color="primary" @click="onAddJourney" />
   </div>
 </template>
 
