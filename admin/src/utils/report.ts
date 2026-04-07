@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas'
 
 export async function makeChartPage(
   chart: HTMLElement,
+  text: string | undefined,
   doc: jsPDF,
   now: Date,
   brandName: string,
@@ -46,23 +47,51 @@ export async function makeChartPage(
     const imgHeight = canvas.height
     const ratio = imgWidth / imgHeight
 
-    // Calculate dimensions to fit the page
-    let finalWidth = maxWidth
-    let finalHeight = finalWidth / ratio
+    // Logic for Text Wrapping
+    let textLines: string[] = []
+    let textBlockHeight = 0
+    const lineHeight = 5 // Adjust based on font size
 
-    if (finalHeight > maxHeight) {
-      finalHeight = maxHeight
-      finalWidth = finalHeight * ratio
+    if (text) {
+      doc.setFontSize(10)
+      const safeText = toPdfSafeText(text)
+      // Split text to fit the maxWidth
+      textLines = doc.splitTextToSize(safeText, maxWidth)
+      textBlockHeight = textLines.length * lineHeight
+    }
+
+    const heightOffset = textBlockHeight + 10 // 10 for spacing between chart and text
+
+    // Calculate dimensions to fit the page
+    let finalHeight = maxHeight - heightOffset // margin for the text
+    let finalWidth = finalHeight * ratio
+
+    if (finalWidth > maxWidth) {
+      finalWidth = maxWidth
+      finalHeight = finalWidth / ratio
     }
 
     // Center the image on the page
     const x = (pageWidth - finalWidth) / 2
-    const y = (pageHeight - finalHeight) / 2
+    const y = margin + 20 // (pageHeight - finalHeight) / 2
 
     doc.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight)
+    if (textLines.length > 0) {
+      doc.text(textLines, margin, pageHeight - margin - heightOffset)
+    }
     return true
   } catch (error) {
     console.error('Error capturing chart:', error)
     return false
   }
+}
+
+function toPdfSafeText(text: string) {
+  return text
+    .normalize('NFKD')
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/[–—]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
 }

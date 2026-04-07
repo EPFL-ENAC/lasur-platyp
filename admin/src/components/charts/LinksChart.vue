@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.${props.type}.texts.default`) }}</p>
     <p v-if="mostRecommendedTarget">
       {{
@@ -40,6 +41,7 @@ import {
 } from 'echarts/components'
 import type { StatLinks } from 'src/models'
 import { MODE_COLORS } from './commons'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -54,6 +56,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 

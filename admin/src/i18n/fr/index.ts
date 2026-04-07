@@ -715,6 +715,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       labels: {
         walking: 'Marche',
         bike: 'Vélo',
+        ebike: 'Vélo électrique',
         pub: 'Transports publics urbains',
         train: 'Train',
         moto: 'Moto / scooter',
@@ -732,6 +733,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         vae: 'Vélo à assistance électrique',
         velo: 'Vélo',
         cargo: 'Vélo cargo',
+        other: 'Autre',
       },
       texts: {
         default:
@@ -752,6 +754,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         collective: 'Changement collectif',
         environment: 'Aménagement environnement',
         other: 'Autre',
+        autres: 'Autres',
+        total: 'Total',
 
         walking: 'Marche',
         bike: 'Vélo',
@@ -809,6 +813,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         velo: 'Vélo',
         cargo: 'Vélo cargo',
         allModes: 'Tous les modes',
+        autres: 'Autres',
+        total: 'Total',
       },
       texts: {
         default:

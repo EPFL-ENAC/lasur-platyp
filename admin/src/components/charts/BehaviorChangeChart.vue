@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.behavior_change_${props.type}.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.behavior_change_${props.type}.texts.default`) }}</p>
     <q-markdown
       v-if="total > 5"
@@ -37,8 +38,11 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { toMaxDecimals } from 'src/utils/numbers'
+import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
+import { lowerCaseFirst } from 'src/utils/string'
+import { moveToEnd } from 'src/utils/arrays'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -53,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -84,9 +89,8 @@ const descriptionValues = computed(() => {
     return item.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
   })
   return {
-    percentage: toMaxDecimals(
+    percentage: formatNumber(
       motivatedByMode.reduce((sum, p) => sum + p, 0) / motivatedByMode.length,
-      2,
     ),
   }
 })
@@ -177,6 +181,8 @@ function leversOptions() {
     behaviorChangeData.by_mode_levers.flatMap((item) => item.levers.map((lever) => lever.category)),
   )
 
+  const sorted = getSortedModes(behaviorChangeData.by_mode_levers)
+
   return {
     series: Array.from(allCategories).map((category) => ({
       name: keyLabel(category),
@@ -189,10 +195,10 @@ function leversOptions() {
           if (params.value === 0) {
             return ''
           }
-          return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 2) || 0)
+          return formatNumber(params.value as number)
         },
       },
-      data: behaviorChangeData.by_mode_levers.map((item) => {
+      data: sorted.map((item) => {
         const lever = item.levers.find((l) => l.category === category)
         return lever ? lever.count : 0
       }),
@@ -200,7 +206,7 @@ function leversOptions() {
         color: CATEGORY_COLORS[category] || '#ccc',
       },
     })) as SeriesOption[],
-    categories: behaviorChangeData.by_mode_levers.map((item) => keyLabel(item.mode)),
+    categories: sorted.map((item) => keyLabel(item.mode)),
     total: behaviorChangeData.total_responses,
   }
 }
@@ -211,6 +217,8 @@ function motivationOptions() {
     return null
   }
   const levels = [1, 2, 3, 4, 5]
+
+  const sorted = getSortedModes(behaviorChangeData.by_mode_motivation)
 
   return {
     series: levels.map((level) => ({
@@ -224,10 +232,10 @@ function motivationOptions() {
           if (params.value === 0) {
             return ''
           }
-          return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 2) || 0)
+          return formatNumber(params.value as number)
         },
       },
-      data: behaviorChangeData.by_mode_motivation.map((item) => {
+      data: sorted.map((item) => {
         const lever = item.motivations.find((l) => l.level === level)
         return lever ? lever.count : 0
       }),
@@ -235,12 +243,39 @@ function motivationOptions() {
         color: MOTIVATION_COLORS[level] || '#ccc',
       },
     })) as SeriesOption[],
-    categories: behaviorChangeData.by_mode_motivation.map((item) => keyLabel(item.mode)),
+    categories: sorted.map((item) => keyLabel(item.mode)),
     total: behaviorChangeData.total_responses,
   }
 }
 
 function shortKey(key: string) {
-  return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+  return lowerCaseFirst(key.replace('freq_mod_pro_', '').replace('freq_mod_', ''))
+}
+
+function getSortedModes<
+  T extends
+    | typeof stats.behaviorChange.levers.by_mode_levers
+    | typeof stats.behaviorChange.motivation.by_mode_motivation,
+>(data: T): T {
+  const copy = [...data] as T
+
+  moveToEnd(
+    copy,
+    copy.find((item) => item.mode === 'Autres'),
+  )
+  moveToEnd(
+    copy,
+    copy.find((item) => item.mode === 'other'),
+  )
+  moveToEnd(
+    copy,
+    copy.find((item) => item.mode === 'Total'),
+  )
+  moveToEnd(
+    copy,
+    copy.find((item) => item.mode === 'allModes'),
+  )
+
+  return copy
 }
 </script>

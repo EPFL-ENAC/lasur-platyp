@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.emissions_${props.reductionType}.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t(`stats.emissions_${props.reductionType}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
@@ -37,8 +38,9 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { toMaxDecimals } from 'src/utils/numbers'
+import { formatNumber } from 'src/utils/numbers'
 import { MODE_COLORS } from './commons'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -56,6 +58,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const currentEmissions = ref(0)
@@ -65,17 +68,15 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    current_emissions: new Intl.NumberFormat().format(
-      toMaxDecimals(currentEmissions.value, 0) || 0,
+    current_emissions: formatNumber(currentEmissions.value / 1000), // convert from kg to tons
+    new_emissions: formatNumber(newEmissions.value / 1000),
+    cheeseburgers: formatNumber(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 18.8), // kg to grams ?
     ),
-    new_emissions: new Intl.NumberFormat().format(toMaxDecimals(newEmissions.value, 0) || 0),
-    cheeseburgers: new Intl.NumberFormat().format(
-      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 18.8),
-    ),
-    smartphones: new Intl.NumberFormat().format(
+    smartphones: formatNumber(
       Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 80.2),
     ),
-    streaming_hours: new Intl.NumberFormat().format(
+    streaming_hours: formatNumber(
       Math.round(((currentEmissions.value - newEmissions.value) * 1_000_000) / 50),
     ),
   }
@@ -172,14 +173,7 @@ function initChartOptions() {
       formatter: function (params: any) {
         const tar = params[1]
         if (!tar) return ''
-        return (
-          tar.name +
-          '<br/>' +
-          tar.seriesName +
-          ' : ' +
-          new Intl.NumberFormat().format(toMaxDecimals(tar.value, 0) || 0) +
-          ' kgCO₂eq'
-        )
+        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' kgCO₂eq'
       },
     },
     legend: {
@@ -242,7 +236,7 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 0) || 0)
+            return formatNumber(params.value as number)
           },
         },
         data: [

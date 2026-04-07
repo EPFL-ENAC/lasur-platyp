@@ -8,6 +8,7 @@
       :option="option"
       :update-options="updateOptions"
       :loading="stats.loading"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.freq_mod.title`) }}</div>
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="chart-text" :data-chart-id="chartId">
     <p>{{ t('stats.freq_mod.texts.default') }}</p>
     <p v-if="topModes.length === 3">
       {{
@@ -44,6 +45,7 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
 import { MODE_COLORS } from './commons'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -57,6 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const topModes = ref<string[]>([])

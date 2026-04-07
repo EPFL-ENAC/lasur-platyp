@@ -706,6 +706,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       labels: {
         walking: 'Walking',
         bike: 'Bicycle',
+        ebike: 'Electric bike',
         pub: 'Public transport',
         train: 'Train',
         moto: 'Motorcycle/scooter',
@@ -723,6 +724,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         vae: 'Electric bike',
         velo: 'Bike',
         cargo: 'Cargo bike',
+        other: 'Other',
       },
       texts: {
         default:
@@ -743,6 +745,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
         collective: 'Collective measures',
         environment: 'Environmental improvements',
         other: 'Other',
+        autres: 'Other',
+        total: 'Total',
 
         walking: 'Walking',
         bike: 'Bicycle',
@@ -800,6 +804,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
         velo: 'Bike',
         cargo: 'Cargo bike',
         allModes: 'All modes',
+        autres: 'Other',
+        total: 'Total',
       },
       texts: {
         default:
