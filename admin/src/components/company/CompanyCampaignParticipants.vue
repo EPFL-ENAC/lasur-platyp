@@ -3,7 +3,7 @@
     <div v-if="rows?.length < 1">
       <q-btn
         size="sm"
-        color="field"
+        color="secondary"
         :disable="loading"
         :label="t('add')"
         icon="add"

@@ -19,22 +19,28 @@
         <div class="row q-col-gutter-md">
           <q-input
             v-model="surveyLink"
+            outlined
+            rounded
+            color="field"
             class="col-12"
             :label="t('campaign.email_template.surveyLink')"
             readonly
-            filled
           />
           <q-input
             v-model="contactEmail"
+            outlined
+            rounded
+            color="field"
             class="col-12 col-sm-6"
             :label="t('campaign.email_template.contactEmail')"
-            outlined
           />
           <q-input
             v-model="contactName"
+            outlined
+            rounded
+            color="field"
             class="col-12 col-sm-6"
             :label="t('campaign.email_template.contactName')"
-            outlined
           />
         </div>
       </q-card-section>
@@ -42,9 +48,11 @@
       <q-tabs
         v-model="tab"
         dense
-        class="text-grey"
-        active-color="primary"
-        indicator-color="primary"
+        active-color="field"
+        active-bg-color="background"
+        active-class="tab-active"
+        indicator-color="transparent"
+        class="bg-secondary-ultra-light q-mx-md"
         align="justify"
         narrow-indicator
       >
@@ -52,11 +60,9 @@
         <q-tab name="en" label="English" />
       </q-tabs>
 
-      <q-separator />
-
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel v-for="lang in ['fr', 'en']" :key="lang" :name="lang">
-          <div :id="`email-content-${lang}`" class="q-pa-md bg-grey-1 rounded-borders">
+          <div :id="`email-content-${lang}`" class="q-pa-md bg-background rounded-borders">
             <q-markdown
               :src="
                 t(
@@ -77,7 +83,7 @@
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
+      <q-card-actions align="right">
         <q-btn
           color="primary"
           icon="content_copy"

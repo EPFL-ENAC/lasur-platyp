@@ -51,6 +51,7 @@ body {
   --nav-bg: #{$brand-yellow-100};
   --foreground-color: #{$brand-purple-600};
   --foreground-bg: #{$brand-purple-600};
+  --background: white;
   --title-color: #{$brand-yellow-700};
   --field-color: #{$brand-purple-600};
   --field-label-color: #{$brand-purple-600};
@@ -66,6 +67,7 @@ body.body--dark {
   --nav-bg: #{$brand-purple-600};
   --foreground-color: #{$brand-yellow-500};
   --foreground-bg: #{$brand-yellow-500};
+  --background: #{$brand-purple-800};
   --title-color: #{$brand-yellow-500};
   --field-color: #{$brand-yellow-50};
   --field-label-color: #{$brand-yellow-50};
@@ -112,6 +114,10 @@ body.body--dark {
 
 .bg-super-muted {
   background-color: var(--super-muted-color) !important;
+}
+
+.bg-background {
+  background-color: var(--background) !important;
 }
 
 .text-title {
