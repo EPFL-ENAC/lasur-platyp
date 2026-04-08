@@ -44,8 +44,10 @@
           :label="t('form.change_other_levers_specify')"
           type="textarea"
           class="q-mb-lg text-h6"
-          bg-color="green-3"
-          filled
+          color="filled"
+          bg-color="filled"
+          outlined
+          rounded
           debounce="500"
           @update:model-value="onSave"
         />

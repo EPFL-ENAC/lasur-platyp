@@ -5,7 +5,7 @@
     <div class="row justify-center q-mt-lg">
       <span
         class="text-h4 q-mr-lg cursor-pointer"
-        :class="selected ? 'text-grey-6' : 'text-white'"
+        :class="selected ? 'text-muted' : 'text-foreground'"
         @click="selected = false"
         >{{ leftLabel }}</span
       >
@@ -18,7 +18,7 @@
       />
       <span
         class="text-h4 q-ml-lg cursor-pointer"
-        :class="selected ? 'text-white' : 'text-grey-6'"
+        :class="selected ? 'text-foreground' : 'text-muted'"
         @click="selected = true"
         >{{ rightLabel }}</span
       >

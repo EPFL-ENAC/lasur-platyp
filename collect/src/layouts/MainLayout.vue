@@ -3,7 +3,7 @@
     <q-header bordered class="bg-nav">
       <q-toolbar>
         <a href="https://modus-ge.ch/" target="_blank">
-          <img :src="$q.dark.isActive ? '/LOGO-JAUNE.svg' : '/LOGO-VIOLET.svg'" height="25px" />
+          <img :src="$q.dark.isActive ? '/LOGO-JAUNE.svg' : '/LOGO-VIOLET.svg'" alt="Logo" height="25px" />
         </a>
 
         <q-space />
