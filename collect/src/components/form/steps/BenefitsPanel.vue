@@ -2,17 +2,14 @@
   <div v-if="hasBenefits(reco)">
     <q-btn
       :label="t('benefits.show')"
-      color="white"
+      color="foreground"
       size="md"
       icon-right="workspace_premium"
       no-caps
-      flat
       dense
     >
-      <q-menu class="q-mr-md" :max-width="'400px'">
-        <div class="bg-white text-secondary q-pt-md q-pr-md q-pl-md rounded-borders">
-          <q-markdown :src="getBenefits(reco, locale)" />
-        </div>
+      <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'">
+        <q-markdown :src="getBenefits(reco, locale)" />
       </q-menu>
     </q-btn>
   </div>

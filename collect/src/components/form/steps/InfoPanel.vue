@@ -1,5 +1,5 @@
 <template>
-  <q-card v-if="withInfo" class="bg-primary">
+  <q-card flat v-if="withInfo">
     <q-card-section>
       <q-markdown :src="info" class="q-mt-md text-bold" />
     </q-card-section>

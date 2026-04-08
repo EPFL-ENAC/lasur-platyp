@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
+    <div :class="`${labelClass}`">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="row justify-center q-mt-lg">
       <span
-        class="text-h4 q-mt-md q-mr-lg cursor-pointer"
-        :class="selected ? 'text-grey-6' : 'text-white'"
+        class="text-h4 q-mr-lg cursor-pointer"
+        :class="selected ? 'text-muted' : 'text-foreground'"
         @click="selected = false"
         >{{ leftLabel }}</span
       >
@@ -13,11 +13,12 @@
         v-model="selected"
         :color="props.color ?? 'primary'"
         :toggle-indeterminate="required !== true"
+        dense
         size="80px"
       />
       <span
-        class="text-h4 q-mt-md q-ml-lg cursor-pointer"
-        :class="selected ? 'text-white' : 'text-grey-6'"
+        class="text-h4 q-ml-lg cursor-pointer"
+        :class="selected ? 'text-foreground' : 'text-muted'"
         @click="selected = true"
         >{{ rightLabel }}</span
       >
@@ -29,6 +30,7 @@
 interface Props {
   modelValue: boolean | undefined
   label?: string
+  labelClass?: string
   leftLabel?: string
   rightLabel?: string
   hint?: string
@@ -43,5 +45,7 @@ const selected = computed({
   get: () => props.modelValue,
   set: (val: boolean) => emit('update:modelValue', val),
 })
+
+const labelClass = computed(() => props.labelClass || 'text-h4')
 
 </script>

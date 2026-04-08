@@ -152,7 +152,8 @@ export default {
     email: {
       title: 'Longitudinal following of participants (optional)',
       text: `By providing your email, you allow your organization to track the evolution of mobility practices and desires. By reusing mobilyse at a later time, it will be able to understand what worked or not in the measures for your mobility and thus support you more effectively.
-Important: your email is encrypted instantly and is never stored by mobilyse. We guarantee that no one has, in any case, access to it.`,
+
+**Important:** your email is encrypted instantly and is never stored by mobilyse. We guarantee that no one has, in any case, access to it.`,
       label: 'Your email address (optional)',
     },
     final: 'Your answers have been registered, thank you for your participation!',
@@ -282,4 +283,5 @@ Important: your email is encrypted instantly and is never stored by mobilyse. We
   previous: 'Previous',
   select_preferred_language: 'Select your preferred language',
   select_or_drag_item: 'Select or drag one of the options',
+  dark_mode: 'Dark mode',
 }

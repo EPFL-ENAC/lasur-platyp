@@ -3,7 +3,7 @@
     <div class="q-mb-lg">
       <div class="text-h5 text-bold q-mb-md">{{ t(`main_mode.${mainFm}`) }}</div>
     </div>
-    <q-card class="bg-primary">
+    <q-card flat>
       <q-card-section>
         <div class="text-h5">
           <SectionItem
@@ -17,9 +17,10 @@
           <SectionItem v-else :label="t(`main_mode.not_sustainable`)" />
         </div>
         <template v-for="(reco, idx) in recoDt" :key="idx">
-          <div class="rounded-borders q-mb-md bg-secondary text-white">
+          <q-separator />
+          <div>
             <div class="q-pa-md">
-              <q-item-label class="text-body1 text-green-6 text-bold">{{
+              <q-item-label class="text-body1 text-primary text-bold">{{
                 t(
                   isModeSustainable && isModeOptions
                     ? 'form.journey.label_option_idx'

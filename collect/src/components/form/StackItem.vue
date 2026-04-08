@@ -15,7 +15,7 @@
             draggable="true"
             @dragstart="onDragStart"
             v-ripple
-            class="rounded-borders q-mt-md q-mb-md bg-teal-1 text-grey-8"
+            class="rounded-borders q-mt-md q-mb-md bordered-secondary"
             style="cursor: move"
           >
             <q-item-section v-if="q.screen.gt.xs" avatar>
@@ -23,9 +23,9 @@
             </q-item-section>
             <q-item-section>
               <div class="row" :class="optionLabelClass">
-                <span class="on-right"
-                  >{{ `${withPosition ? idx + 1 + ' - ' : ''}` }}{{ getOption(sel)?.label }}</span
-                >
+                <span class="on-right">
+                  {{ `${withPosition ? idx + 1 + ' - ' : ''}` }}{{ getOption(sel)?.label }}
+                </span>
               </div>
               <q-item-label v-if="getOption(sel)?.hint" class="text-h6 on-right">
                 {{ getOption(sel)?.hint }}
@@ -47,7 +47,7 @@
             :title="option.label"
             color="secondary"
             size="xl"
-            class="on-right on-left q-mb-md"
+            class="on-right on-left q-mb-md bordered-secondary"
             @click="onAdd(option)"
           >
             <q-img
@@ -67,7 +67,7 @@
             :title="option.label"
             color="secondary"
             size="xl"
-            class="on-right on-left q-mb-md"
+            class="on-right on-left q-mb-md bordered-secondary"
           >
             <q-menu auto-close>
               <q-list>
@@ -254,13 +254,17 @@ function onDropInsert(e: DragEvent, index: number) {
 .drop-zone {
   border: dashed 4px #ccc;
 }
+
 .drag-enter {
   // border: dashed 4px $secondary !important;
 }
+
 .icon-primary {
   filter: invert(26%) sepia(77%) saturate(3932%) hue-rotate(140deg) brightness(102%) contrast(99%);
 }
+
 .icon-white {
   filter: invert(100%);
 }
+
 </style>

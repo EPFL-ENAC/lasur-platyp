@@ -160,7 +160,8 @@ export default {
     email: {
       title: 'Suivi longitudinal des participant·e·s (optionnel)',
       text: `En renseignant votre email, vous permettez à votre organisation de suivre l'évolution des pratiques et désirs de mobilité. Grâce a cela, en réutilisant mobilyse une prochaine fois, elle pourra comprendre ce qui a fonctionné ou non dans les aides pour votre mobilité et ainsi vous accompagner plus efficacement.
-Important : votre email est crypté instantanément et n'est jamais stocké par mobilyse. Nous garantissons que personne n'a, en aucun cas, accès à celui-ci.`,
+
+**Important :** votre email est crypté instantanément et n'est jamais stocké par mobilyse. Nous garantissons que personne n'a, en aucun cas, accès à celui-ci.`,
       label: 'Votre adresse email (optionnelle)',
     },
     final: 'Vos réponses ont été enregistrées, merci de votre participation !',
@@ -294,4 +295,5 @@ Important : votre email est crypté instantanément et n'est jamais stocké par 
   previous: 'Précédent',
   select_preferred_language: 'Sélectionner votre langue préférée',
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
+  dark_mode: 'Mode sombre',
 }
