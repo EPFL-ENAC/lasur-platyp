@@ -3,10 +3,10 @@
 #### Basic Information
 
 - **Name** (_required_): Campaign identifier
-- **Description**: Overview of the campaign purpose
+- **Slug**: Unique URL identifier (auto-generated, e.g., "acme-corp-spring-2024-mobility-vx7k")
 - **Start Date**: When the campaign begins
 - **End Date**: When the campaign closes
-- **Slug**: Unique URL identifier (auto-generated, e.g., "acme-corp-spring-2024-mobility-vx7k")
+- **Number of employees**: Allows you to adjust the tracking of questionnaire response rates in the Dashboard
 
 #### Contact Information
 
@@ -17,6 +17,19 @@ Campaigns can override organisation-level contact information:
 - **Information URL**: Campaign-specific information link
 
 If these fields are left empty, the campaign will use the organisation's contact information.
+
+
+#### Campaign-Specific Measures
+
+If measures to support staff mobility are already in place at the time of the campaign, you can enter details here so that the staff concerned can access this information:
+
+1. Toggle "With employer measures specific to this campaign"
+2. Select measures specific to this campaign
+3. This is useful for:
+   - Pilot programs testing new initiatives
+   - Seasonal measures
+   - Location-specific measures
+   - Limited-time benefits
 
 #### Workplaces
 
@@ -46,15 +59,3 @@ Campaigns must define how workplace locations are handled:
 - Upload a CSV file to add multiple workplaces at once
 - Required CSV columns: name, address, lat, lon
 - Use the "Upload CSV" button in the workplaces tab
-
-#### Campaign-Specific Measures
-
-By default, campaigns inherit the employer measures defined at the organisation level. However, you can enable campaign-specific measures:
-
-1. Toggle "With employer measures specific to this campaign"
-2. Select measures specific to this campaign
-3. This is useful for:
-   - Pilot programs testing new initiatives
-   - Seasonal measures
-   - Location-specific measures
-   - Limited-time benefits
