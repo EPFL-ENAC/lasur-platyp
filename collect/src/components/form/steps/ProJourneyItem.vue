@@ -35,17 +35,19 @@
     <div v-if="canBeCompanyVehicle">
       <ToggleItem
         :label="t('form.journey_pro.is_company_vehicle.label')"
+        label-class="text-h5"
         :left-label="t('form.journey_pro.is_company_vehicle.option.private_vehicle')"
         :right-label="t('form.journey_pro.is_company_vehicle.option.company_vehicle')"
         v-model="journey.is_company_vehicle"
         required
-        class="q-mb-lg"
+        class="q-mt-xl q-mb-xl"
         color="accent"
       />
     </div>
     <div v-if="journey.mode">
       <ToggleItem
         :label="t('form.journey_pro.has_to_carry_heavy_equipment')"
+        label-class="text-h5"
         :left-label="t('form.no')"
         :right-label="t('form.yes')"
         v-model="hasHeavyEquipment"
@@ -62,7 +64,7 @@
       :step="1"
       :step2="10"
       label-class="text-subtitle1 text-center"
-      class="bg-primary rounded-borders q-pa-md"
+      class="q-pa-md"
     />
   </div>
 </template>
