@@ -60,3 +60,10 @@ Les campagnes doivent définir la gestion des lieux de travail :
 - Importez un fichier CSV pour ajouter plusieurs lieux de travail en une fois
 - Colonnes CSV requises : name, address, lat, lon
 - Utilisez le bouton "Importer CSV" dans l'onglet des lieux de travail
+
+#### Récompenser les participant·e·s au questionnaire
+
+Afin d'augmenter le taux de réponse des participant·e·s au questionnaire, nous pouvons conseiller d'ajouter une récompense (tirage au sort ou récompense immédiate) pour les personnes de votre organisation qui auront pris le temps de répondre. Pour cela, nous donnons la possibilité aux participant·e·s de prouver qu'ils·elles ont bien rempli ce questionnaire, en téléchargeant un PDF unique à la fin de celui-ci. 
+
+Si vous êtes intéressé par cette option, cochez la case correspondante en bas de la création / édition de la campagne et complétez le texte qui s'affichera au sein du PDF. Vous pouvez par exemple les remercier et leur indiquer à qui partager ce document afin de participer au programme de récompenses que vous aurez choisi. 
+Notre expérience montre que même la mise en place d'une récompense peu coûteuse et hypothétique (à travers un tirage au sort par exemple) suffit à augmenter significativement le taux de participations, et favorise ainsi la précision des résultats et la justification de la stratégie mobilité de l'organisation.
