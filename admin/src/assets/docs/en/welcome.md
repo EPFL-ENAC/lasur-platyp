@@ -1,10 +1,10 @@
 ### A free tool to support you in your mobility strategy
 
-The aim of Mobilyse is to build an easy-to-use tool that enables any organisation to carry out a mobility analysis with a view to establishing or revising their mobility plan. The analysis focuses on both the mobility practices of collaborators and their desire for mobility, while taking into account personal and professional constraints.
+Mobilyse aims to help all organisations — regardless of their size or sector — carry out a comprehensive assessment of the mobility habits of their employees. The tool describes current mobility practices, the personal and professional constraints that may influence daily travel, as well as the potential and willingness for change.
 
-It is a way for organisations to target the most relevant assistance to implement for their collaborators and to periodically assess the alignment of this assistance with their actual needs.
+With this information, organisations can identify the most relevant mobility support measures to implement and monitor, over time, how well these measures remain aligned with the needs of their employees. They may analyse the results internally or share them with a third party with the appropriate mobility‑management expertise. Mobilyse can therefore complement existing mobility plans or help initiate a new one.
 
-The tool is easy to use and has a low entry cost (completely free), making it particularly suitable for SMEs, although it can also complement mobility plans already in place.
+The tool stands out for its simplicity, completely free access and personal data protection, making it particularly well‑suited for SMEs.
 
 **As an organisation, why launch a campaign?**
 
