@@ -87,7 +87,9 @@ export default {
       defaultContactName: 'NOM_DE_CONTACT',
       template: `Chères collaboratrices, chers collaborateurs,
 
-Mobilyse est un outil proposé par la Fondation Modus et l'EPFL pour aider les organisations à adapter les aides à la mobilité proposées aux collaboratrices et collaborateurs. Nous utilisons aujourd'hui cet outil pour comprendre comment vous accompagner au mieux dans votre mobilité quotidienne, que ce soit vos déplacements domicile-travail ou vos déplacements professionnels (dans le cadre de vos fonctions). 🚲🚃🚶🚈 Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10 minutes maximum et l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
+Mobilyse est un outil proposé par la Fondation Modus et l'EPFL pour aider les organisations à adapter les aides à la mobilité proposées aux collaboratrices et collaborateurs. Nous utilisons aujourd'hui cet outil pour comprendre comment vous accompagner au mieux dans votre mobilité quotidienne, que ce soit vos déplacements domicile-travail ou vos déplacements professionnels (dans le cadre de vos fonctions). 🚲🚃🚶🚈
+
+Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10 minutes maximum et l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
 
 [{surveyLink}]({surveyLink})
 
@@ -294,8 +296,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
-        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s. Leur usage des modes de transport, leurs équipements, leurs contraintes et leur répartition géographique.
-        
+        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements, leurs contraintes et .
+
 Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
 - sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
@@ -350,7 +352,7 @@ Certains impacts sont aussi calculés :
       },
     },
     reco_dt2: {
-      title: 'Recommandations',
+      title: 'Répartition modale potentielle',
       labels: {
         covoit: 'Covoiturage',
         elec: 'Voiture électrique',
@@ -383,7 +385,7 @@ Certains impacts sont aussi calculés :
       },
     },
     freq_mod: {
-      title: 'Modes de transport',
+      title: 'Répartition modale',
       labels: {
         walking: 'Marche',
         bike: 'Vélo',
@@ -406,7 +408,7 @@ Certains impacts sont aussi calculés :
       },
     },
     freq_mod_pro: {
-      title: 'Modes de transport (professionnel)',
+      title: 'Répartition modale (professionnel)',
       xaxis: 'Trajets par année',
       labels: {
         local: 'Local',
@@ -427,7 +429,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_freq_mod: {
-      title: 'Émissions CO₂ par mode de transport',
+      title: 'Émissions de CO₂ par mode de transport',
       yaxis: 'Émissions CO₂ par trajet (kgCO₂eq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -452,7 +454,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_reco_mod: {
-      title: 'Potentiel de réduction sur les émissions pendulaires',
+      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
       yaxis: 'Émissions évitées (kgCO₂eq)',
       xaxis: 'Mode recommandé',
       labels: {
@@ -515,7 +517,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_reco_share: {
-      title: "Répartition de l'évolution",
+      title: "Répartition des gains d'émissions par mode de transport",
       labels: {
         walking: 'Marche',
         bike: 'Vélo',
@@ -537,13 +539,13 @@ Certains impacts sont aussi calculés :
         postSaving: 'Total après recommandations',
       },
       texts: {
-        default: 'Ici est affichée la part de réduction due à chaque mode recommandé.',
+        default: 'Ce graphe affiche la part de réduction d’émissions de CO2éq correspondant à chaque mode recommandé, dans le cas où les collaborateur·trice·s suivraient les recommandations.',
         specific:
           "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
       },
     },
     emissions_reductions_share: {
-      title: "Répartition de l'évolution",
+      title: "Répartition des gains d'émissions par mode de transport",
       series: 'Réduction potentielle',
       labels: {
         walking: 'Marche',
@@ -566,13 +568,13 @@ Certains impacts sont aussi calculés :
         postSaving: 'Total après recommandations',
       },
       texts: {
-        default: 'Ici est affichée la part de réduction due à chaque mode recommandé.',
+        default: 'Ce graphe affiche la part de réduction d’émissions de CO2éq correspondant à chaque mode recommandé, dans le cas où les collaborateur·trice·s suivraient les recommandations.',
         specific:
           "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
       },
     },
     emissions_freq_mod_pro: {
-      title: 'Émissions CO₂ par mode de transport (professionnel)',
+      title: 'Émissions de CO₂ par mode de transport (professionnel)',
       yaxis: 'Émissions CO₂ par trajet (kgCO₂eq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -593,11 +595,11 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         specific:
-          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kg CO₂, contre moins de {remainingEmissions}kg / trajet pour les autres.',
+          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂eq/trajet, contre moins de {remainingEmissions}kgCO₂eq/trajet pour les autres.',
       },
     },
     emissions_reco_mod_pro: {
-      title: 'Potentiel de réduction sur les émissions professionnelles',
+      title: 'Potentiel de réduction sur les émissions liées aux déplacements professionnels',
       yaxis: 'Émissions évitées (kgCO₂eq)',
       xaxis: 'Mode recommandé',
       labels: {
@@ -628,7 +630,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_reductions_mod_pro: {
-      title: 'Potentiel de réduction sur les émissions professionnelles',
+      title: 'Potentiel de réduction sur les émissions liées aux déplacements professionnels',
       yaxis: 'Émissions évitées (kgCO₂eq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -660,7 +662,7 @@ Certains impacts sont aussi calculés :
       },
     },
     mod_reco: {
-      title: 'Recommandations de changement modal',
+      title: 'Recommandations de report modal',
       labels: {
         walking: 'Marche',
         bike: 'Vélo',
@@ -688,7 +690,7 @@ Certains impacts sont aussi calculés :
         default:
           'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
         specific:
-          'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.',
+          'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les répondants.',
       },
     },
     mod_reco_pro: {
@@ -728,11 +730,11 @@ Certains impacts sont aussi calculés :
       },
     },
     energy_journey: {
-      title_current: "Diagramme de potentiel d'activité physique par mode utilisé actuellement",
-      title_reco: "Diagramme de potentiel d'activité physique en suivant les recommandations",
-      title_share: "Modes ayant le plus de potentiel d'activité physique à gagner",
-      yaxis: 'Énergie dépensée (kcal)',
-      xaxis: 'Participant·e·s (trié·e·s par énergie dépensée)',
+      title_current: "Dépenses énergétiques quotidiennes moyennes lors des déplacements",
+      title_reco: "Dépenses énergétiques quotidiennes moyennes potentielles lors des déplacements",
+      title_share: "Modes de transport avec le potentiel de gain le plus élevé en matière de dépenses énergétiques ",
+      yaxis: 'Énergie dépensée (kcal/jour/pers)',
+      xaxis: 'Ensemble des participant·e·s (trié·e·s par énergie dépensée)',
       whoMin: 'Activité physique minimum recommandée par l’OMS',
       participantsAverage: 'Activité physique moyenne des participants',
       labels: {
@@ -770,7 +772,7 @@ Certains impacts sont aussi calculés :
       },
     },
     behavior_change_levers: {
-      title: 'Mesures aidant à adopter les recommandations',
+      title: 'Mesures souhaitées pour adopter les recommandations de mobilité durable formulées',
       labels: {
         finance: 'Aides financières',
         flexibility: 'Flexibilité',
@@ -870,7 +872,7 @@ Certains impacts sont aussi calculés :
 
         covoit: 'Covoiturage',
         elec: 'Voiture électrique',
-        mob_subs: 'Abo. de mobilité',
+        mob_subs: "Abo. d'autopartage",
         train_subs: 'Abo. de train',
         upt_subs: 'Abo. de transports publics',
         inter: 'Intermodalité',
