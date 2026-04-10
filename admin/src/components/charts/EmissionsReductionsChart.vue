@@ -76,11 +76,20 @@ const textLabels = computed(() => {
     cheeseburgers: formatNumber(
       Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 18.8), // kg to grams ?
     ),
-    smartphones: formatNumber(
-      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 80.2),
+    vacuum: formatNumber(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 73.43),
     ),
-    streaming_hours: formatNumber(
-      Math.round(((currentEmissions.value - newEmissions.value) * 1_000_000) / 50),
+    shirt: formatNumber(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 13.23466),
+    ),
+    laptop: formatNumber(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 192.62),
+    ),
+    email_sent: formatNumber(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 0.002462),
+    ),
+    visio_hour: formatNumber(
+      Math.round(((currentEmissions.value - newEmissions.value) * 1000) / 0.057063),
     ),
   }
 })

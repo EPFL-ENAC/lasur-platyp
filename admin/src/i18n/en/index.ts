@@ -468,7 +468,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod: {
@@ -500,7 +500,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reco_share: {
@@ -615,7 +615,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_pro: {
@@ -647,7 +647,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {

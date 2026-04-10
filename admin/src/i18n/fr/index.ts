@@ -296,7 +296,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
-        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements, leurs contraintes et .
+        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.
 
 Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
@@ -481,7 +481,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod: {
@@ -513,7 +513,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reco_share: {
@@ -626,7 +626,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_pro: {
@@ -658,7 +658,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {currentEmissions} à {newEmissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {smartphones} smartphones ou bien à {streaming_hours} heures de streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
