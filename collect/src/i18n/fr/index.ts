@@ -31,7 +31,7 @@ export default {
       '65': '65 ans et plus',
     },
     employment_rate: 'Quel est votre taux de travail ?',
-    remote_work_rate: 'Quel est votre taux de télétravail ?',
+    remote_work_rate: 'Quel est votre taux de télétravail, en % de votre taux de travail indiqué ci-dessus ?',
     company_vehicle: 'Avez-vous un véhicule de fonction ?',
     search_or_select_option: 'Rechercher ou sélectionner une option',
     yes: 'Oui',
@@ -45,12 +45,12 @@ export default {
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',
     travel_time: 'Combien de temps mettez-vous environ pour aller au travail ?',
     travel_time_minutes: 'minutes (aller)',
-    constraints: 'Avez vous des contraintes potentielles quant à votre mobilité quotidienne ?',
+    constraints: 'Rencontrez-vous d’éventuelles contraintes liées à vos déplacements quotidiens ?',
     constraints_option: {
-      dependent: 'Emmener des enfants ou des personnes dépendantes',
+      dependent: 'Accompagnement d’enfants ou de personnes dépendantes',
       heavy: 'Transport de matériel lourd ou encombrant',
-      night: 'Horaires spéciaux',
-      disabled: 'Carte de stationnement pour personne à mobilité réduite',
+      night: 'Horaires de travail spéciaux (p. ex. travail de nuit)',
+      disabled: 'Détention d’une carte officielle de stationnement pour personne à mobilité réduite',
       none: 'Aucune contrainte particulière',
     },
     equipments: 'De quels équipements de mobilité disposez-vous pour vos déplacements quotidiens ?',
@@ -60,9 +60,9 @@ export default {
       train_subs: 'Abonnement de train',
       moto: 'Moto / scooter / cyclomoteur',
       ebike: 'Vélo à assistance électrique',
-      mob_subs: 'Abonnement de mobilité partagée (mobility, etc.)',
+      mob_subs: 'Abonnement de mobilité partagée (Mobility, Donkey Republic, etc.)',
       car: 'Voiture (conducteur/passager)',
-      ev: 'Véhicule électrique',
+      ev: 'Voiture électrique',
     },
     freq_mod:
       'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',
@@ -159,9 +159,9 @@ export default {
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
     email: {
       title: 'Suivi longitudinal des participant·e·s (optionnel)',
-      text: `En renseignant votre email, vous permettez à votre organisation de suivre l'évolution des pratiques et désirs de mobilité. Grâce a cela, en réutilisant mobilyse une prochaine fois, elle pourra comprendre ce qui a fonctionné ou non dans les aides pour votre mobilité et ainsi vous accompagner plus efficacement.
+      text: `En renseignant votre adresse e-mail, vous permettez à votre organisation de suivre l’évolution des pratiques et des préférences en matière de mobilité au fil du temps. Lors d’une future utilisation de Mobilyse, cela contribuera à identifier les mesures de mobilité qui fonctionnent bien et celles qui peuvent être améliorées, afin que votre employeur puisse mieux soutenir vos besoins.
 
-**Important :** votre email est crypté instantanément et n'est jamais stocké par mobilyse. Nous garantissons que personne n'a, en aucun cas, accès à celui-ci.`,
+**Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par Mobilyse. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
       label: 'Votre adresse email (optionnelle)',
     },
     final: 'Vos réponses ont été enregistrées, merci de votre participation !',

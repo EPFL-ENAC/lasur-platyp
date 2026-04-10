@@ -31,27 +31,27 @@ export default {
       '65': '65 and over',
     },
     employment_rate: 'What is your employment rate?',
-    remote_work_rate: 'What is your remote work rate?',
+    remote_work_rate: 'What is your remote work rate, as a % of the work rate indicated in the previous question?',
     company_vehicle: 'Do you have a company vehicle?',
     search_or_select_option: 'Search or select an option',
     yes: 'Yes',
     no: 'No',
     workplace: 'Your usual place of work',
     workplace_option: {
-      other: 'Other workplace (to be specified)',
+      other: 'Other workplace (specify)',
     },
     origin: 'Where do you usually leave from to reach your workplace?',
     origin_hint:
-      'This confidential information will only be used to calculate your mobility options for your home-work journey.',
+      'This confidential information will only be used to calculate your mobility options for your home-work commute.',
     travel_time:
-      'What is your average travel time from home to work, with the mode of transport you use most often?',
+      'What is your average travel time from your home to your workplace?',
     travel_time_minutes: 'minutes (one way)',
-    constraints: 'What are your possible constraints related to daily mobility?',
+    constraints: 'Do you experience any potential constraints related to your daily mobility?',
     constraints_option: {
       dependent: 'Accompanying children or dependent persons',
-      heavy: 'Transporting heavy/bulky equipment',
-      night: 'Night work',
-      disabled: 'Parking card for people with reduced mobility',
+      heavy: 'Transporting heavy or bulky equipment',
+      night: 'Atypical working hours (e.g. night work)',
+      disabled: 'Holding an official parking permit for persons with reduced mobility',
       none: 'No particular constraints',
     },
     equipments: 'Which of the following equipments do you have access to for your daily commute?',
@@ -61,9 +61,9 @@ export default {
       train_subs: 'Train subscription',
       moto: 'Motorcycle/scooter/moped',
       ebike: 'Electric bicycle',
-      mob_subs: 'Shared mobility subscription (mobility, etc.)',
+      mob_subs: 'Shared mobility subscription (Mobility, Donkey Republic, etc.)',
       car: 'Car (driver/passenger)',
-      ev: 'Electric vehicle',
+      ev: 'Electric car',
     },
     freq_mod: 'How often do you use the following modes of transportation to get to work?',
     freq_mod_hint: 'Number of days in a usual week',
@@ -137,7 +137,7 @@ export default {
     change: 'About the recommended mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
-      'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-work journeys?',
+      'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-to-work commute?',
     change_levers:
       'What would help you to use this mode of transport (even if you already partially use it)?',
     change_levers_option: {
@@ -151,9 +151,9 @@ export default {
     change_other_levers_specify: 'Please specify what other measures would help you',
     email: {
       title: 'Longitudinal following of participants (optional)',
-      text: `By providing your email, you allow your organization to track the evolution of mobility practices and desires. By reusing mobilyse at a later time, it will be able to understand what worked or not in the measures for your mobility and thus support you more effectively.
+      text: `By providing your email address, you enable your organisation to monitor how mobility practices and preferences evolve over time. When Mobilyse is used again in the future, this helps identify which mobility measures are effective and which could be improved, allowing your employer to better support your mobility needs.
 
-**Important:** your email is encrypted instantly and is never stored by mobilyse. We guarantee that no one has, in any case, access to it.`,
+**Important:** your email address is instantly encrypted and never stored by Mobilyse. Your employer cannot, under any circumstances, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
       label: 'Your email address (optional)',
     },
     final: 'Your answers have been registered, thank you for your participation!',
