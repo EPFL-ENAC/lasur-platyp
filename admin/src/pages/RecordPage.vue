@@ -25,14 +25,14 @@
             expand-icon="expand_more"
             header-class="bg-super-muted text-foreground"
           >
-          <div class="row q-col-gutter-md q-pa-md">
-            <div class="col-12 col-md-6">
-              <fields-list :items="dataItems1" :dbobject="record?.data" />
+            <div class="row q-col-gutter-md q-pa-md">
+              <div class="col-12 col-md-6">
+                <fields-list :items="dataItems1" :dbobject="record?.data" />
+              </div>
+              <div class="col-12 col-md-6">
+                <fields-list :items="dataItems2" :dbobject="record?.data" />
+              </div>
             </div>
-            <div class="col-12 col-md-6">
-              <fields-list :items="dataItems2" :dbobject="record?.data" />
-            </div>
-          </div>
           </q-expansion-item>
         </q-list>
 
@@ -43,28 +43,25 @@
             expand-icon="expand_more"
             header-class="bg-super-muted text-foreground"
           >
-          <div class="row q-col-gutter-md q-pa-md">
-            <div class="col-12 col-md-6">
-              <div class="text-bold q-mb-sm">{{ t('record.typo_reco') }}</div>
-              <fields-list :items="typoRecoItems" :dbobject="record?.typo?.reco" />
-              <div class="text-bold q-mb-sm q-mt-lg">{{ t('record.typo_reco_actions') }}</div>
-              <fields-list
-                :items="typoRecoActionsItems"
-                :dbobject="record?.typo?.reco_actions"
-              />
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="text-bold q-mb-sm">{{ t('record.typo_reco_pro') }}</div>
-              <fields-list :items="typoRecoProItems" :dbobject="record?.typo?.reco_pro" />
-              <div class="text-bold q-mb-sm q-mt-lg">
-                {{ t('record.typo_reco_pro_actions') }}
+            <div class="row q-col-gutter-md q-pa-md">
+              <div class="col-12 col-md-6">
+                <div class="text-bold q-mb-sm">{{ t('record.typo_reco') }}</div>
+                <fields-list :items="typoRecoItems" :dbobject="record?.typo?.reco" />
+                <div class="text-bold q-mb-sm q-mt-lg">{{ t('record.typo_reco_actions') }}</div>
+                <fields-list :items="typoRecoActionsItems" :dbobject="record?.typo?.reco_actions" />
               </div>
-              <fields-list
-                :items="typoRecoProActionsItems"
-                :dbobject="record?.typo?.reco_actions"
-              />
+              <div class="col-12 col-md-6">
+                <div class="text-bold q-mb-sm">{{ t('record.typo_reco_pro') }}</div>
+                <fields-list :items="typoRecoProItems" :dbobject="record?.typo?.reco_pro" />
+                <div class="text-bold q-mb-sm q-mt-lg">
+                  {{ t('record.typo_reco_pro_actions') }}
+                </div>
+                <fields-list
+                  :items="typoRecoProActionsItems"
+                  :dbobject="record?.typo?.reco_actions"
+                />
+              </div>
             </div>
-          </div>
           </q-expansion-item>
         </q-list>
       </div>

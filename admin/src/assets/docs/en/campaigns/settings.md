@@ -18,7 +18,6 @@ Campaigns can override organisation-level contact information:
 
 If these fields are left empty, the campaign will use the organisation's contact information.
 
-
 #### Campaign-Specific Measures
 
 If measures to support staff mobility are already in place at the time of the campaign, you can enter details here so that the staff concerned can access this information:
@@ -62,7 +61,7 @@ Campaigns must define how workplace locations are handled:
 
 #### Rewarding survey participants
 
-To increase the response rate from survey participants, we recommend offering a reward (a prize draw or an instant reward) to those within your organisation who take the time to complete the survey. To do this, we give participants the option to prove they have completed the questionnaire by downloading a unique PDF at the end. 
+To increase the response rate from survey participants, we recommend offering a reward (a prize draw or an instant reward) to those within your organisation who take the time to complete the survey. To do this, we give participants the option to prove they have completed the questionnaire by downloading a unique PDF at the end.
 
-If you are interested in this option, tick the relevant box at the bottom of the campaign creation/editing page and fill in the text that will appear in the PDF. For example, you could thank them and tell them who to share this document with in order to take part in the rewards programme you have chosen. 
+If you are interested in this option, tick the relevant box at the bottom of the campaign creation/editing page and fill in the text that will appear in the PDF. For example, you could thank them and tell them who to share this document with in order to take part in the rewards programme you have chosen.
 Our experience shows that even offering a low-cost, hypothetical reward (such as a prize draw) is enough to significantly increase participation rates, thereby improving the accuracy of the results and supporting the organisation’s mobility strategy.

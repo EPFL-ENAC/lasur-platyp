@@ -7,6 +7,7 @@
 The Dashboard brings together all the **aggregated** results from one or more campaigns, which are compared with reference data for Geneva, such as the [Micro-Census on Mobility and Transport (MRMT)](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf) . This Dashboard is organised into three sections:
 
 **1. Mobility assessment** shows the current state of participants’ mobility. It includes:
+
 - Participants’ mobility equipment
 - Mobility constraints
 - The geographical distribution of participants
@@ -17,10 +18,11 @@ The Dashboard brings together all the **aggregated** results from one or more ca
 
 **2. Mobility potential**, which represents the hypothetical situation in which each participant follows the personalised recommendations made to them.
 The impact of these behavioural changes is therefore visible in:
+
 - Modal shares
 - CO₂ emissions from commuting or business travel
 - Daily physical activity resulting from commuting
-Some graphs show, in particular, which modes of transport are most promising for achieving the estimated environmental or physical activity benefits.
+  Some graphs show, in particular, which modes of transport are most promising for achieving the estimated environmental or physical activity benefits.
 
 **3. Participants’ motivation to change their behaviour**
 This section shows the extent to which participants wish to use the modes of transport recommended to them.
@@ -33,4 +35,3 @@ A button allows you to download the information in the Dashboard as a PDF. This 
 #### Download the disaggregated data
 
 To enable further analysis of participants’ responses, we offer the option to download the data line by line in _.csv_ format (which remains anonymous; see [privacy notice](https://modus-ge.ch/mobilyse-notice-protection-des-donnees)) . However, the processing of this data must be carried out in accordance with current regulations, outside the scope of Mobilyse.
-

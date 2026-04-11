@@ -8,7 +8,6 @@
 - **Date de fin** : Date de clôture de la campagne
 - **Nombre de collaborateur·trice·s** : Permet d'ajuster le suivi, dans le Tableau de bord, du taux de participation au questionnaire
 
-
 #### Informations de contact
 
 Les campagnes peuvent remplacer les informations de contact définies au niveau de l'organisation :
@@ -18,7 +17,6 @@ Les campagnes peuvent remplacer les informations de contact définies au niveau 
 - **Lien d'information** : Lien d'information spécifique à la campagne
 
 Si ces champs sont laissés vides, la campagne utilisera les informations de contact de l'organisation.
-
 
 #### Mesures spécifiques à la campagne
 
@@ -63,7 +61,7 @@ Les campagnes doivent définir la gestion des lieux de travail :
 
 #### Récompenser les participant·e·s au questionnaire
 
-Afin d'augmenter le taux de réponse des participant·e·s au questionnaire, nous pouvons conseiller d'ajouter une récompense (tirage au sort ou récompense immédiate) pour les personnes de votre organisation qui auront pris le temps de répondre. Pour cela, nous donnons la possibilité aux participant·e·s de prouver qu'ils·elles ont bien rempli ce questionnaire, en téléchargeant un PDF unique à la fin de celui-ci. 
+Afin d'augmenter le taux de réponse des participant·e·s au questionnaire, nous pouvons conseiller d'ajouter une récompense (tirage au sort ou récompense immédiate) pour les personnes de votre organisation qui auront pris le temps de répondre. Pour cela, nous donnons la possibilité aux participant·e·s de prouver qu'ils·elles ont bien rempli ce questionnaire, en téléchargeant un PDF unique à la fin de celui-ci.
 
-Si vous êtes intéressé par cette option, cochez la case correspondante en bas de la création / édition de la campagne et complétez le texte qui s'affichera au sein du PDF. Vous pouvez par exemple les remercier et leur indiquer à qui partager ce document afin de participer au programme de récompenses que vous aurez choisi. 
+Si vous êtes intéressé par cette option, cochez la case correspondante en bas de la création / édition de la campagne et complétez le texte qui s'affichera au sein du PDF. Vous pouvez par exemple les remercier et leur indiquer à qui partager ce document afin de participer au programme de récompenses que vous aurez choisi.
 Notre expérience montre que même la mise en place d'une récompense peu coûteuse et hypothétique (à travers un tirage au sort par exemple) suffit à augmenter significativement le taux de participations, et favorise ainsi la précision des résultats et la justification de la stratégie mobilité de l'organisation.
