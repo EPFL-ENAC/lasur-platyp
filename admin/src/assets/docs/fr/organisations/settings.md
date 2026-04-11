@@ -2,7 +2,7 @@
 
 ### Administrateurs
 
-Les administrateurs sont des utilisateur·ices·s ayant un accès complet pour gérer les campagnes de mobilité, les participant·e·s et les données de l'organisation.
+Les administrateurs sont des utilisateur·trice·s ayant un accès complet pour gérer les campagnes de mobilité, les participant·e·s et les données de l'organisation.
 
 **Comment ajouter des administrateurs :**
 
@@ -19,7 +19,7 @@ Les administrateurs sont des utilisateur·ices·s ayant un accès complet pour g
 
 ### Informations de contact
 
-Les informations de contact permettent aux participant·e·s et utilisateur·ices·s du système de savoir à qui s'adresser pour toute question liée à la mobilité.
+Les informations de contact permettent aux participant·e·s et utilisateur·trice·s du système de savoir à qui s'adresser pour toute question liée à la mobilité.
 
 **Nom du contact :**
 

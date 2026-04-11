@@ -110,6 +110,27 @@ Thank you for your valuable contribution! If you have any questions, please cont
   docs: {
     title: 'Documentation',
     hint: 'Find here all the documentation to help you use Mobilyse administration interface.',
+    general: {
+      title: 'General',
+      privacy: {
+        title: 'Privacy and data protection',
+        caption: 'Learn about how Mobilyse handles data and ensures the privacy of participants',
+      },
+      terms: {
+        title: 'Terms of use',
+        caption:
+          'Learn about the terms of use for Mobilyse and your responsibilities as an administrator',
+      },
+      what_next: {
+        title: 'What to do next?',
+        caption:
+          'Learn about the next steps to take after setting up your organisation and campaign',
+      },
+      need_more_help: {
+        title: 'Need more help?',
+        caption: 'Contact us for any questions or support regarding campaign management',
+      },
+    },
     organisations: {
       title: 'Organisations',
       create: {
@@ -135,6 +156,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems',
+      },
+      mobility_advisor: {
+        title: 'How to use the mobility advisor',
+        caption: 'Learn how to use the mobility advisor to support your organisation',
       },
     },
     campaigns: {
@@ -169,22 +194,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
         title: 'Best practices for campaign management',
         caption: 'Tips and recommendations to make the most of the campaign features in Mobilyse',
       },
-    },
-    participants: {
-      title: 'Participants',
-      description:
-        "Participants are employees or members of an organisation who complete mobility surveys within a campaign. Each campaign maintains its own list of participants identified by a unique identifier that references the organisation's external participant registry.",
-      settings: {
-        title: 'How to manage participants',
-        caption: 'Learn how to add, edit, and remove participants in your campaigns',
-      },
-      common_issues: {
-        title: 'Common issues and troubleshooting',
-        caption: 'Solutions to frequently encountered problems related to participant management',
-      },
-      best_practices: {
-        title: 'Best practices for participant management',
-        caption: 'Tips and recommendations to effectively manage participants in your campaigns',
+      dashboard: {
+        title: 'How to use the campaign dashboard?',
+        caption:
+          'Learn how to use the campaign dashboard to monitor the progress of your campaign and access key statistics',
       },
     },
   },

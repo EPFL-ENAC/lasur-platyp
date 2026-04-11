@@ -113,6 +113,27 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
   docs: {
     title: 'Documentation',
     hint: 'Trouvez des guides et des ressources pour vous aider à utiliser mobilyse.',
+    general: {
+      title: 'Général',
+      privacy: {
+        title: 'Politique de confidentialité',
+        caption: 'En savoir plus sur la politique de confidentialité de mobilyse',
+      },
+      terms: {
+        title: "Conditions d'utilisation",
+        caption: "En savoir plus sur les conditions d'utilisation de mobilyse",
+      },
+      what_next: {
+        title: 'Et après ?',
+        caption:
+          'Découvrez les étapes suivantes après la création de votre organisation et de votre campagne',
+      },
+      need_more_help: {
+        title: 'Besoin de plus d’aide ?',
+        caption:
+          "Contactez-nous pour toute question ou besoin d'accompagnement concernant la gestion de vos campagnes de mobilité",
+      },
+    },
     organisations: {
       title: 'Organisations',
       create: {
@@ -140,6 +161,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       best_practices: {
         title: "Bonnes pratiques pour la création d'organisation",
         caption: 'Conseils pour structurer votre organisation et vos campagnes de manière efficace',
+      },
+      mobility_advisor: {
+        title: 'Rôle conseiller·ère mobilité',
+        caption:
+          'Apprenez à utiliser un·e conseiller·ère mobilité pour accompagner votre organisation',
       },
     },
     campaigns: {
@@ -177,24 +203,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         caption:
           'Conseils et recommandations pour tirer le meilleur parti des fonctionnalités de campagne dans Mobilyse',
       },
-    },
-    participants: {
-      title: 'Participants',
-      description:
-        "Les participants sont des collaborateur·trice·s ou des membres d'une organisation qui répondent aux enquêtes de mobilité dans le cadre d'une campagne. Chaque campagne maintient sa propre liste de participants identifiés par un identifiant unique qui fait référence au registre externe des participants de l'organisation.",
-      settings: {
-        title: 'Comment gérer les participants',
-        caption: 'Apprenez à ajouter, modifier et supprimer des participants dans une campagne',
-      },
-      common_issues: {
-        title: 'Problèmes courants',
+      dashboard: {
+        title: 'Comment utiliser le dashboard de campagne ?',
         caption:
-          'Solutions aux problèmes fréquemment rencontrés lors de la gestion des participants',
-      },
-      best_practices: {
-        title: 'Bonnes pratiques pour la gestion des participants',
-        caption:
-          'Conseils et recommandations pour gérer efficacement les participants dans vos campagnes de mobilité',
+          'Apprenez à utiliser le dashboard de campagne pour suivre les résultats et les statistiques de votre campagne',
       },
     },
   },

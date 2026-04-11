@@ -8,5 +8,5 @@ Vous pouvez ajouter un·e conseiller·ère mobilité lors de la création ou l'�
 
 ### Droits d'un·e conseiller·ère mobilité
 
-Un·e conseiller·ère mobilité peut accéder aux résultats agrégés des campagnes de l'entreprise (l'ensemble du Tableau de bord) sans pouvoir télécharger les données désagrégées des campagnes, ce qui est reservé aux administrateur·rice·s de l'organisation.
+Un·e conseiller·ère mobilité peut accéder aux résultats agrégés des campagnes de l'entreprise (l'ensemble du Tableau de bord) sans pouvoir télécharger les données désagrégées des campagnes, ce qui est réservé aux administrateur·rice·s de l'organisation.
 Il lui est également impossible de créer une campagne, ainsi que de modifier directement une campagne ou l'organisation.

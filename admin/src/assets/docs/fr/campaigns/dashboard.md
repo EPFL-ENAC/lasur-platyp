@@ -1,6 +1,6 @@
 ### Visualiser les résultats d'une campagne
 
-**Important:** Les résultats présentés ne concernent que les participant·e·s ayant répondu au questionaire. Si vous sohaitez utiliser ces chiffres dans le cadre d'un bilan carbone par exemple, vous pouvez le faire à condition d'extrapoler les résultats affichés dans le Tableau de bord pour qu'ils tiennent compte de l'ensemble des collaborateur·trice·s.
+**Important:** Les résultats présentés ne concernent que les participant·e·s ayant répondu au questionnaire. Si vous souhaitez utiliser ces chiffres dans le cadre d'un bilan carbone par exemple, vous pouvez le faire à condition d'extrapoler les résultats affichés dans le Tableau de bord pour qu'ils tiennent compte de l'ensemble des collaborateur·trice·s.
 
 #### Structure du Tableau de bord
 

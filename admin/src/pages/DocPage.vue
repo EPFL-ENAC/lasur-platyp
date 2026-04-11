@@ -39,6 +39,14 @@
 <script setup lang="ts">
 import WelcomeEn from 'src/assets/docs/en/welcome.md'
 import WelcomeFr from 'src/assets/docs/fr/welcome.md'
+import PrivacyEn from 'src/assets/docs/en/general/privacy.md'
+import PrivacyFr from 'src/assets/docs/fr/general/privacy.md'
+import TermsEn from 'src/assets/docs/en/general/terms.md'
+import TermsFr from 'src/assets/docs/fr/general/terms.md'
+import WhatNextEn from 'src/assets/docs/en/general/what_next.md'
+import WhatNextFr from 'src/assets/docs/fr/general/what_next.md'
+import NeedMoreHelpEn from 'src/assets/docs/en/general/need_more_help.md'
+import NeedMoreHelpFr from 'src/assets/docs/fr/general/need_more_help.md'
 import CreateEn from 'src/assets/docs/en/organisations/create.md'
 import CreateFr from 'src/assets/docs/fr/organisations/create.md'
 import OrgSettingsEn from 'src/assets/docs/en/organisations/settings.md'
@@ -51,6 +59,8 @@ import BestPracticesEn from 'src/assets/docs/en/organisations/best_practices.md'
 import BestPracticesFr from 'src/assets/docs/fr/organisations/best_practices.md'
 import CommonIssuesEn from 'src/assets/docs/en/organisations/common_issues.md'
 import CommonIssuesFr from 'src/assets/docs/fr/organisations/common_issues.md'
+import MobilityAdvisorEn from 'src/assets/docs/en/organisations/mobility_advisor.md'
+import MobilityAdvisorFr from 'src/assets/docs/fr/organisations/mobility_advisor.md'
 import CampaignSettingsEn from 'src/assets/docs/en/campaigns/settings.md'
 import CampaignSettingsFr from 'src/assets/docs/fr/campaigns/settings.md'
 import CampaignCommonIssuesEn from 'src/assets/docs/en/campaigns/common_issues.md'
@@ -65,12 +75,8 @@ import CampaignAnalyseResultsEn from 'src/assets/docs/en/campaigns/analyse_resul
 import CampaignAnalyseResultsFr from 'src/assets/docs/fr/campaigns/analyse_results.md'
 import CampaignRewardEn from 'src/assets/docs/en/campaigns/reward.md'
 import CampaignRewardFr from 'src/assets/docs/fr/campaigns/reward.md'
-import ParticipantsSettingsEn from 'src/assets/docs/en/participants/settings.md'
-import ParticipantsSettingsFr from 'src/assets/docs/fr/participants/settings.md'
-import ParticipantsCommonIssuesEn from 'src/assets/docs/en/participants/common_issues.md'
-import ParticipantsCommonIssuesFr from 'src/assets/docs/fr/participants/common_issues.md'
-import ParticipantsBestPracticesEn from 'src/assets/docs/en/participants/best_practices.md'
-import ParticipantsBestPracticesFr from 'src/assets/docs/fr/participants/best_practices.md'
+import CampaignDashboardEn from 'src/assets/docs/en/campaigns/dashboard.md'
+import CampaignDashboardFr from 'src/assets/docs/fr/campaigns/dashboard.md'
 
 const { locale, t } = useI18n()
 
@@ -87,6 +93,31 @@ interface DocSection {
 }
 
 const sections = computed<DocSection[]>(() => [
+  {
+    title: t('docs.general.title'),
+    entries: [
+      {
+        title: t('docs.general.privacy.title'),
+        caption: t('docs.general.privacy.caption'),
+        markdown: locale.value === 'fr' ? PrivacyFr : PrivacyEn,
+      },
+      {
+        title: t('docs.general.terms.title'),
+        caption: t('docs.general.terms.caption'),
+        markdown: locale.value === 'fr' ? TermsFr : TermsEn,
+      },
+      {
+        title: t('docs.general.what_next.title'),
+        caption: t('docs.general.what_next.caption'),
+        markdown: locale.value === 'fr' ? WhatNextFr : WhatNextEn,
+      },
+      {
+        title: t('docs.general.need_more_help.title'),
+        caption: t('docs.general.need_more_help.caption'),
+        markdown: locale.value === 'fr' ? NeedMoreHelpFr : NeedMoreHelpEn,
+      },
+    ],
+  },
   {
     title: t('docs.organisations.title'),
     entries: [
@@ -120,6 +151,11 @@ const sections = computed<DocSection[]>(() => [
         caption: t('docs.organisations.best_practices.caption'),
         markdown: locale.value === 'fr' ? BestPracticesFr : BestPracticesEn,
       },
+      {
+        title: t('docs.organisations.mobility_advisor.title'),
+        caption: t('docs.organisations.mobility_advisor.caption'),
+        markdown: locale.value === 'fr' ? MobilityAdvisorFr : MobilityAdvisorEn,
+      },
     ],
   },
   {
@@ -147,6 +183,11 @@ const sections = computed<DocSection[]>(() => [
         markdown: locale.value === 'fr' ? CampaignAnalyseResultsFr : CampaignAnalyseResultsEn,
       },
       {
+        title: t('docs.campaigns.dashboard.title'),
+        caption: t('docs.campaigns.dashboard.caption'),
+        markdown: locale.value === 'fr' ? CampaignDashboardFr : CampaignDashboardEn,
+      },
+      {
         title: t('docs.campaigns.reward.title'),
         caption: t('docs.campaigns.reward.caption'),
         markdown: locale.value === 'fr' ? CampaignRewardFr : CampaignRewardEn,
@@ -160,27 +201,6 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.campaigns.best_practices.title'),
         caption: t('docs.campaigns.best_practices.caption'),
         markdown: locale.value === 'fr' ? CampaignBestPracticesFr : CampaignBestPracticesEn,
-      },
-    ],
-  },
-  {
-    title: t('docs.participants.title'),
-    description: t('docs.participants.description'),
-    entries: [
-      {
-        title: t('docs.participants.settings.title'),
-        caption: t('docs.participants.settings.caption'),
-        markdown: locale.value === 'fr' ? ParticipantsSettingsFr : ParticipantsSettingsEn,
-      },
-      {
-        title: t('docs.participants.common_issues.title'),
-        caption: t('docs.participants.common_issues.caption'),
-        markdown: locale.value === 'fr' ? ParticipantsCommonIssuesFr : ParticipantsCommonIssuesEn,
-      },
-      {
-        title: t('docs.participants.best_practices.title'),
-        caption: t('docs.participants.best_practices.caption'),
-        markdown: locale.value === 'fr' ? ParticipantsBestPracticesFr : ParticipantsBestPracticesEn,
       },
     ],
   },

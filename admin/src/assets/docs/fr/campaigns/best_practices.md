@@ -14,7 +14,7 @@
 4. **Envisagez des mesures spécifiques à la campagne** : Utilisez-les pour tester de nouvelles initiatives avant un déploiement à l'échelle de l'organisation
 
 
-### Lors du partage du questionaire aux collaborateur·trice·s
+### Lors du partage du questionnaire aux collaborateur·trice·s
 
 Sur la base des tests menés sur l'année 2025 avec Mobilyse, nous livrons ici quelques conseils pour augmenter le taux de réponses au questionnaire, en exposant les points déterminants sur la communication aux collaborateur·trice·s:
 
