@@ -47,5 +47,4 @@ const selected = computed({
 })
 
 const labelClass = computed(() => props.labelClass || 'text-h4')
-
 </script>

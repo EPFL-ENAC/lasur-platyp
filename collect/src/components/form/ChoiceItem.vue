@@ -115,11 +115,9 @@ function onOption(option: Option) {
 </script>
 
 <style scoped>
-
 .q-item {
   background: var(--field-bg);
   color: var(--foreground-color);
   border: 1px solid var(--secondary-border-color);
 }
-
 </style>

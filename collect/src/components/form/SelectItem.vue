@@ -37,9 +37,7 @@
           </template>
         </template>
         <template v-slot:option="scope">
-          <q-item
-            v-bind="scope.itemProps"
-          >
+          <q-item v-bind="scope.itemProps">
             <q-item-section v-if="scope.opt.icon" avatar>
               <q-icon :name="scope.opt.icon" />
             </q-item-section>

@@ -112,7 +112,8 @@ export default {
           private_vehicle: 'My private vehicle',
         },
       },
-      has_to_carry_heavy_equipment: 'Most of the time, I have to carry heavy or bulky equipment for this professional journey',
+      has_to_carry_heavy_equipment:
+        'Most of the time, I have to carry heavy or bulky equipment for this professional journey',
     },
     travel_pro: 'Do you have to travel as part of your work?',
     days_per_month: 'In days per month',
@@ -143,7 +144,8 @@ export default {
     change_levers_option: {
       financial_support: 'Financial support',
       work_flexibility: 'Greater flexibility at work (schedules, remote working, etc.)',
-      collective_changes: 'Collective changes (organisation communication, colleague involvement, etc.)',
+      collective_changes:
+        'Collective changes (organisation communication, colleague involvement, etc.)',
       work_environment:
         'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points, etc.)',
       other: 'Other',
