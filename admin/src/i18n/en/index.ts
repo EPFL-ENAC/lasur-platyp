@@ -286,7 +286,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       mobility_analysis: {
         title: 'Mobility analysis',
         description: `The graphs below provide information on participants’ current mobility habits, including their use of transport modes, the equipment their possess, the constraints they face, and their geographical distribution.
-        
+
 Some environmental impacts have also been calculated:
 - on the environment, via greenhouse gas emissions calculated using mobi-tools factors [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
 - on participants’ health, via average daily energy expenditure (metabolic equivalent task) during their trips. The Swiss Confederation and the WHO recommend 150 minutes of moderate-intensity exercise (cycling/brisk walking) per week, equivalent to 150 kcal per day. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity) A lack of physical activity has a direct impact on physical and mental health (psychological and cognitive), and thus directly affects employees’ well-being, sick leave rates, productivity and the working atmosphere.`,
@@ -468,7 +468,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod: {
@@ -500,7 +500,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reco_share: {
@@ -615,7 +615,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_pro: {
@@ -647,7 +647,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {currentEmissions} to {newEmissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {smartphones} smartphones or {streaming_hours} hours of streaming [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
