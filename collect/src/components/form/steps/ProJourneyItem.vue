@@ -111,20 +111,22 @@ const modeOptions = computed<Option[]>(() =>
   ].filter((opt) => props.modes.includes(opt.value)),
 )
 
-const canBeCompanyVehicle = computed(() => ['bike', 'cargo', 'car', 'truck', 'moto'].includes(journey.value.mode))
+const canBeCompanyVehicle = computed(() =>
+  ['bike', 'cargo', 'car', 'truck', 'moto'].includes(journey.value.mode),
+)
 
 const hasHeavyEquipment = computed({
   get: () => journey.value.constraints?.includes('heavy') ?? false,
   set: (val: boolean) => {
-    const current = new Set(journey.value.constraints || []);
+    const current = new Set(journey.value.constraints || [])
     if (val) {
       current.add('heavy')
     } else {
       current.delete('heavy')
     }
-    journey.value.constraints = Array.from(current);
+    journey.value.constraints = Array.from(current)
   },
-});
+})
 
 function onSelect(option: Option | undefined) {
   if (!option) return

@@ -88,7 +88,7 @@ export const useCollector = defineStore('collector', () => {
     if (plainEmail) {
       record.email_hash = await hashEmail(plainEmail)
     }
-    
+
     const response = await api.post(`/collect/record/${tkOrSlug}`, record)
     responseIdInCampaign.value = response.data.response_id_in_campaign ?? null
     return response.data

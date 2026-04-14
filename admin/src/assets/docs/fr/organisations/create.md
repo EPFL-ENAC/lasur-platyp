@@ -1,11 +1,11 @@
 ## Création d'une fiche organisation
 
-Pour créer une nouvelle organisation, les administrateurs doivent fournir les informations essentielles sur l'organisation et configurer les paramètres liés à la mobilité.
+Pour créer une nouvelle organisation, les administrateur·trice·s doivent fournir les informations essentielles sur l'organisation et configurer les paramètres liés à la mobilité.
 
 ### Champs obligatoires
 
 - **Nom** (_obligatoire_) : Nom de l'organisation tel qu'il apparaîtra dans tout le système
-- **Administrateurs** (_obligatoire_) : Adresses email des utilisateurs ayant un accès administrateur aux données de cette organisation
+- **Administrateurs** (_obligatoire_) : Adresses email des utilisateur·trice·s ayant un accès administrateur aux données de cette organisation
 
 ### Champs optionnels
 

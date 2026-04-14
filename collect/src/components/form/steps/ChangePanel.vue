@@ -1,7 +1,7 @@
 <template>
   <div>
     <SectionItem :label="t('form.change')" label-class="text-h4" class="q-mb-md" />
-    
+
     <q-card class="bg-primary-muted q-mb-xl">
       <q-card-section class="q-pa-sm">
         <div class="text-h5 text-secondary text-center">
@@ -12,7 +12,6 @@
 
     <q-card flat>
       <q-card-section>
-
         <RatingItem
           v-if="isRecoChange"
           :label="t('form.change_motivation')"

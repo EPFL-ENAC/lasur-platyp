@@ -9,7 +9,12 @@
         class="text-h6"
       />
       <div class="text-h6 q-ml-xl">
-        <a href="https://modus-ge.ch/mobilyse-cgu-collaborateur-trice-s" target="_blank" rel="noopener noreferrer" class="text-muted q-ml-sm">
+        <a
+          href="https://modus-ge.ch/mobilyse-cgu-collaborateur-trice-s"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-muted q-ml-sm"
+        >
           {{ t('form.terms_conditions_link') }}
           <q-icon name="open_in_new" size="xs" />
         </a>
@@ -33,7 +38,7 @@
           rel="noopener noreferrer"
         >
           {{ t('form.confidentiality_link') }}
-          <q-icon name="open_in_new" size="xs"/>
+          <q-icon name="open_in_new" size="xs" />
         </a>
       </div>
     </q-card-section>

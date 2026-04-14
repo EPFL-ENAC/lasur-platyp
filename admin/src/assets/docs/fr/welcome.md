@@ -1,17 +1,18 @@
 ### Un outil gratuit pour vous accompagner dans votre stratégie mobilité
 
-L'objectif de Mobilyse est de construire un outil simple d’utilisation permettant à toute organisation de réaliser une analyse de mobilité en vue d'établir ou de réviser leur plan de mobilité. L’analyse s’intéresse tant aux pratiques de mobilité des collaboratrices et collaborateurs, qu'à leur désir de mobilité tout en prenant en compte les contraintes personnelles et professionnelles.
+Mobilyse a pour objectif d’aider toutes les organisations — quelle que soit leur taille et domaine d'activité — à réaliser un diagnostic complet de la mobilité de leurs collaboratrices et collaborateurs.
 
-C'est un moyen pour les organisations de cibler les aides les plus pertinentes à mettre en oeuvre pour leurs collaborateur.trice.s et d'évaluer, périodiquement, l'alignement de ces aides avec les besoins réels de ceux-ci.
+L’outil permet de faire un état des lieux à la fois des pratiques réelles de mobilité, les contraintes personnelles et professionnelles qui peuvent influencer les déplacements, aine que les potentiels et envies de changement.
+Grâce à ces informations, les organisations peuvent identifier les aides les plus pertinentes à mettre en place et vérifier, au fil du temps, que celles‑ci restent bien alignées avec les besoins réels de leurs collaboratrices et collaborateurs. Pour cela, elles peuvent analyser les résultats en interne ou les transmettre à un tiers ayant les compétences de gestion de mobilité souhaitées. Mobilyse peut ainsi compléter efficacement des plans de mobilité déjà existants ou initier la démarche.
 
-L'utilisation simple de l'outil et le faible coût d'entrée (totalement gratuit) en font un outil particulièrement adapté pour les PME, bien qu'il puisse venir également en complément de plans de mobilités déjà en action.
+L’outil se distingue par sa simplicité d’utilisation, son accès totalement gratuit et sa protection des données personnelles, ce qui en fait un choix particulièrement adapté aux PME.
 
 **En tant qu'organisation, pourquoi lancer une campagne ?**
 
 - Cibler les aides à la mobilité des collaborateur·trice·s
 - Améliorer le bien-être au travail et la santé des collaborateur·trice·s
 - Engager une démarche RSE améliorant l'attractivité de l'organisation
-- Calculer et monitorer le bilan carbone de l'organisation pour la mobilité (scope 3, catégories 6 et 7)
+- Calculer et monitorer le bilan carbone de l'organisation pour la mobilité (scope 3, catégories [6](https://ghgprotocol.org/sites/default/files/2022-12/Chapter6.pdf) et [7](https://ghgprotocol.org/sites/default/files/2022-12/Chapter7.pdf))
 
 **En tant que collaborateur·trice, pourquoi répondre au questionnaire de 10min ?**
 

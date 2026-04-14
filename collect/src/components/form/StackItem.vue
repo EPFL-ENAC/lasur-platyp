@@ -266,5 +266,4 @@ function onDropInsert(e: DragEvent, index: number) {
 .icon-white {
   filter: invert(100%);
 }
-
 </style>

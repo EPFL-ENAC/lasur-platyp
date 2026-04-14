@@ -4,7 +4,11 @@
     <div v-if="survey.stepName === 'agreement'">
       <q-card flat>
         <q-card-section>
-          <SectionItem :label="t('form.agreement')" :hint="t('form.agreement_hint')" class="q-mb-lg" />
+          <SectionItem
+            :label="t('form.agreement')"
+            :hint="t('form.agreement_hint')"
+            class="q-mb-lg"
+          />
           <AgreementPanel />
         </q-card-section>
       </q-card>
@@ -263,7 +267,8 @@ function nextStep() {
         survey.record.data.change2 = {}
       }
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
-    } else if (survey.previousStepName === 'email') { // step was just incremented, so we check previous step
+    } else if (survey.previousStepName === 'email') {
+      // step was just incremented, so we check previous step
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     }
   }
@@ -293,7 +298,7 @@ function handleSwipe(dir: any) {
 
 function onSave() {
   if (!survey.tokenOrSlug) return
-  
+
   if (survey.record.data.change?.levers?.includes('other') === false) {
     survey.record.data.change.other_levers = undefined
   }
