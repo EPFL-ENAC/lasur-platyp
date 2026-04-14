@@ -129,7 +129,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Découvrez les étapes suivantes après la création de votre organisation et de votre campagne',
       },
       need_more_help: {
-        title: 'Besoin de plus d’aide ?',
+        title: 'Vous ne trouvez pas la réponse à votre question ?',
         caption:
           "Contactez-nous pour toute question ou besoin d'accompagnement concernant la gestion de vos campagnes de mobilité",
       },
@@ -137,20 +137,20 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     organisations: {
       title: 'Organisations',
       create: {
-        title: 'Comment créer une organisation',
+        title: 'Comment créer une organisation ?',
         caption: 'Un guide pour créer une organisation et gérer ses campagnes',
       },
       settings: {
-        title: "Comment gérer les paramètres d'une organisation",
+        title: "Comment gérer les paramètres d'une organisation ?",
         caption:
           "Un guide pour mettre à jour les informations et les paramètres d'une organisation",
       },
       employer_measures: {
-        title: "Comment gérer les aides mobilité de l'employeur par défaut ?",
+        title: "Comment gérer les aides à la mobilité par défaut ?",
         caption: 'Un guide pour gérer les aides employeur pour votre organisation',
       },
       custom_measures: {
-        title: 'Comment ajouter des aides personnalisées ?',
+        title: 'Comment ajouter des aides à la mobilité personnalisées ?',
         caption: 'Un guide pour gérer les aides personnalisées pour votre organisation',
       },
       common_issues: {
@@ -159,11 +159,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           "Solutions aux problèmes fréquemment rencontrés lors de la gestion d'une organisation",
       },
       best_practices: {
-        title: "Bonnes pratiques pour la création d'organisation",
+        title: "Bonnes pratiques pour la création d'une organisation",
         caption: 'Conseils pour structurer votre organisation et vos campagnes de manière efficace',
       },
       mobility_advisor: {
-        title: 'Rôle conseiller·ère mobilité',
+        title: 'Quel est le rôle de conseiller·ère mobilité ?',
         caption:
           'Apprenez à utiliser un·e conseiller·ère mobilité pour accompagner votre organisation',
       },
@@ -173,7 +173,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       description:
         "Les campagnes sont des enquêtes ou initiatives de mobilité limitées dans le temps au sein d'une organisation. Chaque organisation peut avoir plusieurs campagnes.",
       settings: {
-        title: "Comment gérer les paramètres d'une campagne",
+        title: "Comment gérer les paramètres d'une campagne ?",
         caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
       },
       share_link: {
@@ -182,16 +182,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Apprenez à partager le lien vers le questionnaire de votre campagne auprès des participant·e·s',
       },
       isochrone: {
-        title: "Comment et pourquoi afficher l'isochrone sur la carte ?",
+        title: "Qu'est-ce qu'une isochrone et comment l'afficher sur la carte ?",
         caption: "Apprenez à afficher l'isochrone sur la carte",
       },
-      analyse_results: {
-        title: 'Comment analyser les résultats de la campagne ?',
-        caption:
-          'Apprenez à analyser les résultats de votre campagne et à interpréter les statistiques',
-      },
       reward: {
-        title: 'Comment récompenser les participant·e·s ayant répondu au questionnaire ?',
+        title: 'Comment récompenser les participant·e·s qui répondent au questionnaire ?',
         caption: 'Apprenez comment récompenser les participant·e·s de votre campagne',
       },
       common_issues: {
@@ -199,14 +194,14 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         caption: "Solutions aux problèmes fréquemment rencontrés lors de la gestion d'une campagne",
       },
       best_practices: {
-        title: 'Bonnes pratiques pour la gestion des campagnes',
+        title: "Bonnes pratiques pour la création d'une campagne",
         caption:
           'Conseils et recommandations pour tirer le meilleur parti des fonctionnalités de campagne dans Mobilyse',
       },
       dashboard: {
-        title: 'Comment utiliser le dashboard de campagne ?',
+        title: 'Comment se servir du Tableau de bord pour analyser les résultats ?',
         caption:
-          'Apprenez à utiliser le dashboard de campagne pour suivre les résultats et les statistiques de votre campagne',
+          'Apprenez à utiliser le Tableau de bord de campagne pour suivre les résultats et les statistiques de votre campagne',
       },
     },
   },

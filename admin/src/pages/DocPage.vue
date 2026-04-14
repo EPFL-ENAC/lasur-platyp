@@ -71,8 +71,6 @@ import CampaignShareLinkEn from 'src/assets/docs/en/campaigns/share_link.md'
 import CampaignShareLinkFr from 'src/assets/docs/fr/campaigns/share_link.md'
 import CampaignIsochroneEn from 'src/assets/docs/en/campaigns/display_isochrone.md'
 import CampaignIsochroneFr from 'src/assets/docs/fr/campaigns/display_isochrone.md'
-import CampaignAnalyseResultsEn from 'src/assets/docs/en/campaigns/analyse_results.md'
-import CampaignAnalyseResultsFr from 'src/assets/docs/fr/campaigns/analyse_results.md'
 import CampaignRewardEn from 'src/assets/docs/en/campaigns/reward.md'
 import CampaignRewardFr from 'src/assets/docs/fr/campaigns/reward.md'
 import CampaignDashboardEn from 'src/assets/docs/en/campaigns/dashboard.md'
@@ -93,31 +91,6 @@ interface DocSection {
 }
 
 const sections = computed<DocSection[]>(() => [
-  {
-    title: t('docs.general.title'),
-    entries: [
-      {
-        title: t('docs.general.privacy.title'),
-        caption: t('docs.general.privacy.caption'),
-        markdown: locale.value === 'fr' ? PrivacyFr : PrivacyEn,
-      },
-      {
-        title: t('docs.general.terms.title'),
-        caption: t('docs.general.terms.caption'),
-        markdown: locale.value === 'fr' ? TermsFr : TermsEn,
-      },
-      {
-        title: t('docs.general.what_next.title'),
-        caption: t('docs.general.what_next.caption'),
-        markdown: locale.value === 'fr' ? WhatNextFr : WhatNextEn,
-      },
-      {
-        title: t('docs.general.need_more_help.title'),
-        caption: t('docs.general.need_more_help.caption'),
-        markdown: locale.value === 'fr' ? NeedMoreHelpFr : NeedMoreHelpEn,
-      },
-    ],
-  },
   {
     title: t('docs.organisations.title'),
     entries: [
@@ -142,6 +115,11 @@ const sections = computed<DocSection[]>(() => [
         markdown: locale.value === 'fr' ? CustomMeasuresFr : CustomMeasuresEn,
       },
       {
+        title: t('docs.organisations.mobility_advisor.title'),
+        caption: t('docs.organisations.mobility_advisor.caption'),
+        markdown: locale.value === 'fr' ? MobilityAdvisorFr : MobilityAdvisorEn,
+      },
+      {
         title: t('docs.organisations.common_issues.title'),
         caption: t('docs.organisations.common_issues.caption'),
         markdown: locale.value === 'fr' ? CommonIssuesFr : CommonIssuesEn,
@@ -150,11 +128,6 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.organisations.best_practices.title'),
         caption: t('docs.organisations.best_practices.caption'),
         markdown: locale.value === 'fr' ? BestPracticesFr : BestPracticesEn,
-      },
-      {
-        title: t('docs.organisations.mobility_advisor.title'),
-        caption: t('docs.organisations.mobility_advisor.caption'),
-        markdown: locale.value === 'fr' ? MobilityAdvisorFr : MobilityAdvisorEn,
       },
     ],
   },
@@ -178,11 +151,6 @@ const sections = computed<DocSection[]>(() => [
         markdown: locale.value === 'fr' ? CampaignIsochroneFr : CampaignIsochroneEn,
       },
       {
-        title: t('docs.campaigns.analyse_results.title'),
-        caption: t('docs.campaigns.analyse_results.caption'),
-        markdown: locale.value === 'fr' ? CampaignAnalyseResultsFr : CampaignAnalyseResultsEn,
-      },
-      {
         title: t('docs.campaigns.dashboard.title'),
         caption: t('docs.campaigns.dashboard.caption'),
         markdown: locale.value === 'fr' ? CampaignDashboardFr : CampaignDashboardEn,
@@ -201,6 +169,31 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.campaigns.best_practices.title'),
         caption: t('docs.campaigns.best_practices.caption'),
         markdown: locale.value === 'fr' ? CampaignBestPracticesFr : CampaignBestPracticesEn,
+      },
+    ],
+  },
+  {
+    title: t('docs.general.title'),
+    entries: [
+      {
+        title: t('docs.general.terms.title'),
+        caption: t('docs.general.terms.caption'),
+        markdown: locale.value === 'fr' ? TermsFr : TermsEn,
+      },
+      {
+        title: t('docs.general.privacy.title'),
+        caption: t('docs.general.privacy.caption'),
+        markdown: locale.value === 'fr' ? PrivacyFr : PrivacyEn,
+      },
+      {
+        title: t('docs.general.what_next.title'),
+        caption: t('docs.general.what_next.caption'),
+        markdown: locale.value === 'fr' ? WhatNextFr : WhatNextEn,
+      },
+      {
+        title: t('docs.general.need_more_help.title'),
+        caption: t('docs.general.need_more_help.caption'),
+        markdown: locale.value === 'fr' ? NeedMoreHelpFr : NeedMoreHelpEn,
       },
     ],
   },

@@ -134,19 +134,19 @@ Thank you for your valuable contribution! If you have any questions, please cont
     organisations: {
       title: 'Organisations',
       create: {
-        title: 'How to create an organisation',
+        title: 'How to create an organisation?',
         caption: 'Learn how to create a new organisation in Mobilyse',
       },
       settings: {
-        title: 'How to manage organisation settings',
+        title: 'How to manage organisation settings?',
         caption: 'Learn how to update your organisation settings and preferences',
       },
       employer_measures: {
-        title: 'How to manage employer measures',
+        title: 'How to manage employer measures?',
         caption: 'Learn how to manage employer measures for your organisation',
       },
       custom_measures: {
-        title: 'How to manage custom measures',
+        title: 'How to manage custom measures?',
         caption: 'Learn how to manage custom measures for your organisation',
       },
       best_practices: {
@@ -158,7 +158,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         caption: 'Solutions to frequently encountered problems',
       },
       mobility_advisor: {
-        title: 'How to use the mobility advisor',
+        title: 'How to use the mobility advisor?',
         caption: 'Learn how to use the mobility advisor to support your organisation',
       },
     },
@@ -167,7 +167,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       description:
         'Campaigns are time-bound mobility surveys or initiatives within an organisation. Each organisation can have multiple campaigns.',
       settings: {
-        title: 'How to manage campaign settings',
+        title: 'How to manage campaign settings?',
         caption: 'Learn how to create and update your campaign settings and preferences',
       },
       share_link: {
@@ -177,10 +177,6 @@ Thank you for your valuable contribution! If you have any questions, please cont
       isochrone: {
         title: 'How and why to display the isochrone on the map?',
         caption: 'Learn how and why to display the isochrone on the map',
-      },
-      analyse_results: {
-        title: 'How to analyse the results of the campaign?',
-        caption: 'Learn how to analyse the results of the campaign and interpret the statistics',
       },
       reward: {
         title: 'How to reward participants who have completed the survey?',
