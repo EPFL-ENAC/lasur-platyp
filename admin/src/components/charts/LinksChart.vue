@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
     <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
     <p v-if="mostRecommendedTarget">
       {{
