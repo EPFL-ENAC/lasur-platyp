@@ -182,10 +182,6 @@
             @click="onShowEmailTemplate"
           />
         </div>
-        <div class="text-hint q-mb-md">
-          {{ t('participants_individual_hint') }}
-        </div>
-        <company-campaign-participants :campaign="item" :company="props.company" />
       </q-card-section>
     </q-card>
 
@@ -203,7 +199,6 @@
 import { copyToClipboard } from 'quasar'
 import type { Campaign, Company, EmployerActions } from 'src/models'
 import CampaignCharts from 'src/components/charts/CampaignCharts.vue'
-import CompanyCampaignParticipants from 'src/components/company/CompanyCampaignParticipants.vue'
 import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import IsochronesMap from 'src/components/IsochronesMap.vue'
