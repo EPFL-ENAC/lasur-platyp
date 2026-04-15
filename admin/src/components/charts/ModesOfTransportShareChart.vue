@@ -74,7 +74,13 @@ const hasData = computed(() => {
     return false
   }
   const frequencies = stats.frequencies['freq_mod'] as Frequencies
-  return Array.isArray(frequencies) ? frequencies.length > 0 : frequencies.data.length > 0
+  if (Array.isArray(frequencies)) {
+    // Check if ANY frequency has actual data
+    return frequencies.some((freq) => freq.data && freq.data.length > 0)
+  }
+
+  // If it's a single Frequencies object
+  return frequencies.data && frequencies.data.length > 0
 })
 
 watch(
