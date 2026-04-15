@@ -17,6 +17,7 @@
         binary-state-sort
         @request="onRequest"
         :rows-per-page-options="[10, 25, 50]"
+        :no-data-label="authStore.isAdmin ? t('no_records') : t('records_not_super_admin')"
       >
         <template v-slot:top>
           <q-btn-dropdown color="primary" size="sm" icon="download" :label="t('download')">
@@ -146,10 +147,13 @@ import { makePaginationRequestHandler } from 'src/utils/pagination'
 import type { PaginationOptions } from 'src/utils/pagination'
 import { notifyError } from 'src/utils/notify'
 import Papa from 'papaparse'
+import { useQuasar } from 'quasar'
+import MarkdownDialog from 'src/components/MarkdownDialog.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()
 const services = useServices()
+const $q = useQuasar()
 const service = services.make('record')
 const companyService = services.make('company')
 const campaignService = services.make('campaign')
@@ -289,6 +293,9 @@ function fetchFromServer(
   sortBy: string,
   descending: boolean,
 ) {
+  // Only super admins can see records directly on the table, others need to download the results
+  if (!authStore.isAdmin) return Promise.resolve({})
+  
   const query: Query = {
     $skip: startRow,
     $limit: count,
@@ -340,6 +347,19 @@ function getRecoDt2(row: Record): string[] {
 }
 
 function onDownload(completedOnly: boolean) {
+  $q.dialog({
+    component: MarkdownDialog,
+    componentProps: {
+      text: t('data_protection_notice.content'),
+      title: t('data_protection_notice.title'),
+    },
+    persistent: true,
+  }).onOk(() => {
+     downloadCSV(completedOnly)
+  })
+}
+
+function downloadCSV(completedOnly: boolean) {
   const query: Query = {
     $skip: 0,
     $limit: 1000,

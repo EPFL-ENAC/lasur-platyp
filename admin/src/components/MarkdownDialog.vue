@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showDialog" @hide="onHide">
+  <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="dialog-lg">
       <q-card-section v-if="props.title">
         <div class="text-h6">{{ props.title }}</div>
@@ -14,34 +14,26 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn :label="t('close')" color="primary" @click="onHide" v-close-popup />
+        <q-btn :label="t('cancel')" color="primary" outline @click="onDialogCancel" v-close-popup />
+        <q-btn label="Ok" color="primary" @click="onDialogOK" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
+import { useDialogPluginComponent } from 'quasar'
+
 const { t } = useI18n()
 
 interface DialogProps {
-  modelValue: boolean
   title?: string | undefined
   text: string
 }
 
 const props = defineProps<DialogProps>()
-const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
+defineEmits([...useDialogPluginComponent.emits])
 
-const showDialog = ref(props.modelValue)
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
-watch(
-  () => props.modelValue,
-  (value) => {
-    showDialog.value = value
-  },
-)
-
-function onHide() {
-  emit('update:modelValue', false)
-}
 </script>
