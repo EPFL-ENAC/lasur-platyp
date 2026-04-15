@@ -1,9 +1,9 @@
 <template>
   <q-card flat class="q-my-md">
     <q-expansion-item
+      v-model="preferencesStore.statsSectionsCollapsedState.mobilityAnalysis"
       :label="t('stats.sections.mobility_analysis.title')"
       header-class="text-h5"
-      :default-opened="true"
       expand-icon-toggle
     >
       <q-markdown
@@ -12,15 +12,13 @@
       />
       <q-separator />
       <q-card-section>
+        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.home_to_work') }}</h6>
         <div class="grid-container">
           <div>
-            <equipment-frequencies-chart :percent="percent" :height="height" />
-          </div>
-          <div>
-            <frequencies-chart type="constraints" :percent="percent" :height="height" />
-          </div>
-          <div>
             <location-chart :title="t('stats.locationsHeatmap.title')" :height="height" />
+          </div>
+          <div>
+            <modes-of-transport-share-chart :height="height" />
           </div>
           <div>
             <travel-time-frequencies-chart
@@ -32,7 +30,10 @@
             />
           </div>
           <div>
-            <modes-of-transport-share-chart :height="height" />
+            <equipment-frequencies-chart :percent="percent" :height="height" />
+          </div>
+          <div>
+            <frequencies-chart type="constraints" :percent="percent" :height="height" />
           </div>
           <div>
             <emissions-chart
@@ -45,6 +46,11 @@
           <div>
             <journey-energy-chart type="current" :height="height" />
           </div>
+        </div>
+      </q-card-section>
+      <q-card-section>
+        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.professional_travel') }}</h6>
+        <div class="grid-container">
           <div>
             <frequencies-stack-chart
               type="freq_mod_pro"
@@ -68,9 +74,9 @@
 
   <q-card flat class="q-my-md">
     <q-expansion-item
+      v-model="preferencesStore.statsSectionsCollapsedState.mobilityPotentials"
       :label="t('stats.sections.mobility_potentials.title')"
       header-class="text-h5"
-      :default-opened="true"
       expand-icon-toggle
     >
       <q-markdown
@@ -80,6 +86,7 @@
       <q-separator />
 
       <q-card-section>
+        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.home_to_work') }}</h6>
         <div class="grid-container">
           <div>
             <share-chart type="reco_dt2" :height="height" />
@@ -96,14 +103,6 @@
             />
           </div>
           <div>
-            <emissions-reductions-chart
-              type="freq_mod_pro"
-              reduction-type="reductions_mod_pro"
-              :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
-              :height="height"
-            />
-          </div>
-          <div>
             <emissions-reductions-share-chart reduction-type="reductions_mod" :height="height" />
           </div>
           <div>
@@ -114,14 +113,28 @@
           </div>
         </div>
       </q-card-section>
+
+      <q-card-section>
+        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.professional_travel') }}</h6>
+        <div class="grid-container">
+          <div>
+            <emissions-reductions-chart
+              type="freq_mod_pro"
+              reduction-type="reductions_mod_pro"
+              :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
+              :height="height"
+            />
+          </div>
+        </div>
+      </q-card-section>
     </q-expansion-item>
   </q-card>
 
   <q-card flat class="q-my-md">
     <q-expansion-item
+      v-model="preferencesStore.statsSectionsCollapsedState.behaviouralChanges"
       :label="t('stats.sections.behavioural_changes.title')"
       header-class="text-h5"
-      :default-opened="true"
       expand-icon-toggle
     >
       <q-markdown
@@ -171,6 +184,7 @@ interface Props {
 defineProps<Props>()
 
 const { t } = useI18n()
+const preferencesStore = usePreferencesStore()
 </script>
 
 <style lang="css" scoped>

@@ -317,6 +317,8 @@ Certains impacts sont aussi calculés :
         title: 'Motiver les changements de comportement',
         description: `Cette dernière section apporte des informations sur la volonté des participant·e·s de suivre ou non les recommandations qui leur ont été faites, et leurs besoins ou désirs pour déclencher ces changements de comportement. Cela peut permettre d'orienter vos décisions et de cibler les aides à la mobilité que vous pourriez envisager.`,
       },
+      home_to_work: 'Home-to-work commute',
+      professional_travel: 'Professional travel'
     },
     equipments: {
       title: 'Équipements de mobilité',

@@ -109,6 +109,7 @@
     "useStats": true,
     "useIsochrones": true,
     "CATEGORY_TAGS": true,
-    "useDataProtectionStore": true
+    "usePreferencesStore": true,
+    "StatsSectionsCollapsedState": true
   }
 }

@@ -193,7 +193,7 @@
 import { Cookies, useQuasar } from 'quasar'
 import { locales } from 'boot/i18n'
 
-const dataProtection = useDataProtectionStore()
+const dataProtection = usePreferencesStore()
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const router = useRouter()

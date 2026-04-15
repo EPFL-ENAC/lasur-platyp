@@ -82,13 +82,13 @@ declare global {
   const useCounterStore: (typeof import('./stores/example-store'))['useCounterStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
-  const useDataProtectionStore: typeof import('./stores/dataProtection')['useDataProtectionStore']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useId: typeof import('vue')['useId']
   const useIsochrones: typeof import('./stores/isochrones')['useIsochrones']
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
   const useParticipants: typeof import('./stores/participants')['useParticipants']
+  const usePreferencesStore: typeof import('./stores/preferences')['usePreferencesStore']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useServices: typeof import('./stores/services')['useServices']
@@ -109,6 +109,9 @@ declare global {
   // @ts-ignore
   export type { PiniaCustomProperties } from './stores/index'
   import('./stores/index')
+  // @ts-ignore
+  export type { StatsSectionsCollapsedState } from './stores/preferences'
+  import('./stores/preferences')
   // @ts-ignore
   export type { Service } from './stores/services'
   import('./stores/services')
@@ -194,13 +197,13 @@ declare module 'vue' {
     readonly useCampaigns: UnwrapRef<typeof import('./stores/campaigns')['useCampaigns']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useDataProtectionStore: UnwrapRef<typeof import('./stores/dataProtection')['useDataProtectionStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useIsochrones: UnwrapRef<typeof import('./stores/isochrones')['useIsochrones']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useParticipants: UnwrapRef<typeof import('./stores/participants')['useParticipants']>
+    readonly usePreferencesStore: UnwrapRef<typeof import('./stores/preferences')['usePreferencesStore']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useServices: UnwrapRef<typeof import('./stores/services')['useServices']>

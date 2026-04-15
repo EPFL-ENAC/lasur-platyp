@@ -308,6 +308,8 @@ Some environmental impacts have also been calculated:
         title: 'Encouraging behavioural changes',
         description: `This final section provides information on participants’ willingness to follow the recommendations made to them, and on their needs or desires in order to bring about these behavioural changes. This can help guide your decisions and identify the mobility aids you might consider.`,
       },
+      home_to_work: 'Home-to-work commute',
+      professional_travel: 'Professional travel'
     },
     equipments: {
       title: 'Mobility equipments',
@@ -728,7 +730,7 @@ Some environmental impacts have also been calculated:
       },
     },
     energy_journey: {
-      title_current: 'Potential Physical Activity Diagram by Currently Used Mode',
+      title_current: 'Physical Activity Diagram by Currently Used Mode',
       title_reco: 'Potential Physical Activity Diagram following Recommendations',
       title_share: 'Modes with the Most Potential for Increased Physical Activity',
       yaxis: 'Energy expenditure (kcal)',
