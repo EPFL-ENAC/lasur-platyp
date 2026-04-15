@@ -121,16 +121,6 @@
               }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item class="text-foreground" clickable :to="'/legal-notice'" dense>
-            <q-item-section avatar>
-              <q-icon name="fa-solid fa-gavel" size="xs" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label header class="text-foreground text-weight-medium q-pl-sm q-py-sm">{{
-                t('legal_notice')
-              }}</q-item-label>
-            </q-item-section>
-          </q-item>
         </q-list>
 
         <q-space />

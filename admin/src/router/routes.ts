@@ -16,7 +16,6 @@ const routes: RouteRecordRaw[] = [
       { path: 'record/:id', component: () => import('pages/RecordPage.vue') },
       { path: 'users', component: () => import('pages/UsersPage.vue') },
       { path: 'doc', component: () => import('pages/DocPage.vue') },
-      { path: 'legal-notice', component: () => import('pages/LegalNoticePage.vue') },
     ],
   },
   {
