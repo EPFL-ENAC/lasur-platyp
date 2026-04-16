@@ -1,7 +1,7 @@
 <template>
-  <div class="title q-mb-md">{{ props.title }}</div>
+  <div class="text-h6 text-center q-mb-md">{{ props.title }}</div>
   <div class="wrapper">
-    <div v-if="!hasData" class="no-data">
+     <div v-if="!hasData" class="text-subtitle1 text-foreground text-center">
       {{ t('stats.no_data') }}
     </div>
     <div v-else class="with-data">

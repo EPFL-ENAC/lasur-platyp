@@ -18,6 +18,9 @@ class LocationsService(BaseStatsService):
 
     def get_workplaces(self) -> list[dict]:
         """Get a list of unique workplaces with their coordinates."""
+        if self.df.empty or "data.workplace.lat" not in self.df.columns or "data.workplace.lon" not in self.df.columns:
+                return []
+
         workplaces = self.df[["data.workplace.lat", "data.workplace.lon"]].dropna().drop_duplicates()
         return workplaces.rename(columns={"data.workplace.lat": "lat", "data.workplace.lon": "lon"}).to_dict(orient="records")
 

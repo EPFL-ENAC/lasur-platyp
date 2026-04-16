@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
     <q-markdown
       v-if="emissionItemsLabels"
       :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"

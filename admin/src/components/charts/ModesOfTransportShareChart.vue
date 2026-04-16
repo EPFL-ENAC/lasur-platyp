@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
     <p class="q-mb-xs">{{ t('stats.freq_mod.texts.default') }}</p>
     <p v-if="topModes.length === 3">
       {{
@@ -74,7 +74,13 @@ const hasData = computed(() => {
     return false
   }
   const frequencies = stats.frequencies['freq_mod'] as Frequencies
-  return Array.isArray(frequencies) ? frequencies.length > 0 : frequencies.data.length > 0
+  if (Array.isArray(frequencies)) {
+    // Check if ANY frequency has actual data
+    return frequencies.some((freq) => freq.data && freq.data.length > 0)
+  }
+
+  // If it's a single Frequencies object
+  return frequencies.data && frequencies.data.length > 0
 })
 
 watch(
