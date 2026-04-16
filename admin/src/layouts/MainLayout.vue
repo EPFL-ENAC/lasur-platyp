@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh LpR fFf">
+  <q-layout view="hHh LpR lff">
     <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav">
       <q-toolbar>
         <q-btn
@@ -167,40 +167,21 @@
       <router-view />
     </q-page-container>
 
-    <q-dialog v-if="authStore.isAuthenticated" v-model="showDataProtectionNotice">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">{{ t('data_protection_notice.title') }}</div>
-        </q-card-section>
-
-        <q-card-section class="q-py-none">
-          <q-markdown :src="t('data_protection_notice.content')" no-heading-anchor-links />
-        </q-card-section>
-
-        <q-card-actions>
-          <q-toggle v-model="dataProtection.doNotShowNotice" :label="t('do_not_show_again')" />
-        </q-card-actions>
-
-        <q-card-actions align="right">
-          <q-btn flat :label="t('close')" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <app-footer />
   </q-layout>
 </template>
 
 <script setup lang="ts">
+import AppFooter from 'src/components/AppFooter.vue'
 import { Cookies, useQuasar } from 'quasar'
 import { locales } from 'boot/i18n'
 
-const dataProtection = usePreferencesStore()
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const router = useRouter()
 const $q = useQuasar()
 
 const leftDrawerOpen = ref(false)
-const showDataProtectionNotice = ref(!dataProtection.doNotShowNotice)
 
 const username = computed(() => authStore.profile?.email)
 const localeOptions = computed(() => {

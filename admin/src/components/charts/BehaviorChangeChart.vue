@@ -235,7 +235,7 @@ function motivationOptions() {
           if (params.value === 0) {
             return ''
           }
-          return formatNumber(params.value as number)
+          return formatNumber(Math.round(params.value as number))
         },
       },
       data: sorted.map((item) => {

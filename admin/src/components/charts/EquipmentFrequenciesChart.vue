@@ -9,17 +9,22 @@
       :update-options="updateOptions"
       :loading="stats.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
+      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.equipments.title`) }}</div>
       <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
+
+  <div v-if="percent" class="q-mt-md chart-text" :data-chart-id="chartId">
+    <q-markdown :src="t(`stats.equipments.mrmt_source`)" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import ECharts from 'vue-echarts'
-import type { EChartsOption } from 'echarts'
+import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart, PictorialBarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
@@ -32,6 +37,7 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
 import { useQuasar } from 'quasar'
+import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
@@ -57,6 +63,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
+const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -109,7 +116,7 @@ function initChartOptions() {
   initLabelsChartOptions(frequencies)
 }
 
-const MRMT_VALUES = {
+const MRMT_VALUES_PERCENT = {
   upt_subs: 26,
   car: 71,
   bike: 54,
@@ -133,10 +140,10 @@ function initLabelsChartOptions(frequencies: Frequencies) {
   const categories = dataset.map((item) => item.name)
   const values = dataset.map((item) => item.value)
 
-  const mrmtValues = dataset.map((item) => {
-    const mrmt = MRMT_VALUES[item.key as keyof typeof MRMT_VALUES]
+  const mrmtValues = props.percent ? dataset.map((item) => {
+    const mrmt = MRMT_VALUES_PERCENT[item.key as keyof typeof MRMT_VALUES_PERCENT]
     return mrmt ?? null
-  })
+  }) : []
 
   if (categories.length === 0) return
 
@@ -145,6 +152,30 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     ? Math.max(...mrmtValues.filter((v): v is number => v !== null))
     : 0
   const xAxisMax = Math.max(maxBarValue, maxMrmtValue)
+
+  const series: SeriesOption[] = [
+    {
+      name: t('stats.observed'),
+      type: 'bar',
+      data: values,
+    },
+  ]
+  if (props.percent) {
+    series.push({
+      name: 'MRMT',
+      type: 'pictorialBar',
+      symbol: 'rect', // This creates the "line" marker
+      symbolRepeat: false,
+      symbolSize: [4, 32], // [width, height] - height slightly taller than bar
+      symbolOffset: [0, 0],
+      symbolPosition: 'end',
+      itemStyle: {
+        color: '#FF5722', // Distinct color for the marker
+      },
+      data: mrmtValues,
+      z: 3, // Ensure it's on top of the bars
+     })
+  }
 
   const newOption: EChartsOption = {
     grid: {
@@ -191,27 +222,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       type: 'value',
       max: Math.ceil(xAxisMax * 1.1),
     },
-    series: [
-      {
-        name: t('stats.observed'),
-        type: 'bar',
-        data: values,
-      },
-      {
-        name: 'MRMT',
-        type: 'pictorialBar',
-        symbol: 'rect', // This creates the "line" marker
-        symbolRepeat: false,
-        symbolSize: [4, 32], // [width, height] - height slightly taller than bar
-        symbolOffset: [0, 0],
-        symbolPosition: 'end',
-        itemStyle: {
-          color: '#FF5722', // Distinct color for the marker
-        },
-        data: mrmtValues,
-        z: 3, // Ensure it's on top of the bars
-      },
-    ],
+    series,
   }
 
   option.value = newOption

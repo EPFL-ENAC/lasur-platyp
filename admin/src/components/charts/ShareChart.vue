@@ -132,12 +132,12 @@ function initChartOptions() {
     grid: {
       left: '20',
       right: '20',
-      top: '40',
+      top: '60',
       bottom: '20',
       containLabel: true,
     },
     animation: false,
-    height: props.height,
+    height: props.height - 100,
     title: {
       text: t(`stats.${props.type}.title`),
       subtext: t(`stats.total`, { count: total.value }),
@@ -152,13 +152,16 @@ function initChartOptions() {
       formatter: '<b>{b}</b><br/>{c} ({d}%)',
     },
     legend: {
-      show: false,
+      show: true,
+      bottom: 16,
+      type: 'scroll',
     },
     series: [
       {
         type: 'pie',
-        radius: ['30%', '50%'],
+        radius: ['40%', '70%'],
         avoidLabelOverlap: true,
+        top: 'middle',
         color: colors,
         label: {
           margin: 0,

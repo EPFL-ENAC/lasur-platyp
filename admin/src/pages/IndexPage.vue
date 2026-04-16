@@ -3,8 +3,8 @@
     <div class="text-h3 q-pa-md text-title">{{ t('dashboard') }}</div>
     <div class="q-pa-md">
       <q-card flat class="q-mb-lg">
-        <q-card-section>
-          {{ t('introduction_text') }}
+        <q-card-section class="q-pb-none">
+          <q-markdown :src="t('introduction_text')" />
         </q-card-section>
 
         <q-card-actions align="right">
@@ -22,11 +22,14 @@
       <div class="text-h6 q-mb-sm">{{ t('statistics') }}</div>
       <dashboard-panel />
     </div>
+
+    <data-protection-notice-dialog />
   </q-page>
 </template>
 
 <script setup lang="ts">
 import DashboardPanel from 'src/components/DashboardPanel.vue'
+import DataProtectionNoticeDialog from 'src/components/DataProtectionNoticeDialog.vue'
 
 const { t } = useI18n()
 </script>

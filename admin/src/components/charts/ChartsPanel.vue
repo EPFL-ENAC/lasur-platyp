@@ -57,6 +57,7 @@
               :groups="['local', 'national', 'europe', 'inter']"
               :xaxis="t('stats.freq_mod_pro.xaxis')"
               :height="height"
+              :percent="percent"
             />
           </div>
           <div>

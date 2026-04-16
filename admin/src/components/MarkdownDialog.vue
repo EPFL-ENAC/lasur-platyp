@@ -14,7 +14,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn :label="t('cancel')" color="primary" outline @click="onDialogCancel" v-close-popup />
+        <q-btn v-if="props.canCancel" :label="t('cancel')" color="primary" outline @click="onDialogCancel" v-close-popup />
         <q-btn label="Ok" color="primary" @click="onDialogOK" v-close-popup />
       </q-card-actions>
     </q-card>
@@ -29,6 +29,7 @@ const { t } = useI18n()
 interface DialogProps {
   title?: string | undefined
   text: string
+  canCancel?: boolean
 }
 
 const props = defineProps<DialogProps>()

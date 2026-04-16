@@ -11,6 +11,7 @@
         :heatmap-gradient="gradient"
         :center="[7.4474, 46.9481]"
         :zoom="5"
+        :fit-bounds-margins="2"
         :height="`${props.height}px`"
         :map-id="id"
       >

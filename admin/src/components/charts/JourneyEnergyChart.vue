@@ -23,7 +23,8 @@
 
   <div class="q-mt-md chart-text" :data-chart-id="chartId">
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
-    <q-markdown v-if="textLabels" :src="t(`stats.energy_journey.texts.specific`, textLabels)" />
+    <q-markdown v-if="textLabelsCurrent" :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)" />
+    <q-markdown v-if="textLabelsReco" :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)" />
   </div>
 </template>
 
@@ -78,8 +79,19 @@ const total = ref(0)
 const addedEnergy = ref(0)
 const newHealthyParticipants = ref(0)
 
-const textLabels = computed(() => {
-  if (total.value < 5) return null
+const textLabelsCurrent = computed(() => {
+  if (props.type !== 'current' || total.value < 5) return null
+
+  const averageEnergyExpenditurePerToken =
+    stats.journeyEnergyStats.current?.average_energy_per_unique_token || 0
+
+  return {
+    energy: formatNumber(averageEnergyExpenditurePerToken),
+  }
+})
+
+const textLabelsReco = computed(() => {
+  if (props.type !== 'reco' || total.value < 5) return null
 
   return {
     added_energy: formatNumber(addedEnergy.value),
@@ -191,7 +203,7 @@ function initChartOptions() {
     },
     xAxis: {
       type: 'category',
-      data: sortedTokens.map((_, i) => `#${i + 1}`), // Truncate tokens for display
+      data: sortedTokens.map((_, i) => `${i + 1}`), // Truncate tokens for display
       name: props.xaxis || t(`stats.energy_journey.xaxis`),
       nameLocation: 'middle',
       nameGap: 30,

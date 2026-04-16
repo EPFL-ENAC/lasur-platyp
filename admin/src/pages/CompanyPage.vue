@@ -61,7 +61,7 @@
 
       <q-separator />
 
-      <q-card-section> Some content ? </q-card-section>
+      <q-card-section>{{ t('company.employer_measures_description') }}</q-card-section>
 
       <template v-if="isCompanyAdmin">
         <q-separator />

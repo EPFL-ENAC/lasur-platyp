@@ -48,7 +48,7 @@
       <q-tabs
         v-model="tab"
         dense
-        active-color="field"
+        active-color="secondary"
         active-bg-color="background"
         active-class="tab-active"
         indicator-color="transparent"

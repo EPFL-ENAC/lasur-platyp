@@ -43,6 +43,7 @@ interface Props {
   height?: string
   zoom?: number
   mapId: string
+  fitBoundsMargins: number
 }
 const props = defineProps<Props>()
 
@@ -71,7 +72,7 @@ watch([() => props.h3Heatmap, () => props.dots], () => {
           },
         )
       }
-      map.value.fitBounds(geoJson.boundingBox, { padding: 20, duration: 500 })
+      map.value.fitBounds(geoJson.boundingBox, { padding: props.fitBoundsMargins, duration: 500 })
     }
   }
 })
@@ -179,7 +180,7 @@ function onInit() {
       },
     })
 
-    map.value.fitBounds(geoJson.boundingBox, { padding: 20, duration: 500 })
+    map.value.fitBounds(geoJson.boundingBox, { padding: props.fitBoundsMargins, duration: 500 })
   })
 
   map.value.resize()

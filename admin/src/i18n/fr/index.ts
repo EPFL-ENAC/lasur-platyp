@@ -5,6 +5,7 @@ export default {
   company: {
     label: 'Organisation',
     actions: 'Mesures employeur',
+    employer_measures_description: 'Cette section permet d’ajouter, si besoin, des mesures personnalisées mises en place par l’organisation. Lors de la création ou l’édition d’une campagne, celles-ci s’ajouteront aux mesures par défaut qui vous seront proposées.',
     custom_actions: 'Mesures spécifiques',
     custom_actions_hint:
       'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des collaborateur·trice·s. Ces mesures sont regroupées par mode de transport ou sont globales.',
@@ -40,6 +41,7 @@ export default {
       "Identifiant unique pour l'URL de la campagne (ex. 'printemps-2024-enquete-mobilite'). Seules les lettres, chiffres, tirets et underscores sont autorisés.",
     description: 'Description',
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
+    employer_measures_hint: 'Vous pouvez préciser ici les mesures déjà en place en soutien à la mobilité de vos collaboarateur·rice·s. Les mesures qui apparaissent ici sont une sélection de mesures "par défaut" ainsi que les "mesures spécifiques" entrées dans la section précédente "Mesures employeur".',
     rewards: {
       toggle: 'Je souhaite récompenser les participant·e·s.',
       hint: 'Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d\'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une "attestation" (document PDF) à la fin du remplissage du questionnaire à chaque répondant·e, qui prouvera sa participation. Le ou la répondant·e pourra alors transférer cette attestation auprès de la personne en charge d\'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).',
@@ -334,6 +336,7 @@ Certains impacts sont aussi calculés :
         car: 'Voiture (conducteur/passager)',
         ev: 'Véhicule électrique',
       },
+      mrmt_source: 'Source MRMT : [https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)'
     },
     constraints: {
       title: 'Contraintes de mobilité',
@@ -525,34 +528,6 @@ Certains impacts sont aussi calculés :
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
-    emissions_reco_share: {
-      title: "Répartition des gains d'émissions par mode de transport",
-      labels: {
-        walking: 'Marche',
-        bike: 'Vélo',
-        ebike: 'Vélo électrique',
-        pub: 'Transports publics urbains',
-        train: 'Train',
-        moto: 'Moto / scooter',
-        car: 'Voiture',
-        carpool: 'Covoiturage',
-        plane: 'Avion',
-        pub_train: 'Transports publics (y compris le train)',
-        car_moto: 'Voiture ou moto',
-        elec: 'Véhicule électrique',
-        inter: 'Intermodalité',
-        emissions: 'Émissions CO₂ totales',
-        journeys: 'Nombre de trajets',
-        distances: 'Distance totale',
-        current: 'Actuel',
-        postSaving: 'Total après recommandations',
-      },
-      texts: {
-        default: 'Ce graphe affiche la part de réduction d’émissions de CO2éq correspondant à chaque mode recommandé, dans le cas où les collaborateur·trice·s suivraient les recommandations.',
-        specific:
-          "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
-      },
-    },
     emissions_reductions_share: {
       title: "Répartition des gains d'émissions par mode de transport",
       series: 'Réduction potentielle',
@@ -612,6 +587,7 @@ Certains impacts sont aussi calculés :
       yaxis: 'Émissions évitées (kgCO₂eq)',
       xaxis: 'Mode recommandé',
       labels: {
+        avoid: 'Éviter le déplacement',
         walking: 'Marche',
         bike: 'Vélo',
         ebike: 'Vélo électrique',
@@ -624,6 +600,7 @@ Certains impacts sont aussi calculés :
         pub_train: 'Transports publics (y compris le train)',
         car_moto: 'Voiture ou moto',
         elec: 'Véhicule électrique',
+        elec_moto: 'Moto / scooter électrique',
         inter: 'Intermodalité',
         emissions: 'Émissions CO₂ totales',
         journeys: 'Nombre de trajets',
@@ -644,6 +621,7 @@ Certains impacts sont aussi calculés :
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
       labels: {
+        avoid: 'Éviter le déplacement',
         walking: 'Marche',
         bike: 'Vélo',
         ebike: 'Vélo électrique',
@@ -656,6 +634,7 @@ Certains impacts sont aussi calculés :
         pub_train: 'Transports publics (y compris le train)',
         car_moto: 'Voiture ou moto',
         elec: 'Véhicule électrique',
+        elec_moto: 'Moto / scooter électrique',
         inter: 'Intermodalité',
         emissions: 'Émissions CO₂ totales',
         journeys: 'Nombre de trajets',
@@ -772,7 +751,9 @@ Certains impacts sont aussi calculés :
       texts: {
         default:
           "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers.",
-        specific:
+        specific_current:
+          "Actuellement, les participant·e·s dépensent en moyenne {energy} kcal/jour/pers pour leurs déplacements domicile-travail.",
+        specific_reco:
           "Si les recommandations sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers, et {count} personnes supplémentaires passeront au-dessus des recommandations d'activité physique journalière de l'OMS.",
         default_share:
           "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
@@ -898,6 +879,7 @@ Certains impacts sont aussi calculés :
           'Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou si il serait pertinent de les aider à y avoir accès.',
         specific:
           'Par exemple, {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation.',
+        hover_hint: 'Passez la souris sur les cellules pour plus de détails',
       },
     },
   },
@@ -979,6 +961,18 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
     pdf_export_failed: "Erreur lors de l'exportation du PDF. Veuillez réessayer plus tard.",
     no_charts_to_export: 'Aucun graphique à exporter en PDF.',
   },
+  footer: {
+    mobilyse: `[https://modus-ge.ch/project/toolkit-mobilite](https://modus-ge.ch/project/toolkit-mobilite)`,
+    modus: `Fondation Modus
+Pour une mobilité durable à Genève
+[https://www.modus-ge.ch](https://www.modus-ge.ch)`,
+    epfl: `
+Laboratoire de sociologie urbaine (LASUR)
+[https://www.epfl.ch/labs/lasur/](https://www.epfl.ch/labs/lasur/)
+
+ENAC-IT4R
+[https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+  },
   action: 'Mesure',
   add: 'Ajouter',
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",
@@ -1019,8 +1013,10 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
   group: 'Groupe',
   help: 'Aide',
   identifier: 'Identifiant',
+  welcome: 'Bienvenue !',
   introduction_text:
-    "Bienvenue dans l'interface d'administration de Mobilyse. Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateurs, et consulter les statistiques de mobilité.",
+    `Bienvenue dans l'interface d'administration de Mobilyse !
+Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateurs, et consulter les statistiques de mobilité. La section Documentation est notamment à votre disposition pour vous renseigner et vous guider sur les différentes fonctionnalités de Mobilyse.`,
   label_en: 'Libellé (EN)',
   label_fr: 'Libellé (FR)',
   last_modified: 'Dernière modification',

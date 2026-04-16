@@ -161,18 +161,12 @@ function initChartOptions() {
       {
         name: 'Added kcal',
         type: 'pie',
-        radius: '70%',
+        radius: ['40%', '70%'],
         top: 'middle',
         avoidLabelOverlap: true,
         label: {
           show: true,
           position: 'outer',
-          formatter: function (params) {
-            if (params.value === 0) {
-              return ''
-            }
-            return formatNumber(params.value as number)
-          },
         },
         data: filtered.map((item) => ({
           name: keyLabel(item.mode),
