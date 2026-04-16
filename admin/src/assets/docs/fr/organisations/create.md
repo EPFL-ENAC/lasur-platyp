@@ -5,7 +5,7 @@ Pour créer une nouvelle organisation, les administrateur·trice·s doivent four
 ### Champs obligatoires
 
 - **Nom** (_obligatoire_) : Nom de l'organisation tel qu'il apparaîtra dans tout le système
-- **Administrateurs** (_obligatoire_) : Adresses email des utilisateur·trice·s ayant un accès administrateur aux données de cette organisation
+- **Administrateur·trice·s** (_obligatoire_) : Adresses email des utilisateur·trice·s ayant un accès administrateur·trice·s aux données de cette organisation
 
 ### Champs optionnels
 
