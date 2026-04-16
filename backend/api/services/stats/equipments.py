@@ -29,7 +29,7 @@ class EquipmentsService(BaseStatsService):
     
     
     def _compute_equipments_reco_matrix(self, df) -> EquipmentRecommendationMatrix:
-        equip_cols = [f"data.equipments.{i}" for i in range(3)]
+        equip_cols = [col for col in df.columns if col.startswith("data.equipments.")]
         rec_cols = [f"typo.reco.reco_dt2.{i}" for i in range(1)]
 
         matrix = EquipmentRecommendationMatrix()
