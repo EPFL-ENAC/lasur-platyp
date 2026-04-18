@@ -140,10 +140,12 @@ function initLabelsChartOptions(frequencies: Frequencies) {
   const categories = dataset.map((item) => item.name)
   const values = dataset.map((item) => item.value)
 
-  const mrmtValues = props.percent ? dataset.map((item) => {
-    const mrmt = MRMT_VALUES_PERCENT[item.key as keyof typeof MRMT_VALUES_PERCENT]
-    return mrmt ?? null
-  }) : []
+  const mrmtValues = props.percent
+    ? dataset.map((item) => {
+        const mrmt = MRMT_VALUES_PERCENT[item.key as keyof typeof MRMT_VALUES_PERCENT]
+        return mrmt ?? null
+      })
+    : []
 
   if (categories.length === 0) return
 
@@ -174,7 +176,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       },
       data: mrmtValues,
       z: 3, // Ensure it's on top of the bars
-     })
+    })
   }
 
   const newOption: EChartsOption = {

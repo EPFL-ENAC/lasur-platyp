@@ -1,7 +1,7 @@
 <template>
   <q-card flat class="q-my-md">
     <q-expansion-item
-      v-model="preferencesStore.statsSectionsCollapsedState.mobilityAnalysis"
+      v-model="preferencesStore.statsSectionsExpandedState.mobilityAnalysis"
       :label="t('stats.sections.mobility_analysis.title')"
       header-class="text-h5"
       expand-icon-toggle
@@ -75,7 +75,7 @@
 
   <q-card flat class="q-my-md">
     <q-expansion-item
-      v-model="preferencesStore.statsSectionsCollapsedState.mobilityPotentials"
+      v-model="preferencesStore.statsSectionsExpandedState.mobilityPotentials"
       :label="t('stats.sections.mobility_potentials.title')"
       header-class="text-h5"
       expand-icon-toggle
@@ -133,7 +133,7 @@
 
   <q-card flat class="q-my-md">
     <q-expansion-item
-      v-model="preferencesStore.statsSectionsCollapsedState.behaviouralChanges"
+      v-model="preferencesStore.statsSectionsExpandedState.behaviouralChanges"
       :label="t('stats.sections.behavioural_changes.title')"
       header-class="text-h5"
       expand-icon-toggle

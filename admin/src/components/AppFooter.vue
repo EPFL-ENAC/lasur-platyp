@@ -1,24 +1,22 @@
 <template>
   <q-footer class="footer q-py-lg q-px-xl bg-secondary">
     <div>
-      <img src="/admin/LOGO-JAUNE.svg" alt="Mobilyse">
+      <img src="/admin/LOGO-JAUNE.svg" alt="Mobilyse" />
       <q-markdown :src="t('footer.mobilyse')" />
     </div>
     <div>
-      <img src="/admin/modus.svg" alt="Modus">
+      <img src="/admin/modus.svg" alt="Modus" />
       <q-markdown :src="t('footer.modus')" />
     </div>
     <div>
-      <img src="/admin/EPFL.svg" alt="EPFL">
+      <img src="/admin/EPFL.svg" alt="EPFL" />
       <q-markdown :src="t('footer.epfl')" />
     </div>
   </q-footer>
 </template>
 
 <script setup lang="ts">
-
 const { t } = useI18n()
-
 </script>
 
 <style scoped>

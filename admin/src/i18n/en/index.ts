@@ -5,7 +5,8 @@ export default {
   company: {
     label: 'Organisation',
     actions: 'Employer measures',
-    employer_measures_description: 'This section allows you to add, if necessary, any custom metrics set up by your organisation. When creating or editing a campaign, these will be added to the default metrics that are suggested to you.',
+    employer_measures_description:
+      'This section allows you to add, if necessary, any custom metrics set up by your organisation. When creating or editing a campaign, these will be added to the default metrics that are suggested to you.',
     custom_actions: 'Custom measures',
     custom_actions_hint:
       'Add or remove custom employer measures that will facilitate employees mobility. These measures are grouped per transport mode or are global.',
@@ -40,7 +41,8 @@ export default {
       'Unique identifier for the campaign URL (e.g., "spring-2024-mobility-survey"). Only letters, numbers, hyphens and underscores are allowed.',
     description: 'Description',
     with_actions: 'With employer measures specific to this campaign',
-    employer_measures_hint: 'Here you can specify the measures already in place to support your employees’ mobility. The measures listed here are a selection of "default" measures, as well as the "specific measures" entered in the previous section, "Employer Measures".',
+    employer_measures_hint:
+      'Here you can specify the measures already in place to support your employees’ mobility. The measures listed here are a selection of "default" measures, as well as the "specific measures" entered in the previous section, "Employer Measures".',
     rewards: {
       toggle: 'I want to reward participants.',
       hint: 'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
@@ -311,7 +313,7 @@ Some environmental impacts have also been calculated:
         description: `This final section provides information on participants’ willingness to follow the recommendations made to them, and on their needs or desires in order to bring about these behavioural changes. This can help guide your decisions and identify the mobility aids you might consider.`,
       },
       home_to_work: 'Home-to-work commute',
-      professional_travel: 'Professional travel'
+      professional_travel: 'Professional travel',
     },
     equipments: {
       title: 'Mobility equipments',
@@ -327,7 +329,8 @@ Some environmental impacts have also been calculated:
         car: 'Car (driver/passenger)',
         ev: 'Electric vehicle',
       },
-      mrmt_source: 'MRMT source: [https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)'
+      mrmt_source:
+        'MRMT source: [https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
     },
     constraints: {
       title: 'Mobility constraints',
@@ -590,7 +593,7 @@ Some environmental impacts have also been calculated:
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
         elec: 'Electric vehicle',
-        elec_moto: 'Moto / scooter électrique',
+        elec_moto: 'Electric motorcycle/scooter',
         inter: 'Intermodality',
         emissions: 'Total CO₂ emissions',
         journeys: 'Number of journeys',
@@ -972,7 +975,8 @@ ENAC-IT4R
   download: 'Download',
   records: 'Records',
   no_records: 'No records',
-  records_not_super_admin: 'Only super admins can see records directly on Mobilyse. However, they are still available for download on the button above',
+  records_not_super_admin:
+    'Only super admins can see records directly on Mobilyse. However, they are still available for download on the button above',
   close: 'Close',
   cancel: 'Cancel',
   companies: 'Companies',
@@ -999,9 +1003,8 @@ ENAC-IT4R
   group: 'Group',
   help: 'Help',
   identifier: 'Identifier',
-  welcome: 'Welcome !',
-  introduction_text:
-    `Welcome to the Mobilyse administration interface!
+  welcome: 'Welcome!',
+  introduction_text: `Welcome to the Mobilyse administration interface!
 Use the menu to navigate through the different sections, manage organisations, campaigns, and users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of Mobilyse.`,
   label_en: 'Label (EN)',
   label_fr: 'Label (FR)',
@@ -1069,4 +1072,5 @@ Use the menu to navigate through the different sections, manage organisations, c
   updated_at: 'Updated at',
   do_not_show_again: 'Do not show again',
   dark_mode: 'Dark mode',
+  ok: 'OK',
 }

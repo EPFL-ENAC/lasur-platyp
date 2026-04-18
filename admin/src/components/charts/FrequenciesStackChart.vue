@@ -133,14 +133,14 @@ function initChartOptions() {
   })
 
   let series: {
-    name: string;
-    type: "bar";
-    stack: string;
+    name: string
+    type: 'bar'
+    stack: string
     emphasis: {
-        focus: "series";
-    };
-    color: string;
-    data: number[];
+      focus: 'series'
+    }
+    color: string
+    data: number[]
   }[] = []
 
   if (props.percent) {
@@ -162,7 +162,7 @@ function initChartOptions() {
         color: MODE_COLORS[mode] || '#ccc',
         data: props.groups.map((grp) => {
           const item = dataset.find((d) => d.key === `${grp}_${mode}`)
-          return item ? item.value / (sumByGroup[grp] || 1) * 100 : 0
+          return item ? (item.value / (sumByGroup[grp] || 1)) * 100 : 0
         }),
       }
     })
@@ -211,18 +211,16 @@ function initChartOptions() {
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter: (params: any) => {
-        let res = `${params[0].name}<br/>`;
+        let res = `${params[0].name}<br/>`
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         params.forEach((item: any) => {
           // item.value is the data point value
-          const val = props.percent 
-            ? `${item.value.toFixed(1)}%` 
-            : item.value;
-          
-          res += `${item.marker} ${item.seriesName}: <b>${val}</b><br/>`;
-        });
-        return res;
-      }
+          const val = props.percent ? `${item.value.toFixed(1)}%` : item.value
+
+          res += `${item.marker} ${item.seriesName}: <b>${val}</b><br/>`
+        })
+        return res
+      },
     },
     legend: {
       show: false,

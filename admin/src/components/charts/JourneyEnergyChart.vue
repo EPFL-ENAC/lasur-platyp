@@ -23,8 +23,14 @@
 
   <div class="q-mt-md chart-text" :data-chart-id="chartId">
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
-    <q-markdown v-if="textLabelsCurrent" :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)" />
-    <q-markdown v-if="textLabelsReco" :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)" />
+    <q-markdown
+      v-if="textLabelsCurrent"
+      :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)"
+    />
+    <q-markdown
+      v-if="textLabelsReco"
+      :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)"
+    />
   </div>
 </template>
 

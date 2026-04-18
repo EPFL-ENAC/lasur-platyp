@@ -73,24 +73,12 @@ const textLabels = computed(() => {
   return {
     current_emissions: formatNumber(currentEmissions.value / 1000),
     new_emissions: formatNumber(newEmissions.value / 1000),
-    cheeseburgers: formatNumber(
-      Math.round((currentEmissions.value - newEmissions.value) / 18.8),
-    ),
-    vacuum: formatNumber(
-      Math.round((currentEmissions.value - newEmissions.value) / 73.43),
-    ),
-    shirt: formatNumber(
-      Math.round((currentEmissions.value - newEmissions.value) / 13.23466),
-    ),
-    laptop: formatNumber(
-      Math.round((currentEmissions.value - newEmissions.value) / 192.62),
-    ),
-    email_sent: formatNumber(
-      Math.round((currentEmissions.value - newEmissions.value) / 0.002462),
-    ),
-    visio_hour: formatNumber(
-      Math.round((currentEmissions.value - newEmissions.value) / 0.057063),
-    ),
+    cheeseburgers: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 18.8)),
+    vacuum: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 73.43)),
+    shirt: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 13.23466)),
+    laptop: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 192.62)),
+    email_sent: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.002462)),
+    visio_hour: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.057063)),
   }
 })
 

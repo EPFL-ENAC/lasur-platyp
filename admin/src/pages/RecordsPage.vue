@@ -295,7 +295,7 @@ function fetchFromServer(
 ) {
   // Only super admins can see records directly on the table, others need to download the results
   if (!authStore.isAdmin) return Promise.resolve({})
-  
+
   const query: Query = {
     $skip: startRow,
     $limit: count,
@@ -356,7 +356,7 @@ function onDownload(completedOnly: boolean) {
     },
     persistent: true,
   }).onOk(() => {
-     downloadCSV(completedOnly)
+    downloadCSV(completedOnly)
   })
 }
 

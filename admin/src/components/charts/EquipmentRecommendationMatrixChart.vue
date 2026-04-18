@@ -17,7 +17,9 @@
           :label="t('stats.equipments_by_recommendations.simpleMode')"
           color="primary"
         />
-        <div class="text-caption">{{ t('stats.equipments_by_recommendations.texts.hover_hint') }}</div>
+        <div class="text-caption">
+          {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
+        </div>
       </div>
     </template>
     <div v-else>

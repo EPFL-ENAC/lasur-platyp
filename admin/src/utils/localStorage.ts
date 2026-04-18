@@ -1,7 +1,9 @@
 export function getLocalStorageBoolean(key: string, defaultValue: boolean): boolean {
   if (typeof window !== 'undefined') {
-    console.log('getLocalStorageBoolean - key:', key, 'storedValue:', localStorage.getItem(key))
-    return localStorage.getItem(key) === 'true'
+    const item = localStorage.getItem(key)
+    if (item !== null && item !== undefined) {
+      return item === 'true'
+    }
   }
   return defaultValue
 }

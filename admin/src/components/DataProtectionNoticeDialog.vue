@@ -21,15 +21,15 @@
 </template>
 
 <script setup lang="ts">
-
 const preferences = usePreferencesStore()
 const authStore = useAuthStore()
 const { t } = useI18n()
 
-const showDataProtectionNotice = ref(!preferences.doNotShowNotice && !preferences.hasAlreadyShownDataProtectionNoticeThisTime)
+const showDataProtectionNotice = ref(
+  !preferences.doNotShowNotice && !preferences.hasAlreadyShownDataProtectionNoticeThisTime,
+)
 
 function onClose() {
   preferences.hasAlreadyShownDataProtectionNoticeThisTime = true
 }
-
 </script>
