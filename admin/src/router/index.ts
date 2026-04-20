@@ -6,6 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router'
 import routes from './routes'
+import { isFirstVisit, markVisited } from 'src/utils/localStorage'
 
 /*
  * If not building with SSR mode, you can
@@ -31,6 +32,19 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+  })
+
+  Router.beforeEach((to, from, next) => {
+    const docUrl = '/doc'
+
+    if (isFirstVisit() && to.path !== docUrl && from.path !== docUrl) {
+      next(docUrl)
+    } else {
+      if (from.path === docUrl) {
+        markVisited()
+      }
+      next()
+    }
   })
 
   return Router

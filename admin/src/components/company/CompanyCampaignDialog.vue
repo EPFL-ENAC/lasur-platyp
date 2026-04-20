@@ -14,7 +14,7 @@
             v-model="tab"
             dense
             no-caps
-            active-color="field"
+            active-color="secondary"
             active-bg-color="white"
             active-class="tab-active"
             indicator-color="transparent"
@@ -150,6 +150,7 @@
                   :label="t('campaign.with_actions')"
                   @update:model-value="onWithActionsChanged"
                 />
+                <p class="text-hint q-mb-md">{{ t('campaign.employer_measures_hint') }}</p>
                 <employer-actions-input
                   v-if="withActions"
                   v-model="selected.actions"

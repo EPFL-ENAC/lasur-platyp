@@ -6,10 +6,11 @@
       v-model="tab"
       dense
       no-caps
-      class="text-grey"
-      active-color="field"
-      active-bg-color="grey-4"
-      indicator-color="primary"
+      active-color="secondary"
+      active-bg-color="white"
+      active-class="tab-active"
+      indicator-color="transparent"
+      class="bg-secondary-ultra-light"
       align="left"
     >
       <q-tab name="personnal" :label="t('actions.personnal')" />

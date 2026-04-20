@@ -5,6 +5,8 @@ export default {
   company: {
     label: 'Organisation',
     actions: 'Employer measures',
+    employer_measures_description:
+      'This section allows you to add, if necessary, any custom metrics set up by your organisation. When creating or editing a campaign, these will be added to the default metrics that are suggested to you.',
     custom_actions: 'Custom measures',
     custom_actions_hint:
       'Add or remove custom employer measures that will facilitate employees mobility. These measures are grouped per transport mode or are global.',
@@ -39,6 +41,8 @@ export default {
       'Unique identifier for the campaign URL (e.g., "spring-2024-mobility-survey"). Only letters, numbers, hyphens and underscores are allowed.',
     description: 'Description',
     with_actions: 'With employer measures specific to this campaign',
+    employer_measures_hint:
+      'Here you can specify the measures already in place to support your employees’ mobility. The measures listed here are a selection of "default" measures, as well as the "specific measures" entered in the previous section, "Employer Measures".',
     rewards: {
       toggle: 'I want to reward participants.',
       hint: 'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
@@ -308,6 +312,8 @@ Some environmental impacts have also been calculated:
         title: 'Encouraging behavioural changes',
         description: `This final section provides information on participants’ willingness to follow the recommendations made to them, and on their needs or desires in order to bring about these behavioural changes. This can help guide your decisions and identify the mobility aids you might consider.`,
       },
+      home_to_work: 'Home-to-work commute',
+      professional_travel: 'Professional travel',
     },
     equipments: {
       title: 'Mobility equipments',
@@ -323,6 +329,8 @@ Some environmental impacts have also been calculated:
         car: 'Car (driver/passenger)',
         ev: 'Electric vehicle',
       },
+      mrmt_source:
+        'MRMT source: [https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
     },
     constraints: {
       title: 'Mobility constraints',
@@ -512,35 +520,6 @@ Some environmental impacts have also been calculated:
           'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
-    emissions_reco_share: {
-      title: 'Share of CO₂ emissions reduction per recommended mode of transport',
-      labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
-        current: 'Current',
-        postSaving: 'Total after recommendations',
-      },
-      texts: {
-        default:
-          'This chart shows the share of CO₂ emissions reduction per recommended mode of transport.',
-        specific:
-          '{percentage}% of potential reduction depend on the main recommendation for mode {mode}.',
-      },
-    },
     emissions_reductions_share: {
       title: 'Share of CO₂ emissions reduction per recommended mode of transport',
       series: 'Potential reduction',
@@ -601,6 +580,7 @@ Some environmental impacts have also been calculated:
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
+        avoid: 'Avoid travel',
         walking: 'Walking',
         bike: 'Bicycle',
         ebike: 'Electric bike',
@@ -613,6 +593,7 @@ Some environmental impacts have also been calculated:
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
         elec: 'Electric vehicle',
+        elec_moto: 'Electric motorcycle/scooter',
         inter: 'Intermodality',
         emissions: 'Total CO₂ emissions',
         journeys: 'Number of journeys',
@@ -633,6 +614,7 @@ Some environmental impacts have also been calculated:
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
+        avoid: 'Avoid travel',
         walking: 'Walking',
         bike: 'Bicycle',
         ebike: 'Electric bike',
@@ -645,6 +627,7 @@ Some environmental impacts have also been calculated:
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
         elec: 'Electric vehicle',
+        elec_moto: 'Electric motorcycle/scooter',
         inter: 'Intermodality',
         emissions: 'Total CO₂ emissions',
         journeys: 'Number of journeys',
@@ -728,7 +711,7 @@ Some environmental impacts have also been calculated:
       },
     },
     energy_journey: {
-      title_current: 'Potential Physical Activity Diagram by Currently Used Mode',
+      title_current: 'Physical Activity Diagram by Currently Used Mode',
       title_reco: 'Potential Physical Activity Diagram following Recommendations',
       title_share: 'Modes with the Most Potential for Increased Physical Activity',
       yaxis: 'Energy expenditure (kcal)',
@@ -761,7 +744,9 @@ Some environmental impacts have also been calculated:
       texts: {
         default:
           'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person.',
-        specific:
+        specific_current:
+          'Currently, participants spend an average of {energy} kcal/day/person on their home-work travel.',
+        specific_reco:
           'If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person, and {count} more people will exceed the daily physical activity recommendations of the WHO.',
         default_share:
           'This chart shows which modes of transport have the most potential for increased physical activity.',
@@ -886,6 +871,7 @@ Some environmental impacts have also been calculated:
           'This table shows the equipment of participants based on the recommendations made to them. This allows us to understand whether participants already have access to the mode recommended to them, or if it would be pertinent to help them gain access.',
         specific:
           'For example, {percentage}% of participants to whom the {mode} mode is recommended are currently equipped to follow this recommendation.',
+        hover_hint: 'Hover over the cells for more details',
       },
     },
   },
@@ -964,6 +950,18 @@ Furthermore, we recommend that you adapt your processing register accordingly.
     pdf_export_failed: 'Error exporting PDF. Please try again later.',
     no_charts_to_export: 'No charts to export as PDF.',
   },
+  footer: {
+    mobilyse: `[https://modus-ge.ch/project/toolkit-mobilite](https://modus-ge.ch/project/toolkit-mobilite)`,
+    modus: `Fondation Modus
+Promoting sustainable mobility in the Greater Geneva
+[https://www.modus-ge.ch](https://www.modus-ge.ch)`,
+    epfl: `
+Laboratory Of Urban Sociology (LASUR)
+[https://www.epfl.ch/labs/lasur/](https://www.epfl.ch/labs/lasur/)
+
+ENAC-IT4R
+[https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+  },
   action: 'Measure',
   add: 'Add',
   address_input_hint: 'Type Enter to lookup addresses.',
@@ -976,7 +974,11 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   completed: 'Completed',
   download: 'Download',
   records: 'Records',
+  no_records: 'No records',
+  records_not_super_admin:
+    'Only super admins can see records directly on Mobilyse. However, they are still available for download on the button above',
   close: 'Close',
+  cancel: 'Cancel',
   companies: 'Companies',
   company_campaign: 'Company (campaign)',
   company_removed: 'Company removed',
@@ -1001,8 +1003,9 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   group: 'Group',
   help: 'Help',
   identifier: 'Identifier',
-  introduction_text:
-    'Welcome to Mobilyse administration interface. Use the menu to navigate through the different sections and manage companies, campaigns, users, and view mobility statistics.',
+  welcome: 'Welcome!',
+  introduction_text: `Welcome to the Mobilyse administration interface!
+Use the menu to navigate through the different sections, manage organisations, campaigns, and users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of Mobilyse.`,
   label_en: 'Label (EN)',
   label_fr: 'Label (FR)',
   last_modified: 'Last Modified',
@@ -1069,4 +1072,5 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   updated_at: 'Updated at',
   do_not_show_again: 'Do not show again',
   dark_mode: 'Dark mode',
+  ok: 'OK',
 }

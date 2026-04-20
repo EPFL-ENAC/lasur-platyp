@@ -17,6 +17,9 @@
           :label="t('stats.equipments_by_recommendations.simpleMode')"
           color="primary"
         />
+        <div class="text-caption">
+          {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
+        </div>
       </div>
     </template>
     <div v-else>
@@ -266,7 +269,7 @@ function initChartOptions() {
       left: 'center',
       bottom: '0%',
       inRange: {
-        color: ['#cfc', '#0a0'], // Adjust colors to your theme
+        color: ['#FFCC33', '#FFFFE0', '#74C365'],
       },
     },
     tooltip: {
@@ -335,5 +338,13 @@ function shortKey(key: string) {
   position: absolute;
   top: 0;
   left: 0;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.options > * {
+  pointer-events: all;
 }
 </style>

@@ -42,6 +42,7 @@ use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, G
 interface Props {
   type: string
   groups: string[]
+  percent?: boolean
   xaxis?: string
   yaxis?: string
   height?: number
@@ -63,7 +64,7 @@ watch(
   },
 )
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => props.percent], () => {
   if (!stats.loading) {
     initChartOptions()
   }
@@ -131,21 +132,57 @@ function initChartOptions() {
     return modes_order.indexOf(a) - modes_order.indexOf(b)
   })
 
-  const series = sorted_modes.map((mode) => {
-    return {
-      name: t(`stats.${props.type}.labels.${mode}`),
-      type: 'bar' as const,
-      stack: 'total',
-      emphasis: {
-        focus: 'series' as const,
-      },
-      color: MODE_COLORS[mode] || '#ccc',
-      data: props.groups.map((grp) => {
-        const item = dataset.find((d) => d.key === `${grp}_${mode}`)
-        return item ? item.value : 0
-      }),
+  let series: {
+    name: string
+    type: 'bar'
+    stack: string
+    emphasis: {
+      focus: 'series'
     }
-  })
+    color: string
+    data: number[]
+  }[] = []
+
+  if (props.percent) {
+    const sumByGroup: Record<string, number> = {}
+    dataset.forEach((item) => {
+      const grp = props.groups.find((g) => item.key.startsWith(g))
+      if (grp) {
+        sumByGroup[grp] = (sumByGroup[grp] || 0) + item.value
+      }
+    })
+    series = sorted_modes.map((mode) => {
+      return {
+        name: t(`stats.${props.type}.labels.${mode}`),
+        type: 'bar' as const,
+        stack: 'total',
+        emphasis: {
+          focus: 'series' as const,
+        },
+        color: MODE_COLORS[mode] || '#ccc',
+        data: props.groups.map((grp) => {
+          const item = dataset.find((d) => d.key === `${grp}_${mode}`)
+          return item ? (item.value / (sumByGroup[grp] || 1)) * 100 : 0
+        }),
+      }
+    })
+  } else {
+    series = sorted_modes.map((mode) => {
+      return {
+        name: t(`stats.${props.type}.labels.${mode}`),
+        type: 'bar' as const,
+        stack: 'total',
+        emphasis: {
+          focus: 'series' as const,
+        },
+        color: MODE_COLORS[mode] || '#ccc',
+        data: props.groups.map((grp) => {
+          const item = dataset.find((d) => d.key === `${grp}_${mode}`)
+          return item ? item.value : 0
+        }),
+      }
+    })
+  }
 
   const newOption: EChartsOption = {
     grid: {
@@ -171,6 +208,18 @@ function initChartOptions() {
       axisPointer: {
         // Use axis to trigger tooltip
         type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: (params: any) => {
+        let res = `${params[0].name}<br/>`
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        params.forEach((item: any) => {
+          // item.value is the data point value
+          const val = props.percent ? `${item.value.toFixed(1)}%` : item.value
+
+          res += `${item.marker} ${item.seriesName}: <b>${val}</b><br/>`
+        })
+        return res
       },
     },
     legend: {

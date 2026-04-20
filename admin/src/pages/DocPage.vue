@@ -75,7 +75,11 @@ import CampaignRewardEn from 'src/assets/docs/en/campaigns/reward.md'
 import CampaignRewardFr from 'src/assets/docs/fr/campaigns/reward.md'
 import CampaignDashboardEn from 'src/assets/docs/en/campaigns/dashboard.md'
 import CampaignDashboardFr from 'src/assets/docs/fr/campaigns/dashboard.md'
+import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import { useQuasar } from 'quasar'
+import { isFirstVisit } from 'src/utils/localStorage'
 
+const $q = useQuasar()
 const { locale, t } = useI18n()
 
 interface DocEntry {
@@ -198,6 +202,18 @@ const sections = computed<DocSection[]>(() => [
     ],
   },
 ])
+
+onMounted(() => {
+  if (isFirstVisit()) {
+    $q.dialog({
+      component: MarkdownDialog,
+      componentProps: {
+        text: t('introduction_text'),
+        title: t('welcome'),
+      },
+    })
+  }
+})
 </script>
 
 <style scoped>

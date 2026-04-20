@@ -109,9 +109,9 @@ export const CATEGORY_COLORS: { [key: string]: string } = {
 }
 
 export const MOTIVATION_COLORS: { [key: string]: string } = {
-  1: '#ff0000',
-  2: '#ff8800',
-  3: '#ffff00',
-  4: '#aaff00',
-  5: '#00c000',
+  1: '#f38989',
+  2: '#f2b4a3',
+  3: '#ffdbc2',
+  4: '#c1cbb1',
+  5: '#78c1a3',
 }
