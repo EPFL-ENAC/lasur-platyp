@@ -844,6 +844,7 @@ Some environmental impacts have also been calculated:
         moto: 'Motorcycle/scooter',
         car: 'Car',
         car_driver: 'Car (as driver)',
+        car_passenger: 'Car (as passenger)',
         carpool: 'Carpooling',
         plane: 'Plane',
         pub_train: 'Public transport and train',
