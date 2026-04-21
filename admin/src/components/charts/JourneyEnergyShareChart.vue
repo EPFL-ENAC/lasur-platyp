@@ -148,7 +148,7 @@ function initChartOptions() {
         const p = Array.isArray(params) ? params[0] : params
         if (!p) return ''
 
-        return `${p.name}<br/><b>${formatNumber(p.value as number)} kcal</b> (${p.percent}%)`
+        return `${p.name}<br/><b>${p.percent}%</b> (${formatNumber(p.value as number)} kcal)`
       },
     },
     legend: {

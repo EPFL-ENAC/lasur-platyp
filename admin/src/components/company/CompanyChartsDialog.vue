@@ -122,6 +122,8 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
 }
 
 async function goToReport() {
+  const id = stats.dumpToLocalStorage()
+  
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
@@ -130,8 +132,7 @@ async function goToReport() {
     url.searchParams.set('campaigns', props.campaign.name)
   }
 
-  const compressedState = await stats.toCompressedURLState()
-  url.searchParams.set('stats', compressedState)
+  url.searchParams.set('statsStateId', id)
 
   window.open(url.toString(), '_blank')
 }

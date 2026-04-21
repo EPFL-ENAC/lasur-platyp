@@ -236,7 +236,7 @@ import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
 import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
 import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
-import { stateFromCompressedURL, type StatsState } from 'src/stores/stats'
+import { type StatsState, flushStateFromLocalStorage, getStateFromLocalStorage } from 'src/stores/stats'
 import type { Frequencies } from 'src/models'
 
 interface Props {
@@ -255,11 +255,22 @@ const stats = ref<StatsState | null>(null)
 const orgs = ref<string[]>([])
 const campaigns = ref<string[]>([])
 
-onMounted(async () => {
-  stats.value = await stateFromCompressedURL(route.query.stats as string)
+onMounted(() => {
+  stats.value = getStateFromLocalStorage(route.query.statsStateId as string)
   orgs.value = (route.query.orgs as string)?.split(';').map(decodeURIComponent) || []
   campaigns.value = (route.query.campaigns as string)?.split(';').map(decodeURIComponent) || []
+
+  window.addEventListener('beforeunload', cleanUpLocalStorage)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('beforeunload', cleanUpLocalStorage)
+  cleanUpLocalStorage()
+})
+
+function cleanUpLocalStorage() {
+  flushStateFromLocalStorage(route.query.statsStateId as string)
+}
 
 const reportDate = computed(() => {
   const df = new Intl.DateTimeFormat(locale.value, {

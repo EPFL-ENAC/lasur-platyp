@@ -119,8 +119,8 @@ const emissionItemsLabels = computed(() => {
   if (!ei) return null
 
   return {
-    carMotoJourneysPercentage: formatNumber(ei.carMotoJourneysPercentage),
-    carMotoEmissionsPercentage: formatNumber(ei.carMotoEmissionsPercentage),
+    carMotoJourneysPercentage: formatNumber(Math.round(ei.carMotoJourneysPercentage)),
+    carMotoEmissionsPercentage: formatNumber(Math.round(ei.carMotoEmissionsPercentage)),
   }
 })
 
@@ -162,10 +162,10 @@ const emissionItemsProLabels = computed(() => {
   const withoutFirstJourneys = eip.withoutFirst.reduce((sum, item) => sum + item.journeys, 0)
 
   return {
-    firstPercent: formatNumber((eip.first.emissions / eip.total) * 100),
+    firstPercent: formatNumber(Math.round((eip.first.emissions / eip.total) * 100)),
     firstMode: keyLabel(eip.first.mode),
     firstEmissions: formatNumber((eip.first.emissions || 0) / eip.first.journeys),
-    secondPercent: formatNumber((eip.second.emissions / eip.total) * 100),
+    secondPercent: formatNumber(Math.round((eip.second.emissions / eip.total) * 100)),
     secondMode: keyLabel(eip.second.mode),
     remainingEmissions: formatNumber(withoutFirstEmissions / withoutFirstJourneys),
   }
@@ -197,34 +197,38 @@ function initChartOptions() {
   const labelColor = $q.dark.isActive ? '#fffcf4' : '#000000'
 
   let ubound = 0
-  const dataset = emissions
+  const preparedData = emissions
     .sort((a, b) => {
-      const emaA = a.journeys ? a.emissions / a.journeys : 0
-      const emaB = b.journeys ? b.emissions / b.journeys : 0
-      return emaB - emaA
+      const emaA = a.journeys ? a.emissions / a.journeys : 0;
+      const emaB = b.journeys ? b.emissions / b.journeys : 0;
+      return emaB - emaA;
     })
     .map((item) => {
-      const data = [
-        ubound,
-        ubound + item.journeys,
-        item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0,
-        keyLabel(item.mode),
-        MODE_COLORS[shortKey(item.mode)] || MODE_COLORS['default'],
-        item.emissions.toFixed(0),
-        item.journeys,
-        `${item.distances.toFixed(0)} km`,
-      ]
-      ubound += item.journeys
-      return data
-    })
+      const data = {
+        name: keyLabel(item.mode),
+        color: MODE_COLORS[shortKey(item.mode)] || MODE_COLORS['default'],
+        value: [
+          ubound, // 0: start x
+          ubound + item.journeys, // 1: end x
+          item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0, // 2: height
+          keyLabel(item.mode), // 3: label
+          item.emissions.toFixed(0), // 4
+          item.journeys, // 5
+          `${item.distances.toFixed(0)} km`, // 6
+        ],
+      };
+      ubound += item.journeys;
+      return data;
+    });
 
   total.value = emissions[0]?.total || 0
+
   const newOption: EChartsOption = {
     grid: {
       left: '40',
       right: '20',
       top: '60',
-      bottom: '20',
+      bottom: '60',
       containLabel: true,
     },
     animation: false,
@@ -241,86 +245,112 @@ function initChartOptions() {
     },
     tooltip: {
       trigger: 'item',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: (params: any) => {
+        let html = `<div style="font-weight: bold; margin-bottom: 4px;">${params.marker} ${params.name}</div>`;
+        
+        const indicesToShow = [4, 5, 6];
+        
+        indicesToShow.forEach((idx) => {
+          const label = params.dimensionNames[idx];
+          const value = params.value[idx];
+          
+          if (value !== undefined) {
+            html += `
+              <div style="display: flex; justify-content: space-between; gap: 20px;">
+                <span>${label}</span>
+                <span style="font-weight: bold;">${value}</span>
+              </div>`;
+          }
+        });
+        
+        return html;
+      }
     },
     legend: {
-      show: false,
+      show: true,
+      bottom: 0,
+      left: 'center',
+      itemGap: 20,
     },
     xAxis: {
       name: props.xaxis || '',
       nameLocation: 'middle',
-      nameGap: 30,
+      nameGap: 20,
       type: 'value',
     },
     yAxis: {
       name: props.yaxis || '',
       nameLocation: 'middle',
-      nameGap: 40,
+      nameGap: 50,
       type: 'value',
     },
-    series: [
-      {
-        type: 'custom',
-        renderItem: function (params, api) {
-          const val0 = (api.value(0) as number) || 0
-          const val1 = (api.value(1) as number) || 0
-          const yValue = api.value(2) || 0
-          const start = api.coord([api.value(0) || 0, yValue]) || [0, 0]
-          const size: [number, number] = api.size
-            ? (api.size([val1 - val0, yValue]) as [number, number])
-            : [0, 0]
-          const style = { fill: api.value(4) as string }
-          const rect = {
-            type: 'rect' as const,
-            shape: {
-              x: start[0] as number,
-              y: start[1] as number,
-              width: size[0],
-              height: size[1],
-            },
-            style: style,
-          }
+    series: preparedData.map((item) => ({
+      name: item.name, // This makes the item appear in the legend
+      color: item.color!,
+      type: 'custom',
+      renderItem: function (params, api) {
+        const val0 = api.value(0) as number;
+        const val1 = api.value(1) as number;
+        const yValue = api.value(2) as number;
+        const start = api.coord([val0, yValue]);
+        const size = api.size!([val1 - val0, yValue]) as [number, number];
+        const style = api.style();
 
-          const pxLeft = api.coord([val0, 0])[0] || 0
-          const pxRight = api.coord([val1, 0])[0] || 0
-          const pxBaseY = api.coord([0, 0])[1] || 0
-          const pxValY = api.coord([0, yValue])[1] || 0
-          const label = {
-            type: 'text' as const,
-            style: {
-              text: String(api.value(3)),
-              x: (pxLeft + pxRight) / 2,
-              y: yValue ? pxValY - 10 : pxBaseY + 14,
-              textAlign: 'center',
-              textVerticalAlign: 'middle',
-              fill: labelColor,
+        const pxLeft = api.coord([val0, 0])[0]!;
+        const pxRight = api.coord([val1, 0])[0]!;
+        const pxBaseY = api.coord([0, 0])[1]!;
+        const pxValY = api.coord([0, yValue])[1]!;
+
+        return {
+          type: 'group',
+          children: [
+            {
+              type: 'rect',
+              shape: {
+                x: start[0]!,
+                y: start[1]!,
+                width: size[0]!,
+                height: size[1]!,
+              },
+              style: {
+                ...style,
+                fill: item.color!,
+              },
             },
-            silent: true, // don't intercept mouse events
-          }
-          return { type: 'group', children: [rect, label] }
-        },
-        label: {
-          show: true,
-          position: 'top',
-        },
-        dimensions: [
-          'from',
-          'to',
-          'emissions',
-          'label',
-          'color',
-          keyLabel('emissions'),
-          keyLabel('journeys'),
-          keyLabel('distances'),
-        ],
-        encode: {
-          x: [0, 1],
-          y: 2,
-          tooltip: [5, 6, 7],
-          itemName: 3,
-        },
-        data: dataset,
+            {
+              type: 'text',
+              style: {
+                text: String(item.name),
+                x: (pxLeft + pxRight) / 2,
+                y: yValue ? pxValY - 10 : pxBaseY - 10,
+                //y: yValue ? pxValY - 10 : pxBaseY + 14,
+                textAlign: 'center',
+                textVerticalAlign: 'middle',
+                fill: labelColor,
+              },
+              silent: true,
+            },
+          ],
+        };
       },
-    ],
+      data: [item.value],
+      dimensions: [
+        'from',
+        'to',
+        'emissions',
+        'label',
+        keyLabel('emissions'),
+        keyLabel('journeys'),
+        keyLabel('distances'),
+      ],
+      encode: {
+        x: [0, 1],
+        y: 2,
+        tooltip: [4, 5, 6],
+        itemName: 3,
+      },
+    })),
   }
   option.value = newOption
 }

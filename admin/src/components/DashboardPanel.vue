@@ -78,8 +78,7 @@
           outline
           dense
           icon="picture_as_pdf"
-          :loading="exportingPDF"
-          :disable="stats.loading || exportingPDF"
+          :disable="stats.loading"
           :label="t('stats.pdf_report')"
           no-caps
           @click="goToReport"
@@ -108,6 +107,12 @@
           </q-menu>
         </q-btn>
       </q-btn-group>
+
+      <download-data-button
+        :company-filter="companyFilter"
+        :campaign-filter="campaignFilter"
+        class="on-right"
+      />
     </div>
     <div v-if="stats.loading">
       <div class="spinner-container">
@@ -133,6 +138,7 @@
 import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
 import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
+import DownloadDataButton from 'src/components/DownloadDataButton.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
 
@@ -145,7 +151,6 @@ const campaignService = services.make('campaign')
 const layout = ref('grid')
 const percent = ref(true)
 const height = ref(400)
-const exportingPDF = ref(false)
 const companyMap = ref<{ [key: string]: Company }>({})
 const campaignMap = ref<{ [key: string]: Campaign }>({})
 const showMapFilter = ref(false)
@@ -226,6 +231,8 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
 }
 
 async function goToReport() {
+  const id = stats.dumpToLocalStorage()
+  
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
@@ -243,8 +250,7 @@ async function goToReport() {
     displayedCampaigns.map((id) => campaignMap.value[`${id}`]?.name || id).join(';'),
   )
 
-  const compressedState = await stats.toCompressedURLState()
-  url.searchParams.set('stats', compressedState)
+  url.searchParams.set('statsStateId', id)
 
   window.open(url.toString(), '_blank')
 }

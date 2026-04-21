@@ -14,7 +14,8 @@ import {
 } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
-import { compressToURL, decompressFromURL } from 'src/utils/compression'
+import { getLocalStorageJSON, setLocalStorage } from 'src/utils/localStorage'
+import { getRandomId } from 'src/utils/random'
 
 const authStore = useAuthStore()
 
@@ -138,6 +139,12 @@ export const useStats = defineStore('stats', () => {
     })
   }
 
+  function dumpToLocalStorage() {
+    const id = getRandomId()
+    setLocalStorage(makeStatsStateId(id), JSON.stringify(toJSONState()))
+    return id
+  }
+
   function toJSONState(): StatsState {
     return {
       frequencies: frequencies.value,
@@ -150,11 +157,6 @@ export const useStats = defineStore('stats', () => {
       behaviorChange: behaviorChange.value,
       equipmentsStats: equipmentsStats.value,
     }
-  }
-
-  async function toCompressedURLState(): Promise<string> {
-    const jsonState = toJSONState()
-    return compressToURL(jsonState)
   }
 
   return {
@@ -171,10 +173,18 @@ export const useStats = defineStore('stats', () => {
     loadStats,
     getCampaignStats,
     toJSONState,
-    toCompressedURLState,
+    dumpToLocalStorage
   }
 })
 
-export function stateFromCompressedURL(compressedState: string): Promise<StatsState> {
-  return decompressFromURL(compressedState)
+function makeStatsStateId(uuid: string): string {
+  return `stats_${uuid}`
+}
+
+export function getStateFromLocalStorage(id: string): StatsState | null {
+  return getLocalStorageJSON<StatsState | null>(makeStatsStateId(id), null)
+}
+
+export function flushStateFromLocalStorage(id: string): void {
+  localStorage.removeItem(makeStatsStateId(id))
 }
