@@ -344,7 +344,7 @@ Certains impacts sont aussi calculés :
     constraints: {
       title: 'Contraintes de mobilité',
       labels: {
-        dependent: 'Emmener des enfants ou des personnes dépendantes',
+        dependent: 'Emmener des enfants\nou des personnes dépendantes',
         heavy: 'Transport de matériel\nlourd ou encombrant',
         night: 'Horaires spéciaux',
         disabled: 'Carte de stationnement pour\npersonne à mobilité réduite',
@@ -500,7 +500,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_reductions_mod: {
-      title: 'Potentiel de réduction sur les émissions pendulaires',
+      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
       yaxis: 'Émissions évitées (kgCO₂eq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',

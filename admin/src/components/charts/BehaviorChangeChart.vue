@@ -17,11 +17,7 @@
   </div>
 
   <div v-if="total > 0" class="q-mt-md chart-text">
-    <p class="q-mb-xs">{{ t(`stats.behavior_change_${props.type}.texts.default`) }}</p>
-    <q-markdown
-      v-if="total > 5"
-      :src="t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues)"
-    />
+    <q-markdown :src="chartDescription" />
   </div>
 </template>
 
@@ -62,6 +58,14 @@ const props = withDefaults(defineProps<Props>(), {
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
+
+const chartDescription = computed(() => {
+  if (total.value < 5) {
+    return t(`stats.behavior_change_${props.type}.texts.default`)
+  }
+
+  return t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues.value)
+})
 
 const descriptionValues = computed(() => {
   if (props.type === 'levers') {

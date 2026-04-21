@@ -224,7 +224,7 @@ function initChartOptions() {
       },
     },
     legend: {
-      show: false,
+      show: true,
       bottom: 0, // position at the bottom
       left: 'center', // center horizontally
     },
