@@ -9,15 +9,16 @@
       :update-options="updateOptions"
       :loading="stats.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.chartTranslationName}.title`) }}</div>
+      <div class="text-h6 text-center">
+        {{ t(`stats.emissions_${props.chartTranslationName}.title`) }}
+      </div>
       <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
-  <div class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.emissions_${props.chartTranslationName}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
@@ -42,7 +43,6 @@ import {
 import { formatNumber } from 'src/utils/numbers'
 import { MODE_COLORS } from './commons'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 import type { EmissionReduction, Emissions } from 'src/models'
 
 const { t, locale } = useI18n()
@@ -63,7 +63,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const currentEmissions = ref(0)
@@ -114,10 +113,7 @@ function keyLabel(key: string) {
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (
-    !props.emissions ||
-    !props.reductions
-  ) {
+  if (!props.emissions || !props.reductions) {
     return
   }
 

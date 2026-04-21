@@ -9,7 +9,6 @@
       :update-options="updateOptions"
       :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>
@@ -17,7 +16,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default_share`) }}</p>
     <q-markdown
       v-if="total > 5 && biggestShare"
@@ -47,7 +46,6 @@ import {
 import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 import type { JourneyEnergyStats } from 'src/models'
 // import { MODE_COLORS } from './commons'
 
@@ -69,7 +67,6 @@ interface AddedEnergyShare {
   percentage: number
 }
 
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const biggestShare = ref<AddedEnergyShare | null>(null)

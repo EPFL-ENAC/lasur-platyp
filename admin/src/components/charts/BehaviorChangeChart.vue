@@ -9,7 +9,6 @@
       :update-options="updateOptions"
       :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.behavior_change_${props.type}.title`) }}</div>
@@ -17,7 +16,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.behavior_change_${props.type}.texts.default`) }}</p>
     <q-markdown
       v-if="total > 5"
@@ -44,7 +43,6 @@ import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { useQuasar } from 'quasar'
 import { lowerCaseFirst } from 'src/utils/string'
 import { moveToEnd } from 'src/utils/arrays'
-import { getRandomId } from 'src/utils/random'
 import type { BehaviorChangeStats } from 'src/models'
 
 const { t, locale } = useI18n()
@@ -62,7 +60,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -260,7 +257,7 @@ function shortKey(key: string) {
 function getSortedModes<
   T extends
     | BehaviorChangeStats['levers']['by_mode_levers']
-    | BehaviorChangeStats['motivation']['by_mode_motivation']
+    | BehaviorChangeStats['motivation']['by_mode_motivation'],
 >(data: T): T {
   const copy = [...data] as T
 

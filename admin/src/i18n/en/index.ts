@@ -1077,5 +1077,5 @@ Use the menu to navigate through the different sections, manage organisations, c
   back: 'Back',
   print: 'Print',
   mobility_statistics: 'Mobility statistics',
-  report_title: 'Generated mobility report'
+  report_title: 'Generated mobility report',
 }

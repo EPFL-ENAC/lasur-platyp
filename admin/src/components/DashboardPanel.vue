@@ -229,15 +229,23 @@ async function goToReport() {
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
-  const displayedOrgs = companyFilter.value.length > 0 ? companyFilter.value : Object.keys(companyMap.value)
-  url.searchParams.set('orgs', encodeURIComponent(displayedOrgs.map((id) => companyMap.value[`${id}`]?.name || id).join(';')))
+  const displayedOrgs =
+    companyFilter.value.length > 0 ? companyFilter.value : Object.keys(companyMap.value)
+  url.searchParams.set(
+    'orgs',
+    displayedOrgs.map((id) => companyMap.value[`${id}`]?.name || id).join(';'),
+  )
 
-  const displayedCampaigns = campaignFilter.value.length > 0 ? campaignFilter.value : Object.keys(campaignMap.value)
-  url.searchParams.set('campaigns', encodeURIComponent(displayedCampaigns.map((id) => campaignMap.value[`${id}`]?.name || id).join(';')))
+  const displayedCampaigns =
+    campaignFilter.value.length > 0 ? campaignFilter.value : Object.keys(campaignMap.value)
+  url.searchParams.set(
+    'campaigns',
+    displayedCampaigns.map((id) => campaignMap.value[`${id}`]?.name || id).join(';'),
+  )
 
   const compressedState = await stats.toCompressedURLState()
   url.searchParams.set('stats', compressedState)
-  
+
   window.open(url.toString(), '_blank')
 }
 </script>

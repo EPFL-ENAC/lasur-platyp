@@ -9,7 +9,6 @@
         :update-options="updateOptions"
         :loading="props.loading"
         :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-        :data-chart-id="chartId"
       />
       <div class="options" v-if="props.hasOptions">
         <q-toggle
@@ -28,7 +27,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.equipments_by_recommendations.texts.default`) }}</p>
     <p v-if="analysisText">
       {{ t(`stats.equipments_by_recommendations.texts.specific`, analysisText) }}
@@ -61,7 +60,6 @@ import {
   recommendationToEquipmentMap,
 } from 'src/models'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
@@ -86,7 +84,6 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 

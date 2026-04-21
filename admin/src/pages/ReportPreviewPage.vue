@@ -5,12 +5,7 @@
         {{ t('report_title') }}
       </q-toolbar-title>
       <q-space />
-      <q-btn
-        color="primary"
-        icon="print"
-        :label="t('print')"
-        @click="printReport"
-      />
+      <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />
     </q-toolbar>
 
     <div v-if="stats" class="report-container">
@@ -54,9 +49,7 @@
 
       <report-page :org-names="orgs">
         <travel-time-frequencies-chart
-          :frequencies="
-            ((stats.frequencies?.['travel_time'] ?? null) as Frequencies | null)
-          "
+          :frequencies="(stats.frequencies?.['travel_time'] ?? null) as Frequencies | null"
           :xaxis="t('stats.travel_time.xaxis')"
           :range-step="5"
           :percent="percent"
@@ -66,9 +59,7 @@
 
       <report-page :org-names="orgs">
         <equipment-frequencies-chart
-          :frequencies="
-            ((stats.frequencies?.['equipments'] ?? null) as Frequencies | null)
-          "
+          :frequencies="(stats.frequencies?.['equipments'] ?? null) as Frequencies | null"
           :percent="percent"
           :height="height"
         />
@@ -77,9 +68,7 @@
       <report-page :org-names="orgs">
         <frequencies-chart
           chart-translation-name="constraints"
-          :frequencies="
-            ((stats.frequencies?.['constraints'] ?? null) as Frequencies | null)
-          "
+          :frequencies="(stats.frequencies?.['constraints'] ?? null) as Frequencies | null"
           :percent="percent"
           :height="height"
         />
@@ -109,9 +98,7 @@
         </h2>
         <frequencies-stack-chart
           chart-translation-name="freq_mod_pro"
-          :frequencies="
-            ((stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null)
-          "
+          :frequencies="(stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null"
           :groups="['local', 'national', 'europe', 'inter']"
           :xaxis="t('stats.freq_mod_pro.xaxis')"
           :height="height"
@@ -151,11 +138,7 @@
       </report-page>
 
       <report-page :org-names="orgs">
-        <links-chart
-          type="mod_reco"
-          :links="stats.links['mod_reco'] ?? null"
-          :height="height"
-        />
+        <links-chart type="mod_reco" :links="stats.links['mod_reco'] ?? null" :height="height" />
       </report-page>
 
       <report-page :org-names="orgs">
@@ -257,13 +240,14 @@ import { stateFromCompressedURL, type StatsState } from 'src/stores/stats'
 import type { Frequencies } from 'src/models'
 
 interface Props {
-  modelValue: boolean
   height: number
   percent: boolean
 }
 
-defineProps<Props>()
-defineEmits(['update:modelValue'])
+withDefaults(defineProps<Props>(), {
+  height: 400,
+  percent: false,
+})
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -273,7 +257,6 @@ const campaigns = ref<string[]>([])
 
 onMounted(async () => {
   stats.value = await stateFromCompressedURL(route.query.stats as string)
-  console.log(stats.value)
   orgs.value = (route.query.orgs as string)?.split(';').map(decodeURIComponent) || []
   campaigns.value = (route.query.campaigns as string)?.split(';').map(decodeURIComponent) || []
 })

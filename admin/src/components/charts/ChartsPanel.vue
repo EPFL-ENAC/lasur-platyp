@@ -32,7 +32,7 @@
           </div>
           <div>
             <travel-time-frequencies-chart
-              :frequencies="((stats.frequencies?.['travel_time'] ?? null) as Frequencies | null)"
+              :frequencies="(stats.frequencies?.['travel_time'] ?? null) as Frequencies | null"
               :xaxis="t('stats.travel_time.xaxis')"
               :range-step="5"
               :percent="percent"
@@ -42,16 +42,16 @@
           </div>
           <div>
             <equipment-frequencies-chart
-              :frequencies="((stats.frequencies?.['equipments'] ?? null) as Frequencies | null)"
+              :frequencies="(stats.frequencies?.['equipments'] ?? null) as Frequencies | null"
               :percent="percent"
               :height="height"
               :loading="stats.loading"
-              />
-            </div>
-            <div>
-              <frequencies-chart
+            />
+          </div>
+          <div>
+            <frequencies-chart
               chartTranslationName="constraints"
-              :frequencies="((stats.frequencies?.['constraints'] ?? null) as Frequencies | null)"
+              :frequencies="(stats.frequencies?.['constraints'] ?? null) as Frequencies | null"
               :percent="percent"
               :height="height"
               :loading="stats.loading"
@@ -83,7 +83,7 @@
           <div>
             <frequencies-stack-chart
               chartTranslationName="freq_mod_pro"
-              :frequencies="((stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null)"
+              :frequencies="(stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null"
               :groups="['local', 'national', 'europe', 'inter']"
               :xaxis="t('stats.freq_mod_pro.xaxis')"
               :height="height"
@@ -195,10 +195,11 @@
         <div class="grid-container">
           <div>
             <emissions-reductions-chart
-              type="freq_mod_pro"
-              reduction-type="reductions_mod_pro"
+              chartTranslationName="reductions_mod_pro"
               :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
               :height="height"
+              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
+              :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
             />
           </div>
         </div>
@@ -279,7 +280,6 @@ defineProps<Props>()
 const { t } = useI18n()
 const preferencesStore = usePreferencesStore()
 const stats = useStats()
-
 </script>
 
 <style lang="css" scoped>

@@ -27,7 +27,7 @@
     </q-carousel-slide>
     <q-carousel-slide name="travel_time" class="column no-wrap flex-center item">
       <travel-time-frequencies-chart
-        :frequencies="((stats.frequencies?.['travel_time'] ?? null) as Frequencies | null)"
+        :frequencies="(stats.frequencies?.['travel_time'] ?? null) as Frequencies | null"
         :xaxis="t('stats.travel_time.xaxis')"
         :range-step="5"
         :percent="percent"
@@ -37,7 +37,7 @@
     </q-carousel-slide>
     <q-carousel-slide name="equipments" class="column no-wrap flex-center item">
       <equipment-frequencies-chart
-        :frequencies="((stats.frequencies?.['equipments'] ?? null) as Frequencies | null)"
+        :frequencies="(stats.frequencies?.['equipments'] ?? null) as Frequencies | null"
         :percent="percent"
         :height="height"
         :loading="stats.loading"
@@ -46,7 +46,7 @@
     <q-carousel-slide name="constraints" class="column no-wrap flex-center item">
       <frequencies-chart
         chartTranslationName="constraints"
-        :frequencies="((stats.frequencies?.['constraints'] ?? null) as Frequencies | null)"
+        :frequencies="(stats.frequencies?.['constraints'] ?? null) as Frequencies | null"
         :percent="percent"
         :height="height"
         :loading="stats.loading"
@@ -72,7 +72,7 @@
     <q-carousel-slide name="freq_mod_pro" class="column no-wrap flex-center item">
       <frequencies-stack-chart
         chartTranslationName="freq_mod_pro"
-        :frequencies="((stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null)"
+        :frequencies="(stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null"
         :groups="['local', 'national', 'europe', 'inter']"
         :xaxis="t('stats.freq_mod_pro.xaxis')"
         :height="height"
@@ -171,9 +171,9 @@
       />
     </q-carousel-slide>
     <q-carousel-slide name="behaviors_motivation" class="column no-wrap flex-center item">
-      <behavior-change-chart 
-        :height="height" 
-        type="motivation" 
+      <behavior-change-chart
+        :height="height"
+        type="motivation"
         :behavior-change-stats="stats.behaviorChange"
         :loading="stats.loading"
       />

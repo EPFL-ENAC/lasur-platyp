@@ -3,9 +3,7 @@
     <header v-if="!props.isTitle">
       <img src="/admin/LOGO-VIOLET.svg" alt="logo" />
 
-      <div>
-        {{ t('mobility_statistics') }} - {{ props.orgNames?.join(', ') || '' }}
-      </div>
+      <div>{{ t('mobility_statistics') }} - {{ props.orgNames?.join(', ') || '' }}</div>
     </header>
 
     <slot />
@@ -26,7 +24,6 @@ const { t } = useI18n()
 </script>
 
 <style scoped>
-
 .title-page {
   display: flex;
   flex-direction: column;
@@ -47,13 +44,13 @@ const { t } = useI18n()
 }
 
 .page::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("/admin/PATTERN-JAUNE.svg");
+  background-image: url('/admin/PATTERN-JAUNE.svg');
   background-repeat: no-repeat;
   background-position: 0rem -5rem;
   background-size: cover;

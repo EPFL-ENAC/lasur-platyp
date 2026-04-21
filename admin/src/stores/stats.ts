@@ -171,7 +171,7 @@ export const useStats = defineStore('stats', () => {
     loadStats,
     getCampaignStats,
     toJSONState,
-    toCompressedURLState
+    toCompressedURLState,
   }
 })
 

@@ -9,22 +9,25 @@
       :update-options="updateOptions"
       :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.chartTranslationName}.title`) }}</div>
+      <div class="text-h6 text-center">
+        {{ t(`stats.emissions_${props.chartTranslationName}.title`) }}
+      </div>
       <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <q-markdown
       v-if="emissionItemsLabels"
       :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsLabels)"
     />
     <q-markdown
       v-else-if="emissionItemsProLabels"
-      :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsProLabels)"
+      :src="
+        t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsProLabels)
+      "
     />
   </div>
 </template>
@@ -45,7 +48,6 @@ import {
 import { MODE_COLORS } from './commons'
 import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
-import { getRandomId } from 'src/utils/random'
 import type { Emissions } from 'src/models'
 
 const { t, locale } = useI18n()
@@ -66,7 +68,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 

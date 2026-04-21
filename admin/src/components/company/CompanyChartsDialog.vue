@@ -10,11 +10,7 @@
           <q-btn flat icon="map" @click="showMapFilter = true">
             <q-badge v-if="areaCount > 0" color="orange" floating rounded />
           </q-btn>
-          <q-btn
-            flat
-            icon="picture_as_pdf"
-            @click="goToReport"
-          />
+          <q-btn flat icon="picture_as_pdf" @click="goToReport" />
         </q-toolbar>
       </q-card-section>
       <q-separator />
@@ -129,15 +125,14 @@ async function goToReport() {
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
-  url.searchParams.set('orgs', encodeURIComponent(props.company.name))
+  url.searchParams.set('orgs', props.company.name)
   if (props.campaign) {
-    url.searchParams.set('campaigns', encodeURIComponent(props.campaign.name))
+    url.searchParams.set('campaigns', props.campaign.name)
   }
 
   const compressedState = await stats.toCompressedURLState()
   url.searchParams.set('stats', compressedState)
-  
+
   window.open(url.toString(), '_blank')
 }
-
 </script>

@@ -18,7 +18,7 @@ const defaultStatsSectionsExpandedState: StatsSectionsExpandedState = {
 
 export const usePreferencesStore = defineStore('preferences', () => {
   const doNotShowDataProtectionNoticeKey = 'doNotShowDataProtectionNotice'
-const statsSectionsExpandedStateKey = 'statsSectionsExpandedState'
+  const statsSectionsExpandedStateKey = 'statsSectionsExpandedState'
 
   const doNotShowNotice = ref(getLocalStorageBoolean(doNotShowDataProtectionNoticeKey, false))
   const statsSectionsExpandedState = ref(

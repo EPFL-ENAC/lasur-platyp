@@ -58,7 +58,9 @@ const hasData = computed(() => {
   if (!props.frequencies) {
     return false
   }
-  return Array.isArray(props.frequencies) ? props.frequencies.length > 0 : props.frequencies.data.length > 0
+  return Array.isArray(props.frequencies)
+    ? props.frequencies.length > 0
+    : props.frequencies.data.length > 0
 })
 
 watch(

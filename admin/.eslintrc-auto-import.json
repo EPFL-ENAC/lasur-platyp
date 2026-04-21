@@ -110,6 +110,8 @@
     "useIsochrones": true,
     "CATEGORY_TAGS": true,
     "usePreferencesStore": true,
-    "StatsSectionsExpandedState": true
+    "StatsSectionsExpandedState": true,
+    "StatsState": true,
+    "stateFromCompressedURL": true
   }
 }

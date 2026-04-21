@@ -9,7 +9,6 @@
       :update-options="updateOptions"
       :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.freq_mod.title`) }}</div>
@@ -19,7 +18,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t('stats.freq_mod.texts.default') }}</p>
     <p v-if="topModes.length === 3">
       {{
@@ -49,7 +48,6 @@ import {
 import type { Frequencies } from 'src/models'
 import { MODE_COLORS } from './commons'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
@@ -65,7 +63,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const topModes = ref<string[]>([])
@@ -74,7 +71,9 @@ const hasData = computed(() => {
   if (!props.frequencies) {
     return false
   }
-  return Array.isArray(props.frequencies) ? props.frequencies.length > 0 : props.frequencies.data.length > 0
+  return Array.isArray(props.frequencies)
+    ? props.frequencies.length > 0
+    : props.frequencies.data.length > 0
 })
 
 watch(

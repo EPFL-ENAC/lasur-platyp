@@ -9,7 +9,6 @@
       :update-options="updateOptions"
       :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">
@@ -21,7 +20,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown
       v-if="textLabelsCurrent"
@@ -51,7 +50,6 @@ import { initOptions, updateOptions, MODE_COLORS } from './commons'
 import type { JourneyEnergyData, JourneyEnergyStats } from 'src/models'
 import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
-import { getRandomId } from 'src/utils/random'
 
 // Register ECharts modules
 use([
@@ -80,7 +78,6 @@ const props = withDefaults(defineProps<Props>(), {
 const { t, locale } = useI18n()
 const $q = useQuasar()
 
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const addedEnergy = ref(0)
