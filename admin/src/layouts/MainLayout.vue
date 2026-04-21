@@ -125,11 +125,13 @@
 
         <q-space />
 
+        <!-- dark mode is temporarily disabled
         <q-toggle
           :model-value="$q.dark.isActive"
           @update:model-value="(e) => $q.dark.set(e)"
           :label="t('dark_mode')"
         />
+        -->
 
         <div v-if="authStore.isAuthenticated" class="q-pa-sm">
           <div class="username-line">
