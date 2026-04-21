@@ -51,9 +51,14 @@ export const useStats = defineStore('stats', () => {
     loading.value = true
     frequencies.value = {}
     emissions.value = {}
+    emissionsReductions.value = {}
     links.value = {}
     homeLocationsHeatmap.value = {}
     workplaceLocations.value = []
+    journeyEnergyStats.value = makeDefaultJourneyEnergyStats()
+    behaviorChange.value = makeDefaultBehaviorChangeStats()
+    equipmentsStats.value = null
+
     return loadAllStats(filter).finally(() => {
       loading.value = false
     })

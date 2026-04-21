@@ -189,6 +189,20 @@
           </div>
         </div>
       </q-card-section>
+
+      <q-card-section>
+        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.professional_travel') }}</h6>
+        <div class="grid-container">
+          <div>
+            <emissions-reductions-chart
+              type="freq_mod_pro"
+              reduction-type="reductions_mod_pro"
+              :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
+              :height="height"
+            />
+          </div>
+        </div>
+      </q-card-section>
     </q-expansion-item>
   </q-card>
 

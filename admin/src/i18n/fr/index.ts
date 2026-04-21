@@ -857,6 +857,7 @@ Certains impacts sont aussi calculés :
         moto: 'Moto / scooter',
         car: 'Voiture',
         car_driver: 'Voiture (en tant que conducteur)',
+        car_passenger: 'Voiture (en tant que passager)',
         carpool: 'Covoiturage',
         plane: 'Avion',
         pub_train: 'Transports publics (y compris le train)',

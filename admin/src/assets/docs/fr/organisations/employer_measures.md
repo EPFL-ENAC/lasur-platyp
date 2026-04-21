@@ -1,6 +1,6 @@
 ## Mesures employeur
 
-Les mesures employeur sont des actions mises en place par l'organisation pour faciliter et encourager la mobilité durable des salariés. Ces mesures sont catégorisées par mode de transport et par type de déplacement (trajet domicile-travail vs. déplacement professionnel).
+Les mesures employeur sont des actions mises en place par l'organisation pour faciliter et encourager la mobilité durable des collaborateur·trice·s. Ces mesures sont catégorisées par mode de transport et par type de déplacement (trajet domicile-travail vs. déplacement professionnel).
 
 ### Mesures pour les trajets domicile-travail
 

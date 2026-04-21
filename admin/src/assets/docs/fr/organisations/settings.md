@@ -1,15 +1,15 @@
 ## Paramètres de l'organisation
 
-### Administrateurs
+### Administrateur·trice·s
 
-Les administrateurs sont des utilisateur·trice·s ayant un accès complet pour gérer les campagnes de mobilité, les participant·e·s et les données de l'organisation.
+Les administrateur·trice·s sont des utilisateur·trice·s ayant un accès complet pour gérer les campagnes de mobilité, les participant·e·s et les données de l'organisation.
 
-**Comment ajouter des administrateurs :**
+**Comment ajouter des administrateur·trice·s :**
 
-- Saisissez l'adresse email de chaque administrateur dans le champ dédié
+- Saisissez l'adresse email de chaque administrateur·trice dans le champ dédié
 - Appuyez sur Entrée après chaque email pour l'ajouter à la liste
-- Plusieurs administrateurs peuvent être assignés à une même organisation
-- Les administrateurs peuvent consulter et modifier toutes les campagnes et données de participants de l'organisation
+- Plusieurs administrateur·trice·s peuvent être assigné·e·s à une même organisation
+- Les administrateur·trice·s peuvent consulter et modifier toutes les campagnes et données de participant·e·s de l'organisation
 
 **Objectif :**
 
