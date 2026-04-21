@@ -277,6 +277,7 @@ class EquipmentPerRecommendation(BaseModel):
     car_driver: int = 0
     ev: int = 0
     inter: int = 0
+    car_passenger: int = 0
 
     total: int = 0
 
