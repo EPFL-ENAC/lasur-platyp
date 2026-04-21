@@ -271,7 +271,7 @@ function initChartOptions() {
       show: true,
       bottom: 0,
       left: 'center',
-      itemGap: 20,
+      itemGap: 10,
     },
     xAxis: {
       name: props.xaxis || '',
@@ -282,7 +282,7 @@ function initChartOptions() {
     yAxis: {
       name: props.yaxis || '',
       nameLocation: 'middle',
-      nameGap: 50,
+      nameGap: 40,
       type: 'value',
     },
     series: preparedData.map((item) => ({
