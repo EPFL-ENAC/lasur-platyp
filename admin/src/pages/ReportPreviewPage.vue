@@ -49,7 +49,7 @@
 
       <report-page :org-names="orgs">
         <travel-time-frequencies-chart
-          :frequencies="(stats.frequencies?.['travel_time'] ?? null) as Frequencies | null"
+          :frequencies="getFreq('travel_time')"
           :xaxis="t('stats.travel_time.xaxis')"
           :range-step="5"
           :percent="percent"
@@ -59,7 +59,7 @@
 
       <report-page :org-names="orgs">
         <equipment-frequencies-chart
-          :frequencies="(stats.frequencies?.['equipments'] ?? null) as Frequencies | null"
+          :frequencies="getFreq('equipments')"
           :percent="percent"
           :height="height"
         />
@@ -68,7 +68,7 @@
       <report-page :org-names="orgs">
         <frequencies-chart
           chart-translation-name="constraints"
-          :frequencies="(stats.frequencies?.['constraints'] ?? null) as Frequencies | null"
+          :frequencies="getFreq('constraints')"
           :percent="percent"
           :height="height"
         />
@@ -98,7 +98,7 @@
         </h2>
         <frequencies-stack-chart
           chart-translation-name="freq_mod_pro"
-          :frequencies="(stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null"
+          :frequencies="getFreqArray('freq_mod_pro')"
           :groups="['local', 'national', 'europe', 'inter']"
           :xaxis="t('stats.freq_mod_pro.xaxis')"
           :height="height"
@@ -132,7 +132,7 @@
         </h2>
         <share-chart
           chart-translation-name="reco_dt2"
-          :frequencies="stats.frequencies?.['reco_dt2'] ?? null"
+          :frequencies="getFreq('reco_dt2')"
           :height="height"
         />
       </report-page>
@@ -274,6 +274,14 @@ const reportDate = computed(() => {
 
 const printReport = () => {
   window.print()
+}
+
+const getFreq = (key: string) => {
+  return (stats.value!.frequencies?.[key] ?? null) as Frequencies | null
+}
+
+const getFreqArray = (key: string) => {
+  return (stats.value!.frequencies?.[key] ?? null) as Frequencies[] | null
 }
 </script>
 
