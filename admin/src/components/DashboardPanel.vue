@@ -138,7 +138,7 @@
 import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
 import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
-import DownloadDataButton from './DownloadDataButton.vue'
+import DownloadDataButton from 'src/components/DownloadDataButton.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
 

@@ -88,6 +88,8 @@ function downloadCSV(completedOnly: boolean) {
       a.href = url
       a.download = 'records.csv'
       a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
     })
 }
 
