@@ -7,9 +7,8 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.travel_time.title`) }}</div>
@@ -17,7 +16,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t('stats.travel_time.texts.default') }}</p>
     <p v-if="hasData && medianValue">
       {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
@@ -40,15 +39,14 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  type: string
+  frequencies?: Frequencies | null
+  loading?: boolean
   xaxis?: string
   yaxis?: string
   rangeStep?: number
@@ -59,31 +57,29 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
-const chartId = getRandomId()
 const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const medianValue = ref<number | null>(null)
 
 const hasData = computed(() => {
-  if (!stats.frequencies || !stats.frequencies['travel_time']) {
+  if (!props.frequencies) {
     return false
   }
-  const frequencies = stats.frequencies['travel_time'] as Frequencies
-  return frequencies.data.length > 0
+  return props.frequencies.data.length > 0
 })
 
 watch(
-  () => stats.loading,
+  () => props.loading,
   () => {
-    if (stats.loading) {
+    if (props.loading) {
       initChartOptions()
     }
   },
 )
 
 watch([() => props.percent, () => props.height, locale], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -95,13 +91,11 @@ onMounted(() => {
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.frequencies || !stats.frequencies['travel_time']) {
+  if (!props.frequencies) {
     return
   }
 
-  const frequencies = stats.frequencies['travel_time'] as Frequencies
-
-  initValuesChartOptions(frequencies)
+  initValuesChartOptions(props.frequencies)
 }
 
 function computeMedian(frequencies: Frequencies) {

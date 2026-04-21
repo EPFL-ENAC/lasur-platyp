@@ -7,24 +7,27 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.type}.title`) }}</div>
+      <div class="text-h6 text-center">
+        {{ t(`stats.emissions_${props.chartTranslationName}.title`) }}
+      </div>
       <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <q-markdown
       v-if="emissionItemsLabels"
-      :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsLabels)"
+      :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsLabels)"
     />
     <q-markdown
       v-else-if="emissionItemsProLabels"
-      :src="t(`stats.emissions_${props.type}.texts.specific`, emissionItemsProLabels)"
+      :src="
+        t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsProLabels)
+      "
     />
   </div>
 </template>
@@ -45,37 +48,37 @@ import {
 import { MODE_COLORS } from './commons'
 import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
-import { getRandomId } from 'src/utils/random'
+import type { Emissions } from 'src/models'
 
 const { t, locale } = useI18n()
-const stats = useStats()
 const $q = useQuasar()
 use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  type: string
+  chartTranslationName: string
+  emissions?: Emissions[] | null
   xaxis?: string
   yaxis?: string
   rangeStep?: number
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
-watch([() => stats.loading], () => {
-  if (stats.loading) {
+watch([() => props.loading], () => {
+  if (props.loading) {
     initChartOptions()
   }
 })
 
 watch([() => props.height, locale, () => $q.dark.isActive], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -88,18 +91,16 @@ const globalAnswersThreshold = 10
 const perModeAnswersThreshold = 3
 
 const emissionItems = computed(() => {
-  if (props.type.includes('pro')) {
+  if (props.chartTranslationName.includes('pro')) {
     return null
   }
-  if (!stats.emissions || !stats.emissions[props.type]) return null
+  if (!props.emissions) return null
   if (total.value < globalAnswersThreshold) return null
 
-  const emissions = stats.emissions[props.type] || []
-
-  const carEmissions = emissions.find((item) => item.mode === 'car')
-  const motoEmissions = emissions.find((item) => item.mode === 'moto')
-  const allJourneys = emissions.reduce((sum, item) => sum + item.journeys, 0)
-  const allEmissions = emissions.reduce((sum, item) => sum + item.emissions, 0)
+  const carEmissions = props.emissions.find((item) => item.mode === 'car')
+  const motoEmissions = props.emissions.find((item) => item.mode === 'moto')
+  const allJourneys = props.emissions.reduce((sum, item) => sum + item.journeys, 0)
+  const allEmissions = props.emissions.reduce((sum, item) => sum + item.emissions, 0)
   const combinedJourneys = (carEmissions?.journeys || 0) + (motoEmissions?.journeys || 0)
   const combinedEmissions = (carEmissions?.emissions || 0) + (motoEmissions?.emissions || 0)
 
@@ -124,13 +125,13 @@ const emissionItemsLabels = computed(() => {
 })
 
 const emissionItemsPro = computed(() => {
-  if (!props.type.includes('pro')) {
+  if (!props.chartTranslationName.includes('pro')) {
     return null
   }
-  if (!stats.emissions || !stats.emissions[props.type]) return null
+  if (!props.emissions) return null
   if (total.value < globalAnswersThreshold) return null
 
-  const emissions = stats.emissions[props.type] || []
+  const emissions = props.emissions || []
 
   const planeEmissions = emissions.find((item) => item.mode === 'plane')
   const carEmissions = emissions.find((item) => item.mode === 'car')
@@ -178,17 +179,17 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_${props.type}.labels.${shortKey(key)}`)
+  return t(`stats.emissions_${props.chartTranslationName}.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.emissions || !stats.emissions[props.type]) {
+  if (!props.emissions) {
     return
   }
 
-  const emissions = stats.emissions[props.type] || []
+  const emissions = props.emissions || []
   if (emissions.length === 0) {
     return
   }
@@ -229,7 +230,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_${props.type}.title`),
+      text: t(`stats.emissions_${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,

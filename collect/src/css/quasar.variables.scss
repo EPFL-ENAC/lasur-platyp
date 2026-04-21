@@ -133,7 +133,7 @@ body.body--dark {
   background-color: $brand-purple-100 !important;
 }
 
-.q-btn {
+.q-btn:not(.q-btn--rounded) {
   padding: 4px 8px !important;
 }
 

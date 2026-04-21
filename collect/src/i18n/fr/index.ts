@@ -31,7 +31,8 @@ export default {
       '65': '65 ans et plus',
     },
     employment_rate: 'Quel est votre taux de travail ?',
-    remote_work_rate: 'Quel est votre taux de télétravail, en % de votre taux de travail indiqué ci-dessus ?',
+    remote_work_rate:
+      'Quel est votre taux de télétravail, en % de votre taux de travail indiqué ci-dessus ?',
     company_vehicle: 'Avez-vous un véhicule de fonction ?',
     search_or_select_option: 'Rechercher ou sélectionner une option',
     yes: 'Oui',
@@ -50,7 +51,8 @@ export default {
       dependent: 'Accompagnement d’enfants ou de personnes dépendantes',
       heavy: 'Transport de matériel lourd ou encombrant',
       night: 'Horaires de travail spéciaux (p. ex. travail de nuit)',
-      disabled: 'Détention d’une carte officielle de stationnement pour personne à mobilité réduite',
+      disabled:
+        'Détention d’une carte officielle de stationnement pour personne à mobilité réduite',
       none: 'Aucune contrainte particulière',
     },
     equipments: 'De quels équipements de mobilité disposez-vous pour vos déplacements quotidiens ?',

@@ -51,9 +51,7 @@
                   v-model="tkSlug"
                   :label="t('token')"
                   outlined
-                  dark
-                  color="white"
-                  class="text-white"
+                  color="field"
                   debounce="300"
                   @update:model-value="onToken"
                 />
@@ -66,7 +64,7 @@
                 size="lg"
                 @click="onStart"
                 :disable="survey.tokenOrSlug === null"
-                class="q-mt-md"
+                class="q-px-md q-mt-md"
               />
             </div>
             <div class="q-mt-lg">

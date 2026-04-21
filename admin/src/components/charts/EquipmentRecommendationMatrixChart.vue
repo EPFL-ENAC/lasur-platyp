@@ -7,11 +7,10 @@
         :init-options="initOptions"
         :option="option"
         :update-options="updateOptions"
-        :loading="stats.loading"
+        :loading="props.loading"
         :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-        :data-chart-id="chartId"
       />
-      <div class="options">
+      <div class="options" v-if="props.hasOptions">
         <q-toggle
           v-model="simpleMode"
           :label="t('stats.equipments_by_recommendations.simpleMode')"
@@ -28,7 +27,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.equipments_by_recommendations.texts.default`) }}</p>
     <p v-if="analysisText">
       {{ t(`stats.equipments_by_recommendations.texts.specific`, analysisText) }}
@@ -56,16 +55,15 @@ import {
   equipmentLabels,
   type EquipmentPerRecommendation,
   type EquipmentRecommendationMatrix,
+  type EquipmentsStats,
   recommendationLabelsReversed,
   recommendationToEquipmentMap,
 } from 'src/models'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 use([
   SVGRenderer,
   HeatmapChart,
@@ -77,13 +75,15 @@ use([
 ])
 
 interface Props {
+  equipmentsStats: EquipmentsStats | null
   height?: number
+  loading?: boolean
+  hasOptions?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -99,14 +99,14 @@ const recommendationLabelsFiltered = computed(() => {
   return [...recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r]), walking] // we always want to show "marche" in simple mode, even if it's not in the mapping, because it's a common recommendation
 })
 
-watch([() => stats.loading], () => {
-  if (stats.loading) {
+watch([() => props.loading], () => {
+  if (props.loading) {
     initChartOptions()
   }
 })
 
 watch([() => props.height, locale, simpleMode], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -116,7 +116,7 @@ onMounted(() => {
 })
 
 const analysisText = computed(() => {
-  if (!stats.equipmentsStats) return null
+  if (!props.equipmentsStats) return null
 
   const threshold = 5
   let smallestReco: keyof EquipmentRecommendationMatrix | null = null
@@ -127,7 +127,7 @@ const analysisText = computed(() => {
 
     if (eq) {
       const value =
-        stats.equipmentsStats.equipment_recommendation_matrix[
+        props.equipmentsStats.equipment_recommendation_matrix[
           rec as keyof EquipmentRecommendationMatrix
         ][eq as keyof EquipmentPerRecommendation]
       if (value < smallestValue && value > threshold) {
@@ -140,7 +140,7 @@ const analysisText = computed(() => {
   if (!smallestReco) return null
 
   const smallestRecoContent =
-    stats.equipmentsStats.equipment_recommendation_matrix[
+    props.equipmentsStats.equipment_recommendation_matrix[
       smallestReco as keyof EquipmentRecommendationMatrix
     ]
   const percentage =
@@ -203,13 +203,13 @@ function initChartOptions() {
   option.value = {}
   total.value = 0
 
-  if (!stats.equipmentsStats) {
+  if (!props.equipmentsStats) {
     return
   }
 
-  total.value = stats.equipmentsStats.total
+  total.value = props.equipmentsStats.total
 
-  const data = transformMatrixToData(stats.equipmentsStats.equipment_recommendation_matrix)
+  const data = transformMatrixToData(props.equipmentsStats.equipment_recommendation_matrix)
 
   // total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {
@@ -236,7 +236,7 @@ function initChartOptions() {
       type: 'category',
       data: recommendationLabelsFiltered.value.map((l) => {
         const reco =
-          stats.equipmentsStats!.equipment_recommendation_matrix[
+          props.equipmentsStats!.equipment_recommendation_matrix[
             l as keyof EquipmentRecommendationMatrix
           ]
         return `${keyLabel(l)} (${reco.total})`
@@ -276,7 +276,7 @@ function initChartOptions() {
       trigger: 'item',
       formatter: function (params: CallbackDataParams | CallbackDataParams[]) {
         const p = Array.isArray(params) ? params[0] : params
-        if (!p || !p.value || !stats.equipmentsStats) return ''
+        if (!p || !p.value || !props.equipmentsStats) return ''
 
         const v = p.value as [number, number, number]
         if (v[2] === 0) return ''
@@ -286,7 +286,7 @@ function initChartOptions() {
         const reco = keyLabel(labels.recommendation)
         const equipment = keyLabel(labels.equipment)
         const count =
-          stats.equipmentsStats.equipment_recommendation_matrix[labels.recommendation][
+          props.equipmentsStats.equipment_recommendation_matrix[labels.recommendation][
             labels.equipment
           ]
 
@@ -314,7 +314,7 @@ function initChartOptions() {
             )
             if (!labels) return ''
             const count =
-              stats.equipmentsStats!.equipment_recommendation_matrix[labels.recommendation][
+              props.equipmentsStats!.equipment_recommendation_matrix[labels.recommendation][
                 labels.equipment
               ]
 

@@ -22,12 +22,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
 import { cellToBoundary } from 'h3-js'
 import type { GradientScale } from 'src/utils/colors'
-import type { H3Heatmap } from 'src/models'
-
-interface Dot {
-  lat: number
-  lon: number
-}
+import type { H3Heatmap, LatLon } from 'src/models'
 
 interface HeatmapGeoJSON {
   shape: GeoJSON.FeatureCollection<GeoJSON.Polygon, { value: number }>
@@ -37,13 +32,14 @@ interface HeatmapGeoJSON {
 
 interface Props {
   h3Heatmap: H3Heatmap
-  dots?: Dot[]
+  dots?: LatLon[]
   heatmapGradient: GradientScale
   center: [number, number]
   height?: string
   zoom?: number
   mapId: string
   fitBoundsMargins: number
+  noControls?: boolean
 }
 const props = defineProps<Props>()
 
@@ -129,8 +125,10 @@ function onInit() {
     zoom: props.zoom || 14,
     attributionControl: false,
   })
-  map.value.addControl(new NavigationControl({}))
-  map.value.addControl(new FullscreenControl({}))
+  if (!props.noControls) {
+    map.value.addControl(new NavigationControl({}))
+    map.value.addControl(new FullscreenControl({}))
+  }
   map.value.addControl(
     new AttributionControl({
       compact: true,

@@ -7,9 +7,8 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>
@@ -17,7 +16,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default_share`) }}</p>
     <q-markdown
       v-if="total > 5 && biggestShare"
@@ -47,16 +46,17 @@ import {
 import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
+import type { JourneyEnergyStats } from 'src/models'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
+  journeyEnergyStats?: JourneyEnergyStats | null
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -67,19 +67,18 @@ interface AddedEnergyShare {
   percentage: number
 }
 
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const biggestShare = ref<AddedEnergyShare | null>(null)
 
-watch([() => stats.loading], () => {
-  if (stats.loading) {
+watch([() => props.loading], () => {
+  if (props.loading) {
     initChartOptions()
   }
 })
 
 watch([() => props.height, locale], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -103,7 +102,7 @@ function initChartOptions() {
   option.value = {}
   total.value = 0
 
-  const rawData = stats.journeyEnergyStats.gains?.gains_per_mode || []
+  const rawData = props.journeyEnergyStats?.gains?.gains_per_mode || []
 
   if (rawData.length === 0) return
 

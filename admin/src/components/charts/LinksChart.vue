@@ -7,9 +7,8 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
@@ -17,7 +16,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
     <p v-if="mostRecommendedTarget">
       {{
@@ -43,37 +42,36 @@ import {
 import type { StatLinks } from 'src/models'
 import { MODE_COLORS } from './commons'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   type: string
+  links: StatLinks | null
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
 watch(
-  () => stats.loading,
+  () => props.loading,
   () => {
-    if (stats.loading) {
+    if (props.loading) {
       initChartOptions()
     }
   },
 )
 
 watch([() => props.height, locale], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -84,7 +82,7 @@ onMounted(() => {
 
 const mostRecommendedTarget = computed(() => {
   if (total.value < 5) return null
-  const links = stats.links?.[props.type]
+  const links = props.links
   if (!links) return null
 
   return links.most_recommended_target
@@ -105,11 +103,11 @@ function initChartOptions() {
   const recoSuffix = ' '
   option.value = {}
   total.value = 0
-  if (!stats.links || !stats.links[props.type]) {
+  if (!props.links) {
     return
   }
 
-  const links = stats.links[props.type] as StatLinks
+  const links = props.links
   if (links.data.length === 0) {
     return
   }

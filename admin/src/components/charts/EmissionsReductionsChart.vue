@@ -9,19 +9,20 @@
       :update-options="updateOptions"
       :loading="stats.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.reductionType}.title`) }}</div>
+      <div class="text-h6 text-center">
+        {{ t(`stats.emissions_${props.chartTranslationName}.title`) }}
+      </div>
       <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
-    <p class="q-mb-xs">{{ t(`stats.emissions_${props.reductionType}.texts.default`) }}</p>
+  <div class="q-mt-md chart-text">
+    <p class="q-mb-xs">{{ t(`stats.emissions_${props.chartTranslationName}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
-      :src="t(`stats.emissions_${props.reductionType}.texts.specific`, textLabels)"
+      :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels)"
     />
   </div>
 </template>
@@ -42,7 +43,7 @@ import {
 import { formatNumber } from 'src/utils/numbers'
 import { MODE_COLORS } from './commons'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
+import type { EmissionReduction, Emissions } from 'src/models'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
@@ -50,8 +51,9 @@ const stats = useStats()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  type: string
-  reductionType: string
+  chartTranslationName: string
+  emissions: Emissions[] | null
+  reductions: EmissionReduction[] | null
   yaxis?: string
   rangeStep?: number
   height?: number
@@ -61,7 +63,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const currentEmissions = ref(0)
@@ -106,25 +107,21 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_${props.reductionType}.labels.${shortKey(key)}`)
+  return t(`stats.emissions_${props.chartTranslationName}.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (
-    !stats.emissions ||
-    !stats.emissions[props.type] ||
-    !stats.emissionsReductions[props.reductionType]
-  ) {
+  if (!props.emissions || !props.reductions) {
     return
   }
 
-  const emissions = stats.emissions[props.type] || []
+  const emissions = props.emissions || []
   if (emissions.length === 0) {
     return
   }
-  const recoEmissions = stats.emissionsReductions[props.reductionType] || []
+  const recoEmissions = props.reductions || []
   if (recoEmissions.length === 0) {
     return
   }
@@ -158,7 +155,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_${props.reductionType}.title`),
+      text: t(`stats.emissions_${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -185,12 +182,12 @@ function initChartOptions() {
       axisLabel: {
         rotate: 30,
       },
-      name: t(`stats.emissions_${props.reductionType}.xaxis`) || '',
+      name: t(`stats.emissions_${props.chartTranslationName}.xaxis`) || '',
       nameLocation: 'middle',
       nameGap: 90,
     },
     yAxis: {
-      name: t(`stats.emissions_${props.reductionType}.yaxis`) || '',
+      name: t(`stats.emissions_${props.chartTranslationName}.yaxis`) || '',
       nameLocation: 'middle',
       nameGap: 50,
       type: 'value',
@@ -226,7 +223,7 @@ function initChartOptions() {
         ],
       },
       {
-        name: t(`stats.emissions_${props.reductionType}.series`) || '',
+        name: t(`stats.emissions_${props.chartTranslationName}.series`) || '',
         type: 'bar',
         stack: 'Total',
         label: {

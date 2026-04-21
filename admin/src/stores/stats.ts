@@ -14,8 +14,21 @@ import {
 } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
+import { compressToURL, decompressFromURL } from 'src/utils/compression'
 
 const authStore = useAuthStore()
+
+export interface StatsState {
+  frequencies: { [key: string]: Frequencies | Frequencies[] }
+  emissions: { [key: string]: Emissions[] }
+  emissionsReductions: { [key: string]: EmissionReduction[] }
+  links: { [key: string]: StatLinks }
+  homeLocationsHeatmap: H3Heatmap
+  workplaceLocations: { lat: number; lon: number }[]
+  journeyEnergyStats: JourneyEnergyStats
+  behaviorChange: BehaviorChangeStats
+  equipmentsStats: EquipmentsStats | null
+}
 
 export const useStats = defineStore('stats', () => {
   const frequencies = ref<{ [key: string]: Frequencies | Frequencies[] }>(
@@ -26,12 +39,13 @@ export const useStats = defineStore('stats', () => {
     {} as { [key: string]: EmissionReduction[] },
   )
   const links = ref<{ [key: string]: StatLinks }>({} as { [key: string]: StatLinks })
-  const loading = ref(false)
   const homeLocationsHeatmap = ref<H3Heatmap>({})
   const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
   const journeyEnergyStats = ref<JourneyEnergyStats>({} as JourneyEnergyStats)
   const behaviorChange = ref<BehaviorChangeStats>({} as BehaviorChangeStats)
   const equipmentsStats = ref<EquipmentsStats | null>(null)
+
+  const loading = ref(false)
 
   async function loadStats(filter: Filter | undefined = undefined) {
     loading.value = true
@@ -124,6 +138,25 @@ export const useStats = defineStore('stats', () => {
     })
   }
 
+  function toJSONState(): StatsState {
+    return {
+      frequencies: frequencies.value,
+      emissions: emissions.value,
+      emissionsReductions: emissionsReductions.value,
+      links: links.value,
+      homeLocationsHeatmap: homeLocationsHeatmap.value,
+      workplaceLocations: workplaceLocations.value,
+      journeyEnergyStats: journeyEnergyStats.value,
+      behaviorChange: behaviorChange.value,
+      equipmentsStats: equipmentsStats.value,
+    }
+  }
+
+  async function toCompressedURLState(): Promise<string> {
+    const jsonState = toJSONState()
+    return compressToURL(jsonState)
+  }
+
   return {
     frequencies,
     behaviorChange,
@@ -137,5 +170,11 @@ export const useStats = defineStore('stats', () => {
     loading,
     loadStats,
     getCampaignStats,
+    toJSONState,
+    toCompressedURLState,
   }
 })
+
+export function stateFromCompressedURL(compressedState: string): Promise<StatsState> {
+  return decompressFromURL(compressedState)
+}

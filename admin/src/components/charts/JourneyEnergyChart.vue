@@ -7,9 +7,8 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">
@@ -21,7 +20,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown
       v-if="textLabelsCurrent"
@@ -48,10 +47,9 @@ import {
   MarkLineComponent,
 } from 'echarts/components'
 import { initOptions, updateOptions, MODE_COLORS } from './commons'
-import type { JourneyEnergyData } from 'src/models'
+import type { JourneyEnergyData, JourneyEnergyStats } from 'src/models'
 import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
-import { getRandomId } from 'src/utils/random'
 
 // Register ECharts modules
 use([
@@ -67,9 +65,11 @@ use([
 
 interface Props {
   type: 'current' | 'reco'
+  journeyEnergyStats?: JourneyEnergyStats | null
   xaxis?: string
   yaxis?: string
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -77,19 +77,17 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const addedEnergy = ref(0)
 const newHealthyParticipants = ref(0)
 
 const textLabelsCurrent = computed(() => {
-  if (props.type !== 'current' || total.value < 5) return null
+  if (props.type !== 'current' || total.value < 5 || !props.journeyEnergyStats) return null
 
   const averageEnergyExpenditurePerToken =
-    stats.journeyEnergyStats.current?.average_energy_per_unique_token || 0
+    props.journeyEnergyStats.current?.average_energy_per_unique_token || 0
 
   return {
     energy: formatNumber(averageEnergyExpenditurePerToken),
@@ -97,7 +95,7 @@ const textLabelsCurrent = computed(() => {
 })
 
 const textLabelsReco = computed(() => {
-  if (props.type !== 'reco' || total.value < 5) return null
+  if (props.type !== 'reco' || total.value < 5 || !props.journeyEnergyStats) return null
 
   return {
     added_energy: formatNumber(addedEnergy.value),
@@ -105,7 +103,7 @@ const textLabelsReco = computed(() => {
   }
 })
 
-watch([() => stats.loading, () => props.height, locale], () => {
+watch([() => props.loading, () => props.height, locale], () => {
   initChartOptions()
 })
 
@@ -115,19 +113,23 @@ onMounted(() => {
 function initChartOptions() {
   option.value = {}
 
-  const rawData = stats.journeyEnergyStats[props.type]?.data || []
+  total.value = 0
+
+  if (!props.journeyEnergyStats) return
+
+  const rawData = props.journeyEnergyStats[props.type]?.data || []
   total.value = rawData.length
 
   if (total.value === 0) return
 
   const averageEnergyExpenditurePerToken =
-    stats.journeyEnergyStats[props.type]?.average_energy_per_unique_token || 0
+    props.journeyEnergyStats[props.type]?.average_energy_per_unique_token || 0
   addedEnergy.value =
-    (stats.journeyEnergyStats.reco.average_energy_per_unique_token ?? 0) -
-    (stats.journeyEnergyStats.current.average_energy_per_unique_token ?? 0)
+    (props.journeyEnergyStats.reco.average_energy_per_unique_token ?? 0) -
+    (props.journeyEnergyStats.current.average_energy_per_unique_token ?? 0)
   newHealthyParticipants.value =
-    stats.journeyEnergyStats.gains.reco_above_who_count -
-    stats.journeyEnergyStats.gains.current_above_who_count
+    props.journeyEnergyStats.gains.reco_above_who_count -
+    props.journeyEnergyStats.gains.current_above_who_count
 
   const tokenMap: Record<string, Record<string, number>> = {}
   const modesSet = new Set<string>()

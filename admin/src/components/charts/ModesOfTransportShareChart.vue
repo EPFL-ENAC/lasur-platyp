@@ -7,9 +7,8 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      :data-chart-id="chartId"
     />
     <div v-else>
       <div class="text-h6 text-center">{{ t(`stats.freq_mod.title`) }}</div>
@@ -19,7 +18,7 @@
     </div>
   </div>
 
-  <div v-if="total > 0" class="q-mt-md chart-text" :data-chart-id="chartId">
+  <div v-if="total > 0" class="q-mt-md chart-text">
     <p class="q-mb-xs">{{ t('stats.freq_mod.texts.default') }}</p>
     <p v-if="topModes.length === 3">
       {{
@@ -49,14 +48,14 @@ import {
 import type { Frequencies } from 'src/models'
 import { MODE_COLORS } from './commons'
 import { useQuasar } from 'quasar'
-import { getRandomId } from 'src/utils/random'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
+  frequencies: Frequencies | Frequencies[] | null
+  loading?: boolean
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -64,36 +63,30 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const chart = shallowRef(null)
-const chartId = getRandomId()
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const topModes = ref<string[]>([])
 
 const hasData = computed(() => {
-  if (!stats.frequencies || !stats.frequencies['freq_mod']) {
+  if (!props.frequencies) {
     return false
   }
-  const frequencies = stats.frequencies['freq_mod'] as Frequencies
-  if (Array.isArray(frequencies)) {
-    // Check if ANY frequency has actual data
-    return frequencies.some((freq) => freq.data && freq.data.length > 0)
-  }
-
-  // If it's a single Frequencies object
-  return frequencies.data && frequencies.data.length > 0
+  return Array.isArray(props.frequencies)
+    ? props.frequencies.length > 0
+    : props.frequencies.data.length > 0
 })
 
 watch(
-  () => stats.loading,
+  () => props.loading,
   () => {
-    if (stats.loading) {
+    if (props.loading) {
       initChartOptions()
     }
   },
 )
 
 watch([() => props.height, locale], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -124,13 +117,13 @@ const MRMT_VALUES = {
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.frequencies || !stats.frequencies['freq_mod']) {
+  if (!props.frequencies) {
     return
   }
 
   let dataset: { key: string; name: string; value: number; count: number }[] = []
-  if (Array.isArray(stats.frequencies['freq_mod'])) {
-    dataset = (stats.frequencies['freq_mod'] as Frequencies[]).map((item: Frequencies) => {
+  if (Array.isArray(props.frequencies)) {
+    dataset = (props.frequencies as Frequencies[]).map((item: Frequencies) => {
       total.value = item.total
       return {
         key: shortKey(item.field),
@@ -142,7 +135,7 @@ function initChartOptions() {
       }
     })
   } else {
-    const frequencies = stats.frequencies['freq_mod'] as Frequencies
+    const frequencies = props.frequencies as Frequencies
     dataset = frequencies.data.map((item) => ({
       key: shortKey(item.value),
       name: keyLabel(item.value),

@@ -31,7 +31,8 @@ export default {
       '65': '65 and over',
     },
     employment_rate: 'What is your employment rate?',
-    remote_work_rate: 'What is your remote work rate, as a % of the work rate indicated in the previous question?',
+    remote_work_rate:
+      'What is your remote work rate, as a % of the work rate indicated in the previous question?',
     company_vehicle: 'Do you have a company vehicle?',
     search_or_select_option: 'Search or select an option',
     yes: 'Yes',
@@ -43,8 +44,7 @@ export default {
     origin: 'Where do you usually leave from to reach your workplace?',
     origin_hint:
       'This confidential information will only be used to calculate your mobility options for your home-work commute.',
-    travel_time:
-      'What is your average travel time from your home to your workplace?',
+    travel_time: 'What is your average travel time from your home to your workplace?',
     travel_time_minutes: 'minutes (one way)',
     constraints: 'Do you experience any potential constraints related to your daily mobility?',
     constraints_option: {

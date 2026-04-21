@@ -7,11 +7,11 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
     <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
+      <div class="text-h6 text-center">{{ t(`stats.${props.chartTranslationName}.title`) }}</div>
       <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
     </div>
   </div>
@@ -36,16 +36,17 @@ import { useQuasar } from 'quasar'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  type: string
+  chartTranslationName: string
+  frequencies?: Frequencies[] | Frequencies | null
   groups: string[]
   percent?: boolean
   xaxis?: string
   yaxis?: string
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -56,16 +57,16 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 
 watch(
-  () => stats.loading,
+  () => props.loading,
   () => {
-    if (stats.loading) {
+    if (props.loading) {
       initChartOptions()
     }
   },
 )
 
 watch([() => props.height, locale, () => props.percent], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -82,20 +83,20 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.${props.type}.labels.${shortKey(key)}`)
+  return t(`stats.${props.chartTranslationName}.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.frequencies || !stats.frequencies[props.type]) {
+  if (!props.frequencies) {
     return
   }
 
   let dataset: { key: string; name: string; value: number }[] = []
   total.value = 0
-  if (Array.isArray(stats.frequencies[props.type])) {
-    dataset = (stats.frequencies[props.type] as Frequencies[]).map((item: Frequencies) => {
+  if (Array.isArray(props.frequencies)) {
+    dataset = (props.frequencies as Frequencies[]).map((item: Frequencies) => {
       total.value = item.total
       return {
         key: shortKey(item.field),
@@ -104,7 +105,7 @@ function initChartOptions() {
       }
     })
   } else {
-    const frequencies = stats.frequencies[props.type] as Frequencies
+    const frequencies = props.frequencies as Frequencies
     dataset = frequencies.data.map((item) => ({
       key: shortKey(item.value),
       name: keyLabel(item.value),
@@ -153,7 +154,7 @@ function initChartOptions() {
     })
     series = sorted_modes.map((mode) => {
       return {
-        name: t(`stats.${props.type}.labels.${mode}`),
+        name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
         type: 'bar' as const,
         stack: 'total',
         emphasis: {
@@ -169,7 +170,7 @@ function initChartOptions() {
   } else {
     series = sorted_modes.map((mode) => {
       return {
-        name: t(`stats.${props.type}.labels.${mode}`),
+        name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
         type: 'bar' as const,
         stack: 'total',
         emphasis: {
@@ -195,7 +196,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 120,
     title: {
-      text: t(`stats.${props.type}.title`),
+      text: t(`stats.${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -232,7 +233,7 @@ function initChartOptions() {
       nameLocation: 'end',
       nameGap: 30,
       type: 'category',
-      data: props.groups.map((g) => t(`stats.${props.type}.labels.${g}`)),
+      data: props.groups.map((g) => t(`stats.${props.chartTranslationName}.labels.${g}`)),
     },
     xAxis: {
       name: props.xaxis || t('stats.nb_employees'),
