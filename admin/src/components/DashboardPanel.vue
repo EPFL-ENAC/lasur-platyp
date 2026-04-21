@@ -78,8 +78,7 @@
           outline
           dense
           icon="picture_as_pdf"
-          :loading="exportingPDF"
-          :disable="stats.loading || exportingPDF"
+          :disable="stats.loading"
           :label="t('stats.pdf_report')"
           no-caps
           @click="goToReport"
@@ -152,7 +151,6 @@ const campaignService = services.make('campaign')
 const layout = ref('grid')
 const percent = ref(true)
 const height = ref(400)
-const exportingPDF = ref(false)
 const companyMap = ref<{ [key: string]: Company }>({})
 const campaignMap = ref<{ [key: string]: Campaign }>({})
 const showMapFilter = ref(false)
@@ -233,6 +231,8 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
 }
 
 async function goToReport() {
+  const id = stats.dumpToLocalStorage()
+  
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
@@ -250,8 +250,7 @@ async function goToReport() {
     displayedCampaigns.map((id) => campaignMap.value[`${id}`]?.name || id).join(';'),
   )
 
-  const compressedState = await stats.toCompressedURLState()
-  url.searchParams.set('stats', compressedState)
+  url.searchParams.set('statsStateId', id)
 
   window.open(url.toString(), '_blank')
 }
