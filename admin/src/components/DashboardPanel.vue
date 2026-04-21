@@ -82,7 +82,7 @@
           :disable="stats.loading || exportingPDF"
           :label="t('stats.pdf_report')"
           no-caps
-          @click="onPDFExport"
+          @click="goToReport"
         />
         <q-btn icon="settings" size="sm" color="field" outline>
           <q-menu>
@@ -130,14 +130,11 @@
 </template>
 
 <script setup lang="ts">
-import { jsPDF } from 'jspdf'
 import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
 import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
-import { notifyError } from 'src/utils/notify'
-import { makeChartPage } from 'src/utils/report'
 
 const { t } = useI18n()
 const stats = useStats()
@@ -228,108 +225,20 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
   onFilter()
 }
 
-async function onPDFExport() {
-  // Add filter selections
-  const filters = []
-  if (companyFilter.value.length > 0) {
-    let filterText = ''
-    const companyNames = companyFilter.value
-      .map((id) => companyOptions.value.find((c) => `${c.value}` === `${id}`)?.label || id)
-      .join(', ')
-    filterText += `${t('companies')}: ${companyNames}`
-    if (filterText) {
-      filters.push(filterText)
-    }
-  }
-  if (campaignFilter.value.length > 0) {
-    let filterText = ''
-    const campaignNames = campaignFilter.value
-      .map((id) => campaignOptions.value.find((c) => `${c.value}` === `${id}`)?.label || id)
-      .join(', ')
-    filterText += `${t('campaigns')}: ${campaignNames}`
-    if (filterText) {
-      filters.push(filterText)
-    }
-  }
+async function goToReport() {
+  const url = new URL(window.location.href)
+  url.pathname = '/admin/report'
 
-  const doc = new jsPDF({ orientation: 'landscape' })
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 10
-  const now = new Date()
+  const displayedOrgs = companyFilter.value.length > 0 ? companyFilter.value : Object.keys(companyMap.value)
+  url.searchParams.set('orgs', encodeURIComponent(displayedOrgs.map((id) => companyMap.value[`${id}`]?.name || id).join(';')))
 
-  exportingPDF.value = true
-  try {
-    // Get all carousel slides
-    const chartContainers = document.querySelectorAll('.echarts')
-    if (chartContainers.length === 0) {
-      notifyError(t('stats.no_charts_to_export'))
-      return
-    }
+  const displayedCampaigns = campaignFilter.value.length > 0 ? campaignFilter.value : Object.keys(campaignMap.value)
+  url.searchParams.set('campaigns', encodeURIComponent(displayedCampaigns.map((id) => campaignMap.value[`${id}`]?.name || id).join(';')))
 
-    if (layout.value === 'grid') {
-      // Grid layout export
-      let topMargin = 25
-
-      // Add title
-      doc.setFontSize(54)
-      doc.setTextColor(1, 152, 59) // Primary color #01983b
-      doc.text(t('main.brand'), pageWidth / 2, topMargin, { align: 'center' })
-      topMargin += 14
-      doc.setFontSize(24)
-      doc.setTextColor(0, 0, 0) // Reset to black
-      doc.text(t('stats.title'), pageWidth / 2, topMargin, { align: 'center' })
-      topMargin = pageHeight - 15
-      doc.setFontSize(10)
-      doc.text(now.toLocaleString(), margin, topMargin)
-
-      if (filters.length > 0) {
-        doc.text(filters.join(' | '), pageWidth - margin, topMargin, { align: 'right' })
-      }
-      // Move to next page
-      doc.addPage()
-    }
-    let capturedCount = 0
-    for (let i = 0; i < chartContainers.length; i++) {
-      const chart = chartContainers[i] as HTMLElement
-      const chartId = chart.getAttribute('data-chart-id')
-      const text = document.querySelector<HTMLElement>(`.chart-text[data-chart-id="${chartId}"]`)
-
-      // Skip if chart is not visible or has no dimensions
-      if (chart.offsetWidth === 0 || chart.offsetHeight === 0) {
-        continue
-      }
-
-      const added = await makeChartPage(
-        chart,
-        text?.innerText,
-        doc,
-        now,
-        t('main.brand'),
-        `${t('stats.title')}`,
-        filters.join(' | '),
-      )
-      if (added) {
-        capturedCount++
-        if (i < chartContainers.length - 1) {
-          doc.addPage()
-        }
-      }
-    }
-
-    if (capturedCount > 0) {
-      doc.save(
-        `${t('main.brand').replaceAll(' ', '_')}_${t('stats.title').replaceAll(' ', '_')}_${new Date().toISOString()}.pdf`,
-      )
-    } else {
-      notifyError(t('stats.no_charts_to_export'))
-    }
-  } catch (error) {
-    console.error('Error generating PDF:', error)
-    notifyError(t('error.pdf_export_failed'))
-  } finally {
-    exportingPDF.value = false
-  }
+  const compressedState = await stats.toCompressedURLState()
+  url.searchParams.set('stats', compressedState)
+  
+  window.open(url.toString(), '_blank')
 }
 </script>
 

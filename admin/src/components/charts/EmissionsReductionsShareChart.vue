@@ -7,7 +7,7 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
       :data-chart-id="chartId"
     />
@@ -47,16 +47,17 @@ import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { useQuasar } from 'quasar'
 import { getRandomId } from 'src/utils/random'
+import type { EmissionReduction } from 'src/models'
 // import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-const stats = useStats()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  reductionType: string
+  reductions: EmissionReduction[] | null
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -72,15 +73,15 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 
 const totalSavings = computed(() => {
-  const recoEmissions = stats.emissionsReductions?.[props.reductionType] || []
+  const recoEmissions = props.reductions || []
   return recoEmissions.reduce((sum, item) => sum + item.reduced, 0)
 })
 
 const biggestEmission = computed<PercentageEmission | null>(() => {
   if (total.value < 5) return null
-  if (!stats.emissionsReductions || !stats.emissionsReductions[props.reductionType]) return null
+  if (!props.reductions) return null
 
-  const recoEmissions = stats.emissionsReductions[props.reductionType] || []
+  const recoEmissions = props.reductions || []
   if (recoEmissions.length === 0) return null
 
   let biggest: PercentageEmission | null = null
@@ -93,14 +94,14 @@ const biggestEmission = computed<PercentageEmission | null>(() => {
   return biggest
 })
 
-watch([() => stats.loading], () => {
-  if (stats.loading) {
+watch([() => props.loading], () => {
+  if (props.loading) {
     initChartOptions()
   }
 })
 
 watch([() => props.height, locale], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -123,11 +124,11 @@ function keyLabel(key: string) {
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.emissionsReductions || !stats.emissionsReductions[props.reductionType]) {
+  if (!props.reductions) {
     return
   }
 
-  const recoEmissions = stats.emissionsReductions[props.reductionType] || []
+  const recoEmissions = props.reductions || []
   if (recoEmissions.length === 0) {
     return
   }

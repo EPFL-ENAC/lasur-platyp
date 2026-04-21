@@ -1091,4 +1091,8 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   do_not_show_again: 'Ne plus afficher',
   dark_mode: 'Mode sombre',
   ok: 'OK',
+  back: 'Retour',
+  print: 'Imprimer',
+  mobility_statistics: 'Statistiques de mobilité',
+  report_title: 'Rapport de mobilité généré',
 }

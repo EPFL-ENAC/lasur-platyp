@@ -110,6 +110,7 @@
     "useIsochrones": true,
     "CATEGORY_TAGS": true,
     "usePreferencesStore": true,
-    "StatsSectionsCollapsedState": true
+    "StatsSectionsCollapsedState": true,
+    "StatsSectionsExpandedState": true
   }
 }

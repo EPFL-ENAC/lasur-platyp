@@ -7,7 +7,7 @@
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      :loading="stats.loading"
+      :loading="props.loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
       :data-chart-id="chartId"
     />
@@ -45,15 +45,17 @@ import { useQuasar } from 'quasar'
 import { lowerCaseFirst } from 'src/utils/string'
 import { moveToEnd } from 'src/utils/arrays'
 import { getRandomId } from 'src/utils/random'
+import type { BehaviorChangeStats } from 'src/models'
 
 const { t, locale } = useI18n()
-const stats = useStats()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 const $q = useQuasar()
 
 interface Props {
   type: 'levers' | 'motivation'
+  behaviorChangeStats: BehaviorChangeStats | null
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -66,7 +68,7 @@ const total = ref(0)
 
 const descriptionValues = computed(() => {
   if (props.type === 'levers') {
-    const levers = stats.behaviorChange.levers
+    const levers = props.behaviorChangeStats?.levers
     if (!levers) {
       return {}
     }
@@ -83,7 +85,7 @@ const descriptionValues = computed(() => {
     }
   }
 
-  const motivation = stats.behaviorChange.motivation
+  const motivation = props.behaviorChangeStats?.motivation
   if (!motivation) {
     return {}
   }
@@ -98,14 +100,14 @@ const descriptionValues = computed(() => {
   }
 })
 
-watch([() => stats.loading], () => {
-  if (stats.loading) {
+watch([() => props.loading], () => {
+  if (props.loading) {
     initChartOptions()
   }
 })
 
 watch([() => props.height, locale], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -176,7 +178,7 @@ function initChartOptions() {
 }
 
 function leversOptions() {
-  const behaviorChangeData = stats.behaviorChange.levers
+  const behaviorChangeData = props.behaviorChangeStats?.levers
   if (!behaviorChangeData) {
     return null
   }
@@ -215,7 +217,7 @@ function leversOptions() {
 }
 
 function motivationOptions() {
-  const behaviorChangeData = stats.behaviorChange.motivation
+  const behaviorChangeData = props.behaviorChangeStats?.motivation
   if (!behaviorChangeData) {
     return null
   }
@@ -257,8 +259,8 @@ function shortKey(key: string) {
 
 function getSortedModes<
   T extends
-    | typeof stats.behaviorChange.levers.by_mode_levers
-    | typeof stats.behaviorChange.motivation.by_mode_motivation,
+    | BehaviorChangeStats['levers']['by_mode_levers']
+    | BehaviorChangeStats['motivation']['by_mode_motivation']
 >(data: T): T {
   const copy = [...data] as T
 

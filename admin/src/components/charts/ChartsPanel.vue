@@ -4,6 +4,7 @@
       v-model="preferencesStore.statsSectionsExpandedState.mobilityAnalysis"
       :label="t('stats.sections.mobility_analysis.title')"
       header-class="text-h5"
+      data-section-name="mobility_analysis"
       expand-icon-toggle
     >
       <q-markdown
@@ -15,36 +16,64 @@
         <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.home_to_work') }}</h6>
         <div class="grid-container">
           <div>
-            <location-chart :title="t('stats.locationsHeatmap.title')" :height="height" />
+            <location-chart
+              :title="t('stats.locationsHeatmap.title')"
+              :height="height"
+              :home-locations-heatmap="stats.homeLocationsHeatmap"
+              :workplace-locations="stats.workplaceLocations"
+            />
           </div>
           <div>
-            <modes-of-transport-share-chart :height="height" />
+            <modes-of-transport-share-chart
+              :height="height"
+              :frequencies="stats.frequencies?.['freq_mod'] ?? null"
+              :loading="stats.loading"
+            />
           </div>
           <div>
             <travel-time-frequencies-chart
-              type="travel_time"
+              :frequencies="((stats.frequencies?.['travel_time'] ?? null) as Frequencies | null)"
               :xaxis="t('stats.travel_time.xaxis')"
               :range-step="5"
               :percent="percent"
               :height="height"
+              :loading="stats.loading"
             />
           </div>
           <div>
-            <equipment-frequencies-chart :percent="percent" :height="height" />
-          </div>
-          <div>
-            <frequencies-chart type="constraints" :percent="percent" :height="height" />
+            <equipment-frequencies-chart
+              :frequencies="((stats.frequencies?.['equipments'] ?? null) as Frequencies | null)"
+              :percent="percent"
+              :height="height"
+              :loading="stats.loading"
+              />
+            </div>
+            <div>
+              <frequencies-chart
+              chartTranslationName="constraints"
+              :frequencies="((stats.frequencies?.['constraints'] ?? null) as Frequencies | null)"
+              :percent="percent"
+              :height="height"
+              :loading="stats.loading"
+            />
           </div>
           <div>
             <emissions-chart
-              type="freq_mod"
+              chartTranslationName="freq_mod"
+              :emissions="stats.emissions?.['freq_mod'] ?? null"
               :xaxis="t('stats.emissions_freq_mod.xaxis')"
               :yaxis="t('stats.emissions_freq_mod.yaxis')"
               :height="height"
+              :loading="stats.loading"
             />
           </div>
           <div>
-            <journey-energy-chart type="current" :height="height" />
+            <journey-energy-chart
+              type="current"
+              :journey-energy-stats="stats.journeyEnergyStats"
+              :height="height"
+              :loading="stats.loading"
+            />
           </div>
         </div>
       </q-card-section>
@@ -53,19 +82,23 @@
         <div class="grid-container">
           <div>
             <frequencies-stack-chart
-              type="freq_mod_pro"
+              chartTranslationName="freq_mod_pro"
+              :frequencies="((stats.frequencies?.['freq_mod_pro'] ?? null) as Frequencies[] | null)"
               :groups="['local', 'national', 'europe', 'inter']"
               :xaxis="t('stats.freq_mod_pro.xaxis')"
               :height="height"
               :percent="percent"
+              :loading="stats.loading"
             />
           </div>
           <div>
             <emissions-chart
-              type="freq_mod_pro"
+              chartTranslationName="freq_mod_pro"
+              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
               :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
               :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
               :height="height"
+              :loading="stats.loading"
             />
           </div>
         </div>
@@ -78,6 +111,7 @@
       v-model="preferencesStore.statsSectionsExpandedState.mobilityPotentials"
       :label="t('stats.sections.mobility_potentials.title')"
       header-class="text-h5"
+      data-section-name="mobility_potentials"
       expand-icon-toggle
     >
       <q-markdown
@@ -90,27 +124,52 @@
         <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.home_to_work') }}</h6>
         <div class="grid-container">
           <div>
-            <share-chart type="reco_dt2" :height="height" />
-          </div>
-          <div>
-            <links-chart type="mod_reco" :height="height" />
-          </div>
-          <div>
-            <emissions-reductions-chart
-              type="freq_mod"
-              reduction-type="reductions_mod"
-              :yaxis="t('stats.emissions_reductions_mod.yaxis')"
+            <share-chart
+              chartTranslationName="reco_dt2"
+              :frequencies="stats.frequencies?.['reco_dt2'] ?? null"
               :height="height"
+              :loading="stats.loading"
             />
           </div>
           <div>
-            <emissions-reductions-share-chart reduction-type="reductions_mod" :height="height" />
+            <links-chart
+              type="mod_reco"
+              :links="stats.links['mod_reco'] ?? null"
+              :height="height"
+              :loading="stats.loading"
+            />
           </div>
           <div>
-            <journey-energy-chart type="reco" :height="height" />
+            <emissions-reductions-chart
+              chartTranslationName="reductions_mod"
+              :emissions="stats.emissions?.['freq_mod'] ?? null"
+              :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
+              :yaxis="t('stats.emissions_reductions_mod.yaxis')"
+              :height="height"
+              :loading="stats.loading"
+            />
           </div>
           <div>
-            <journey-energy-share-chart :height="height" />
+            <emissions-reductions-share-chart
+              :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
+              :height="height"
+              :loading="stats.loading"
+            />
+          </div>
+          <div>
+            <journey-energy-chart
+              type="reco"
+              :height="height"
+              :journey-energy-stats="stats.journeyEnergyStats"
+              :loading="stats.loading"
+            />
+          </div>
+          <div>
+            <journey-energy-share-chart
+              :journeyEnergyStats="stats.journeyEnergyStats"
+              :height="height"
+              :loading="stats.loading"
+            />
           </div>
         </div>
       </q-card-section>
@@ -120,10 +179,12 @@
         <div class="grid-container">
           <div>
             <emissions-reductions-chart
-              type="freq_mod_pro"
-              reduction-type="reductions_mod_pro"
+              chartTranslationName="reductions_mod_pro"
+              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
+              :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
               :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
               :height="height"
+              :loading="stats.loading"
             />
           </div>
         </div>
@@ -136,6 +197,7 @@
       v-model="preferencesStore.statsSectionsExpandedState.behaviouralChanges"
       :label="t('stats.sections.behavioural_changes.title')"
       header-class="text-h5"
+      data-section-name="behavioural_changes"
       expand-icon-toggle
     >
       <q-markdown
@@ -147,13 +209,28 @@
       <q-card-section>
         <div class="grid-container">
           <div>
-            <behavior-change-chart :height="height" type="levers" />
+            <behavior-change-chart
+              type="levers"
+              :behavior-change-stats="stats.behaviorChange"
+              :height="height"
+              :loading="stats.loading"
+            />
           </div>
           <div>
-            <behavior-change-chart :height="height" type="motivation" />
+            <behavior-change-chart
+              type="motivation"
+              :behavior-change-stats="stats.behaviorChange"
+              :height="height"
+              :loading="stats.loading"
+            />
           </div>
           <div>
-            <equipment-recommendation-matrix-chart :height="height" />
+            <equipment-recommendation-matrix-chart
+              :equipmentsStats="stats.equipmentsStats"
+              :height="height"
+              :loading="stats.loading"
+              has-options
+            />
           </div>
         </div>
       </q-card-section>
@@ -176,6 +253,7 @@ import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
 import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
 import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
+import type { Frequencies } from 'src/models'
 
 interface Props {
   height: number
@@ -186,6 +264,8 @@ defineProps<Props>()
 
 const { t } = useI18n()
 const preferencesStore = usePreferencesStore()
+const stats = useStats()
+
 </script>
 
 <style lang="css" scoped>

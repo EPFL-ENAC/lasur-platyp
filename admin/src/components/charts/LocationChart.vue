@@ -6,14 +6,15 @@
     </div>
     <div v-else class="with-data">
       <location-heatmap
-        :h3Heatmap="stats.homeLocationsHeatmap"
-        :dots="stats.workplaceLocations"
+        :h3Heatmap="props.homeLocationsHeatmap"
+        :dots="props.workplaceLocations"
         :heatmap-gradient="gradient"
         :center="[7.4474, 46.9481]"
         :zoom="5"
         :fit-bounds-margins="2"
         :height="`${props.height}px`"
         :map-id="id"
+        :no-controls="props.noControls"
       >
         <div class="legend-item">
           <span class="legend-swatch dot"></span>
@@ -57,16 +58,20 @@
 import { GradientScale } from 'src/utils/colors'
 import LocationHeatmap from '../LocationHeatmap.vue'
 import { getRandomId } from 'src/utils/random'
+import type { H3Heatmap, LatLon } from 'src/models'
 
 const { t } = useI18n()
-const stats = useStats()
 
 interface Props {
   title: string
+  homeLocationsHeatmap: H3Heatmap
+  workplaceLocations: LatLon[]
   height?: number
+  noControls?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  noControls: false
 })
 
 const gradient = computed(() => {
@@ -84,15 +89,15 @@ const id = ref(`location-heatmap-${getRandomId()}`)
 
 const hasData = computed(() => {
   const hasHeatmapData =
-    !!stats.homeLocationsHeatmap && Object.keys(stats.homeLocationsHeatmap).length > 0
-  const hasWorkplaceData = !!stats.workplaceLocations && stats.workplaceLocations.length > 0
+    !!props.homeLocationsHeatmap && Object.keys(props.homeLocationsHeatmap).length > 0
+  const hasWorkplaceData = !!props.workplaceLocations && props.workplaceLocations.length > 0
   return hasHeatmapData || hasWorkplaceData
 })
 
 const max = computed(() => {
-  if (!stats.homeLocationsHeatmap) return 0
+  if (!props.homeLocationsHeatmap) return 0
 
-  const values = Object.values(stats.homeLocationsHeatmap)
+  const values = Object.values(props.homeLocationsHeatmap)
   if (values.length === 0) return 0
 
   return Math.max(...values)

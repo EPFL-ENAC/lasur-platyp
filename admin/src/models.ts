@@ -324,6 +324,11 @@ export interface EquipmentsStats {
 
 export type H3Heatmap = { [hexId: string]: number }
 
+export interface LatLon {
+  lat: number
+  lon: number
+}
+
 export interface Stats {
   total: number
   frequencies: Frequencies[] | null
@@ -339,7 +344,7 @@ export interface Stats {
   pro_mode_emission_reductions: EmissionReduction[] | null
   pro_mode_links: StatLinks | null
   home_location_heatmap: H3Heatmap | null
-  workplace_locations: { lat: number; lon: number }[] | null
+  workplace_locations: LatLon[] | null
   journey_energy_stats: JourneyEnergyStats | null
   behavior_change: BehaviorChangeStats | null
   equipments_stats: EquipmentsStats | null
