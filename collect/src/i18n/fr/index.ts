@@ -300,4 +300,5 @@ export default {
   select_preferred_language: 'Sélectionner votre langue préférée',
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
   dark_mode: 'Mode sombre',
+  transit_lines: 'Réseau transports publics',
 }

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <QuestionText :label="label ?? ''" :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`" />
+    <QuestionText
+      :label="label ?? ''"
+      :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`"
+    />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <q-rating
       v-model="selected"

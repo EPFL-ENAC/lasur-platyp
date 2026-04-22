@@ -79,7 +79,8 @@ export default {
         'If enabled, participants will be able to select any workplace when filling the survey.',
       workplaces_list: 'List of known workplaces',
       show_isochrone: 'Show isochrone',
-      isochrones_hint: 'An isochrone map shows the areas that can be reached from a starting point using specific modes of transport within a given time. In this case, the isochrone map illustrates which parts of the region are accessible via different modes of transport from a workplace, allowing you to see, in particular, how far employees can travel from that location.'
+      isochrones_hint:
+        'An isochrone map shows the areas that can be reached from a starting point using specific modes of transport within a given time. In this case, the isochrone map illustrates which parts of the region are accessible via different modes of transport from a workplace, allowing you to see, in particular, how far employees can travel from that location.',
     },
     email_template: {
       buttonText: 'Email template',
@@ -923,7 +924,7 @@ Some environmental impacts have also been calculated:
     direct_select_hint: 'You are now editing the polygon. Drag the points to adjust the shape.',
     draw_polygon_hint:
       'Click on the map to add points to your polygon. Double-click to finish drawing.',
-    zoom_hint: 'Scroll to zoom in or out'
+    zoom_hint: 'Scroll to zoom in or out',
   },
   map_filter: {
     workplaces: {
@@ -976,7 +977,7 @@ Promoting sustainable mobility in the Greater Geneva](https://www.modus-ge.ch)`,
 ---
 
 ¹ **List of specialist advisers and further information:** Mobility Management Suisse
-² **Financial support or resources:** municipal and cantonal programmes ([Mobility Plan - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite); [SIL - rsGE H 1 21.03: Regulations on corporate mobility schemes (RPMob)](https://silgeneve.ch/legis/index.aspx)), federal programmes ([Promoting sustainable mobility initiatives in businesses](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5)), etc.`
+² **Financial support or resources:** municipal and cantonal programmes ([Mobility Plan - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite); [SIL - rsGE H 1 21.03: Regulations on corporate mobility schemes (RPMob)](https://silgeneve.ch/legis/index.aspx)), federal programmes ([Promoting sustainable mobility initiatives in businesses](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5)), etc.`,
   },
   action: 'Measure',
   add: 'Add',

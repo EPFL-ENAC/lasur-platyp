@@ -226,14 +226,13 @@ function onMapFilter() {
 }
 
 function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
-  console.log('Selected area:', area)
   areaFilter.value = area
   onFilter()
 }
 
 async function goToReport() {
   const id = stats.dumpToLocalStorage()
-  
+
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
@@ -246,8 +245,8 @@ async function goToReport() {
 
   let displayedCampaigns = campaignFilter.value
   if (campaignFilter.value.length === 0) {
-    const campaignsInDisplayedOrgs = Object.values(campaignMap.value).filter((campaign) =>
-      displayedOrgs.some((orgId) => orgId == `${campaign.company_id}`), // use loose equality to compare string and number IDs
+    const campaignsInDisplayedOrgs = Object.values(campaignMap.value).filter(
+      (campaign) => displayedOrgs.some((orgId) => orgId == `${campaign.company_id}`), // use loose equality to compare string and number IDs
     )
     displayedCampaigns = campaignsInDisplayedOrgs.map((campaign) => `${campaign.id}`)
   }

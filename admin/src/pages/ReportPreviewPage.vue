@@ -224,10 +224,8 @@
         <h2 class="text-h6">
           {{ t('generated_report.final_page_subtitle') }}
         </h2>
-        
-        <q-markdown
-          :src="t('generated_report.final_page_body')"
-        />
+
+        <q-markdown :src="t('generated_report.final_page_body')" />
       </report-page>
     </div>
   </div>
@@ -250,7 +248,11 @@ import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
 import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
 import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
-import { type StatsState, flushStateFromLocalStorage, getStateFromLocalStorage } from 'src/stores/stats'
+import {
+  type StatsState,
+  flushStateFromLocalStorage,
+  getStateFromLocalStorage,
+} from 'src/stores/stats'
 import type { Frequencies } from 'src/models'
 
 interface Props {

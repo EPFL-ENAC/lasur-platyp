@@ -80,7 +80,8 @@ export default {
         "Si activé, les participants pourront sélectionner n'importe quel lieu de travail lors du remplissage de l'enquête.",
       workplaces_list: 'Liste des lieux de travail connus',
       show_isochrone: "Afficher l'isochrone",
-      isochrones_hint: "Une isochrone est une carte représentant les lieux accessibles, depuis un point de départ, avec certains modes, dans un temps imparti. L'isochrone montre ici quelle partie du territoire est accessible avec différents modes de transport depuis un lieu de travail, vous permettant de visualiser notamment jusqu'où les collaborateur·trice·s peuvent se rendre depuis ce site."
+      isochrones_hint:
+        "Une isochrone est une carte représentant les lieux accessibles, depuis un point de départ, avec certains modes, dans un temps imparti. L'isochrone montre ici quelle partie du territoire est accessible avec différents modes de transport depuis un lieu de travail, vous permettant de visualiser notamment jusqu'où les collaborateur·trice·s peuvent se rendre depuis ce site.",
     },
     email_template: {
       buttonText: "Modèle d'email",
@@ -937,7 +938,7 @@ Certains impacts sont aussi calculés :
       'Vous êtes en train de modifier le polygone. Faites glisser les points pour ajuster la forme.',
     draw_polygon_hint:
       'Cliquez sur la carte pour ajouter des points à votre polygone. Double-cliquez pour terminer le dessin.',
-    zoom_hint: 'Pour zoomer, utilisez la molette de la souris'
+    zoom_hint: 'Pour zoomer, utilisez la molette de la souris',
   },
   map_filter: {
     workplaces: {
@@ -992,7 +993,7 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
 ---
 
 ¹ **Liste de conseillers spécialisés et informations complémentaires :** Mobility Management Suisse
-² **Soutien financier ou ressources :** programmes communaux et cantonaux ([Plan de mobilité - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite) ; [SIL - rsGE H 1 21.03 : Règlement sur les plans de mobilité d'entreprise (RPMob)](https://silgeneve.ch/legis/index.aspx)), programmes fédéraux ([Promotion d'initiatives de mobilité durable dans les entreprises](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5), etc.`
+² **Soutien financier ou ressources :** programmes communaux et cantonaux ([Plan de mobilité - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite) ; [SIL - rsGE H 1 21.03 : Règlement sur les plans de mobilité d'entreprise (RPMob)](https://silgeneve.ch/legis/index.aspx)), programmes fédéraux ([Promotion d'initiatives de mobilité durable dans les entreprises](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5), etc.`,
   },
   action: 'Mesure',
   add: 'Ajouter',

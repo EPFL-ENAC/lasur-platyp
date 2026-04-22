@@ -80,7 +80,7 @@ const textLabels = computed(() => {
     laptop: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 192.62)),
     email_sent: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.002462)),
     visio_hour: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.057063)),
-    unit: UNIT_LABEL
+    unit: UNIT_LABEL,
   }
 })
 
@@ -174,7 +174,9 @@ function initChartOptions() {
       formatter: function (params: any) {
         const tar = params[1]
         if (!tar) return ''
-        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' ' + UNIT_LABEL
+        return (
+          tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' ' + UNIT_LABEL
+        )
       },
     },
     legend: {

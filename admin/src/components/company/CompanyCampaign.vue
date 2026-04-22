@@ -106,7 +106,9 @@
                     :reco="wp.address"
                     height="400px"
                   />
-                  <div class="text-body2 q-mt-sm">{{ t('campaign.workplaces.isochrones_hint') }}</div>
+                  <div class="text-body2 q-mt-sm">
+                    {{ t('campaign.workplaces.isochrones_hint') }}
+                  </div>
                 </div>
               </q-expansion-item>
             </div>

@@ -112,7 +112,7 @@ const isochronesData = ref<GeoJSON.FeatureCollection>()
 const selectedMode = ref<string>('WALK')
 const selectedModeCutoffSec = ref<number[]>([]) // in seconds
 const modeOptions = computed(() => {
-  return ['WALK', 'BIKE', 'EBIKE', 'TRANSIT', /* 'RAIL', 'BUS' */].map((m) => {
+  return ['WALK', 'BIKE', 'EBIKE', 'TRANSIT' /* 'RAIL', 'BUS' */].map((m) => {
     return { label: t(`record.mode.${m.toLowerCase()}`), value: m }
   })
 })
