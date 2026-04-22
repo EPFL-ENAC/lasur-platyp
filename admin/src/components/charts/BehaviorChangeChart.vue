@@ -17,6 +17,7 @@
   </div>
 
   <div v-if="total > 0" class="q-mt-md chart-text">
+    <p class="q-mb-xs">{{ t(`stats.behavior_change_${props.type}.texts.info`) }}</p>
     <q-markdown :src="chartDescription" />
   </div>
 </template>
@@ -38,7 +39,7 @@ import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { useQuasar } from 'quasar'
 import { lowerCaseFirst } from 'src/utils/string'
-import { moveToEnd } from 'src/utils/arrays'
+import { moveToStart } from 'src/utils/arrays'
 import type { BehaviorChangeStats } from 'src/models'
 
 const { t, locale } = useI18n()
@@ -64,7 +65,14 @@ const chartDescription = computed(() => {
     return t(`stats.behavior_change_${props.type}.texts.default`)
   }
 
-  return t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues.value)
+  if (props.type === 'motivation') {
+    return t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues.value)
+  }
+
+  return `${t(`stats.behavior_change_${props.type}.texts.default`)}\n\n${t(
+    `stats.behavior_change_${props.type}.texts.specific`,
+    descriptionValues.value,
+  )}`
 })
 
 const descriptionValues = computed(() => {
@@ -265,21 +273,21 @@ function getSortedModes<
 >(data: T): T {
   const copy = [...data] as T
 
-  moveToEnd(
+  moveToStart(
     copy,
-    copy.find((item) => item.mode === 'Autres'),
+    copy.find((item) => item.mode === 'allModes'),
   )
-  moveToEnd(
-    copy,
-    copy.find((item) => item.mode === 'other'),
-  )
-  moveToEnd(
+  moveToStart(
     copy,
     copy.find((item) => item.mode === 'Total'),
   )
-  moveToEnd(
+  moveToStart(
     copy,
-    copy.find((item) => item.mode === 'allModes'),
+    copy.find((item) => item.mode === 'other'),
+  )
+  moveToStart(
+    copy,
+    copy.find((item) => item.mode === 'Autres'),
   )
 
   return copy

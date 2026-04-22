@@ -190,7 +190,7 @@ function initChartOptions() {
       left: '20',
       right: '20',
       top: '60',
-      bottom: '40',
+      bottom: '60',
       containLabel: true,
     },
     animation: false,
@@ -238,7 +238,7 @@ function initChartOptions() {
     xAxis: {
       name: props.xaxis || t('stats.nb_employees'),
       nameLocation: 'middle',
-      nameGap: 30,
+      nameGap: 20,
       type: 'value',
     },
     series: series,

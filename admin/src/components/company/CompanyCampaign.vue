@@ -2,7 +2,7 @@
   <div>
     <q-card flat class="q-ma-md">
       <q-card-section>
-        <h5 class="text-h5 q-ma-none">{{ t('overview') }}</h5>
+        <h5 class="text-h5 q-ma-none">{{ t('participation_following') }}</h5>
       </q-card-section>
 
       <q-separator />
@@ -106,6 +106,7 @@
                     :reco="wp.address"
                     height="400px"
                   />
+                  <div class="text-body2 q-mt-sm">{{ t('campaign.workplaces.isochrones_hint') }}</div>
                 </div>
               </q-expansion-item>
             </div>

@@ -19,8 +19,7 @@
   </div>
 
   <div v-if="total > 0" class="q-mt-md chart-text">
-    <p class="q-mb-xs">{{ t('stats.freq_mod.texts.default') }}</p>
-    <p v-if="topModes.length === 3">
+    <p v-if="topModes.length === 3" class="q-mb-xs">
       {{
         t('stats.freq_mod.texts.specific', {
           top_1: topModes[0],
@@ -29,6 +28,7 @@
         })
       }}
     </p>
+    <p>{{ t('stats.freq_mod.texts.default') }}</p>
   </div>
 </template>
 
@@ -190,7 +190,9 @@ function initChartOptions() {
       formatter: '<b>{b}</b><br/>{c} ({d}%)',
     },
     legend: {
-      show: false,
+      show: true,
+      bottom: 0,
+      left: 'center',
     },
     series: [
       {
@@ -202,6 +204,7 @@ function initChartOptions() {
         label: {
           margin: 0,
           fontWeight: 'bold',
+          formatter: '{d}% ({c})',
         },
         data: dataset,
       },
@@ -212,8 +215,11 @@ function initChartOptions() {
         center: ['80%', '68%'],
         avoidLabelOverlap: true,
         color: mrmtColors,
+        tooltip: {
+          formatter: '<b>{b}</b><br/>{d}%',
+        },
         label: {
-          formatter: '{b} (MRMT)',
+          formatter: '{d}% (MRMT)',
           fontSize: 10,
         },
         data: mrmtDataset,

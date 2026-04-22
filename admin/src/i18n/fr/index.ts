@@ -80,6 +80,7 @@ export default {
         "Si activé, les participants pourront sélectionner n'importe quel lieu de travail lors du remplissage de l'enquête.",
       workplaces_list: 'Liste des lieux de travail connus',
       show_isochrone: "Afficher l'isochrone",
+      isochrones_hint: "Une isochrone est une carte représentant les lieux accessibles, depuis un point de départ, avec certains modes, dans un temps imparti. L'isochrone montre ici quelle partie du territoire est accessible avec différents modes de transport depuis un lieu de travail, vous permettant de visualiser notamment jusqu'où les collaborateur·trice·s peuvent se rendre depuis ce site."
     },
     email_template: {
       buttonText: "Modèle d'email",
@@ -315,7 +316,7 @@ Certains impacts sont aussi calculés :
       },
       mobility_potentials: {
         title: 'Potentiels de mobilité',
-        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux collaborateur·trice·s en fonction de leurs habitudes, contraintes, désirs, localisation... Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient ces recommandations.`,
+        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux collaborateur·trice·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
       },
       behavioural_changes: {
         title: 'Motiver les changements de comportement',
@@ -496,7 +497,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod: {
@@ -528,7 +529,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_share: {
@@ -616,7 +617,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_pro: {
@@ -650,7 +651,7 @@ Certains impacts sont aussi calculés :
         default:
           "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}tCO₂ / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
@@ -799,6 +800,7 @@ Certains impacts sont aussi calculés :
         allModes: 'Tous les modes',
       },
       texts: {
+        info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         default:
           "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
         specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",
@@ -837,6 +839,7 @@ Certains impacts sont aussi calculés :
         total: 'Total',
       },
       texts: {
+        info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         default:
           'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
         specific:
@@ -934,6 +937,7 @@ Certains impacts sont aussi calculés :
       'Vous êtes en train de modifier le polygone. Faites glisser les points pour ajuster la forme.',
     draw_polygon_hint:
       'Cliquez sur la carte pour ajouter des points à votre polygone. Double-cliquez pour terminer le dessin.',
+    zoom_hint: 'Pour zoomer, utilisez la molette de la souris'
   },
   map_filter: {
     workplaces: {
@@ -968,16 +972,27 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
     no_charts_to_export: 'Aucun graphique à exporter en PDF.',
   },
   footer: {
-    mobilyse: `[https://modus-ge.ch/project/toolkit-mobilite](https://modus-ge.ch/project/toolkit-mobilite)`,
-    modus: `Fondation Modus
-Pour une mobilité durable à Genève
-[https://www.modus-ge.ch](https://www.modus-ge.ch)`,
+    modus: `[Fondation Modus
+Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
     epfl: `
-Laboratoire de sociologie urbaine (LASUR)
-[https://www.epfl.ch/labs/lasur/](https://www.epfl.ch/labs/lasur/)
+[Laboratoire de sociologie urbaine (LASUR)](https://www.epfl.ch/labs/lasur/)
 
-ENAC-IT4R
-[https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+[ENAC-IT4R](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+  },
+  generated_report: {
+    title: 'Rapport de mobilité',
+    final_page_title: 'Prochaines étapes',
+    final_page_subtitle: 'Quelles sont les prochaines étapes de votre stratégie de mobilité ?',
+
+    final_page_body: `1. **Nommer un responsable de la mobilité** pour l'entreprise, souvent appelé « Mobility Manager ».
+2. **Identifier tout besoin de soutien**…¹
+3. … pour la **mise en œuvre de mesures de mobilité** dans le cadre d'un plan de mobilité.²
+4. **Effectuer des revues périodiques** et/ou en fonction des étapes de vie de votre organisation afin de mesurer les changements dans les pratiques de mobilité des employés et, par conséquent, l'impact des mesures de soutien. De cette manière, en adéquation avec l'accessibilité, les modes de transport et les évolutions sociétales, les mesures de mobilité que vous proposez peuvent évoluer pour rester pertinentes.
+
+---
+
+¹ **Liste de conseillers spécialisés et informations complémentaires :** Mobility Management Suisse
+² **Soutien financier ou ressources :** programmes communaux et cantonaux ([Plan de mobilité - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite) ; [SIL - rsGE H 1 21.03 : Règlement sur les plans de mobilité d'entreprise (RPMob)](https://silgeneve.ch/legis/index.aspx)), programmes fédéraux ([Promotion d'initiatives de mobilité durable dans les entreprises](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5), etc.`
   },
   action: 'Mesure',
   add: 'Ajouter',
@@ -1006,6 +1021,7 @@ ENAC-IT4R
   data: 'Données',
   download_csv: 'Télécharger CSV',
   overview: 'Vue d’ensemble',
+  participation_following: 'Suivi de participation',
   view: 'Voir',
   edit: 'Editer',
   email: 'Email',
@@ -1095,5 +1111,5 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   back: 'Retour',
   print: 'Imprimer',
   mobility_statistics: 'Statistiques de mobilité',
-  report_title: 'Rapport de mobilité généré',
+  transit_lines: 'Réseau transports publics',
 }

@@ -112,6 +112,8 @@
     "usePreferencesStore": true,
     "StatsSectionsExpandedState": true,
     "StatsState": true,
-    "stateFromCompressedURL": true
+    "stateFromCompressedURL": true,
+    "flushStateFromLocalStorage": true,
+    "getStateFromLocalStorage": true
   }
 }

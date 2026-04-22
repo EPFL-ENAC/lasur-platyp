@@ -2,7 +2,7 @@
   <div class="bg-grey-3">
     <q-toolbar class="bg-white text-primary q-py-sm toolbar print-hide">
       <q-toolbar-title class="text-weight-bold">
-        {{ t('report_title') }}
+        {{ t('generated_report.title') }}
       </q-toolbar-title>
       <q-space />
       <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />
@@ -213,6 +213,20 @@
         <equipment-recommendation-matrix-chart
           :height="height"
           :equipments-stats="stats.equipmentsStats"
+        />
+      </report-page>
+
+      <report-page :org-names="orgs">
+        <h1 class="text-h4">
+          {{ t('generated_report.final_page_title') }}
+        </h1>
+
+        <h2 class="text-h6">
+          {{ t('generated_report.final_page_subtitle') }}
+        </h2>
+        
+        <q-markdown
+          :src="t('generated_report.final_page_body')"
         />
       </report-page>
     </div>

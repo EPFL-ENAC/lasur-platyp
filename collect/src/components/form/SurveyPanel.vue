@@ -238,6 +238,20 @@ function nextStep() {
       }
     }
   }
+  if (survey.stepName === 'change') {
+    // Both undefined and 0 mean no data
+    if (!survey.record.data.change.motivation) {
+      notifyError(t('form.error.change_motivation_required'))
+      return
+    }
+  }
+  if (survey.stepName === 'change2') {
+    if (!survey.record.data.change2.motivation) {
+      notifyError(t('form.error.change_motivation_required'))
+      return
+    }
+  }
+
   survey.incStep()
   if (survey.tokenOrSlug) {
     void collector.loadInfo(survey.tokenOrSlug)
@@ -305,6 +319,7 @@ function onSave() {
   if (survey.record.data.change2?.levers?.includes('other') === false) {
     survey.record.data.change2.other_levers = undefined
   }
+
   void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
 }
 
