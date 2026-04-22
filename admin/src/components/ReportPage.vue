@@ -32,9 +32,12 @@ const { t } = useI18n()
 }
 
 .page {
+  --page-margins-x: 20mm;
+  --page-margins-y: 15mm;
+
   width: 210mm;
   min-height: 297mm;
-  padding: 10mm;
+  padding: var(--page-margins-y) var(--page-margins-x);
   margin-bottom: 30px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -74,7 +77,7 @@ footer {
   position: absolute;
   bottom: 0;
   left: 0;
-  padding: 5mm 10mm;
+  padding: calc(var(--page-margins-y) * 0.5) var(--page-margins-x);
   width: 100%;
   text-align: right;
 }
@@ -94,7 +97,7 @@ footer::after {
     width: 210mm !important;
     min-height: 297mm !important;
     margin: 0 !important;
-    padding: 10mm !important;
+    padding: var(--page-margins-y) var(--page-margins-x) !important;
     box-shadow: none !important;
     overflow: visible !important;
 

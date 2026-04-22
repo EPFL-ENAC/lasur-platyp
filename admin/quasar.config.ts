@@ -120,7 +120,7 @@ export default defineConfig((ctx) => {
     framework: {
       config: {
         // dark: 'auto',
-        dark: false
+        dark: false,
       },
 
       // iconSet: 'material-icons', // Quasar icon set

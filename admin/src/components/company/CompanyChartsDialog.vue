@@ -123,7 +123,7 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
 
 async function goToReport() {
   const id = stats.dumpToLocalStorage()
-  
+
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 

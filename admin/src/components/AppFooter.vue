@@ -1,15 +1,24 @@
 <template>
   <q-footer class="footer q-py-lg q-px-xl bg-secondary">
     <div>
-      <img src="/admin/LOGO-JAUNE.svg" alt="Mobilyse" />
-      <q-markdown :src="t('footer.mobilyse')" />
+      <a
+        href="https://modus-ge.ch/project/toolkit-mobilite"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/admin/LOGO-JAUNE.svg" alt="Mobilyse" />
+      </a>
     </div>
     <div>
-      <img src="/admin/modus.svg" alt="Modus" />
+      <a href="https://modus-ge.ch" target="_blank" rel="noopener noreferrer">
+        <img src="/admin/powered_by_modus.svg" alt="Modus" />
+      </a>
       <q-markdown :src="t('footer.modus')" />
     </div>
     <div>
-      <img src="/admin/EPFL.svg" alt="EPFL" />
+      <a href="https://epfl.ch" target="_blank" rel="noopener noreferrer"
+        ><img src="/admin/EPFL.svg" alt="EPFL"
+      /></a>
       <q-markdown :src="t('footer.epfl')" />
     </div>
   </q-footer>
@@ -32,5 +41,9 @@ const { t } = useI18n()
 .footer img {
   height: 2rem;
   margin-bottom: 1rem;
+}
+
+:deep(a) {
+  color: var(--q-primary) !important;
 }
 </style>

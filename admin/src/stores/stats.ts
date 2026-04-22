@@ -173,7 +173,7 @@ export const useStats = defineStore('stats', () => {
     loadStats,
     getCampaignStats,
     toJSONState,
-    dumpToLocalStorage
+    dumpToLocalStorage,
   }
 })
 

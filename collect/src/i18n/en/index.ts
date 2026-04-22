@@ -13,6 +13,8 @@ export default {
       journey_days: 'Please specify the number of days per week for each journey',
       pro_journey_mode: 'Please specify the mode of transport for each journey',
       pro_journey_hex_id: 'Please specify the destination for each journey',
+      change_motivation_required:
+        'Please indicate your willingness to adopt this mode of transport',
       invalid_email: 'Please enter a valid email address',
     },
     agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
@@ -286,4 +288,5 @@ export default {
   select_preferred_language: 'Select your preferred language',
   select_or_drag_item: 'Select or drag one of the options',
   dark_mode: 'Dark mode',
+  transit_lines: 'Public transport network',
 }

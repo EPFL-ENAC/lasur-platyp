@@ -79,6 +79,8 @@ export default {
         'If enabled, participants will be able to select any workplace when filling the survey.',
       workplaces_list: 'List of known workplaces',
       show_isochrone: 'Show isochrone',
+      isochrones_hint:
+        'An isochrone map shows the areas that can be reached from a starting point using specific modes of transport within a given time. In this case, the isochrone map illustrates which parts of the region are accessible via different modes of transport from a workplace, allowing you to see, in particular, how far employees can travel from that location.',
     },
     email_template: {
       buttonText: 'Email template',
@@ -306,7 +308,7 @@ Some environmental impacts have also been calculated:
       },
       mobility_potentials: {
         title: 'Mobility potentials',
-        description: `This section sets out the personalised recommendations suggested to participants. Mobilyse thus indicates which modes of transport are most likely to suit employees based on their habits, constraints, preferences, location, etc. Some graphs also illustrate the potential benefits in terms of greenhouse gas emissions and health, should all participants adopt these recommendations.`,
+        description: `This section presents the personalized recommendations suggested to participants. Mobilyse indicates which modes are most likely to suit employees based on their habits, constraints, preferences, residential and work location… Some graphs also illustrate the potential gains in terms of impact on greenhouse gas emissions and health, in the event that all participants adopt the recommendations formulated by mobilyse.`,
       },
       behavioural_changes: {
         title: 'Encouraging behavioural changes',
@@ -485,7 +487,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod: {
@@ -517,7 +519,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_share: {
@@ -572,7 +574,7 @@ Some environmental impacts have also been calculated:
       },
       texts: {
         specific:
-          '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kg CO₂, against less than {remainingEmissions}kg / journey for the others.',
+          '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
       },
     },
     emissions_reco_mod_pro: {
@@ -605,7 +607,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_pro: {
@@ -639,7 +641,7 @@ Some environmental impacts have also been calculated:
         default:
           'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}tCO₂ / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
@@ -787,6 +789,7 @@ Some environmental impacts have also been calculated:
         allModes: 'All modes',
       },
       texts: {
+        info: 'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         default:
           'This chart helps to understand how participants would like to be supported in evolving their mobility.',
         specific: 'The support that participants feel they need most is {lever}.',
@@ -825,6 +828,7 @@ Some environmental impacts have also been calculated:
         total: 'Total',
       },
       texts: {
+        info: 'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         default:
           'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel.',
         specific:
@@ -920,6 +924,7 @@ Some environmental impacts have also been calculated:
     direct_select_hint: 'You are now editing the polygon. Drag the points to adjust the shape.',
     draw_polygon_hint:
       'Click on the map to add points to your polygon. Double-click to finish drawing.',
+    zoom_hint: 'Scroll to zoom in or out',
   },
   map_filter: {
     workplaces: {
@@ -952,16 +957,27 @@ Furthermore, we recommend that you adapt your processing register accordingly.
     no_charts_to_export: 'No charts to export as PDF.',
   },
   footer: {
-    mobilyse: `[https://modus-ge.ch/project/toolkit-mobilite](https://modus-ge.ch/project/toolkit-mobilite)`,
-    modus: `Fondation Modus
-Promoting sustainable mobility in the Greater Geneva
-[https://www.modus-ge.ch](https://www.modus-ge.ch)`,
+    modus: `[Fondation Modus
+Promoting sustainable mobility in the Greater Geneva](https://www.modus-ge.ch)`,
     epfl: `
-Laboratory Of Urban Sociology (LASUR)
-[https://www.epfl.ch/labs/lasur/](https://www.epfl.ch/labs/lasur/)
+[Laboratory Of Urban Sociology (LASUR)](https://www.epfl.ch/labs/lasur/)
 
-ENAC-IT4R
-[https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+[ENAC-IT4R](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+  },
+  generated_report: {
+    title: 'Generated mobility report',
+    final_page_title: 'Going forward',
+    final_page_subtitle: 'What are the next steps for your mobility strategy?',
+    final_page_body: `
+1. **Appoint a mobility lead** for the company, often referred to as a "Mobility Manager"
+2. **Identify any need for support**…¹
+3. … for the **implementation of mobility measures** as part of a mobility plan.²
+4. **Review periodically** and/or in line with the life stages of your organisation to measure changes in employees’ mobility practices and thus the impact of the support measures. In this way, in line with accessibility, transport modes and societal changes, the mobility measures you propose can evolve to remain relevant.
+
+---
+
+¹ **List of specialist advisers and further information:** Mobility Management Suisse
+² **Financial support or resources:** municipal and cantonal programmes ([Mobility Plan - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite); [SIL - rsGE H 1 21.03: Regulations on corporate mobility schemes (RPMob)](https://silgeneve.ch/legis/index.aspx)), federal programmes ([Promoting sustainable mobility initiatives in businesses](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5)), etc.`,
   },
   action: 'Measure',
   add: 'Add',
@@ -990,6 +1006,7 @@ ENAC-IT4R
   data: 'Data',
   download_csv: 'Download CSV',
   overview: 'Overview',
+  participation_following: 'Participation following',
   view: 'View',
   edit: 'Edit',
   email: 'Email',
@@ -1077,5 +1094,5 @@ Use the menu to navigate through the different sections, manage organisations, c
   back: 'Back',
   print: 'Print',
   mobility_statistics: 'Mobility statistics',
-  report_title: 'Generated mobility report',
+  transit_lines: 'Public transport network',
 }

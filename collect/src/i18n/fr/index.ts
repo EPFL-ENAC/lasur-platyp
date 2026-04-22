@@ -13,6 +13,7 @@ export default {
       journey_days: 'Veuillez spécifier le nombre de jours par semaine pour chaque trajet',
       pro_journey_mode: 'Veuillez spécifier le mode de transport pour chaque trajet',
       pro_journey_hex_id: 'Veuillez spécifier la destination pour chaque trajet',
+      change_motivation_required: "Veuillez indiquer votre volonté d'adopter ce mode de transport",
       invalid_email: 'Veuillez entrer une adresse email valide',
     },
     agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
@@ -299,4 +300,5 @@ export default {
   select_preferred_language: 'Sélectionner votre langue préférée',
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
   dark_mode: 'Mode sombre',
+  transit_lines: 'Réseau transports publics',
 }

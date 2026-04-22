@@ -56,6 +56,11 @@
             ></div>
             <div>{{ t('isochrones.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
           </div>
+
+          <div class="legend-transit-lines">
+            <div class="purple-bar"></div>
+            <div>{{ t('transit_lines') }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -435,5 +440,16 @@ function getCutoffColor(cutoff: number): string {
   z-index: 10;
   bottom: 10px;
   left: 10px;
+}
+
+.legend-transit-lines {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.purple-bar {
+  width: 1rem;
+  height: 0.25rem;
+  background-color: #5a3fc0;
 }
 </style>

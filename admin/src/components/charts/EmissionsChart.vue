@@ -164,10 +164,10 @@ const emissionItemsProLabels = computed(() => {
   return {
     firstPercent: formatNumber(Math.round((eip.first.emissions / eip.total) * 100)),
     firstMode: keyLabel(eip.first.mode),
-    firstEmissions: formatNumber((eip.first.emissions || 0) / eip.first.journeys),
+    firstEmissions: formatNumber(Math.round((eip.first.emissions || 0) / eip.first.journeys)),
     secondPercent: formatNumber(Math.round((eip.second.emissions / eip.total) * 100)),
     secondMode: keyLabel(eip.second.mode),
-    remainingEmissions: formatNumber(withoutFirstEmissions / withoutFirstJourneys),
+    remainingEmissions: formatNumber(Math.round(withoutFirstEmissions / withoutFirstJourneys)),
   }
 })
 
@@ -199,9 +199,9 @@ function initChartOptions() {
   let ubound = 0
   const preparedData = emissions
     .sort((a, b) => {
-      const emaA = a.journeys ? a.emissions / a.journeys : 0;
-      const emaB = b.journeys ? b.emissions / b.journeys : 0;
-      return emaB - emaA;
+      const emaA = a.journeys ? a.emissions / a.journeys : 0
+      const emaB = b.journeys ? b.emissions / b.journeys : 0
+      return emaB - emaA
     })
     .map((item) => {
       const data = {
@@ -216,10 +216,10 @@ function initChartOptions() {
           item.journeys, // 5
           `${item.distances.toFixed(0)} km`, // 6
         ],
-      };
-      ubound += item.journeys;
-      return data;
-    });
+      }
+      ubound += item.journeys
+      return data
+    })
 
   total.value = emissions[0]?.total || 0
 
@@ -247,25 +247,25 @@ function initChartOptions() {
       trigger: 'item',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter: (params: any) => {
-        let html = `<div style="font-weight: bold; margin-bottom: 4px;">${params.marker} ${params.name}</div>`;
-        
-        const indicesToShow = [4, 5, 6];
-        
+        let html = `<div style="font-weight: bold; margin-bottom: 4px;">${params.marker} ${params.name}</div>`
+
+        const indicesToShow = [4, 5, 6]
+
         indicesToShow.forEach((idx) => {
-          const label = params.dimensionNames[idx];
-          const value = params.value[idx];
-          
+          const label = params.dimensionNames[idx]
+          const value = params.value[idx]
+
           if (value !== undefined) {
             html += `
               <div style="display: flex; justify-content: space-between; gap: 20px;">
                 <span>${label}</span>
                 <span style="font-weight: bold;">${value}</span>
-              </div>`;
+              </div>`
           }
-        });
-        
-        return html;
-      }
+        })
+
+        return html
+      },
     },
     legend: {
       show: true,
@@ -290,17 +290,17 @@ function initChartOptions() {
       color: item.color!,
       type: 'custom',
       renderItem: function (params, api) {
-        const val0 = api.value(0) as number;
-        const val1 = api.value(1) as number;
-        const yValue = api.value(2) as number;
-        const start = api.coord([val0, yValue]);
-        const size = api.size!([val1 - val0, yValue]) as [number, number];
-        const style = api.style();
+        const val0 = api.value(0) as number
+        const val1 = api.value(1) as number
+        const yValue = api.value(2) as number
+        const start = api.coord([val0, yValue])
+        const size = api.size!([val1 - val0, yValue]) as [number, number]
+        const style = api.style()
 
-        const pxLeft = api.coord([val0, 0])[0]!;
-        const pxRight = api.coord([val1, 0])[0]!;
-        const pxBaseY = api.coord([0, 0])[1]!;
-        const pxValY = api.coord([0, yValue])[1]!;
+        const pxLeft = api.coord([val0, 0])[0]!
+        const pxRight = api.coord([val1, 0])[0]!
+        const pxBaseY = api.coord([0, 0])[1]!
+        const pxValY = api.coord([0, yValue])[1]!
 
         return {
           type: 'group',
@@ -332,7 +332,7 @@ function initChartOptions() {
               silent: true,
             },
           ],
-        };
+        }
       },
       data: [item.value],
       dimensions: [

@@ -80,6 +80,7 @@ const textLabels = computed(() => {
     laptop: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 192.62)),
     email_sent: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.002462)),
     visio_hour: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.057063)),
+    unit: UNIT_LABEL,
   }
 })
 
@@ -109,6 +110,9 @@ function keyLabel(key: string) {
   }
   return t(`stats.emissions_${props.chartTranslationName}.labels.${shortKey(key)}`)
 }
+
+const SCALE_FACTOR = 1 / 1000 // convert from kg to tons
+const UNIT_LABEL = 'tCO₂eq'
 
 function initChartOptions() {
   option.value = {}
@@ -170,7 +174,9 @@ function initChartOptions() {
       formatter: function (params: any) {
         const tar = params[1]
         if (!tar) return ''
-        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' kgCO₂eq'
+        return (
+          tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' ' + UNIT_LABEL
+        )
       },
     },
     legend: {
@@ -217,7 +223,7 @@ function initChartOptions() {
               }
               sum += categoryEmissions[c] || 0
             }
-            return currentEmissions.value - sum - (categoryEmissions[cat] || 0)
+            return (currentEmissions.value - sum - (categoryEmissions[cat] || 0)) * SCALE_FACTOR
           }),
           0,
         ],
@@ -233,24 +239,24 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return formatNumber(params.value as number)
+            return formatNumber(params.value as number) + ' ' + UNIT_LABEL
           },
         },
         data: [
           {
-            value: currentEmissions.value,
+            value: currentEmissions.value * SCALE_FACTOR,
             itemStyle: {
               color: '#000',
             },
           },
           ...categories.map((cat) => ({
-            value: categoryEmissions[cat] || 0,
+            value: (categoryEmissions[cat] || 0) * SCALE_FACTOR,
             itemStyle: {
               color: MODE_COLORS[cat] || MODE_COLORS.default || '#ccc',
             },
           })),
           {
-            value: newEmissions.value,
+            value: newEmissions.value * SCALE_FACTOR,
             itemStyle: {
               color: '#000',
             },

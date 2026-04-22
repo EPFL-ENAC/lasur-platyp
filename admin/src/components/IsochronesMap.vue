@@ -68,6 +68,11 @@
             ></div>
             <div>{{ t('record.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
           </div>
+
+          <div class="legend-transit-lines">
+            <div class="purple-bar"></div>
+            <div>{{ t('transit_lines') }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -107,7 +112,7 @@ const isochronesData = ref<GeoJSON.FeatureCollection>()
 const selectedMode = ref<string>('WALK')
 const selectedModeCutoffSec = ref<number[]>([]) // in seconds
 const modeOptions = computed(() => {
-  return ['WALK', 'BIKE', 'EBIKE', 'CAR', 'TRANSIT', 'RAIL', 'BUS'].map((m) => {
+  return ['WALK', 'BIKE', 'EBIKE', 'TRANSIT' /* 'RAIL', 'BUS' */].map((m) => {
     return { label: t(`record.mode.${m.toLowerCase()}`), value: m }
   })
 })
@@ -181,22 +186,18 @@ async function loadIsochronesData() {
       bikeSpeed = 17
       cutoffSec = [600, 1200, 1800, 2400, 3600]
       break
-    case 'CAR':
-      mode = 'CAR'
-      cutoffSec = [1200, 2400]
-      break
     case 'TRANSIT':
       mode = 'TRANSIT'
       cutoffSec = [1200, 2400, 3600]
       break
-    case 'RAIL':
+    /* case 'RAIL':
       mode = 'RAIL'
       cutoffSec = [1200, 2400, 3600]
       break
     case 'BUS':
       mode = 'BUS'
       cutoffSec = [1200, 2400, 3600]
-      break
+      break */
     default:
       cutoffSec = [300, 600, 900, 1200, 1800]
       break
@@ -470,5 +471,16 @@ function getCutoffColor(cutoff: number): string {
   z-index: 10;
   bottom: 10px;
   left: 10px;
+}
+
+.legend-transit-lines {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.purple-bar {
+  width: 1rem;
+  height: 0.25rem;
+  background-color: #5a3fc0;
 }
 </style>
