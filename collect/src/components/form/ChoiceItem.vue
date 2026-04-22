@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <QuestionText :label="label ?? ''" :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`" />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="q-mt-lg">
       <div :class="col ? 'row q-col-gutter-md' : ''">
@@ -36,6 +36,8 @@
 
 <script setup lang="ts">
 import type { Option } from 'src/components/form/models'
+import QuestionText from './QuestionText.vue'
+
 interface Props {
   modelValue: string | string[] | undefined
   label?: string

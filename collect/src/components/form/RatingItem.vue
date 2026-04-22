@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <QuestionText :label="label ?? ''" :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`" />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <q-rating
       v-model="selected"
@@ -14,6 +14,8 @@
 </template>
 
 <script setup lang="ts">
+import QuestionText from './QuestionText.vue'
+
 interface Props {
   modelValue: number | undefined
   label?: string

@@ -164,10 +164,10 @@ const emissionItemsProLabels = computed(() => {
   return {
     firstPercent: formatNumber(Math.round((eip.first.emissions / eip.total) * 100)),
     firstMode: keyLabel(eip.first.mode),
-    firstEmissions: formatNumber((eip.first.emissions || 0) / eip.first.journeys),
+    firstEmissions: formatNumber(Math.round((eip.first.emissions || 0) / eip.first.journeys)),
     secondPercent: formatNumber(Math.round((eip.second.emissions / eip.total) * 100)),
     secondMode: keyLabel(eip.second.mode),
-    remainingEmissions: formatNumber(withoutFirstEmissions / withoutFirstJourneys),
+    remainingEmissions: formatNumber(Math.round(withoutFirstEmissions / withoutFirstJourneys)),
   }
 })
 

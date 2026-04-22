@@ -573,7 +573,7 @@ Some environmental impacts have also been calculated:
       },
       texts: {
         specific:
-          '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kg CO₂, against less than {remainingEmissions}kg / journey for the others.',
+          '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
       },
     },
     emissions_reco_mod_pro: {

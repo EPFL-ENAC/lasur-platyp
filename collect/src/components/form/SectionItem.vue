@@ -1,11 +1,13 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md" :class="labelClass">{{ label }}</div>
+    <QuestionText :label="label ?? ''" :containerClass="`text-bold q-mb-md ${labelClass}`" />
     <div v-if="hint" class="text-h6">{{ hint }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
+import QuestionText from './QuestionText.vue'
+
 interface Props {
   label?: string
   hint?: string

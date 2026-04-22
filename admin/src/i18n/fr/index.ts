@@ -446,7 +446,7 @@ Certains impacts sont aussi calculés :
     },
     emissions_freq_mod: {
       title: 'Émissions de CO₂ par mode de transport',
-      yaxis: 'Émissions CO₂ par trajet (kgCO₂eq)',
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
         walking: 'Marche',
@@ -471,7 +471,7 @@ Certains impacts sont aussi calculés :
     },
     emissions_reco_mod: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
-      yaxis: 'Émissions évitées (kgCO₂eq)',
+      yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       labels: {
         walking: 'Marche',
@@ -502,7 +502,7 @@ Certains impacts sont aussi calculés :
     },
     emissions_reductions_mod: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
-      yaxis: 'Émissions évitées (kgCO₂eq)',
+      yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
       labels: {
@@ -557,14 +557,14 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         default:
-          'Ce graphe affiche la part de réduction d’émissions de CO2éq correspondant à chaque mode recommandé, dans le cas où les collaborateur·trice·s suivraient les recommandations.',
+          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les collaborateur·trice·s suivraient les recommandations.',
         specific:
           "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
       },
     },
     emissions_freq_mod_pro: {
       title: 'Émissions de CO₂ par mode de transport (professionnel)',
-      yaxis: 'Émissions CO₂ par trajet (kgCO₂eq)',
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
         walking: 'Marche',
@@ -584,12 +584,12 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         specific:
-          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂eq/trajet, contre moins de {remainingEmissions}kgCO₂eq/trajet pour les autres.',
+          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
       },
     },
     emissions_reco_mod_pro: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements professionnels',
-      yaxis: 'Émissions évitées (kgCO₂eq)',
+      yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       labels: {
         avoid: 'Éviter le déplacement',
@@ -622,7 +622,7 @@ Certains impacts sont aussi calculés :
     },
     emissions_reductions_mod_pro: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements professionnels',
-      yaxis: 'Émissions évitées (kgCO₂eq)',
+      yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
       labels: {
