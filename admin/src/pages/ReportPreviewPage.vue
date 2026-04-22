@@ -226,6 +226,10 @@
         </h2>
 
         <q-markdown :src="t('generated_report.final_page_body')" />
+
+        <div class="text-center q-mt-lg">
+          <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE.svg" alt="graph" />
+        </div>
       </report-page>
     </div>
   </div>
