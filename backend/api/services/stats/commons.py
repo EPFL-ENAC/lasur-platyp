@@ -47,8 +47,10 @@ MODES_PRO_V1 = [
 MODES_PRO = [
     'walking',
     'bike',
+    'cargo',
     'pub',
     'moto',
+    'truck',
     'car',
     'train',
     'boat',
@@ -111,8 +113,18 @@ class BaseStatsService:
             # Hypothèse sur l'allongement des distances : en moyenne, 1.22 (network based vs real measured distances : https://journals.sagepub.com/doi/abs/10.3141/1804-28)
             # On pourrait améliorer ca en cherchant la meme chose pour l'avion (études sur les détours/distances faites lorsqu'on doit attendre au dessus d'un aéroport plein...)
             # Pareil pour le bateau (pour l'instant on applique 1.22 à tous)
-            avg_dist_coeff = {'train': 1.22, 'car': 1.22, 'bike': 1.22,
-                              'walk': 1.22, 'moto': 1.22, 'pub': 1.22, 'boat': 1.22, 'plane': 1.22}
+            avg_dist_coeff = {
+                'train': 1.22, 
+                'car': 1.22, 
+                'bike': 1.22,
+                'walk': 1.22, 
+                'moto': 1.22, 
+                'pub': 1.22, 
+                'boat': 1.22, 
+                'plane': 1.22,
+                'truck': 1.22,
+                'cargo': 1.22
+            }
             if h3.latlng_to_cell(lat, lon, h3.get_resolution(h3_index)) == h3_index:
                 # Si meme hexagone (apres mise à la resolution choisie par l'utilisateur), on prend une distance moyenne de la taille d'une arrête de l'hexagone.
                 return h3.average_hexagon_edge_length(h3.get_resolution(h3_index))
