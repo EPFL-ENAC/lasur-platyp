@@ -413,6 +413,7 @@ Certains impacts sont aussi calculés :
         car: 'Voiture',
         carpool: 'Covoiturage',
         plane: 'Avion',
+        other: 'Autre',
         pub_train: 'Transports publics (y compris le train)',
         car_moto: 'Voiture ou moto',
         combined: 'Combiné',

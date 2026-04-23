@@ -403,6 +403,7 @@ Some environmental impacts have also been calculated:
         car: 'Car',
         carpool: 'Carpooling',
         plane: 'Plane',
+        other: 'Other',
         pub_train: 'Public transport and train',
         car_moto: 'Car and motorcycle/scooter',
         combined: 'Combined',

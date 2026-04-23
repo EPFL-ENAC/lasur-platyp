@@ -10,7 +10,8 @@ MODES = [
     'moto',
     'carpool',
     'car',
-    'train'
+    'train',
+    'other'
 ]
 
 RECOS = [
@@ -123,7 +124,8 @@ class BaseStatsService:
                 'boat': 1.22, 
                 'plane': 1.22,
                 'truck': 1.22,
-                'cargo': 1.22
+                'cargo': 1.22,
+                'other': 1.22
             }
             if h3.latlng_to_cell(lat, lon, h3.get_resolution(h3_index)) == h3_index:
                 # Si meme hexagone (apres mise à la resolution choisie par l'utilisateur), on prend une distance moyenne de la taille d'une arrête de l'hexagone.
