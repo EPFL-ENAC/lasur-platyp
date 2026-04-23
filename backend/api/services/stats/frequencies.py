@@ -257,6 +257,11 @@ class FrequenciesService(BaseStatsService):
                     col_hexid_i,
                 ]
             ].copy()
+            # Filter for the specific mode
+            df_i = df_i[df_i[col_mode_i] == mode]
+            # Skip if no records for this mode
+            if df_i.empty:
+                continue
             # Calculate distance type from workplace to pro travel destination for each record
             df_i["type"] = df_i.apply(
                 lambda row: calculate_distance_type(row, i), axis=1
