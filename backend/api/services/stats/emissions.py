@@ -71,7 +71,7 @@ class EmissionsService(BaseStatsService):
             emission.distances = round(emission.distances, 3)
             emission.emissions = round(emission.emissions, 3)
         # filter out emissions with zero emissions
-        results = [e for e in results if e.emissions > 0]
+        results = [e for e in results if e.journeys > 0]
 
         return results
 
