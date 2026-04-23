@@ -648,6 +648,7 @@ Certains impacts sont aussi calculés :
         car_moto: 'Voiture ou moto',
         elec: 'Véhicule électrique',
         elec_moto: 'Moto / scooter électrique',
+        elec_truck: 'Camion électrique',
         inter: 'Intermodalité',
         emissions: 'Émissions CO₂ totales',
         journeys: 'Nombre de trajets',

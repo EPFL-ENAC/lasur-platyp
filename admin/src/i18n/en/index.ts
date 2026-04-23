@@ -637,6 +637,7 @@ Some environmental impacts have also been calculated:
         car_moto: 'Car and motorcycle/scooter',
         elec: 'Electric vehicle',
         elec_moto: 'Electric motorcycle/scooter',
+        elec_truck: 'Electric truck',
         inter: 'Intermodality',
         emissions: 'Total CO₂ emissions',
         journeys: 'Number of journeys',
