@@ -24,7 +24,8 @@ MODE_EMISSIONS = {
     'avoid': 0,
     'other': 45.7,
     'inter': 56.72391025641025,  # Mean intermodality emissions calculated from dataset
-    'truck': 400
+    'truck': 300,
+    'elec_truck': 150
 }
 
 class EmissionsService(BaseStatsService):
