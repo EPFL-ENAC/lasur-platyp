@@ -312,7 +312,7 @@ class EnergyService(BaseStatsService):
             
             total_energy = float(df_mode['energy_kcal'].sum())
             total_time = float((df_mode['travel_time'] * df_mode['time_fraction'] * df_mode['days'] * 2 * 45 / 5).sum())
-            total_journeys = int((df_mode['days'] * 2 * 45 / 5).sum())
+            total_journeys = int((df_mode.groupby(['token', 'journey'])['days'].first() * 2 * 45 / 5).sum())
             
             # Calculate average daily kcal per person
             avg_daily = total_energy / len(df) if len(df) > 0 else 0

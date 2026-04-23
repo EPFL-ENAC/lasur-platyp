@@ -672,7 +672,7 @@ class EmissionsService(BaseStatsService):
                     mode=mode_name,
                     total=len(df),
                     distances=float((df_mode['dist_mode'] * df_mode['days'] * 2 * 45).sum()),
-                    journeys=int((df_mode['days'] * 2 * 45).sum()),
+                    journeys=int((df_mode.groupby(['token', 'journey'])['days'].first() * 2 * 45).sum()),
                     emissions=float(df_mode['emissions_dt'].sum())
                 ))
             
