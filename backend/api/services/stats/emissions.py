@@ -71,7 +71,7 @@ class EmissionsService(BaseStatsService):
             emission.distances = round(emission.distances, 3)
             emission.emissions = round(emission.emissions, 3)
         # filter out emissions with zero emissions
-        results = [e for e in results if e.emissions > 0]
+        results = [e for e in results if e.journeys > 0]
 
         return results
 
@@ -672,7 +672,7 @@ class EmissionsService(BaseStatsService):
                     mode=mode_name,
                     total=len(df),
                     distances=float((df_mode['dist_mode'] * df_mode['days'] * 2 * 45).sum()),
-                    journeys=int((df_mode['days'] * 2 * 45).sum()),
+                    journeys=int((df_mode.groupby(['token', 'journey'])['days'].first() * 2 * 45).sum()),
                     emissions=float(df_mode['emissions_dt'].sum())
                 ))
             

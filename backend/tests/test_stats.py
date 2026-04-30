@@ -195,7 +195,8 @@ def test_compute_modes_frequencies():
         Frequencies(field='car', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2), Frequency(
             value='3', count=1, sum=3), Frequency(value='4', count=3, sum=12), Frequency(value='5', count=3, sum=15)]),
         Frequencies(field='train', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='3', count=2, sum=6), Frequency(value='5', count=1, sum=5)])
+            value='3', count=2, sum=6), Frequency(value='5', count=1, sum=5)]),
+        Frequencies(field='other', total=30, data=[])
     ]
     assert len(result) == len(expected)
     for res_freqs, exp_freqs in zip(result, expected):
@@ -238,7 +239,7 @@ def test_compute_modes_emissions():
     # print(result)
     expected = [
         Emissions(mode='bike', total=30, distances=2693.855,
-                  journeys=2520, emissions=151.304),
+                  journeys=2430, emissions=151.304),
         Emissions(mode='pub', total=30, distances=20522.579,
                   journeys=3690, emissions=2496.472),
         Emissions(mode='moto', total=30, distances=6272.711,
