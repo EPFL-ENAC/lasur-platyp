@@ -80,6 +80,7 @@ export const MODE_COLORS: { [key: string]: string } = {
   elec: '#E15956',
   elec_moto: '#E15956',
   covoit: '#F0988D',
+  carpool: '#F0988D',
   inter: '#AB8D74',
   moto: '#C00000',
   train: '#335E96',
@@ -96,6 +97,8 @@ export const MODE_COLORS: { [key: string]: string } = {
   marche: '#DEF1D3',
   plane: '#7030A0',
   boat: '#213D61',
+  truck: '#842152',
+  elec_truck: '#C2307A',
   visio: '#D1D1D1',
   default: '#ccc',
 }
