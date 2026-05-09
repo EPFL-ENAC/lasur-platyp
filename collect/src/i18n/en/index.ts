@@ -270,6 +270,11 @@ export default {
     },
     minutes: '{count} min',
   },
+  certificate: {
+    title: 'Certificate',
+    participation_id: 'Participation ID: {id}',
+    date: 'Date: {date}',
+  },
   resume: 'Resume',
   start_new: 'Or start a new survey',
   start: 'Start',

@@ -194,8 +194,6 @@ function initChartOptions() {
     return
   }
 
-  const labelColor = $q.dark.isActive ? '#fffcf4' : '#000000'
-
   let ubound = 0
   const preparedData = emissions
     .sort((a, b) => {
@@ -232,7 +230,7 @@ function initChartOptions() {
       containLabel: true,
     },
     animation: false,
-    height: props.height - 100,
+    height: props.height - 120,
     title: {
       text: t(`stats.emissions_${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
@@ -297,11 +295,6 @@ function initChartOptions() {
         const size = api.size!([val1 - val0, yValue]) as [number, number]
         const style = api.style()
 
-        const pxLeft = api.coord([val0, 0])[0]!
-        const pxRight = api.coord([val1, 0])[0]!
-        const pxBaseY = api.coord([0, 0])[1]!
-        const pxValY = api.coord([0, yValue])[1]!
-
         return {
           type: 'group',
           children: [
@@ -317,19 +310,6 @@ function initChartOptions() {
                 ...style,
                 fill: item.color!,
               },
-            },
-            {
-              type: 'text',
-              style: {
-                text: String(item.name),
-                x: (pxLeft + pxRight) / 2,
-                y: yValue ? pxValY - 10 : pxBaseY - 10,
-                //y: yValue ? pxValY - 10 : pxBaseY + 14,
-                textAlign: 'center',
-                textVerticalAlign: 'middle',
-                fill: labelColor,
-              },
-              silent: true,
             },
           ],
         }

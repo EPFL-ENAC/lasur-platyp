@@ -36,7 +36,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { formatNumber } from 'src/utils/numbers'
-import type { CallbackDataParams } from 'echarts/types/dist/shared'
+import type { CallbackDataParams, XAXisOption } from 'echarts/types/dist/shared'
 import { useQuasar } from 'quasar'
 import { lowerCaseFirst } from 'src/utils/string'
 import { moveToStart } from 'src/utils/arrays'
@@ -51,6 +51,7 @@ interface Props {
   behaviorChangeStats: BehaviorChangeStats | null
   height?: number
   loading?: boolean
+  percent?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -156,7 +157,7 @@ function initChartOptions() {
       containLabel: true,
     },
     animation: false,
-    height: props.height - 100,
+    height: props.height - 140,
     title: {
       text: t(`stats.behavior_change_${props.type}.title`),
       subtext: t(`stats.total`, { count: total.value }),
@@ -182,6 +183,9 @@ function initChartOptions() {
       data: opt.categories,
     },
     series: opt.series,
+  }
+  if (props.percent) {
+    (newOption.xAxis as XAXisOption).max = 100
   }
   option.value = newOption
 }
@@ -209,12 +213,18 @@ function leversOptions() {
           if (params.value === 0) {
             return ''
           }
+          if (props.percent) {
+            return `${formatNumber(params.value as number)}%`
+          }
           return formatNumber(params.value as number)
         },
       },
       data: sorted.map((item) => {
         const lever = item.levers.find((l) => l.category === category)
-        return lever ? lever.count : 0
+        if (!lever) {
+          return 0
+        }
+        return props.percent ? lever.percentage : lever.count
       }),
       itemStyle: {
         color: CATEGORY_COLORS[category] || '#ccc',
@@ -246,12 +256,18 @@ function motivationOptions() {
           if (params.value === 0) {
             return ''
           }
+          if (props.percent) {
+            return `${formatNumber(params.value as number)}%`
+          }
           return formatNumber(Math.round(params.value as number))
         },
       },
       data: sorted.map((item) => {
         const lever = item.motivations.find((l) => l.level === level)
-        return lever ? lever.count : 0
+        if (!lever) {
+          return 0
+        }
+        return props.percent ? lever.percentage : lever.count
       }),
       itemStyle: {
         color: MOTIVATION_COLORS[level] || '#ccc',
@@ -275,19 +291,19 @@ function getSortedModes<
 
   moveToStart(
     copy,
-    copy.find((item) => item.mode === 'allModes'),
-  )
-  moveToStart(
-    copy,
-    copy.find((item) => item.mode === 'Total'),
-  )
-  moveToStart(
-    copy,
     copy.find((item) => item.mode === 'other'),
   )
   moveToStart(
     copy,
     copy.find((item) => item.mode === 'Autres'),
+  )
+  moveToStart(
+    copy,
+    copy.find((item) => item.mode === 'allModes'),
+  )
+  moveToStart(
+    copy,
+    copy.find((item) => item.mode === 'Total'),
   )
 
   return copy

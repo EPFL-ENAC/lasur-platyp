@@ -28,7 +28,7 @@
         })
       }}
     </p>
-    <p>{{ t('stats.freq_mod.texts.default') }}</p>
+    <q-markdown :src="t('stats.freq_mod.texts.default')" />
   </div>
 </template>
 

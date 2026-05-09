@@ -90,13 +90,17 @@ const total = ref(0)
 const simpleMode = ref(false)
 
 const recommendationLabelsFiltered = computed(() => {
-  if (!simpleMode.value) {
+  return recommendationLabelsReversed
+
+  // We disable filtering in simple mode for now, kept as a comment for reference in case we want to re-enable it in the future.
+  /* if (!simpleMode.value) {
     return recommendationLabelsReversed
   }
 
   const walking: 'marche' = 'marche' as const
 
   return [...recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r]), walking] // we always want to show "marche" in simple mode, even if it's not in the mapping, because it's a common recommendation
+  */
 })
 
 watch([() => props.loading], () => {

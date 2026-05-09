@@ -341,7 +341,7 @@ Certains impacts sont aussi calculés :
         ev: 'Véhicule électrique',
       },
       mrmt_source:
-        'Source MRMT : [https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
+        '[Source MRMT](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
     },
     constraints: {
       title: 'Contraintes de mobilité',
@@ -420,7 +420,7 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         default:
-          'Le mode Voiture est le mode le plus utilisé dans le canton de Genève (enquête MRMT, 2015).',
+          'Le mode Voiture est le mode le plus utilisé dans le canton de Genève ([enquête MRMT, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
           'Le mode {top_1} est le plus utilisé par les répondant·es, suivi de {top_2} et {top_3}.',
       },

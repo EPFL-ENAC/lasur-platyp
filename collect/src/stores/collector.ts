@@ -1,16 +1,51 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/api'
-import type { Record, CampaignInfo } from 'src/models'
+import type { Record, CampaignInfo, RecordCertificate } from 'src/models'
 import { hashEmail } from 'src/utils/hash'
 
 // Current version of the form data structure
 export const VERSION = '2.0.0'
 
+function makeRecord(rec: Partial<Record>): Record {
+  return {
+    token: rec.token || '',
+    data: {
+      version: VERSION,
+      terms_conditions: false,
+      confidentiality: false,
+      employment_rate: 100,
+      remote_work_rate: 40,
+      company_vehicle: null,
+      travel_time: 5,
+      equipments: [],
+      constraints: [],
+      freq_mod_journeys: [{ modes: [], days: 1 }],
+      travel_pro: false,
+      freq_mod_pro_journeys: [],
+      importance_time: 1,
+      importance_cost: 1,
+      importance_flex: 1,
+      importance_rel: 1,
+      importance_comfort: 1,
+      importance_most: 1,
+      importance_env: 1,
+      needs_walking: 1,
+      needs_bike: 1,
+      needs_pub: 1,
+      needs_moto: 1,
+      needs_car: 1,
+      needs_train: 1,
+      change: {},
+      change2: {},
+      ...rec.data
+    }
+  } as unknown as Record // Type assertion to satisfy the original behavior
+}
+
 export const useCollector = defineStore('collector', () => {
   const info = ref<CampaignInfo>({} as CampaignInfo)
-  // const token = ref<string | null>(null)
-  const responseIdInCampaign = ref<number | null>(null)
+  const token = ref<string | null>(null)
   const loading = ref<boolean>(false)
 
   async function loadInfo(tkOrSlug: string): Promise<CampaignInfo> {
@@ -21,59 +56,28 @@ export const useCollector = defineStore('collector', () => {
     })
   }
 
-  async function load(tkOrSlug: string): Promise<Record> {
-    // token.value = null
+  async function loadRecordDraft(tkOrSlug: string): Promise<Record> {
+    token.value = null
     loading.value = true
-    responseIdInCampaign.value = null
 
     return api
       .get(`/collect/record/${tkOrSlug}`)
       .then((response) => {
-        // token.value = tkOrSlug
-        const cr = response.data
-        const data = {
-          version: VERSION,
+        token.value = response.data.token
+        return makeRecord(response.data)
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
 
-          terms_conditions: false,
-          confidentiality: false,
+  async function loadRecordCertificate(tk: string): Promise<RecordCertificate> {
+    loading.value = true
 
-          employment_rate: 100,
-          remote_work_rate: 40,
-          company_vehicle: null,
-          travel_time: 5,
-          equipments: [],
-          constraints: [],
-          freq_mod_journeys: [{ modes: [], days: 1 }],
-
-          travel_pro: false,
-          freq_mod_pro_journeys: [],
-
-          importance_time: 1,
-          importance_cost: 1,
-          importance_flex: 1,
-          importance_rel: 1,
-          importance_comfort: 1,
-          importance_most: 1,
-          importance_env: 1,
-          needs_walking: 1,
-          needs_bike: 1,
-          needs_pub: 1,
-          needs_moto: 1,
-          needs_car: 1,
-          needs_train: 1,
-
-          change: {},
-          change2: {},
-
-          ...cr.data,
-        }
-
-        responseIdInCampaign.value = cr.response_id_in_campaign ?? null
-
-        return {
-          token: cr.token,
-          data,
-        } as Record
+    return api
+      .get(`/collect/certificate/${tk}`)
+      .then((response) => {
+        return response.data as RecordCertificate
       })
       .finally(() => {
         loading.value = false
@@ -81,23 +85,16 @@ export const useCollector = defineStore('collector', () => {
   }
 
   async function save(tkOrSlug: string, record: Record, plainEmail: string | null = null) {
-    // token.value = null
-    // loading.value = true
-    responseIdInCampaign.value = null
-
     if (plainEmail) {
       record.email_hash = await hashEmail(plainEmail)
     }
 
     const response = await api.post(`/collect/record/${tkOrSlug}`, record)
-    responseIdInCampaign.value = response.data.response_id_in_campaign ?? null
     return response.data
   }
 
   async function loadTypo(record: Record, locale: string) {
-    // token.value = null
     loading.value = true
-    responseIdInCampaign.value = null
 
     return api
       .get(`/collect/record/${record.token}/typo`, { params: { locale } })
@@ -110,14 +107,11 @@ export const useCollector = defineStore('collector', () => {
   }
 
   async function saveComments(record: Record) {
-    // token.value = null
     loading.value = true
-    responseIdInCampaign.value = null
 
     return api
       .put(`/collect/record/${record.token}/comments`, { comments: record.data.comments })
       .then((response) => {
-        responseIdInCampaign.value = response.data.response_id_in_campaign ?? null
         return response.data
       })
       .finally(() => {
@@ -127,13 +121,13 @@ export const useCollector = defineStore('collector', () => {
 
   return {
     info,
-    // token,
     loading,
-    responseId: responseIdInCampaign,
+    token,
     loadInfo,
-    load,
+    loadRecordDraft,
     save,
     loadTypo,
     saveComments,
+    loadRecordCertificate,
   }
 })

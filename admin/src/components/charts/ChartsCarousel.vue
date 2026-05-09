@@ -168,6 +168,7 @@
         type="levers"
         :behavior-change-stats="stats.behaviorChange"
         :loading="stats.loading"
+        :percent="percent"
       />
     </q-carousel-slide>
     <q-carousel-slide name="behaviors_motivation" class="column no-wrap flex-center item">
@@ -176,6 +177,7 @@
         type="motivation"
         :behavior-change-stats="stats.behaviorChange"
         :loading="stats.loading"
+        :percent="percent"
       />
     </q-carousel-slide>
     <q-carousel-slide

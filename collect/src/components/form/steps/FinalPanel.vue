@@ -16,7 +16,7 @@
           :label="t('form.final_rewards.download')"
           icon-right="download"
           size="lg"
-          @click="downloadPdf()"
+          :href="rewardUrl"
         />
       </div>
     </div>
@@ -31,37 +31,12 @@ const { t, locale } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
 
+const rewardUrl = computed(() => {
+  return `/certificate/${collector.token}`
+})
+
 onMounted(() => {
   survey.finish()
 })
 
-async function downloadPdf() {
-  const { jsPDF } = await import('jspdf')
-  const doc = new jsPDF()
-
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const margin = 10
-  const maxWidth = pageWidth - margin * 2
-
-  const rewardMessage = collector.info.rewards_message?.[locale.value] || ''
-  const wrappedMessage = doc.splitTextToSize(rewardMessage, maxWidth)
-
-  let y = 10
-
-  doc.text(wrappedMessage, margin, y)
-  y += wrappedMessage.length * 7
-
-  y += 20
-
-  if (collector.responseId) {
-    const participationText = t('form.final_rewards.participation_id', {
-      id: collector.responseId,
-    })
-    const wrappedParticipation = doc.splitTextToSize(participationText, maxWidth)
-
-    doc.text(wrappedParticipation, margin, y)
-  }
-
-  doc.save('attestation.pdf')
-}
 </script>

@@ -281,6 +281,11 @@ export default {
     },
     minutes: '{count} min',
   },
+  certificate: {
+    title: 'Attestation',
+    participation_id: 'Identifiant de votre participation: {id}',
+    date: 'Date: {date}',
+  },
   resume: 'Continuer le questionnaire',
   start_new: 'Ou recommencer du début',
   start: 'Démarrer',

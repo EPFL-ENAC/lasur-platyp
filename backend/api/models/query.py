@@ -88,6 +88,11 @@ class RecordResult(ListResult):
     data: List[RecordRead] = []
 
 
+class RecordCertificate(BaseModel):
+    response_id_in_campaign: int
+    rewards_message: dict[str, str]
+
+
 class DataEntryRead(DataEntryBase):
     id: int
 

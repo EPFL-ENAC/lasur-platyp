@@ -17,10 +17,10 @@
   </div>
 
   <div v-if="total > 0" class="q-mt-md chart-text">
-    <p class="q-mb-xs">{{ t('stats.travel_time.texts.default') }}</p>
-    <p v-if="hasData && medianValue">
+    <p v-if="hasData && medianValue" class="q-mb-xs">
       {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
     </p>
+    <p>{{ t('stats.travel_time.texts.default') }}</p>
   </div>
 </template>
 

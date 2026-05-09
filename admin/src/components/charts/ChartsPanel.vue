@@ -189,21 +189,6 @@
           </div>
         </div>
       </q-card-section>
-
-      <q-card-section>
-        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.professional_travel') }}</h6>
-        <div class="grid-container">
-          <div>
-            <emissions-reductions-chart
-              chartTranslationName="reductions_mod_pro"
-              :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
-              :height="height"
-              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
-              :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
-            />
-          </div>
-        </div>
-      </q-card-section>
     </q-expansion-item>
   </q-card>
 
@@ -229,6 +214,7 @@
               :behavior-change-stats="stats.behaviorChange"
               :height="height"
               :loading="stats.loading"
+              :percent="percent"
             />
           </div>
           <div>
@@ -237,6 +223,7 @@
               :behavior-change-stats="stats.behaviorChange"
               :height="height"
               :loading="stats.loading"
+              :percent="percent"
             />
           </div>
           <div>
