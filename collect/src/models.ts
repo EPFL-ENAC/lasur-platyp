@@ -74,6 +74,11 @@ export interface Record {
   response_id_in_campaign: number | null
 }
 
+export interface RecordCertificate {
+  response_id_in_campaign: number | null
+  rewards_message: { [key: string]: string } | null
+}
+
 export interface Recommendation {
   reco?: {
     reco_dt2: string[]

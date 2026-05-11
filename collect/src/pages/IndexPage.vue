@@ -147,7 +147,7 @@ async function onInit() {
 async function onToken() {
   if (tkSlug.value && tkSlug.value.trim().length > 0) {
     return collector
-      .load(tkSlug.value.trim())
+      .loadRecordDraft(tkSlug.value.trim())
       .then((cr: Record) => {
         survey.tokenOrSlug = tkSlug.value.trim()
         survey.init(cr)

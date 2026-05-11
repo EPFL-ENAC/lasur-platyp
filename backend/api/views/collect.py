@@ -4,7 +4,7 @@ from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
 from api.models.domain import Campaign, Workplace
-from api.models.query import RecordDraft, RecordRead, RecordComments, CampaignInfo
+from api.models.query import RecordCertificate, RecordDraft, RecordRead, RecordComments, CampaignInfo
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
 from api.services.companies import CompanyService
@@ -128,6 +128,26 @@ async def createOrUpdate(
         campaign = await CampaignService(session).get(participant.campaign_id)
 
     return await RecordService(session).createOrUpdate(item, campaign)
+
+
+@router.get("/certificate/{token}", response_model=RecordCertificate, response_model_exclude_none=True)
+async def get_final(token: str, session: AsyncSession = Depends(get_session)) -> RecordCertificate:
+    """Get a record by participant token, only if the participant has completed the survey"""
+    if token is None:
+        raise HTTPException(status_code=400, detail="Missing token")
+    
+    record = await RecordService(session).get_by_token(token)
+
+    if record is None:
+        raise HTTPException(status_code=404, detail="Record not found")
+    if record.response_id_in_campaign is None and (not record.data.get("change", None) or not record.data.get("change2", None)):
+        raise HTTPException(status_code=400, detail="Participant has not completed the survey yet")
+    
+    campaign = await CampaignService(session).get(record.campaign_id)
+    if campaign is None:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    return RecordCertificate(response_id_in_campaign=record.response_id_in_campaign, rewards_message=campaign.rewards_message or {})
 
 
 @router.put("/record/{token}/comments", response_model=RecordRead, response_model_exclude_none=True)

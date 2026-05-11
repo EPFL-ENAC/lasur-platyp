@@ -312,9 +312,9 @@ export const recommendationToEquipmentMap: {
   cargo: null,
   train: 'train_subs',
   tpu: 'upt_subs',
-  covoit: null,
+  covoit: 'mob_subs',
   elec: 'ev',
-  inter: null,
+  inter: 'inter',
 }
 
 export interface EquipmentsStats {

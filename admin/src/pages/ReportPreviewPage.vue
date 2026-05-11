@@ -198,6 +198,7 @@
           :height="height"
           type="levers"
           :behavior-change-stats="stats.behaviorChange"
+          :percent="percent"
         />
       </report-page>
 
@@ -206,6 +207,7 @@
           :height="height"
           type="motivation"
           :behavior-change-stats="stats.behaviorChange"
+          :percent="percent"
         />
       </report-page>
 
@@ -266,7 +268,7 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   height: 400,
-  percent: false,
+  percent: true,
 })
 
 const { t, locale } = useI18n()

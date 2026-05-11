@@ -9,6 +9,10 @@ const routes: RouteRecordRaw[] = [
       { path: 'go/:token', component: () => import('pages/IndexPage.vue') },
     ],
   },
+  {
+    path: '/certificate/:token',
+    component: () => import('pages/CertificatePreviewPage.vue'),
+  },
 
   // Always leave this as last one,
   // but you can also remove it
