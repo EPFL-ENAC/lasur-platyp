@@ -138,16 +138,16 @@ async def get_final(token: str, session: AsyncSession = Depends(get_session)) ->
     
     record = await RecordService(session).get_by_token(token)
 
-    if not record.data.get("change", None) or not record.data.get("change2", None):
-        raise HTTPException(status_code=400, detail="Participant has not completed the survey yet")
     if record is None:
         raise HTTPException(status_code=404, detail="Record not found")
+    if record.response_id_in_campaign is None and (not record.data.get("change", None) or not record.data.get("change2", None)):
+        raise HTTPException(status_code=400, detail="Participant has not completed the survey yet")
     
     campaign = await CampaignService(session).get(record.campaign_id)
     if campaign is None:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
-    return RecordCertificate(response_id_in_campaign=record.id, rewards_message=campaign.rewards_message)
+    return RecordCertificate(response_id_in_campaign=record.response_id_in_campaign, rewards_message=campaign.rewards_message or {})
 
 
 @router.put("/record/{token}/comments", response_model=RecordRead, response_model_exclude_none=True)

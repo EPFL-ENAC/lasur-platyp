@@ -11,12 +11,15 @@
 
       <div class="row justify-center q-mt-lg">
         <q-btn
+          v-if="rewardUrl"
           rounded
           color="accent"
           :label="t('form.final_rewards.download')"
           icon-right="download"
           size="lg"
           :href="rewardUrl"
+          target="_blank"
+          rel="noopener noreferrer"
         />
       </div>
     </div>
@@ -32,6 +35,8 @@ const survey = useSurvey()
 const collector = useCollector()
 
 const rewardUrl = computed(() => {
+  if (!collector.token) return null
+
   return `/certificate/${collector.token}`
 })
 

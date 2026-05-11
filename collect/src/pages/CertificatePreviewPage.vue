@@ -50,7 +50,6 @@ const text = computed(() => {
 })
 
 watch(token, async (newToken) => {
-  console.log('Loading certificate for token:', newToken)
   if (!newToken) {
     return
   }
