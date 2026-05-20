@@ -10,48 +10,46 @@
       </q-card-section>
     </q-card>
 
-    <q-card flat>
-      <q-card-section>
-        <RatingItem
-          v-if="isRecoChange"
-          :label="t('form.change_motivation')"
-          :hint="t('form.change_motivation_hint')"
-          v-model="survey.record.data.change.motivation"
-          :max="5"
-          label-class="text-h5"
-          class="q-mb-lg"
-          @update:model-value="onSave"
-        />
-        <ChoiceItem
-          :label="t('form.change_levers')"
-          :options="[
-            { value: 'finance', label: t('form.change_levers_option.financial_support') },
-            { value: 'flexibility', label: t('form.change_levers_option.work_flexibility') },
-            { value: 'collective', label: t('form.change_levers_option.collective_changes') },
-            { value: 'environment', label: t('form.change_levers_option.work_environment') },
-            { value: 'other', label: t('form.change_levers_option.other') },
-          ]"
-          v-model="survey.record.data.change.levers"
-          multiple
-          label-class="text-h5"
-          option-label-class="text-h5"
-          @update:model-value="onSave"
-        />
-        <q-input
-          v-if="survey.record.data.change.levers?.includes('other')"
-          v-model="survey.record.data.change.other_levers"
-          :label="t('form.change_other_levers_specify')"
-          type="textarea"
-          class="q-mb-lg text-h6"
-          color="filled"
-          bg-color="filled"
-          outlined
-          rounded
-          debounce="500"
-          @update:model-value="onSave"
-        />
-      </q-card-section>
-    </q-card>
+    <div>
+      <RatingItem
+        v-if="isRecoChange"
+        :label="t('form.change_motivation')"
+        :hint="t('form.change_motivation_hint')"
+        v-model="survey.record.data.change.motivation"
+        :max="5"
+        label-class="text-h4 text-bold q-mb-md"
+        class="q-mb-lg"
+        @update:model-value="onSave"
+      />
+      <ChoiceItem
+        :label="t('form.change_levers')"
+        :options="[
+          { value: 'finance', label: t('form.change_levers_option.financial_support') },
+          { value: 'flexibility', label: t('form.change_levers_option.work_flexibility') },
+          { value: 'collective', label: t('form.change_levers_option.collective_changes') },
+          { value: 'environment', label: t('form.change_levers_option.work_environment') },
+          { value: 'other', label: t('form.change_levers_option.other') },
+        ]"
+        v-model="survey.record.data.change.levers"
+        multiple
+        label-class="text-h4 text-bold q-mb-md"
+        option-label-class="text-h5"
+        @update:model-value="onSave"
+      />
+      <q-input
+        v-if="survey.record.data.change.levers?.includes('other')"
+        v-model="survey.record.data.change.other_levers"
+        :label="t('form.change_other_levers_specify')"
+        type="textarea"
+        class="q-mb-lg text-h6"
+        color="filled"
+        bg-color="filled"
+        outlined
+        rounded
+        debounce="500"
+        @update:model-value="onSave"
+      />
+    </div>
   </div>
 </template>
 

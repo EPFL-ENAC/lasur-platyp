@@ -2,16 +2,15 @@
   <div v-if="survey.record" v-touch-swipe.mouse.left.right="handleSwipe">
     <!--pre>{{ survey.step }} - {{ survey.stepName }}</pre-->
     <div v-if="survey.stepName === 'agreement'">
-      <q-card flat>
-        <q-card-section>
-          <SectionItem
-            :label="t('form.agreement')"
-            :hint="t('form.agreement_hint')"
-            class="q-mb-lg"
-          />
-          <AgreementPanel />
-        </q-card-section>
-      </q-card>
+      <div>
+        <SectionItem
+          :label="t('form.agreement')"
+          label-class="text-h4 text-bold"
+          :hint="t('form.agreement_hint')"
+          class="q-mb-lg"
+        />
+        <AgreementPanel />
+      </div>
     </div>
     <div v-if="survey.stepName === 'age_class'">
       <AgePanel />
@@ -56,24 +55,26 @@
       />
     </div>
     <div v-if="survey.stepName === 'importance'">
-      <q-card flat>
-        <q-card-section>
-          <SectionItem
-            :label="t('form.importance')"
-            :hint="t('form.importance_hint')"
-            class="q-mb-lg"
-          />
-          <ImportancePanel />
-        </q-card-section>
-      </q-card>
+      <div>
+        <SectionItem
+          :label="t('form.importance')"
+          label-class="text-bold text-h4"
+          :hint="t('form.importance_hint')"
+          class="q-mb-lg"
+        />
+        <ImportancePanel />
+      </div>
     </div>
     <div v-if="survey.stepName === 'needs'">
-      <q-card flat>
-        <q-card-section>
-          <SectionItem :label="t('form.needs')" :hint="t('form.needs_hint')" class="q-mb-lg" />
-          <NeedsPanel />
-        </q-card-section>
-      </q-card>
+      <div>
+        <SectionItem
+          :label="t('form.needs')"
+          label-class="text-bold text-h4"
+          :hint="t('form.needs_hint')"
+          class="q-mb-lg"
+        />
+        <NeedsPanel />
+      </div>
     </div>
     <div v-if="survey.stepName === 'recommendations'">
       <RecommendationsPanel />
@@ -89,7 +90,11 @@
       <EmailPanel v-model="plainEmail" />
     </div>
     <div v-if="survey.stepName === 'comments'">
-      <SectionItem :label="t('form.comments')" class="q-mb-lg" />
+      <SectionItem
+        :label="t('form.comments')"
+        label-class="text-h4 text-bold q-mb-md"
+        class="q-mb-lg"
+      />
       <q-input
         v-model="survey.record.data.comments"
         type="textarea"
@@ -127,7 +132,7 @@
       <q-btn
         rounded
         v-if="survey.stepName === 'comments'"
-        color="primary"
+        color="accent"
         :label="t('finish')"
         icon-right="send"
         size="lg"
@@ -240,13 +245,13 @@ function nextStep() {
   }
   if (survey.stepName === 'change') {
     // Both undefined and 0 mean no data
-    if (!survey.record.data.change?.motivation) {
+    if (!survey.record.data.change?.motivation && !survey.isRecommendationInUse()) {
       notifyError(t('form.error.change_motivation_required'))
       return
     }
   }
   if (survey.stepName === 'change2') {
-    if (!survey.record.data.change2?.motivation) {
+    if (!survey.record.data.change2?.motivation && !survey.isRecommendation2InUse()) {
       notifyError(t('form.error.change_motivation_required'))
       return
     }

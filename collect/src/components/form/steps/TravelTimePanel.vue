@@ -1,6 +1,7 @@
 <template>
   <NumberItem
     :label="t('form.travel_time')"
+    label-class="text-h4 text-bold q-mb-lg"
     v-model="survey.record.data.travel_time"
     :min="5"
     :max="120"
