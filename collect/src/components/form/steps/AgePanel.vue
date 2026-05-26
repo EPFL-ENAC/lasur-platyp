@@ -1,14 +1,12 @@
 <template>
-  <q-card flat>
-    <q-card-section>
-      <ChoiceItem
-        :label="t('form.age_class')"
-        :options="ageOptions"
-        v-model="survey.record.data.age_class"
-        :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
-      />
-    </q-card-section>
-  </q-card>
+  <div>
+    <ChoiceItem
+      :label="t('form.age_class')"
+      :options="ageOptions"
+      v-model="survey.record.data.age_class"
+      :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
