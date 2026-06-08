@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const addressLocation = defineModel<AddressLocation | undefined>({
-  default: { address: '' },
+  default: () => ({ address: '' }),
 })
 
 const map = ref<Map>()

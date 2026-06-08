@@ -29,7 +29,13 @@ const collector = useCollector()
 
 const OTHER_WORKPLACE_OPTION = '_other'
 
-const selectedWorkplace = ref<string>(survey.record.data.workplace?.name || '')
+const selectedWorkplace = ref<string>(initialWorkplace())
+
+function initialWorkplace() {
+  if (survey.record.data.workplace?.name) return survey.record.data.workplace.name
+  if (collector.info?.open_workplaces) return OTHER_WORKPLACE_OPTION
+  return ''
+}
 
 const workplaceOptions = computed<Option[]>(() => {
   const options = (

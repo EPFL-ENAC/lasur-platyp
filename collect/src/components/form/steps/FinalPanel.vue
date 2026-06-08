@@ -7,9 +7,11 @@
       <div class="text-center">
         {{ t('form.final_subtitle') }}
       </div>
-      <div v-if="hasCar" class="text-center q-mt-md">
-        {{ t('form.final_car') }}
-      </div>
+      <q-markdown
+        v-if="hasCar"
+        :src="t('form.final_car_markdown')"
+        class="text-center q-mt-md"
+      />
     </div>
     <div v-if="collector.info.rewards_message" class="q-mb-xl">
       <q-separator />
