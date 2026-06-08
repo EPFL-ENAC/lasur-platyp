@@ -1,9 +1,18 @@
 <template>
   <div>
-    <div class="text-h4 text-center q-mb-xl">
-      {{ t('form.final') }}
+    <div>
+      <div class="text-h4 text-center q-mb-xl">
+        {{ t('form.final') }}
+      </div>
+      <div class="text-center">
+        {{ t('form.final_subtitle') }}
+      </div>
+      <div v-if="hasCar" class="text-center q-mt-md">
+        {{ t('form.final_car') }}
+      </div>
     </div>
     <div v-if="collector.info.rewards_message" class="q-mb-xl">
+      <q-separator />
       <div class="text-h5 text-center q-mb-md">
         {{ t('form.final_rewards.title') }}
       </div>
@@ -38,6 +47,11 @@ const rewardUrl = computed(() => {
   if (!collector.token) return null
 
   return `/certificate/${collector.token}`
+})
+
+const hasCar = computed(() => {
+  const freqMod = survey.getFreqMod('car')
+  return !!freqMod && freqMod > 0
 })
 
 onMounted(() => {

@@ -236,12 +236,8 @@ async function goToReport() {
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
-  const displayedOrgs =
+  let displayedOrgs =
     companyFilter.value.length > 0 ? companyFilter.value : Object.keys(companyMap.value)
-  url.searchParams.set(
-    'orgs',
-    displayedOrgs.map((id) => companyMap.value[`${id}`]?.name || id).join(';'),
-  )
 
   let displayedCampaigns = campaignFilter.value
   if (campaignFilter.value.length === 0) {
@@ -249,7 +245,19 @@ async function goToReport() {
       (campaign) => displayedOrgs.some((orgId) => orgId == `${campaign.company_id}`), // use loose equality to compare string and number IDs
     )
     displayedCampaigns = campaignsInDisplayedOrgs.map((campaign) => `${campaign.id}`)
+  } else {
+    // If we filtered by campaigns, make sure we remove the orgs that are not in the filtered campaigns from the report filters
+    displayedOrgs = displayedOrgs.filter((orgId) =>
+      campaignFilter.value.some(
+        (campaignId) => `${campaignMap.value[campaignId]?.company_id}` === orgId,
+      ),
+    )
   }
+
+  url.searchParams.set(
+    'orgs',
+    displayedOrgs.map((id) => companyMap.value[`${id}`]?.name || id).join(';'),
+  )
   url.searchParams.set(
     'campaigns',
     displayedCampaigns.map((id) => campaignMap.value[`${id}`]?.name || id).join(';'),

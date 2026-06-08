@@ -10,17 +10,10 @@
       class="q-mb-lg"
     />
     <LocationItem
-      v-if="selectedWorkplace === OTHER_WORKPLACE_OPTION"
+      :readonly="selectedWorkplace !== OTHER_WORKPLACE_OPTION"
       map-id="workplace-map"
       v-model="survey.record.data.workplace"
       class="q-mb-xl"
-    />
-    <LocationItem
-      map-id="origin-map"
-      :label="t('form.origin')"
-      :hint="t('form.origin_hint')"
-      v-model="survey.record.data.origin"
-      class="q-mt-xl"
     />
   </div>
 </template>

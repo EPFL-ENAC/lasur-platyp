@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="`${labelClass}`">{{ label }}</div>
+    <QuestionText v-if="label" :label="label" :class="`${labelClass}`" />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="row justify-center q-mt-lg">
       <span
@@ -27,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+import QuestionText from './QuestionText.vue'
+
 interface Props {
   modelValue: boolean | undefined
   label?: string
