@@ -140,3 +140,7 @@ cython_debug/
 .vscode/
 
 notebooks/
+
+data/*.pbf
+data/*.gpkg.zip
+data/*/
