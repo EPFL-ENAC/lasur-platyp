@@ -23,3 +23,16 @@ db-revision:
 
 seed:
 	curl -X PUT 'http://localhost:8000/seed' -H 'accept: application/json'
+
+download-switzerland-osm:
+	wget -O "data/switzerland.gpkg.zip" "https://download.geofabrik.de/europe/switzerland-latest-free.gpkg.zip"
+	unzip "data/switzerland.gpkg.zip" -d data/switzerland
+
+download-france-osm:
+	wget -O data/franche-comte.gpkg.zip "https://download.geofabrik.de/europe/france/franche-comte-latest-free.gpkg.zip"
+	unzip data/franche-comte.gpkg.zip -d data/franche-comte
+	wget -O data/rhone-alpes.gpkg.zip "https://download.geofabrik.de/europe/france/rhone-alpes-latest-free.gpkg.zip"
+	unzip data/rhone-alpes.gpkg.zip -d data/rhone-alpes
+
+generate-boundaries:
+	poetry run python scripts/create_administrative_areas.py
