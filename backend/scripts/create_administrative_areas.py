@@ -66,8 +66,8 @@ def main() -> None:
     data_dir = base_dir / "data"
 
     france_paths = [
-        data_dir / "franche-comte" / "franche-comte.gpkg",
-        data_dir / "rhone-alpes" / "rhone-alpes.gpkg",
+        data_dir / "france" / "franche-comte" / "franche-comte.gpkg",
+        data_dir / "france" / "rhone-alpes" / "rhone-alpes.gpkg",
     ]
 
     ch_path = data_dir / "switzerland" / "switzerland.gpkg"
