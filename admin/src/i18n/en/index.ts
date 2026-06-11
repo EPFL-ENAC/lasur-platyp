@@ -1,3 +1,59 @@
+const transportationModes = {
+  // --- Active Mobility ---
+  walking: 'Walking',
+  walk: 'Walking',
+  marche: 'Walking',
+  bike: 'Bicycle',
+  velo: 'Bicycle',
+  ebike: 'Electric bike',
+  vae: 'E-bike (Pedelec)',
+  cargo: 'Cargo bike',
+
+  // --- Motorcycles & Small Motorized ---
+  moto: 'Motorcycle / scooter',
+  elec_moto: 'Electric motorcycle / scooter',
+
+  // --- Public Transport ---
+  pub: 'Urban public transport',
+  pub_train: 'Public transport (including train)',
+  tpu: 'Public transport',
+  transit: 'Public transport',
+  bus: 'Bus',
+  train: 'Train',
+  rail: 'Train',
+
+  // --- Private Motorized Vehicles (Cars) ---
+  car: 'Car',
+  car_driver: 'Car (as driver)',
+  car_passenger: 'Car (as passenger)',
+  car_moto: 'Car or motorcycle',
+  elec: 'Electric vehicle',
+  ev: 'Electric vehicle',
+  carpool: 'Carpooling',
+  covoit: 'Carpooling',
+
+  // --- Long Distance / Heavy Transport ---
+  truck: 'Truck',
+  elec_truck: 'Electric truck / van',
+  plane: 'Plane',
+  boat: 'Boat',
+
+  // --- Alternative & Abstract ---
+  avoid: 'Avoid travel',
+  inter: 'Intermodality',
+  combined: 'Combined',
+  other: 'Other',
+  unknown: 'Unknown',
+}
+
+const emissionsLabels = {
+  emissions: 'Total CO₂ emissions',
+  journeys: 'Number of journeys',
+  distances: 'Total distance',
+  current: 'Current',
+  postSaving: 'Total after recommendations',
+}
+
 export default {
   main: {
     brand: 'Mobilyse',
@@ -297,6 +353,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
     observed: 'Data from participants',
     participants_median: 'Participants median',
     geneva_median: 'Geneva area median',
+    reference_data: 'Reference data (Geneva canton)',
+    units: {
+      tco2eq_per_year: 'tCO₂eq/year',
+    },
     sections: {
       mobility_analysis: {
         title: 'Mobility analysis',
@@ -309,6 +369,12 @@ Some environmental impacts have also been calculated:
       mobility_potentials: {
         title: 'Mobility potentials',
         description: `This section presents the personalized recommendations suggested to participants. Mobilyse indicates which modes are most likely to suit employees based on their habits, constraints, preferences, residential and work location… Some graphs also illustrate the potential gains in terms of impact on greenhouse gas emissions and health, in the event that all participants adopt the recommendations formulated by mobilyse.`,
+        insights: {
+          most_potential: 'The mode with the highest potential for users is: **{mode}** (recommended to **{percentage}%** of respondents)',
+          biggest_emission_reduction: "The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction} {unit}**, i.e. **{percentage}%** of the total potential gain for responding employees.",
+          biggest_emission_reduction_extrapolation: "Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction} {unit}** per year.",
+          biggest_physical_activity_gain: "The mode of transport that most increases employees' physical activity is: **{mode}**. This scenario enables **{collaborators_count}** additional employees to reach the WHO-recommended daily level of physical expenditure (150 kcal/day/person)."
+        },
       },
       behavioural_changes: {
         title: 'Encouraging behavioural changes',
@@ -332,7 +398,7 @@ Some environmental impacts have also been calculated:
         ev: 'Electric vehicle',
       },
       mrmt_source:
-        '[MRMT source](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
+        'Reference data, Geneva canton [Microcensus of Mobility and Transportation, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
     },
     constraints: {
       title: 'Mobility constraints',
@@ -341,8 +407,12 @@ Some environmental impacts have also been calculated:
         heavy: 'Transporting heavy/bulky\nequipment',
         night: 'Night work',
         disabled: 'Parking card for people\nwith reduced mobility',
+        other: 'Other *',
         none: 'No constraint',
       },
+      texts: {
+        other: 'Other constraints are available in detail if you download the whole dataset.'
+      }
     },
     locationsHeatmap: {
       title: 'Geographical distribution of home and workplace locations',
@@ -359,165 +429,62 @@ Some environmental impacts have also been calculated:
       },
     },
     reco_dt2: {
-      title: 'Recommendations',
+      title: 'Potential modal split',
       labels: {
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        marche: 'Walking',
-        tpu: 'Public transport',
-        train: 'Train',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
-      },
+        ...transportationModes
+      }
     },
     reco_pros: {
       title: 'Recommendations (professional)',
       labels: {
-        avoid: 'Avoid travel',
-        bike: 'Bicycle',
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
-        elec_moto: 'Electric motorcycle/scooter',
-        elec_truck: 'Electric truck/van',
-        inter: 'Intermodality',
-        marche: 'Walking',
-        tpu: 'Public transport',
-        train: 'Train',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
-        pub: 'Public transport',
-      },
+        ...transportationModes
+      }
     },
     freq_mod: {
-      title: 'Modes of transport',
+      title: 'Modal split',
+      title_mrmt: 'Reference data (Geneva canton)',
       labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        other: 'Other',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        combined: 'Combined',
+        ...transportationModes
       },
       texts: {
-        default: 'The mode Car is the most used in the Geneva canton ([MRMT survey, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
+        default: 'The mode Car is the most used in the Geneva canton ([Microrecensement Mobilité et Transportsw, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
           'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.',
       },
     },
     freq_mod_pro: {
-      title: 'Modes of transport (professional)',
+      title: 'Modal split (professional travel)',
       xaxis: 'Journeys per year',
       labels: {
+        ...transportationModes,
         local: 'Local',
         region: 'Regional',
         national: 'National',
         europe: 'European',
         inter: 'International',
-        walking: 'Walking',
-        bike: 'Bicycle (or electric bike)',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        plane: 'Plane',
-        cargo: 'Cargo bike',
-        truck: 'Truck',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        boat: 'Boat',
       },
     },
     emissions_freq_mod: {
-      title: 'CO₂ emissions per mode of transport',
+      title: 'CO₂ emissions per transport mode',
       yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
       xaxis: 'Journeys per year',
       labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        other: 'Other',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
+        ...transportationModes,
+        ...emissionsLabels
       },
       texts: {
         specific:
           "{carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing {carMotoEmissionsPercentage}% of the company's annual CO₂ emissions.",
       },
     },
-    emissions_reco_mod: {
-      title: 'Potential for reducing commuter emissions',
-      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
-      xaxis: 'Recommended mode',
-      labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
-        current: 'Current',
-        postSaving: 'Total after recommendations',
-      },
-      texts: {
-        default:
-          'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
-        specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
-      },
-    },
     emissions_reductions_mod: {
-      title: 'Potential for reducing commuter emissions',
+      title: 'Potential reductions in commuting emissions',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
-        current: 'Current',
-        postSaving: 'Total after recommendations',
+          ...transportationModes,
+          ...emissionsLabels
       },
       texts: {
         default:
@@ -530,24 +497,8 @@ Some environmental impacts have also been calculated:
       title: 'Share of CO₂ emissions reduction per recommended mode of transport',
       series: 'Potential reduction',
       labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
-        current: 'Current',
-        postSaving: 'Total after recommendations',
+        ...transportationModes,
+        ...emissionsLabels
       },
       texts: {
         default:
@@ -557,93 +508,25 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_freq_mod_pro: {
-      title: 'CO₂ emissions per mode of transport (professional)',
+      title: 'CO₂ emissions per transport mode (professional travel)',
       yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
       xaxis: 'Journeys per year',
       labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        boat: 'Boat',
-        cargo: 'Cargo bike',
-        truck: 'Truck',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
+        ...transportationModes,
+        ...emissionsLabels,
       },
       texts: {
         specific:
           '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
       },
     },
-    emissions_reco_mod_pro: {
-      title: 'Potential for reducing professional emissions',
-      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
-      xaxis: 'Recommended mode',
-      labels: {
-        avoid: 'Avoid travel',
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        elec: 'Electric vehicle',
-        elec_moto: 'Electric motorcycle/scooter',
-        inter: 'Intermodality',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
-        current: 'Current',
-        postSaving: 'Total after recommendations',
-      },
-      texts: {
-        default:
-          'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
-        specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
-      },
-    },
     emissions_reductions_mod_pro: {
-      title: 'Potential for reducing professional emissions',
+      title: 'Potential reductions in professional travel emissions ',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
-        avoid: 'Avoid travel',
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        elec: 'Electric vehicle',
-        elec_moto: 'Electric motorcycle/scooter',
-        elec_truck: 'Electric truck',
-        inter: 'Intermodality',
-        emissions: 'Total CO₂ emissions',
-        journeys: 'Number of journeys',
-        distances: 'Total distance',
-        current: 'Current',
-        postSaving: 'Total after recommendations',
+        ...emissionsLabels
       },
       texts: {
         default:
@@ -654,29 +537,6 @@ Some environmental impacts have also been calculated:
     },
     mod_reco: {
       title: 'Modal shift recommendations',
-      labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        unknown: 'Unknown',
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        marche: 'Walking',
-        tpu: 'Public transport',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
-        other: 'Other',
-      },
       texts: {
         default:
           'This chart shows which modes of transport have been recommended (on the right) based on the mode currently in use (on the left).',
@@ -686,33 +546,6 @@ Some environmental impacts have also been calculated:
     },
     mod_reco_pro: {
       title: 'Modal shift recommendations (professional)',
-      labels: {
-        avoid: 'Avoid travel',
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        truck: 'Truck',
-        moto: 'Motorcycle / scooter',
-        elec_moto: 'Electric motorcycle / scooter',
-        elec_truck: 'Electric truck / van',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        unknown: 'Unknown',
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        marche: 'Walking',
-        tpu: 'Public transport',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
-        other: 'Other',
-      },
       texts: {
         default:
           'This chart shows which modes of transport have been recommended (on the right) based on the mode currently in use (on the left).',
@@ -721,43 +554,21 @@ Some environmental impacts have also been calculated:
       },
     },
     energy_journey: {
-      title_current: 'Physical Activity Diagram by Currently Used Mode',
+      title_current: 'Potential daily energy expenditures',
       title_reco: 'Potential Physical Activity Diagram following Recommendations',
-      title_share: 'Modes with the Most Potential for Increased Physical Activity',
+      title_share: 'Transport modes with highest potential energy gains',
       yaxis: 'Energy expenditure (kcal)',
       xaxis: 'Participants (sorted by energy expenditure)',
       whoMin: 'WHO minimum recommended physical activity',
       participantsAverage: 'Average physical activity expenditure of participants',
-      labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        ebike: 'Electric bike',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        unknown: 'Unknown',
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        marche: 'Walking',
-        tpu: 'Public transport',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
-        other: 'Other',
-      },
       texts: {
         default:
-          'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person.',
+          'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person, equivalent to 37 minutes of walking, 23 minutes of fitness, or 14 minutes of football per day.',
         specific_current:
           'Currently, participants spend an average of {energy} kcal/day/person on their home-work travel.',
         specific_reco:
-          'If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person, and {count} more people will exceed the daily physical activity recommendations of the WHO.',
+          `If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person (equivalent to {yoga_min} minutes of yoga per person per day).
+          Moreover, {count} more people will exceed the daily physical activity recommendations of the WHO, going from {percent_current}% to {percent_potential}%.`,
         default_share:
           'This chart shows which modes of transport have the most potential for increased physical activity.',
         specific_share:
@@ -765,35 +576,16 @@ Some environmental impacts have also been calculated:
       },
     },
     behavior_change_levers: {
-      title: 'Measures helping to adopt recommendations',
+      title: 'Support measures requested to adopt mobility recommendations',
       labels: {
         finance: 'Financial incentives',
         flexibility: 'Flexibility',
         collective: 'Collective measures',
         environment: 'Environmental improvements',
-        other: 'Other',
         autres: 'Other',
         total: 'Total',
-
-        walking: 'Walking',
-        bike: 'Bicycle',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        unknown: 'Unknown',
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        marche: 'Walking',
-        tpu: 'Public transport',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
+        
+        ...transportationModes,
         allModes: 'All modes',
       },
       texts: {
@@ -804,7 +596,7 @@ Some environmental impacts have also been calculated:
       },
     },
     behavior_change_motivation: {
-      title: 'Motivation to adopt recommendations',
+      title: 'Willingness to adopt recommendations',
       labels: {
         l1: 'Not interested',
         l2: 'Rather not motivated',
@@ -812,25 +604,7 @@ Some environmental impacts have also been calculated:
         l4: 'Rather motivated',
         l5: 'Very motivated',
 
-        walking: 'Walking',
-        bike: 'Bicycle',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        unknown: 'Unknown',
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
-        inter: 'Intermodality',
-        marche: 'Walking',
-        tpu: 'Public transport',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
+        ...transportationModes,
         allModes: 'All modes',
         autres: 'Other',
         total: 'Total',
@@ -844,38 +618,18 @@ Some environmental impacts have also been calculated:
       },
     },
     equipments_by_recommendations: {
-      title: 'Equipment by recommendations',
+      title: 'Equipment by recommendation',
       tooltip: `{count} of the participants who got the recommendation "{reco}" are equipped with "{equipment}". <br />
       This represents {percentage}% of participants who got the recommendation "{reco}".`,
       simpleMode: 'Simple mode',
       labels: {
-        walking: 'Walking',
-        bike: 'Bicycle',
-        pub: 'Public transport',
-        train: 'Train',
-        moto: 'Motorcycle/scooter',
-        car: 'Car',
-        car_driver: 'Car (as driver)',
-        car_passenger: 'Car (as passenger)',
-        carpool: 'Carpooling',
-        plane: 'Plane',
-        pub_train: 'Public transport and train',
-        car_moto: 'Car and motorcycle/scooter',
-        unknown: 'Unknown',
+        ...transportationModes,
 
-        ev: 'Electric vehicle',
-        ebike: 'Electric bike',
         mob_subs: 'Mobility sub.',
         train_subs: 'Train sub.',
         upt_subs: 'Public transport sub.',
-        covoit: 'Carpooling',
-        elec: 'Electric vehicle',
         inter: 'Intermodality',
-        marche: 'Walking',
         tpu: 'Public transport',
-        vae: 'Electric bike',
-        velo: 'Bike',
-        cargo: 'Cargo bike',
 
         allModes: 'All modes',
       },
@@ -887,6 +641,9 @@ Some environmental impacts have also been calculated:
         hover_hint: 'Hover over the cells for more details',
       },
     },
+  },
+  transportation_modes: {
+    ...transportationModes
   },
   record: {
     reco: 'Recommended mode of transport: {mode}',
@@ -900,13 +657,7 @@ Some environmental impacts have also been calculated:
     },
     pois: 'Points of interest',
     mode: {
-      walk: 'Walking',
-      bike: 'Bicycle',
-      ebike: 'E-bike',
-      car: 'Car',
-      transit: 'Public Transport',
-      rail: 'Train',
-      bus: 'Bus',
+      ...transportationModes
     },
     categories: {
       food: 'Food',
@@ -1103,4 +854,5 @@ Use the menu to navigate through the different sections, manage organisations, c
   print: 'Print',
   mobility_statistics: 'Mobility statistics',
   transit_lines: 'Public transport network',
+  documentation: 'Documentation',
 }

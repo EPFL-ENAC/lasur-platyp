@@ -103,7 +103,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_${props.reco}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 function initChartOptions() {
@@ -136,9 +136,9 @@ function initChartOptions() {
     currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
 
   const categoriesLabels = [
-    keyLabel('current'),
+    t(`stats.emissions_${props.reco}.labels.current`),
     ...categories.map((cat) => keyLabel(cat)),
-    keyLabel('postSaving'),
+    t(`stats.emissions_${props.reco}.labels.postSaving`),
   ]
 
   total.value = emissions[0]?.total || 0

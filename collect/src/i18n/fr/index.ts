@@ -54,6 +54,7 @@ export default {
       night: 'Horaires de travail spéciaux (p. ex. travail de nuit)',
       disabled:
         'Détention d’une carte officielle de stationnement pour personne à mobilité réduite',
+      other: 'Autre (préciser)',
       none: 'Aucune contrainte particulière',
     },
     equipments: 'De quels équipements de mobilité disposez-vous pour vos déplacements quotidiens ?',

@@ -54,6 +54,7 @@ export default {
       heavy: 'Transporting heavy or bulky equipment',
       night: 'Atypical working hours (e.g. night work)',
       disabled: 'Holding an official parking permit for persons with reduced mobility',
+      other: 'Other (specify)',
       none: 'No particular constraints',
     },
     equipments: 'Which of the following equipments do you have access to for your daily commute?',

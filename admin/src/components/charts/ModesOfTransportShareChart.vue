@@ -38,7 +38,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
+import { initOptions, MODE_IDEAL_ORDER, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -103,7 +103,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.freq_mod.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 const MRMT_VALUES = {
@@ -145,6 +145,8 @@ function initChartOptions() {
     total.value = frequencies.total
   }
 
+  dataset.sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
+
   const sortedByValue = dataset
     .filter((item) => item.count > 5)
     .toSorted((a, b) => b.value - a.value)
@@ -162,7 +164,7 @@ function initChartOptions() {
     key,
     name: keyLabel(key),
     value,
-  }))
+  })).sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
 
   const mrmtColors = mrmtDataset.map((item) => MODE_COLORS[item.key] || '#ccc')
 
@@ -176,15 +178,27 @@ function initChartOptions() {
     },
     animation: false,
     height: props.height,
-    title: {
-      text: t(`stats.freq_mod.title`),
-      subtext: t(`stats.total`, { count: total.value }),
-      left: 'center',
-      top: 0,
-      textStyle: {
-        fontSize: 16,
+    title: [
+      {
+        text: t(`stats.freq_mod.title`),
+        subtext: t(`stats.total`, { count: total.value }),
+        left: 'center',
+        top: 0,
+        textStyle: {
+          fontSize: 16,
+        },
       },
-    },
+      {
+        text: t(`stats.freq_mod.title_mrmt`),
+        left: '80%',
+        top: '45%',
+        textAlign: 'center',
+        textStyle: {
+          fontSize: 12,
+          fontWeight: 'normal',
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
       formatter: '<b>{b}</b><br/>{c} ({d}%)',
@@ -219,7 +233,7 @@ function initChartOptions() {
           formatter: '<b>{b}</b><br/>{d}%',
         },
         label: {
-          formatter: '{d}% (MRMT)',
+          formatter: '{d}%',
           fontSize: 10,
         },
         data: mrmtDataset,

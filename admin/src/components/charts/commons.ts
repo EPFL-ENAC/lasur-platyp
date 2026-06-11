@@ -74,6 +74,35 @@ interface InitOptions {
   renderer: 'canvas' | 'svg'
 }
 
+export const MODE_IDEAL_ORDER: { [key: string]: number } = {
+  default: 0,
+  visio: 0,
+  walking: 1,
+  marche: 1,
+  bike: 2,
+  velo: 2,
+  ebike: 3,
+  vae: 3,
+  cargo: 4,
+  pub: 5,
+  tpu: 5,
+  upt_subs: 5,
+  train: 6,
+  train_subs: 6,
+  elec: 7,
+  elec_moto: 7,
+  covoit: 8,
+  carpool: 8,
+  car: 9,
+  car_driver: 9,
+  moto: 10,
+  elec_truck: 11,
+  truck: 12,
+  boat: 13,
+  plane: 14,
+  inter: 100,
+}
+
 export const MODE_COLORS: { [key: string]: string } = {
   car: '#860706',
   car_driver: '#860706',

@@ -116,7 +116,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => props.percent], () => {
   if (!props.loading) {
     initChartOptions()
   }

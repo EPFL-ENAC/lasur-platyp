@@ -35,7 +35,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, MODE_COLORS, updateOptions } from './commons'
+import { initOptions, MODE_COLORS, MODE_IDEAL_ORDER, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -129,6 +129,8 @@ function initChartOptions() {
   if (recoEmissions.length === 0) {
     return
   }
+
+  recoEmissions.sort((a, b) => (MODE_IDEAL_ORDER[a.mode] ?? 0) - (MODE_IDEAL_ORDER[b.mode] ?? 0))
 
   total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {

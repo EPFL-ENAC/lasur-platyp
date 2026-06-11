@@ -41,14 +41,6 @@
         <q-separator />
 
         <q-card-actions align="right">
-          <q-btn
-            size="sm"
-            outline
-            color="field"
-            icon="bar_chart"
-            :label="t('report_global')"
-            @click="onShowStats"
-          />
           <q-btn size="sm" color="primary" icon="edit" :label="t('edit')" @click="onEdit" />
         </q-card-actions>
       </template>
@@ -162,8 +154,6 @@
       :company="company"
       @saved="onCustomActionsUpdated"
     />
-    <company-charts-dialog v-if="company" v-model="showChartsDialog" :company="company" />
-
     <company-campaign-dialog
       v-if="company && selectedCampaign"
       v-model="showCampaignDialog"
@@ -183,7 +173,6 @@ import type { FieldItem } from 'src/components/FieldsList.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import CompanyDialog from 'src/components/company/CompanyDialog.vue'
 import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
-import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import { notifySuccess, notifyError } from 'src/utils/notify'
 import type { QTableColumn } from 'quasar'
 import { checkUrlParamNumber } from 'src/utils/numbers'
@@ -202,7 +191,6 @@ const company = ref<Company>()
 const showRemoveDialog = ref(false)
 const showDialog = ref(false)
 const showCustomActionsDialog = ref(false)
-const showChartsDialog = ref(false)
 const selectedCampaign = ref<Campaign>()
 const showCampaignDialog = ref(false)
 
@@ -359,10 +347,6 @@ function onShowCustomActions() {
 
 function onCustomActionsUpdated() {
   actionsStore.load()
-}
-
-function onShowStats() {
-  showChartsDialog.value = true
 }
 
 function onAddCampaign() {

@@ -36,7 +36,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, MODE_COLORS, updateOptions } from './commons'
+import { initOptions, MODE_COLORS, MODE_IDEAL_ORDER, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -95,7 +95,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.energy_journey.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 function initChartOptions() {
@@ -107,6 +107,7 @@ function initChartOptions() {
   if (rawData.length === 0) return
 
   const filtered = rawData.filter((item) => item.added_kcal > 0)
+  filtered.sort((a, b) => (MODE_IDEAL_ORDER[a.mode] ?? 0) - (MODE_IDEAL_ORDER[b.mode] ?? 0))
   total.value = filtered.length
 
   const sumPositiveEnergy = filtered.reduce((sum, item) => sum + item.added_kcal, 0)

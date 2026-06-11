@@ -160,7 +160,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
   ]
   if (props.percent) {
     series.push({
-      name: 'MRMT',
+      name: t('stats.reference_data'),
       type: 'pictorialBar',
       symbol: 'rect', // This creates the "line" marker
       symbolRepeat: false,
@@ -204,7 +204,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     legend: {
       show: true,
       bottom: 0,
-      data: [t('stats.observed'), 'MRMT'],
+      data: [t('stats.observed'), t('stats.reference_data')],
     },
     yAxis: {
       name: props.yaxis || '',

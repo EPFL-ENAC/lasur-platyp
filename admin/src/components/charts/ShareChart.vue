@@ -25,7 +25,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
+import { initOptions, MODE_IDEAL_ORDER, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -90,7 +90,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.${props.chartTranslationName}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 function initChartOptions() {
@@ -123,7 +123,7 @@ function initChartOptions() {
   }
 
   // Extract category names and values for series
-  const categories = dataset.map((item) => item.key)
+  const categories = dataset.map((item) => item.key).sort((a, b) => (MODE_IDEAL_ORDER[a] || 0) - (MODE_IDEAL_ORDER[b] || 0))
   const colors = categories.map((category) => MODE_COLORS[category] || '#ccc')
 
   if (categories.length === 0) {

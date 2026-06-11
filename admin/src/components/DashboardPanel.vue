@@ -120,7 +120,7 @@
       </div>
     </div>
     <div v-else-if="layout === 'grid'">
-      <charts-panel :percent="percent" :height="height" />
+      <charts-panel :percent="percent" :height="height" :collaborators-count="totalCollaboratorsCount" />
     </div>
     <div v-else>
       <charts-carousel :percent="percent" :height="height" />
@@ -173,6 +173,25 @@ const campaignOptions = computed(() => {
       value: campaign.id,
     }))
     .sort((a, b) => a.label.localeCompare(b.label))
+})
+
+const selectedCampaigns = computed(() => {
+  const allCampaigns = Object.values(campaignMap.value)
+  const filteredByCompanies = companyFilter.value.length
+    ? allCampaigns.filter((campaign) =>
+        companyFilter.value.includes(`${campaign.company_id}`),
+      )
+    : allCampaigns
+  const filteredByCampaigns = campaignFilter.value.length
+    ? filteredByCompanies.filter((campaign) =>
+        campaignFilter.value.includes(`${campaign.id}`),
+      )
+    : filteredByCompanies
+  return filteredByCampaigns
+})
+
+const totalCollaboratorsCount = computed(() => {
+  return selectedCampaigns.value.reduce((sum, campaign) => sum + (campaignMap.value[`${campaign.id}`]?.nb_employees || 0), 0)
 })
 
 const areaFilter = ref<GeoJSON.FeatureCollection | undefined>(undefined)

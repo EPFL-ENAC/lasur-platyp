@@ -96,7 +96,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.${props.type}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 function initChartOptions() {

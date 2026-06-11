@@ -57,6 +57,7 @@ interface Props {
   yaxis?: string
   rangeStep?: number
   height?: number
+  loading?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -108,7 +109,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_${props.chartTranslationName}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 const SCALE_FACTOR = 1 / 1000 // convert from kg to tons
@@ -142,9 +143,9 @@ function initChartOptions() {
     currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
 
   const categoriesLabels = [
-    keyLabel('current'),
+    t(`stats.emissions_${props.chartTranslationName}.labels.current`),
     ...categories.map((cat) => keyLabel(cat)),
-    keyLabel('postSaving'),
+    t(`stats.emissions_${props.chartTranslationName}.labels.postSaving`),
   ]
 
   total.value = emissions[0]?.total || 0

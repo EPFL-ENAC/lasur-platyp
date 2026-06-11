@@ -10,19 +10,6 @@
       <q-card-section>
         <campaign-charts :item="item" />
       </q-card-section>
-
-      <q-separator />
-
-      <q-card-actions align="right">
-        <q-btn
-          v-if="isCompanyAdmin"
-          :label="t('report')"
-          size="sm"
-          color="primary"
-          icon="bar_chart"
-          @click="onShowStats"
-        />
-      </q-card-actions>
     </q-card>
 
     <q-card flat class="q-ma-md">
@@ -187,13 +174,6 @@
         </div>
       </q-card-section>
     </q-card>
-
-    <company-charts-dialog
-      v-if="props.company"
-      v-model="showChartsDialog"
-      :company="company"
-      :campaign="item"
-    />
     <email-template-dialog v-if="props.item" v-model="showEmailTemplateDialog" :campaign="item" />
   </div>
 </template>
@@ -202,7 +182,6 @@
 import { copyToClipboard } from 'quasar'
 import type { Campaign, Company, EmployerActions } from 'src/models'
 import CampaignCharts from 'src/components/charts/CampaignCharts.vue'
-import CompanyChartsDialog from 'src/components/company/CompanyChartsDialog.vue'
 import FieldsList from 'src/components/FieldsList.vue'
 import IsochronesMap from 'src/components/IsochronesMap.vue'
 import EmailTemplateDialog from 'src/components/EmailTemplateDialog.vue'
@@ -225,7 +204,6 @@ const props = defineProps<Props>()
 
 const SHOW_WORKPLACES_MIN = 5
 
-const showChartsDialog = ref(false)
 const showEmailTemplateDialog = ref(false)
 const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
 
@@ -339,10 +317,6 @@ function onSurveyLinkCopy() {
   if (!props.item.slug) return
   copyToClipboard(makeSurveyLink(props.item.slug!))
   notifyInfo(t('survey_link_copied'))
-}
-
-function onShowStats() {
-  showChartsDialog.value = true
 }
 
 function onShowEmailTemplate() {
