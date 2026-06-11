@@ -1,47 +1,36 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%; position: relative;`">
-    <template v-if="total > 0">
-      <e-charts
-        ref="chart"
-        autoresize
-        :init-options="initOptions"
-        :option="option"
-        :update-options="updateOptions"
-        :loading="props.loading"
-        :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-      />
-      <div class="options" v-if="props.hasOptions">
-        <q-toggle
-          v-model="simpleMode"
-          :label="t('stats.equipments_by_recommendations.simpleMode')"
-          color="primary"
-        />
-        <div class="text-caption">
-          {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
-        </div>
-      </div>
-    </template>
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.equipments_by_recommendations.title`) }}</div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
-    <p class="q-mb-xs">{{ t(`stats.equipments_by_recommendations.texts.default`) }}</p>
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="total > 0"
+    :no-data-title="t('stats.equipments_by_recommendations.title')"
+    :option="option"
+    :exportable="!!exportable"
+  >
+    <p class="q-mb-xs">{{ t('stats.equipments_by_recommendations.texts.default') }}</p>
     <p v-if="analysisText">
-      {{ t(`stats.equipments_by_recommendations.texts.specific`, analysisText) }}
+      {{ t('stats.equipments_by_recommendations.texts.specific', analysisText) }}
     </p>
+  </e-charts-shell>
+  <div class="options" v-if="props.hasOptions && total > 0">
+    <q-toggle
+      v-model="simpleMode"
+      :label="t('stats.equipments_by_recommendations.simpleMode')"
+      color="primary"
+    />
+    <div class="text-caption">
+      {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { HeatmapChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -59,11 +48,8 @@ import {
   recommendationLabelsReversed,
   recommendationToEquipmentMap,
 } from 'src/models'
-import { useQuasar } from 'quasar'
-// import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 use([
   SVGRenderer,
   HeatmapChart,
@@ -79,9 +65,11 @@ interface Props {
   height?: number
   loading?: boolean
   hasOptions?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
 const option = ref<EChartsOption>({})

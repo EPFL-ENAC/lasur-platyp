@@ -42,6 +42,9 @@ interface Props {
   noControls?: boolean
 }
 const props = defineProps<Props>()
+defineExpose({
+  exportImage,
+})
 
 const map = ref<Map>()
 
@@ -124,6 +127,9 @@ function onInit() {
     trackResize: true,
     zoom: props.zoom || 14,
     attributionControl: false,
+    canvasContextAttributes: {
+      preserveDrawingBuffer: true, // This is needed to be able to export the map as an image
+    },
   })
   if (!props.noControls) {
     map.value.addControl(new NavigationControl({}))
@@ -182,6 +188,24 @@ function onInit() {
   })
 
   map.value.resize()
+}
+
+function exportImage(): Promise<string | null> {
+  return new Promise((resolve) => {
+    if (!map.value) {
+      resolve(null)
+      return
+    }
+    map.value.once('render', () => {
+      const canvas = map.value?.getCanvas()
+      if (canvas) {
+        resolve(canvas.toDataURL('image/png'))
+      } else {
+        resolve(null)
+      }
+    })
+    map.value?.triggerRepaint() // Force a repaint to ensure the 'render' event is fired
+  })
 }
 </script>
 

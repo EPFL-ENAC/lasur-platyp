@@ -1,24 +1,13 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">
-        {{ t(`stats.emissions_${props.chartTranslationName}.title`) }}
-      </div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="total > 0"
+    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  >
     <q-markdown
       v-if="emissionItemsLabels"
       :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsLabels)"
@@ -29,16 +18,15 @@
         t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsProLabels)
       "
     />
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { CustomChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -46,12 +34,10 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { MODE_COLORS } from './commons'
-import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
 import type { Emissions } from 'src/models'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
@@ -62,12 +48,13 @@ interface Props {
   rangeStep?: number
   height?: number
   loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -77,7 +64,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale, () => $q.dark.isActive], () => {
+watch([() => props.height, locale], () => {
   if (!props.loading) {
     initChartOptions()
   }

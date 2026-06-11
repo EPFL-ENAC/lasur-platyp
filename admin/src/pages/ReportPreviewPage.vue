@@ -36,6 +36,7 @@
           :height="height"
           :home-locations-heatmap="stats.homeLocationsHeatmap"
           :workplace-locations="stats.workplaceLocations"
+          :exportable="false"
           no-controls
         />
       </report-page>
@@ -44,6 +45,7 @@
         <modes-of-transport-share-chart
           :height="height"
           :frequencies="stats.frequencies?.['freq_mod'] ?? null"
+          :exportable="false"
         />
       </report-page>
 
@@ -54,6 +56,7 @@
           :range-step="5"
           :percent="percent"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -62,6 +65,7 @@
           :frequencies="getFreq('equipments')"
           :percent="percent"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -71,6 +75,7 @@
           :frequencies="getFreq('constraints')"
           :percent="percent"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -81,6 +86,7 @@
           :xaxis="t('stats.emissions_freq_mod.xaxis')"
           :yaxis="t('stats.emissions_freq_mod.yaxis')"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -89,6 +95,7 @@
           type="current"
           :journey-energy-stats="stats.journeyEnergyStats"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -103,6 +110,7 @@
           :xaxis="t('stats.freq_mod_pro.xaxis')"
           :height="height"
           :percent="percent"
+          :exportable="false"
         />
       </report-page>
 
@@ -113,6 +121,7 @@
           :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
           :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -134,11 +143,17 @@
           chart-translation-name="reco_dt2"
           :frequencies="getFreq('reco_dt2')"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
       <report-page :org-names="orgs">
-        <links-chart type="mod_reco" :links="stats.links['mod_reco'] ?? null" :height="height" />
+        <links-chart
+          type="mod_reco"
+          :links="stats.links['mod_reco'] ?? null"
+          :height="height"
+          :exportable="false"
+        />
       </report-page>
 
       <report-page :org-names="orgs">
@@ -148,6 +163,7 @@
           :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
           :yaxis="t('stats.emissions_reductions_mod.yaxis')"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -155,6 +171,7 @@
         <emissions-reductions-share-chart
           :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -163,6 +180,7 @@
           type="reco"
           :journey-energy-stats="stats.journeyEnergyStats"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -170,6 +188,7 @@
         <journey-energy-share-chart
           :journey-energy-stats="stats.journeyEnergyStats"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -183,6 +202,7 @@
           :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
           :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
           :height="height"
+          :exportable="false"
         />
       </report-page>
 
@@ -199,6 +219,7 @@
           type="levers"
           :behavior-change-stats="stats.behaviorChange"
           :percent="percent"
+          :exportable="false"
         />
       </report-page>
 
@@ -208,6 +229,7 @@
           type="motivation"
           :behavior-change-stats="stats.behaviorChange"
           :percent="percent"
+          :exportable="false"
         />
       </report-page>
 
@@ -215,6 +237,7 @@
         <equipment-recommendation-matrix-chart
           :height="height"
           :equipments-stats="stats.equipmentsStats"
+          :exportable="false"
         />
       </report-page>
 

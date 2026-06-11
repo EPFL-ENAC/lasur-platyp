@@ -1,42 +1,33 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.energy_journey.title_share`) }}</div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
-    <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default_share`) }}</p>
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="total > 0"
+    :no-data-title="t('stats.energy_journey.title_share')"
+    :option="option"
+    :exportable="!!exportable"
+  >
+    <p class="q-mb-xs">{{ t('stats.energy_journey.texts.default_share') }}</p>
     <q-markdown
       v-if="total > 5 && biggestShare"
       :src="
-        t(`stats.energy_journey.texts.specific_share`, {
+        t('stats.energy_journey.texts.specific_share', {
           percentage: formatNumber(biggestShare.percentage),
           mode: keyLabel(biggestShare.mode),
         })
       "
     />
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, MODE_COLORS, MODE_IDEAL_ORDER, updateOptions } from './commons'
+import { MODE_COLORS, MODE_IDEAL_ORDER } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -45,21 +36,20 @@ import {
 } from 'echarts/components'
 import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
-import { useQuasar } from 'quasar'
 import type { JourneyEnergyStats } from 'src/models'
-// import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   journeyEnergyStats?: JourneyEnergyStats | null
   height?: number
   loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
 interface AddedEnergyShare {

@@ -1,34 +1,25 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.behavior_change_${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
+    :option="option"
+    :show-info="total > 0"
+    :exportable="!!exportable"
+  >
     <p class="q-mb-xs">{{ t(`stats.behavior_change_${props.type}.texts.info`) }}</p>
     <q-markdown :src="chartDescription" />
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { CATEGORY_COLORS, initOptions, MOTIVATION_COLORS, updateOptions } from './commons'
+import { CATEGORY_COLORS, MOTIVATION_COLORS } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -37,14 +28,12 @@ import {
 } from 'echarts/components'
 import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams, XAXisOption } from 'echarts/types/dist/shared'
-import { useQuasar } from 'quasar'
 import { lowerCaseFirst } from 'src/utils/string'
 import { moveToStart } from 'src/utils/arrays'
 import type { BehaviorChangeStats } from 'src/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
-const $q = useQuasar()
 
 interface Props {
   type: 'levers' | 'motivation'
@@ -52,12 +41,13 @@ interface Props {
   height?: number
   loading?: boolean
   percent?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
