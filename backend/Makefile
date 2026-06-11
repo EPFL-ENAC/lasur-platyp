@@ -43,3 +43,6 @@ download-france-osm:
 
 generate-boundaries:
 	poetry run python scripts/create_administrative_areas.py
+
+generate-multilevel-boundaries:
+	poetry run python scripts/create_multilevel_boundaries.py
