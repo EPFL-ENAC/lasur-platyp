@@ -121,6 +121,10 @@ export const MODE_IDEAL_ORDER: Record<string, number> = {
   unknown: 950,
 }
 
+export function modeSortOrder(key: string): number {
+  return MODE_IDEAL_ORDER[key] || MODE_IDEAL_ORDER.default!
+}
+
 export const MODE_COLORS: { [key: string]: string } = {
   car: '#860706',
   car_driver: '#860706',

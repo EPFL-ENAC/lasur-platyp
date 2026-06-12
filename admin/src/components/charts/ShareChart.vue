@@ -15,7 +15,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_IDEAL_ORDER, MODE_COLORS } from './commons'
+import { MODE_COLORS, modeSortOrder } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -109,7 +109,7 @@ function initChartOptions() {
     }))
     total.value = frequencies.total
   }
-  dataset.sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
+  dataset.sort((a, b) => modeSortOrder(a.key) - modeSortOrder(b.key))
 
   // Extract category names and values for series
   const categories = dataset.map((item) => item.key)

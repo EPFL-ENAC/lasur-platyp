@@ -26,7 +26,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS, MODE_IDEAL_ORDER } from './commons'
+import { MODE_COLORS, modeSortOrder } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -120,7 +120,7 @@ function initChartOptions() {
     return
   }
 
-  recoEmissions.sort((a, b) => (MODE_IDEAL_ORDER[a.mode] ?? 0) - (MODE_IDEAL_ORDER[b.mode] ?? 0))
+  recoEmissions.sort((a, b) => modeSortOrder(a.mode) - modeSortOrder(b.mode))
 
   total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {

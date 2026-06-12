@@ -27,7 +27,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_IDEAL_ORDER, MODE_COLORS } from './commons'
+import { MODE_COLORS, modeSortOrder } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -132,7 +132,7 @@ function initChartOptions() {
     total.value = frequencies.total
   }
 
-  dataset.sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
+  dataset.sort((a, b) => modeSortOrder(a.key) - modeSortOrder(b.key))
 
   const sortedByValue = dataset
     .filter((item) => item.count > 5)
@@ -153,7 +153,7 @@ function initChartOptions() {
       name: keyLabel(key),
       value,
     }))
-    .sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
+    .sort((a, b) => modeSortOrder(a.key) - modeSortOrder(b.key))
 
   const mrmtColors = mrmtDataset.map((item) => MODE_COLORS[item.key] || '#ccc')
 

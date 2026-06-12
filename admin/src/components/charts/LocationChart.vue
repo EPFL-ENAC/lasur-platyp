@@ -59,12 +59,6 @@
       </location-heatmap>
     </div>
   </chart-shell>
-  <div class="wrapper">
-    <div v-if="!hasData" class="text-subtitle1 text-foreground text-center">
-      {{ t('stats.no_data') }}
-    </div>
-    <div v-else class="with-data"></div>
-  </div>
 </template>
 <script setup lang="ts">
 import html2canvas from 'html2canvas'

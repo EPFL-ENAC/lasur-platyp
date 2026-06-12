@@ -69,7 +69,6 @@ const containerStyle = computed<CSSProperties>(() => ({
 }))
 
 async function handleExport() {
-  console.log('Exporting chart...') // Debug log
   if (exporting.value || props.loading || !props.hasData || !props.captureRawImage) {
     return
   }
@@ -81,8 +80,6 @@ async function handleExport() {
     if (!rawImage) {
       return
     }
-
-    console.log(rawImage) // Debug log to check the captured image data URL
 
     const finalImage = await mergeImageWithLogo(rawImage, props.logoUrl, {
       padding: props.logoPadding,

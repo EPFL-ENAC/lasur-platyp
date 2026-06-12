@@ -36,7 +36,7 @@ import type { EChartsType } from 'echarts/core'
 import { useQuasar } from 'quasar'
 import ECharts from 'vue-echarts'
 import ChartShell from './ChartShell.vue'
-import { initOptions, updateOptions } from './commons.js'
+import { initOptions, updateOptions } from './commons'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 
 interface Props {
@@ -81,7 +81,6 @@ const resolvedExportBackgroundColor = computed(() => {
 })
 
 async function captureRawImage(): Promise<string | null> {
-  console.log('Capturing raw image...', chart.value) // Debug log
   const instance = chart.value?.chart as EChartsType | undefined
 
   if (!instance) {
