@@ -69,7 +69,7 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 const addedEnergy = ref(0)
 const newHealthyParticipants = ref(0)
-const WHO_RECOMMENDATION = 150;
+const WHO_RECOMMENDATION = 150
 
 const textLabelsCurrent = computed(() => {
   if (props.type !== 'current' || total.value < 5 || !props.journeyEnergyStats) return null
@@ -89,8 +89,16 @@ const textLabelsReco = computed(() => {
     added_energy: formatNumber(addedEnergy.value),
     yoga_min: formatNumber(addedEnergy.value / 4.7), // Approximate conversion to minutes of yoga
     count: formatNumber(newHealthyParticipants.value || 0),
-    percent_current: formatNumber(props.journeyEnergyStats.gains.current_above_who_count / props.journeyEnergyStats.current.data.length * 100),
-    percent_potential: formatNumber(props.journeyEnergyStats.gains.reco_above_who_count / props.journeyEnergyStats.reco.data.length * 100),
+    percent_current: formatNumber(
+      (props.journeyEnergyStats.gains.current_above_who_count /
+        props.journeyEnergyStats.current.data.length) *
+        100,
+    ),
+    percent_potential: formatNumber(
+      (props.journeyEnergyStats.gains.reco_above_who_count /
+        props.journeyEnergyStats.reco.data.length) *
+        100,
+    ),
   }
 })
 

@@ -8,7 +8,9 @@
     :option="option"
     :exportable="!!exportable"
   >
-    <div>{{ t('stats.constraints.labels.other') }}</div>
+    <div class="q-mt-md text-italic">
+      {{ t('stats.constraints.texts.other') }}
+    </div>
   </e-charts-shell>
 </template>
 

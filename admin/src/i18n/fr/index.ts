@@ -379,11 +379,15 @@ Certains impacts sont aussi calculés :
         title: 'Potentiels de mobilité',
         description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux collaborateur·trice·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
-          most_potential: "Le mode de transport avec le plus fort potentiel d'utilisateur.trices est : **{mode}** (recommandé à **{percentage}%** des collaborateur.trices ayant répondu)",
-          biggest_emission_reduction: "Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les collaborateur.trices ayant répondu.",
-          biggest_emission_reduction_extrapolation: "En extrapolant aux **{collaborators_count}** collaborateur.trices de votre organisation, cette réduction est estimée à **{reduction} {unit}**.",
-          biggest_physical_activity_gain: "Le mode de transport permettant d'augmenter le plus l'activité physique des collaborateur.trice.s est : **{mode}**. Ce scénario permet à **{collaborators_count}** collaborateur.trice.s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers)."
-        }
+          most_potential:
+            "Le mode de transport avec le plus fort potentiel d'utilisateur.trices est : **{mode}** (recommandé à **{percentage}%** des collaborateur.trices ayant répondu)",
+          biggest_emission_reduction:
+            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les collaborateur.trices ayant répondu.',
+          biggest_emission_reduction_extrapolation:
+            'En extrapolant aux **{collaborators_count}** collaborateur.trices de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
+          biggest_physical_activity_gain:
+            "Le mode de transport permettant d'augmenter le plus l'activité physique des collaborateur.trice.s est : **{mode}**. Ce scénario permet à **{collaborators_count}** collaborateur.trice.s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
+        },
       },
       behavioural_changes: {
         title: 'Motiver les changements de comportement',
@@ -420,8 +424,9 @@ Certains impacts sont aussi calculés :
         none: 'Aucune contrainte',
       },
       texts: {
-        other: 'Le détail des autres contraintes est accessibles en téléchargeant le détail des données.'
-      }
+        other:
+          'Le détail des autres contraintes est accessible en téléchargeant le détail des données.',
+      },
     },
     locationsHeatmap: {
       title: 'Répartition géographique des lieux de résidence et de travail',
@@ -441,20 +446,20 @@ Certains impacts sont aussi calculés :
     reco_dt2: {
       title: 'Répartition modale potentielle',
       labels: {
-        ...transportationModes
+        ...transportationModes,
       },
     },
     reco_pros: {
       title: 'Recommandations (professionnel)',
       labels: {
-        ...transportationModes
+        ...transportationModes,
       },
     },
     freq_mod: {
       title: 'Répartition modale',
       title_mrmt: 'Données de référence (canton de Genève)',
       labels: {
-        ...transportationModes
+        ...transportationModes,
       },
       texts: {
         default:
@@ -519,7 +524,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_freq_mod_pro: {
-      title: 'Émissions de CO₂ par mode de transport déplacements professionnels)',
+      title: 'Émissions de CO₂ par mode de transport (déplacements professionnels)',
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -578,8 +583,7 @@ Certains impacts sont aussi calculés :
           "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers, soit l'équivalent de 37 min de marche, 23min de fitness ou 14min de football par jour.",
         specific_current:
           'Actuellement, les participant·e·s dépensent en moyenne {energy} kcal/jour/pers pour leurs déplacements domicile-travail.',
-        specific_reco:
-          `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers (l'équivalent de {yoga_min} minutes de yoga par personne et par jour).
+        specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers (l'équivalent de {yoga_min} minutes de yoga par personne et par jour).
           De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d'activité physique journalière de l'OMS, passant de {percent_current}% à {percent_potential}%.`,
         default_share:
           "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
@@ -656,7 +660,7 @@ Certains impacts sont aussi calculés :
     },
   },
   transportation_modes: {
-    ...transportationModes
+    ...transportationModes,
   },
   record: {
     reco: 'Mode de transport recommandé : {mode}',
@@ -670,7 +674,7 @@ Certains impacts sont aussi calculés :
     },
     pois: "Points d'intérêt",
     mode: {
-      ...transportationModes
+      ...transportationModes,
     },
     categories: {
       food: 'Nourriture',

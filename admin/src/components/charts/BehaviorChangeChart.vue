@@ -175,7 +175,7 @@ function initChartOptions() {
     series: opt.series,
   }
   if (props.percent) {
-    (newOption.xAxis as XAXisOption).max = 100
+    ;(newOption.xAxis as XAXisOption).max = 100
   }
   option.value = newOption
 }

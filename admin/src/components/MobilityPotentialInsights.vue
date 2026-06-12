@@ -98,9 +98,7 @@ const bestMode = computed(() => {
     return null
   }
 
-  const maxItem = dataset.reduce((max, item) =>
-    item.value > max.value ? item : max,
-  )
+  const maxItem = dataset.reduce((max, item) => (item.value > max.value ? item : max))
 
   return {
     mode: maxItem.name,
@@ -135,9 +133,7 @@ const bestModeCount = computed(() => {
     return null
   }
 
-  const maxItem = dataset.reduce((max, item) =>
-    item.value > max.value ? item : max,
-  )
+  const maxItem = dataset.reduce((max, item) => (item.value > max.value ? item : max))
 
   return maxItem.value || null
 })
@@ -147,10 +143,7 @@ const bestReduction = computed(() => {
     return null
   }
 
-  const totalReduction = reductionData.value.reduce(
-    (sum, item) => sum + item.reduced,
-    0,
-  )
+  const totalReduction = reductionData.value.reduce((sum, item) => sum + item.reduced, 0)
 
   if (totalReduction === 0) {
     return null
@@ -171,9 +164,7 @@ const bestReduction = computed(() => {
     reduction: maxItem.reduced * SCALE_FACTOR,
     percentage: Math.round((maxItem.reduced / totalReduction) * 100),
     extrapolatedReduction:
-      extrapolatedReduction !== null
-        ? extrapolatedReduction * SCALE_FACTOR
-        : null,
+      extrapolatedReduction !== null ? extrapolatedReduction * SCALE_FACTOR : null,
   }
 })
 
@@ -225,20 +216,14 @@ const message = computed(() => {
       },
     )
 
-    if (
-      props.collaboratorsCount &&
-      bestReduction.value.extrapolatedReduction !== null
-    ) {
+    if (props.collaboratorsCount && bestReduction.value.extrapolatedReduction !== null) {
       secondParagraph +=
         ' ' +
-        t(
-          'stats.sections.mobility_potentials.insights.biggest_emission_reduction_extrapolation',
-          {
-            collaborators_count: formatNumber(props.collaboratorsCount),
-            reduction: formatNumber(bestReduction.value.extrapolatedReduction),
-            unit: unitLabel.value,
-          },
-        )
+        t('stats.sections.mobility_potentials.insights.biggest_emission_reduction_extrapolation', {
+          collaborators_count: formatNumber(props.collaboratorsCount),
+          reduction: formatNumber(bestReduction.value.extrapolatedReduction),
+          unit: unitLabel.value,
+        })
     }
 
     paragraphs.push(secondParagraph)
@@ -246,15 +231,10 @@ const message = computed(() => {
 
   if (bestPhysicalActivity.value) {
     paragraphs.push(
-      t(
-        'stats.sections.mobility_potentials.insights.biggest_physical_activity_gain',
-        {
-          mode: bestPhysicalActivity.value.mode,
-          collaborators_count: formatNumber(
-            bestPhysicalActivity.value.collaboratorsCount,
-          ),
-        },
-      ),
+      t('stats.sections.mobility_potentials.insights.biggest_physical_activity_gain', {
+        mode: bestPhysicalActivity.value.mode,
+        collaborators_count: formatNumber(bestPhysicalActivity.value.collaboratorsCount),
+      }),
     )
   }
 

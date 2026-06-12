@@ -109,9 +109,10 @@ function initChartOptions() {
     }))
     total.value = frequencies.total
   }
+  dataset.sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
 
   // Extract category names and values for series
-  const categories = dataset.map((item) => item.key).sort((a, b) => (MODE_IDEAL_ORDER[a] || 0) - (MODE_IDEAL_ORDER[b] || 0))
+  const categories = dataset.map((item) => item.key)
   const colors = categories.map((category) => MODE_COLORS[category] || '#ccc')
 
   if (categories.length === 0) {

@@ -8,10 +8,7 @@ export async function mergeImageWithLogo(
   logoSrc: string,
   options: MergeImageWithLogoOptions = {},
 ): Promise<string> {
-  const [baseImage, logoImage] = await Promise.all([
-    loadImage(baseImageSrc),
-    loadImage(logoSrc),
-  ])
+  const [baseImage, logoImage] = await Promise.all([loadImage(baseImageSrc), loadImage(logoSrc)])
 
   const canvas = document.createElement('canvas')
   canvas.width = baseImage.naturalWidth || baseImage.width
@@ -30,18 +27,11 @@ export async function mergeImageWithLogo(
   const logoWidthRatio = options.logoWidthRatio ?? 0.12
   const logoWidth = Math.round(canvas.width * logoWidthRatio)
   const logoHeight = Math.round(
-    ((logoImage.naturalHeight || logoImage.height) /
-      (logoImage.naturalWidth || logoImage.width)) *
+    ((logoImage.naturalHeight || logoImage.height) / (logoImage.naturalWidth || logoImage.width)) *
       logoWidth,
   )
 
-  ctx.drawImage(
-    logoImage,
-    canvas.width - logoWidth - padding,
-    padding,
-    logoWidth,
-    logoHeight,
-  )
+  ctx.drawImage(logoImage, canvas.width - logoWidth - padding, padding, logoWidth, logoHeight)
 
   return canvas.toDataURL('image/png')
 }

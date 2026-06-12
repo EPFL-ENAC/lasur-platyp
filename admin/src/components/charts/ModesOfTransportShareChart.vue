@@ -147,11 +147,13 @@ function initChartOptions() {
     return
   }
 
-  const mrmtDataset = Object.entries(MRMT_VALUES).map(([key, value]) => ({
-    key,
-    name: keyLabel(key),
-    value,
-  })).sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
+  const mrmtDataset = Object.entries(MRMT_VALUES)
+    .map(([key, value]) => ({
+      key,
+      name: keyLabel(key),
+      value,
+    }))
+    .sort((a, b) => (MODE_IDEAL_ORDER[a.key] || 0) - (MODE_IDEAL_ORDER[b.key] || 0))
 
   const mrmtColors = mrmtDataset.map((item) => MODE_COLORS[item.key] || '#ccc')
 

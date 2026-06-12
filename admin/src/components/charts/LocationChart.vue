@@ -63,8 +63,7 @@
     <div v-if="!hasData" class="text-subtitle1 text-foreground text-center">
       {{ t('stats.no_data') }}
     </div>
-    <div v-else class="with-data">
-    </div>
+    <div v-else class="with-data"></div>
   </div>
 </template>
 <script setup lang="ts">
@@ -177,7 +176,7 @@ async function captureRawImage(): Promise<string | null> {
 
     const scaleX = overlayCanvas.width / wrapperRect.width
     const scaleY = overlayCanvas.height / wrapperRect.height
-    
+
     ctx.drawImage(
       mapImage,
       mapOffsetX * scaleX,
@@ -185,7 +184,7 @@ async function captureRawImage(): Promise<string | null> {
       mapRect.width * scaleX,
       mapRect.height * scaleY,
     )
-    
+
     // Draw title + legend + other DOM on top
     ctx.drawImage(overlayCanvas, 0, 0)
 
@@ -211,10 +210,8 @@ const id = ref(`location-heatmap-${getRandomId()}`)
 
 const hasData = computed(() => {
   const hasHeatmapData =
-    !!props.homeLocationsHeatmap &&
-    Object.keys(props.homeLocationsHeatmap).length > 0
-  const hasWorkplaceData =
-    !!props.workplaceLocations && props.workplaceLocations.length > 0
+    !!props.homeLocationsHeatmap && Object.keys(props.homeLocationsHeatmap).length > 0
+  const hasWorkplaceData = !!props.workplaceLocations && props.workplaceLocations.length > 0
 
   return hasHeatmapData || hasWorkplaceData
 })
@@ -233,7 +230,6 @@ const max = computed(() => {
 .wrapper {
   width: 100%;
 }
-
 
 .title {
   font-size: 16px;

@@ -370,10 +370,14 @@ Some environmental impacts have also been calculated:
         title: 'Mobility potentials',
         description: `This section presents the personalized recommendations suggested to participants. Mobilyse indicates which modes are most likely to suit employees based on their habits, constraints, preferences, residential and work location… Some graphs also illustrate the potential gains in terms of impact on greenhouse gas emissions and health, in the event that all participants adopt the recommendations formulated by mobilyse.`,
         insights: {
-          most_potential: 'The mode with the highest potential for users is: **{mode}** (recommended to **{percentage}%** of respondents)',
-          biggest_emission_reduction: "The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction} {unit}**, i.e. **{percentage}%** of the total potential gain for responding employees.",
-          biggest_emission_reduction_extrapolation: "Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction} {unit}** per year.",
-          biggest_physical_activity_gain: "The mode of transport that most increases employees' physical activity is: **{mode}**. This scenario enables **{collaborators_count}** additional employees to reach the WHO-recommended daily level of physical expenditure (150 kcal/day/person)."
+          most_potential:
+            'The mode with the highest potential for users is: **{mode}** (recommended to **{percentage}%** of respondents)',
+          biggest_emission_reduction:
+            'The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction} {unit}**, i.e. **{percentage}%** of the total potential gain for responding employees.',
+          biggest_emission_reduction_extrapolation:
+            'Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction} {unit}** per year.',
+          biggest_physical_activity_gain:
+            "The mode of transport that most increases employees' physical activity is: **{mode}**. This scenario enables **{collaborators_count}** additional employees to reach the WHO-recommended daily level of physical expenditure (150 kcal/day/person).",
         },
       },
       behavioural_changes: {
@@ -411,8 +415,8 @@ Some environmental impacts have also been calculated:
         none: 'No constraint',
       },
       texts: {
-        other: 'Other constraints are available in detail if you download the whole dataset.'
-      }
+        other: 'Other constraints are available in detail if you download the whole dataset.',
+      },
     },
     locationsHeatmap: {
       title: 'Geographical distribution of home and workplace locations',
@@ -431,23 +435,24 @@ Some environmental impacts have also been calculated:
     reco_dt2: {
       title: 'Potential modal split',
       labels: {
-        ...transportationModes
-      }
+        ...transportationModes,
+      },
     },
     reco_pros: {
       title: 'Recommendations (professional)',
       labels: {
-        ...transportationModes
-      }
+        ...transportationModes,
+      },
     },
     freq_mod: {
       title: 'Modal split',
       title_mrmt: 'Reference data (Geneva canton)',
       labels: {
-        ...transportationModes
+        ...transportationModes,
       },
       texts: {
-        default: 'The mode Car is the most used in the Geneva canton ([Microrecensement Mobilité et Transportsw, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
+        default:
+          'The mode Car is the most used in the Geneva canton ([Microrecensement Mobilité et Transports, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
           'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.',
       },
@@ -470,7 +475,7 @@ Some environmental impacts have also been calculated:
       xaxis: 'Journeys per year',
       labels: {
         ...transportationModes,
-        ...emissionsLabels
+        ...emissionsLabels,
       },
       texts: {
         specific:
@@ -483,8 +488,8 @@ Some environmental impacts have also been calculated:
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
-          ...transportationModes,
-          ...emissionsLabels
+        ...transportationModes,
+        ...emissionsLabels,
       },
       texts: {
         default:
@@ -498,7 +503,7 @@ Some environmental impacts have also been calculated:
       series: 'Potential reduction',
       labels: {
         ...transportationModes,
-        ...emissionsLabels
+        ...emissionsLabels,
       },
       texts: {
         default:
@@ -521,12 +526,12 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_reductions_mod_pro: {
-      title: 'Potential reductions in professional travel emissions ',
+      title: 'Potential reductions in professional travel emissions',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
       labels: {
-        ...emissionsLabels
+        ...emissionsLabels,
       },
       texts: {
         default:
@@ -554,7 +559,7 @@ Some environmental impacts have also been calculated:
       },
     },
     energy_journey: {
-      title_current: 'Potential daily energy expenditures',
+      title_current: 'Average daily energy expenditure during travel',
       title_reco: 'Potential Physical Activity Diagram following Recommendations',
       title_share: 'Transport modes with highest potential energy gains',
       yaxis: 'Energy expenditure (kcal)',
@@ -566,8 +571,7 @@ Some environmental impacts have also been calculated:
           'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person, equivalent to 37 minutes of walking, 23 minutes of fitness, or 14 minutes of football per day.',
         specific_current:
           'Currently, participants spend an average of {energy} kcal/day/person on their home-work travel.',
-        specific_reco:
-          `If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person (equivalent to {yoga_min} minutes of yoga per person per day).
+        specific_reco: `If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person (equivalent to {yoga_min} minutes of yoga per person per day).
           Moreover, {count} more people will exceed the daily physical activity recommendations of the WHO, going from {percent_current}% to {percent_potential}%.`,
         default_share:
           'This chart shows which modes of transport have the most potential for increased physical activity.',
@@ -584,7 +588,7 @@ Some environmental impacts have also been calculated:
         environment: 'Environmental improvements',
         autres: 'Other',
         total: 'Total',
-        
+
         ...transportationModes,
         allModes: 'All modes',
       },
@@ -643,7 +647,7 @@ Some environmental impacts have also been calculated:
     },
   },
   transportation_modes: {
-    ...transportationModes
+    ...transportationModes,
   },
   record: {
     reco: 'Recommended mode of transport: {mode}',
@@ -657,7 +661,7 @@ Some environmental impacts have also been calculated:
     },
     pois: 'Points of interest',
     mode: {
-      ...transportationModes
+      ...transportationModes,
     },
     categories: {
       food: 'Food',

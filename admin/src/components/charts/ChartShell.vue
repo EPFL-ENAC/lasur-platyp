@@ -16,10 +16,7 @@
         <slot />
       </div>
 
-      <div
-        v-else
-        class="chart-shell__empty column items-center justify-center q-px-md"
-      >
+      <div v-else class="chart-shell__empty column items-center justify-center q-px-md">
         <div v-if="noDataTitle" class="text-h6 text-center">{{ noDataTitle }}</div>
         <div class="text-subtitle1 text-foreground text-center">
           {{ noDataText }}
@@ -73,12 +70,7 @@ const containerStyle = computed<CSSProperties>(() => ({
 
 async function handleExport() {
   console.log('Exporting chart...') // Debug log
-  if (
-    exporting.value ||
-    props.loading ||
-    !props.hasData ||
-    !props.captureRawImage
-  ) {
+  if (exporting.value || props.loading || !props.hasData || !props.captureRawImage) {
     return
   }
 
