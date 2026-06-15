@@ -39,6 +39,7 @@ export default {
     search_or_select_option: 'Search or select an option',
     yes: 'Yes',
     no: 'No',
+    multiple_options: 'Multiple options possible',
     workplace: 'Your usual place of work',
     workplace_option: {
       other: 'Other workplace (specify)',
@@ -48,7 +49,7 @@ export default {
       'This confidential information will only be used to calculate your mobility options for your home-work commute.',
     travel_time: 'What is your average travel time from your home to your workplace?',
     travel_time_minutes: 'minutes (one way)',
-    constraints: 'Do you experience any potential constraints related to your daily mobility?',
+    constraints: 'Do you experience any potential constraints related to your daily mobility, several times per week?',
     constraints_option: {
       dependent: 'Accompanying children or dependent persons',
       heavy: 'Transporting heavy or bulky equipment',
@@ -154,13 +155,15 @@ export default {
     },
     change_other_levers_specify: 'Please specify what other measures would help you',
     email: {
-      title: 'Longitudinal following of participants (optional)',
+      title: 'Follow-up of participants over time (optional)',
       text: `By providing your email address, you enable your organisation to monitor how mobility practices and preferences evolve over time. When Mobilyse is used again in the future, this helps identify which mobility measures are effective and which could be improved, allowing your employer to better support your mobility needs.
 
 **Important:** your email address is instantly encrypted and never stored by Mobilyse. Your employer cannot, under any circumstances, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
       label: 'Your email address (optional)',
     },
     final: 'Your answers have been registered, thank you for your participation!',
+    final_subtitle: 'Your contribution helps us build a more sustainable future.',
+    final_car: 'By the way, do you know the real cost of your car? Find out [here](https://comob.dev.stimul.io/) in 3 questions',
     final_rewards: {
       title: 'The organisation offers rewards for answering this survey',
       download: 'Download attestation of participation',

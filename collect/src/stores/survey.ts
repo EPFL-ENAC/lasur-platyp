@@ -15,9 +15,9 @@ export const useSurvey = defineStore(
   () => {
     const stepNames = [
       'agreement',
-      'age_class',
       'employment',
-      'places',
+      'workplace',
+      'origin_places',
       'travel_time',
       'constraints',
       'equipments',
@@ -26,6 +26,7 @@ export const useSurvey = defineStore(
       'freq_mod_pro',
       'importance',
       'needs',
+      'age_class',
       'recommendations',
       'change',
       'change2',
@@ -185,30 +186,28 @@ export const useSurvey = defineStore(
       return !['car', 'moto'].includes(mode)
     }
 
-    function isRecommendationInUse() {
+    function isRecommendationAtIndexInUse(index: number) {
       if (
         recommendation.value.reco &&
         recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length
+        recommendation.value.reco.reco_dt2.length > index
       ) {
         const freqMods = getFreqMods()
-        const mode = recommendation.value.reco.reco_dt2[0]
-        return mode !== undefined && freqMods[mode] !== undefined && freqMods[mode] > 0
+        const mode = recommendation.value.reco.reco_dt2[index]
+        if (!mode) return false
+
+        const translatedMode = RecoToMode[mode] || mode
+        return freqMods[translatedMode] !== undefined && freqMods[translatedMode] > 0
       }
       return false
     }
 
+    function isRecommendationInUse() {
+      return isRecommendationAtIndexInUse(0)
+    }
+
     function isRecommendation2InUse() {
-      if (
-        recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length > 1
-      ) {
-        const freqMods = getFreqMods()
-        const mode = recommendation.value.reco.reco_dt2[1]
-        return mode !== undefined && freqMods[mode] !== undefined && freqMods[mode] > 0
-      }
-      return false
+      return isRecommendationAtIndexInUse(1)
     }
 
     /**

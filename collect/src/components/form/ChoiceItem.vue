@@ -5,6 +5,7 @@
       :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`"
     />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
+    <div v-if="multiple" class="text-h6">{{ t('form.multiple_options') }}</div>
     <div class="q-mt-lg">
       <div :class="col ? 'row q-col-gutter-md' : ''">
         <template v-for="(group, idx) in optionGroups" :key="idx">
@@ -19,6 +20,12 @@
                   class="rounded-borders q-mb-md"
                   @click="onOption(option)"
                 >
+                  <q-item-section avatar>
+                    <q-icon
+                      :name="iconSet[isSelected(option) ? 1 : 0]"
+                      :color="isSelected(option) ? 'secondary' : 'primary'"
+                    />
+                  </q-item-section>
                   <q-item-section>
                     <q-item-label class="text-h4" :class="optionLabelClass">{{
                       option.label
@@ -55,6 +62,15 @@ interface Props {
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
+
+const { t } = useI18n()
+
+const iconSet = computed(() => {
+  if (props.multiple) {
+    return ['check_box_outline_blank', 'check_box']
+  }
+  return ['radio_button_unchecked', 'radio_button_checked']
+})
 
 const selected = computed(() => {
   if (props.multiple) {

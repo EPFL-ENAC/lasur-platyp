@@ -18,9 +18,12 @@
     <div v-if="survey.stepName === 'employment'">
       <EmploymentPanel />
     </div>
-    <div v-if="survey.stepName === 'places'">
+    <div v-if="survey.stepName === 'workplace'">
       <div class="text-h4 text-bold">{{ t('form.workplace') }}</div>
-      <PlacesPanel />
+      <WorkplacePanel />
+    </div>
+    <div v-if="survey.stepName === 'origin_places'">
+      <OriginPlacePanel />
     </div>
     <div v-if="survey.stepName === 'travel_time'">
       <TravelTimePanel />
@@ -148,7 +151,8 @@ import SectionItem from 'src/components/form/SectionItem.vue'
 import AgreementPanel from 'src/components/form/steps/AgreementPanel.vue'
 import AgePanel from 'src/components/form/steps/AgePanel.vue'
 import EmploymentPanel from 'src/components/form/steps/EmploymentPanel.vue'
-import PlacesPanel from 'src/components/form/steps/PlacesPanel.vue'
+import OriginPlacePanel from 'src/components/form/steps/OriginPlacePanel.vue'
+import WorkplacePanel from 'src/components/form/steps/WorkplacePanel.vue'
 import EquipmentsPanel from 'src/components/form/steps/EquipmentsPanel.vue'
 import ConstraintsPanel from 'src/components/form/steps/ConstraintsPanel.vue'
 import JourneysPanel from 'src/components/form/steps/JourneysPanel.vue'
@@ -197,7 +201,7 @@ function nextStep() {
       return
     }
   }
-  if (survey.stepName === 'places') {
+  if (survey.stepName === 'workplace') {
     if (
       survey.record.data.workplace?.lat === undefined ||
       survey.record.data.workplace?.lat === 0
@@ -205,6 +209,8 @@ function nextStep() {
       notifyError(t('form.error.workplace'))
       return
     }
+  }
+  if (survey.stepName === 'origin_places') {
     if (survey.record.data.origin?.lat === undefined || survey.record.data.origin?.lat === 0) {
       notifyError(t('form.error.origin'))
       return
@@ -303,7 +309,7 @@ function prevStep() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
   if (
-    ['places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(survey.stepName || '')
+    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(survey.stepName || '')
   ) {
     // ignore because of map dragging conflict
     return

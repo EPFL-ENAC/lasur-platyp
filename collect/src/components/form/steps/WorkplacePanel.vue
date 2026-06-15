@@ -10,17 +10,10 @@
       class="q-mb-lg"
     />
     <LocationItem
-      v-if="selectedWorkplace === OTHER_WORKPLACE_OPTION"
+      :readonly="selectedWorkplace !== OTHER_WORKPLACE_OPTION"
       map-id="workplace-map"
       v-model="survey.record.data.workplace"
       class="q-mb-xl"
-    />
-    <LocationItem
-      map-id="origin-map"
-      :label="t('form.origin')"
-      :hint="t('form.origin_hint')"
-      v-model="survey.record.data.origin"
-      class="q-mt-xl"
     />
   </div>
 </template>
@@ -36,7 +29,13 @@ const collector = useCollector()
 
 const OTHER_WORKPLACE_OPTION = '_other'
 
-const selectedWorkplace = ref<string>(survey.record.data.workplace?.name || '')
+const selectedWorkplace = ref<string>(initialWorkplace())
+
+function initialWorkplace() {
+  if (survey.record.data.workplace?.name) return survey.record.data.workplace.name
+  if (collector.info?.open_workplaces) return OTHER_WORKPLACE_OPTION
+  return ''
+}
 
 const workplaceOptions = computed<Option[]>(() => {
   const options = (

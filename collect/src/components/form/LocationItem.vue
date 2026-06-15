@@ -2,138 +2,88 @@
   <div>
     <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
-    <div class="q-mt-lg">
-      <div class="text-subtitle1">
-        {{ t('lookup_address_or_select_on_map') }}
-      </div>
-      <div class="row q-mb-sm">
-        <div class="col-auto q-mt-xs">
-          <q-btn color="primary" icon="search" @click="showInput = !showInput" />
-        </div>
-        <div class="col">
-          <transition name="fade">
-            <q-input
-              v-if="showInput"
-              v-model="addressLocation.address"
-              type="text"
-              class="on-right on-left"
-              color="field"
-              bg-color="field"
-              outlined
-              rounded
-              dense
-              :placeholder="t('type_enter_to_lookup_address')"
-              @keyup.enter="onSuggestAddress"
-              @update:model-value="onUpdate"
-              :loading="loading"
-              lazy-rules
-              style="min-width: 250px"
-            >
-              <q-menu v-model="showSuggestions" no-parent-event no-focus auto-close>
-                <q-list style="min-width: 100px">
-                  <q-item
-                    clickable
-                    v-close-popup
-                    v-for="sugg in suggestions"
-                    :key="sugg.value"
-                    @click="onSuggestionSelected(sugg)"
-                  >
-                    <q-item-section>{{ sugg.value }}</q-item-section>
-                  </q-item>
-                  <q-item v-if="suggestions.length === 0">
-                    <q-item-section class="text-grey">
-                      {{ t('no_results') }}
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-input>
-          </transition>
-        </div>
-        <q-btn
-          v-if="hasLocation"
-          size="sm"
-          color="primary"
-          icon="delete"
-          :title="formatCoordinates(addressLocation.lat, addressLocation.lon)"
-          @click="onRemoveLocation"
-          class="q-mt-xs"
-        />
-      </div>
-    </div>
+
+    <AddressInput v-model="addressLocation" :readonly="props.readonly" />
+
     <div>
-      <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapinput" />
+      <div
+        :id="mapId"
+        :style="`--t-height: ${height || '400px'}`"
+        class="mapinput"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { geocoderApi, toAddress } from 'src/utils/geocoder'
-import type { Feature, Point } from 'geojson'
 import type { AddressLocation } from 'src/models'
-import { formatCoordinates } from 'src/utils/numbers'
 import {
   AttributionControl,
   FullscreenControl,
   Map,
   Marker,
   NavigationControl,
-  //type IControl,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
-
-const { t } = useI18n()
+import AddressInput from './AddressInput.vue'
 
 interface Props {
-  modelValue: AddressLocation | undefined
   label?: string
   hint?: string
   height?: string
   center?: [number, number]
   zoom?: number
   mapId: string
-}
-const props = defineProps<Props>()
-const emit = defineEmits(['update:modelValue'])
-
-interface Suggestion {
-  value: string
-  feature: Feature
+  readonly?: boolean
 }
 
-const addressLocation = ref<AddressLocation>({ address: '' })
-const suggestions = ref<Suggestion[]>([])
-const showInput = ref(false)
-const showSuggestions = ref(false)
-const loading = ref(false)
+const props = withDefaults(defineProps<Props>(), {
+  readonly: false,
+})
+
+const addressLocation = defineModel<AddressLocation | undefined>({
+  default: () => ({ address: '' }),
+})
+
 const map = ref<Map>()
 let marker: Marker | undefined
 
 const defaultCenter: [number, number] = [6.142873, 46.205066]
 
-const hasLocation = computed(() => addressLocation.value.lat && addressLocation.value.lon)
+onMounted(() => {
+  initMap()
+})
 
-onMounted(onInit)
+onBeforeUnmount(() => {
+  marker?.remove()
+  map.value?.remove()
+})
 
-function onInit() {
-  addressLocation.value = props.modelValue || { address: '' }
-  suggestions.value = []
+function initMap() {
+  const currentValue = addressLocation.value
+
   const center: [number, number] = props.center
     ? [props.center[0], props.center[1]]
-    : props.modelValue
-      ? [props.modelValue.lon || defaultCenter[0], props.modelValue.lat || defaultCenter[1]]
+    : currentValue
+      ? [
+          currentValue.lon || defaultCenter[0],
+          currentValue.lat || defaultCenter[1],
+        ]
       : defaultCenter
+
   map.value = new Map({
     container: props.mapId,
-    center: center,
-    style: style,
+    center,
+    style,
     trackResize: true,
     zoom: props.zoom || 14,
     attributionControl: false,
   })
+
   map.value.addControl(new NavigationControl({}))
   map.value.addControl(new FullscreenControl({}))
+
   map.value.addControl(
     new AttributionControl({
       compact: true,
@@ -141,99 +91,68 @@ function onInit() {
         '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
     }),
   )
-  if (props.modelValue?.lat && props.modelValue?.lon) {
-    marker = new Marker().setLngLat([props.modelValue.lon, props.modelValue.lat])
+
+  if (currentValue?.lat != null && currentValue?.lon != null) {
+    marker = new Marker().setLngLat([currentValue.lon, currentValue.lat])
     marker.addTo(map.value)
   }
-  map.value.on('click', (e) => {
-    addressLocation.value.lat = e.lngLat.lat
-    addressLocation.value.lon = e.lngLat.lng
-    addressLocation.value.address = undefined
-    onUpdateMarker()
-    onUpdate()
-  })
+
+  if (!props.readonly) {
+    map.value.on('click', (e) => {
+      addressLocation.value = {
+        ...(addressLocation.value || { address: '' }),
+        lat: e.lngLat.lat,
+        lon: e.lngLat.lng,
+        address: undefined,
+      }
+
+      onUpdateMarker()
+    })
+  }
 }
 
-function onUpdateMarker() {
+function onUpdateMarker(flyTo = true) {
   if (!map.value) {
     return
   }
+
   if (marker) {
     marker.remove()
+    marker = undefined
   }
-  if (addressLocation.value.lat && addressLocation.value.lon) {
-    marker = new Marker().setLngLat([addressLocation.value.lon, addressLocation.value.lat])
+
+  if (
+    addressLocation.value?.lat != null &&
+    addressLocation.value?.lon != null
+  ) {
+    marker = new Marker().setLngLat([
+      addressLocation.value.lon,
+      addressLocation.value.lat,
+    ])
     marker.addTo(map.value)
-    map.value.flyTo({
-      center: [addressLocation.value.lon, addressLocation.value.lat], // New center
-      zoom: map.value.getZoom(),
-      speed: 2, // Control the animation speed (default: 1.2)
-      curve: 1, // Control the smoothness of the curve
-      essential: true, // Makes it non-disruptive for screen readers
-    })
-    showInput.value = false
+
+    if (flyTo) {
+      map.value.flyTo({
+        center: [addressLocation.value.lon, addressLocation.value.lat],
+        zoom: map.value.getZoom(),
+        speed: 2,
+        curve: 1,
+        essential: true,
+      })
+    }
   }
 }
 
-function onUpdate() {
-  emit('update:modelValue', addressLocation.value)
-}
-
-function onSuggestAddress() {
-  if (addressLocation.value?.address === undefined || addressLocation.value.address.length < 3) {
-    return
-  }
-  loading.value = true
-  showSuggestions.value = false
-  suggestions.value = []
-  geocoderApi
-    .forwardGeocode({ query: addressLocation.value.address, limit: 10 })
-    .then((collection) => {
-      if (collection && collection.features && collection.features.length) {
-        suggestions.value = collection.features
-          .filter((feature) => feature.properties?.address)
-          .map((feature) => ({ value: toAddress(feature), feature }))
-      }
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-    .finally(() => {
-      showSuggestions.value = true
-      loading.value = false
-    })
-}
-
-function onSuggestionSelected(suggestion: Suggestion) {
-  addressLocation.value.address = suggestion.value
-  showSuggestions.value = false
-
-  addressLocation.value.lat = (suggestion.feature.geometry as Point).coordinates[1]
-  addressLocation.value.lon = (suggestion.feature.geometry as Point).coordinates[0]
-
-  onUpdateMarker()
-  onUpdate()
-}
-
-function onRemoveLocation() {
-  addressLocation.value.lat = undefined
-  addressLocation.value.lon = undefined
-  addressLocation.value.address = ''
-  onUpdateMarker()
-}
+watch(
+  () => [addressLocation.value?.lat, addressLocation.value?.lon],
+  () => {
+    onUpdateMarker(true)
+  },
+)
 </script>
 
 <style scoped>
 .mapinput {
   height: var(--t-height);
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0; /* Start or end with opacity 0 for the fade effect */
 }
 </style>

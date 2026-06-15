@@ -10,9 +10,9 @@ export default {
     custom_actions: 'Mesures spécifiques',
     custom_actions_hint:
       'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des collaborateur·trice·s. Ces mesures sont regroupées par mode de transport ou sont globales.',
-    administrators: 'Administrateurs',
+    administrators: 'Administrateur·trice',
     administrators_hint:
-      "L'adresse email des administrateurs pour cette organisation (tapez Entrée pour ajouter une entrée).",
+      "L'adresse email des administrateur·trice pour cette organisation (tapez Entrée pour ajouter une entrée).",
     mobility_advisors: 'Conseiller·ère mobilité',
     mobility_advisors_hint:
       "L'adresse email des conseiller·ère·s mobilité pour cette organisation (tapez Entrée pour ajouter une entrée).",
@@ -30,7 +30,7 @@ export default {
       'Je ne souhaite pas que la Fondation Modus cite le nom de mon organisation comme utilisateur de mobilyse',
     your_role: 'Votre rôle',
     roles: {
-      admin: 'Administrateur',
+      admin: 'Administrateur·trice',
       mobility_advisor: 'Conseiller·ère mobilité',
       none: 'Aucun',
     },
@@ -212,8 +212,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     },
   },
   role: {
-    'platyp-user': 'Utilisateur',
-    'platyp-admin': 'Administrateur',
+    'platyp-user': 'Utilisateur·trice',
+    'platyp-admin': 'Administrateur·trice',
   },
   participant: {
     identifier: 'Identifiant',
@@ -1008,7 +1008,7 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
   address_input_hint: "Tapez Entrée pour rechercher l'adresse.",
   address: 'Adresse',
   administration: 'Administration',
-  administrator: 'Administrateur',
+  administrator: 'Administrateur·trice',
   all: 'Tous',
   campaigns: 'Campagnes',
   comments: 'Commentaires',
@@ -1071,7 +1071,7 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   password_hint:
     'Le mot de passe doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.',
   password_temp_hint:
-    "Mot de passe temporaire que l'utilisateur mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
+    "Mot de passe temporaire que l'utilisateur·trice mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
   password: 'Mot de passe',
   recommendations: 'recommandations',
   remove_campaign_text:
@@ -1085,8 +1085,8 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   remove_participant: 'Supprimer le participant',
   remove_record_text: "Êtes-vous sûr de vouloir supprimer l'enregistrement '{token}'?",
   remove_record: "Supprimer l'enregistrement",
-  remove_user_text: "Êtes-vous sûr de vouloir supprimer l'utilisateur '{name}'?",
-  remove_user: "Supprimer l'utilisateur",
+  remove_user_text: "Êtes-vous sûr de vouloir supprimer l'utilisateur·trice '{name}'?",
+  remove_user: "Supprimer l'utilisateur·trice",
   remove: 'Supprimer',
   report: 'Rapport',
   report_global: 'Rapport global',

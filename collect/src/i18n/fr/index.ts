@@ -38,6 +38,7 @@ export default {
     search_or_select_option: 'Rechercher ou sélectionner une option',
     yes: 'Oui',
     no: 'Non',
+    multiple_options: 'Plusieurs réponses possibles',
     workplace: 'Votre lieu de travail habituel',
     workplace_option: {
       other: 'Autre lieu de travail (à préciser)',
@@ -47,7 +48,7 @@ export default {
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',
     travel_time: 'Combien de temps mettez-vous environ pour aller au travail ?',
     travel_time_minutes: 'minutes (aller)',
-    constraints: 'Rencontrez-vous d’éventuelles contraintes liées à vos déplacements quotidiens ?',
+    constraints: 'Rencontrez-vous d’éventuelles contraintes liées à vos déplacements quotidiens, plusieurs fois dans la semaine ?',
     constraints_option: {
       dependent: 'Accompagnement d’enfants ou de personnes dépendantes',
       heavy: 'Transport de matériel lourd ou encombrant',
@@ -162,13 +163,15 @@ export default {
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
     email: {
-      title: 'Suivi longitudinal des participant·e·s (optionnel)',
+      title: 'Suivi dans le temps des participant·e·s (optionnel)',
       text: `En renseignant votre adresse e-mail, vous permettez à votre organisation de suivre l’évolution des pratiques et des préférences en matière de mobilité au fil du temps. Lors d’une future utilisation de Mobilyse, cela contribuera à identifier les mesures de mobilité qui fonctionnent bien et celles qui peuvent être améliorées, afin que votre employeur puisse mieux soutenir vos besoins.
 
 **Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par Mobilyse. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
       label: 'Votre adresse email (optionnelle)',
     },
     final: 'Vos réponses ont été enregistrées, merci de votre participation !',
+    final_subtitle: 'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
+    final_car: 'Au fait, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
     final_rewards: {
       title: "L'organisation offre des récompenses pour les participants à ce questionnaire",
       download: 'Télécharger votre attestation de participation',

@@ -67,14 +67,19 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         _check_campaign(campaign)
         # this is a campaign's slug then initialize a new record
         wp = get_first_workplace(campaign)
-        data = {
-            "workplace": {
-                "name": wp.name,
-                "address": wp.address,
-                "lon": wp.lon,
-                "lat": wp.lat
+        if wp is None:
+            data = {
+                "workplace": None
             }
-        }
+        else:
+            data = {
+                "workplace": {
+                    "name": wp.name,
+                    "address": wp.address,
+                    "lon": wp.lon,
+                    "lat": wp.lat
+                }
+            }
         return RecordDraft(token=secrets.token_urlsafe(16), data=data)
 
     # 2. this is a participant's token: try to get the record in case it was already saved
@@ -98,12 +103,16 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
     _check_campaign(campaign)
     wp = get_first_workplace(campaign)
     data = participant.data
-    data["workplace"] = {
-        "name": wp.name,
-        "address": wp.address,
-        "lon": wp.lon,
-        "lat": wp.lat
-    }
+    if wp is not None:
+        data["workplace"] = {
+            "name": wp.name,
+            "address": wp.address,
+            "lon": wp.lon,
+            "lat": wp.lat
+        }
+    else:
+        data["workplace"] = None
+    
     return RecordDraft(token=tokenOrSlug, data=data)
 
 
@@ -224,20 +233,20 @@ def _check_campaign(campaign: Campaign):
             status_code=400, detail="Campaign has already ended")
 
 
-def get_first_workplace(campaign: Campaign) -> Workplace:
+def get_first_workplace(campaign: Campaign) -> Workplace | None:
     """Get the first workplace of a campaign
 
     Args:
-        campaign (Campaign): The campaign
+        campaign (Campaign): The campaign. Can be None if there are no workplaces and open_workplaces is true.
 
     Raises:
-        ValueError: if no workplace is defined
+        ValueError: if no workplace is defined and open_workplaces is false
 
     Returns:
         Workplace: The first workplace
     """
     firstWorkplace = campaign.workplaces[0] if campaign.workplaces else None
-    if firstWorkplace is None:
+    if firstWorkplace is None and not campaign.open_workplaces:
         raise HTTPException(
             status_code=400, detail="Invalid campaign: no workplaces defined")
     return firstWorkplace
