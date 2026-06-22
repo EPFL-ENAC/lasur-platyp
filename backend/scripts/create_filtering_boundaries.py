@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Create a unified administrative boundaries GeoJSON from OSM extracts.
+"""Create district-sized GeoJSON from OSM extracts for participant filtering.
 
-Combines French communes (admin_level7) from Franche-Comte and Rhone-Alpes
+Combines French arrondissements (admin_level7) from Franche-Comte and Rhone-Alpes
 with Swiss districts (admin_level6) and districtless cantons (admin_level4).
 """
 
@@ -36,14 +36,14 @@ def read_osm_extract(path: Path, layer: str = LAYER_NAME) -> gpd.GeoDataFrame:
     return gpd.read_file(path, layer=layer)
 
 
-def get_france_communes(france_paths: list[Path]) -> gpd.GeoDataFrame:
-    """Extract admin_level7 (communes) from French OSM extracts."""
+def get_france_arrondissements(france_paths: list[Path]) -> gpd.GeoDataFrame:
+    """Extract admin_level7 (arrondissements) from French OSM extracts."""
     frames: list[gpd.GeoDataFrame] = []
     for path in france_paths:
         gdf = read_osm_extract(path)
-        communes = gdf[gdf.fclass == "admin_level7"]
-        print(f"  {path.name}: {len(communes)} communes")
-        frames.append(communes)
+        arrondissements = gdf[gdf.fclass == "admin_level7"]
+        print(f"  {path.name}: {len(arrondissements)} arrondissements")
+        frames.append(arrondissements)
     return pd.concat(frames, ignore_index=True)
 
 
@@ -72,14 +72,14 @@ def main() -> None:
 
     ch_path = data_dir / "switzerland" / "switzerland.gpkg"
 
-    print("Loading French communes...")
-    france = get_france_communes(france_paths)
+    print("Loading French arrondissements...")
+    france = get_france_arrondissements(france_paths)
 
     print("Loading Swiss areas...")
     switzerland = get_switzerland_areas(ch_path)
 
     output = pd.concat([france, switzerland], ignore_index=True)
-    output_path = data_dir / "administrative_boundaries.geojson"
+    output_path = data_dir / "filtering_boundaries.geojson"
 
     print(f"\nTotal features: {len(output)}")
     print(f"Writing to {output_path}...")

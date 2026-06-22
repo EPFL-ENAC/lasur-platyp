@@ -41,8 +41,8 @@ download-france-osm:
 	wget -O data/france/rhone-alpes.gpkg.zip "https://download.geofabrik.de/europe/france/rhone-alpes-latest-free.gpkg.zip"
 	unzip data/france/rhone-alpes.gpkg.zip -d data/france/rhone-alpes
 
-generate-boundaries:
-	poetry run python scripts/create_administrative_areas.py
+generate-filtering-boundaries:
+	poetry run python scripts/create_filtering_boundaries.py
 
 generate-multilevel-boundaries:
 	poetry run python scripts/create_multilevel_boundaries.py
