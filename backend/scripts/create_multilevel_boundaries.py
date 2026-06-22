@@ -3,8 +3,6 @@
 Create unified GeoPackages for local, regional, and national boundaries.
 """
 
-import re
-import sys
 from pathlib import Path
 
 import geopandas as gpd
@@ -83,7 +81,8 @@ def extract_local_italian_boundaries(
     return pd.concat([it_va_municipalities, it_pi_municipalities], ignore_index=True)
 
 def extract_regional_boundaries(
-    nuts_df: gpd.GeoDataFrame
+    nuts_df: gpd.GeoDataFrame,
+    nuts_2021_df: gpd.GeoDataFrame
 ) -> gpd.GeoDataFrame:
     # Configure exclusions here
     EXCLUDED_NUTS3_IDS = {"FRY10", "FRY20", "FRY30", "FRY40", "FRY50"}  # FR overseas departments
@@ -109,6 +108,9 @@ def extract_regional_boundaries(
 
     regions = pd.concat([nuts3, nuts2], ignore_index=True).drop(columns=["NAME_LATN_CLEAN"], errors="ignore")
 
+    uk_nuts = nuts_2021_df[(nuts_2021_df["CNTR_CODE"] == "UK") & (nuts_2021_df["LEVL_CODE"] == 2)]
+    regions = pd.concat([regions, uk_nuts], ignore_index=True)
+
     regions = regions[["CNTR_CODE", "NAME_LATN", "geometry"]]
     # rename columns to "country, name, geometry"
     regions = regions.rename(columns={"CNTR_CODE": "country", "NAME_LATN": "name"})
@@ -126,20 +128,21 @@ def extract_national_boundaries(gbd_df: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 def main() -> None:
     data_dir = get_data_path()
     nuts_df = gpd.read_file(data_dir / "NUTS_RG_01M_2024_3035.gpkg")
+    nuts_2021_df = gpd.read_file(data_dir / "NUTS_RG_01M_2021_3035.gpkg")
     lau_df = gpd.read_file(data_dir / "LAU_RG_01M_2024_3035.gpkg")
     gbd_df = gpd.read_file(data_dir / "geoBoundariesCGAZ_ADM0.gpkg")
 
     print("Extracting local boundaries...")
     local_boundaries = extract_local_boundaries(nuts_df, lau_df)
-    local_boundaries.to_file(data_dir / "local_boundaries.gpkg", driver="GPKG")
+    local_boundaries.to_file(data_dir / "local_boundaries.geojson", driver="GeoJSON")
     
     print("Extracting regional boundaries...")
-    regional_boundaries = extract_regional_boundaries(nuts_df)
-    regional_boundaries.to_file(data_dir / "regional_boundaries.gpkg", driver="GPKG")
+    regional_boundaries = extract_regional_boundaries(nuts_df, nuts_2021_df)
+    regional_boundaries.to_file(data_dir / "regional_boundaries.geojson", driver="GeoJSON")
 
     print("Extracting national boundaries...")
     national_boundaries = extract_national_boundaries(gbd_df)
-    national_boundaries.to_file(data_dir / "national_boundaries.gpkg", driver="GPKG")
+    national_boundaries.to_file(data_dir / "national_boundaries.geojson", driver="GeoJSON")
 
 if __name__ == "__main__":
     main()

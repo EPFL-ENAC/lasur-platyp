@@ -29,6 +29,7 @@ download-world-boundaries:
 
 download-nuts-data:
 	wget -O "data/NUTS_RG_01M_2024_3035.gpkg" "https://gisco-services.ec.europa.eu/distribution/v2/nuts/gpkg/NUTS_RG_01M_2024_3035.gpkg"
+	wget -O "data/NUTS_RG_01M_2021_3035.gpkg" "https://gisco-services.ec.europa.eu/distribution/v2/nuts/gpkg/NUTS_RG_01M_2021_3035.gpkg"
 	wget -O "data/LAU_RG_01M_2024_3035.gpkg" "https://gisco-services.ec.europa.eu/distribution/v2/lau/gpkg/LAU_RG_01M_2024_3035.gpkg"
 
 download-switzerland-osm:
