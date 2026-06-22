@@ -5,6 +5,7 @@
     v-model="survey.record.data.constraints"
     multiple
     :option-label-class="q.screen.lt.sm ? 'text-h5' : ''"
+    @update:model-value="cleanupConstraints"
   />
   <q-input
     v-if="survey.record.data.constraints.includes('other')"
@@ -36,4 +37,10 @@ const constraintsOptions = computed<Option[]>(() => [
   { value: 'other', label: t('form.constraints_option.other') },
   { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
 ])
+
+function cleanupConstraints() {
+  if (!survey.record.data.constraints.includes('other')) {
+    survey.record.data.constraints_custom = ''
+  }
+}
 </script>
