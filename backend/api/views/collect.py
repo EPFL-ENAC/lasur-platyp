@@ -47,6 +47,7 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
         contact_name=campaign.contact_name if campaign.contact_name else company.contact_name,
         info_url=campaign.info_url if campaign.info_url else company.info_url,
         workplaces=campaign.workplaces,
+        with_professional_questions=campaign.with_professional_questions,
         open_workplaces=campaign.open_workplaces,
         rewards_message=campaign.rewards_message
     )

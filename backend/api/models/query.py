@@ -109,6 +109,7 @@ class CampaignInfo(BaseModel):
     info_url: Optional[str] = None
     workplaces: List[WorkplaceRead] = []
     open_workplaces: bool = False
+    with_professional_questions: bool = True
     rewards_message: Optional[Dict[str, str]] = None
 
 

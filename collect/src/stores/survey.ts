@@ -76,25 +76,25 @@ export const useSurvey = defineStore(
       return step.value > stepNames.indexOf(name) + 1
     }
 
-    function incStep() {
+    function incStep(withProfessionalQuestions = true) {
       step.value += 1
-      let skipped = skipIncSteps()
+      let skipped = skipIncSteps(withProfessionalQuestions)
       while (skipped) {
-        skipped = skipIncSteps()
+        skipped = skipIncSteps(withProfessionalQuestions)
       }
       timestamp.value = Date.now()
     }
 
-    function decStep() {
+    function decStep(withProfessionalQuestions = true) {
       step.value -= 1
-      let skipped = skipDecSteps()
+      let skipped = skipDecSteps(withProfessionalQuestions)
       while (skipped) {
-        skipped = skipDecSteps()
+        skipped = skipDecSteps(withProfessionalQuestions)
       }
       timestamp.value = Date.now()
     }
 
-    function skipIncSteps() {
+    function skipIncSteps(withProfessionalQuestions = true) {
       if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         record.value.data = {
           ...record.value.data,
@@ -103,15 +103,24 @@ export const useSurvey = defineStore(
         step.value += 1
         return true
       }
+      if (!withProfessionalQuestions && stepName.value === 'travel_pro') {
+        step.value += 1
+        return true
+      }
 
       return false
     }
 
-    function skipDecSteps() {
+    function skipDecSteps(withProfessionalQuestions = true) {
       if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         step.value -= 1
         return true
       }
+      if (!withProfessionalQuestions && stepName.value === 'travel_pro') {
+        step.value -= 1
+        return true
+      }
+
       return false
     }
 
