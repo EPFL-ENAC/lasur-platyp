@@ -3,15 +3,14 @@
     :height="height"
     :loading="props.loading"
     :has-data="hasData"
-    :show-info="total > 0"
-    :no-data-title="t('stats.travel_time.title')"
+    :show-info="!!hasOther"
+    :no-data-title="t('stats.constraints.title')"
     :option="option"
     :exportable="!!exportable"
   >
-    <p v-if="hasData && medianValue" class="q-mb-xs">
-      {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
-    </p>
-    <p>{{ t('stats.travel_time.texts.default') }}</p>
+    <div class="q-mt-md text-italic">
+      {{ t('stats.constraints.texts.other') }}
+    </div>
   </e-charts-shell>
 </template>
 
@@ -34,12 +33,12 @@ use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, G
 
 interface Props {
   frequencies?: Frequencies | null
-  loading?: boolean
   xaxis?: string
   yaxis?: string
   rangeStep?: number
   percent?: boolean
   height?: number
+  loading?: boolean
   exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -49,13 +48,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
-const medianValue = ref<number | null>(null)
 
 const hasData = computed(() => {
   if (!props.frequencies) {
     return false
   }
   return props.frequencies.data.length > 0
+})
+
+const hasOther = computed(() => {
+  return props.frequencies?.data.some((item) => item.value === 'other')
 })
 
 watch(
@@ -77,6 +79,17 @@ onMounted(() => {
   initChartOptions()
 })
 
+function keyLabel(key: string) {
+  if (key === 'null' || key === 'None') {
+    return 'N/A'
+  }
+  // is integer ?
+  if (Number.isInteger(Number(key))) {
+    return key
+  }
+  return t(`stats.constraints.labels.${key}`)
+}
+
 function initChartOptions() {
   option.value = {}
   total.value = 0
@@ -84,51 +97,13 @@ function initChartOptions() {
     return
   }
 
-  initValuesChartOptions(props.frequencies)
-}
+  const frequencies = props.frequencies as Frequencies
 
-function computeMedian(frequencies: Frequencies) {
-  const sortedData = frequencies.data.toSorted((a, b) => {
-    const valueA = Number(a.value)
-    const valueB = Number(b.value)
-    if (isNaN(valueA)) return 1
-    if (isNaN(valueB)) return -1
-    return valueA - valueB
-  })
-
-  const totalCount = sortedData.reduce((sum, item) => sum + item.count, 0)
-  if (totalCount === 0) return undefined
-
-  const isEven = totalCount % 2 === 0
-  const midPoint = totalCount / 2
-
-  let cumulativeCount = 0
-  let firstMiddleValue: number | null = null
-
-  for (let i = 0; i < sortedData.length; i++) {
-    const element = sortedData[i]!
-    cumulativeCount += element.count
-
-    const n = Number(element.value)
-    const v = isNaN(n) ? 0 : n
-
-    if (!isEven) {
-      if (cumulativeCount > midPoint) {
-        return v
-      }
-    } else {
-      if (cumulativeCount === midPoint) {
-        firstMiddleValue = v
-      } else if (cumulativeCount > midPoint) {
-        if (firstMiddleValue !== null) {
-          return (firstMiddleValue + v) / 2
-        }
-        return v
-      }
-    }
+  if (props.rangeStep) {
+    initValuesChartOptions(frequencies)
+  } else {
+    initLabelsChartOptions(frequencies)
   }
-
-  return undefined // In case something goes wrong
 }
 
 function initValuesChartOptions(frequencies: Frequencies) {
@@ -143,8 +118,6 @@ function initValuesChartOptions(frequencies: Frequencies) {
     0,
   )
   const categories = makeCategories(max, props.rangeStep)
-
-  medianValue.value = computeMedian(frequencies) ?? null
 
   // foreach category find count in frequencies
   const values =
@@ -164,7 +137,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.travel_time.title`),
+      text: t(`stats.constraints.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -198,6 +171,72 @@ function initValuesChartOptions(frequencies: Frequencies) {
         data: values,
         type: 'bar',
         barCategoryGap: '0',
+      },
+    ],
+  }
+  option.value = newOption
+}
+
+function initLabelsChartOptions(frequencies: Frequencies) {
+  total.value = frequencies.total || 0
+  const dataset = frequencies.data.map((item) => ({
+    key: item.value || 'null',
+    name: keyLabel(item.value || 'null'),
+    value: props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count,
+  }))
+
+  // Extract category names and values for yAxis and series
+  const categories = dataset.map((item) => item.name).reverse()
+  const values = dataset.map((item) => item.value).reverse()
+
+  if (categories.length === 0) {
+    return
+  }
+
+  const newOption: EChartsOption = {
+    grid: {
+      left: '20',
+      right: '20',
+      top: '60',
+      bottom: '20',
+      containLabel: true,
+    },
+    animation: false,
+    height: props.height - 100,
+    title: {
+      text: t(`stats.constraints.title`),
+      subtext: t(`stats.total`, { count: total.value }),
+      left: 'center',
+      top: 0,
+      itemGap: 10,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: `<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+    },
+    legend: {
+      show: false,
+    },
+    yAxis: {
+      name: props.yaxis || '',
+      nameLocation: 'end',
+      nameGap: 30,
+      type: 'category',
+      data: categories,
+    },
+    xAxis: {
+      name: props.xaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      nameLocation: 'middle',
+      nameGap: 30,
+      type: 'value',
+    },
+    series: [
+      {
+        data: values,
+        type: 'bar',
       },
     ],
   }

@@ -1,26 +1,13 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">
-        {{ t(`stats.energy_journey.title_${props.type}`) }}
-      </div>
-      <div class="text-subtitle1 text-foreground text-center">
-        {{ t('stats.no_data') }}
-      </div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="total > 0"
+    :no-data-title="t(`stats.energy_journey.title_${props.type}`)"
+    :option="option"
+    :exportable="!!exportable"
+  >
     <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
     <q-markdown
       v-if="textLabelsCurrent"
@@ -30,11 +17,11 @@
       v-if="textLabelsReco"
       :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)"
     />
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart, LineChart } from 'echarts/charts'
@@ -46,9 +33,8 @@ import {
   GridComponent,
   MarkLineComponent,
 } from 'echarts/components'
-import { initOptions, updateOptions, MODE_COLORS } from './commons'
+import { MODE_COLORS } from './commons'
 import type { JourneyEnergyData, JourneyEnergyStats } from 'src/models'
-import { useQuasar } from 'quasar'
 import { formatNumber } from 'src/utils/numbers'
 
 // Register ECharts modules
@@ -70,18 +56,20 @@ interface Props {
   yaxis?: string
   height?: number
   loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const addedEnergy = ref(0)
 const newHealthyParticipants = ref(0)
+const WHO_RECOMMENDATION = 150
 
 const textLabelsCurrent = computed(() => {
   if (props.type !== 'current' || total.value < 5 || !props.journeyEnergyStats) return null
@@ -99,7 +87,18 @@ const textLabelsReco = computed(() => {
 
   return {
     added_energy: formatNumber(addedEnergy.value),
+    yoga_min: formatNumber(addedEnergy.value / 4.7), // Approximate conversion to minutes of yoga
     count: formatNumber(newHealthyParticipants.value || 0),
+    percent_current: formatNumber(
+      (props.journeyEnergyStats.gains.current_above_who_count /
+        props.journeyEnergyStats.current.data.length) *
+        100,
+    ),
+    percent_potential: formatNumber(
+      (props.journeyEnergyStats.gains.reco_above_who_count /
+        props.journeyEnergyStats.reco.data.length) *
+        100,
+    ),
   }
 })
 
@@ -154,7 +153,7 @@ function initChartOptions() {
   // 3. Create Series (one series per mode for stacking)
   const series: SeriesOption[] = modes.map((mode) => {
     return {
-      name: t(`stats.energy_journey.labels.${mode}`),
+      name: t(`transportation_modes.${mode}`),
       type: 'bar',
       stack: 'total', // This enables the stacking
       emphasis: { focus: 'series' },
@@ -194,7 +193,7 @@ function initChartOptions() {
       icon: 'circle',
       data: [
         ...modes.map((mode) => ({
-          name: t(`stats.energy_journey.labels.${mode}`),
+          name: t(`transportation_modes.${mode}`),
           icon: 'circle',
         })),
         {
@@ -230,7 +229,7 @@ function initChartOptions() {
         color: 'black',
         symbol: 'none',
         silent: true, // Doesn't intercept mouse events
-        data: sortedTokens.map(() => 150), // Constant value for the line
+        data: sortedTokens.map(() => WHO_RECOMMENDATION), // Constant value for the line
         lineStyle: {
           width: 0, // Hide the line itself
         },
@@ -239,7 +238,7 @@ function initChartOptions() {
           label: {
             show: true,
             position: 'insideEndTop',
-            formatter: '150 kcal',
+            formatter: `${WHO_RECOMMENDATION} kcal`,
             distance: 10,
             fontWeight: 'bold',
           },
@@ -250,7 +249,7 @@ function initChartOptions() {
           },
           data: [
             {
-              yAxis: 150,
+              yAxis: WHO_RECOMMENDATION,
             },
           ],
           z: 1000,

@@ -1,41 +1,32 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_reductions_share.title`) }}</div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
-    <p class="q-mb-xs">{{ t(`stats.emissions_reductions_share.texts.default`) }}</p>
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="true"
+    :no-data-title="t('stats.emissions_reductions_share.title')"
+    :option="option"
+    :exportable="!!exportable"
+  >
+    <p class="q-mb-xs">{{ t('stats.emissions_reductions_share.texts.default') }}</p>
     <p v-if="biggestEmission">
       {{
-        t(`stats.emissions_reductions_share.texts.specific`, {
+        t('stats.emissions_reductions_share.texts.specific', {
           percentage: formatNumber(biggestEmission.percentage || 0),
           mode: keyLabel(biggestEmission.mode),
         })
       }}
     </p>
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, MODE_COLORS, updateOptions } from './commons'
+import { MODE_COLORS, modeSortOrder } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -44,21 +35,20 @@ import {
 } from 'echarts/components'
 import { formatNumber } from 'src/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
-import { useQuasar } from 'quasar'
 import type { EmissionReduction } from 'src/models'
-// import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   reductions: EmissionReduction[] | null
   height?: number
   loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
 interface PercentageEmission {
@@ -129,6 +119,8 @@ function initChartOptions() {
   if (recoEmissions.length === 0) {
     return
   }
+
+  recoEmissions.sort((a, b) => modeSortOrder(a.mode) - modeSortOrder(b.mode))
 
   total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {

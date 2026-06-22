@@ -1,24 +1,13 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="hasData"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.freq_mod.title`) }}</div>
-      <div class="text-subtitle1 text-foreground text-foreground text-center">
-        {{ t('stats.no_data') }}
-      </div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="hasData"
+    :show-info="total > 0"
+    :no-data-title="t('stats.freq_mod.title')"
+    :option="option"
+    :exportable="!!exportable"
+  >
     <p v-if="topModes.length === 3" class="q-mb-xs">
       {{
         t('stats.freq_mod.texts.specific', {
@@ -29,16 +18,16 @@
       }}
     </p>
     <q-markdown :src="t('stats.freq_mod.texts.default')" />
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
+import { MODE_COLORS, modeSortOrder } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -46,23 +35,21 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
-import { MODE_COLORS } from './commons'
-import { useQuasar } from 'quasar'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   frequencies: Frequencies | Frequencies[] | null
   loading?: boolean
   height?: number
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const topModes = ref<string[]>([])
@@ -103,7 +90,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.freq_mod.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 const MRMT_VALUES = {
@@ -145,6 +132,8 @@ function initChartOptions() {
     total.value = frequencies.total
   }
 
+  dataset.sort((a, b) => modeSortOrder(a.key) - modeSortOrder(b.key))
+
   const sortedByValue = dataset
     .filter((item) => item.count > 5)
     .toSorted((a, b) => b.value - a.value)
@@ -158,11 +147,13 @@ function initChartOptions() {
     return
   }
 
-  const mrmtDataset = Object.entries(MRMT_VALUES).map(([key, value]) => ({
-    key,
-    name: keyLabel(key),
-    value,
-  }))
+  const mrmtDataset = Object.entries(MRMT_VALUES)
+    .map(([key, value]) => ({
+      key,
+      name: keyLabel(key),
+      value,
+    }))
+    .sort((a, b) => modeSortOrder(a.key) - modeSortOrder(b.key))
 
   const mrmtColors = mrmtDataset.map((item) => MODE_COLORS[item.key] || '#ccc')
 
@@ -176,15 +167,27 @@ function initChartOptions() {
     },
     animation: false,
     height: props.height,
-    title: {
-      text: t(`stats.freq_mod.title`),
-      subtext: t(`stats.total`, { count: total.value }),
-      left: 'center',
-      top: 0,
-      textStyle: {
-        fontSize: 16,
+    title: [
+      {
+        text: t(`stats.freq_mod.title`),
+        subtext: t(`stats.total`, { count: total.value }),
+        left: 'center',
+        top: 0,
+        textStyle: {
+          fontSize: 16,
+        },
       },
-    },
+      {
+        text: t(`stats.freq_mod.title_mrmt`),
+        left: '80%',
+        top: '45%',
+        textAlign: 'center',
+        textStyle: {
+          fontSize: 12,
+          fontWeight: 'normal',
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
       formatter: '<b>{b}</b><br/>{c} ({d}%)',
@@ -219,7 +222,7 @@ function initChartOptions() {
           formatter: '<b>{b}</b><br/>{d}%',
         },
         label: {
-          formatter: '{d}% (MRMT)',
+          formatter: '{d}%',
           fontSize: 10,
         },
         data: mrmtDataset,

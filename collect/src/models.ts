@@ -41,6 +41,7 @@ export interface RecordData {
   travel_time: number
   equipments: string[]
   constraints: string[]
+  constraints_custom?: string | undefined
   freq_mod_journeys: Journey[]
 
   travel_pro: boolean

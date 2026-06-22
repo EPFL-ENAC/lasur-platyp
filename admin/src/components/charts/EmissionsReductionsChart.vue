@@ -1,39 +1,28 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="stats.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">
-        {{ t(`stats.emissions_${props.chartTranslationName}.title`) }}
-      </div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
-
-  <div class="q-mt-md chart-text">
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="true"
+    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  >
     <p class="q-mb-xs">{{ t(`stats.emissions_${props.chartTranslationName}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
       :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels)"
     />
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
+import { MODE_COLORS } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -41,13 +30,9 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { formatNumber } from 'src/utils/numbers'
-import { MODE_COLORS } from './commons'
-import { useQuasar } from 'quasar'
 import type { EmissionReduction, Emissions } from 'src/models'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
-const stats = useStats()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
@@ -57,12 +42,14 @@ interface Props {
   yaxis?: string
   rangeStep?: number
   height?: number
+  loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const currentEmissions = ref(0)
@@ -84,14 +71,14 @@ const textLabels = computed(() => {
   }
 })
 
-watch([() => stats.loading], () => {
-  if (stats.loading) {
+watch([() => props.loading], () => {
+  if (props.loading) {
     initChartOptions()
   }
 })
 
 watch([() => props.height, locale], () => {
-  if (!stats.loading) {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -108,7 +95,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_${props.chartTranslationName}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 const SCALE_FACTOR = 1 / 1000 // convert from kg to tons
@@ -142,9 +129,9 @@ function initChartOptions() {
     currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
 
   const categoriesLabels = [
-    keyLabel('current'),
+    t(`stats.emissions_${props.chartTranslationName}.labels.current`),
     ...categories.map((cat) => keyLabel(cat)),
-    keyLabel('postSaving'),
+    t(`stats.emissions_${props.chartTranslationName}.labels.postSaving`),
   ]
 
   total.value = emissions[0]?.total || 0

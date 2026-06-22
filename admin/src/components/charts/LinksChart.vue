@@ -1,38 +1,28 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
-
-  <div v-if="total > 0" class="q-mt-md chart-text">
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="total > 0"
+    :no-data-title="t(`stats.${props.type}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  >
     <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
     <p v-if="mostRecommendedTarget">
       {{
         t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
       }}
     </p>
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { SankeyChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -41,10 +31,8 @@ import {
 } from 'echarts/components'
 import type { StatLinks } from 'src/models'
 import { MODE_COLORS } from './commons'
-import { useQuasar } from 'quasar'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
@@ -52,12 +40,13 @@ interface Props {
   links: StatLinks | null
   height?: number
   loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
@@ -96,7 +85,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.${props.type}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 function initChartOptions() {

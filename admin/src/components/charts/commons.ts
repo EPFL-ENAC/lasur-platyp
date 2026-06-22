@@ -74,6 +74,57 @@ interface InitOptions {
   renderer: 'canvas' | 'svg'
 }
 
+export const MODE_IDEAL_ORDER: Record<string, number> = {
+  // Fallback order for unknown keys (keep them at the end)
+  default: 999,
+  // --- Active mobility ---
+  walking: 10,
+  walk: 10,
+  marche: 10,
+  bike: 20,
+  velo: 20,
+  ebike: 30,
+  vae: 30,
+  cargo: 40,
+  // --- Public transport ---
+  pub: 50,
+  tpu: 50,
+  transit: 50,
+  upt_subs: 50,
+  bus: 55,
+  train: 60,
+  rail: 60,
+  train_subs: 60,
+  pub_train: 65,
+  // --- Private motorized ---
+  carpool: 70,
+  covoit: 70,
+  car: 80,
+  car_driver: 80,
+  car_passenger: 81,
+  car_moto: 85,
+  elec: 90,
+  ev: 90,
+  moto: 95,
+  elec_moto: 96,
+  // --- Long distance / other ---
+  truck: 110,
+  elec_truck: 111,
+  boat: 120,
+  plane: 130,
+  // --- Alternative / abstract ---
+  avoid: 200,
+  combined: 210,
+  inter: 220,
+  visio: 230,
+  other: 900,
+  unknown: 950,
+}
+
+export function modeSortOrder(key: string): number {
+  return MODE_IDEAL_ORDER[key] || MODE_IDEAL_ORDER.default!
+}
+
 export const MODE_COLORS: { [key: string]: string } = {
   car: '#860706',
   car_driver: '#860706',

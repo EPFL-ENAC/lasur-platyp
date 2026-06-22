@@ -1,29 +1,20 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="hasData"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="props.loading"
-      :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.${props.chartTranslationName}.title`) }}</div>
-      <div class="text-subtitle1 text-foreground text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="hasData"
+    :no-data-title="t(`stats.${props.chartTranslationName}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  />
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -31,10 +22,8 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
-import { useQuasar } from 'quasar'
 
 const { t, locale } = useI18n()
-const $q = useQuasar()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
@@ -46,12 +35,13 @@ interface Props {
   percent?: boolean
   height?: number
   loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 

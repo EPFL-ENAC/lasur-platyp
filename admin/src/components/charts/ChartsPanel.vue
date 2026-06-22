@@ -49,8 +49,7 @@
             />
           </div>
           <div>
-            <frequencies-chart
-              chartTranslationName="constraints"
+            <mobility-constraints-frequencies-chart
               :frequencies="getFreq('constraints')"
               :percent="percent"
               :height="height"
@@ -118,6 +117,11 @@
         class="compact text-caption q-px-md q-pb-md q-mt-sm"
         :src="t('stats.sections.mobility_potentials.description')"
       />
+      <mobility-potential-insights
+        frequency-key="reco_dt2"
+        reduction-key="reductions_mod"
+        :collaborators-count="collaboratorsCount || undefined"
+      />
       <q-separator />
 
       <q-card-section>
@@ -177,6 +181,14 @@
       <q-card-section>
         <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.professional_travel') }}</h6>
         <div class="grid-container">
+          <div>
+            <share-chart
+              chartTranslationName="reco_pros"
+              :height="height"
+              :frequencies="getFreq('reco_pros')"
+              :loading="stats.loading"
+            />
+          </div>
           <div>
             <emissions-reductions-chart
               chartTranslationName="reductions_mod_pro"
@@ -241,7 +253,7 @@
 </template>
 <script setup lang="ts">
 import EquipmentFrequenciesChart from 'src/components/charts/EquipmentFrequenciesChart.vue'
-import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
+import MobilityConstraintsFrequenciesChart from './MobilityConstraintsFrequenciesChart.vue'
 import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
 import TravelTimeFrequenciesChart from 'src/components/charts/TravelTimeFrequenciesChart.vue'
 import LocationChart from 'src/components/charts/LocationChart.vue'
@@ -255,11 +267,13 @@ import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
 import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
 import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
+import MobilityPotentialInsights from '../MobilityPotentialInsights.vue'
 import type { Frequencies } from 'src/models'
 
 interface Props {
   height: number
   percent: boolean
+  collaboratorsCount?: number | undefined
 }
 
 defineProps<Props>()
