@@ -57,7 +57,7 @@ const modeOptions = computed<Option[]>(() => [
       { value: 'ebike', label: t('form.mode.ebike'), icon: 'electric_bike' },
     ],
   },
-  { value: 'pub', label: t('form.mode.pub'), icon: '/icons/bus.svg' },
+  { value: 'pub', label: t('form.mode.pub'), icon: 'directions_bus' },
   { value: 'moto', label: t('form.mode.moto'), icon: 'two_wheeler' },
   {
     value: 'car',
@@ -72,7 +72,7 @@ const modeOptions = computed<Option[]>(() => [
       },
     ],
   },
-  { value: 'train', label: t('form.mode.train'), icon: '/icons/train.svg' },
+  { value: 'train', label: t('form.mode.train'), icon: 'directions_railway' },
   {
     value: 'other',
     label: t('form.mode.other'),

@@ -9,7 +9,7 @@
       </div>
       <q-markdown
         v-if="hasCar"
-        :src="t('form.final_car_markdown')"
+        :src="t('form.final_car')"
         class="text-center q-mt-md"
       />
     </div>
