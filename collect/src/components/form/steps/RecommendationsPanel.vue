@@ -79,7 +79,7 @@ const recoPros = computed(
 )
 
 const proJourneyHexIds = computed(() =>
-  (survey.record.data.freq_mod_pro_journeys || []).map((j) => j.hex_id).filter((id): id is string => !!id),
+  (survey.record.data.freq_mod_pro_journeys || []).map((j) => j.hex_id!),
 )
 
 const mesurePro = computed(
@@ -111,7 +111,6 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
 
 function openPrintPreview() {
   const payload = JSON.stringify(previewData.value)
-  sessionStorage.setItem('recommendations-preview', payload)
 
   const routeData = router.resolve({
     path: '/print-reco',

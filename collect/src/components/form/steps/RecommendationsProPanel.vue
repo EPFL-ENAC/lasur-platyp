@@ -13,7 +13,7 @@
             :reco-class="reco === 'avoid' ? 'text-subtitle1' : 'text-h5'"
             wrapper-class="rounded-borders q-mb-md bg-secondary text-white"
             :actions="getActions(index)"
-            :benefints-expanded="!!benefitsExpanded"
+            :benefits-expanded="!!benefitsExpanded"
           >
             <PlaceItem
               v-if="proJourneyHexIds[index]"
