@@ -5,7 +5,7 @@
       :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`"
     />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
-    <div v-if="multiple" class="text-h6">{{ t('form.multiple_options') }}</div>
+    <div v-if="multiple" class="text-h6 text-italic">{{ t('form.multiple_options') }}</div>
     <div class="q-mt-lg">
       <div :class="col ? 'row q-col-gutter-md' : ''">
         <template v-for="(group, idx) in optionGroups" :key="idx">

@@ -154,3 +154,22 @@ export interface PoisParams {
   categories: string[]
   bbox: [number, number, number, number]
 }
+
+export interface RecommendationsPreviewData {
+  perso: {
+    mainFm: string
+    isModeSustainable: boolean
+    isModeOptions: boolean
+    recoDt: string[]
+    center: [number, number] | null
+    mesureDt1: string[]
+    mesureDt2: string[]
+    globalActions: string[]
+  }
+  pro: {
+    recoPros: string[]
+    proJourneyHexIds: string[]
+    mesurePro: string[][]
+    globalActions: string[]
+  }
+}

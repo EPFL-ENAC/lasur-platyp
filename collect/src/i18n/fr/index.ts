@@ -143,6 +143,9 @@ export default {
       'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
+    recommendations_print: {
+      title: 'Recommandations de mobilité',
+    },
     actions:
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
