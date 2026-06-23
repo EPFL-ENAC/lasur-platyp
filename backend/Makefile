@@ -55,3 +55,15 @@ generate-filtering-boundaries:
 
 generate-multilevel-boundaries:
 	poetry run python scripts/create_multilevel_boundaries.py
+
+pmtiles:
+	tippecanoe -Z 1  -z 5  -o data/national_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/national_boundaries.geojson
+	tippecanoe -Z 5  -z 10 -o data/regional_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/regional_boundaries.geojson
+	tippecanoe -Z 10 -z 12 -o data/filtering_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/filtering_boundaries.geojson
+	tippecanoe -Z 12       -o data/local_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/local_boundaries.geojson
+
+pmtiles2:
+	for f in data/*.geojson; do \
+		base=$$(basename $$f .geojson); \
+		tippecanoe -zg -o data/$$base.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force $$f; \
+	done
