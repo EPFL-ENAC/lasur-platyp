@@ -27,6 +27,7 @@ geojson-pydantic = "^2.1.0"
 shapely = "^2.1.2"
 slowapi = "^0.1.9"
 matplotlib = "^3.10.8"
+geopandas = "^1.1.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.1"
