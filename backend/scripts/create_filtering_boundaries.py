@@ -54,7 +54,8 @@ def get_switzerland_areas(ch_path: Path) -> gpd.GeoDataFrame:
     districts = gdf[gdf.fclass == "admin_level6"]
     print(f"  {ch_path.name}: {len(districts)} districts")
 
-    cantons = gdf[(gdf.fclass == "admin_level4") & (gdf.name.isin(DISTRICTLESS_CANTONS))]
+    cantons = gdf[(gdf.fclass == "admin_level4") &
+                  (gdf.name.isin(DISTRICTLESS_CANTONS))]
     print(f"  {ch_path.name}: {len(cantons)} districtless cantons")
 
     return pd.concat([cantons, districts], ignore_index=True)
@@ -70,7 +71,7 @@ def main() -> None:
         data_dir / "france" / "rhone-alpes" / "rhone-alpes.gpkg",
     ]
 
-    ch_path = data_dir / "switzerland" / "switzerland.gpkg"
+    ch_path = data_dir / "switzerland" / "switzerland" / "switzerland.gpkg"
 
     print("Loading French arrondissements...")
     france = get_france_arrondissements(france_paths)

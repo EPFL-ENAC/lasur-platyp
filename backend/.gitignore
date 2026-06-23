@@ -141,6 +141,4 @@ cython_debug/
 
 notebooks/
 
-data/*.pbf
-data/*.gpkg.zip
-data/*/
+data/
