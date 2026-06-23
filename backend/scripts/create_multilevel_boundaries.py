@@ -132,6 +132,12 @@ def main() -> None:
     lau_df = gpd.read_file(data_dir / "LAU_RG_01M_2024_3035.gpkg")
     gbd_df = gpd.read_file(data_dir / "geoBoundariesCGAZ_ADM0.gpkg")
 
+    crs = "EPSG:4326"  # WGS84
+    nuts_df = nuts_df.to_crs(crs)
+    nuts_2021_df = nuts_2021_df.to_crs(crs)
+    lau_df = lau_df.to_crs(crs)
+    gbd_df = gbd_df.to_crs(crs)
+
     print("Extracting local boundaries...")
     local_boundaries = extract_local_boundaries(nuts_df, lau_df)
     local_boundaries.to_file(data_dir / "local_boundaries.geojson", driver="GeoJSON")
