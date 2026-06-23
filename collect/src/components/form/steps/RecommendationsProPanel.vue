@@ -1,47 +1,32 @@
 <template>
-  <div v-if="hasRecoPro">
+  <div v-if="recoPros.length">
     <q-card flat>
       <q-card-section>
         <SectionItem :label="t('form.recommendations_pro')" />
-        <div
-          v-for="(reco, index) in survey.recommendation.reco_pro?.reco_pros"
-          :key="index"
-          class="rounded-borders q-mb-md bg-secondary text-white"
-        >
-          <q-separator />
 
-          <div class="q-pa-md">
-            <q-item-label class="text-body1 text-primary text-bold">{{
-              t('form.journey_pro.label_idx', { index: index + 1 })
-            }}</q-item-label>
-            <q-item-label :class="reco === 'avoid' ? 'text-subtitle1' : 'text-h5'">{{
-              t(`reco.${reco}`)
-            }}</q-item-label>
-            <BenefitsPanel :reco="reco" class="q-mt-sm" />
+        <template v-for="(reco, index) in recoPros" :key="index">
+          <q-separator />
+          <RecommendationItem
+            :reco="reco"
+            :reco-label="t(`reco.${reco}`)"
+            :index-label="t('form.journey_pro.label_idx', { index: index + 1 })"
+            :reco-class="reco === 'avoid' ? 'text-subtitle1' : 'text-h5'"
+            wrapper-class="rounded-borders q-mb-md bg-secondary text-white"
+            :actions="getActions(index)"
+            :benefits-expanded="!!benefitsExpanded"
+          >
             <PlaceItem
-              v-if="
-                survey.record.data.freq_mod_pro_journeys &&
-                survey.record.data.freq_mod_pro_journeys[index]
-              "
+              v-if="proJourneyHexIds[index]"
               :map-id="`map-pro-${index}`"
-              v-model="survey.record.data.freq_mod_pro_journeys[index].hex_id"
+              :model-value="proJourneyHexIds[index]"
               read-only
               :height="'200px'"
               class="q-mt-sm q-mb-sm"
             />
-            <q-item-label
-              v-if="getActions(index).length"
-              class="text-body1 text-green-2 text-bold"
-              >{{
-                t('form.actions', {
-                  count: getActions(index).length,
-                  actions: getActions(index).join('; '),
-                })
-              }}</q-item-label
-            >
-          </div>
-        </div>
+          </RecommendationItem>
+        </template>
       </q-card-section>
+
       <q-card-section v-if="globalActions.length" class="q-pt-none">
         <div class="text-body1 text-bold text-green-2">
           {{
@@ -58,32 +43,20 @@
 
 <script setup lang="ts">
 import SectionItem from 'src/components/form/SectionItem.vue'
-import BenefitsPanel from 'src/components/form/steps/BenefitsPanel.vue'
+import RecommendationItem from './RecommendationItem.vue'
 import PlaceItem from 'src/components/form/PlaceItem.vue'
 
 const { t } = useI18n()
-const survey = useSurvey()
 
-const hasRecoPro = computed(
-  () =>
-    survey.recommendation.reco_pro?.reco_pros &&
-    survey.recommendation.reco_pro?.reco_pros.length > 0,
-)
+const props = defineProps<{
+  recoPros: string[]
+  proJourneyHexIds: string[]
+  mesurePro: string[][]
+  globalActions: string[]
+  benefitsExpanded?: boolean
+}>()
 
 function getActions(index: number) {
-  const actions = survey.recommendation.reco_actions?.mesure_pro?.[index] || []
-  return actions.map(translateAction)
-}
-
-const globalActions = computed(() => {
-  return survey.recommendation.reco_actions?.mesures_pro_globa?.map(translateAction) || []
-})
-
-function translateAction(action: string) {
-  const label = t(`actions.${action}`)
-  if (label === `actions.${action}`) {
-    return action
-  }
-  return label
+  return props.mesurePro[index] || []
 }
 </script>
