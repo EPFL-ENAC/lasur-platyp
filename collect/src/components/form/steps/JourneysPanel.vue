@@ -44,6 +44,7 @@ function onAddJourney() {
   }
   survey.record.data.freq_mod_journeys.push({
     days: 1,
+    days_per: 'year',
     modes: [],
   })
 }

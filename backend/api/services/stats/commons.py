@@ -70,6 +70,23 @@ RECOS_PRO = [
     'pub'
 ]
 
+DAYS_PER_YEAR = {
+    'week': 52,
+    'month': 12,
+    'year': 1,
+}
+
+
+def normalize_pro_days_to_yearly(days: float, days_per) -> float:
+    """Convert pro journey days count to an annual equivalent.
+
+    Old records lack days_per (treated as yearly). New records carry
+    days_per in {'week', 'month', 'year'}.
+    """
+    if pd.isna(days_per) or days_per not in DAYS_PER_YEAR:
+        return days
+    return days * DAYS_PER_YEAR[days_per]
+
 
 class BaseStatsService:
 

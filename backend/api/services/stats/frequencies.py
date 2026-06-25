@@ -1,7 +1,7 @@
 import re
 import pandas as pd
 from api.models.query import Frequencies, Frequency
-from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO, MODES_PRO_V1
+from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO, MODES_PRO_V1, normalize_pro_days_to_yearly
 
 
 class FrequenciesService(BaseStatsService):
@@ -247,7 +247,9 @@ class FrequenciesService(BaseStatsService):
             if col_hexid_i not in df.columns:
                 continue
             col_days_i = col_days[i]
+            col_days_per_i = f"data.freq_mod_pro_journeys.{str(i)}.days_per"
             # make a dataframe with only i columns and workplace lat/lon
+            extra_cols = [col_days_per_i] if col_days_per_i in df.columns else []
             df_i = df[
                 [
                     "data.workplace.lat",
@@ -255,7 +257,7 @@ class FrequenciesService(BaseStatsService):
                     col_days_i,
                     col_mode_i,
                     col_hexid_i,
-                ]
+                ] + extra_cols
             ].copy()
             # Filter for the specific mode
             df_i = df_i[df_i[col_mode_i] == mode]
@@ -270,7 +272,8 @@ class FrequenciesService(BaseStatsService):
             # count positive mod_days
             df_i = df_i[df_i[col_days_i] > 0]
             for idx, row in df_i.iterrows():
-                days = int(row[col_days_i])
+                days_per = row[col_days_per_i] if col_days_per_i in df_i.columns else None
+                days = int(normalize_pro_days_to_yearly(row[col_days_i], days_per))
                 type = row["type"]
                 field = f"{type}_{mode}"
                 if field not in field_frequencies:

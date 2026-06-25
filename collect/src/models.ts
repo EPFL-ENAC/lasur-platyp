@@ -25,6 +25,7 @@ export interface Journey {
 export interface ProJourney {
   mode: string
   days: number
+  days_per: 'week' | 'month' | 'year'
   is_company_vehicle?: boolean | undefined
   constraints?: string[]
   hex_id: string | undefined

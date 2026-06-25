@@ -56,20 +56,31 @@
         color="accent"
       />
     </div>
-    <NumberItem
-      :label="t('form.journey_pro.days_per_year')"
-      v-model="journey.days"
-      :min="1"
-      :max="300"
-      :step="1"
-      :step2="10"
-      label-class="text-subtitle1 text-center"
-      class="q-pa-md"
-    />
+    <div class="row justify-center q-mt-lg">
+      <NumberItem
+        v-model="journey.days"
+        :min="1"
+        :max="daysPerMax"
+        :step="1"
+        :step2="10"
+        label-class="text-subtitle1 text-center"
+        class="q-pa-md"
+      />
+      <q-btn
+        :label="daysPerLabel"
+        :icon="daysPerIcon"
+        @click="onToggleDaysPer"
+        :color="$q.dark.isActive ? 'primary' : 'secondary'"
+        flat
+        no-caps
+        size="lg"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar'
 import PlaceItem from 'src/components/form/PlaceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
@@ -90,6 +101,7 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 const { t } = useI18n()
+const $q = useQuasar()
 
 const journey = computed({
   get: () => props.modelValue,
@@ -110,6 +122,45 @@ const modeOptions = computed<Option[]>(() =>
     { value: 'plane', label: t('form.mode.plane'), icon: 'flight' },
   ].filter((opt) => props.modes.includes(opt.value)),
 )
+
+const daysPerLabel = computed(() => {
+  switch (journey.value.days_per) {
+    case 'week':
+      return t('form.journey_pro.days_per_week')
+    case 'month':
+      return t('form.journey_pro.days_per_month')
+    case 'year':
+      return t('form.journey_pro.days_per_year')
+    default:
+      return ''
+  }
+})
+
+const daysPerIcon = computed(() => {
+  switch (journey.value.days_per) {
+    case 'week':
+      return 'calendar_view_week'
+    case 'month':
+      return 'calendar_view_month'
+    case 'year':
+      return 'calendar_month'
+    default:
+      return ''
+  }
+})
+
+const daysPerMax = computed(() => {
+  switch (journey.value.days_per) {
+    case 'week':
+      return 7
+    case 'month':
+      return 31
+    case 'year':
+      return 365
+    default:
+      return 365
+  }
+})
 
 const canBeCompanyVehicle = computed(() =>
   ['bike', 'cargo', 'car', 'truck', 'moto'].includes(journey.value.mode),
@@ -133,6 +184,18 @@ function onSelect(option: Option | undefined) {
   journey.value.mode = option.value
   if (!canBeCompanyVehicle.value) {
     journey.value.is_company_vehicle = undefined
+  }
+}
+
+function onToggleDaysPer() {
+  journey.value.days_per =
+    journey.value.days_per === 'week'
+      ? 'month'
+      : journey.value.days_per === 'month'
+        ? 'year'
+        : 'week'
+  if (journey.value.days > daysPerMax.value) {
+    journey.value.days = daysPerMax.value
   }
 }
 </script>

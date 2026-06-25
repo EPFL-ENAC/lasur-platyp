@@ -1,6 +1,6 @@
 import pandas as pd
 from api.models.query import EmissionReductions, Emissions
-from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO
+from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO, normalize_pro_days_to_yearly
 
 MODE_EMISSIONS = {
     'walking': 0,
@@ -430,29 +430,33 @@ class EmissionsService(BaseStatsService):
             if col_hexid_i not in df.columns:
                 continue
             col_days_i = col_days[i]
-            
+            col_days_per_i = f'data.freq_mod_pro_journeys.{str(i)}.days_per'
+
             for idx, row in df.iterrows():
                 mode = row.get(col_mode_i)
-                days = row.get(col_days_i)
+                days_raw = row.get(col_days_i)
                 hex_id = row.get(col_hexid_i)
-                
+
                 # Filter by mode if specified
                 if target_mode is not None and mode != target_mode:
                     continue
-                
-                if pd.notna(mode) and pd.notna(days) and days > 0 and pd.notna(hex_id):
+
+                if pd.notna(mode) and pd.notna(days_raw) and days_raw > 0 and pd.notna(hex_id):
                     workplace_lat = row.get('data.workplace.lat')
                     workplace_lon = row.get('data.workplace.lon')
-                    
+
                     if pd.notna(workplace_lat) and pd.notna(workplace_lon):
                         # Calculate distance to H3 hex
                         distance_km = self._calculate_distance_to_h3(
-                            float(workplace_lat), 
-                            float(workplace_lon), 
-                            hex_id, 
+                            float(workplace_lat),
+                            float(workplace_lon),
+                            hex_id,
                             mode
                         )
-                        
+
+                        days_per = row.get(col_days_per_i) if col_days_per_i in df.columns else None
+                        days = normalize_pro_days_to_yearly(days_raw, days_per)
+
                         journeys_list.append({
                             'token': row.get('token', idx),
                             'journey_idx': i,
@@ -906,20 +910,23 @@ class EmissionsService(BaseStatsService):
             col_reco_i = f'typo.reco_pro.reco_pros.{i}'
             col_hexid_i = f'data.freq_mod_pro_journeys.{i}.hex_id'
             col_days_i = f'data.freq_mod_pro_journeys.{i}.days'
-            
+            col_days_per_i = f'data.freq_mod_pro_journeys.{i}.days_per'
+
             # Skip if columns don't exist
-            if (col_mode_i not in df.columns or 
+            if (col_mode_i not in df.columns or
                 col_reco_i not in df.columns or
                 col_hexid_i not in df.columns or
                 col_days_i not in df.columns):
                 continue
-            
+
             # Process each row (person)
             for idx, row in df.iterrows():
                 current_mode = row.get(col_mode_i)
                 reco_mode = row.get(col_reco_i)
-                days = row.get(col_days_i)
+                days_raw = row.get(col_days_i)
                 hex_id = row.get(col_hexid_i)
+                days_per = row.get(col_days_per_i) if col_days_per_i in df.columns else None
+                days = normalize_pro_days_to_yearly(days_raw, days_per) if pd.notna(days_raw) else days_raw
                 
                 # Skip if missing data or no recommendation (per user requirement #3)
                 if (pd.isna(current_mode) or 

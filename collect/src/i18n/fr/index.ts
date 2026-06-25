@@ -48,7 +48,8 @@ export default {
       'Cette information confidentielle sera uniquement utilisée pour calculer vos options de mobilité pour votre déplacement domicile-travail',
     travel_time: 'Combien de temps mettez-vous environ pour aller au travail ?',
     travel_time_minutes: 'minutes (aller)',
-    constraints: 'Rencontrez-vous d’éventuelles contraintes liées à vos déplacements quotidiens, plusieurs fois dans la semaine ?',
+    constraints:
+      'Rencontrez-vous d’éventuelles contraintes liées à vos déplacements quotidiens, plusieurs fois dans la semaine ?',
     constraints_option: {
       dependent: 'Accompagnement d’enfants ou de personnes dépendantes',
       heavy: 'Transport de matériel lourd ou encombrant',
@@ -109,6 +110,8 @@ export default {
       hint: "Sélectionnez l'aire de destination et le principal mode de transport d'un déplacement professionnel typique.",
       add: 'Ajouter un déplacement',
       remove: 'Supprimer le déplacement',
+      days_per_week: 'Jours par semaine',
+      days_per_month: 'Jours par mois',
       days_per_year: 'Jours par année',
       is_company_vehicle: {
         label: 'Le véhicule utilisé en général est...',
@@ -174,8 +177,10 @@ export default {
       label: 'Votre adresse email (optionnelle)',
     },
     final: 'Vos réponses ont été enregistrées, merci de votre participation !',
-    final_subtitle: 'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
-    final_car: 'Au fait, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
+    final_subtitle:
+      'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
+    final_car:
+      'Au fait, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
     final_rewards: {
       title: "L'organisation offre des récompenses pour les participants à ce questionnaire",
       download: 'Télécharger votre attestation de participation',

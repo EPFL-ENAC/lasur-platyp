@@ -60,6 +60,7 @@ function onAddJourney() {
   }
   journeys.value.push({
     days: 1,
+    days_per: 'year',
     mode: '',
     hex_id: undefined,
     constraints: [],
