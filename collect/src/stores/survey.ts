@@ -47,7 +47,7 @@ export const useSurvey = defineStore(
 
     function init(cr: Record) {
       record.value = cr
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       started.value = false
       step.value = 1
       timestamp.value = Date.now()
@@ -55,13 +55,13 @@ export const useSurvey = defineStore(
 
     function finish() {
       record.value = {} as Record
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       tokenOrSlug.value = null
     }
 
     function reset() {
       record.value = {} as Record
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       started.value = false
       step.value = 0
       timestamp.value = Date.now()
@@ -125,7 +125,7 @@ export const useSurvey = defineStore(
     }
 
     function getFreqMod(mode: string) {
-      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+      if (record.value.data?.freq_mod_journeys && record.value.data?.freq_mod_journeys.length) {
         let freq = 0
         record.value.data.freq_mod_journeys.forEach((j) => {
           // unique values of modes
