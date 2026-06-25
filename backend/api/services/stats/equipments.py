@@ -56,7 +56,7 @@ class EquipmentsService(BaseStatsService):
                         current_value = getattr(getattr(matrix, reco), "inter", 0)
                         setattr(getattr(matrix, reco), "inter", current_value + 1)
 
-        for recommendation in matrix.model_fields.keys():
+        for recommendation in matrix.__class__.model_fields.keys():
             total_count = (df[rec_cols] == recommendation).any(axis=1).sum()
             reco_obj = getattr(matrix, recommendation)
             reco_obj.total = int(total_count)

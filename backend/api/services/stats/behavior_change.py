@@ -144,7 +144,7 @@ class BehaviorChangeService(BaseStatsService):
         all_modes = set(lever_counts.keys()) | set(motivation_counts.keys())
         
         if not all_modes:
-            return 'all_aggregated', {'allModes': df}
+            return 'all_aggregated', {'Tous modes': df}
         
         # Calculate total responses (use max to avoid double-counting)
         total_lever = sum(lever_counts.values())
@@ -153,7 +153,7 @@ class BehaviorChangeService(BaseStatsService):
         
         # Case 1: Less than 10 total responses in either metric - aggregate everything
         if total_responses < 10:
-            return 'all_aggregated', {'allModes': df}
+            return 'all_aggregated', {'Tous modes': df}
         
         # Case 2: Check which modes meet threshold (>=10 in EITHER metric)
         modes_above_threshold = {}
@@ -166,7 +166,7 @@ class BehaviorChangeService(BaseStatsService):
         
         if len(modes_above_threshold) == 0:
             # No individual mode has 10+ responses in either metric
-            return 'all_aggregated', {'allModes': df}
+            return 'all_aggregated', {'Tous modes': df}
         
         # Case 3: Mixed - some modes above, some below threshold
         mode_groups = {}
@@ -198,20 +198,20 @@ class BehaviorChangeService(BaseStatsService):
             mode_groups: dict mapping mode name to filtered dataframe
         """
         if not mode_counts:
-            return 'all_aggregated', {'allModes': df}
+            return 'all_aggregated', {'Tous modes': df}
         
         total = sum(mode_counts.values())
         
         # Case 1: Less than 10 total responses - aggregate everything
         if total < 10:
-            return 'all_aggregated', {'allModes': df}
+            return 'all_aggregated', {'Tous modes': df}
         
         # Case 2: At least 10 responses total
         modes_above_threshold = {mode: count for mode, count in mode_counts.items() if count >= 10}
         
         if len(modes_above_threshold) == 0:
             # No individual mode has 10+ responses
-            return 'all_aggregated', {'allModes': df}
+            return 'all_aggregated', {'Tous modes': df}
         
         # Case 3: Mixed - some modes above, some below threshold
         mode_groups = {}
