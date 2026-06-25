@@ -49,7 +49,8 @@ export default {
       'This confidential information will only be used to calculate your mobility options for your home-work commute.',
     travel_time: 'What is your average travel time from your home to your workplace?',
     travel_time_minutes: 'minutes (one way)',
-    constraints: 'Do you experience any potential constraints related to your daily mobility, several times per week?',
+    constraints:
+      'Do you experience any potential constraints related to your daily mobility, several times per week?',
     constraints_option: {
       dependent: 'Accompanying children or dependent persons',
       heavy: 'Transporting heavy or bulky equipment',
@@ -108,6 +109,8 @@ export default {
       hint: 'Select the area of destination and the main mode of transport of a typical professional journey.',
       add: 'Add journey',
       remove: 'Remove journey',
+      days_per_week: 'Days per week',
+      days_per_month: 'Days per month',
       days_per_year: 'Days per year',
       is_company_vehicle: {
         label: 'The vehicle used in general is...',
@@ -167,7 +170,8 @@ export default {
     },
     final: 'Your answers have been registered, thank you for your participation!',
     final_subtitle: 'Your contribution helps us build a more sustainable future.',
-    final_car: 'By the way, do you know the real cost of your car? Find out [here](https://comob.dev.stimul.io/) in 3 questions',
+    final_car:
+      'By the way, do you know the real cost of your car? Find out [here](https://comob.dev.stimul.io/) in 3 questions',
     final_rewards: {
       title: 'The organisation offers rewards for answering this survey',
       download: 'Download attestation of participation',

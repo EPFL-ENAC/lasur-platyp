@@ -85,12 +85,26 @@ class ModalTypoService:
         """Get typo pro suggestions for a record"""
         record.company_id
         url = f"{self.url}/modal-typo/reco-pro-h3"
+        # normalize to days per year
+        freq_mod_pro_journeys = record.data["freq_mod_pro_journeys"] if "freq_mod_pro_journeys" in record.data else [
+        ]
+        for journey in freq_mod_pro_journeys:
+            if "days_per" in journey:
+                if journey["days_per"] == "week":
+                    journey["days"] = journey.get("days", 1) * 52
+                elif journey["days_per"] == "month":
+                    journey["days"] = journey.get("days", 1) * 12
+                elif journey["days_per"] == "year":
+                    journey["days"] = journey.get("days", 1)
+                else:
+                    journey["days"] = journey.get("days", 1)
+                journey.pop("days_per", None)
         data = {
             "score_velo": scores["velo"],
             "score_tpu": scores["tpu"],
             "score_train": scores["train"],
             "score_elec": scores["elec"],
-            "freq_mod_pro_journeys": record.data["freq_mod_pro_journeys"],
+            "freq_mod_pro_journeys": freq_mod_pro_journeys,
             "d_lon": record.data["workplace"]["lon"],
             "d_lat": record.data["workplace"]["lat"],
         }

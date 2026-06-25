@@ -4,7 +4,7 @@
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="row justify-center q-mt-lg">
       <span
-        class="text-h4 q-mr-lg cursor-pointer"
+        class="text-h5 q-mr-lg cursor-pointer"
         :class="selected ? 'text-muted' : 'text-foreground'"
         @click="selected = false"
         >{{ leftLabel }}</span
@@ -17,7 +17,7 @@
         size="80px"
       />
       <span
-        class="text-h4 q-ml-lg cursor-pointer"
+        class="text-h5 q-ml-lg cursor-pointer"
         :class="selected ? 'text-foreground' : 'text-muted'"
         @click="selected = true"
         >{{ rightLabel }}</span
