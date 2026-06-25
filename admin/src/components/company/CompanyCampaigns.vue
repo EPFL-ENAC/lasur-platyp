@@ -106,6 +106,7 @@ function onAdd() {
     name: '',
     company_id: props.company.id,
     open_workplaces: false,
+    with_professional_questions: true,
   } as Campaign
   showDialog.value = true
 }

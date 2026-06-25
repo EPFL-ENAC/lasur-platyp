@@ -92,6 +92,7 @@ class CampaignBase(Entity):
     rewards_message: Optional[Dict[str, str]] = Field(default=None, sa_column=Column(JSON))
     open_workplaces: bool = Field(default=False)
     nb_employees: Optional[int] = Field(default=None)
+    with_professional_questions: bool = Field(default=True, nullable=False)
 
 
 class Campaign(CampaignBase, table=True):

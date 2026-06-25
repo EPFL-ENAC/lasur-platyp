@@ -96,6 +96,8 @@ export default {
     slug_hint:
       'Unique identifier for the campaign URL (e.g., "spring-2024-mobility-survey"). Only letters, numbers, hyphens and underscores are allowed.',
     description: 'Description',
+    with_professional_questions: 'Include questions about professional travel',
+    with_professional_questions_hint: 'Bla bla bla bla',
     with_actions: 'With employer measures specific to this campaign',
     employer_measures_hint:
       'Here you can specify the measures already in place to support your employees’ mobility. The measures listed here are a selection of "default" measures, as well as the "specific measures" entered in the previous section, "Employer Measures".',

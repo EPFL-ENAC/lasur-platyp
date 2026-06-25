@@ -47,7 +47,7 @@ export const useSurvey = defineStore(
 
     function init(cr: Record) {
       record.value = cr
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       started.value = false
       step.value = 1
       timestamp.value = Date.now()
@@ -55,13 +55,13 @@ export const useSurvey = defineStore(
 
     function finish() {
       record.value = {} as Record
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       tokenOrSlug.value = null
     }
 
     function reset() {
       record.value = {} as Record
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       started.value = false
       step.value = 0
       timestamp.value = Date.now()
@@ -76,25 +76,25 @@ export const useSurvey = defineStore(
       return step.value > stepNames.indexOf(name) + 1
     }
 
-    function incStep() {
+    function incStep(withProfessionalQuestions = true) {
       step.value += 1
-      let skipped = skipIncSteps()
+      let skipped = skipIncSteps(withProfessionalQuestions)
       while (skipped) {
-        skipped = skipIncSteps()
+        skipped = skipIncSteps(withProfessionalQuestions)
       }
       timestamp.value = Date.now()
     }
 
-    function decStep() {
+    function decStep(withProfessionalQuestions = true) {
       step.value -= 1
-      let skipped = skipDecSteps()
+      let skipped = skipDecSteps(withProfessionalQuestions)
       while (skipped) {
-        skipped = skipDecSteps()
+        skipped = skipDecSteps(withProfessionalQuestions)
       }
       timestamp.value = Date.now()
     }
 
-    function skipIncSteps() {
+    function skipIncSteps(withProfessionalQuestions = true) {
       if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         record.value.data = {
           ...record.value.data,
@@ -103,20 +103,29 @@ export const useSurvey = defineStore(
         step.value += 1
         return true
       }
+      if (!withProfessionalQuestions && stepName.value === 'travel_pro') {
+        step.value += 1
+        return true
+      }
 
       return false
     }
 
-    function skipDecSteps() {
+    function skipDecSteps(withProfessionalQuestions = true) {
       if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         step.value -= 1
         return true
       }
+      if (!withProfessionalQuestions && stepName.value === 'travel_pro') {
+        step.value -= 1
+        return true
+      }
+
       return false
     }
 
     function getFreqMod(mode: string) {
-      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+      if (record.value.data?.freq_mod_journeys && record.value.data?.freq_mod_journeys.length) {
         let freq = 0
         record.value.data.freq_mod_journeys.forEach((j) => {
           // unique values of modes

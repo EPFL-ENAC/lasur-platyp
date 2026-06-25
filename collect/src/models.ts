@@ -131,6 +131,7 @@ export interface CampaignInfo {
   contact_email?: string
   info_url?: string
   workplaces: AddressLocation[]
+  with_professional_questions?: boolean
   open_workplaces?: boolean
   rewards_message?: { [key: string]: string }
 }

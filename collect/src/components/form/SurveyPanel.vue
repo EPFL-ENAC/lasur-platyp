@@ -263,7 +263,7 @@ function nextStep() {
     }
   }
 
-  survey.incStep()
+  survey.incStep(collector.info.with_professional_questions ?? true)
   if (survey.tokenOrSlug) {
     void collector.loadInfo(survey.tokenOrSlug)
     if (survey.stepName === 'recommendations') {
@@ -302,7 +302,7 @@ function nextStep() {
 
 function prevStep() {
   if (survey.stepName === 'agreement') return
-  survey.decStep()
+  survey.decStep(collector.info.with_professional_questions ?? true)
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
