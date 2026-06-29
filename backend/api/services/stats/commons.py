@@ -70,9 +70,9 @@ RECOS_PRO = [
     'pub'
 ]
 
-DAYS_PER_YEAR = {
-    'week': 52,
-    'month': 12,
+DAYS_PER_YEAR_FACTOR = {
+    'week': 45,  # worked weeks
+    'month': 11,  # worked months
     'year': 1,
 }
 
@@ -83,9 +83,9 @@ def normalize_pro_days_to_yearly(days: float, days_per) -> float:
     Old records lack days_per (treated as yearly). New records carry
     days_per in {'week', 'month', 'year'}.
     """
-    if pd.isna(days_per) or days_per not in DAYS_PER_YEAR:
+    if pd.isna(days_per) or days_per not in DAYS_PER_YEAR_FACTOR:
         return days
-    return days * DAYS_PER_YEAR[days_per]
+    return days * DAYS_PER_YEAR_FACTOR[days_per]
 
 
 class BaseStatsService:
@@ -132,13 +132,13 @@ class BaseStatsService:
             # On pourrait améliorer ca en cherchant la meme chose pour l'avion (études sur les détours/distances faites lorsqu'on doit attendre au dessus d'un aéroport plein...)
             # Pareil pour le bateau (pour l'instant on applique 1.22 à tous)
             avg_dist_coeff = {
-                'train': 1.22, 
-                'car': 1.22, 
+                'train': 1.22,
+                'car': 1.22,
                 'bike': 1.22,
-                'walk': 1.22, 
-                'moto': 1.22, 
-                'pub': 1.22, 
-                'boat': 1.22, 
+                'walk': 1.22,
+                'moto': 1.22,
+                'pub': 1.22,
+                'boat': 1.22,
                 'plane': 1.22,
                 'truck': 1.22,
                 'cargo': 1.22,
@@ -175,22 +175,22 @@ class BaseStatsService:
     def _build_journey_dataframe(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
         Extract journey data from freq_mod_journeys columns.
-        
+
         Extracts journey information from data.freq_mod_journeys.*.days columns
         and returns a DataFrame with journey-level information.
-        
+
         Args:
             df: DataFrame with V2 records containing freq_mod_journeys data
-            
+
         Returns:
             DataFrame with columns ['token', 'journey', 'days', 'dist', 'travel_time'] or None if no data
         """
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
-        
+
         if len(col_days) == 0:
             return None
-        
+
         journeys_list = []
         for idx, row in df.iterrows():
             for col in col_days:
@@ -205,26 +205,26 @@ class BaseStatsService:
                         'dist': row['distance_km'],
                         'travel_time': row.get('data.travel_time', 0)
                     })
-        
+
         if len(journeys_list) == 0:
             return None
-        
+
         return pd.DataFrame(journeys_list)
 
     def _build_modes_dataframe(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
         Extract mode data from freq_mod_journeys columns.
-        
+
         Extracts mode information from data.freq_mod_journeys.*.modes.* columns
         and returns a DataFrame with mode-level information.
-        
+
         NOTE: Mode names are NOT normalized here to preserve the original behavior
         where intermodality calculations use raw mode names. Normalization happens
         later in the aggregation step.
-        
+
         Args:
             df: DataFrame with V2 records containing freq_mod_journeys data
-            
+
         Returns:
             DataFrame with columns ['token', 'journey', 'mode'] or None if no data
         """
@@ -241,58 +241,62 @@ class BaseStatsService:
                             'journey': journey_id,
                             'mode': mode_val
                         })
-        
+
         if len(modes_list) == 0:
             return None
-        
+
         return pd.DataFrame(modes_list)
 
     def _calculate_intermodality_attributes(self, combined_df: pd.DataFrame) -> pd.DataFrame:
         """
         Calculate intermodality attributes for each journey.
-        
+
         Determines whether each journey is intermodal (uses multiple non-walking modes)
         and whether it includes train travel.
-        
+
         Args:
             combined_df: DataFrame with journeys and modes merged
-            
+
         Returns:
             DataFrame with added columns: ['has_train', 'n_modes', 'is_intermodal', 'is_walking_intermodal']
         """
         combined_df['is_train'] = combined_df['mode'] == 'train'
-        combined_df['is_walking'] = combined_df['mode'].isin(['walking', 'marche'])
-        
+        combined_df['is_walking'] = combined_df['mode'].isin(
+            ['walking', 'marche'])
+
         journey_info = combined_df.groupby(['token', 'journey']).agg({
             'is_train': 'any',
             'mode': 'count',
             'is_walking': 'sum'
         }).rename(columns={'is_train': 'has_train', 'mode': 'n_modes', 'is_walking': 'n_walking'}).reset_index()
-        
+
         # is_intermodal = n_modes - sum(is_walking) > 1
-        journey_info['is_intermodal'] = (journey_info['n_modes'] - journey_info['n_walking']) > 1
+        journey_info['is_intermodal'] = (
+            journey_info['n_modes'] - journey_info['n_walking']) > 1
         # specific treatment for walking + bike or walking + train + walking, which are a specific type of intermodality for MET
-        journey_info['is_walking_intermodal'] = (journey_info['n_walking'] > 0) & ((journey_info['n_modes'] - journey_info['n_walking']) >= 1)
-        
+        journey_info['is_walking_intermodal'] = (journey_info['n_walking'] > 0) & (
+            (journey_info['n_modes'] - journey_info['n_walking']) >= 1)
+
         # Join back to combined df
         combined_df = combined_df.merge(
-            journey_info[['token', 'journey', 'has_train', 'n_modes', 'is_intermodal', 'is_walking_intermodal']], 
-            on=['token', 'journey'], 
+            journey_info[['token', 'journey', 'has_train',
+                          'n_modes', 'is_intermodal', 'is_walking_intermodal']],
+            on=['token', 'journey'],
             how='left'
         )
-        
+
         return combined_df
 
     def _build_journey_attributes(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
         Orchestrator function to build complete journey attributes dataframe.
-        
+
         Combines journey extraction, mode extraction, and intermodality calculation
         into a single enriched dataframe.
-        
+
         Args:
             df: DataFrame with V2 records
-            
+
         Returns:
             Enriched DataFrame with all journey attributes or None if no data
             Columns: ['token', 'journey', 'days', 'dist', 'mode', 'is_train', 
@@ -302,21 +306,22 @@ class BaseStatsService:
         journeys_df = self._build_journey_dataframe(df)
         if journeys_df is None:
             return None
-        
+
         # Step 2: Build modes dataframe
         modes_df = self._build_modes_dataframe(df)
         if modes_df is None:
             return None
-        
+
         # Step 3: Join journeys and modes
-        combined_df = journeys_df.merge(modes_df, on=['token', 'journey'], how='inner')
-        
+        combined_df = journeys_df.merge(
+            modes_df, on=['token', 'journey'], how='inner')
+
         if len(combined_df) == 0:
             return None
-        
+
         # Step 4: Calculate intermodality attributes
         combined_df = self._calculate_intermodality_attributes(combined_df)
-        
+
         return combined_df
 
     def _normalize_mode_name(self, df: pd.DataFrame, column: str) -> str:
