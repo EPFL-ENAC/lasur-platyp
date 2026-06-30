@@ -98,7 +98,7 @@ export default {
       "Identifiant unique pour l'URL de la campagne (ex. 'printemps-2024-enquete-mobilite'). Seules les lettres, chiffres, tirets et underscores sont autorisés.",
     description: 'Description',
     with_professional_questions: 'Inclure des questions sur les déplacements professionnels',
-    with_professional_questions_hint: 'Bla bla bla bla',
+    with_professional_questions_hint: "Par défaut, nous vous donnons la possibilité d'étudier les déplacements domicile-travail et les déplacements professionnels des collaborateur·trice·s. Si cette dernière option (déplacements professionnels) ne vous intéresse pas, vous pouvez retirer cette partie du questionnaire avec ce bouton.",
     with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
     employer_measures_hint:
       'Vous pouvez préciser ici les mesures déjà en place en soutien à la mobilité de vos collaborateur·rice·s. Les mesures qui apparaissent ici sont une sélection de mesures "par défaut" ainsi que les "mesures spécifiques" entrées dans la section précédente "Mesures employeur".',
