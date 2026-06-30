@@ -104,7 +104,7 @@ export default {
       'Vous pouvez préciser ici les mesures déjà en place en soutien à la mobilité de vos collaborateur·rice·s. Les mesures qui apparaissent ici sont une sélection de mesures "par défaut" ainsi que les "mesures spécifiques" entrées dans la section précédente "Mesures employeur".',
     rewards: {
       toggle: 'Je souhaite récompenser les participant·e·s.',
-      hint: 'Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d\'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une "attestation" (document PDF) à la fin du remplissage du questionnaire à chaque répondant·e, qui prouvera sa participation. Le ou la répondant·e pourra alors transférer cette attestation auprès de la personne en charge d\'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).',
+      hint: 'Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d\'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une "attestation" (document PDF) à la fin du remplissage du questionnaire à chaque participant·e, qui prouvera sa participation. Le ou la participant·e pourra alors transférer cette attestation auprès de la personne en charge d\'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).',
       default_message:
         "Bravo et merci pour votre participation à l'enquête mobilyse ! Vos réponses sont précieuses et nous permettront de mieux comprendre comment vous aider dans votre mobilité au quotidien. En téléchargeant ce document et en le transférant à [...], vous pourrez profiter de [...].",
       message_placeholder: 'Message pour les participants',
@@ -357,8 +357,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     switch_to_carousel: 'Passer en vue carrousel',
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
-    nb_employees: 'Nombre de collaborateur·trice·s',
-    percent_employees: '% de collaborateur·trice·s',
+    nb_employees: 'Nombre de participant·e·s',
+    percent_employees: '% de participant·e·s',
     total: 'N : {count}',
     no_data: 'Aucune donnée disponible',
     observed: 'Données des participant·e·s',
@@ -379,16 +379,16 @@ Certains impacts sont aussi calculés :
       },
       mobility_potentials: {
         title: 'Potentiels de mobilité',
-        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux collaborateur·trice·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
+        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
           most_potential:
-            "Le mode de transport avec le plus fort potentiel d'utilisateur.trices est : **{mode}** (recommandé à **{percentage}%** des collaborateur.trices ayant répondu)",
+            "Le mode de transport avec le plus fort potentiel d'utilisateur·trices est : **{mode}** (recommandé à **{percentage}%** des participant·e·s ayant répondu)",
           biggest_emission_reduction:
-            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les collaborateur.trices ayant répondu.',
+            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
           biggest_emission_reduction_extrapolation:
-            'En extrapolant aux **{collaborators_count}** collaborateur.trices de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
+            'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
           biggest_physical_activity_gain:
-            "Le mode de transport permettant d'augmenter le plus l'activité physique des collaborateur.trice.s est : **{mode}**. Ce scénario permet à **{collaborators_count}** collaborateur.trice.s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
+            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce scénario permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
         },
       },
       behavioural_changes: {
@@ -442,7 +442,7 @@ Certains impacts sont aussi calculés :
         default:
           'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
         specific:
-          'Le temps de trajet domicile-travail médian des répondant·es est de {median} minutes.',
+          'Le temps de trajet domicile-travail médian des participant·e·s est de {median} minutes.',
       },
     },
     reco_dt2: {
@@ -467,7 +467,7 @@ Certains impacts sont aussi calculés :
         default:
           'Le mode Voiture est le mode le plus utilisé dans le canton de Genève ([Microrecensement Mobilité et Transports, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
-          'Le mode {top_1} est le plus utilisé par les répondant·es, suivi de {top_2} et {top_3}.',
+          'Le mode {top_1} est le plus utilisé par les participant·e·s, suivi de {top_2} et {top_3}.',
       },
     },
     freq_mod_pro: {
@@ -492,7 +492,7 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         specific:
-          "{carMotoJourneysPercentage}% des trajets des répondant·es sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
+          "{carMotoJourneysPercentage}% des trajets des participant·e·s sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
       },
     },
     emissions_reductions_mod: {
@@ -506,7 +506,7 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
@@ -520,7 +520,7 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         default:
-          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les collaborateur·trice·s suivraient les recommandations.',
+          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
         specific:
           "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
       },
@@ -548,7 +548,7 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les collaborateur·trice·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
@@ -559,7 +559,7 @@ Certains impacts sont aussi calculés :
         default:
           'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
         specific:
-          'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les répondants.',
+          'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les participant·e·s.',
       },
     },
     mod_reco_pro: {
