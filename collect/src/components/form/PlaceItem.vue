@@ -13,6 +13,7 @@ import { AttributionControl, FullscreenControl, Map, NavigationControl } from 'm
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
 import { H3GridManager, H3Utils, type H3Index } from 'src/utils/h3'
+import { BoundariesManager } from 'src/utils/boundaries'
 
 interface Props {
   modelValue: string | undefined
@@ -63,16 +64,19 @@ function onInit() {
   )
 
   if (map.value) {
-    new H3GridManager(
-      map.value,
-      location.value,
-      props.readOnly
-        ? undefined
-        : (hexId: H3Index) => {
-            location.value = hexId
-            onUpdate()
-          },
-    )
+    map.value.on('load', () => {
+      new H3GridManager(
+        map.value,
+        location.value,
+        props.readOnly
+          ? undefined
+          : (hexId: H3Index) => {
+              location.value = hexId
+              onUpdate()
+            },
+      )
+      new BoundariesManager(map.value)
+    })
   }
 }
 

@@ -24,6 +24,12 @@ db-revision:
 seed:
 	curl -X PUT 'http://localhost:8000/seed' -H 'accept: application/json'
 
+#
+# Maps
+#
+
+# Download original maps data from various sources and store them in the data folder. 
+# This is a prerequisite for generating boundaries and pmtiles.
 download-data: download-world-boundaries download-nuts-data download-switzerland-osm download-france-osm
 
 download-world-boundaries:
@@ -48,6 +54,8 @@ download-france-osm:
 	wget -O data/france/rhone-alpes.gpkg.zip "https://download.geofabrik.de/europe/france/rhone-alpes-latest-free.gpkg.zip"
 	unzip data/france/rhone-alpes.gpkg.zip -d data/france/rhone-alpes
 
+# Generate boundaries from the downloaded data. 
+# This is a prerequisite for generating pmtiles.
 generate-boundaries: generate-filtering-boundaries generate-multilevel-boundaries
 
 generate-filtering-boundaries:
@@ -57,13 +65,27 @@ generate-multilevel-boundaries:
 	poetry run python scripts/create_multilevel_boundaries.py
 
 pmtiles:
+	for f in data/*.geojson; do \
+		base=$$(basename $$f .geojson); \
+		tippecanoe -zg -o data/$$base.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force $$f; \
+	done
+
+pmtiles2:
 	tippecanoe -Z 1  -z 5  -o data/national_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/national_boundaries.geojson
 	tippecanoe -Z 5  -z 10 -o data/regional_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/regional_boundaries.geojson
 	tippecanoe -Z 10 -z 12 -o data/filtering_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/filtering_boundaries.geojson
 	tippecanoe -Z 12       -o data/local_boundaries.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force data/local_boundaries.geojson
 
-pmtiles2:
-	for f in data/*.geojson; do \
-		base=$$(basename $$f .geojson); \
-		tippecanoe -zg -o data/$$base.pmtiles --drop-densest-as-needed --extend-zooms-if-still-dropping --force $$f; \
+# Upload the generated pmtiles to the S3 bucket.
+version=$(shell date +%FT%H:%M)
+bucket=10208-fcd9acb029f419e6493edf97f4592b96
+folder=platyp
+
+cdn-maps:
+	for f in data/*.pmtiles; do \
+		s3cmd put --acl-public --guess-mime-type $$f s3://${bucket}/${folder}/maps/${version}/$$f; \
 	done
+	@echo "Uploaded pmtiles to CDN in folder: ${folder}/maps/${version}"
+
+sync:
+	s3cmd sync s3://${bucket}/${folder}/maps/${version}/ maps-${version}/
