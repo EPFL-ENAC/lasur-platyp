@@ -501,7 +501,7 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_reductions_share: {
-      title: 'Share of CO₂ emissions reduction per recommended mode of transport',
+      title: 'Distribution of emissions reductions by transport mode',
       series: 'Potential reduction',
       labels: {
         ...transportationModes,
@@ -574,7 +574,7 @@ Some environmental impacts have also been calculated:
         specific_current:
           'Currently, participants spend an average of {energy} kcal/day/person on their home-work travel.',
         specific_reco: `If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person (equivalent to {yoga_min} minutes of yoga per person per day).
-          Moreover, {count} more people will exceed the daily physical activity recommendations of the WHO, going from {percent_current}% to {percent_potential}%.`,
+          In addition, an additional {count} people will exceed the WHO’s daily physical activity recommendations. The proportion of participants who meet at least the WHO’s recommendations through their commute is expected to rise from around {percent_current}% to potentially around {percent_potential}%.`,
         default_share:
           'This chart shows which modes of transport have the most potential for increased physical activity.',
         specific_share:

@@ -586,7 +586,7 @@ Certains impacts sont aussi calculés :
         specific_current:
           'Actuellement, les participant·e·s dépensent en moyenne {energy} kcal/jour/pers pour leurs déplacements domicile-travail.',
         specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers (l'équivalent de {yoga_min} minutes de yoga par personne et par jour).
-          De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d'activité physique journalière de l'OMS, passant de {percent_current}% à {percent_potential}%.`,
+          De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d’activité physique journalière de l’OMS. Le taux des participant·e·s dépensant au moins ce que recommande l'OMS grâce aux déplacements domicile-travail passerait d'environ {percent_current}% actuellement à environ {percent_potential}% potentiellement.`,
         default_share:
           "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
         specific_share:

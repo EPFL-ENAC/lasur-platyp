@@ -91,12 +91,12 @@ const textLabelsReco = computed(() => {
     count: formatNumber(newHealthyParticipants.value || 0),
     percent_current: formatNumber(
       (props.journeyEnergyStats.gains.current_above_who_count /
-        props.journeyEnergyStats.current.data.length) *
+        props.journeyEnergyStats.current.total) *
         100,
     ),
     percent_potential: formatNumber(
       (props.journeyEnergyStats.gains.reco_above_who_count /
-        props.journeyEnergyStats.reco.data.length) *
+        props.journeyEnergyStats.reco.total) *
         100,
     ),
   }
