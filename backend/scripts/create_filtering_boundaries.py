@@ -36,26 +36,26 @@ def read_osm_extract(path: Path, layer: str = LAYER_NAME) -> gpd.GeoDataFrame:
     return gpd.read_file(path, layer=layer)
 
 
-def get_france_arrondissements(france_paths: list[Path]) -> gpd.GeoDataFrame:
+def get_france_arrondissements(france_paths: list[Path], crs: str) -> gpd.GeoDataFrame:
     """Extract admin_level7 (arrondissements) from French OSM extracts."""
     frames: list[gpd.GeoDataFrame] = []
     for path in france_paths:
         gdf = read_osm_extract(path)
-        arrondissements = gdf[gdf.fclass == "admin_level7"]
+        arrondissements = gdf[gdf.fclass == "admin_level7"].to_crs(crs)
         print(f"  {path.name}: {len(arrondissements)} arrondissements")
         frames.append(arrondissements)
     return pd.concat(frames, ignore_index=True)
 
 
-def get_switzerland_areas(ch_path: Path) -> gpd.GeoDataFrame:
+def get_switzerland_areas(ch_path: Path, crs: str) -> gpd.GeoDataFrame:
     """Extract Swiss districts and districtless cantons from the OSM extract."""
     gdf = read_osm_extract(ch_path)
 
-    districts = gdf[gdf.fclass == "admin_level6"]
+    districts = gdf[gdf.fclass == "admin_level6"].to_crs(crs)
     print(f"  {ch_path.name}: {len(districts)} districts")
 
     cantons = gdf[(gdf.fclass == "admin_level4") &
-                  (gdf.name.isin(DISTRICTLESS_CANTONS))]
+                  (gdf.name.isin(DISTRICTLESS_CANTONS))].to_crs(crs)
     print(f"  {ch_path.name}: {len(cantons)} districtless cantons")
 
     return pd.concat([cantons, districts], ignore_index=True)
@@ -73,11 +73,13 @@ def main() -> None:
 
     ch_path = data_dir / "switzerland" / "switzerland" / "switzerland.gpkg"
 
+    crs = "EPSG:4326"  # WGS84
+
     print("Loading French arrondissements...")
-    france = get_france_arrondissements(france_paths)
+    france = get_france_arrondissements(france_paths, crs)
 
     print("Loading Swiss areas...")
-    switzerland = get_switzerland_areas(ch_path)
+    switzerland = get_switzerland_areas(ch_path, crs)
 
     output = pd.concat([france, switzerland], ignore_index=True)
     output_path = data_dir / "filtering_boundaries.geojson"

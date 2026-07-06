@@ -22,13 +22,24 @@ export interface Journey {
   days: number
 }
 
+export type BoundaryLevel = 'national' | 'regional' | 'local'
+
+export interface PlaceLocation {
+  lat: number
+  lon: number
+  level: BoundaryLevel
+  feature_id?: string | number | undefined
+}
+
 export interface ProJourney {
   mode: string
   days: number
   days_per: 'week' | 'month' | 'year'
   is_company_vehicle?: boolean | undefined
   constraints?: string[]
-  hex_id: string | undefined
+  /** @deprecated superseded by `location`, kept for backward compatibility with older records */
+  hex_id?: string | undefined
+  location?: PlaceLocation | undefined
 }
 
 export interface RecordData {
@@ -170,7 +181,7 @@ export interface RecommendationsPreviewData {
   }
   pro: {
     recoPros: string[]
-    proJourneyHexIds: string[]
+    proJourneyLocations: (PlaceLocation | undefined)[]
     mesurePro: string[][]
     globalActions: string[]
   }

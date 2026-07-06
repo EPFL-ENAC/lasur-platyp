@@ -23,7 +23,7 @@
     <RecommendationsProPanel
       class="q-mt-xl"
       :reco-pros="recoPros"
-      :pro-journey-hex-ids="proJourneyHexIds"
+      :pro-journey-locations="proJourneyLocations"
       :mesure-pro="mesurePro"
       :global-actions="globalActionsPro"
       :benefits-expanded="false"
@@ -35,6 +35,7 @@
 import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
 import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
 import type { RecommendationsPreviewData } from 'src/models'
+import { resolveLocation } from 'src/utils/boundaries'
 
 const { t } = useI18n()
 const survey = useSurvey()
@@ -78,8 +79,8 @@ const recoPros = computed(
   () => survey.recommendation.reco_pro?.reco_pros || [],
 )
 
-const proJourneyHexIds = computed(() =>
-  (survey.record.data.freq_mod_pro_journeys || []).map((j) => j.hex_id!),
+const proJourneyLocations = computed(() =>
+  (survey.record.data.freq_mod_pro_journeys || []).map((j) => resolveLocation(j.location, j.hex_id)),
 )
 
 const mesurePro = computed(
@@ -103,7 +104,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
   },
   pro: {
     recoPros: recoPros.value,
-    proJourneyHexIds: proJourneyHexIds.value,
+    proJourneyLocations: proJourneyLocations.value,
     mesurePro: mesurePro.value,
     globalActions: globalActionsPro.value,
   },
