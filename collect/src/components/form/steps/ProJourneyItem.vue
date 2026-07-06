@@ -6,7 +6,7 @@
       <PlaceItem
         :map-id="mapId"
         label-class="text-h6"
-        v-model="journey.hex_id"
+        v-model="location"
         :zoom="8"
         class="q-mb-xl"
       />
@@ -85,7 +85,8 @@ import PlaceItem from 'src/components/form/PlaceItem.vue'
 import NumberItem from 'src/components/form/NumberItem.vue'
 import ToggleItem from 'src/components/form/ToggleItem.vue'
 import type { Option } from 'src/components/form/models'
-import type { ProJourney } from 'src/models'
+import type { ProJourney, PlaceLocation } from 'src/models'
+import { H3Utils } from 'src/utils/h3'
 
 interface Props {
   modelValue: ProJourney
@@ -106,6 +107,14 @@ const $q = useQuasar()
 const journey = computed({
   get: () => props.modelValue,
   set: (val: ProJourney) => emit('update:modelValue', val),
+})
+
+const location = computed({
+  get: () => journey.value.location,
+  set: (val: PlaceLocation | undefined) => {
+    journey.value.location = val
+    journey.value.hex_id = val ? H3Utils.fromPlaceLocation(val) : undefined
+  },
 })
 
 const modeOptions = computed<Option[]>(() =>

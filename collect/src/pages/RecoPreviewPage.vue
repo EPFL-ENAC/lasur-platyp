@@ -35,7 +35,7 @@
         <RecommendationsProPanel
           class="q-mt-xl"
           :reco-pros="data.pro.recoPros"
-          :pro-journey-hex-ids="data.pro.proJourneyHexIds"
+          :pro-journey-locations="data.pro.proJourneyLocations"
           :mesure-pro="data.pro.mesurePro"
           :global-actions="data.pro.globalActions"
           :benefits-expanded="true"

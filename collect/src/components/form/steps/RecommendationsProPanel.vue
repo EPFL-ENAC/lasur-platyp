@@ -16,9 +16,9 @@
             :benefits-expanded="!!benefitsExpanded"
           >
             <PlaceItem
-              v-if="proJourneyHexIds[index]"
+              v-if="proJourneyLocations[index]"
               :map-id="`map-pro-${index}`"
-              :model-value="proJourneyHexIds[index]"
+              :model-value="proJourneyLocations[index]"
               read-only
               :height="'200px'"
               class="q-mt-sm q-mb-sm"
@@ -45,12 +45,13 @@
 import SectionItem from 'src/components/form/SectionItem.vue'
 import RecommendationItem from './RecommendationItem.vue'
 import PlaceItem from 'src/components/form/PlaceItem.vue'
+import type { PlaceLocation } from 'src/models'
 
 const { t } = useI18n()
 
 const props = defineProps<{
   recoPros: string[]
-  proJourneyHexIds: string[]
+  proJourneyLocations: (PlaceLocation | undefined)[]
   mesurePro: string[][]
   globalActions: string[]
   benefitsExpanded?: boolean

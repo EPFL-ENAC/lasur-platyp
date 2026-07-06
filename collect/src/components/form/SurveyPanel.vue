@@ -230,7 +230,7 @@ function nextStep() {
       if (journey.mode === undefined || journey.mode === '') {
         errors.push(t('form.error.pro_journey_mode'))
       }
-      if (journey.hex_id === undefined || journey.hex_id === '') {
+      if (!journey.location && !journey.hex_id) {
         errors.push(t('form.error.pro_journey_hex_id'))
       }
     }

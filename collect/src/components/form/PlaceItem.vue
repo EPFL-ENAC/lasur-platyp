@@ -12,11 +12,11 @@
 import { AttributionControl, FullscreenControl, Map, NavigationControl } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
-import { H3GridManager, H3Utils, type H3Index } from 'src/utils/h3'
 import { BoundariesManager } from 'src/utils/boundaries'
+import type { PlaceLocation } from 'src/models'
 
 interface Props {
-  modelValue: string | undefined
+  modelValue: PlaceLocation | undefined
   label?: string
   hint?: string
   height?: string
@@ -27,21 +27,21 @@ interface Props {
   readOnly?: boolean
 }
 const props = defineProps<Props>()
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: PlaceLocation | undefined]
+}>()
 
 const defaultCenter: [number, number] = [6.142873, 46.205066]
 
-const location = ref<H3Index>('' as H3Index)
 const map = ref<Map>()
 
 onMounted(onInit)
 
 function onInit() {
   let center = defaultCenter
-  location.value = props.modelValue || ''
-  if (location.value !== '') {
-    const latLong = H3Utils.getLatLong(location.value)
-    center = [latLong[1], latLong[0]]
+  const initSelection = props.modelValue
+  if (initSelection) {
+    center = [initSelection.lon, initSelection.lat]
   } else if (props.center) {
     center = [props.center[0], props.center[1]]
   }
@@ -65,23 +65,17 @@ function onInit() {
 
   if (map.value) {
     map.value.on('load', () => {
-      new H3GridManager(
+      new BoundariesManager(
         map.value,
-        location.value,
+        initSelection,
         props.readOnly
           ? undefined
-          : (hexId: H3Index) => {
-              location.value = hexId
-              onUpdate()
+          : (selection: PlaceLocation | undefined) => {
+              emit('update:modelValue', selection)
             },
       )
-      new BoundariesManager(map.value)
     })
   }
-}
-
-function onUpdate() {
-  emit('update:modelValue', location.value)
 }
 </script>
 

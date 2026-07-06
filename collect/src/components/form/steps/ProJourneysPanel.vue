@@ -62,7 +62,7 @@ function onAddJourney() {
     days: 1,
     days_per: 'year',
     mode: '',
-    hex_id: undefined,
+    location: undefined,
     constraints: [],
   })
 }
