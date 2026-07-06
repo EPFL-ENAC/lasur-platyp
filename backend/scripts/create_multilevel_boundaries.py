@@ -38,8 +38,9 @@ def extract_local_boundaries(
 
     municipalities = pd.concat([fr_municipalities, ch_municipalities, de_municipalities, it_municipalities], ignore_index=True)
         
-    municipalities = municipalities[["CNTR_CODE", "LAU_NAME", "geometry"]]
-    municipalities = municipalities.rename(columns={"CNTR_CODE": "country", "LAU_NAME": "name"})
+    municipalities = municipalities[["CNTR_CODE", "LAU_NAME", "GISCO_ID", "geometry"]]
+    municipalities = municipalities.rename(columns={"CNTR_CODE": "country", "LAU_NAME": "name", "GISCO_ID": "id"})
+    municipalities = municipalities.drop_duplicates(subset=["id"])
 
     return municipalities
 
@@ -111,16 +112,19 @@ def extract_regional_boundaries(
     uk_nuts = nuts_2021_df[(nuts_2021_df["CNTR_CODE"] == "UK") & (nuts_2021_df["LEVL_CODE"] == 2)]
     regions = pd.concat([regions, uk_nuts], ignore_index=True)
 
-    regions = regions[["CNTR_CODE", "NAME_LATN", "geometry"]]
-    # rename columns to "country, name, geometry"
-    regions = regions.rename(columns={"CNTR_CODE": "country", "NAME_LATN": "name"})
+    regions = regions[["CNTR_CODE", "NAME_LATN", "NUTS_ID", "geometry"]]
+    # rename columns to "country, name, id, geometry"
+    regions = regions.rename(columns={"CNTR_CODE": "country", "NAME_LATN": "name", "NUTS_ID": "id"})
 
     return regions
 
 def extract_national_boundaries(gbd_df: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    nations = gbd_df[["shapeType", "shapeName", "geometry"]]
-    # rename columns to "type, name, geometry"
-    nations = nations.rename(columns={"shapeType": "type", "shapeName": "name"})
+    nations = gbd_df[["shapeType", "shapeName", "shapeGroup", "geometry"]]
+    # Create an ID column based on the shapeType (ADM0 or DISP for disputed) and shapeGroup (country code)
+    # Removing regions identified as DISP will result in holes in the map.
+    nations["id"] = nations["shapeType"] + "_" + nations["shapeGroup"]
+    nations.drop(columns=["shapeType", "shapeGroup"], inplace=True)
+    nations = nations.rename(columns={"shapeName": "name", "id": "id", "geometry": "geometry"})
 
     return nations
 
