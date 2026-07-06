@@ -433,6 +433,7 @@ Certains impacts sont aussi calculés :
     locationsHeatmap: {
       title: 'Répartition géographique des lieux de résidence et de travail',
       households: 'Lieux de domicile',
+      households_number: 'Nombre de domiciles',
       workplaces: 'Lieux de travail enregistrés',
     },
     travel_time: {

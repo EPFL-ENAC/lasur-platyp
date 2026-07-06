@@ -46,14 +46,19 @@
           </span>
           <span class="legend-label">{{ t('stats.locationsHeatmap.households') }}</span>
         </div>
-        <div class="gradient-container">
-          <div
-            class="gradient-bar"
-            :style="{ background: gradient.toCSSGradient('to right') }"
-          ></div>
-          <div class="gradient-labels">
-            <span>1</span>
-            <span>>{{ max }}</span>
+        <div>
+          <div class="text-hint">
+            <span class="legend-label">{{ t('stats.locationsHeatmap.households_number') }}</span>
+          </div>
+          <div class="gradient-container">
+            <div
+              class="gradient-bar"
+              :style="{ background: gradient.toCSSGradient('to right') }"
+            ></div>
+            <div class="gradient-labels">
+              <span>1</span>
+              <span>{{ max }}</span>
+            </div>
           </div>
         </div>
       </location-heatmap>
@@ -268,7 +273,7 @@ const max = computed(() => {
 }
 
 .gradient-container {
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 .gradient-bar {

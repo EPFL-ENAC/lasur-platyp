@@ -423,6 +423,7 @@ Some environmental impacts have also been calculated:
     locationsHeatmap: {
       title: 'Geographical distribution of home and workplace locations',
       households: 'Households',
+      households_number: 'Number of households',
       workplaces: 'Workplaces',
     },
     travel_time: {
