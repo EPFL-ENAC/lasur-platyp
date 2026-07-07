@@ -198,11 +198,11 @@ export const useSurvey = defineStore(
     function isRecommendationAtIndexInUse(index: number) {
       if (
         recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length > index
+        recommendation.value.reco.reco_inter &&
+        recommendation.value.reco.reco_inter.length > index
       ) {
         const freqMods = getFreqMods()
-        const mode = recommendation.value.reco.reco_dt2[index]
+        const mode = recommendation.value.reco.reco_inter[index]
         if (!mode) return false
 
         const translatedMode = RecoToMode[mode] || mode
@@ -220,15 +220,15 @@ export const useSurvey = defineStore(
     }
 
     /**
-     * Check if a mode is one of the recommendations (reco_dt2).
+     * Check if a mode is one of the recommendations (reco_inter).
      */
     function isModeInRecommendation(mode: string) {
       if (
         recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length
+        recommendation.value.reco.reco_inter &&
+        recommendation.value.reco.reco_inter.length
       ) {
-        return recommendation.value.reco.reco_dt2.some(
+        return recommendation.value.reco.reco_inter.some(
           (reco) => (RecoToMode[reco] || reco) === mode,
         )
       }

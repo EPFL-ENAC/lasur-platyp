@@ -66,8 +66,8 @@ const emit = defineEmits(['update:modelValue'])
 const isRecoChange = computed(() => !survey.isRecommendationInUse())
 
 const firstRecoDt = computed(() =>
-  survey.recommendation.reco && survey.recommendation.reco.reco_dt2.length
-    ? survey.recommendation.reco.reco_dt2[0]
+  survey.recommendation.reco && survey.recommendation.reco.reco_inter.length
+    ? survey.recommendation.reco.reco_inter[0]
     : '',
 )
 

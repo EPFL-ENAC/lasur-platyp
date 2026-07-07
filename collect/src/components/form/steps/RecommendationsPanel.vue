@@ -1,12 +1,7 @@
 <template>
   <div>
     <div class="row justify-end q-mb-md">
-      <q-btn
-        color="primary"
-        icon="print"
-        :label="t('print')"
-        @click="openPrintPreview"
-      />
+      <q-btn color="primary" icon="print" :label="t('print')" @click="openPrintPreview" />
     </div>
 
     <RecommendationsPersoPanel
@@ -42,14 +37,10 @@ const survey = useSurvey()
 const router = useRouter()
 
 const mainFm = computed(() => survey.getMainFreqMod())
-const isModeSustainable = computed(() =>
-  survey.isModeSustainable(survey.getMainFreqMod(false)),
-)
-const isModeOptions = computed(() =>
-  survey.isModeInRecommendation(mainFm.value),
-)
+const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
+const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
 
-const recoDt = computed(() => survey.recommendation.reco?.reco_dt2 || [])
+const recoDt = computed(() => survey.recommendation.reco?.reco_inter || [])
 
 const center = computed(() => {
   const loc = survey.record.data.origin
@@ -63,33 +54,23 @@ function normalizeArray(value?: string | string[]) {
   return [value]
 }
 
-const mesureDt1 = computed(() =>
-  normalizeArray(survey.recommendation.reco_actions?.mesure_dt1),
-)
+const mesureDt1 = computed(() => normalizeArray(survey.recommendation.reco_actions?.mesure_dt1))
 
-const mesureDt2 = computed(() =>
-  normalizeArray(survey.recommendation.reco_actions?.mesure_dt2),
-)
+const mesureDt2 = computed(() => normalizeArray(survey.recommendation.reco_actions?.mesure_dt2))
 
-const globalActionsPerso = computed(
-  () => survey.recommendation.reco_actions?.mesures_globa || [],
-)
+const globalActionsPerso = computed(() => survey.recommendation.reco_actions?.mesures_globa || [])
 
-const recoPros = computed(
-  () => survey.recommendation.reco_pro?.reco_pros || [],
-)
+const recoPros = computed(() => survey.recommendation.reco_pro?.reco_pros || [])
 
 const proJourneyLocations = computed(() =>
-  (survey.record.data.freq_mod_pro_journeys || []).map((j) => resolveLocation(j.location, j.hex_id)),
+  (survey.record.data.freq_mod_pro_journeys || []).map((j) =>
+    resolveLocation(j.location, j.hex_id),
+  ),
 )
 
-const mesurePro = computed(
-  () => survey.recommendation.reco_actions?.mesure_pro || [],
-)
+const mesurePro = computed(() => survey.recommendation.reco_actions?.mesure_pro || [])
 
-const globalActionsPro = computed(
-  () => survey.recommendation.reco_actions?.mesures_pro_globa || [],
-)
+const globalActionsPro = computed(() => survey.recommendation.reco_actions?.mesures_pro_globa || [])
 
 const previewData = computed<RecommendationsPreviewData>(() => ({
   perso: {

@@ -94,7 +94,7 @@ export interface RecordCertificate {
 
 export interface Recommendation {
   reco?: {
-    reco_dt2: string[]
+    reco_inter: string[]
     scores: {
       covoit: number
       elec: number

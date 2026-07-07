@@ -81,6 +81,38 @@ class ModalTypoService:
         response.raise_for_status()
         return response.json()
 
+    def get_recommendation_inter(self, record: Record) -> dict:
+        """Get intermodality typo suggestions for a record"""
+        url = f"{self.url}/modal-typo/reco-inter"
+        data = {
+            "o_lon": record.data["origin"]["lon"],
+            "o_lat": record.data["origin"]["lat"],
+            "d_lon": record.data["workplace"]["lon"],
+            "d_lat": record.data["workplace"]["lat"],
+            "tps_traj": record.data["travel_time"],
+            "constraints": record.data["constraints"],
+            "freq_mod_journeys": record.data["freq_mod_journeys"],
+
+            "a_voit": record.data["needs_car"],
+            "a_moto": record.data["needs_moto"],
+            "a_tpu": record.data["needs_pub"],
+            "a_train": record.data["needs_train"],
+            "a_marc": record.data["needs_walking"],
+            "a_velo": record.data["needs_bike"],
+
+            "i_tmps": record.data["importance_time"],
+            "i_prix": record.data["importance_cost"],
+            "i_flex": record.data["importance_flex"],
+            "i_conf": record.data["importance_comfort"],
+            "i_fiab": record.data["importance_rel"],
+            "i_prof": record.data["importance_most"],
+            "i_envi": record.data["importance_env"]
+        }
+        response = requests.post(
+            url, headers=self.headers, json=data)
+        response.raise_for_status()
+        return response.json()
+
     def get_recommendation_pro(self, record: Record, scores: dict) -> dict:
         """Get typo pro suggestions for a record"""
         record.company_id
@@ -113,7 +145,7 @@ class ModalTypoService:
         response.raise_for_status()
         return response.json()
 
-    def get_recommendation_employer_actions(self, company: Company, campaign: Campaign, custom_actions: list[CompanyAction], locale: str, reco_dt2: list, reco_pro: list[str]) -> dict:
+    def get_recommendation_employer_actions(self, company: Company, campaign: Campaign, custom_actions: list[CompanyAction], locale: str, reco_inter: list, reco_pro: list[str]) -> dict:
         """Get employer actions for a record"""
         url = f"{self.url}/modal-typo/empl"
 
@@ -158,7 +190,7 @@ class ModalTypoService:
                 "mesures_pro_train": actions["mesures_pro_train"] if "mesures_pro_train" in actions else [],
                 "mesures_pro_elec": actions["mesures_pro_elec"] if "mesures_pro_elec" in actions else [],
             },
-            "reco_dt2": reco_dt2,
+            "reco_dt2": reco_inter,
             "reco_pro": reco_pro
         }
         response = requests.post(

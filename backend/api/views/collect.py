@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 import secrets
 from typing import Dict
@@ -22,12 +23,12 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
-    
+
     try:
         campaign = await CampaignService(session).get_by_slug(tokenOrSlug)
     except:
         campaign = None
-    
+
     if not campaign:
         try:
             cr = await RecordService(session).get_by_token(tokenOrSlug)
@@ -35,10 +36,10 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
                 campaign = await CampaignService(session).get(cr.campaign_id)
         except:
             campaign = None
-    
+
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
-    
+
     company = await CompanyService(session).get(campaign.company_id)
     return CampaignInfo(
         name=campaign.name,
@@ -89,7 +90,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         cr = await RecordService(session).get_by_token(tokenOrSlug)
     except:
         cr = None  # 404 if not found
-    
+
     if cr is not None:
         campaign = await CampaignService(session).get(cr.campaign_id)
         _check_campaign(campaign)
@@ -113,7 +114,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         }
     else:
         data["workplace"] = None
-    
+
     return RecordDraft(token=tokenOrSlug, data=data)
 
 
@@ -127,7 +128,7 @@ async def createOrUpdate(
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
-    
+
     campaign = None
     if tokenOrSlug != item.token:
         # this is a campaign's slug
@@ -145,18 +146,19 @@ async def get_final(token: str, session: AsyncSession = Depends(get_session)) ->
     """Get a record by participant token, only if the participant has completed the survey"""
     if token is None:
         raise HTTPException(status_code=400, detail="Missing token")
-    
+
     record = await RecordService(session).get_by_token(token)
 
     if record is None:
         raise HTTPException(status_code=404, detail="Record not found")
     if record.response_id_in_campaign is None and (not record.data.get("change", None) or not record.data.get("change2", None)):
-        raise HTTPException(status_code=400, detail="Participant has not completed the survey yet")
-    
+        raise HTTPException(
+            status_code=400, detail="Participant has not completed the survey yet")
+
     campaign = await CampaignService(session).get(record.campaign_id)
     if campaign is None:
         raise HTTPException(status_code=404, detail="Campaign not found")
-    
+
     return RecordCertificate(response_id_in_campaign=record.response_id_in_campaign, rewards_message=campaign.rewards_message or {})
 
 
@@ -193,18 +195,19 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
     record = await recordService.get_by_token(token)
     response = {}
     service = ModalTypoService()
-    reco = service.get_recommendation_multi(record)
+    reco = service.get_recommendation_inter(record)
+    logging.info(f"Modal typo recommendation for record {record.id}: {reco}")
     response["reco"] = reco
     reco_pro = None
     if "scores" in reco:
         reco_pro = service.get_recommendation_pro(record, reco["scores"])
         response["reco_pro"] = reco_pro
-    if "reco_dt2" in reco and reco_pro is not None:
+    if "reco_inter" in reco and reco_pro is not None:
         company = await CompanyService(session).get(record.company_id)
         campaign = await CampaignService(session).get(record.campaign_id)
         custom_actions = await CompanyActionService(session).get_company_actions(company.id)
         actions = service.get_recommendation_employer_actions(
-            company, campaign, custom_actions, locale, reco["reco_dt2"], reco_pro["reco_pros"])
+            company, campaign, custom_actions, locale, reco["reco_inter"], reco_pro["reco_pros"])
         response["reco_actions"] = actions
     record.typo = response
     # remove access and scores from record.typo.reco
@@ -215,6 +218,7 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
     record.comments = None  # clear comments
     await recordService.update(record.id, record)
     return response
+
 
 def _check_campaign(campaign: Campaign):
     """Check if campaign has a valid time frame
