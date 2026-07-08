@@ -67,7 +67,7 @@ const props = defineProps<{
   center: [number, number] | null
   mesureDt1: string[]
   mesureDt2: string[]
-  globalActions: string[],
+  globalActions: string[]
   benefitsExpanded?: boolean
 }>()
 

@@ -40,7 +40,7 @@
         </q-menu>
       </q-btn>
       <div
-        :id="`map-${reco}`"
+        :id="mapContainerId"
         :style="`--t-height: ${height || '400px'}; --t-width: ${width || '100%'};`"
         class="map-view"
       ></div>
@@ -93,6 +93,8 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 
+const mapContainerId = `map-${props.reco}-${useId()}`
+
 const map = ref<Map>()
 let marker: Marker | undefined
 const loadingIsochrones = ref(true)
@@ -138,7 +140,7 @@ onMounted(onInit)
 
 function onInit() {
   map.value = new Map({
-    container: `map-${props.reco}`,
+    container: mapContainerId,
     center: props.center,
     style: style,
     trackResize: true,

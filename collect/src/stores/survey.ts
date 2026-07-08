@@ -29,7 +29,6 @@ export const useSurvey = defineStore(
       'age_class',
       'recommendations',
       'change',
-      'change2',
       'email',
       'comments',
       'final',
@@ -39,6 +38,7 @@ export const useSurvey = defineStore(
     const record = ref<Record>({} as Record)
     const started = ref(false)
     const step = ref(0)
+    const changeStepIndex = ref(0)
     const timestamp = ref(Date.now())
     const recommendation = ref<Recommendation>({})
 
@@ -50,6 +50,7 @@ export const useSurvey = defineStore(
       recommendation.value = {}
       started.value = false
       step.value = 1
+      changeStepIndex.value = 0
       timestamp.value = Date.now()
     }
 
@@ -64,8 +65,17 @@ export const useSurvey = defineStore(
       recommendation.value = {}
       started.value = false
       step.value = 0
+      changeStepIndex.value = 0
       timestamp.value = Date.now()
       tokenOrSlug.value = null
+    }
+
+    /**
+     * Number of 'change' sub-steps, one per recommended mode (reco_inter).
+     * At least one, so the step is still shown when there is no recommendation.
+     */
+    function changeStepsCount() {
+      return Math.max(recommendation.value.reco?.reco_inter?.length ?? 0, 1)
     }
 
     function isBeforeStep(name: string) {
@@ -77,7 +87,15 @@ export const useSurvey = defineStore(
     }
 
     function incStep(withProfessionalQuestions = true) {
+      if (stepName.value === 'change' && changeStepIndex.value < changeStepsCount() - 1) {
+        changeStepIndex.value += 1
+        timestamp.value = Date.now()
+        return
+      }
       step.value += 1
+      if (stepName.value === 'change') {
+        changeStepIndex.value = 0
+      }
       let skipped = skipIncSteps(withProfessionalQuestions)
       while (skipped) {
         skipped = skipIncSteps(withProfessionalQuestions)
@@ -86,7 +104,15 @@ export const useSurvey = defineStore(
     }
 
     function decStep(withProfessionalQuestions = true) {
+      if (stepName.value === 'change' && changeStepIndex.value > 0) {
+        changeStepIndex.value -= 1
+        timestamp.value = Date.now()
+        return
+      }
       step.value -= 1
+      if (stepName.value === 'change') {
+        changeStepIndex.value = changeStepsCount() - 1
+      }
       let skipped = skipDecSteps(withProfessionalQuestions)
       while (skipped) {
         skipped = skipDecSteps(withProfessionalQuestions)
@@ -198,11 +224,11 @@ export const useSurvey = defineStore(
     function isRecommendationAtIndexInUse(index: number) {
       if (
         recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length > index
+        recommendation.value.reco.reco_inter &&
+        recommendation.value.reco.reco_inter.length > index
       ) {
         const freqMods = getFreqMods()
-        const mode = recommendation.value.reco.reco_dt2[index]
+        const mode = recommendation.value.reco.reco_inter[index]
         if (!mode) return false
 
         const translatedMode = RecoToMode[mode] || mode
@@ -211,24 +237,16 @@ export const useSurvey = defineStore(
       return false
     }
 
-    function isRecommendationInUse() {
-      return isRecommendationAtIndexInUse(0)
-    }
-
-    function isRecommendation2InUse() {
-      return isRecommendationAtIndexInUse(1)
-    }
-
     /**
-     * Check if a mode is one of the recommendations (reco_dt2).
+     * Check if a mode is one of the recommendations (reco_inter).
      */
     function isModeInRecommendation(mode: string) {
       if (
         recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length
+        recommendation.value.reco.reco_inter &&
+        recommendation.value.reco.reco_inter.length
       ) {
-        return recommendation.value.reco.reco_dt2.some(
+        return recommendation.value.reco.reco_inter.some(
           (reco) => (RecoToMode[reco] || reco) === mode,
         )
       }
@@ -241,6 +259,7 @@ export const useSurvey = defineStore(
       record,
       started,
       step,
+      changeStepIndex,
       stepName,
       previousStepName,
       timestamp,
@@ -252,12 +271,12 @@ export const useSurvey = defineStore(
       isAfterStep,
       incStep,
       decStep,
+      changeStepsCount,
       getFreqMod,
       getMainFreqMod,
       isModeSustainable,
       isModeInRecommendation,
-      isRecommendationInUse,
-      isRecommendation2InUse,
+      isRecommendationAtIndexInUse,
     }
   },
   { persist: true },

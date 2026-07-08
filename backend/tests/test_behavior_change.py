@@ -34,22 +34,22 @@ def create_test_dataframe_with_behavior_change(
         for i in range(count):
             row = {
                 'typo.reco.reco_dt2.0': mode,
-                'data.change.motivation': None,
-                'data.change.levers.0': None,
-                'data.change.levers.1': None,
-                'data.change.levers.2': None,
-                'data.change.other_levers': None
+                'data.changes.0.motivation': None,
+                'data.changes.0.levers.0': None,
+                'data.changes.0.levers.1': None,
+                'data.changes.0.levers.2': None,
+                'data.changes.0.other_levers': None
             }
 
             # Add motivation if this person answered (based on list length)
             if motivations and mode in motivations and i < len(motivations[mode]):
-                row['data.change.motivation'] = motivations[mode][i]
+                row['data.changes.0.motivation'] = motivations[mode][i]
 
             # Add levers if this person answered (based on list length)
             if levers and mode in levers and i < len(levers[mode]):
                 lever_val = levers[mode][i]
                 # Put the lever in the first column for simplicity
-                row['data.change.levers.0'] = lever_val
+                row['data.changes.0.levers.0'] = lever_val
 
             rows.append(row)
 
@@ -482,10 +482,10 @@ def test_empty_data_handling():
     """Test graceful handling of empty data."""
     df = pd.DataFrame({
         'typo.reco.reco_dt2.0': [],
-        'data.change.motivation': [],
-        'data.change.levers.0': [],
-        'data.change.levers.1': [],
-        'data.change.levers.2': []
+        'data.changes.0.motivation': [],
+        'data.changes.0.levers.0': [],
+        'data.changes.0.levers.1': [],
+        'data.changes.0.levers.2': []
     })
 
     service = BehaviorChangeService(df)
@@ -501,11 +501,11 @@ def test_other_levers_extracted():
     """Test that other_levers text is extracted correctly."""
     data = {
         'typo.reco.reco_dt2.0': ['velo', 'train', 'tpu'],
-        'data.change.motivation': [5, 4, 3],
-        'data.change.levers.0': ['finance', 'flexibility', 'other'],
-        'data.change.levers.1': [None, None, None],
-        'data.change.levers.2': [None, None, None],
-        'data.change.other_levers': ['More parking', '', 'Better infrastructure']
+        'data.changes.0.motivation': [5, 4, 3],
+        'data.changes.0.levers.0': ['finance', 'flexibility', 'other'],
+        'data.changes.0.levers.1': [None, None, None],
+        'data.changes.0.levers.2': [None, None, None],
+        'data.changes.0.other_levers': ['More parking', '', 'Better infrastructure']
     }
     df = pd.DataFrame(data)
 

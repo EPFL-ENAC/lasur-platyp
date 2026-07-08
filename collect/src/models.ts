@@ -75,8 +75,7 @@ export interface RecordData {
   comments: string
   workplace: AddressLocation
   origin: AddressLocation
-  change: Change
-  change2: Change
+  changes: Change[]
 }
 
 export interface Record {
@@ -94,7 +93,7 @@ export interface RecordCertificate {
 
 export interface Recommendation {
   reco?: {
-    reco_dt2: string[]
+    reco_inter: string[]
     scores: {
       covoit: number
       elec: number
