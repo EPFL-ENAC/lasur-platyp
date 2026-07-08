@@ -435,7 +435,7 @@ Some environmental impacts have also been calculated:
         specific: 'The median travel time from home to work for participants is {median} minutes.',
       },
     },
-    reco_dt2: {
+    reco_inter: {
       title: 'Potential modal split',
       labels: {
         ...transportationModes,

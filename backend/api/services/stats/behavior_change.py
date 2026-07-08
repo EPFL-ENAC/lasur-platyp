@@ -19,9 +19,15 @@ class BehaviorChangeService(BaseStatsService):
     # equivalent `changes` indices so they feed into the same aggregation.
     LEGACY_CHANGE_PREFIXES = {'data.change.': 0, 'data.change2.': 1}
 
+    # Older records stored up to two general recommendations in reco_dt2.0/.1,
+    # not tied to a specific journey, instead of one reco_inter.N per journey.
+    # Map them onto the equivalent reco_inter indices so they feed into the same
+    # aggregation.
+    LEGACY_RECO_COLUMNS = {'typo.reco.reco_dt2.0': 0, 'typo.reco.reco_dt2.1': 1}
+
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
-        self.reco_prefix = 'typo.reco.reco_dt2.'
+        self.reco_prefix = 'typo.reco.reco_inter.'
         self.change_prefix = 'data.changes.'
 
     def compute_behavior_change_stats(self) -> BehaviorChangeStats:
@@ -91,6 +97,21 @@ class BehaviorChangeService(BaseStatsService):
                     df[new_col] = df[col]
         return df
 
+    def _normalize_legacy_reco_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Map legacy `typo.reco.reco_dt2.0` / `.1` onto `typo.reco.reco_inter.0` /
+        `.1`, so both old and new recommendation shapes feed into the same
+        per-index aggregation."""
+        df = df.copy()
+        for legacy_col, index in self.LEGACY_RECO_COLUMNS.items():
+            if legacy_col not in df.columns:
+                continue
+            new_col = f'{self.reco_prefix}{index}'
+            if new_col in df.columns:
+                df[new_col] = df[new_col].combine_first(df[legacy_col])
+            else:
+                df[new_col] = df[legacy_col]
+        return df
+
     def _reco_indices(self, df: pd.DataFrame) -> List[int]:
         """Indices of recommendations present in the DataFrame, from either the
         reco_dt2 or the changes columns."""
@@ -116,6 +137,7 @@ class BehaviorChangeService(BaseStatsService):
         rows with an actual recommended mode at that index are kept.
         """
         df = self._normalize_legacy_change_columns()
+        df = self._normalize_legacy_reco_columns(df)
         indices = self._reco_indices(df)
         if not indices:
             return pd.DataFrame(columns=['reco_mode'])

@@ -119,7 +119,10 @@ const origin = computed(() => {
 })
 
 const reco = computed(() => {
-  const recommendations = (record.value?.typo?.reco?.reco_dt2 as string[]) || []
+  const recommendations =
+    (record.value?.typo?.reco?.reco_dt2 as string[]) ||
+    (record.value?.typo?.reco?.reco_inter as string[]) ||
+    []
   return recommendations.length > 0 ? recommendations[0] : undefined
 })
 

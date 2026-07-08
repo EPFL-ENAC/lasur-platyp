@@ -129,24 +129,26 @@ def test_compute_travel_time_frequencies():
 
 
 def test_compute_recommendation_frequencies():
-    # Load the test CSV into a DataFrame
+    # Load the test CSV into a DataFrame. It only has legacy typo.reco.reco_dt2.0/.1
+    # data (no typo.reco.reco_inter.N), so every recommendation at both legacy
+    # indices is taken into account.
     df = load_test_dataframe()
     service = FrequenciesService(df)
     result = service.compute_recommendation_frequencies()
 
     # print(result)
     expected = Frequencies(
-        field='reco_dt2',
+        field='reco_inter',
         total=30,
         data=[
-            Frequency(value='covoit', count=11, sum=None),
-            Frequency(value='inter', count=5, sum=None),
-            Frequency(value='train', count=3, sum=None),
-            Frequency(value='vae', count=3, sum=None),
-            Frequency(value='tpu', count=4, sum=None),
-            Frequency(value='elec', count=2, sum=None),
-            Frequency(value='velo', count=1, sum=None),
-            Frequency(value='marche', count=1, sum=None)
+            Frequency(value='covoit', count=18, sum=None),
+            Frequency(value='elec', count=13, sum=None),
+            Frequency(value='inter', count=7, sum=None),
+            Frequency(value='train', count=6, sum=None),
+            Frequency(value='vae', count=6, sum=None),
+            Frequency(value='tpu', count=6, sum=None),
+            Frequency(value='velo', count=2, sum=None),
+            Frequency(value='marche', count=2, sum=None)
         ]
     )
     assert_frequencies_equal(result, expected)
@@ -281,7 +283,9 @@ def test_compute_modes_pro_emissions():
 
 
 def test_compute_mode_reco_links():
-    # Load the test CSV into a DataFrame
+    # Load the test CSV into a DataFrame. It only has legacy typo.reco.reco_dt2.0/.1
+    # data (no typo.reco.reco_inter.N), so every journey's mode is linked to both
+    # legacy recommendations, weighted by the person's total journey days.
     df = load_test_dataframe()
     service = LinksService(df)
     result = service.compute_mode_reco_links()
@@ -291,34 +295,47 @@ def test_compute_mode_reco_links():
         total=30,
         data=[
             Link(source='walking', target='elec', value=1),
-            Link(source='walking', target='train', value=1),
-            Link(source='walking', target='tpu', value=5),
-            Link(source='bike', target='covoit', value=3),
+            Link(source='walking', target='train', value=3),
+            Link(source='walking', target='vae', value=11),
+            Link(source='walking', target='tpu', value=17),
+            Link(source='walking', target='covoit', value=1),
+            Link(source='bike', target='covoit', value=5),
+            Link(source='bike', target='elec', value=4),
             Link(source='bike', target='velo', value=1),
+            Link(source='bike', target='marche', value=1),
             Link(source='bike', target='tpu', value=2),
-            Link(source='bike', target='elec', value=1),
-            Link(source='pub', target='covoit', value=5),
-            Link(source='pub', target='train', value=2),
-            Link(source='pub', target='inter', value=1),
-            Link(source='pub', target='tpu', value=3),
-            Link(source='pub', target='elec', value=1),
-            Link(source='moto', target='elec', value=1),
+            Link(source='bike', target='train', value=1),
+            Link(source='pub', target='covoit', value=8),
+            Link(source='pub', target='elec', value=6),
+            Link(source='pub', target='train', value=3),
+            Link(source='pub', target='vae', value=1),
+            Link(source='pub', target='inter', value=11),
+            Link(source='pub', target='tpu', value=11),
+            Link(source='moto', target='elec', value=2),
+            Link(source='moto', target='train', value=1),
             Link(source='moto', target='covoit', value=1),
-            Link(source='car', target='elec', value=1),
-            Link(source='car', target='covoit', value=2),
-            Link(source='car', target='inter', value=3),
-            Link(source='train', target='train', value=1),
+            Link(source='car', target='elec', value=4),
+            Link(source='car', target='train', value=5),
+            Link(source='car', target='covoit', value=7),
+            Link(source='car', target='inter', value=7),
+            Link(source='train', target='train', value=2),
+            Link(source='train', target='vae', value=6),
             Link(source='train', target='covoit', value=1),
+            Link(source='train', target='elec', value=1),
             Link(source='train', target='tpu', value=1),
-            Link(source='car', target='vae', value=2),
-            Link(source='car', target='train', value=1),
-            Link(source='carpool', target='inter', value=1),
-            Link(source='bike', target='inter', value=3),
-            Link(source='moto', target='marche', value=1),
-            Link(source='moto', target='vae', value=1),
-            Link(source='moto', target='tpu', value=1),
-            Link(source='walking', target='inter', value=2),
-            Link(source='train', target='inter', value=1)
+            Link(source='car', target='vae', value=11),
+            Link(source='car', target='tpu', value=6),
+            Link(source='carpool', target='inter', value=5),
+            Link(source='carpool', target='vae', value=5),
+            Link(source='bike', target='inter', value=15),
+            Link(source='bike', target='vae', value=15),
+            Link(source='moto', target='marche', value=3),
+            Link(source='moto', target='vae', value=8),
+            Link(source='moto', target='velo', value=5),
+            Link(source='moto', target='tpu', value=5),
+            Link(source='moto', target='inter', value=5),
+            Link(source='walking', target='inter', value=25),
+            Link(source='train', target='inter', value=5),
         ]
     )
     assert_links_equal(result, expected)

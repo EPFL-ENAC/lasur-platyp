@@ -331,86 +331,64 @@ class EnergyService(BaseStatsService):
     def _compute_mode_energy_reco_v2(self, df: pd.DataFrame) -> list[EnergyExpenditure]:
         """
         Compute energy for recommended modes (V2 data) - aggregated by mode.
-        
+
+        Each recommendation is taken into account, weighted by the days of the
+        journey(s) it applies to: new-style typo.reco.reco_inter.N is weighted by
+        its own matching journey's days, legacy typo.reco.reco_dt2.0/.1 (general
+        recommendations, not tied to a specific journey) by the sum of the
+        person's journey days.
+
         Args:
             df: DataFrame with V2 records
-            
+
         Returns:
             List of EnergyExpenditure objects
         """
         if len(df) == 0:
             return []
-        
-        # Build journeys df for aggregation (need total_days per token)
-        journeys_df = self._build_journey_dataframe(df)
-        
-        if journeys_df is None or journeys_df.empty:
-            return []
-        
+
         # Ensure travel_time exists in df
         if 'data.travel_time' not in df.columns:
             return []
-        
-        # Step 1: Get unique tokens with total_days and recommendation
-        token_data = []
-        for token in df['token'].unique() if 'token' in df.columns else range(len(df)):
-            token_journeys = journeys_df[journeys_df['token'] == token]
-            
-            if 'token' in df.columns:
-                token_row = df[df['token'] == token].iloc[0]
-            else:
-                token_row = df.iloc[token]
-            
-            reco_field = 'typo.reco.reco_dt2.0'
-            
-            if reco_field not in token_row or pd.isna(token_row[reco_field]):
-                continue
-            
-            travel_time = token_row.get('data.travel_time', 0)
-            if pd.isna(travel_time):
-                travel_time = 0
-            
-            token_data.append({
-                'token': token,
-                'travel_time': travel_time,
-                'total_days': token_journeys['days'].sum(),
-                'reco_mode': token_row[reco_field]
-            })
-        
-        if len(token_data) == 0:
+
+        # One row per recommendation instance, weighted by its journey(s)' days
+        reco_df = self._build_reco_weighted(df)
+        if reco_df is None:
             return []
-        
-        reco_df = pd.DataFrame(token_data)
-        
-        # Step 2: Normalize mode names
+
+        travel_time_by_token = df.set_index(
+            'token')['data.travel_time'] if 'token' in df.columns else pd.Series(dtype=float)
+        reco_df['travel_time'] = reco_df['token'].map(
+            travel_time_by_token).fillna(0)
+
+        # Normalize mode names
         reco_df['reco_mode'] = self._normalize_mode_name(reco_df, 'reco_mode')
-        
-        # Step 3: Map to MET factors
+
+        # Map to MET factors
         reco_df['met_factor'] = reco_df['reco_mode'].map(MODE_MET).fillna(0)
-        
-        # Step 4: Calculate energy
-        # Formula: MET * travel_time/60 * total_days * 2 / 5
+
+        # Calculate energy: MET * travel_time/60 * days * 2 / 5
         reco_df['energy_kcal'] = (
             reco_df['met_factor'] *
             reco_df['travel_time'] / 60 *
-            reco_df['total_days'] * 2 / 5
+            reco_df['days'] * 2 / 5
         )
-        
-        # Step 5: Aggregate by recommended mode
+
+        # Aggregate by recommended mode
         results = []
         for reco_mode in reco_df['reco_mode'].unique():
             if pd.isna(reco_mode):
                 continue
-            
+
             df_mode = reco_df[reco_df['reco_mode'] == reco_mode]
-            
+
             total_energy = float(df_mode['energy_kcal'].sum())
-            total_time = float((df_mode['travel_time'] * df_mode['total_days'] * 2 * 45 / 5).sum())
-            total_journeys = int((df_mode['total_days'] * 2 * 45 / 5).sum())
-            
+            total_time = float((df_mode['travel_time'] * df_mode['days'] * 2 * 45 / 5).sum())
+            total_journeys = int((df_mode['days'] * 2 * 45 / 5).sum())
+
             # Average daily kcal per person
             avg_daily = total_energy / len(df) if len(df) > 0 else 0
-            
+
             results.append(EnergyExpenditure(
                 mode=reco_mode,
                 total=len(df),
@@ -419,7 +397,7 @@ class EnergyService(BaseStatsService):
                 energy_kcal=total_energy,
                 avg_daily_kcal=avg_daily
             ))
-        
+
         return results
 
     def _compute_journey_energy_v2(self, df: pd.DataFrame) -> EnergyByJourney:
@@ -481,89 +459,73 @@ class EnergyService(BaseStatsService):
     def _compute_journey_energy_reco_v2(self, df: pd.DataFrame) -> EnergyByJourney:
         """
         Compute energy per journey leg for recommended modes (for stacked barplot).
-        
-        For recommended modes, we create synthetic journey legs based on the
-        recommendation for each participant.
-        
+
+        Creates one synthetic leg per recommendation instance that should be taken
+        into account: one per journey for new-style typo.reco.reco_inter.N (weighted
+        by that journey's own days), or per legacy typo.reco.reco_dt2.0/.1 general
+        recommendation (weighted by the sum of the person's journey days).
+
         Args:
             df: DataFrame with V2 records
-            
+
         Returns:
             EnergyByJourney object with per-leg breakdown
         """
         if len(df) == 0:
             return EnergyByJourney(total=len(df), data=[])
-        
-        # Build journeys df for getting total_days
-        journeys_df = self._build_journey_dataframe(df)
-        
-        if journeys_df is None or journeys_df.empty:
-            return EnergyByJourney(total=len(df), data=[])
-        
+
         if 'data.travel_time' not in df.columns:
             return EnergyByJourney(total=len(df), data=[])
-        
-        # Build journey legs for recommended modes
-        legs = []
-        reco_field = 'typo.reco.reco_dt2.0'
-        
-        total_energy = 0
 
-        for token in df['token'].unique() if 'token' in df.columns else range(len(df)):
-            token_journeys = journeys_df[journeys_df['token'] == token]
-            
-            if 'token' in df.columns:
-                token_row = df[df['token'] == token].iloc[0]
-            else:
-                token_row = df.iloc[token]
-            
-            if reco_field not in token_row or pd.isna(token_row[reco_field]):
-                continue
-            
-            reco_mode = token_row[reco_field]
-            travel_time = token_row.get('data.travel_time', 0)
-            
-            if pd.isna(travel_time):
-                travel_time = 0
-            
-            total_days = token_journeys['days'].sum()
-            
-            # Normalize mode name
-            reco_mode_normalized = self._normalize_mode_name(
-                pd.DataFrame([{'reco_mode': reco_mode}]), 
-                'reco_mode'
-            )[0]
-            
-            # Calculate energy for this recommendation
-            met_factor = MODE_MET.get(reco_mode_normalized, 0)
-            energy_kcal = met_factor * travel_time / 60 * total_days * 2 / 5
+        reco_df = self._build_reco_weighted(df)
+        if reco_df is None:
+            return EnergyByJourney(total=len(df), data=[])
 
-            total_energy += energy_kcal
-            
-            # Create a journey leg for each journey day combination
-            # We'll create one synthetic leg per token representing their recommended mode
-            legs.append(JourneyEnergyLeg(
-                token=str(token),
-                journey_id="reco",
-                mode=reco_mode_normalized,
-                days=int(total_days),
-                travel_time=float(travel_time),
-                energy_kcal=float(energy_kcal),
+        travel_time_by_token = df.set_index(
+            'token')['data.travel_time'] if 'token' in df.columns else pd.Series(dtype=float)
+        reco_df['travel_time'] = reco_df['token'].map(
+            travel_time_by_token).fillna(0)
+        reco_df['reco_mode'] = self._normalize_mode_name(reco_df, 'reco_mode')
+        reco_df['met_factor'] = reco_df['reco_mode'].map(MODE_MET).fillna(0)
+        reco_df['energy_kcal'] = (
+            reco_df['met_factor'] * reco_df['travel_time'] / 60 *
+            reco_df['days'] * 2 / 5
+        )
+
+        legs = [
+            JourneyEnergyLeg(
+                token=str(row.token),
+                journey_id=f"reco_{row.journey}",
+                mode=row.reco_mode,
+                days=int(row.days),
+                travel_time=float(row.travel_time),
+                energy_kcal=float(row.energy_kcal),
                 is_intermodal=False  # Recommendations are single-mode
-            ))
-        
-        length = len(df['token'].unique() if 'token' in df.columns else df)
+            )
+            for row in reco_df.itertuples()
+        ]
+
+        energy_grouped_summed = reco_df.groupby('token')['energy_kcal'].sum()
+        average_energy_per_unique_token = float(
+            energy_grouped_summed.mean()) if not energy_grouped_summed.empty else None
 
         return EnergyByJourney(
             total=len(df),
-            average_energy_per_unique_token=total_energy / length if length > 0 else None,
+            average_energy_per_unique_token=average_energy_per_unique_token,
             data=legs
         )
     
     def _compute_journey_energy_gains(self, current: EnergyByJourney, reco: EnergyByJourney) -> JourneyEnergyGains:
         """
         Compute energy gains (reductions) for each mode by comparing current and recommended journeys.
-        
+
+        New-style recommendations (one per journey) are complementary: each is
+        compared against that same journey's current energy, and gains are summed
+        across journeys. Legacy recommendations (typo.reco.reco_dt2.0/.1) are
+        alternatives, not complementary — only the first one is used, compared
+        against the person's total current energy, matching how they were
+        originally applied.
+
         Args:
             current: EnergyByJourney for current modes
             reco: EnergyByJourney for recommended modes
@@ -572,30 +534,39 @@ class EnergyService(BaseStatsService):
         """
 
         who_recommendation = 150
-        
+
         legs_by_token = {}
         for leg in current.data:
             if leg.token not in legs_by_token:
                 legs_by_token[leg.token] = LegPerToken(token=leg.token)
             legs_by_token[leg.token].current_legs.append(leg)
-        
+
         for leg in reco.data:
             if leg.token not in legs_by_token:
                 legs_by_token[leg.token] = LegPerToken(token=leg.token)
-            legs_by_token[leg.token].reco_leg = leg
+            legs_by_token[leg.token].reco_legs.append(leg)
 
         current_above_who_count = sum(1 for leg in legs_by_token.values() if leg.current_energy() >= who_recommendation)
         reco_above_who_count = sum(1 for leg in legs_by_token.values() if leg.reco_energy() >= who_recommendation)
 
         gains_per_mode_dict = {}
-        for leg in legs_by_token.values():
-            if leg.reco_leg:
-                gains_per_mode_dict[leg.reco_leg.mode] = gains_per_mode_dict.get(leg.reco_leg.mode, 0) + leg.gain()
-        
+        for lpt in legs_by_token.values():
+            journey_legs = [l for l in lpt.reco_legs if not l.journey_id.startswith('reco_legacy_')]
+            if journey_legs:
+                for reco_leg in journey_legs:
+                    journey_id = reco_leg.journey_id[len('reco_'):]
+                    baseline = lpt.current_energy_for_journey(journey_id)
+                    gain = reco_leg.energy_kcal - baseline
+                    gains_per_mode_dict[reco_leg.mode] = gains_per_mode_dict.get(reco_leg.mode, 0) + gain
+            elif lpt.reco_legs:
+                reco_leg = lpt.reco_legs[0]
+                gain = reco_leg.energy_kcal - lpt.current_energy()
+                gains_per_mode_dict[reco_leg.mode] = gains_per_mode_dict.get(reco_leg.mode, 0) + gain
+
         gains_per_mode = [JourneyEnergyGainsByMode(mode=mode, added_kcal=gain) for mode, gain in gains_per_mode_dict.items()]
 
         total_gain = sum(g.added_kcal for g in gains_per_mode)
-        
+
         return JourneyEnergyGains(
             total=total_gain,
             gains_per_mode=gains_per_mode,
@@ -607,15 +578,23 @@ class EnergyService(BaseStatsService):
 class LegPerToken(BaseModel):
     token: str
     current_legs: list[JourneyEnergyLeg] = Field(default_factory=list)
-    reco_leg: JourneyEnergyLeg | None = None # recommendations are always only one mode
+    # New-style: one leg per journey (complementary). Legacy: up to two
+    # alternative general recommendations (typo.reco.reco_dt2.0/.1).
+    reco_legs: list[JourneyEnergyLeg] = Field(default_factory=list)
 
     def current_energy(self):
         return sum(leg.energy_kcal for leg in self.current_legs)
 
+    def current_energy_for_journey(self, journey_id: str):
+        return sum(leg.energy_kcal for leg in self.current_legs if leg.journey_id == journey_id)
+
     def reco_energy(self):
-        if not self.reco_leg:
-            return 0
-        return self.reco_leg.energy_kcal
+        journey_legs = [l for l in self.reco_legs if not l.journey_id.startswith('reco_legacy_')]
+        if journey_legs:
+            return sum(leg.energy_kcal for leg in journey_legs)
+        if self.reco_legs:
+            return self.reco_legs[0].energy_kcal
+        return 0
 
     def gain(self):
         return self.reco_energy() - self.current_energy()

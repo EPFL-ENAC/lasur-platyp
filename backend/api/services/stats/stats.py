@@ -147,9 +147,12 @@ class StatsService:
             filter (dict): The filter criteria for the records.
             flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
         """
-        # Filter records with values in column typo.reco_dt2.0
-        if 'typo.reco.reco_dt2.0' in df.columns:
-            df = df[df['typo.reco.reco_dt2.0'].notna()]
-            return df
-        else:
+        # A record is completed once it has a recommendation: either the new
+        # typo.reco.reco_inter.N (one per journey) or, for records collected before
+        # that change, the legacy typo.reco.reco_dt2.0
+        reco_cols = [col for col in df.columns if col ==
+                     'typo.reco.reco_dt2.0' or col.startswith('typo.reco.reco_inter.')]
+        if not reco_cols:
             return pd.DataFrame()
+        df = df[df[reco_cols].notna().any(axis=1)]
+        return df

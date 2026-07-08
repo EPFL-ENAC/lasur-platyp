@@ -68,7 +68,7 @@ def test_missing_columns():
     # Should handle missing recommendation column
     result = freq_service.compute_recommendation_frequencies()
     assert isinstance(result, Frequencies)
-    assert result.field == "reco_dt2"
+    assert result.field == "reco_inter"
     assert result.data == []
 
     # EmissionsService should now handle missing workplace coordinates gracefully

@@ -683,46 +683,42 @@ class EmissionsService(BaseStatsService):
             return results
         
         else:
-            # Calculate recommendation emissions (R lines 171-210)
-            # Use typo.reco.reco_dt2.0 for v2 records
-            
-            # Build journeys df for aggregation (need total_days per token)
-            journeys_df = self._build_journey_dataframe(df)
-            
-            # Step 1: Get unique tokens with total_days and recommendation
-            token_data = []
-            for token in df['token'].unique() if 'token' in df.columns else range(len(df)):
-                token_journeys = journeys_df[journeys_df['token'] == token]
-                token_combined = df_combined[df_combined['token'] == token]
-                
-                if 'token' in df.columns:
-                    token_row = df[df['token'] == token].iloc[0]
-                else:
-                    token_row = df.iloc[token]
-                
-                reco_field = 'typo.reco.reco_dt2.0'
-                
-                reco_mode = token_row[reco_field]
-                if pd.isna(reco_mode):
-                    continue
-                
-                token_data.append({
-                    'token': token,
-                    'dist': token_row['distance_km'],
-                    'total_days': token_journeys['days'].sum(),
-                    'reco_mode': reco_mode,
-                    'is_intermodal': token_combined['is_intermodal'].any() if len(token_combined) > 0 else False
-                })
-            
-            if len(token_data) == 0:
+            # Calculate recommendation emissions (R lines 171-210), each
+            # recommendation taken into account: new-style typo.reco.reco_inter.N is
+            # matched 1:1 to the journey of the same index (its own days/distance/
+            # intermodality), legacy typo.reco.reco_dt2.0/.1 general recommendations
+            # (not tied to a specific journey) are weighted by, and compared against,
+            # the person's total journey days/emissions, as originally computed.
+            reco_df = self._build_reco_weighted(df)
+            if reco_df is None:
                 return []
-            
-            reco_df = pd.DataFrame(token_data)
-            
-            # Step 2: Normalize mode names
+
+            dist_by_token = df.set_index('token')['distance_km'] if 'token' in df.columns else pd.Series(dtype=float)
+            reco_df['dist'] = reco_df['token'].map(dist_by_token)
+
+            journey_intermodal = df_combined.groupby(['token', 'journey'])['is_intermodal'].first()
+            token_any_intermodal = df_combined.groupby('token')['is_intermodal'].any()
+            journey_emissions = df_combined.groupby(['token', 'journey'])['emissions_dt'].sum()
+            token_total_emissions = df_combined.groupby('token')['emissions_dt'].sum()
+
+            def is_legacy(journey_id) -> bool:
+                return str(journey_id).startswith('legacy_')
+
+            reco_df['is_intermodal'] = reco_df.apply(
+                lambda row: token_any_intermodal.get(row['token'], False) if is_legacy(row['journey'])
+                else journey_intermodal.get((row['token'], row['journey']), False),
+                axis=1
+            )
+            reco_df['current_emissions'] = reco_df.apply(
+                lambda row: token_total_emissions.get(row['token'], 0) if is_legacy(row['journey'])
+                else journey_emissions.get((row['token'], row['journey']), 0),
+                axis=1
+            )
+
+            # Normalize mode names
             reco_df['reco_mode'] = self._normalize_mode_name(reco_df, 'reco_mode')
-            
-            # Step 3: Map to emissions factors (use em_reco from R)
+
+            # Map to emissions factors (use em_reco from R)
             em_reco_map = {
                 'vae': 11, 'ebike': 11, 'cargo': 11, 'train': 8,
                 'tpu': 25, 'pub': 25, 'velo': 6, 'bike': 6,
@@ -730,35 +726,24 @@ class EmissionsService(BaseStatsService):
                 'covoit': 93, 'carpool': 93, 'inter': 56.72391025641025
             }
             reco_df['emissions_factor'] = reco_df['reco_mode'].map(em_reco_map)
-            
-            # Step 4: Calculate reco emissions (R line 186)
-            # emissions / 1000 * dist * total_days * 2 * 45
+
+            # Calculate reco emissions (R line 186)
+            # emissions / 1000 * dist * days * 2 * 45
             reco_df['reco_emissions'] = (
                 reco_df['emissions_factor'] / 1000 *
-                reco_df['dist'] * reco_df['total_days'] * 2 * 45
+                reco_df['dist'] * reco_df['days'] * 2 * 45
             )
-            
-            # Step 5: Get current emissions per token
-            current_emissions_by_token = df_combined.groupby('token')['emissions_dt'].sum().reset_index()
-            current_emissions_by_token = current_emissions_by_token.rename(columns={'emissions_dt': 'current_emissions'})
 
-            reco_df = reco_df.merge(
-                current_emissions_by_token,
-                on='token',
-                how='left'
-            )
-            reco_df['current_emissions'] = reco_df['current_emissions'].fillna(0)
-            
-            # Step 6: Apply intermodal logic (R lines 200-209)
+            # Apply intermodal logic (R lines 200-209)
             # If is_intermodal AND reco == 'inter': use min(reco_emissions, current_emissions)
             def apply_inter_logic(row):
                 if row['is_intermodal'] and row['reco_mode'] == 'inter':
                     return min(row['reco_emissions'], row['current_emissions'])
                 return row['reco_emissions']
-            
+
             reco_df['final_emissions'] = reco_df.apply(apply_inter_logic, axis=1)
-            
-            # Step 7: Aggregate by reco_mode
+
+            # Aggregate by reco_mode
             results = []
             for reco_mode in reco_df['reco_mode'].unique():
                 if pd.isna(reco_mode):
@@ -767,11 +752,11 @@ class EmissionsService(BaseStatsService):
                 results.append(Emissions(
                     mode=reco_mode,
                     total=len(df),
-                    distances=float((df_mode['dist'] * df_mode['total_days'] * 2 * 45).sum()),
-                    journeys=int((df_mode['total_days'] * 2 * 45).sum()),
+                    distances=float((df_mode['dist'] * df_mode['days'] * 2 * 45).sum()),
+                    journeys=int((df_mode['days'] * 2 * 45).sum()),
                     emissions=float(df_mode['final_emissions'].sum())
                 ))
-            
+
             return results
 
     def _compute_mode_emission_reductions_v2(self, df: pd.DataFrame, mode: str) -> list[EmissionReductions]:
@@ -810,29 +795,44 @@ class EmissionsService(BaseStatsService):
             'days': 'first',
             'is_intermodal': 'first'
         }).reset_index()
-        
-        # Step 4: Get recommendation for each token
-        reco_data = []
-        for idx, row in df.iterrows():
-            token = row.get('token', idx)
-            reco_mode = row.get('typo.reco.reco_dt2.0', None)
-            
-            if pd.notna(reco_mode):
-                reco_data.append({
-                    'token': token,
-                    'reco_mode': reco_mode
-                })
-        
-        if len(reco_data) == 0:
+
+        # Step 4: Get recommendation(s) for each journey. New-style
+        # typo.reco.reco_inter.N is that specific journey's own recommendation
+        # (matched by index); legacy typo.reco.reco_dt2.0/.1 general
+        # recommendations (not tied to a specific journey) apply independently to
+        # every journey of the person, as originally computed.
+        new_reco_rows = []
+        for col in self._reco_inter_columns(df):
+            journey_id = col.rsplit('.', 1)[1]
+            for idx, reco in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                new_reco_rows.append(
+                    {'token': token, 'journey': journey_id, 'reco_mode': reco})
+        new_reco_df = pd.DataFrame(
+            new_reco_rows, columns=['token', 'journey', 'reco_mode'])
+
+        legacy_reco_rows = []
+        for col in self._reco_legacy_columns(df):
+            for idx, reco in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                legacy_reco_rows.append({'token': token, 'reco_mode': reco})
+        legacy_reco_df = pd.DataFrame(
+            legacy_reco_rows, columns=['token', 'reco_mode'])
+
+        if new_reco_df.empty and legacy_reco_df.empty:
             return []
-        
-        reco_df = pd.DataFrame(reco_data)
-        
+
+        frames = []
+        if not new_reco_df.empty:
+            frames.append(journey_emissions.merge(
+                new_reco_df, on=['token', 'journey'], how='inner'))
+        if not legacy_reco_df.empty:
+            frames.append(journey_emissions.merge(
+                legacy_reco_df, on='token', how='inner'))
+        journey_emissions = pd.concat(frames, ignore_index=True)
+
         # Normalize mode names
-        reco_df['reco_mode'] = self._normalize_mode_name(reco_df, 'reco_mode')
-        
-        # Step 5: Join recommendations with journey emissions
-        journey_emissions = journey_emissions.merge(reco_df, on='token', how='left')
+        journey_emissions['reco_mode'] = self._normalize_mode_name(journey_emissions, 'reco_mode')
 
         def calc_reco_emissions(row):
             reco_mode = row['reco_mode']

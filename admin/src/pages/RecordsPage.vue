@@ -330,7 +330,7 @@ function onRemove() {
 }
 
 function getRecoDt2(row: Record): string[] {
-  return (row.typo?.reco?.reco_dt2 as string[]) || []
+  return (row.typo?.reco?.reco_dt2 as string[]) || (row.typo?.reco?.reco_inter as string[]) || []
 }
 
 function truncateString(str: string, maxLength: number) {
