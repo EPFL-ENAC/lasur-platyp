@@ -118,7 +118,7 @@
         :src="t('stats.sections.mobility_potentials.description')"
       />
       <mobility-potential-insights
-        frequency-key="reco_dt2"
+        frequency-key="reco_inter"
         reduction-key="reductions_mod"
         :collaborators-count="collaboratorsCount || undefined"
       />
@@ -129,8 +129,8 @@
         <div class="grid-container">
           <div>
             <share-chart
-              chartTranslationName="reco_dt2"
-              :frequencies="getFreq('reco_dt2')"
+              chartTranslationName="reco_inter"
+              :frequencies="getFreq('reco_inter')"
               :height="height"
               :loading="stats.loading"
             />

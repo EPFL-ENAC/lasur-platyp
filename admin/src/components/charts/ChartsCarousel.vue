@@ -89,10 +89,10 @@
         :loading="stats.loading"
       />
     </q-carousel-slide>
-    <q-carousel-slide name="reco_dt2" class="column no-wrap flex-center item">
+    <q-carousel-slide name="reco_inter" class="column no-wrap flex-center item">
       <share-chart
-        chartTranslationName="reco_dt2"
-        :frequencies="stats.frequencies?.['reco_dt2'] ?? null"
+        chartTranslationName="reco_inter"
+        :frequencies="stats.frequencies?.['reco_inter'] ?? null"
         :height="height"
         :loading="stats.loading"
       />

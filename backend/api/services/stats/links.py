@@ -44,6 +44,7 @@ class LinksService(BaseStatsService):
 
     def _compute_mode_reco_links_v1(self, df: pd.DataFrame) -> Links:
         """Compute all mode recommendation links from a DataFrame of records."""
+        legacy_cols = self._reco_legacy_columns(df)
         counts = {}
         for mode in MODES:
             col_name = f'data.freq_mod_{mode}'
@@ -51,35 +52,59 @@ class LinksService(BaseStatsService):
                 continue
             df_mode = df[df[col_name].notna()]
             for _, row in df_mode.iterrows():
-                reco = row['typo.reco.reco_dt2.0']
                 mod_count = int(row[col_name])
                 if mod_count <= 0:
                     continue
-                mod_counts = counts.get(mode, {})
-                mod_counts[reco] = mod_counts.get(reco, 0) + 1
-                counts[mode] = mod_counts
+                for legacy_col in legacy_cols:
+                    reco = row[legacy_col]
+                    if pd.isna(reco):
+                        continue
+                    mod_counts = counts.get(mode, {})
+                    mod_counts[reco] = mod_counts.get(reco, 0) + 1
+                    counts[mode] = mod_counts
         links = [Link(source=mod, target=reco, value=int(count)) for mod,
                  reco_counts in counts.items() for reco, count in reco_counts.items()]
         return Links(total=len(df), data=links)
 
     def _compute_mode_reco_links_v2(self, df: pd.DataFrame) -> Links:
-        """Compute all mode recommendation links from a DataFrame of records."""
+        """Compute all mode recommendation links from a DataFrame of records.
 
-        # New data version: get the series from data.freq_mod_journeys
+        New-style records: link each journey's mode(s) to that same journey's own
+        recommendation (typo.reco.reco_inter.<journey index>), weighted by that
+        journey's `days`.
+        Legacy records (typo.reco.reco_dt2.0 / .1, not tied to a specific journey):
+        link every journey's mode(s) to each legacy recommendation, weighted by the
+        sum of the person's journey days (as originally computed).
+        """
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
+        legacy_cols = self._reco_legacy_columns(df)
+        total_days_by_token = df[col_days].sum(
+            axis=1) if len(col_days) and legacy_cols else None
+
         counts = {}
+
+        def add(mode, reco, weight):
+            if pd.isna(reco) or pd.isna(weight):
+                return
+            mod_counts = counts.get(mode, {})
+            mod_counts[reco] = mod_counts.get(reco, 0) + weight
+            counts[mode] = mod_counts
+
         for i in range(len(col_days)):
             col_modes_i = df.columns[df.columns.str.startswith(
                 f'data.freq_mod_journeys.{str(i)}.modes.')]
             if col_modes_i.empty:
                 continue
             col_days_i = col_days[i]
-            # make a dataframe with only i columns
-            df_i = df[[col_days_i] + col_modes_i.tolist() +
-                      ['typo.reco.reco_dt2.0']].copy()
+            reco_col_i = f'typo.reco.reco_inter.{str(i)}'
+            cols_needed = [col_days_i] + col_modes_i.tolist()
+            if reco_col_i in df.columns:
+                cols_needed.append(reco_col_i)
+            cols_needed += [c for c in legacy_cols if c not in cols_needed]
+            df_i = df[cols_needed].copy()
             # iterate rows
-            for _, row in df_i.iterrows():
+            for idx, row in df_i.iterrows():
                 days = row[col_days_i]
                 if pd.isna(days) or int(days) <= 0:
                     continue
@@ -87,10 +112,18 @@ class LinksService(BaseStatsService):
                     mode = row[col]
                     if pd.isna(mode):
                         continue
-                    reco = row['typo.reco.reco_dt2.0']
-                    mod_counts = counts.get(mode, {})
-                    mod_counts[reco] = mod_counts.get(reco, 0) + 1
-                    counts[mode] = mod_counts
+                    reco = row[reco_col_i] if reco_col_i in df_i.columns else None
+                    if pd.notna(reco):
+                        # new-style: this journey's own recommendation, weighted
+                        # by this journey's own days
+                        add(mode, reco, int(days))
+                    else:
+                        # legacy: general recommendation(s), weighted by the
+                        # person's total journey days
+                        token_days = total_days_by_token.loc[idx] if total_days_by_token is not None else None
+                        for legacy_col in legacy_cols:
+                            add(mode, row[legacy_col], int(token_days)
+                                if pd.notna(token_days) else None)
         data = [Link(source=mod, target=reco, value=int(count)) for mod,
                 reco_counts in counts.items() for reco, count in reco_counts.items()]
         links = Links(total=len(df), data=data)

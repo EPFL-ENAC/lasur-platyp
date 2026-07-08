@@ -74,19 +74,24 @@ class FrequenciesService(BaseStatsService):
         )
 
     def compute_recommendation_frequencies(self) -> Frequencies:
-        """Compute recommendation frequencies from a DataFrame of records."""
-        if "typo.reco.reco_dt2.0" not in self.df.columns:
-            return Frequencies(field="reco_dt2", total=len(self.df), data=[])
+        """Compute recommendation frequencies from a DataFrame of records.
 
-        reco_series = self.df["typo.reco.reco_dt2.0"].dropna()
-        reco_counts = reco_series.value_counts()
+        Each recommendation is taken into account (one per journey for new-style
+        typo.reco.reco_inter.N records, one per legacy typo.reco.reco_dt2.{0,1} for
+        older records), weighted by the days of the journey(s) it applies to.
+        """
+        reco_df = self._build_reco_weighted(self.df)
+        if reco_df is None:
+            return Frequencies(field="reco_inter", total=len(self.df), data=[])
+
+        grouped = reco_df.groupby("reco_mode")["days"]
 
         return Frequencies(
-            field="reco_dt2",
+            field="reco_inter",
             total=len(self.df),
             data=[
-                Frequency(value=reco, count=count)
-                for reco, count in reco_counts.items()
+                Frequency(value=reco, count=int(counts.count()), sum=int(counts.sum()))
+                for reco, counts in grouped
             ],
         )
 

@@ -140,8 +140,8 @@
           {{ t('stats.sections.home_to_work') }}
         </h2>
         <share-chart
-          chart-translation-name="reco_dt2"
-          :frequencies="getFreq('reco_dt2')"
+          chart-translation-name="reco_inter"
+          :frequencies="getFreq('reco_inter')"
           :height="height"
           :exportable="false"
         />

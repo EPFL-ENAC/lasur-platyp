@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 import h3
 
@@ -88,10 +89,95 @@ def normalize_pro_days_to_yearly(days: float, days_per) -> float:
     return days * DAYS_PER_YEAR_FACTOR[days_per]
 
 
+RECO_INTER_PATTERN = re.compile(r'^typo\.reco\.reco_inter\.(\d+)$')
+# Legacy general recommendations (not tied to a specific journey), superseded by
+# typo.reco.reco_inter but still present on records collected before that change.
+RECO_LEGACY_COLUMNS = ['typo.reco.reco_dt2.0', 'typo.reco.reco_dt2.1']
+
+
 class BaseStatsService:
 
     def __init__(self, df: pd.DataFrame):
         self.df = df
+
+    def _reco_inter_columns(self, df: pd.DataFrame) -> list[str]:
+        """typo.reco.reco_inter.N columns present in df, sorted by journey index N."""
+        cols = [c for c in df.columns if RECO_INTER_PATTERN.match(c)]
+        return sorted(cols, key=lambda c: int(RECO_INTER_PATTERN.match(c).group(1)))
+
+    def _reco_legacy_columns(self, df: pd.DataFrame) -> list[str]:
+        """typo.reco.reco_dt2.{0,1} columns present in df."""
+        return [c for c in RECO_LEGACY_COLUMNS if c in df.columns]
+
+    def _has_completed_recommendation(self, df: pd.DataFrame) -> pd.Series:
+        """Boolean mask: whether a row has a recommendation, new or legacy."""
+        reco_cols = self._reco_inter_columns(df) + self._reco_legacy_columns(df)
+        if not reco_cols:
+            return pd.Series(False, index=df.index)
+        return df[reco_cols].notna().any(axis=1)
+
+    def _build_reco_weighted(self, df: pd.DataFrame) -> pd.DataFrame | None:
+        """
+        One row per recommendation instance that should be taken into account, with
+        the journey-frequency weight it should count for: ['token', 'journey',
+        'reco_mode', 'days'].
+
+        - New-style typo.reco.reco_inter.N is matched 1:1 by index N with the journey
+          of the same index in data.freq_mod_journeys, and weighted by that specific
+          journey's own `days` (same index convention already used for professional
+          travel: freq_mod_pro_journeys.N / reco_pro.reco_pros.N).
+        - Legacy typo.reco.reco_dt2.0 / .1 are general recommendations that predate
+          per-journey recommendations, so each is weighted by the sum of the person's
+          journey days (or 1 if no per-journey day data exists, e.g. pure V1 records) —
+          this matches how these legacy recommendations were originally applied.
+
+        Args:
+            df: DataFrame of records (needs a 'token' column to key journeys/legacy
+                rows; falls back to the row index when absent)
+
+        Returns:
+            DataFrame with columns ['token', 'journey', 'reco_mode', 'days'] or None
+            if no recommendation data is found.
+        """
+        if df.empty:
+            return None
+
+        # Total journey days per token, computed directly from the journey day
+        # columns rather than via _build_journey_dataframe, which additionally
+        # requires a 'distance_km' column not all callers compute.
+        journey_days_cols = [c for c in df.columns if re.fullmatch(
+            r'data\.freq_mod_journeys\.\d+\.days', c)]
+        if journey_days_cols and 'token' in df.columns:
+            days_by_token = df[journey_days_cols].sum(axis=1)
+            days_by_token.index = df['token']
+            days_by_token = days_by_token.groupby(level=0).sum()
+        else:
+            days_by_token = pd.Series(dtype=float)
+
+        rows = []
+        for col in self._reco_inter_columns(df):
+            journey_id = RECO_INTER_PATTERN.match(col).group(1)
+            days_col = f'data.freq_mod_journeys.{journey_id}.days'
+            for idx, reco in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                if days_col in df.columns and pd.notna(df.at[idx, days_col]):
+                    days = df.at[idx, days_col]
+                else:
+                    days = days_by_token.get(token, 1)
+                rows.append({'token': token, 'journey': journey_id,
+                              'reco_mode': reco, 'days': days})
+
+        for col in self._reco_legacy_columns(df):
+            journey_id = f'legacy_{col.rsplit(".", 1)[1]}'
+            for idx, reco in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                days = days_by_token.get(token, 1)
+                rows.append({'token': token, 'journey': journey_id,
+                              'reco_mode': reco, 'days': days})
+
+        if not rows:
+            return None
+        return pd.DataFrame(rows)
 
     def _get_records_v1(self) -> pd.DataFrame:
         """Get records with data.version as NaN"""

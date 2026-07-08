@@ -446,7 +446,7 @@ Certains impacts sont aussi calculés :
           'Le temps de trajet domicile-travail médian des répondant·es est de {median} minutes.',
       },
     },
-    reco_dt2: {
+    reco_inter: {
       title: 'Répartition modale potentielle',
       labels: {
         ...transportationModes,
