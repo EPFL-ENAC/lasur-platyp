@@ -35,8 +35,7 @@ function makeRecord(rec: Partial<Record>): Record {
     needs_moto: 1,
     needs_car: 1,
     needs_train: 1,
-    change: {},
-    change2: {},
+    changes: [],
     ...rec.data,
   }
 

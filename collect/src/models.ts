@@ -75,8 +75,7 @@ export interface RecordData {
   comments: string
   workplace: AddressLocation
   origin: AddressLocation
-  change: Change
-  change2: Change
+  changes: Change[]
 }
 
 export interface Record {

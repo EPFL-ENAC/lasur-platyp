@@ -84,10 +84,7 @@
       <InfoPanel class="q-mt-lg" />
     </div>
     <div v-if="survey.stepName === 'change'">
-      <ChangePanel @update:modelValue="onSave" />
-    </div>
-    <div v-if="survey.stepName === 'change2'">
-      <Change2Panel @update:modelValue="onSave" />
+      <ChangePanel :idx="survey.changeStepIndex" @update:modelValue="onSave" />
     </div>
     <div v-if="survey.stepName === 'email'">
       <EmailPanel v-model="plainEmail" />
@@ -163,7 +160,6 @@ import ImportancePanel from 'src/components/form/steps/ImportancePanel.vue'
 import NeedsPanel from 'src/components/form/steps/NeedsPanel.vue'
 import RecommendationsPanel from 'src/components/form/steps/RecommendationsPanel.vue'
 import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
-import Change2Panel from 'src/components/form/steps/Change2Panel.vue'
 import EmailPanel from './steps/EmailPanel.vue'
 import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
 import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
@@ -251,13 +247,11 @@ function nextStep() {
   }
   if (survey.stepName === 'change') {
     // Both undefined and 0 mean no data
-    if (!survey.record.data.change?.motivation && !survey.isRecommendationInUse()) {
-      notifyError(t('form.error.change_motivation_required'))
-      return
-    }
-  }
-  if (survey.stepName === 'change2') {
-    if (!survey.record.data.change2?.motivation && !survey.isRecommendation2InUse()) {
+    const idx = survey.changeStepIndex
+    if (
+      !survey.record.data.changes?.[idx]?.motivation &&
+      !survey.isRecommendationAtIndexInUse(idx)
+    ) {
       notifyError(t('form.error.change_motivation_required'))
       return
     }
@@ -283,14 +277,6 @@ function nextStep() {
     } else if (survey.isBeforeStep('recommendations')) {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.stepName === 'change') {
-      if (survey.record.data.change === undefined) {
-        survey.record.data.change = {}
-      }
-      void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
-    } else if (survey.stepName === 'change2') {
-      if (survey.record.data.change2 === undefined) {
-        survey.record.data.change2 = {}
-      }
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.previousStepName === 'email') {
       // step was just incremented, so we check previous step
@@ -309,7 +295,9 @@ function prevStep() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
   if (
-    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(survey.stepName || '')
+    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(
+      survey.stepName || '',
+    )
   ) {
     // ignore because of map dragging conflict
     return
@@ -324,11 +312,9 @@ function handleSwipe(dir: any) {
 function onSave() {
   if (!survey.tokenOrSlug) return
 
-  if (survey.record.data.change?.levers?.includes('other') === false) {
-    survey.record.data.change.other_levers = undefined
-  }
-  if (survey.record.data.change2?.levers?.includes('other') === false) {
-    survey.record.data.change2.other_levers = undefined
+  const currentChange = survey.record.data.changes?.[survey.changeStepIndex]
+  if (currentChange?.levers?.includes('other') === false) {
+    currentChange.other_levers = undefined
   }
 
   void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)

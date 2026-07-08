@@ -151,7 +151,7 @@ async def get_final(token: str, session: AsyncSession = Depends(get_session)) ->
 
     if record is None:
         raise HTTPException(status_code=404, detail="Record not found")
-    if record.response_id_in_campaign is None and (not record.data.get("change", None) or not record.data.get("change2", None)):
+    if record.response_id_in_campaign is None and not record.data.get("changes", None):
         raise HTTPException(
             status_code=400, detail="Participant has not completed the survey yet")
 

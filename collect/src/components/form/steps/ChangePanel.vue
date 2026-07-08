@@ -5,17 +5,17 @@
     <q-card class="bg-primary-muted q-mb-xl">
       <q-card-section class="q-pa-sm">
         <div class="text-h5 text-secondary text-center">
-          {{ t(`reco.${firstRecoDt}`) }}
+          {{ t(`reco.${recoDt}`) }}
         </div>
       </q-card-section>
     </q-card>
 
-    <div>
+    <div v-if="change">
       <RatingItem
         v-if="isRecoChange"
         :label="t('form.change_motivation')"
         :hint="t('form.change_motivation_hint')"
-        v-model="survey.record.data.change.motivation"
+        v-model="change.motivation"
         :max="5"
         label-class="text-h4 text-bold q-mb-md"
         class="q-mb-lg"
@@ -30,15 +30,15 @@
           { value: 'environment', label: t('form.change_levers_option.work_environment') },
           { value: 'other', label: t('form.change_levers_option.other') },
         ]"
-        v-model="survey.record.data.change.levers"
+        v-model="change.levers"
         multiple
         label-class="text-h4 text-bold q-mb-md"
         option-label-class="text-h5"
         @update:model-value="onSave"
       />
       <q-input
-        v-if="survey.record.data.change.levers?.includes('other')"
-        v-model="survey.record.data.change.other_levers"
+        v-if="change.levers?.includes('other')"
+        v-model="change.other_levers"
         :label="t('form.change_other_levers_specify')"
         type="textarea"
         class="q-mb-lg text-h6"
@@ -61,13 +61,31 @@ import ChoiceItem from 'src/components/form/ChoiceItem.vue'
 const { t } = useI18n()
 const survey = useSurvey()
 
+interface Props {
+  idx: number
+}
+const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 
-const isRecoChange = computed(() => !survey.isRecommendationInUse())
+// Ensure a Change entry exists for this recommendation index before it's bound to.
+watch(
+  () => props.idx,
+  (idx) => {
+    if (!survey.record.data.changes) survey.record.data.changes = []
+    if (!survey.record.data.changes[idx]) {
+      survey.record.data.changes[idx] = {}
+    }
+  },
+  { immediate: true },
+)
 
-const firstRecoDt = computed(() =>
+const change = computed(() => survey.record.data.changes?.[props.idx])
+
+const isRecoChange = computed(() => !survey.isRecommendationAtIndexInUse(props.idx))
+
+const recoDt = computed(() =>
   survey.recommendation.reco && survey.recommendation.reco.reco_inter.length
-    ? survey.recommendation.reco.reco_inter[0]
+    ? survey.recommendation.reco.reco_inter[props.idx]
     : '',
 )
 
