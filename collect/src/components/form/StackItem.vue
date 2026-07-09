@@ -260,7 +260,7 @@ function onDropInsert(e: DragEvent, index: number) {
 }
 
 .icon-primary {
-  filter: invert(26%) sepia(77%) saturate(3932%) hue-rotate(140deg) brightness(102%) contrast(99%);
+  filter: invert(52%) sepia(88%) saturate(138%) hue-rotate(3deg) brightness(95%) contrast(246%);
 }
 
 .icon-white {
