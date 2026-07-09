@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (authenticated) {
         realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
         profile.value = await keycloak.loadUserProfile()
-        keycloak.onTokenExpired = () => void updateToken()
+        keycloak.onTokenExpired = () => void updateToken().catch(() => undefined)
       }
       return authenticated
     } catch (error) {
@@ -76,7 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('Token refresh error:', error)
       profile.value = undefined
       realmRoles.value = []
-      return null
+      throw error
     }
   }
 

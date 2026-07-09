@@ -22,8 +22,24 @@ export function notifyWarning(message: string) {
   })
 }
 
+// Matches the backend's expired/invalid bearer token detail, e.g.
+// "Not found 'Expired at 1783588004, time: 1783594855(leeway: 60)'".
+// Kept here (rather than duplicated) so both the axios interceptor and
+// notifyError agree on what counts as a session-expiry error.
+const sessionExpiredPattern = /expired at \d+, time: \d+\(leeway: \d+\)/i
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isSessionExpiredError(error: any): boolean {
+  const detail = error?.response?.data?.detail
+  return typeof detail === 'string' && sessionExpiredPattern.test(detail)
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function notifyError(error: any) {
+  // Already surfaced as a friendlier "session expired" warning by the
+  // axios interceptor in boot/api.ts — avoid a second, confusing toast.
+  if (isSessionExpiredError(error)) return
+
   let message = t('unknown_error')
   if (typeof error === 'string') {
     message = t(error)
