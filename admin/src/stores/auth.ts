@@ -16,22 +16,25 @@ export const useAuthStore = defineStore('auth', () => {
     if (isAuthenticated.value || initialized.value) return Promise.resolve(true)
     profile.value = undefined
     realmRoles.value = []
-    return keycloak
-      .init({
+    try {
+      const authenticated = await keycloak.init({
         onLoad: 'check-sso', // Optional: 'login-required' forces login right away, 'check-sso' checks if the user is already logged in.
+        pkceMethod: 'S256',
+        checkLoginIframe: false,
       })
-      .then((authenticated: boolean) => {
-        initialized.value = true
-        if (authenticated) {
-          realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
-          return keycloak.loadUserProfile().then((prof: KeycloakProfile) => {
-            profile.value = prof
-            return authenticated
-          })
-        } else {
-          return authenticated
-        }
-      })
+
+      initialized.value = true
+      if (authenticated) {
+        realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
+        profile.value = await keycloak.loadUserProfile()
+        keycloak.onTokenExpired = () => void updateToken()
+      }
+      return authenticated
+    } catch (error) {
+      console.error('Keycloak initialization failed', error)
+      initialized.value = true
+      return false
+    }
   }
 
   async function login() {
@@ -62,12 +65,19 @@ export const useAuthStore = defineStore('auth', () => {
       })
   }
 
-  async function updateToken() {
-    //return Promise.resolve(true);
-    return keycloak.updateToken(30).catch(() => {
-      console.error('Failed to refresh token')
-      return logout().finally(() => Promise.reject('Failed to refresh token'))
-    })
+  /**
+   * Update token (refresh if needed)
+   */
+  async function updateToken(minValidity = 30) {
+    try {
+      await keycloak.updateToken(minValidity)
+      return keycloak.token
+    } catch (error) {
+      console.error('Token refresh error:', error)
+      profile.value = undefined
+      realmRoles.value = []
+      return null
+    }
   }
 
   function isAdminOfThisCompany(company: Company) {
