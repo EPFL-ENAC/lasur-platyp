@@ -2,6 +2,7 @@ import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import Keycloak from 'keycloak-js'
+import { notifyWarning, isSessionExpiredError } from 'src/utils/notify'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -34,7 +35,18 @@ const api = axios.create({
 })
 const collectUrl = appEnv.COLLECT_URL
 
-export default boot(({ app }) => {
+// If a request slips through with a stale token despite updateToken()
+// (e.g. clock skew, or a request racing a refresh), the backend rejects it
+// with an "Expired at ..." detail message. Catch that here so the user is
+// sent to sign in instead of being left stuck re-sending a dead token.
+function isExpiredTokenError(error: unknown): boolean {
+  if (!axios.isAxiosError(error)) return false
+  const status = error.response?.status
+  if (status !== 401 && status !== 403 && status !== 404) return false
+  return isSessionExpiredError(error)
+}
+
+export default boot(({ app, router }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios
@@ -44,6 +56,22 @@ export default boot(({ app }) => {
   app.config.globalProperties.$api = api
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
+
+  api.interceptors.response.use(
+    (response) => response,
+    (error: unknown) => {
+      if (isExpiredTokenError(error)) {
+        const authStore = useAuthStore()
+        authStore.profile = undefined
+        authStore.realmRoles = []
+        if (router.currentRoute.value.path !== '/signin') {
+          notifyWarning('error.session_expired')
+          void router.push('/signin')
+        }
+      }
+      return Promise.reject(error)
+    },
+  )
 })
 
 export { api, baseUrl, keycloak, collectUrl }
