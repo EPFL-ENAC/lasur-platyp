@@ -5,7 +5,6 @@
         <SectionItem :label="t('form.recommendations_pro')" />
 
         <template v-for="(reco, index) in recoPros" :key="index">
-          <q-separator />
           <RecommendationItem
             :reco="reco"
             :reco-label="t(`reco.${reco}`)"

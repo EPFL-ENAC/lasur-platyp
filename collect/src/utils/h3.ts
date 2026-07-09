@@ -27,7 +27,7 @@ class H3Utils {
    * the former hex grid, kept in sync with `toPlaceLocation`.
    */
   static fromPlaceLocation(location: PlaceLocation): H3Index {
-    const resolution = location.level === 'national' ? 1 : location.level === 'regional' ? 3 : 6
+    const resolution = location.level === 'national' ? 1 : location.level === 'regional' ? 2 : 5
     return h3.latLngToCell(location.lat, location.lon, resolution)
   }
 }
