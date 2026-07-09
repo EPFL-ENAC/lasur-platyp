@@ -24,9 +24,30 @@
             />
           </div>
           <div>
-            <modes-of-transport-share-chart
+            <div>
+              <q-btn-toggle
+                v-model="modalType"
+                :options="[
+                  { label: t('stats.freq_mod.modal_split.simple'), value: 'simple' },
+                  { label: t('stats.freq_mod.modal_split.detailed'), value: 'detailed' },
+                ]"
+                outlined
+                unelevated
+                no-caps
+                color="grey"
+                toggle-color="primary"
+              />
+            </div>
+            <simple-labels-share-chart
+              v-if="modalType === 'simple'"
               :height="height"
-              :frequencies="stats.frequencies?.['freq_mod'] ?? null"
+              :frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
+              :loading="stats.loading"
+            />
+            <complex-labels-share-chart
+              v-if="modalType === 'detailed'"
+              :height="height"
+              :frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
               :loading="stats.loading"
             />
           </div>
@@ -262,7 +283,8 @@ import EmissionsReductionsChart from 'src/components/charts/EmissionsReductionsC
 import EmissionsReductionsShareChart from 'src/components/charts/EmissionsReductionsShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
-import ModesOfTransportShareChart from 'src/components/charts/ModesOfTransportShareChart.vue'
+import SimpleLabelsShareChart from 'src/components/charts/SimpleLabelsShareChart.vue'
+import ComplexLabelsShareChart from 'src/components/charts/ComplexLabelsShareChart.vue'
 import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
 import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
@@ -281,6 +303,8 @@ defineProps<Props>()
 const { t } = useI18n()
 const preferencesStore = usePreferencesStore()
 const stats = useStats()
+
+const modalType = ref('simple')
 
 const getFreq = (key: string) => {
   return (stats.frequencies?.[key] ?? null) as Frequencies | null

@@ -169,3 +169,77 @@ export const MOTIVATION_COLORS: { [key: string]: string } = {
   4: '#c1cbb1',
   5: '#78c1a3',
 }
+
+export const SIMPLE_LABELS_IDEAL_ORDER: Record<string, number> = {
+  // Fallback order for unknown keys (keep them at the end)
+  default: 999,
+  MA: 10,
+  TP: 20,
+  'MA+TP': 30,
+  'MA+TIM': 40,
+  'TIM+TP': 50,
+  TIM: 60,
+}
+
+export function simpleLabelSortOrder(key: string): number {
+  return SIMPLE_LABELS_IDEAL_ORDER[key] || SIMPLE_LABELS_IDEAL_ORDER.default!
+}
+
+export const SIMPLE_LABELS_COLORS: { [key: string]: string } = {
+  MA: '#8ABA6F',
+  TP: '#6093D3',
+  'MA+TP': '#4C7B31',
+  'MA+TIM': '#F0988D',
+  'TIM+TP': '#E15956',
+  TIM: '#860706',
+  default: '#ccc',
+}
+
+export const COMPLEX_LABELS_IDEAL_ORDER: Record<string, number> = {
+  // Fallback order for unknown keys (keep them at the end)
+  default: 999,
+  walking: 10,
+  bike: 20,
+  ebike: 30,
+  pub: 40,
+  train: 50,
+  moto: 60,
+  car: 70,
+  carpool: 80,
+  other: 90,
+  'pub+bike': 100,
+  'bike+pub': 100,
+  'pub+car': 110,
+  'car+pub': 110,
+  'car+bike': 120,
+  'bike+car': 120,
+  'pub+walk': 130,
+  'walk+pub': 130,
+  other_inter: 140,
+}
+
+export function complexLabelSortOrder(key: string): number {
+  return COMPLEX_LABELS_IDEAL_ORDER[key] || COMPLEX_LABELS_IDEAL_ORDER.default!
+}
+
+export const COMPLEX_LABELS_COLORS: { [key: string]: string } = {
+  walking: '#DEF1D3',
+  bike: '#8ABA6F',
+  ebike: '#4C7B31',
+  pub: '#6093D3',
+  train: '#335E96',
+  moto: '#C00000',
+  car: '#860706',
+  carpool: '#F0988D',
+  other: '#AB8D74',
+  'pub+bike': '#4C7B31',
+  'bike+pub': '#4C7B31',
+  'pub+car': '#E15956',
+  'car+pub': '#E15956',
+  'car+bike': '#F0988D',
+  'bike+car': '#F0988D',
+  'pub+walk': '#DEF1D3',
+  'walk+pub': '#DEF1D3',
+  other_inter: '#AB8D74',
+  default: '#ccc',
+}

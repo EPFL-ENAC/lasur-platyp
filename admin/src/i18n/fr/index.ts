@@ -46,6 +46,36 @@ const transportationModes = {
   unknown: 'Inconnu',
 }
 
+const simpleLabels = {
+  MA: 'Mobilité active',
+  TP: 'Transports publics',
+  'MA+TP': 'Mobilité active + Transports publics',
+  'MA+TIM': 'Mobilité active + Transports individuels motorisés',
+  'TIM+TP': 'Transports individuels motorisés + Transports publics',
+  TIM: 'Transports individuels motorisés',
+}
+
+const complexLabels = {
+  walking: 'Marche',
+  bike: 'Vélo',
+  ebike: 'Vélo électrique',
+  pub: 'Transports publics urbains',
+  train: 'Train',
+  moto: 'Moto / scooter',
+  car: 'Voiture',
+  carpool: 'Covoiturage',
+  other: 'Autre',
+  'pub+bike': 'Transports publics + Vélo',
+  'bike+pub': 'Vélo + Transports publics',
+  'pub+car': 'Transports publics + Voiture',
+  'car+pub': 'Voiture + Transports publics',
+  'car+bike': 'Voiture + Vélo',
+  'bike+car': 'Vélo + Voiture',
+  'pub+walk': 'Transports publics + Marche',
+  'walk+pub': 'Marche + Transports publics',
+  other_inter: 'Autre (Intermodal)',
+}
+
 const emissionsLabels = {
   emissions: 'Émissions CO₂ totales',
   journeys: 'Nombre de trajets',
@@ -460,9 +490,15 @@ Certains impacts sont aussi calculés :
     },
     freq_mod: {
       title: 'Répartition modale',
+      title_simple: 'Répartition modale (simple)',
+      title_detailed: 'Répartition modale (détaillée)',
       title_mrmt: 'Données de référence (canton de Genève)',
       labels: {
         ...transportationModes,
+      },
+      modal_split: {
+        simple: 'Simple',
+        detailed: 'Détaillée',
       },
       texts: {
         default:
@@ -665,6 +701,12 @@ Certains impacts sont aussi calculés :
   transportation_modes: {
     ...transportationModes,
   },
+  simple_labels: {
+    ...simpleLabels,
+  },
+  comlex_labels: {
+    ...complexLabels,
+  },
   record: {
     reco: 'Mode de transport recommandé : {mode}',
     isochrones: 'Isochrones',
@@ -726,6 +768,7 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
 *Dernière mise à jour : mars 2026*`,
   },
   error: {
+    session_expired: 'Votre session a expiré. Veuillez vous reconnecter.',
     accept_terms_and_conditions: 'Vous devez accepter les termes et conditions.',
     registration_failed: "L'inscription a échoué. Veuillez réessayer plus tard.",
     password_complexity_not_met: 'Le mot de passe ne répond pas aux exigences de complexité.',

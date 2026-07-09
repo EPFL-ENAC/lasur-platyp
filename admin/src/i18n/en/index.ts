@@ -46,6 +46,36 @@ const transportationModes = {
   unknown: 'Unknown',
 }
 
+const simpleLabels = {
+  MA: 'Active mobility',
+  TP: 'Public transport',
+  'MA+TP': 'Active mobility + Public transport',
+  'MA+TIM': 'Active mobility + Individual motorized transport',
+  'TIM+TP': 'Individual motorized transport + Public transport',
+  TIM: 'Individual motorized transport',
+}
+
+const complexLabels = {
+  walking: 'Walking',
+  bike: 'Bicycle',
+  ebike: 'Electric bike',
+  pub: 'Urban public transport',
+  train: 'Train',
+  moto: 'Motorcycle / scooter',
+  car: 'Car',
+  carpool: 'Carpooling',
+  other: 'Other',
+  'pub+bike': 'Public transport + Bicycle',
+  'bike+pub': 'Bicycle + Public transport',
+  'pub+car': 'Public transport + Car',
+  'car+pub': 'Car + Public transport',
+  'car+bike': 'Car + Bicycle',
+  'bike+car': 'Bicycle + Car',
+  'pub+walk': 'Public transport + Walking',
+  'walk+pub': 'Walking + Public transport',
+  other_inter: 'Other (Intermodal)',
+}
+
 const emissionsLabels = {
   emissions: 'Total CO₂ emissions',
   journeys: 'Number of journeys',
@@ -449,9 +479,15 @@ Some environmental impacts have also been calculated:
     },
     freq_mod: {
       title: 'Modal split',
+      title_simple: 'Modal split (simple)',
+      title_detailed: 'Modal split (detailed)',
       title_mrmt: 'Reference data (Geneva canton)',
       labels: {
         ...transportationModes,
+      },
+      modal_split: {
+        simple: 'Simple',
+        detailed: 'Detailed',
       },
       texts: {
         default:
@@ -652,6 +688,12 @@ Some environmental impacts have also been calculated:
   transportation_modes: {
     ...transportationModes,
   },
+  simple_labels: {
+    ...simpleLabels,
+  },
+  complex_labels: {
+    ...complexLabels,
+  },
   record: {
     reco: 'Recommended mode of transport: {mode}',
     isochrones: 'Isochrones',
@@ -712,6 +754,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
 *Last updated: March 2026*`,
   },
   error: {
+    session_expired: 'Your session has expired. Please sign in again.',
     accept_terms_and_conditions: 'You must accept the terms and conditions.',
     registration_failed: 'Registration failed. Please try again later.',
     password_complexity_not_met: 'The password does not meet the complexity requirements.',
