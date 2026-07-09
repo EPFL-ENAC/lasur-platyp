@@ -23,6 +23,8 @@ class StatsService:
         travel_time = freq_stats.compute_travel_time_frequencies()
         recommendations = freq_stats.compute_recommendation_frequencies()
         mode_frequencies = freq_stats.compute_modes_frequencies()
+        mode_frequencies_simple_labels = freq_stats.compute_modes_frequencies_simple_labels()
+        mode_frequencies_complex_labels = freq_stats.compute_modes_frequencies_complex_labels()
         pro_mode_frequencies = freq_stats.compute_modes_pro_frequencies()
         pro_recommendations = freq_stats.compute_recommendation_pro_frequencies()
 
@@ -64,6 +66,8 @@ class StatsService:
                 recommendations
             ],
             mode_frequencies=mode_frequencies,
+            mode_frequencies_simple_labels=mode_frequencies_simple_labels,
+            mode_frequencies_complex_labels=mode_frequencies_complex_labels,
             mode_emissions=mode_emissions,
             reco_mode_emissions=reco_mode_emissions,
             mode_emission_reductions=mode_emission_reductions,

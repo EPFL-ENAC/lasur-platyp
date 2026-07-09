@@ -19,9 +19,16 @@
       />
     </q-carousel-slide>
     <q-carousel-slide name="freq_mod" class="column no-wrap flex-center item">
-      <modes-of-transport-share-chart
+      <simple-labels-share-chart
         :height="height"
-        :frequencies="stats.frequencies?.['freq_mod'] ?? null"
+        :frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
+        :loading="stats.loading"
+      />
+    </q-carousel-slide>
+    <q-carousel-slide name="freq_mod" class="column no-wrap flex-center item">
+      <complex-labels-share-chart
+        :height="height"
+        :frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
         :loading="stats.loading"
       />
     </q-carousel-slide>
@@ -205,7 +212,8 @@ import EmissionsReductionsChart from 'src/components/charts/EmissionsReductionsC
 import EmissionsReductionsShareChart from 'src/components/charts/EmissionsReductionsShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
-import ModesOfTransportShareChart from 'src/components/charts/ModesOfTransportShareChart.vue'
+import SimpleLabelsShareChart from 'src/components/charts/SimpleLabelsShareChart.vue'
+import ComplexLabelsShareChart from 'src/components/charts/ComplexLabelsShareChart.vue'
 import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
 import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'

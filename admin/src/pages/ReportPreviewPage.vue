@@ -42,9 +42,17 @@
       </report-page>
 
       <report-page :org-names="orgs">
-        <modes-of-transport-share-chart
+        <simple-labels-share-chart
           :height="height"
-          :frequencies="stats.frequencies?.['freq_mod'] ?? null"
+          :frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
+          :exportable="false"
+        />
+      </report-page>
+
+      <report-page :org-names="orgs">
+        <complex-labels-share-chart
+          :height="height"
+          :frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
           :exportable="false"
         />
       </report-page>
@@ -272,7 +280,8 @@ import EmissionsReductionsChart from 'src/components/charts/EmissionsReductionsC
 import EmissionsReductionsShareChart from 'src/components/charts/EmissionsReductionsShareChart.vue'
 import LinksChart from 'src/components/charts/LinksChart.vue'
 import ShareChart from 'src/components/charts/ShareChart.vue'
-import ModesOfTransportShareChart from 'src/components/charts/ModesOfTransportShareChart.vue'
+import SimpleLabelsShareChart from 'src/components/charts/SimpleLabelsShareChart.vue'
+import ComplexLabelsShareChart from 'src/components/charts/ComplexLabelsShareChart.vue'
 import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
 import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'

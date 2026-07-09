@@ -334,6 +334,8 @@ export interface Stats {
   total: number
   frequencies: Frequencies[] | null
   mode_frequencies: Frequencies[] | null
+  mode_frequencies_complex_labels: Frequencies[] | null
+  mode_frequencies_simple_labels: Frequencies[] | null
   mode_emissions: Emissions[] | null
   mode_emission_reductions: EmissionReduction[] | null
   reco_mode_emissions: Emissions[] | null
