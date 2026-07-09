@@ -84,7 +84,7 @@
       <InfoPanel class="q-mt-lg" />
     </div>
     <div v-if="survey.stepName === 'change'">
-      <ChangePanel :idx="survey.changeStepIndex" @update:modelValue="onSave" />
+      <ChangePanel :idx="survey.currentChangeIndex" @update:modelValue="onSave" />
     </div>
     <div v-if="survey.stepName === 'email'">
       <EmailPanel v-model="plainEmail" />
@@ -247,7 +247,7 @@ function nextStep() {
   }
   if (survey.stepName === 'change') {
     // Both undefined and 0 mean no data
-    const idx = survey.changeStepIndex
+    const idx = survey.currentChangeIndex
     if (
       !survey.record.data.changes?.[idx]?.motivation &&
       !survey.isRecommendationAtIndexInUse(idx)
@@ -255,6 +255,7 @@ function nextStep() {
       notifyError(t('form.error.change_motivation_required'))
       return
     }
+    survey.syncChangeGroup(idx)
   }
 
   survey.incStep(collector.info.with_professional_questions ?? true)
@@ -312,10 +313,12 @@ function handleSwipe(dir: any) {
 function onSave() {
   if (!survey.tokenOrSlug) return
 
-  const currentChange = survey.record.data.changes?.[survey.changeStepIndex]
+  const idx = survey.currentChangeIndex
+  const currentChange = survey.record.data.changes?.[idx]
   if (currentChange?.levers?.includes('other') === false) {
     currentChange.other_levers = undefined
   }
+  survey.syncChangeGroup(idx)
 
   void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
 }

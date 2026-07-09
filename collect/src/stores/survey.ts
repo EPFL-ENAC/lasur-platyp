@@ -71,11 +71,64 @@ export const useSurvey = defineStore(
     }
 
     /**
-     * Number of 'change' sub-steps, one per recommended mode (reco_inter).
+     * Raw reco_inter indices of the first occurrence of each unique recommended mode,
+     * in order of appearance. The same mode can appear several times in reco_inter;
+     * this drives the 'change' step so it is only shown once per unique mode.
+     */
+    function uniqueChangeIndices() {
+      const recoInter = recommendation.value.reco?.reco_inter
+      if (!recoInter || !recoInter.length) return [0]
+      const seen = new Set<string>()
+      const indices: number[] = []
+      recoInter.forEach((mode, i) => {
+        if (!seen.has(mode)) {
+          seen.add(mode)
+          indices.push(i)
+        }
+      })
+      return indices
+    }
+
+    /**
+     * Number of 'change' sub-steps, one per unique recommended mode (reco_inter).
      * At least one, so the step is still shown when there is no recommendation.
      */
     function changeStepsCount() {
-      return Math.max(recommendation.value.reco?.reco_inter?.length ?? 0, 1)
+      return uniqueChangeIndices().length
+    }
+
+    /**
+     * Raw reco_inter/changes index of the recommendation currently shown in the
+     * 'change' step, mapping the deduplicated changeStepIndex back to the first
+     * occurrence of that mode.
+     */
+    const currentChangeIndex = computed(() => uniqueChangeIndices()[changeStepIndex.value] ?? 0)
+
+    /**
+     * All raw reco_inter indices sharing the same mode as the given index.
+     */
+    function changeGroupIndices(index: number) {
+      const recoInter = recommendation.value.reco?.reco_inter
+      if (!recoInter || !recoInter.length) return [index]
+      const mode = recoInter[index]
+      return recoInter.reduce<number[]>((acc, m, i) => {
+        if (m === mode) acc.push(i)
+        return acc
+      }, [])
+    }
+
+    /**
+     * Copy the answer at `index` to every other reco_inter occurrence sharing the
+     * same mode, so a recommendation repeated several times is answered once in the
+     * UI but still recorded for each occurrence.
+     */
+    function syncChangeGroup(index: number) {
+      const changes = record.value.data.changes
+      const source = changes?.[index]
+      if (!changes || !source) return
+      changeGroupIndices(index).forEach((i) => {
+        if (i !== index) changes[i] = { ...source }
+      })
     }
 
     function isBeforeStep(name: string) {
@@ -272,6 +325,9 @@ export const useSurvey = defineStore(
       incStep,
       decStep,
       changeStepsCount,
+      currentChangeIndex,
+      changeGroupIndices,
+      syncChangeGroup,
       getFreqMod,
       getMainFreqMod,
       isModeSustainable,
