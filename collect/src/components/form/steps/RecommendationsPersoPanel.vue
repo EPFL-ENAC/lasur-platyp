@@ -1,20 +1,14 @@
 <template>
   <div>
-    <div class="q-mb-lg">
-      <div class="text-h5 text-bold q-mb-md">{{ t(`main_mode.${mainFm}`) }}</div>
-    </div>
-
     <q-card flat>
       <q-card-section>
-        <div class="text-h5">
-          <SectionItem :label="sectionLabel" />
-        </div>
-
-        <template v-for="(reco, idx) in recoDt" :key="idx">
-          <q-separator />
+        <SectionItem :label="t('form.recommendations')" />
+        <template v-for="(reco, idx) in recoInter" :key="idx">
+          <q-separator v-if="idx > 0" />
           <RecommendationItem
             :reco="reco"
             :reco-label="t(`reco.${reco}`)"
+            :bravo="bravo[idx]"
             :index-label="
               t(
                 isModeSustainable && isModeOptions
@@ -63,23 +57,14 @@ const props = defineProps<{
   mainFm: string
   isModeSustainable: boolean
   isModeOptions: boolean
-  recoDt: string[]
+  recoInter: string[]
+  bravo: number[]
   center: [number, number] | null
   mesureDt1: string[]
   mesureDt2: string[]
   globalActions: string[]
   benefitsExpanded?: boolean
 }>()
-
-const sectionLabel = computed(() => {
-  if (props.isModeSustainable && !props.isModeOptions) {
-    return t('main_mode.sustainable')
-  }
-  if (props.isModeSustainable && props.isModeOptions) {
-    return t('main_mode.sustainable_options')
-  }
-  return t('main_mode.not_sustainable')
-})
 
 function showIsochrones(reco: string) {
   return ['marche', 'velo', 'vae', 'cargo', 'train', 'tpu'].includes(reco)

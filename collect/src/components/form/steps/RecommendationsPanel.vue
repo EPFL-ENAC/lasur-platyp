@@ -4,11 +4,16 @@
       <q-btn color="primary" icon="print" :label="t('print')" @click="openPrintPreview" />
     </div>
 
+    <div class="q-mb-lg">
+      <div class="text-h5 text-bold q-mb-md">{{ t(`form.recommendations_preamble`) }}</div>
+    </div>
+
     <RecommendationsPersoPanel
       :main-fm="mainFm"
       :is-mode-sustainable="isModeSustainable"
       :is-mode-options="isModeOptions"
-      :reco-dt="recoDt"
+      :reco-inter="recoInter"
+      :bravo="bravo"
       :center="center"
       :mesure-dt1="mesureDt1"
       :mesure-dt2="mesureDt2"
@@ -32,7 +37,7 @@ import RecommendationsProPanel from 'src/components/form/steps/RecommendationsPr
 import type { RecommendationsPreviewData } from 'src/models'
 import { resolveLocation } from 'src/utils/boundaries'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const survey = useSurvey()
 const router = useRouter()
 
@@ -40,7 +45,8 @@ const mainFm = computed(() => survey.getMainFreqMod())
 const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
 const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
 
-const recoDt = computed(() => survey.recommendation.reco?.reco_inter || [])
+const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
+const bravo = computed(() => survey.recommendation.reco?.bravo || [])
 
 const center = computed(() => {
   const loc = survey.record.data.origin
@@ -77,7 +83,8 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     mainFm: mainFm.value,
     isModeSustainable: isModeSustainable.value,
     isModeOptions: isModeOptions.value,
-    recoDt: recoDt.value,
+    recoInter: recoInter.value,
+    bravo: bravo.value,
     center: center.value,
     mesureDt1: mesureDt1.value,
     mesureDt2: mesureDt2.value,
@@ -98,6 +105,7 @@ function openPrintPreview() {
     path: '/print-reco',
     query: {
       data: encodeURIComponent(payload),
+      locale: locale.value,
     },
   })
 

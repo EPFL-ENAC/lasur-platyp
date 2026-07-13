@@ -1,6 +1,6 @@
 <template>
   <div v-if="hasBenefits(reco)">
-    <div v-if="expanded" class="bg-white text-secondary rounded-borders">
+    <div v-if="expanded" class="bg-white text-secondary rounded-borders q-pa-sm">
       <q-markdown :src="getBenefits(reco, locale)" />
     </div>
 
@@ -13,10 +13,7 @@
       no-caps
       dense
     >
-      <q-menu
-        class="q-mr-md bg-white text-secondary rounded-borders q-pa-md"
-        :max-width="'400px'"
-      >
+      <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'">
         <q-markdown :src="getBenefits(reco, locale)" />
       </q-menu>
     </q-btn>

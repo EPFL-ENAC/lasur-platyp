@@ -143,7 +143,11 @@ export default {
     comments:
       'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité ?',
     recommendations:
-      'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail',
+      'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
+    recommendations_header:
+      'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
+    recommendations_preamble:
+      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour chacun des déplacements domicile-travail et professionnels que vous avez renseignés.',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
     recommendations_print: {
@@ -199,12 +203,6 @@ export default {
     inter: 'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     combined:
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
-    sustainable:
-      ' Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
-    sustainable_options:
-      'Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
-    not_sustainable:
-      'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées :',
     actions:
       'Votre employeur met en oeuvre les mesures suivantes afin de promouvoir la mobilité durable',
   },
@@ -226,6 +224,10 @@ export default {
     pub: 'Les transports publics',
     avoid:
       'Visez à réduire la fréquence de vos déplacements de longue distance et, dans la mesure du possible, privilégiez les solutions de vidéoconférence.',
+  },
+  bravo: {
+    1: 'Félicitations ! Votre habitude de déplacement est déjà quelque peu durable.',
+    2: 'Félicitations ! Votre habitude de déplacement est déjà durable.',
   },
   actions: {
     budget: 'Budget mobilité',
@@ -318,4 +320,5 @@ export default {
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
   dark_mode: 'Mode sombre',
   transit_lines: 'Réseau transports publics',
+  print: 'Imprimer',
 }
