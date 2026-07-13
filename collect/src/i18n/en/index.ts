@@ -137,7 +137,11 @@ export default {
     needs: 'How suitable are the following modes of transport for your daily mobility needs?',
     needs_hint: 'On a scale of 1 (not at all suitable) to 5 (completely suitable)',
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
-    recommendations: 'Recommended modes of transport for your home-to-work journeys',
+    recommendations: 'Recommended modes of transport for your home-to-work journeys:',
+    recommendations_header:
+      'Recommended transport modes for declared home-to-work and professional journeys',
+    recommendations_preamble:
+      'Based on your situation, we propose below one or more modes of transport that seem suitable for each of the home-to-work and professional journeys you have indicated.',
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
     recommendations_print: {
       title: 'Mobility Recommendations',
@@ -179,8 +183,6 @@ export default {
     },
   },
   main_mode: {
-    preamble:
-      'Based on your situation, we propose below one or more modes of transport that seem suitable for each of the home-to-work and professional journeys you have indicated.',
     walking: 'At present, you mainly walk to get to your workplace.',
     bike: 'At present, you mainly use a bicycle or an electric bike to get to your workplace.',
     ebike: 'At present, you mainly use an electric bike to get to your workplace.',
@@ -305,4 +307,5 @@ export default {
   select_or_drag_item: 'Select or drag one of the options',
   dark_mode: 'Dark mode',
   transit_lines: 'Public transport network',
+  print: 'Print',
 }

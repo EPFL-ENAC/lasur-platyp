@@ -5,7 +5,7 @@
     </div>
 
     <div class="q-mb-lg">
-      <div class="text-h5 text-bold q-mb-md">{{ t(`main_mode.preamble`) }}</div>
+      <div class="text-h5 text-bold q-mb-md">{{ t(`form.recommendations_preamble`) }}</div>
     </div>
 
     <RecommendationsPersoPanel
@@ -84,6 +84,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     isModeSustainable: isModeSustainable.value,
     isModeOptions: isModeOptions.value,
     recoInter: recoInter.value,
+    bravo: bravo.value,
     center: center.value,
     mesureDt1: mesureDt1.value,
     mesureDt2: mesureDt2.value,

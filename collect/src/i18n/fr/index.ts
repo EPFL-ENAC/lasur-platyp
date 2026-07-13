@@ -143,7 +143,11 @@ export default {
     comments:
       'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité ?',
     recommendations:
-      'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail',
+      'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
+    recommendations_header:
+      'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
+    recommendations_preamble:
+      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour chacun des déplacements domicile-travail et professionnels que vous avez renseignés.',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
     recommendations_print: {
@@ -188,8 +192,6 @@ export default {
     },
   },
   main_mode: {
-    preamble:
-      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour chacun des déplacements domicile-travail et professionnels que vous avez renseignés.',
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
     bike: 'Actuellement, vous vous rendez au travail principalement en vélo (mécanique ou électrique).',
     ebike: 'Actuellement, vous vous rendez au travail principalement en vélo électrique.',
@@ -318,4 +320,5 @@ export default {
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
   dark_mode: 'Mode sombre',
   transit_lines: 'Réseau transports publics',
+  print: 'Imprimer',
 }

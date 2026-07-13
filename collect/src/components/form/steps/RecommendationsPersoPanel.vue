@@ -2,6 +2,7 @@
   <div>
     <q-card flat>
       <q-card-section>
+        <SectionItem :label="t('form.recommendations')" />
         <template v-for="(reco, idx) in recoInter" :key="idx">
           <q-separator v-if="idx > 0" />
           <RecommendationItem

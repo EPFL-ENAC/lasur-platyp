@@ -1,9 +1,9 @@
 <template>
   <div class="bg-grey-3">
     <q-toolbar class="bg-white text-primary q-py-sm toolbar print-hide">
-      <q-toolbar-title class="text-weight-bold">
-        {{ t('form.recommendations') }}
-      </q-toolbar-title>
+      <div class="text-weight-bold text-h6">
+        {{ t('form.recommendations_header') }}
+      </div>
       <q-space />
       <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />
     </q-toolbar>
@@ -19,7 +19,8 @@
           :main-fm="data.perso.mainFm"
           :is-mode-sustainable="data.perso.isModeSustainable"
           :is-mode-options="data.perso.isModeOptions"
-          :reco-dt="data.perso.recoInter"
+          :reco-inter="data.perso.recoInter"
+          :bravo="data.perso.bravo"
           :center="data.perso.center"
           :mesure-dt1="data.perso.mesureDt1"
           :mesure-dt2="data.perso.mesureDt2"
