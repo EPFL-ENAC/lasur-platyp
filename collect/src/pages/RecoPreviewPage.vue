@@ -1,16 +1,11 @@
 <template>
   <div class="bg-grey-3">
     <q-toolbar class="bg-white text-primary q-py-sm toolbar print-hide">
-      <q-toolbar-title class="text-weight-bold">
-        {{ t('form.recommendations') }}
-      </q-toolbar-title>
+      <div class="text-weight-bold text-h6">
+        {{ t('form.recommendations_header') }}
+      </div>
       <q-space />
-      <q-btn
-        color="primary"
-        icon="print"
-        :label="t('print')"
-        @click="printReport"
-      />
+      <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />
     </q-toolbar>
 
     <div class="report-container">
@@ -24,7 +19,8 @@
           :main-fm="data.perso.mainFm"
           :is-mode-sustainable="data.perso.isModeSustainable"
           :is-mode-options="data.perso.isModeOptions"
-          :reco-dt="data.perso.recoDt"
+          :reco-inter="data.perso.recoInter"
+          :bravo="data.perso.bravo"
           :center="data.perso.center"
           :mesure-dt1="data.perso.mesureDt1"
           :mesure-dt2="data.perso.mesureDt2"
@@ -42,7 +38,7 @@
         />
 
         <h3 class="text-h6 text-right q-mt-xl">
-          {{ t('certificate.date', { date: new Date().toLocaleDateString() }) }}
+          {{ t('certificate.date', { date: new Date().toLocaleDateString(locale) }) }}
         </h3>
       </report-page>
     </div>
@@ -54,9 +50,15 @@ import ReportPage from 'src/components/ReportPage.vue'
 import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
 import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
 import type { RecommendationsPreviewData } from 'src/models'
+import { locales } from 'boot/i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
+
+const queryLocale = route.query.locale
+if (typeof queryLocale === 'string' && locales.includes(queryLocale)) {
+  locale.value = queryLocale
+}
 
 const data = computed<RecommendationsPreviewData | null>(() => {
   const raw = route.query.data

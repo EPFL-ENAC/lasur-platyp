@@ -137,7 +137,11 @@ export default {
     needs: 'How suitable are the following modes of transport for your daily mobility needs?',
     needs_hint: 'On a scale of 1 (not at all suitable) to 5 (completely suitable)',
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
-    recommendations: 'Recommended modes of transport for your home-to-work journeys',
+    recommendations: 'Recommended modes of transport for your home-to-work journeys:',
+    recommendations_header:
+      'Recommended transport modes for declared home-to-work and professional journeys',
+    recommendations_preamble:
+      'Based on your situation, we propose below one or more modes of transport that seem suitable for each of the home-to-work and professional journeys you have indicated.',
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
     recommendations_print: {
       title: 'Mobility Recommendations',
@@ -189,12 +193,6 @@ export default {
     train: 'At present, you mainly use a train to get to your workplace.',
     inter: 'At present, you mainly use a combination of modes to get to your workplace.',
     combined: 'At present, you mainly use a combination of modes to get to your workplace.',
-    sustainable:
-      'Congratulations! Your commuting habits are already sustainable. The following alternatives are also available to you:',
-    sustainable_options:
-      'Congratulations! Your commuting habits are already sustainable. The following options are available to you:',
-    not_sustainable:
-      'Based on the information you have entered, the following alternative modes are recommended:',
     actions: 'Your employer implements the following measures to promote sustainable mobility',
   },
   reco: {
@@ -215,6 +213,10 @@ export default {
     pub: 'Public transport',
     avoid:
       'Aim to reduce the frequency of long-distance travel, and, where possible, leverage video-conferencing solutions',
+  },
+  bravo: {
+    1: 'Congratulations! Your commuting habit is somewhat already sustainable.',
+    2: 'Congratulations! Your commuting habit already sustainable.',
   },
   actions: {
     budget: 'Sustainable mobility budget',
@@ -305,4 +307,5 @@ export default {
   select_or_drag_item: 'Select or drag one of the options',
   dark_mode: 'Dark mode',
   transit_lines: 'Public transport network',
+  print: 'Print',
 }

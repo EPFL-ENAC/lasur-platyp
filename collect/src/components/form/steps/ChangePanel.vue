@@ -5,7 +5,7 @@
     <q-card class="bg-primary-muted q-mb-xl">
       <q-card-section class="q-pa-sm">
         <div class="text-h5 text-secondary text-center">
-          {{ t(`reco.${recoDt}`) }}
+          {{ t(`reco.${recoInter}`) }}
         </div>
       </q-card-section>
     </q-card>
@@ -83,8 +83,8 @@ const change = computed(() => survey.record.data.changes?.[props.idx])
 
 const isRecoChange = computed(() => !survey.isRecommendationAtIndexInUse(props.idx))
 
-const recoDt = computed(() =>
-  survey.recommendation.reco && survey.recommendation.reco.reco_inter.length
+const recoInter = computed(() =>
+  survey.recommendation.reco?.reco_inter && survey.recommendation.reco.reco_inter.length
     ? survey.recommendation.reco.reco_inter[props.idx]
     : '',
 )
