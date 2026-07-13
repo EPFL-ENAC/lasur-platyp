@@ -172,7 +172,7 @@ export interface RecommendationsPreviewData {
     mainFm: string
     isModeSustainable: boolean
     isModeOptions: boolean
-    recoDt: string[]
+    recoInter: string[]
     center: [number, number] | null
     mesureDt1: string[]
     mesureDt2: string[]

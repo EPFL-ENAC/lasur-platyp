@@ -5,12 +5,7 @@
         {{ t('form.recommendations') }}
       </q-toolbar-title>
       <q-space />
-      <q-btn
-        color="primary"
-        icon="print"
-        :label="t('print')"
-        @click="printReport"
-      />
+      <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />
     </q-toolbar>
 
     <div class="report-container">
@@ -24,7 +19,7 @@
           :main-fm="data.perso.mainFm"
           :is-mode-sustainable="data.perso.isModeSustainable"
           :is-mode-options="data.perso.isModeOptions"
-          :reco-dt="data.perso.recoDt"
+          :reco-dt="data.perso.recoInter"
           :center="data.perso.center"
           :mesure-dt1="data.perso.mesureDt1"
           :mesure-dt2="data.perso.mesureDt2"

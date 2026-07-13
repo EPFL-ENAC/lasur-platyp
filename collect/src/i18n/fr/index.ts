@@ -188,6 +188,8 @@ export default {
     },
   },
   main_mode: {
+    preamble:
+      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour chacun des déplacements domicile-travail et professionnels que vous avez renseignés.',
     walking: 'Actuellement, vous vous rendez au travail principalement en marchant.',
     bike: 'Actuellement, vous vous rendez au travail principalement en vélo (mécanique ou électrique).',
     ebike: 'Actuellement, vous vous rendez au travail principalement en vélo électrique.',
@@ -199,12 +201,6 @@ export default {
     inter: 'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     combined:
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
-    sustainable:
-      ' Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
-    sustainable_options:
-      'Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
-    not_sustainable:
-      'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées :',
     actions:
       'Votre employeur met en oeuvre les mesures suivantes afin de promouvoir la mobilité durable',
   },
@@ -226,6 +222,10 @@ export default {
     pub: 'Les transports publics',
     avoid:
       'Visez à réduire la fréquence de vos déplacements de longue distance et, dans la mesure du possible, privilégiez les solutions de vidéoconférence.',
+  },
+  bravo: {
+    1: 'Félicitations ! Votre habitude de déplacement est déjà quelque peu durable.',
+    2: 'Félicitations ! Votre habitude de déplacement est déjà durable.',
   },
   actions: {
     budget: 'Budget mobilité',

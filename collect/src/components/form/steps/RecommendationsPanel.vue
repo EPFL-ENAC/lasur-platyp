@@ -4,11 +4,16 @@
       <q-btn color="primary" icon="print" :label="t('print')" @click="openPrintPreview" />
     </div>
 
+    <div class="q-mb-lg">
+      <div class="text-h5 text-bold q-mb-md">{{ t(`main_mode.preamble`) }}</div>
+    </div>
+
     <RecommendationsPersoPanel
       :main-fm="mainFm"
       :is-mode-sustainable="isModeSustainable"
       :is-mode-options="isModeOptions"
-      :reco-dt="recoDt"
+      :reco-inter="recoInter"
+      :bravo="bravo"
       :center="center"
       :mesure-dt1="mesureDt1"
       :mesure-dt2="mesureDt2"
@@ -40,7 +45,8 @@ const mainFm = computed(() => survey.getMainFreqMod())
 const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
 const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
 
-const recoDt = computed(() => survey.recommendation.reco?.reco_inter || [])
+const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
+const bravo = computed(() => survey.recommendation.reco?.bravo || [])
 
 const center = computed(() => {
   const loc = survey.record.data.origin
@@ -77,7 +83,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     mainFm: mainFm.value,
     isModeSustainable: isModeSustainable.value,
     isModeOptions: isModeOptions.value,
-    recoDt: recoDt.value,
+    recoInter: recoInter.value,
     center: center.value,
     mesureDt1: mesureDt1.value,
     mesureDt2: mesureDt2.value,

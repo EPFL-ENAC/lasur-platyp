@@ -1,14 +1,15 @@
 <template>
   <div :class="wrapperClass">
     <div class="q-pa-md">
-      <q-item-label
-        v-if="indexLabel"
-        class="text-body1 text-primary text-bold"
-      >
+      <q-item-label v-if="indexLabel" class="text-body1 text-primary text-bold">
         {{ indexLabel }}
       </q-item-label>
 
-      <q-item-label :class="recoClass || 'text-h5'">
+      <q-item-label v-if="bravo !== undefined && bravo > 0" :class="'text-h6'">
+        {{ t(`bravo.${bravo}`) }}
+      </q-item-label>
+
+      <q-item-label v-if="bravo !== 2" :class="recoClass || 'text-h5'">
         {{ recoLabel }}
       </q-item-label>
 
@@ -16,10 +17,7 @@
 
       <slot />
 
-      <q-item-label
-        v-if="actions?.length"
-        class="text-body1 text-green-2 text-bold q-mt-md"
-      >
+      <q-item-label v-if="actions?.length" class="text-body1 text-green-2 text-bold q-mt-md">
         {{
           t('form.actions', {
             count: actions.length,
@@ -40,6 +38,7 @@ withDefaults(
   defineProps<{
     reco: string
     recoLabel: string
+    bravo: number | undefined
     indexLabel?: string
     recoClass?: string
     wrapperClass?: string
