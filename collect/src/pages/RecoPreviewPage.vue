@@ -38,7 +38,7 @@
         />
 
         <h3 class="text-h6 text-right q-mt-xl">
-          {{ t('certificate.date', { date: new Date().toLocaleDateString() }) }}
+          {{ t('certificate.date', { date: new Date().toLocaleDateString(locale) }) }}
         </h3>
       </report-page>
     </div>
@@ -50,9 +50,15 @@ import ReportPage from 'src/components/ReportPage.vue'
 import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
 import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
 import type { RecommendationsPreviewData } from 'src/models'
+import { locales } from 'boot/i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
+
+const queryLocale = route.query.locale
+if (typeof queryLocale === 'string' && locales.includes(queryLocale)) {
+  locale.value = queryLocale
+}
 
 const data = computed<RecommendationsPreviewData | null>(() => {
   const raw = route.query.data

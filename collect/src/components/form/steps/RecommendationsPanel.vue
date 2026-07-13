@@ -37,7 +37,7 @@ import RecommendationsProPanel from 'src/components/form/steps/RecommendationsPr
 import type { RecommendationsPreviewData } from 'src/models'
 import { resolveLocation } from 'src/utils/boundaries'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const survey = useSurvey()
 const router = useRouter()
 
@@ -105,6 +105,7 @@ function openPrintPreview() {
     path: '/print-reco',
     query: {
       data: encodeURIComponent(payload),
+      locale: locale.value,
     },
   })
 
