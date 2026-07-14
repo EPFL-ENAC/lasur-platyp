@@ -5,10 +5,10 @@
       <q-icon name="info" size="md" class="q-mr-sm" />
       <div>
         <div>
-          {{ t(`draw_mode.${drawMode}_hint`) }}
+          {{ t('boundary_select.hint') }}
         </div>
         <div>
-          {{ t('draw_mode.zoom_hint') }}
+          {{ t('boundary_select.zoom_hint') }}
         </div>
       </div>
     </div>
@@ -18,10 +18,10 @@
 <script setup lang="ts">
 import { Map, Marker } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import MaplibreGlDraw from 'maplibre-gl-draw'
-import 'maplibre-gl-draw/dist/mapbox-gl-draw.css'
 import { style } from 'src/utils/maps'
 import type { Position } from 'geojson'
+import type { PlaceLocation } from 'src/components/models'
+import { BoundariesManager } from 'src/utils/boundaries'
 
 interface Props {
   modelValue?: GeoJSON.FeatureCollection | undefined
@@ -37,69 +37,58 @@ const { t } = useI18n()
 
 const mapContainer = ref<HTMLDivElement>()
 const map = ref<maplibregl.Map>()
-const draw = ref<MaplibreGlDraw>()
-const drawMode = ref<string>('simple_select')
+
+/**
+ * The selected boundary's level/feature_id/lat/lon are carried in the emitted
+ * feature's properties so that a previously selected boundary can be
+ * re-highlighted when this component is remounted with the same modelValue.
+ */
+function toInitSelection(modelValue: GeoJSON.FeatureCollection | undefined): PlaceLocation | undefined {
+  const properties = modelValue?.features[0]?.properties as Partial<PlaceLocation> | null | undefined
+  const { level, feature_id, lat, lon } = properties || {}
+  if (level === undefined || feature_id === undefined || lat === undefined || lon === undefined) {
+    return undefined
+  }
+  return { level, feature_id, lat, lon }
+}
+
+function toFeatureCollection(
+  selection: PlaceLocation | undefined,
+  boundaries: BoundariesManager,
+): GeoJSON.FeatureCollection | undefined {
+  if (!selection || selection.feature_id === undefined) return undefined
+  const geometry = boundaries.getBoundaryGeometry(selection.level, selection.feature_id)
+  if (!geometry) return undefined
+  return {
+    type: 'FeatureCollection',
+    features: [{ type: 'Feature', geometry, properties: { ...selection } }],
+  }
+}
 
 onMounted(() => {
+  let center: [number, number] = [6.1432, 46.2044] // geneva
+  const initSelection = toInitSelection(props.modelValue)
+  if (initSelection) {
+    center = [initSelection.lon, initSelection.lat]
+  } else if (props.center) {
+    center = [props.center[0], props.center[1]]
+  }
+
   // Initialize map
   map.value = new Map({
     container: mapContainer.value as HTMLDivElement,
     style: style,
-    center: props.center || [6.1432, 46.2044], // geneva
+    center: center,
     zoom: props.zoom || 8,
   })
 
-  draw.value = new MaplibreGlDraw({
-    displayControlsDefault: false,
-    controls: {
-      polygon: true,
-      trash: true,
-    },
-  })
-  // @ts-expect-error - Type mismatch between maplibre-gl-draw and maplibre-gl types
-  map.value.addControl(draw.value)
-
-  // Get polygon created
-  map.value.on('draw.create', () => {
-    emit('update:modelValue', draw.value?.getAll())
-  })
-
-  // Update polygon
-  map.value.on('draw.update', () => {
-    emit('update:modelValue', draw.value?.getAll())
-  })
-
-  // Delete polygon
-  map.value.on('draw.delete', () => {
-    let allFeatures = draw.value?.getAll()
-    if (allFeatures && allFeatures.features.length === 0) {
-      allFeatures = undefined
-    }
-    emit('update:modelValue', allFeatures)
-  })
-
-  // Track mode changes
-  map.value.on('draw.modechange', (e) => {
-    drawMode.value = e.mode
-
-    if (e.mode === 'draw_polygon') {
-      // Delete existing valid polygons when entering draw mode
-      const allFeatures = draw.value?.getAll()
-      if (allFeatures && allFeatures.features.length > 1) {
-        allFeatures.features.forEach((feature) => {
-          if (isValidPolygon(feature)) {
-            draw.value?.delete(feature.id as string)
-          }
-        })
-        emit('update:modelValue', draw.value?.getAll())
-      }
+  map.value.on('load', () => {
+    if (map.value) {
+      const boundaries = new BoundariesManager(map.value, initSelection, (selection) => {
+        emit('update:modelValue', toFeatureCollection(selection, boundaries))
+      })
     }
   })
-
-  // Load existing polygon
-  if (props.modelValue) {
-    draw.value?.set(props.modelValue)
-  }
 
   // Add marker for each point
   if (props.points) {
@@ -116,21 +105,6 @@ onUnmounted(() => {
     map.value.remove()
   }
 })
-
-function isValidPolygon(feature: GeoJSON.Feature | undefined): boolean {
-  if (feature?.geometry.type === 'Polygon') {
-    // check it is not the one being drawn
-    const coordinates = (feature.geometry as GeoJSON.Polygon).coordinates
-    if (coordinates.length > 0) {
-      const firstPosition = coordinates[0]
-      if (firstPosition && firstPosition.length > 0 && firstPosition[0] !== null) {
-        return true
-      }
-    }
-    return false
-  }
-  return false
-}
 </script>
 
 <style scoped>

@@ -726,18 +726,14 @@ Some environmental impacts have also been calculated:
     typo_reco_actions: 'Recommended actions',
     typo_reco_pro_actions: 'Recommended actions (professional)',
   },
-  draw_mode: {
-    simple_select_hint:
-      'Click the polygon button on the top-right of the map to start drawing an area. Existing areas will be deleted.',
-    direct_select_hint: 'You are now editing the polygon. Drag the points to adjust the shape.',
-    draw_polygon_hint:
-      'Click on the map to add points to your polygon. Double-click to finish drawing.',
+  boundary_select: {
+    hint: 'Click an area on the map to filter by it. Click it again to remove the filter.',
     zoom_hint: 'Scroll to zoom in or out',
   },
   map_filter: {
     workplaces: {
       title: 'Workplaces filter',
-      hint: 'Draw an area to only filter workplaces within that area.',
+      hint: 'Select an area to only filter workplaces within that area.',
     },
   },
   data_protection_notice: {

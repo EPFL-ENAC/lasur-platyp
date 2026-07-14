@@ -9,6 +9,8 @@ from enacit4r_sql.utils.query import validate_params, ValidationError, paramAsDi
 
 router = APIRouter()
 
+PRIVACY_LIMIT = 5  # Minimum number of records required to compute statistics
+
 
 @router.get("/all", response_model_exclude_none=True)
 async def compute_all_statistics(
@@ -29,7 +31,11 @@ async def compute_all_statistics(
             workplace_filter = LocationFilter.model_validate(
                 workplace_filter, by_alias=True)
             df = service.filter_by_workplace_location(df, workplace_filter)
-        
+
+        if len(df) < PRIVACY_LIMIT:
+            raise HTTPException(
+                status_code=400, detail="Not enough records to compute statistics")
+
         return StatsService().compute_stats(df)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
