@@ -13,6 +13,7 @@ declare global {
   const $ref: typeof import('vue/macros')['$ref']
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
+  const BoundariesManager: (typeof import('./utils/boundaries'))['BoundariesManager']
   const CATEGORY_TAGS: typeof import('./stores/isochrones')['CATEGORY_TAGS']
   const EffectScope: typeof import('vue')['EffectScope']
   const Service: typeof import('./stores/services')['Service']

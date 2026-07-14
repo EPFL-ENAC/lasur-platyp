@@ -739,19 +739,14 @@ Certains impacts sont aussi calculés :
     typo_reco_actions: 'Actions recommandées',
     typo_reco_pro_actions: 'Actions recommandées (professionnel)',
   },
-  draw_mode: {
-    simple_select_hint:
-      'Cliquez sur le bouton polygone en haut à droite de la carte pour commencer à dessiner une zone. Les zones existantes seront supprimées.',
-    direct_select_hint:
-      'Vous êtes en train de modifier le polygone. Faites glisser les points pour ajuster la forme.',
-    draw_polygon_hint:
-      'Cliquez sur la carte pour ajouter des points à votre polygone. Double-cliquez pour terminer le dessin.',
+  boundary_select: {
+    hint: 'Cliquez sur une zone de la carte pour filtrer selon cette zone. Cliquez à nouveau dessus pour retirer le filtre.',
     zoom_hint: 'Pour zoomer, utilisez la molette de la souris',
   },
   map_filter: {
     workplaces: {
       title: 'Filtre des lieux de travail',
-      hint: 'Dessinez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
+      hint: 'Sélectionnez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
     },
   },
   data_protection_notice: {
