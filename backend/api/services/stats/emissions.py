@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 from api.models.query import EmissionReductions, Emissions
 from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO, normalize_pro_days_to_yearly
@@ -75,22 +76,37 @@ class EmissionsService(BaseStatsService):
 
         return results
 
-    def compute_modes_emission_reductions(self) -> list[EmissionReductions]:
-        """Compute all CO2 emission reductions from a DataFrame of records."""
-        df_v2 = self._get_records_v2()
-        results = []
-        if not df_v2.empty:
-            for mode in MODES:
-                results.extend(
-                    self._compute_mode_emission_reductions_v2(df_v2, mode))
-        # finalize totals
-        for reduction in results:
-            reduction.total = len(df_v2)
-            # round reduced
-            reduction.reduced = round(reduction.reduced, 3)
-        # filter out reductions with zero reduced emissions
-        results = [e for e in results if e.reduced > 0]
-        return results
+    def compute_modes_emissions_simple_labels(self, apply_reco: bool = False) -> list[Emissions]:
+        """
+        Compute CO2 emissions grouped by typo.reco.simple_labels (v3 records
+        only). Journeys are always grouped by their current simple label; if
+        apply_reco is True, the emissions value reported for each label is
+        what the journeys in that label would emit by following their
+        recommendation, instead of their current emissions.
+        """
+        return self._compute_journey_emissions_by_label(
+            self._get_records_v3(), 'typo.reco.simple_labels', apply_reco)
+
+    def compute_modes_emissions_complex_labels(self, apply_reco: bool = False) -> list[Emissions]:
+        """
+        Compute CO2 emissions grouped by typo.reco.complex_labels (v3
+        records only). Journeys are always grouped by their current complex
+        label; if apply_reco is True, the emissions value reported for each
+        label is what the journeys in that label would emit by following
+        their recommendation, instead of their current emissions.
+        """
+        return self._compute_journey_emissions_by_label(
+            self._get_records_v3(), 'typo.reco.complex_labels', apply_reco)
+
+    def compute_modes_emission_reductions_simple_labels(self) -> list[EmissionReductions]:
+        """Compute potential CO2 emission reductions grouped by typo.reco.simple_labels (v3 records only)."""
+        return self._compute_journey_emission_reductions_by_label(
+            self._get_records_v3(), 'typo.reco.simple_labels')
+
+    def compute_modes_emission_reductions_complex_labels(self) -> list[EmissionReductions]:
+        """Compute potential CO2 emission reductions grouped by typo.reco.complex_labels (v3 records only)."""
+        return self._compute_journey_emission_reductions_by_label(
+            self._get_records_v3(), 'typo.reco.complex_labels')
 
     def compute_modes_pro_emissions(self, apply_reco: bool = False) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records for pro journeys."""
@@ -759,34 +775,126 @@ class EmissionsService(BaseStatsService):
 
             return results
 
-    def _compute_mode_emission_reductions_v2(self, df: pd.DataFrame, mode: str) -> list[EmissionReductions]:
+    def _compute_journey_emissions_by_label(self, df: pd.DataFrame, label_prefix: str, apply_reco: bool = False) -> list[Emissions]:
         """
-        Compute all CO2 emission reductions from a DataFrame of records for V2 data.
-        
+        Aggregate journey-level CO2 emissions by a per-journey label column
+        (typo.reco.simple_labels.N or typo.reco.complex_labels.N), crediting
+        each journey's full emissions/distance to exactly one label bucket
+        instead of splitting across its raw modes.
+
+        Journeys are always grouped by their current label (there is no
+        "recommended label" in the data). When apply_reco is True, the value
+        reported per label is what those journeys would emit by following
+        their recommendation, instead of their current emissions -- distances
+        and journey counts are unaffected since only the mode/emission factor
+        changes, not the trip itself.
+
+        Reuses the same journey/mode-fraction pipeline as V2 emissions
+        (_build_journey_attributes, _calculate_journey_metrics), which is
+        version-agnostic, then collapses per-mode rows back to one row per
+        journey before grouping by label.
+
+        Args:
+            df: DataFrame of records already filtered to the relevant version
+                (e.g. v3), containing data.freq_mod_journeys.* and the given
+                label columns
+            label_prefix: column prefix without the trailing journey index,
+                e.g. 'typo.reco.simple_labels'
+            apply_reco: if True, report recommended (post-reco) emissions
+                instead of current emissions; only journeys with a
+                recommendation are included
+
+        Returns:
+            List of Emissions objects (one per observed label)
+        """
+        if df.empty:
+            return []
+
+        if apply_reco:
+            # Only journeys with a recommendation can report a post-reco
+            # emissions value; reuses the same current-vs-recommended
+            # pipeline as the emission-reduction-by-label variant.
+            journey_df = self._build_journey_emission_savings(df)
+            if journey_df is None:
+                return []
+            journey_df = journey_df.rename(
+                columns={'reco_emissions': 'emissions'})[['token', 'journey', 'dist', 'days', 'emissions']]
+        else:
+            combined_df = self._build_journey_attributes(df)
+            if combined_df is None:
+                return []
+
+            combined_df = self._calculate_journey_metrics(combined_df, MODE_EMISSIONS, 'co2')
+
+            # Collapse per-mode rows back to one row per journey: sum co2
+            # across modes in an intermodal journey, dist/days are the same
+            # for every mode row of a given journey.
+            journey_df = combined_df.groupby(['token', 'journey']).agg(
+                emissions=('co2_value', 'sum'), dist=('dist', 'first'), days=('days', 'first')
+            ).reset_index()
+
+        # Label per (token, journey), built the same explicit-suffix way as
+        # _reco_inter_columns/_build_reco_weighted in commons.py.
+        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+        label_cols = [c for c in df.columns if label_pattern.match(c)]
+        rows = []
+        for col in label_cols:
+            journey_id = label_pattern.match(col).group(1)
+            for idx, label in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                rows.append({'token': token, 'journey': journey_id, 'label': label})
+        if not rows:
+            return []
+
+        merged = journey_df.merge(pd.DataFrame(rows), on=['token', 'journey'], how='inner')
+
+        results = []
+        for label in merged['label'].unique():
+            dfl = merged[merged['label'] == label]
+            results.append(Emissions(
+                mode=str(label),
+                total=len(df),
+                distances=round(float((dfl['dist'] * dfl['days'] * 2 * 45).sum()), 3),
+                journeys=int((dfl['days'] * 2 * 45).sum()),
+                emissions=round(float(dfl['emissions'].sum()), 3),
+            ))
+
+        # filter out labels with zero emissions, matching compute_modes_emissions
+        return [e for e in results if e.emissions > 0]
+
+    def _build_journey_emission_savings(self, df: pd.DataFrame) -> pd.DataFrame | None:
+        """
+        Build a per-(token, journey, recommendation) DataFrame with both
+        current and potential recommended CO2 emissions, shared by every
+        emission-reduction grouping (by recommended mode, or by the
+        journey's own v3 typology label).
+
         Based on R implementation (Untitled.R lines 223-227):
         - Uses the same journey-level logic as _compute_mode_emissions_v2
         - Calculates emissions_dt (current) and reco_emissions (recommended)
-        - Returns saved_emissions = emissions_dt - reco_emissions, grouped by recommended mode
-        
+        - saved_emissions = emissions_dt - reco_emissions
+
         Args:
-            df: DataFrame with V2 records
-            mode: Mode to calculate reductions for (the recommended mode)
-            
+            df: DataFrame of records (V2 or V3) containing
+                data.freq_mod_journeys.* and recommendation columns
+
         Returns:
-            List of EmissionReductions objects
+            DataFrame with columns ['token', 'journey', 'dist', 'days',
+            'is_intermodal', 'emissions_dt', 'reco_mode', 'reco_emissions',
+            'saved_emissions'], or None if no data / no recommendations
         """
         if len(df) == 0:
-            return []
-        
+            return None
+
         # Step 1: Build journey attributes using shared pipeline
         df_combined = self._build_journey_attributes(df)
         if df_combined is None:
-            return []
-        
+            return None
+
         # Step 2: Calculate current CO2 emissions
         df_combined = self._calculate_journey_metrics(df_combined, MODE_EMISSIONS, 'co2')
         df_combined['emissions_dt'] = df_combined['co2_value']
-        
+
         # Step 3: Aggregate by journey to get total emissions per journey
         # (needed because we have one row per mode, but need journey-level aggregation)
         journey_emissions = df_combined.groupby(['token', 'journey']).agg({
@@ -820,7 +928,7 @@ class EmissionsService(BaseStatsService):
             legacy_reco_rows, columns=['token', 'reco_mode'])
 
         if new_reco_df.empty and legacy_reco_df.empty:
-            return []
+            return None
 
         frames = []
         if not new_reco_df.empty:
@@ -838,33 +946,71 @@ class EmissionsService(BaseStatsService):
             reco_mode = row['reco_mode']
             if pd.isna(reco_mode) or reco_mode not in MODE_EMISSIONS:
                 return None
-            
+
             if row['is_intermodal'] and reco_mode == 'inter':
                 # If already intermodal and recommended mode is "inter", keep current emissions
                 return row['emissions_dt']
-            
+
             reco_em = row['dist'] * MODE_EMISSIONS[reco_mode] * row['days'] * 2 * 45 / 1000
 
             # Only return the recommended emissions if it's a reduction compared to current emissions
             if pd.notna(row['emissions_dt']):
                 return min(reco_em, row['emissions_dt'])
-            
+
             return reco_em
-        
+
         journey_emissions['reco_emissions'] = journey_emissions.apply(calc_reco_emissions, axis=1)
-        
+
         # Step 7: Calculate reductions per recommended mode (R lines 223-227)
         journey_emissions['saved_emissions'] = journey_emissions['emissions_dt'] - journey_emissions['reco_emissions']
-        
-        # Filter for the specific mode and sum positive reductions
-        mode_df = journey_emissions[journey_emissions['reco_mode'] == mode]
-        reduction_total = float(mode_df[mode_df['saved_emissions'] > 0]['saved_emissions'].sum())
-        
-        return [EmissionReductions(
-            mode=mode,
-            total=len(df),
-            reduced=reduction_total
-        )]
+
+        return journey_emissions
+
+    def _compute_journey_emission_reductions_by_label(self, df: pd.DataFrame, label_prefix: str) -> list[EmissionReductions]:
+        """
+        Aggregate potential CO2 emission reductions by each journey's own v3
+        typology label (typo.reco.simple_labels.N / typo.reco.complex_labels.N)
+        instead of by the recommended mode: "how much could journeys
+        currently labeled X save by following their recommendation?"
+
+        Args:
+            df: DataFrame of records already filtered to v3
+            label_prefix: column prefix without the trailing journey index,
+                e.g. 'typo.reco.simple_labels'
+
+        Returns:
+            List of EmissionReductions objects (one per observed label)
+        """
+        journey_emissions = self._build_journey_emission_savings(df)
+        if journey_emissions is None:
+            return []
+
+        # Label per (token, journey), built the same explicit-suffix way as
+        # _compute_journey_emissions_by_label.
+        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+        label_cols = [c for c in df.columns if label_pattern.match(c)]
+        rows = []
+        for col in label_cols:
+            journey_id = label_pattern.match(col).group(1)
+            for idx, label in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                rows.append({'token': token, 'journey': journey_id, 'label': label})
+        if not rows:
+            return []
+
+        merged = journey_emissions.merge(pd.DataFrame(rows), on=['token', 'journey'], how='inner')
+
+        results = []
+        for label in merged['label'].unique():
+            dfl = merged[merged['label'] == label]
+            reduction_total = float(dfl[dfl['saved_emissions'] > 0]['saved_emissions'].sum())
+            results.append(EmissionReductions(
+                mode=str(label),
+                total=len(df),
+                reduced=round(reduction_total, 3)
+            ))
+
+        return [e for e in results if e.reduced > 0]
 
     def _compute_mode_pro_emission_reductions_v2(
         self, 
