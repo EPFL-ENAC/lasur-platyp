@@ -89,10 +89,21 @@
 
       <report-page :org-names="orgs">
         <emissions-chart
-          chart-translation-name="freq_mod"
-          :emissions="stats.emissions?.['freq_mod'] ?? null"
-          :xaxis="t('stats.emissions_freq_mod.xaxis')"
-          :yaxis="t('stats.emissions_freq_mod.yaxis')"
+          chart-translation-name="freq_mod_simple"
+          :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
+          :xaxis="t('stats.emissions_freq_mod_simple.xaxis')"
+          :yaxis="t('stats.emissions_freq_mod_simple.yaxis')"
+          :height="height"
+          :exportable="false"
+        />
+      </report-page>
+
+      <report-page :org-names="orgs">
+        <emissions-chart
+          chart-translation-name="freq_mod_complex"
+          :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
+          :xaxis="t('stats.emissions_freq_mod_complex.xaxis')"
+          :yaxis="t('stats.emissions_freq_mod_complex.yaxis')"
           :height="height"
           :exportable="false"
         />
@@ -166,10 +177,21 @@
 
       <report-page :org-names="orgs">
         <emissions-reductions-chart
-          chart-translation-name="reductions_mod"
-          :emissions="stats.emissions?.['freq_mod'] ?? null"
-          :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
-          :yaxis="t('stats.emissions_reductions_mod.yaxis')"
+          chart-translation-name="reductions_mod_simple"
+          :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
+          :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
+          :yaxis="t('stats.emissions_reductions_mod_simple.yaxis')"
+          :height="height"
+          :exportable="false"
+        />
+      </report-page>
+
+      <report-page :org-names="orgs">
+        <emissions-reductions-chart
+          chart-translation-name="reductions_mod_complex"
+          :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
+          :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
+          :yaxis="t('stats.emissions_reductions_mod_complex.yaxis')"
           :height="height"
           :exportable="false"
         />
@@ -177,7 +199,17 @@
 
       <report-page :org-names="orgs">
         <emissions-reductions-share-chart
-          :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
+          chart-translation-name="reductions_share_simple"
+          :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
+          :height="height"
+          :exportable="false"
+        />
+      </report-page>
+
+      <report-page :org-names="orgs">
+        <emissions-reductions-share-chart
+          chart-translation-name="reductions_share_complex"
+          :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
           :height="height"
           :exportable="false"
         />

@@ -95,6 +95,14 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
+  // for the simple/complex label variants, categories are v3 typology
+  // labels (e.g. 'TIM', 'car+pub'), not plain transport modes
+  if (props.chartTranslationName.includes('simple')) {
+    return t(`simple_labels.${shortKey(key)}`)
+  }
+  if (props.chartTranslationName.includes('complex')) {
+    return t(`complex_labels.${shortKey(key)}`)
+  }
   return t(`transportation_modes.${shortKey(key)}`)
 }
 

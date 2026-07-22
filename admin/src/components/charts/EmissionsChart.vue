@@ -78,7 +78,7 @@ const globalAnswersThreshold = 10
 const perModeAnswersThreshold = 3
 
 const emissionItems = computed(() => {
-  if (props.chartTranslationName.includes('pro')) {
+  if (props.chartTranslationName !== 'freq_mod') {
     return null
   }
   if (!props.emissions) return null

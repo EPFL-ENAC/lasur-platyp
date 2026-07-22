@@ -521,6 +521,24 @@ Some environmental impacts have also been calculated:
           "{carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing {carMotoEmissionsPercentage}% of the company's annual CO₂ emissions.",
       },
     },
+    emissions_freq_mod_simple: {
+      title: 'CO₂ emissions per simple label',
+      yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
+      xaxis: 'Journeys per year',
+      labels: {
+        ...simpleLabels,
+        ...emissionsLabels,
+      },
+    },
+    emissions_freq_mod_complex: {
+      title: 'CO₂ emissions per detailed label',
+      yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
+      xaxis: 'Journeys per year',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
+      },
+    },
     emissions_reductions_mod: {
       title: 'Potential reductions in commuting emissions',
       series: 'Potential reduction',
@@ -537,6 +555,36 @@ Some environmental impacts have also been calculated:
           'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
+    emissions_reductions_mod_simple: {
+      title: 'Potential reductions in commuting emissions, by simple label',
+      series: 'Potential reduction',
+      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
+      xaxis: 'Current simple label',
+      labels: {
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          'This chart shows the reduction in CO₂ emissions allocated to each current simple label, in the case where the respondents currently in that group follow their recommendation: this is the potential gain in terms of emissions.',
+        specific:
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod_complex: {
+      title: 'Potential reductions in commuting emissions, by detailed label',
+      series: 'Potential reduction',
+      yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
+      xaxis: 'Current detailed label',
+      labels: {
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          'This chart shows the reduction in CO₂ emissions allocated to each current detailed label, in the case where the respondents currently in that group follow their recommendation: this is the potential gain in terms of emissions.',
+        specific:
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
     emissions_reductions_share: {
       title: 'Distribution of emissions reductions by transport mode',
       series: 'Potential reduction',
@@ -549,6 +597,34 @@ Some environmental impacts have also been calculated:
           'This chart shows the share of CO₂ emissions reduction per recommended mode of transport.',
         specific:
           '{percentage}% of potential reduction depend on the main recommendation for mode {mode}.',
+      },
+    },
+    emissions_reductions_share_simple: {
+      title: 'Distribution of emissions reductions by simple label',
+      series: 'Potential reduction',
+      labels: {
+        ...simpleLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          'This chart shows the share of CO₂ emissions reduction per current simple label.',
+        specific:
+          '{percentage}% of potential reduction depend on journeys currently labeled {mode}.',
+      },
+    },
+    emissions_reductions_share_complex: {
+      title: 'Distribution of emissions reductions by detailed label',
+      series: 'Potential reduction',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          'This chart shows the share of CO₂ emissions reduction per current detailed label.',
+        specific:
+          '{percentage}% of potential reduction depend on journeys currently labeled {mode}.',
       },
     },
     emissions_freq_mod_pro: {

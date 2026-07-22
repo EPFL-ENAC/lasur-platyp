@@ -26,7 +26,7 @@
           <div>
             <div>
               <q-btn-toggle
-                v-model="modalType"
+                v-model="freqModalType"
                 :options="[
                   { label: t('stats.freq_mod.modal_split.simple'), value: 'simple' },
                   { label: t('stats.freq_mod.modal_split.detailed'), value: 'detailed' },
@@ -39,13 +39,13 @@
               />
             </div>
             <simple-labels-share-chart
-              v-if="modalType === 'simple'"
+              v-if="freqModalType === 'simple'"
               :height="height"
               :frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
               :loading="stats.loading"
             />
             <complex-labels-share-chart
-              v-if="modalType === 'detailed'"
+              v-if="freqModalType === 'detailed'"
               :height="height"
               :frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
               :loading="stats.loading"
@@ -78,11 +78,35 @@
             />
           </div>
           <div>
+            <div>
+              <q-btn-toggle
+                v-model="emModalType"
+                :options="[
+                  { label: t('stats.freq_mod.modal_split.simple'), value: 'simple' },
+                  { label: t('stats.freq_mod.modal_split.detailed'), value: 'detailed' },
+                ]"
+                outlined
+                unelevated
+                no-caps
+                color="grey"
+                toggle-color="primary"
+              />
+            </div>
             <emissions-chart
-              chartTranslationName="freq_mod"
-              :emissions="stats.emissions?.['freq_mod'] ?? null"
-              :xaxis="t('stats.emissions_freq_mod.xaxis')"
-              :yaxis="t('stats.emissions_freq_mod.yaxis')"
+              v-if="emModalType === 'simple'"
+              chartTranslationName="freq_mod_simple"
+              :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
+              :xaxis="t('stats.emissions_freq_mod_simple.xaxis')"
+              :yaxis="t('stats.emissions_freq_mod_simple.yaxis')"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <emissions-chart
+              v-if="emModalType === 'detailed'"
+              chartTranslationName="freq_mod_complex"
+              :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
+              :xaxis="t('stats.emissions_freq_mod_complex.xaxis')"
+              :yaxis="t('stats.emissions_freq_mod_complex.yaxis')"
               :height="height"
               :loading="stats.loading"
             />
@@ -140,7 +164,7 @@
       />
       <mobility-potential-insights
         frequency-key="reco_inter"
-        reduction-key="reductions_mod"
+        :reduction-key="redModalType === 'simple' ? 'reductions_mod_simple' : 'reductions_mod_complex'"
         :collaborators-count="collaboratorsCount || undefined"
       />
       <q-separator />
@@ -165,18 +189,51 @@
             />
           </div>
           <div>
+            <div>
+              <q-btn-toggle
+                v-model="redModalType"
+                :options="[
+                  { label: t('stats.freq_mod.modal_split.simple'), value: 'simple' },
+                  { label: t('stats.freq_mod.modal_split.detailed'), value: 'detailed' },
+                ]"
+                outlined
+                unelevated
+                no-caps
+                color="grey"
+                toggle-color="primary"
+              />
+            </div>
             <emissions-reductions-chart
-              chartTranslationName="reductions_mod"
-              :emissions="stats.emissions?.['freq_mod'] ?? null"
-              :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
-              :yaxis="t('stats.emissions_reductions_mod.yaxis')"
+              v-if="redModalType === 'simple'"
+              chartTranslationName="reductions_mod_simple"
+              :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
+              :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
+              :yaxis="t('stats.emissions_reductions_mod_simple.yaxis')"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <emissions-reductions-chart
+              v-if="redModalType === 'detailed'"
+              chartTranslationName="reductions_mod_complex"
+              :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
+              :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
+              :yaxis="t('stats.emissions_reductions_mod_complex.yaxis')"
               :height="height"
               :loading="stats.loading"
             />
           </div>
           <div>
             <emissions-reductions-share-chart
-              :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
+              v-if="redModalType === 'simple'"
+              chartTranslationName="reductions_share_simple"
+              :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <emissions-reductions-share-chart
+              v-if="redModalType === 'detailed'"
+              chartTranslationName="reductions_share_complex"
+              :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
               :height="height"
               :loading="stats.loading"
             />
@@ -304,7 +361,9 @@ const { t } = useI18n()
 const preferencesStore = usePreferencesStore()
 const stats = useStats()
 
-const modalType = ref('simple')
+const freqModalType = ref('simple')
+const emModalType = ref('simple')
+const redModalType = ref('simple')
 
 const getFreq = (key: string) => {
   return (stats.frequencies?.[key] ?? null) as Frequencies | null

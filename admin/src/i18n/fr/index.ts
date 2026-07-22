@@ -532,6 +532,24 @@ Certains impacts sont aussi calculés :
           "{carMotoJourneysPercentage}% des trajets des participant·e·s sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
       },
     },
+    emissions_freq_mod_simple: {
+      title: 'Émissions de CO₂ par étiquette simple',
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
+      xaxis: 'Trajets par année',
+      labels: {
+        ...simpleLabels,
+        ...emissionsLabels,
+      },
+    },
+    emissions_freq_mod_complex: {
+      title: 'Émissions de CO₂ par étiquette détaillée',
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
+      xaxis: 'Trajets par année',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
+      },
+    },
     emissions_reductions_mod: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
       yaxis: 'Émissions évitées (kgCO₂éq)',
@@ -548,6 +566,36 @@ Certains impacts sont aussi calculés :
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
+    emissions_reductions_mod_simple: {
+      title: "Potentiel de réduction sur les émissions liées aux déplacements pendulaires, par étiquette simple",
+      yaxis: 'Émissions évitées (kgCO₂éq)',
+      xaxis: 'Étiquette simple actuelle',
+      series: 'Réduction potentielle',
+      labels: {
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque étiquette simple actuelle, dans le cas où les participant·e·s de ce groupe suivent leur recommandation : c'est le potentiel gain en termes d'émissions.",
+        specific:
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod_complex: {
+      title: "Potentiel de réduction sur les émissions liées aux déplacements pendulaires, par étiquette détaillée",
+      yaxis: 'Émissions évitées (kgCO₂éq)',
+      xaxis: 'Étiquette détaillée actuelle',
+      series: 'Réduction potentielle',
+      labels: {
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque étiquette détaillée actuelle, dans le cas où les participant·e·s de ce groupe suivent leur recommandation : c'est le potentiel gain en termes d'émissions.",
+        specific:
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
     emissions_reductions_share: {
       title: "Répartition des gains d'émissions par mode de transport",
       series: 'Réduction potentielle',
@@ -560,6 +608,34 @@ Certains impacts sont aussi calculés :
           'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
         specific:
           "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
+      },
+    },
+    emissions_reductions_share_simple: {
+      title: "Répartition des gains d'émissions par étiquette simple",
+      series: 'Réduction potentielle',
+      labels: {
+        ...simpleLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque étiquette simple actuelle.',
+        specific:
+          "{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.",
+      },
+    },
+    emissions_reductions_share_complex: {
+      title: "Répartition des gains d'émissions par étiquette détaillée",
+      series: 'Réduction potentielle',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        default:
+          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque étiquette détaillée actuelle.',
+        specific:
+          "{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.",
       },
     },
     emissions_freq_mod_pro: {

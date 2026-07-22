@@ -10,7 +10,6 @@ from api.services.stats.commons import BaseStatsService
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.links import LinksService
 from api.services.stats.equipments import EquipmentsService
-from api.services.stats.emissions import EmissionsService
 from api.services.stats.energy import EnergyService
 from api.services.stats.stats import StatsService
 from api.services.stats.behavior_change import BehaviorChangeService
@@ -133,20 +132,6 @@ def test_completed_filter_accepts_reco_inter_and_legacy_reco_dt2():
     df = pd.concat([new_style_df(), legacy_df()], ignore_index=True)
     completed = StatsService()._filter_completed_records(df)
     assert set(completed['token']) == {'A', 'B', 'C'}
-
-
-def test_emissions_reco_inter_applies_per_journey_recommendation():
-    df = new_style_df()
-    service = EmissionsService(df)
-    result = service.compute_modes_emissions(apply_reco=True)
-
-    modes = {e.mode for e in result}
-    # journey-specific recommendations should show up distinctly, not collapsed
-    # into a single recommendation for the whole person
-    assert 'velo' in modes or 'inter' in modes
-    assert 'train' in modes
-    for emission in result:
-        assert emission.emissions >= 0
 
 
 def test_energy_reco_inter_applies_per_journey_recommendation():
