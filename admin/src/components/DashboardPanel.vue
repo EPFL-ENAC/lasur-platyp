@@ -66,17 +66,6 @@
           color="field"
           outline
           dense
-          :icon="layout === 'grid' ? 'slideshow' : 'grid_view'"
-          :label="layout === 'grid' ? t('stats.switch_to_carousel') : t('stats.switch_to_grid')"
-          no-caps
-          @click="layout = layout === 'grid' ? 'carousel' : 'grid'"
-        />
-        <q-btn
-          class="right-border"
-          size="sm"
-          color="field"
-          outline
-          dense
           icon="picture_as_pdf"
           :disable="stats.loading"
           :label="t('stats.pdf_report')"
@@ -119,15 +108,12 @@
         <q-spinner-dots size="64px" color="primary" />
       </div>
     </div>
-    <div v-else-if="layout === 'grid'">
+    <div v-else>
       <charts-panel
         :percent="percent"
         :height="height"
         :collaborators-count="totalCollaboratorsCount"
       />
-    </div>
-    <div v-else>
-      <charts-carousel :percent="percent" :height="height" />
     </div>
     <area-dialog
       v-model="showMapFilter"
@@ -140,7 +126,6 @@
 
 <script setup lang="ts">
 import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
-import ChartsCarousel from 'src/components/charts/ChartsCarousel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
 import DownloadDataButton from 'src/components/DownloadDataButton.vue'
 import type { Company, Campaign } from 'src/models'
@@ -152,7 +137,6 @@ const services = useServices()
 const companyService = services.make('company')
 const campaignService = services.make('campaign')
 
-const layout = ref('grid')
 const percent = ref(true)
 const height = ref(400)
 const companyMap = ref<{ [key: string]: Company }>({})

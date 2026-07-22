@@ -26,10 +26,6 @@ def test_empty_dataframe():
     assert result.total == 0
     assert result.data == []
 
-    result = freq_service.compute_modes_frequencies()
-    assert isinstance(result, list)
-    assert all(isinstance(f, Frequencies) for f in result)
-
     # Emissions service should handle empty dataframe
     result = emissions_service.compute_modes_emissions()
     assert isinstance(result, list)
@@ -266,11 +262,7 @@ def test_mixed_data_versions():
     stats = StatsService()
     df = stats._preprocess_dataframe(df)
 
-    freq_service = FrequenciesService(df)
     emissions_service = EmissionsService(df)
-
-    result = freq_service.compute_modes_frequencies()
-    assert isinstance(result, list)
 
     result = emissions_service.compute_modes_emissions()
     assert isinstance(result, list)

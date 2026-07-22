@@ -1,7 +1,7 @@
 import re
 import pandas as pd
 from api.models.query import Frequencies, Frequency
-from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO, MODES_PRO_V1, normalize_pro_days_to_yearly
+from api.services.stats.commons import BaseStatsService, MODES_PRO, MODES_PRO_V1, normalize_pro_days_to_yearly
 
 
 class FrequenciesService(BaseStatsService):
@@ -133,33 +133,6 @@ class FrequenciesService(BaseStatsService):
             ],
         )
 
-    def compute_modes_frequencies(self) -> list[Frequencies]:
-        """Compute all modes frequencies from a DataFrame of records."""
-        # TODO handle intermodality
-
-        # v1: count frequencies from legacy fields
-        df_v1 = self._get_records_v1()
-        results = []
-        for mode in MODES:
-            results.append(self._compute_mode_frequencies_v1(df_v1, mode))
-
-        # v2: count frequencies from data.freq_mod_journeys
-        df_v2 = self._get_records_v2()
-        if not df_v2.empty:
-            results_v2 = []
-            for mode in MODES:
-                results_v2.append(
-                    self._compute_mode_frequencies_v2(df_v2, mode))
-            results = self._merge_frequencies(results, results_v2)
-
-        # finalize totals and sort data
-        for frequencies in results:
-            frequencies.total = len(self.df)
-            # sort frequencies data by value as integer
-            frequencies.data.sort(key=lambda x: int(x.value))
-
-        return results
-
     def compute_modes_pro_frequencies(self) -> list[Frequencies]:
         """Compute all modes frequencies from a DataFrame of records."""
         # v1: count frequencies from legacy fields
@@ -189,25 +162,29 @@ class FrequenciesService(BaseStatsService):
     def compute_modes_frequencies_simple_labels(self) -> list[Frequencies]:
         """Compute mode frequencies from typo.reco.simple_labels, one Frequencies
         per label actually observed in the data (rather than a fixed mode list)."""
+        df_v3 = self._get_records_v3()
+        if df_v3.empty:
+            return []
+
         label_cols = [
-            col for col in self.df.columns if self.SIMPLE_LABEL_PATTERN.match(col)
+            col for col in df_v3.columns if self.SIMPLE_LABEL_PATTERN.match(col)
         ]
         if not label_cols:
             return []
 
-        observed_labels = pd.unique(self.df[label_cols].values.ravel())
+        observed_labels = pd.unique(df_v3[label_cols].values.ravel())
         observed_labels = sorted(
             str(label) for label in observed_labels if pd.notna(label)
         )
 
         results = [
-            self._compute_mode_frequencies_simple_labels(self.df, label)
+            self._compute_mode_frequencies_simple_labels(df_v3, label)
             for label in observed_labels
         ]
 
         # finalize totals and sort data
         for frequencies in results:
-            frequencies.total = len(self.df)
+            frequencies.total = len(df_v3)
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
 
@@ -216,25 +193,29 @@ class FrequenciesService(BaseStatsService):
     def compute_modes_frequencies_complex_labels(self) -> list[Frequencies]:
         """Compute mode frequencies from typo.reco.complex_labels, one Frequencies
         per label actually observed in the data (rather than a fixed mode list)."""
+        df_v3 = self._get_records_v3()
+        if df_v3.empty:
+            return []
+
         label_cols = [
-            col for col in self.df.columns if self.COMPLEX_LABEL_PATTERN.match(col)
+            col for col in df_v3.columns if self.COMPLEX_LABEL_PATTERN.match(col)
         ]
         if not label_cols:
             return []
 
-        observed_labels = pd.unique(self.df[label_cols].values.ravel())
+        observed_labels = pd.unique(df_v3[label_cols].values.ravel())
         observed_labels = sorted(
             str(label) for label in observed_labels if pd.notna(label)
         )
 
         results = [
-            self._compute_mode_frequencies_complex_labels(self.df, label)
+            self._compute_mode_frequencies_complex_labels(df_v3, label)
             for label in observed_labels
         ]
 
         # finalize totals and sort data
         for frequencies in results:
-            frequencies.total = len(self.df)
+            frequencies.total = len(df_v3)
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
 
@@ -363,114 +344,6 @@ class FrequenciesService(BaseStatsService):
                     freq.sum += int(days)
 
         return list(field_frequencies.values())
-
-    def _compute_mode_frequencies_v1(self, df: pd.DataFrame, mode: str) -> Frequencies:
-        """Compute a mode frequency from a DataFrame of records."""
-        # Legacy data version: get the series for the specific mode
-
-        # Find the column name for the mode
-        col_name = f"data.freq_mod_{mode}"
-        if col_name not in df.columns:
-            return Frequencies(field=mode, total=len(df), data=[])
-        # Get the series for the specific mode
-        mode_series = df[f"data.freq_mod_{mode}"].dropna().astype(int)
-        mode_counts = mode_series.value_counts()
-        mode_sums = mode_series.groupby(mode_series).sum()
-
-        return Frequencies(
-            field=mode,
-            total=len(df),
-            data=[
-                Frequency(
-                    value=str(mod_value),
-                    count=mode_counts[mod_value],
-                    sum=mode_sums[mod_value],
-                )
-                for mod_value in mode_counts.index
-                if mod_value > 0
-            ],
-        )
-
-    def _compute_mode_frequencies_v2(self, df: pd.DataFrame, mode: str) -> Frequencies:
-        """Compute a mode frequency from a DataFrame of records."""
-
-        def is_intermodal(row, i):
-            modes = []
-            for col in row.index:
-                if col.startswith(f"data.freq_mod_journeys.{i}.modes."):
-                    val = row[col]
-                    # walking is not considered for intermodality
-                    if not pd.isna(val) and val != "walking":
-                        modes.append(val)
-            modes = set(modes)
-            return len(modes) > 1
-
-        def extract_mod_days(row, mode, i):
-            modes = []
-            for col in row.index:
-                if col.startswith(f"data.freq_mod_journeys.{i}.modes."):
-                    val = row[col]
-                    if not pd.isna(val) and val == mode:
-                        modes.append(val)
-            modes = set(modes)
-            if len(modes) == 0:
-                return 0
-            if len(modes) > 1:
-                # intermodality, make sure walking is not counted
-                if "walking" in modes:
-                    modes.remove("walking")
-            # get days value
-            days_col = f"data.freq_mod_journeys.{i}.days"
-            days = row[days_col]
-            if mode in modes:
-                return int(days) if not pd.isna(days) else 0
-            return 0
-
-        # New data version: get the series from data.freq_mod_journeys
-        col_days = [
-            col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
-        # print(
-        #     f"Computing mod frequencies for version 2.x using columns: {col_days.tolist()}")
-        frequencies = []
-        for i in range(len(col_days)):
-            # print("mode:", mode, "journey:", i)
-            col_modes_i = df.columns[
-                df.columns.str.startswith(
-                    f"data.freq_mod_journeys.{str(i)}.modes.")
-            ]
-            if col_modes_i.empty:
-                continue
-            col_days_i = col_days[i]
-            # make a dataframe with only i columns
-            df_i = df[[col_days_i] + col_modes_i.tolist()].copy()
-            # intermodality if more than one mode
-            # TODO not used for now
-            df_i["inter"] = df_i.apply(
-                lambda row: is_intermodal(row, i), axis=1)
-            # extract mod days
-            df_i["mod_days"] = df_i.apply(
-                lambda row: extract_mod_days(row, mode, i), axis=1
-            )
-            # count positive mod_days
-            df_i = df_i[df_i["mod_days"] > 0]
-            for row in df_i.itertuples():
-                days = row.mod_days
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
-            # print(df_i)
-
-        # print("Final frequencies for mode", mode, ":", frequencies)
-        return Frequencies(field=mode, total=len(df), data=frequencies)
 
     def _compute_mode_frequencies_simple_labels(
         self, df: pd.DataFrame, mode: str

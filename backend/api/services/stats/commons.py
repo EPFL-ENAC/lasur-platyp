@@ -111,7 +111,8 @@ class BaseStatsService:
 
     def _has_completed_recommendation(self, df: pd.DataFrame) -> pd.Series:
         """Boolean mask: whether a row has a recommendation, new or legacy."""
-        reco_cols = self._reco_inter_columns(df) + self._reco_legacy_columns(df)
+        reco_cols = self._reco_inter_columns(
+            df) + self._reco_legacy_columns(df)
         if not reco_cols:
             return pd.Series(False, index=df.index)
         return df[reco_cols].notna().any(axis=1)
@@ -165,7 +166,7 @@ class BaseStatsService:
                 else:
                     days = days_by_token.get(token, 1)
                 rows.append({'token': token, 'journey': journey_id,
-                              'reco_mode': reco, 'days': days})
+                             'reco_mode': reco, 'days': days})
 
         for col in self._reco_legacy_columns(df):
             journey_id = f'legacy_{col.rsplit(".", 1)[1]}'
@@ -173,7 +174,7 @@ class BaseStatsService:
                 token = df.at[idx, 'token'] if 'token' in df.columns else idx
                 days = days_by_token.get(token, 1)
                 rows.append({'token': token, 'journey': journey_id,
-                              'reco_mode': reco, 'days': days})
+                             'reco_mode': reco, 'days': days})
 
         if not rows:
             return None
@@ -193,6 +194,14 @@ class BaseStatsService:
         df_v2 = self.df[self.df['data.version'].notna(
         ) & self.df['data.version'].str.startswith('2.')].copy()
         return df_v2
+
+    def _get_records_v3(self) -> pd.DataFrame:
+        """Get records with data.version starting with '3.'"""
+        if 'data.version' not in self.df.columns:
+            return pd.DataFrame()
+        df_v3 = self.df[self.df['data.version'].notna(
+        ) & self.df['data.version'].str.startswith('3.')].copy()
+        return df_v3
 
     def _calculate_distance(self, origin_lat: float, origin_lon: float, dest_lat: float, dest_lon: float) -> float:
         """Calculate the distance between origin and destination locations."""

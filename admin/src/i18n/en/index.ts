@@ -127,7 +127,8 @@ export default {
       'Unique identifier for the campaign URL (e.g., "spring-2024-mobility-survey"). Only letters, numbers, hyphens and underscores are allowed.',
     description: 'Description',
     with_professional_questions: 'Include questions about professional travel',
-    with_professional_questions_hint: 'By default, we give you the option to analyse employees’ commutes and business travel. If you are not interested in the latter option (business travel), you can remove this section from the questionnaire with this button.',
+    with_professional_questions_hint:
+      'By default, we give you the option to analyse employees’ commutes and business travel. If you are not interested in the latter option (business travel), you can remove this section from the questionnaire with this button.',
     with_actions: 'With employer measures specific to this campaign',
     employer_measures_hint:
       'Here you can specify the measures already in place to support your employees’ mobility. The measures listed here are a selection of "default" measures, as well as the "specific measures" entered in the previous section, "Employer Measures".',
@@ -375,7 +376,6 @@ Thank you for your valuable contribution! If you have any questions, please cont
     completed: 'Completed',
     pending: 'Pending',
     filter_by_zone: 'Filter by zone',
-    switch_to_carousel: 'Switch to carousel view',
     switch_to_grid: 'Switch to grid view',
     pdf_report: 'PDF report',
     nb_employees: 'Number of employees',
