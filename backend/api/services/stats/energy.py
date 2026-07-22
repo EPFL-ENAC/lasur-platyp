@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from api.models.query import EnergyExpenditure, JourneyEnergyGains, JourneyEnergyGainsByMode, JourneyEnergyLeg, EnergyByJourney, JourneyEnergyStats
-from api.services.stats.commons import BaseStatsService, MODES
+from api.services.stats.commons import BaseStatsService
 from pydantic import BaseModel, Field
 
 # MET values (Metabolic Equivalent of Task) in kcal/hr for 70kg average person
@@ -51,15 +51,15 @@ class EnergyService(BaseStatsService):
         is computed as the weighted average of MET factors from actual
         intermodal journeys in the data.
         """
-        df_v2 = self._get_records_v2()
+        df_v3 = self._get_records_v3()
         
-        if df_v2.empty:
-            # Fallback to a reasonable average if no V2 data
+        if df_v3.empty:
+            # Fallback to a reasonable average if no v3 data
             MODE_MET['inter'] = 3.0 * 70  # Moderate activity
             return 3.0 * 70
         
         # Build journey attributes to identify intermodal journeys
-        df_combined = self._build_journey_attributes(df_v2)
+        df_combined = self._build_journey_attributes(df_v3)
         
         if df_combined is None or df_combined.empty:
             MODE_MET['inter'] = 3.0 * 70
@@ -104,14 +104,14 @@ class EnergyService(BaseStatsService):
         Returns:
             List of EnergyExpenditure objects, one per mode
         """
-        df_v2 = self._get_records_v2()
+        df_v3 = self._get_records_v3()
         results = []
         
-        if not df_v2.empty:
+        if not df_v3.empty:
             if apply_reco:
-                results = self._compute_mode_energy_reco_v2(df_v2)
+                results = self._compute_mode_energy_reco_v3(df_v3)
             else:
-                results = self._compute_mode_energy_v2(df_v2)
+                results = self._compute_mode_energy_v3(df_v3)
         
         # Finalize totals and round values
         for energy in results:
@@ -135,15 +135,15 @@ class EnergyService(BaseStatsService):
         Returns:
             EnergyByJourney object with per-leg breakdown
         """
-        df_v2 = self._get_records_v2()
+        df_v3 = self._get_records_v3()
         
-        if df_v2.empty:
+        if df_v3.empty:
             return EnergyByJourney(total=len(self.df), data=[])
         
         if apply_reco:
-            return self._compute_journey_energy_reco_v2(df_v2)
+            return self._compute_journey_energy_reco_v3(df_v3)
         else:
-            return self._compute_journey_energy_v2(df_v2)
+            return self._compute_journey_energy_v3(df_v3)
     
     def compute_journey_energy_stats(self) -> JourneyEnergyStats:
         """
@@ -152,9 +152,9 @@ class EnergyService(BaseStatsService):
         Returns:
             JourneyEnergyStats object with current, recommended, and gain information
         """
-        df_v2 = self._get_records_v2()
+        df_v3 = self._get_records_v3()
         
-        if df_v2.empty:
+        if df_v3.empty:
             empty_result = EnergyByJourney(total=len(self.df), data=[])
             return JourneyEnergyStats(
                 current=empty_result,
@@ -162,8 +162,8 @@ class EnergyService(BaseStatsService):
                 gains=JourneyEnergyGains(total=0, gains_per_mode=[])
             )
         
-        current_energy = self._compute_journey_energy_v2(df_v2)
-        reco_energy = self._compute_journey_energy_reco_v2(df_v2)
+        current_energy = self._compute_journey_energy_v3(df_v3)
+        reco_energy = self._compute_journey_energy_reco_v3(df_v3)
         
         return JourneyEnergyStats(
             current=current_energy,
@@ -265,12 +265,12 @@ class EnergyService(BaseStatsService):
         
         return journey_df
 
-    def _compute_mode_energy_v2(self, df: pd.DataFrame) -> list[EnergyExpenditure]:
+    def _compute_mode_energy_v3(self, df: pd.DataFrame) -> list[EnergyExpenditure]:
         """
-        Compute energy for current modes (V2 data) - aggregated by mode.
+        Compute energy for current modes (v3 data) - aggregated by mode.
         
         Args:
-            df: DataFrame with V2 records
+            df: DataFrame with v3 records
             
         Returns:
             List of EnergyExpenditure objects
@@ -328,9 +328,9 @@ class EnergyService(BaseStatsService):
         
         return results
 
-    def _compute_mode_energy_reco_v2(self, df: pd.DataFrame) -> list[EnergyExpenditure]:
+    def _compute_mode_energy_reco_v3(self, df: pd.DataFrame) -> list[EnergyExpenditure]:
         """
-        Compute energy for recommended modes (V2 data) - aggregated by mode.
+        Compute energy for recommended modes (v3 data) - aggregated by mode.
 
         Each recommendation is taken into account, weighted by the days of the
         journey(s) it applies to: new-style typo.reco.reco_inter.N is weighted by
@@ -339,7 +339,7 @@ class EnergyService(BaseStatsService):
         person's journey days.
 
         Args:
-            df: DataFrame with V2 records
+            df: DataFrame with v3 records
 
         Returns:
             List of EnergyExpenditure objects
@@ -400,12 +400,12 @@ class EnergyService(BaseStatsService):
 
         return results
 
-    def _compute_journey_energy_v2(self, df: pd.DataFrame) -> EnergyByJourney:
+    def _compute_journey_energy_v3(self, df: pd.DataFrame) -> EnergyByJourney:
         """
         Compute energy per journey leg for current modes (for stacked barplot).
         
         Args:
-            df: DataFrame with V2 records
+            df: DataFrame with v3 records
             
         Returns:
             EnergyByJourney object with per-leg breakdown
@@ -456,7 +456,7 @@ class EnergyService(BaseStatsService):
             data=legs
         )
 
-    def _compute_journey_energy_reco_v2(self, df: pd.DataFrame) -> EnergyByJourney:
+    def _compute_journey_energy_reco_v3(self, df: pd.DataFrame) -> EnergyByJourney:
         """
         Compute energy per journey leg for recommended modes (for stacked barplot).
 
@@ -466,7 +466,7 @@ class EnergyService(BaseStatsService):
         recommendation (weighted by the sum of the person's journey days).
 
         Args:
-            df: DataFrame with V2 records
+            df: DataFrame with v3 records
 
         Returns:
             EnergyByJourney object with per-leg breakdown

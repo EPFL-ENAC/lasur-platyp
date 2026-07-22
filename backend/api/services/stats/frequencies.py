@@ -1,7 +1,7 @@
 import re
 import pandas as pd
 from api.models.query import Frequencies, Frequency
-from api.services.stats.commons import BaseStatsService, MODES_PRO, MODES_PRO_V1, normalize_pro_days_to_yearly
+from api.services.stats.commons import BaseStatsService, MODES_PRO, normalize_pro_days_to_yearly
 
 
 class FrequenciesService(BaseStatsService):
@@ -106,16 +106,7 @@ class FrequenciesService(BaseStatsService):
             return Frequencies(field="reco_pros", total=0, data=[])
 
         all_reco_pros = []
-        # v1: recommendations are made per destination area type
-        for col in [
-            "typo.reco_pro.reco_pro_loc",
-            "typo.reco_pro.reco_pro_reg",
-            "typo.reco_pro.reco_pro_inter",
-        ]:
-            if col in self.df.columns:
-                all_reco_pros.extend(self.df[col].dropna().tolist())
-
-        # v2: recommendations are made per journey
+        # recommendations are made per journey
         col_reco_pros = [
             col for col in self.df.columns if self.RECO_PROS_PATTERN.match(col)
         ]
@@ -134,24 +125,18 @@ class FrequenciesService(BaseStatsService):
         )
 
     def compute_modes_pro_frequencies(self) -> list[Frequencies]:
-        """Compute all modes frequencies from a DataFrame of records."""
-        # v1: count frequencies from legacy fields
-        df_v1 = self._get_records_v1()
-        results = []
-        for mode in MODES_PRO_V1:
-            results.append(self._compute_mode_pro_frequencies_v1(df_v1, mode))
+        """Compute all modes frequencies from a DataFrame of records (v3 only)."""
+        df_v3 = self._get_records_v3()
+        if df_v3.empty:
+            return []
 
-        # v2: count frequencies from data.freq_mod_journeys
-        df_v2 = self._get_records_v2()
-        if not df_v2.empty:
-            results_v2 = []
-            for mode in MODES_PRO:
-                results_v2.extend(
-                    self._compute_mode_pro_frequencies_v2(df_v2, mode))
-            results = self._merge_frequencies(results, results_v2)
+        results = []
+        for mode in MODES_PRO:
+            results.extend(self._compute_mode_pro_frequencies_v3(df_v3, mode))
+
         # finalize totals and sort data
         for frequencies in results:
-            frequencies.total = len(self.df)
+            frequencies.total = len(df_v3)
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
         # filter out frequencies with empty data
@@ -225,38 +210,7 @@ class FrequenciesService(BaseStatsService):
     # Internal functions
     #
 
-    def _compute_mode_pro_frequencies_v1(
-        self, df: pd.DataFrame, mode: str
-    ) -> Frequencies:
-        """Compute a mode frequency from a DataFrame of records."""
-        # Legacy data version: get the series for the specific mode
-
-        # Find the column name for the mode
-        col_name = f"data.freq_mod_pro_{mode}"
-        if col_name not in df.columns:
-            return Frequencies(field=mode, total=len(df), data=[])
-        # Get the series for the specific mode
-        mode_series = df[f"data.freq_mod_pro_{mode}"].dropna().astype(int)
-        # days per month to days per year
-        mode_series = mode_series * 12
-        mode_counts = mode_series.value_counts()
-        mode_sums = mode_series.groupby(mode_series).sum()
-
-        return Frequencies(
-            field=mode.replace("region_", "national_"),
-            total=len(df),
-            data=[
-                Frequency(
-                    value=str(mod_value),
-                    count=mode_counts[mod_value],
-                    sum=mode_sums[mod_value],
-                )
-                for mod_value in mode_counts.index
-                if mod_value > 0
-            ],
-        )
-
-    def _compute_mode_pro_frequencies_v2(
+    def _compute_mode_pro_frequencies_v3(
         self, df: pd.DataFrame, mode: str
     ) -> list[Frequencies]:
         """Compute a mode frequency from a DataFrame of records."""
@@ -421,36 +375,3 @@ class FrequenciesService(BaseStatsService):
 
         return Frequencies(field=mode, total=len(df), data=frequencies)
 
-    def _merge_frequencies(
-        self, frequencies: list[Frequencies], frequencies2: list[Frequencies]
-    ) -> Frequencies:
-        """Merge each Frequencies into a list of Frequencies."""
-        for freq2 in frequencies2:
-            freq1 = next(
-                (f for f in frequencies if f.field == freq2.field), None)
-            if not freq1:
-                frequencies.append(freq2)
-                continue
-            merged_data = freq1.data.copy()
-            for freq in freq2.data:
-                existing_freq = next(
-                    (f for f in merged_data if f.value == freq.value), None
-                )
-                if existing_freq:
-                    existing_freq.count += freq.count
-                    if freq.sum is not None:
-                        if existing_freq.sum is None:
-                            existing_freq.sum = 0
-                        existing_freq.sum += freq.sum
-                else:
-                    merged_data.append(freq)
-            freq = Frequencies(
-                field=freq1.field, total=freq1.total + freq2.total, data=merged_data
-            )
-            # replace in frequencies
-            for i in range(len(frequencies)):
-                if frequencies[i].field == freq.field:
-                    frequencies[i] = freq
-                    break
-
-        return frequencies

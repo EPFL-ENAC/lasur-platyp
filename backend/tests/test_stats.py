@@ -165,7 +165,6 @@ def test_compute_recommendation_pro_frequencies():
         field='reco_pros',
         total=30,
         data=[
-            Frequency(value='elec', count=4, sum=None),
             Frequency(value='train', count=4, sum=None),
             Frequency(value='avoid', count=2, sum=None),
             Frequency(value='bike', count=1, sum=None),
@@ -176,26 +175,26 @@ def test_compute_recommendation_pro_frequencies():
 
 
 def test_compute_modes_pro_frequencies():
-    # Load the test CSV into a DataFrame
+    # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
+    # completed records) contribute, since pro mode frequencies are no
+    # longer computed for v1/v2 records.
     df = load_test_dataframe()
     service = FrequenciesService(df)
     result = service.compute_modes_pro_frequencies()
 
     expected = [
-        Frequencies(field='national_car', total=30, data=[
-                    Frequency(value='3', count=1, sum=3), Frequency(value='48', count=1, sum=48)]),
-        Frequencies(field='national_train', total=30, data=[
-                    Frequency(value='1', count=1, sum=1), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
-        Frequencies(field='national_moto', total=30, data=[
-                    Frequency(value='1', count=2, sum=2), Frequency(value='240', count=1, sum=240)]),
-        Frequencies(field='europe_plane', total=30, data=[
+        Frequencies(field='national_bike', total=7, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='national_moto', total=7, data=[
                     Frequency(value='1', count=2, sum=2)]),
-        Frequencies(field='inter_train', total=30, data=[
-                    Frequency(value='36', count=1, sum=36)]),
-        Frequencies(field='inter_plane', total=30, data=[
-                    Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2), Frequency(value='36', count=1, sum=36)]),
-        Frequencies(field='national_bike', total=30, data=[
-                    Frequency(value='1', count=1, sum=1)])
+        Frequencies(field='national_car', total=7, data=[
+                    Frequency(value='3', count=1, sum=3)]),
+        Frequencies(field='national_train', total=7, data=[
+                    Frequency(value='1', count=1, sum=1), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='europe_plane', total=7, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='inter_plane', total=7, data=[
+                    Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
     ]
     assert len(result) == len(expected)
     for res_freqs, exp_freqs in zip(result, expected):
@@ -227,48 +226,22 @@ def test_compute_modes_pro_emissions():
 
 
 def test_compute_mode_reco_links():
-    # Load the test CSV into a DataFrame. It only has legacy typo.reco.reco_dt2.0/.1
-    # data (no typo.reco.reco_inter.N), so every journey's mode is linked to both
-    # legacy recommendations, weighted by the person's total journey days.
+    # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
+    # completed records) contribute, since mode recommendation links are no
+    # longer computed for v1/v2 records.
     df = load_test_dataframe()
     service = LinksService(df)
     result = service.compute_mode_reco_links()
 
     # print(result)
     expected = Links(
-        total=30,
+        total=7,
         data=[
-            Link(source='walking', target='elec', value=1),
-            Link(source='walking', target='train', value=3),
-            Link(source='walking', target='vae', value=11),
-            Link(source='walking', target='tpu', value=17),
-            Link(source='walking', target='covoit', value=1),
-            Link(source='bike', target='covoit', value=5),
-            Link(source='bike', target='elec', value=4),
-            Link(source='bike', target='velo', value=1),
-            Link(source='bike', target='marche', value=1),
-            Link(source='bike', target='tpu', value=2),
-            Link(source='bike', target='train', value=1),
-            Link(source='pub', target='covoit', value=8),
-            Link(source='pub', target='elec', value=6),
-            Link(source='pub', target='train', value=3),
-            Link(source='pub', target='vae', value=1),
-            Link(source='pub', target='inter', value=11),
-            Link(source='pub', target='tpu', value=11),
-            Link(source='moto', target='elec', value=2),
-            Link(source='moto', target='train', value=1),
-            Link(source='moto', target='covoit', value=1),
-            Link(source='car', target='elec', value=4),
-            Link(source='car', target='train', value=5),
-            Link(source='car', target='covoit', value=7),
-            Link(source='car', target='inter', value=7),
-            Link(source='train', target='train', value=2),
-            Link(source='train', target='vae', value=6),
-            Link(source='train', target='covoit', value=1),
-            Link(source='train', target='elec', value=1),
-            Link(source='train', target='tpu', value=1),
             Link(source='car', target='vae', value=11),
             Link(source='car', target='tpu', value=6),
+            Link(source='car', target='train', value=4),
+            Link(source='car', target='covoit', value=4),
+            Link(source='car', target='inter', value=5),
             Link(source='carpool', target='inter', value=5),
             Link(source='carpool', target='vae', value=5),
             Link(source='bike', target='inter', value=15),
@@ -278,21 +251,27 @@ def test_compute_mode_reco_links():
             Link(source='moto', target='velo', value=5),
             Link(source='moto', target='tpu', value=5),
             Link(source='moto', target='inter', value=5),
+            Link(source='pub', target='tpu', value=10),
+            Link(source='pub', target='inter', value=10),
+            Link(source='walking', target='tpu', value=15),
             Link(source='walking', target='inter', value=25),
+            Link(source='walking', target='vae', value=10),
             Link(source='train', target='inter', value=5),
+            Link(source='train', target='vae', value=5),
         ]
     )
     assert_links_equal(result, expected)
 
 
 def test_compute_mode_reco_pro_links():
-    # Load the test CSV into a DataFrame
+    # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
+    # completed records) contribute.
     df = load_test_dataframe()
     service = LinksService(df)
     result = service.compute_mode_reco_pro_links()
 
     expected = Links(
-        total=30,
+        total=7,
         data=[
             Link(source='plane', target='train', value=1),
             Link(source='plane', target='avoid', value=2),
