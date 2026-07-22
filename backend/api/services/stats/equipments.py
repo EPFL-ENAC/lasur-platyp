@@ -10,7 +10,7 @@ class EquipmentsService(BaseStatsService):
     
 
     def compute_equipments_stats(self) -> EquipmentsStats:
-        df = self._get_records_v2()
+        df = self._get_records_v3()
 
         total = len(df)
 

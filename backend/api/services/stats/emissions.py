@@ -73,20 +73,17 @@ class EmissionsService(BaseStatsService):
             self._get_records_v3(), 'typo.reco.complex_labels')
 
     def compute_modes_pro_emissions(self, apply_reco: bool = False) -> list[Emissions]:
-        """Compute all CO2 emissions from a DataFrame of records for pro journeys."""
-        # v1: cannot compute pro emissions from v1 data
-
-        # v2: count emissions from data.freq_mod_pro_journeys
-        df_v2 = self._get_records_v2()
+        """Compute all CO2 emissions from a DataFrame of records for pro journeys (v3 only)."""
+        df_v3 = self._get_records_v3()
         results = []
-        if not df_v2.empty:
+        if not df_v3.empty:
             for mode in MODES_PRO:
                 results.extend(
-                    self._compute_mode_pro_emissions_v2(df_v2, mode, apply_reco))
+                    self._compute_mode_pro_emissions_v3(df_v3, mode, apply_reco))
 
         # finalize totals
         for emission in results:
-            emission.total = len(df_v2)
+            emission.total = len(df_v3)
             # round distances, emissions
             emission.distances = round(emission.distances, 3)
             emission.emissions = round(emission.emissions, 3)
@@ -126,17 +123,17 @@ class EmissionsService(BaseStatsService):
             - Journey 1: car (5 kgCO2) → train (0.2 kgCO2) = 4.8 kg saved
             Results: [EmissionReductions(mode='train', reduced=15.8)]
         """
-        df_v2 = self._get_records_v2()
-        if df_v2.empty:
+        df_v3 = self._get_records_v3()
+        if df_v3.empty:
             return []
-        
-        results = self._compute_mode_pro_emission_reductions_v2(
-            df_v2, include_negative
+
+        results = self._compute_mode_pro_emission_reductions_v3(
+            df_v3, include_negative
         )
-        
+
         # Finalize totals
         for reduction in results:
-            reduction.total = len(df_v2)
+            reduction.total = len(df_v3)
             reduction.reduced = round(reduction.reduced, 3)
         
         # Filter based on include_negative parameter
@@ -163,7 +160,7 @@ class EmissionsService(BaseStatsService):
         and returns a DataFrame with journey-level information.
         
         Args:
-            df: DataFrame with V2 records containing freq_mod_journeys data
+            df: DataFrame with v3 records containing freq_mod_journeys data
             
         Returns:
             DataFrame with columns ['token', 'journey', 'days', 'dist'] or None if no data
@@ -205,7 +202,7 @@ class EmissionsService(BaseStatsService):
         later in the aggregation step.
         
         Args:
-            df: DataFrame with V2 records containing freq_mod_journeys data
+            df: DataFrame with v3 records containing freq_mod_journeys data
             
         Returns:
             DataFrame with columns ['token', 'journey', 'mode'] or None if no data
@@ -307,7 +304,7 @@ class EmissionsService(BaseStatsService):
         and mode fraction calculation into a single enriched dataframe.
         
         Args:
-            df: DataFrame with V2 records
+            df: DataFrame with v3 records
             
         Returns:
             Enriched DataFrame with all journey attributes or None if no data
@@ -386,7 +383,7 @@ class EmissionsService(BaseStatsService):
         and distances are calculated to H3 hex locations.
         
         Args:
-            df: DataFrame with V2 records containing freq_mod_pro_journeys data
+            df: DataFrame with v3 records containing freq_mod_pro_journeys data
             target_mode: Optional mode to filter by (if None, returns all modes)
             
         Returns:
@@ -467,7 +464,7 @@ class EmissionsService(BaseStatsService):
         and journey counts are unaffected since only the mode/emission factor
         changes, not the trip itself.
 
-        Reuses the same journey/mode-fraction pipeline as V2 emissions
+        Reuses the same journey/mode-fraction pipeline as commute emissions
         (_build_journey_attributes, _calculate_journey_metrics), which is
         version-agnostic, then collapses per-mode rows back to one row per
         journey before grouping by label.
@@ -548,12 +545,11 @@ class EmissionsService(BaseStatsService):
         journey's own v3 typology label).
 
         Based on R implementation (Untitled.R lines 223-227):
-        - Uses the same journey-level logic as _compute_mode_emissions_v2
         - Calculates emissions_dt (current) and reco_emissions (recommended)
         - saved_emissions = emissions_dt - reco_emissions
 
         Args:
-            df: DataFrame of records (V2 or V3) containing
+            df: DataFrame of records (v3) containing
                 data.freq_mod_journeys.* and recommendation columns
 
         Returns:
@@ -690,13 +686,13 @@ class EmissionsService(BaseStatsService):
 
         return [e for e in results if e.reduced > 0]
 
-    def _compute_mode_pro_emission_reductions_v2(
+    def _compute_mode_pro_emission_reductions_v3(
         self, 
         df: pd.DataFrame, 
         include_negative: bool = False
     ) -> list[EmissionReductions]:
         """
-        Compute professional travel CO2 emission reductions for V2 data.
+        Compute professional travel CO2 emission reductions for v3 data.
         
         Based on viz_v2.ipynb logic (cells 31-32):
         - For each professional journey: calculate current vs reco emissions
@@ -709,7 +705,7 @@ class EmissionsService(BaseStatsService):
             savings = current_emissions - reco_emissions
         
         Args:
-            df: DataFrame with V2 records
+            df: DataFrame with v3 records
             include_negative: Whether to include negative savings
             
         Returns:
@@ -811,7 +807,7 @@ class EmissionsService(BaseStatsService):
         
         return results
 
-    def _compute_mode_pro_emissions_v2(self, df: pd.DataFrame, mode: str, apply_reco: bool = False) -> list[Emissions]:
+    def _compute_mode_pro_emissions_v3(self, df: pd.DataFrame, mode: str, apply_reco: bool = False) -> list[Emissions]:
         """
         Compute all CO2 emissions from professional travel for a specific mode.
         
@@ -821,7 +817,7 @@ class EmissionsService(BaseStatsService):
         - Uses same emission factors as daily commutes
         
         Args:
-            df: DataFrame with V2 records containing freq_mod_pro_journeys data
+            df: DataFrame with v3 records containing freq_mod_pro_journeys data
             mode: Mode to calculate emissions for
             apply_reco: Currently unused for professional travel (no recommendations yet)
             

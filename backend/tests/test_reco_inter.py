@@ -20,7 +20,7 @@ def new_style_df() -> pd.DataFrame:
     return pd.DataFrame([
         {
             'token': 'A',
-            'data.version': '2.0',
+            'data.version': '3.0',
             'data.travel_time': 30,
             'data.origin.lat': 46.5, 'data.origin.lon': 6.6,
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
@@ -33,7 +33,7 @@ def new_style_df() -> pd.DataFrame:
         },
         {
             'token': 'B',
-            'data.version': '2.0',
+            'data.version': '3.0',
             'data.travel_time': 20,
             'data.origin.lat': 46.5, 'data.origin.lon': 6.6,
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
@@ -49,7 +49,7 @@ def legacy_df() -> pd.DataFrame:
     return pd.DataFrame([
         {
             'token': 'C',
-            'data.version': '2.0',
+            'data.version': '3.0',
             'data.travel_time': 25,
             'data.origin.lat': 46.5, 'data.origin.lon': 6.6,
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
