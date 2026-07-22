@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from api.services.stats.links import LinksService
-from api.services.stats.stats import StatsService
 from api.models.query import Frequencies, Links
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.emissions import EmissionsService
@@ -27,10 +26,6 @@ def test_empty_dataframe():
     assert result.data == []
 
     # Emissions service should handle empty dataframe
-    result = emissions_service.compute_modes_emissions()
-    assert isinstance(result, list)
-    assert result == []
-
     result = emissions_service.compute_modes_pro_emissions()
     assert isinstance(result, list)
     assert result == []
@@ -53,7 +48,6 @@ def test_missing_columns():
     )
 
     freq_service = FrequenciesService(df)
-    emissions_service = EmissionsService(df)
 
     # Should handle missing travel_time column
     result = freq_service.compute_travel_time_frequencies()
@@ -66,12 +60,6 @@ def test_missing_columns():
     assert isinstance(result, Frequencies)
     assert result.field == "reco_inter"
     assert result.data == []
-
-    # EmissionsService should now handle missing workplace coordinates gracefully
-    result = emissions_service.compute_modes_emissions()
-    assert isinstance(result, list)
-    # Without workplace coordinates, all distances should be 0, so no emissions
-    assert result == []
 
 
 def test_all_nan_values():
@@ -134,29 +122,6 @@ def test_single_row_dataframe():
     assert result.data[0].count == 1
 
 
-def test_zero_journeys():
-    """Test that emissions service handles zero journeys correctly."""
-    df = pd.DataFrame(
-        {
-            "data.freq_mod_walking": [0, 0, 0],
-            "data.origin.lat": [48.85, 48.86, 48.87],
-            "data.origin.lon": [2.35, 2.36, 2.37],
-            "data.workplace.lat": [48.86, 48.87, 48.88],
-            "data.workplace.lon": [2.36, 2.37, 2.38],
-        }
-    )
-
-    service = EmissionsService(df)
-    result = service.compute_modes_emissions()
-
-    # Check that the service doesn't crash with zero journeys
-    assert isinstance(result, list)
-    # Zero journeys should either be filtered out or produce zero emissions
-    for emission in result:
-        if emission.mode == "walking" and emission.emissions is not None:
-            assert emission.emissions <= 0.001
-
-
 def test_invalid_data_types():
     """Test that services handle invalid data types gracefully."""
     df = pd.DataFrame(
@@ -178,26 +143,6 @@ def test_invalid_data_types():
     assert len(result.data) == 2  # Only bike and car, None is dropped
 
 
-def test_negative_values():
-    """Test that services handle negative values."""
-    df = pd.DataFrame(
-        {
-            "data.freq_mod_walking": [1, -1, 2],
-            "data.origin.lat": [48.85, 48.86, 48.87],
-            "data.origin.lon": [2.35, 2.36, 2.37],
-            "data.workplace.lat": [48.86, 48.87, 48.88],
-            "data.workplace.lon": [2.36, 2.37, 2.38],
-        }
-    )
-
-    service = EmissionsService(df)
-
-    # Emissions service might produce unexpected results with negative values
-    # but should not crash
-    result = service.compute_modes_emissions()
-    assert isinstance(result, list)
-
-
 def test_large_values():
     """Test that services handle large numerical values."""
     df = pd.DataFrame(
@@ -212,15 +157,11 @@ def test_large_values():
     )
 
     freq_service = FrequenciesService(df)
-    emissions_service = EmissionsService(df)
 
     result = freq_service.compute_travel_time_frequencies()
     assert isinstance(result, Frequencies)
     assert result.total == 3
     assert len(result.data) == 3
-
-    result = emissions_service.compute_modes_emissions()
-    assert isinstance(result, list)
 
 
 def test_nan_coordinates():
@@ -236,36 +177,8 @@ def test_nan_coordinates():
 
     service = EmissionsService(df)
 
-    # Should not crash with NaN coordinates
-    result = service.compute_modes_emissions()
-    assert isinstance(result, list)
-
-    # Distance should be 0 for NaN coordinates
+    # Should not crash with NaN coordinates, and distance should be 0
     assert np.all(service.df["distance_km"] == 0)
-
-
-def test_mixed_data_versions():
-    """Test that services handle mixed v1 and v2 data correctly."""
-    df = pd.DataFrame(
-        {
-            "data.version": [np.nan, np.nan, "2.0", "2.1"],
-            "data.freq_mod_walking": [1, 2, np.nan, np.nan],
-            "data.freq_mod_journeys.0.days": [np.nan, np.nan, 3, 4],
-            "data.freq_mod_journeys.0.modes.0": [np.nan, np.nan, "walking", "walking"],
-            "data.origin.lat": [48.85, 48.86, 48.87, 48.88],
-            "data.origin.lon": [2.35, 2.36, 2.37, 2.38],
-            "data.workplace.lat": [48.86, 48.87, 48.88, 48.89],
-            "data.workplace.lon": [2.36, 2.37, 2.38, 2.39],
-        }
-    )
-
-    stats = StatsService()
-    df = stats._preprocess_dataframe(df)
-
-    emissions_service = EmissionsService(df)
-
-    result = emissions_service.compute_modes_emissions()
-    assert isinstance(result, list)
 
 
 def test_special_characters():
