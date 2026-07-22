@@ -175,36 +175,6 @@ def test_compute_recommendation_pro_frequencies():
     assert_frequencies_equal(result, expected)
 
 
-def test_compute_modes_frequencies():
-    # Load the test CSV into a DataFrame
-    df = load_test_dataframe()
-    service = FrequenciesService(df)
-    result = service.compute_modes_frequencies()
-
-    # print(result)
-    expected = [
-        Frequencies(field='walking', total=30, data=[Frequency(value='1', count=3, sum=3), Frequency(
-            value='3', count=2, sum=6), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=1, sum=5)]),
-        Frequencies(field='bike', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2), Frequency(
-            value='3', count=5, sum=15), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=1, sum=5)]),
-        Frequencies(field='ebike', total=30, data=[]),
-        Frequencies(field='pub', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='3', count=7, sum=21), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=3, sum=15)]),
-        Frequencies(field='moto', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=2, sum=10)]),
-        Frequencies(field='carpool', total=30, data=[
-                    Frequency(value='3', count=1, sum=3)]),
-        Frequencies(field='car', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2), Frequency(
-            value='3', count=1, sum=3), Frequency(value='4', count=3, sum=12), Frequency(value='5', count=3, sum=15)]),
-        Frequencies(field='train', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='3', count=2, sum=6), Frequency(value='5', count=1, sum=5)]),
-        Frequencies(field='other', total=30, data=[])
-    ]
-    assert len(result) == len(expected)
-    for res_freqs, exp_freqs in zip(result, expected):
-        assert_frequencies_equal(res_freqs, exp_freqs)
-
-
 def test_compute_modes_pro_frequencies():
     # Load the test CSV into a DataFrame
     df = load_test_dataframe()

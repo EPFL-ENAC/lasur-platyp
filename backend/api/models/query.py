@@ -306,7 +306,6 @@ class EquipmentsStats(BaseModel):
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
-    mode_frequencies: Optional[List[Frequencies]] = None
     mode_frequencies_simple_labels: Optional[List[Frequencies]] = None
     mode_frequencies_complex_labels: Optional[List[Frequencies]] = None
     mode_emissions: Optional[List[Emissions]] = None

@@ -22,7 +22,6 @@ class StatsService:
         constraints = freq_stats.compute_constraints_frequencies()
         travel_time = freq_stats.compute_travel_time_frequencies()
         recommendations = freq_stats.compute_recommendation_frequencies()
-        mode_frequencies = freq_stats.compute_modes_frequencies()
         mode_frequencies_simple_labels = freq_stats.compute_modes_frequencies_simple_labels()
         mode_frequencies_complex_labels = freq_stats.compute_modes_frequencies_complex_labels()
         pro_mode_frequencies = freq_stats.compute_modes_pro_frequencies()
@@ -33,7 +32,8 @@ class StatsService:
         reco_mode_emissions = emissions_stats.compute_modes_emissions(
             apply_reco=True)
         pro_mode_emissions = emissions_stats.compute_modes_pro_emissions()
-        pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(apply_reco=True)
+        pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(
+            apply_reco=True)
         mode_emission_reductions = emissions_stats.compute_modes_emission_reductions()
         pro_mode_emission_reductions = emissions_stats.compute_modes_pro_emission_reductions()
 
@@ -65,7 +65,6 @@ class StatsService:
                 travel_time,
                 recommendations
             ],
-            mode_frequencies=mode_frequencies,
             mode_frequencies_simple_labels=mode_frequencies_simple_labels,
             mode_frequencies_complex_labels=mode_frequencies_complex_labels,
             mode_emissions=mode_emissions,
@@ -90,7 +89,7 @@ class StatsService:
 
             home_location_heatmap=home_location_heatmap,
             workplace_locations=workplace_locations,
-            
+
             behavior_change=behavior_change,
 
             equipments_stats=equipments_stats
