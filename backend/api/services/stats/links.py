@@ -1,6 +1,6 @@
 import pandas as pd
 from api.models.query import Link, Links, Recommendation, StatLinks
-from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO_V1
+from api.services.stats.commons import BaseStatsService
 
 
 class LinksService(BaseStatsService):
@@ -9,64 +9,28 @@ class LinksService(BaseStatsService):
         super().__init__(df)
 
     def compute_mode_reco_links(self) -> StatLinks:
-        """Compute all mode recommendation links from a DataFrame of records."""
-        # v1: legacy data version
-        df_v1 = self._get_records_v1()
-        links_v1 = self._compute_mode_reco_links_v1(df_v1)
+        """Compute all mode recommendation links from a DataFrame of records (v3 only)."""
+        df_v3 = self._get_records_v3()
+        links = Links(total=0, data=[])
+        if not df_v3.empty:
+            links = self._compute_mode_reco_links_v3(df_v3)
 
-        # v2: new data version
-        df_v2 = self._get_records_v2()
-        links_v2 = Links(total=0, data=[])
-        if not df_v2.empty:
-            links_v2 = self._compute_mode_reco_links_v2(df_v2)
-
-        # merge links of same source and target
-        return self._compute_stats_for_links(self._merge_links(links_v1, links_v2))
+        return self._compute_stats_for_links(links)
 
     def compute_mode_reco_pro_links(self) -> StatLinks:
-        """Compute all mode recommendation links from a DataFrame of records."""
-        # v1: legacy data version
-        df_v1 = self._get_records_v1()
-        links_v1 = self._compute_mode_reco_pro_links_v1(df_v1)
+        """Compute all mode recommendation links from a DataFrame of records (v3 only)."""
+        df_v3 = self._get_records_v3()
+        links = Links(total=0, data=[])
+        if not df_v3.empty:
+            links = self._compute_mode_reco_pro_links_v3(df_v3)
 
-        # v2: new data version
-        df_v2 = self._get_records_v2()
-        links_v2 = Links(total=0, data=[])
-        if not df_v2.empty:
-            links_v2 = self._compute_mode_reco_pro_links_v2(df_v2)
-
-        # merge links of same source and target
-        return self._compute_stats_for_links(self._merge_links(links_v1, links_v2))
+        return self._compute_stats_for_links(links)
 
     #
     # Internal functions
     #
 
-    def _compute_mode_reco_links_v1(self, df: pd.DataFrame) -> Links:
-        """Compute all mode recommendation links from a DataFrame of records."""
-        legacy_cols = self._reco_legacy_columns(df)
-        counts = {}
-        for mode in MODES:
-            col_name = f'data.freq_mod_{mode}'
-            if col_name not in df.columns:
-                continue
-            df_mode = df[df[col_name].notna()]
-            for _, row in df_mode.iterrows():
-                mod_count = int(row[col_name])
-                if mod_count <= 0:
-                    continue
-                for legacy_col in legacy_cols:
-                    reco = row[legacy_col]
-                    if pd.isna(reco):
-                        continue
-                    mod_counts = counts.get(mode, {})
-                    mod_counts[reco] = mod_counts.get(reco, 0) + 1
-                    counts[mode] = mod_counts
-        links = [Link(source=mod, target=reco, value=int(count)) for mod,
-                 reco_counts in counts.items() for reco, count in reco_counts.items()]
-        return Links(total=len(df), data=links)
-
-    def _compute_mode_reco_links_v2(self, df: pd.DataFrame) -> Links:
+    def _compute_mode_reco_links_v3(self, df: pd.DataFrame) -> Links:
         """Compute all mode recommendation links from a DataFrame of records.
 
         New-style records: link each journey's mode(s) to that same journey's own
@@ -129,37 +93,7 @@ class LinksService(BaseStatsService):
         links = Links(total=len(df), data=data)
         return links
 
-    def _compute_mode_reco_pro_links_v1(self, df: pd.DataFrame) -> Links:
-        """Compute all mode recommendation links from a DataFrame of records."""
-        area_reco = {
-            'local': 'typo.reco_pro.reco_pro_loc',
-            'region': 'typo.reco_pro.reco_pro_reg',
-            'europe': 'typo.reco_pro.reco_pro_reg',
-            'inter': 'typo.reco_pro.reco_pro_int'
-        }
-        counts = {}
-        for area_mode in MODES_PRO_V1:
-          # split mode into area and transport mode
-            area, mode = area_mode.split('_', 1)
-            col_name = f'data.freq_mod_{area}_{mode}'
-            if col_name not in df.columns:
-                continue
-            df_mode = df[df[col_name].notna()]
-            for _, row in df_mode.iterrows():
-                mod_count = int(row[col_name])
-                if mod_count <= 0:
-                    continue
-                if area not in area_reco:
-                    continue
-                reco = row[area_reco[area]]
-                mod_counts = counts.get(mode, {})
-                mod_counts[reco] = mod_counts.get(reco, 0) + 1
-                counts[mode] = mod_counts
-        links = [Link(source=mod, target=reco, value=int(count)) for mod,
-                 reco_counts in counts.items() for reco, count in reco_counts.items()]
-        return Links(total=len(df), data=links)
-
-    def _compute_mode_reco_pro_links_v2(self, df: pd.DataFrame) -> Links:
+    def _compute_mode_reco_pro_links_v3(self, df: pd.DataFrame) -> Links:
         """Compute all mode recommendation links from a DataFrame of records."""
 
         # New data version: get the series from data.freq_mod_pro_journeys
@@ -189,23 +123,6 @@ class LinksService(BaseStatsService):
         links = Links(total=len(df), data=data)
         return links
 
-    def _merge_links(self, links1: Links, links2: Links) -> Links:
-        """Merge two Links into one Links."""
-        # merge links of same source and target
-        merged_data = links1.data.copy()
-        for link in links2.data:
-            existing_link = next(
-                (l for l in merged_data if l.source == link.source and l.target == link.target), None)
-            if existing_link:
-                existing_link.value += link.value
-            else:
-                merged_data.append(link)
-        merged_links = Links(
-            total=links1.total + links2.total,
-            data=merged_data
-        )
-        return merged_links
-    
     def _compute_stats_for_links(self, links: Links) -> StatLinks:
         value_per_target: dict[str, int] = {}
         for link in links.data:

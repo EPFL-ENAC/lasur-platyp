@@ -3,18 +3,6 @@ import pandas as pd
 import h3
 
 
-MODES = [
-    'walking',
-    'bike',
-    'ebike',
-    'pub',
-    'moto',
-    'carpool',
-    'car',
-    'train',
-    'other'
-]
-
 RECOS = [
     'train',
     'tpu',
@@ -24,26 +12,6 @@ RECOS = [
     'inter',
     'elec',
     'covoit'
-]
-
-MODES_PRO_V1 = [
-    'local_walking',
-    'local_car',
-    'local_pub',
-    'local_bike',
-    'local_moto',
-    'local_train',
-    'region_car',
-    'region_pub',
-    'region_train',
-    'region_moto',
-    'region_plane',
-    'europe_car',
-    'europe_train',
-    'europe_plane',
-    'inter_car',
-    'inter_train',
-    'inter_plane'
 ]
 
 MODES_PRO = [
@@ -179,21 +147,6 @@ class BaseStatsService:
         if not rows:
             return None
         return pd.DataFrame(rows)
-
-    def _get_records_v1(self) -> pd.DataFrame:
-        """Get records with data.version as NaN"""
-        if 'data.version' not in self.df.columns:
-            return self.df.copy()
-        df_v1 = self.df[self.df['data.version'].isna()].copy()
-        return df_v1
-
-    def _get_records_v2(self) -> pd.DataFrame:
-        """Get records with data.version starting with '2.'"""
-        if 'data.version' not in self.df.columns:
-            return pd.DataFrame()
-        df_v2 = self.df[self.df['data.version'].notna(
-        ) & self.df['data.version'].str.startswith('2.')].copy()
-        return df_v2
 
     def _get_records_v3(self) -> pd.DataFrame:
         """Get records with data.version starting with '3.'"""

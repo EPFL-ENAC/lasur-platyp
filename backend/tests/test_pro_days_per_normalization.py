@@ -24,7 +24,7 @@ from api.services.stats.frequencies import FrequenciesService
 
 def make_pro_journey_df(journeys: list[dict]) -> pd.DataFrame:
     """
-    Build a minimal v2 DataFrame for professional journey tests.
+    Build a minimal v3 DataFrame for professional journey tests.
 
     Each journey dict may contain:
         record_id, journey_idx, current_mode, reco_mode,
@@ -45,7 +45,7 @@ def make_pro_journey_df(journeys: list[dict]) -> pd.DataFrame:
         row: dict = {
             'data.workplace.lat': record_journeys[0]['workplace_lat'],
             'data.workplace.lon': record_journeys[0]['workplace_lon'],
-            'data.version': '2.0',
+            'data.version': '3.0',
         }
         for j in record_journeys:
             idx = j['journey_idx']

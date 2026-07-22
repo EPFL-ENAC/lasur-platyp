@@ -34,7 +34,7 @@ def create_pro_journey_dataframe(journeys: list[dict]) -> pd.DataFrame:
     base_data = {
         'data.workplace.lat': [],
         'data.workplace.lon': [],
-        'data.version': [],  # Required for v2 filtering
+        'data.version': [],  # Required for v3 filtering
     }
     
     # Group journeys by record to handle multiple journeys per record
@@ -50,7 +50,7 @@ def create_pro_journey_dataframe(journeys: list[dict]) -> pd.DataFrame:
         row = {
             'data.workplace.lat': record_journeys[0]['workplace_lat'],
             'data.workplace.lon': record_journeys[0]['workplace_lon'],
-            'data.version': '2.0',  # Mark as v2 data
+            'data.version': '3.0',  # Mark as v3 data
         }
         
         # Add journey-specific columns using the correct data.freq_mod_pro_journeys format
