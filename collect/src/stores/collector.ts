@@ -6,7 +6,7 @@ import { hashEmail } from 'src/utils/hash'
 import { resolveLocation } from 'src/utils/boundaries'
 
 // Current version of the form data structure
-export const VERSION = '2.0.0'
+export const VERSION = '3.0.0'
 
 function makeRecord(rec: Partial<Record>): Record {
   const data = {
