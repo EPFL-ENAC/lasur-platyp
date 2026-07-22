@@ -28,13 +28,17 @@ class StatsService:
         pro_recommendations = freq_stats.compute_recommendation_pro_frequencies()
 
         emissions_stats = EmissionsService(df)
-        mode_emissions = emissions_stats.compute_modes_emissions()
-        reco_mode_emissions = emissions_stats.compute_modes_emissions(
+        mode_emissions_simple_labels = emissions_stats.compute_modes_emissions_simple_labels()
+        mode_emissions_complex_labels = emissions_stats.compute_modes_emissions_complex_labels()
+        reco_mode_emissions_simple_labels = emissions_stats.compute_modes_emissions_simple_labels(
+            apply_reco=True)
+        reco_mode_emissions_complex_labels = emissions_stats.compute_modes_emissions_complex_labels(
             apply_reco=True)
         pro_mode_emissions = emissions_stats.compute_modes_pro_emissions()
         pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(
             apply_reco=True)
-        mode_emission_reductions = emissions_stats.compute_modes_emission_reductions()
+        mode_emission_reductions_simple_labels = emissions_stats.compute_modes_emission_reductions_simple_labels()
+        mode_emission_reductions_complex_labels = emissions_stats.compute_modes_emission_reductions_complex_labels()
         pro_mode_emission_reductions = emissions_stats.compute_modes_pro_emission_reductions()
 
         energy_stats = EnergyService(df)
@@ -67,9 +71,12 @@ class StatsService:
             ],
             mode_frequencies_simple_labels=mode_frequencies_simple_labels,
             mode_frequencies_complex_labels=mode_frequencies_complex_labels,
-            mode_emissions=mode_emissions,
-            reco_mode_emissions=reco_mode_emissions,
-            mode_emission_reductions=mode_emission_reductions,
+            mode_emissions_simple_labels=mode_emissions_simple_labels,
+            mode_emissions_complex_labels=mode_emissions_complex_labels,
+            reco_mode_emissions_simple_labels=reco_mode_emissions_simple_labels,
+            reco_mode_emissions_complex_labels=reco_mode_emissions_complex_labels,
+            mode_emission_reductions_simple_labels=mode_emission_reductions_simple_labels,
+            mode_emission_reductions_complex_labels=mode_emission_reductions_complex_labels,
 
             mode_energy=mode_energy,
             reco_mode_energy=reco_mode_energy,

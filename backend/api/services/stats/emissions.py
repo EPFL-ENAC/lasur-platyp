@@ -1,6 +1,7 @@
+import re
 import pandas as pd
 from api.models.query import EmissionReductions, Emissions
-from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO, normalize_pro_days_to_yearly
+from api.services.stats.commons import BaseStatsService, MODES_PRO, normalize_pro_days_to_yearly
 
 MODE_EMISSIONS = {
     'walking': 0,
@@ -39,58 +40,37 @@ class EmissionsService(BaseStatsService):
             self.df['distance_km'] = self.df.apply(
                 self._calculate_distance_home_to_work, axis=1)
 
-    def compute_modes_emissions(self, apply_reco: bool = False) -> list[Emissions]:
-        """Compute all CO2 emissions from a DataFrame of records."""
+    def compute_modes_emissions_simple_labels(self, apply_reco: bool = False) -> list[Emissions]:
+        """
+        Compute CO2 emissions grouped by typo.reco.simple_labels (v3 records
+        only). Journeys are always grouped by their current simple label; if
+        apply_reco is True, the emissions value reported for each label is
+        what the journeys in that label would emit by following their
+        recommendation, instead of their current emissions.
+        """
+        return self._compute_journey_emissions_by_label(
+            self._get_records_v3(), 'typo.reco.simple_labels', apply_reco)
 
-        # v1: count emissions from legacy fields
-        df_v1 = self._get_records_v1()
-        results_v1 = self._compute_mode_emissions_v1(df_v1, apply_reco)
-        results = self._merge_emissions([], results_v1)
+    def compute_modes_emissions_complex_labels(self, apply_reco: bool = False) -> list[Emissions]:
+        """
+        Compute CO2 emissions grouped by typo.reco.complex_labels (v3
+        records only). Journeys are always grouped by their current complex
+        label; if apply_reco is True, the emissions value reported for each
+        label is what the journeys in that label would emit by following
+        their recommendation, instead of their current emissions.
+        """
+        return self._compute_journey_emissions_by_label(
+            self._get_records_v3(), 'typo.reco.complex_labels', apply_reco)
 
-        # v2: count emissions from data.freq_mod_journeys
-        df_v2 = self._get_records_v2()
-        if not df_v2.empty:
-            results_v2 = self._compute_mode_emissions_v2(df_v2, apply_reco)
-            # merge v1 and v2 results
-            for em_v2 in results_v2:
-                # find in results the one with same mode
-                em_v1 = next(
-                    (e for e in results if e.mode == em_v2.mode), None)
-                if em_v1 is None:
-                    results.append(em_v2)
-                else:
-                    em_v1.total += em_v2.total
-                    em_v1.distances += em_v2.distances
-                    em_v1.journeys += em_v2.journeys
-                    em_v1.emissions += em_v2.emissions
+    def compute_modes_emission_reductions_simple_labels(self) -> list[EmissionReductions]:
+        """Compute potential CO2 emission reductions grouped by typo.reco.simple_labels (v3 records only)."""
+        return self._compute_journey_emission_reductions_by_label(
+            self._get_records_v3(), 'typo.reco.simple_labels')
 
-        # finalize totals
-        for emission in results:
-            emission.total = len(self.df)
-            # round distances, emissions
-            emission.distances = round(emission.distances, 3)
-            emission.emissions = round(emission.emissions, 3)
-        # filter out modes with zero emissions
-        results = [e for e in results if e.emissions > 0]
-
-        return results
-
-    def compute_modes_emission_reductions(self) -> list[EmissionReductions]:
-        """Compute all CO2 emission reductions from a DataFrame of records."""
-        df_v2 = self._get_records_v2()
-        results = []
-        if not df_v2.empty:
-            for mode in MODES:
-                results.extend(
-                    self._compute_mode_emission_reductions_v2(df_v2, mode))
-        # finalize totals
-        for reduction in results:
-            reduction.total = len(df_v2)
-            # round reduced
-            reduction.reduced = round(reduction.reduced, 3)
-        # filter out reductions with zero reduced emissions
-        results = [e for e in results if e.reduced > 0]
-        return results
+    def compute_modes_emission_reductions_complex_labels(self) -> list[EmissionReductions]:
+        """Compute potential CO2 emission reductions grouped by typo.reco.complex_labels (v3 records only)."""
+        return self._compute_journey_emission_reductions_by_label(
+            self._get_records_v3(), 'typo.reco.complex_labels')
 
     def compute_modes_pro_emissions(self, apply_reco: bool = False) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records for pro journeys."""
@@ -473,320 +453,126 @@ class EmissionsService(BaseStatsService):
         
         return pd.DataFrame(journeys_list)
 
-    #
-    # V1 and V2 Emissions Calculations
-    #
+    def _compute_journey_emissions_by_label(self, df: pd.DataFrame, label_prefix: str, apply_reco: bool = False) -> list[Emissions]:
+        """
+        Aggregate journey-level CO2 emissions by a per-journey label column
+        (typo.reco.simple_labels.N or typo.reco.complex_labels.N), crediting
+        each journey's full emissions/distance to exactly one label bucket
+        instead of splitting across its raw modes.
 
-    def _compute_mode_emissions_v1(self, df: pd.DataFrame, apply_reco: bool = False) -> list[Emissions]:
-        """
-        Compute all CO2 emissions from a DataFrame of records for V1 data.
-        
-        Based on R implementation (Untitled.R lines 40-69):
-        - For current emissions: Calculate weighted sum of emissions across ALL modes per person,
-          then multiply by distance. Return per-mode breakdown.
-        - For recommendations: Use total frequency across all modes and apply recommended mode emissions.
-        
+        Journeys are always grouped by their current label (there is no
+        "recommended label" in the data). When apply_reco is True, the value
+        reported per label is what those journeys would emit by following
+        their recommendation, instead of their current emissions -- distances
+        and journey counts are unaffected since only the mode/emission factor
+        changes, not the trip itself.
+
+        Reuses the same journey/mode-fraction pipeline as V2 emissions
+        (_build_journey_attributes, _calculate_journey_metrics), which is
+        version-agnostic, then collapses per-mode rows back to one row per
+        journey before grouping by label.
+
         Args:
-            df: DataFrame with V1 records
-            apply_reco: If True, calculate emissions with recommendations applied
-            
+            df: DataFrame of records already filtered to the relevant version
+                (e.g. v3), containing data.freq_mod_journeys.* and the given
+                label columns
+            label_prefix: column prefix without the trailing journey index,
+                e.g. 'typo.reco.simple_labels'
+            apply_reco: if True, report recommended (post-reco) emissions
+                instead of current emissions; only journeys with a
+                recommendation are included
+
         Returns:
-            List of Emissions objects (one per mode)
+            List of Emissions objects (one per observed label)
         """
-        if len(df) == 0:
+        if df.empty:
             return []
-        
-        # Get available mode columns
-        mode_columns = [f'data.freq_mod_{m}' for m in MODES]
-        available_mode_cols = [col for col in mode_columns if col in df.columns]
-        
-        if len(available_mode_cols) == 0:
-            return []
-        
+
         if apply_reco:
-            # R implementation lines 62-69: Recommendation emissions
-            # Calculate freq_all_mod = sum of all mode frequencies
-            # Use recommended mode's emissions
-            # Formula: MODE_EMISSIONS[reco] / 1000 * dist * 45 * 2 * freq_all_mod
-            
-            df_reco = df.copy()
-            
-            # Calculate total frequency across all modes per person
-            df_reco['freq_all_mod'] = df_reco[available_mode_cols].fillna(0).sum(axis=1)
-            
-            # Filter out records with no mode frequencies
-            df_reco = df_reco[df_reco['freq_all_mod'] > 0]
-            
-            if len(df_reco) == 0:
+            # Only journeys with a recommendation can report a post-reco
+            # emissions value; reuses the same current-vs-recommended
+            # pipeline as the emission-reduction-by-label variant.
+            journey_df = self._build_journey_emission_savings(df)
+            if journey_df is None:
                 return []
-            
-            # Get recommended mode and normalize naming
-            if 'typo.reco.reco_dt2.0' not in df_reco.columns:
-                return []
-            
-            df_reco['reco_mode'] = df_reco['typo.reco.reco_dt2.0']
-            df_reco = df_reco[df_reco['reco_mode'].notna()]
-            
-            if len(df_reco) == 0:
-                return []
-            
-            # Normalize mode names
-            df_reco['reco_mode'] = self._normalize_mode_name(df_reco, 'reco_mode')
-            
-            # Map to emissions factors (use em_reco mapping from R)
-            em_reco_map = {
-                'vae': 11, 'ebike': 11, 'cargo': 11, 'train': 8,
-                'tpu': 25, 'pub': 25, 'velo': 6, 'bike': 6,
-                'marche': 0, 'walking': 0, 'elec': 90,
-                'covoit': 93, 'carpool': 93, 'inter': 56.72391025641025
-            }
-            df_reco['emissions_factor'] = df_reco['reco_mode'].map(em_reco_map)
-            
-            # Calculate emissions: emissions / 1000 * dist * 45 * 2 * freq_all_mod
-            df_reco['reco_emissions'] = (
-                df_reco['emissions_factor'] / 1000 *
-                df_reco['distance_km'] * 45 * 2 * df_reco['freq_all_mod']
-            )
-            
-            # Aggregate by recommended mode
-            results = []
-            for reco_mode in df_reco['reco_mode'].unique():
-                if pd.isna(reco_mode):
-                    continue
-                df_mode = df_reco[df_reco['reco_mode'] == reco_mode]
-                results.append(Emissions(
-                    mode=reco_mode,
-                    total=len(df),
-                    distances=float((df_mode['distance_km'] * df_mode['freq_all_mod']).sum()),
-                    journeys=int((df_mode['freq_all_mod'] * 45 * 2).sum()),
-                    emissions=float(df_mode['reco_emissions'].sum())
-                ))
-            
-            return results
-        
+            journey_df = journey_df.rename(
+                columns={'reco_emissions': 'emissions'})[['token', 'journey', 'dist', 'days', 'emissions']]
         else:
-            # R implementation lines 40-56: Current mode emissions
-            # Calculate weighted sum: sum(freq_mod_i * emissions_i) for ALL modes per person
-            # Then multiply by: distance * 45 * 2 / 1000
-            # Return per-mode breakdown
-            
-            # Step 1: Create long dataframe (pivot longer equivalent)
-            records_long = []
-            for _, row in df.iterrows():
-                for col in available_mode_cols:
-                    mode_name = col.replace('data.freq_mod_', '')
-                    freq = row[col]
-                    if pd.notna(freq) and freq > 0:
-                        records_long.append({
-                            'token': row.get('token', ''),
-                            'mode': mode_name,
-                            'freq_mod': freq,
-                            'distance_km': row['distance_km'],
-                            'emissions_factor': MODE_EMISSIONS.get(mode_name, 0)
-                        })
-            
-            if len(records_long) == 0:
-                return []
-            
-            df_long = pd.DataFrame(records_long)
-            
-            # Step 2: Calculate weighted sum per person (R line 52)
-            # Group by token and calculate sum(emissions * freq_mod)
-            df_person = df_long.groupby('token').agg({
-                'distance_km': 'first',  # Distance is same for all modes per person
-                'freq_mod': lambda x: (df_long.loc[x.index, 'freq_mod'] * df_long.loc[x.index, 'emissions_factor']).sum()
-            }).rename(columns={'freq_mod': 'weighted_emissions'})
-            
-            # Step 3: Calculate total emissions per person (R line 56)
-            # initial_emissions = initial_emissions * 45 * 2 * dist / 1000
-            df_person['total_emissions'] = (
-                df_person['weighted_emissions'] * 
-                df_person['distance_km'] * 45 * 2 / 1000
-            )
-            
-            # Step 4: Expand to get per-mode contributions
-            # We need to distribute each person's total emissions proportionally to modes
-            df_long_with_totals = df_long.merge(
-                df_person[['total_emissions', 'weighted_emissions']].reset_index(), 
-                on='token'
-            )
-            
-            # Calculate each mode's contribution to the person's total
-            df_long_with_totals['mode_contribution'] = (
-                df_long_with_totals['freq_mod'] * df_long_with_totals['emissions_factor']
-            ) / df_long_with_totals['weighted_emissions']
-            
-            df_long_with_totals['mode_emissions'] = (
-                df_long_with_totals['total_emissions'] * df_long_with_totals['mode_contribution']
-            )
-            
-            # Step 5: Aggregate by mode
-            results = []
-            for mode_name in df_long_with_totals['mode'].unique():
-                df_mode = df_long_with_totals[df_long_with_totals['mode'] == mode_name]
-                results.append(Emissions(
-                    mode=mode_name,
-                    total=len(df),
-                    distances=float(df_mode['distance_km'].sum()),
-                    journeys=int((df_mode['freq_mod'] * 45 * 2).sum()),
-                    emissions=float(df_mode['mode_emissions'].sum())
-                ))
-            
-            return results
-
-    def _compute_mode_emissions_v2(self, df: pd.DataFrame, apply_reco: bool = False) -> list[Emissions]:
-        """
-        Compute all CO2 emissions from a DataFrame of records for V2 data.
-        
-        Based on R implementation (Untitled.R lines 74-210):
-        - Build journey-level dataframe with proper intermodality detection
-        - Calculate mode_fraction based on journey composition (train gets 80% if present)
-        - Apply mode_fraction to distance BEFORE emissions calculation
-        - For recommendations: use typo.reco.reco_dt2.0 and apply intermodal min logic
-        
-        Args:
-            df: DataFrame with V2 records
-            apply_reco: If True, calculate emissions with recommendations applied
-            
-        Returns:
-            List of Emissions objects (one per mode)
-        """
-        if len(df) == 0:
-            return []
-        
-        # Step 1: Build journey attributes using shared pipeline
-        df_combined = self._build_journey_attributes(df)
-        if df_combined is None:
-            return []
-        
-        # Step 2: Calculate CO2 emissions for current modes
-        df_combined = self._calculate_journey_metrics(df_combined, MODE_EMISSIONS, 'co2')
-        # Rename to match existing logic
-        df_combined['emissions_dt'] = df_combined['co2_value']
-        
-        if not apply_reco:
-            # Normalize mode names AFTER calculation (to preserve intermodality logic with raw names)
-            df_combined['mode_normalized'] = self._normalize_mode_name(df_combined, 'mode')
-            
-            # Aggregate by normalized mode
-            results = []
-            for mode_name in df_combined['mode_normalized'].unique():
-                df_mode = df_combined[df_combined['mode_normalized'] == mode_name]
-                results.append(Emissions(
-                    mode=mode_name,
-                    total=len(df),
-                    distances=float((df_mode['dist_mode'] * df_mode['days'] * 2 * 45).sum()),
-                    journeys=int((df_mode.groupby(['token', 'journey'])['days'].first() * 2 * 45).sum()),
-                    emissions=float(df_mode['emissions_dt'].sum())
-                ))
-            
-            return results
-        
-        else:
-            # Calculate recommendation emissions (R lines 171-210), each
-            # recommendation taken into account: new-style typo.reco.reco_inter.N is
-            # matched 1:1 to the journey of the same index (its own days/distance/
-            # intermodality), legacy typo.reco.reco_dt2.0/.1 general recommendations
-            # (not tied to a specific journey) are weighted by, and compared against,
-            # the person's total journey days/emissions, as originally computed.
-            reco_df = self._build_reco_weighted(df)
-            if reco_df is None:
+            combined_df = self._build_journey_attributes(df)
+            if combined_df is None:
                 return []
 
-            dist_by_token = df.set_index('token')['distance_km'] if 'token' in df.columns else pd.Series(dtype=float)
-            reco_df['dist'] = reco_df['token'].map(dist_by_token)
+            combined_df = self._calculate_journey_metrics(combined_df, MODE_EMISSIONS, 'co2')
 
-            journey_intermodal = df_combined.groupby(['token', 'journey'])['is_intermodal'].first()
-            token_any_intermodal = df_combined.groupby('token')['is_intermodal'].any()
-            journey_emissions = df_combined.groupby(['token', 'journey'])['emissions_dt'].sum()
-            token_total_emissions = df_combined.groupby('token')['emissions_dt'].sum()
+            # Collapse per-mode rows back to one row per journey: sum co2
+            # across modes in an intermodal journey, dist/days are the same
+            # for every mode row of a given journey.
+            journey_df = combined_df.groupby(['token', 'journey']).agg(
+                emissions=('co2_value', 'sum'), dist=('dist', 'first'), days=('days', 'first')
+            ).reset_index()
 
-            def is_legacy(journey_id) -> bool:
-                return str(journey_id).startswith('legacy_')
+        # Label per (token, journey), built the same explicit-suffix way as
+        # _reco_inter_columns/_build_reco_weighted in commons.py.
+        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+        label_cols = [c for c in df.columns if label_pattern.match(c)]
+        rows = []
+        for col in label_cols:
+            journey_id = label_pattern.match(col).group(1)
+            for idx, label in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                rows.append({'token': token, 'journey': journey_id, 'label': label})
+        if not rows:
+            return []
 
-            reco_df['is_intermodal'] = reco_df.apply(
-                lambda row: token_any_intermodal.get(row['token'], False) if is_legacy(row['journey'])
-                else journey_intermodal.get((row['token'], row['journey']), False),
-                axis=1
-            )
-            reco_df['current_emissions'] = reco_df.apply(
-                lambda row: token_total_emissions.get(row['token'], 0) if is_legacy(row['journey'])
-                else journey_emissions.get((row['token'], row['journey']), 0),
-                axis=1
-            )
+        merged = journey_df.merge(pd.DataFrame(rows), on=['token', 'journey'], how='inner')
 
-            # Normalize mode names
-            reco_df['reco_mode'] = self._normalize_mode_name(reco_df, 'reco_mode')
+        results = []
+        for label in merged['label'].unique():
+            dfl = merged[merged['label'] == label]
+            results.append(Emissions(
+                mode=str(label),
+                total=len(df),
+                distances=round(float((dfl['dist'] * dfl['days'] * 2 * 45).sum()), 3),
+                journeys=int((dfl['days'] * 2 * 45).sum()),
+                emissions=round(float(dfl['emissions'].sum()), 3),
+            ))
 
-            # Map to emissions factors (use em_reco from R)
-            em_reco_map = {
-                'vae': 11, 'ebike': 11, 'cargo': 11, 'train': 8,
-                'tpu': 25, 'pub': 25, 'velo': 6, 'bike': 6,
-                'marche': 0, 'walking': 0, 'elec': 90,
-                'covoit': 93, 'carpool': 93, 'inter': 56.72391025641025
-            }
-            reco_df['emissions_factor'] = reco_df['reco_mode'].map(em_reco_map)
+        # filter out labels with zero emissions
+        return [e for e in results if e.emissions > 0]
 
-            # Calculate reco emissions (R line 186)
-            # emissions / 1000 * dist * days * 2 * 45
-            reco_df['reco_emissions'] = (
-                reco_df['emissions_factor'] / 1000 *
-                reco_df['dist'] * reco_df['days'] * 2 * 45
-            )
-
-            # Apply intermodal logic (R lines 200-209)
-            # If is_intermodal AND reco == 'inter': use min(reco_emissions, current_emissions)
-            def apply_inter_logic(row):
-                if row['is_intermodal'] and row['reco_mode'] == 'inter':
-                    return min(row['reco_emissions'], row['current_emissions'])
-                return row['reco_emissions']
-
-            reco_df['final_emissions'] = reco_df.apply(apply_inter_logic, axis=1)
-
-            # Aggregate by reco_mode
-            results = []
-            for reco_mode in reco_df['reco_mode'].unique():
-                if pd.isna(reco_mode):
-                    continue
-                df_mode = reco_df[reco_df['reco_mode'] == reco_mode]
-                results.append(Emissions(
-                    mode=reco_mode,
-                    total=len(df),
-                    distances=float((df_mode['dist'] * df_mode['days'] * 2 * 45).sum()),
-                    journeys=int((df_mode['days'] * 2 * 45).sum()),
-                    emissions=float(df_mode['final_emissions'].sum())
-                ))
-
-            return results
-
-    def _compute_mode_emission_reductions_v2(self, df: pd.DataFrame, mode: str) -> list[EmissionReductions]:
+    def _build_journey_emission_savings(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
-        Compute all CO2 emission reductions from a DataFrame of records for V2 data.
-        
+        Build a per-(token, journey, recommendation) DataFrame with both
+        current and potential recommended CO2 emissions, shared by every
+        emission-reduction grouping (by recommended mode, or by the
+        journey's own v3 typology label).
+
         Based on R implementation (Untitled.R lines 223-227):
         - Uses the same journey-level logic as _compute_mode_emissions_v2
         - Calculates emissions_dt (current) and reco_emissions (recommended)
-        - Returns saved_emissions = emissions_dt - reco_emissions, grouped by recommended mode
-        
+        - saved_emissions = emissions_dt - reco_emissions
+
         Args:
-            df: DataFrame with V2 records
-            mode: Mode to calculate reductions for (the recommended mode)
-            
+            df: DataFrame of records (V2 or V3) containing
+                data.freq_mod_journeys.* and recommendation columns
+
         Returns:
-            List of EmissionReductions objects
+            DataFrame with columns ['token', 'journey', 'dist', 'days',
+            'is_intermodal', 'emissions_dt', 'reco_mode', 'reco_emissions',
+            'saved_emissions'], or None if no data / no recommendations
         """
         if len(df) == 0:
-            return []
-        
+            return None
+
         # Step 1: Build journey attributes using shared pipeline
         df_combined = self._build_journey_attributes(df)
         if df_combined is None:
-            return []
-        
+            return None
+
         # Step 2: Calculate current CO2 emissions
         df_combined = self._calculate_journey_metrics(df_combined, MODE_EMISSIONS, 'co2')
         df_combined['emissions_dt'] = df_combined['co2_value']
-        
+
         # Step 3: Aggregate by journey to get total emissions per journey
         # (needed because we have one row per mode, but need journey-level aggregation)
         journey_emissions = df_combined.groupby(['token', 'journey']).agg({
@@ -820,7 +606,7 @@ class EmissionsService(BaseStatsService):
             legacy_reco_rows, columns=['token', 'reco_mode'])
 
         if new_reco_df.empty and legacy_reco_df.empty:
-            return []
+            return None
 
         frames = []
         if not new_reco_df.empty:
@@ -838,33 +624,71 @@ class EmissionsService(BaseStatsService):
             reco_mode = row['reco_mode']
             if pd.isna(reco_mode) or reco_mode not in MODE_EMISSIONS:
                 return None
-            
+
             if row['is_intermodal'] and reco_mode == 'inter':
                 # If already intermodal and recommended mode is "inter", keep current emissions
                 return row['emissions_dt']
-            
+
             reco_em = row['dist'] * MODE_EMISSIONS[reco_mode] * row['days'] * 2 * 45 / 1000
 
             # Only return the recommended emissions if it's a reduction compared to current emissions
             if pd.notna(row['emissions_dt']):
                 return min(reco_em, row['emissions_dt'])
-            
+
             return reco_em
-        
+
         journey_emissions['reco_emissions'] = journey_emissions.apply(calc_reco_emissions, axis=1)
-        
+
         # Step 7: Calculate reductions per recommended mode (R lines 223-227)
         journey_emissions['saved_emissions'] = journey_emissions['emissions_dt'] - journey_emissions['reco_emissions']
-        
-        # Filter for the specific mode and sum positive reductions
-        mode_df = journey_emissions[journey_emissions['reco_mode'] == mode]
-        reduction_total = float(mode_df[mode_df['saved_emissions'] > 0]['saved_emissions'].sum())
-        
-        return [EmissionReductions(
-            mode=mode,
-            total=len(df),
-            reduced=reduction_total
-        )]
+
+        return journey_emissions
+
+    def _compute_journey_emission_reductions_by_label(self, df: pd.DataFrame, label_prefix: str) -> list[EmissionReductions]:
+        """
+        Aggregate potential CO2 emission reductions by each journey's own v3
+        typology label (typo.reco.simple_labels.N / typo.reco.complex_labels.N)
+        instead of by the recommended mode: "how much could journeys
+        currently labeled X save by following their recommendation?"
+
+        Args:
+            df: DataFrame of records already filtered to v3
+            label_prefix: column prefix without the trailing journey index,
+                e.g. 'typo.reco.simple_labels'
+
+        Returns:
+            List of EmissionReductions objects (one per observed label)
+        """
+        journey_emissions = self._build_journey_emission_savings(df)
+        if journey_emissions is None:
+            return []
+
+        # Label per (token, journey), built the same explicit-suffix way as
+        # _compute_journey_emissions_by_label.
+        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+        label_cols = [c for c in df.columns if label_pattern.match(c)]
+        rows = []
+        for col in label_cols:
+            journey_id = label_pattern.match(col).group(1)
+            for idx, label in df[col].dropna().items():
+                token = df.at[idx, 'token'] if 'token' in df.columns else idx
+                rows.append({'token': token, 'journey': journey_id, 'label': label})
+        if not rows:
+            return []
+
+        merged = journey_emissions.merge(pd.DataFrame(rows), on=['token', 'journey'], how='inner')
+
+        results = []
+        for label in merged['label'].unique():
+            dfl = merged[merged['label'] == label]
+            reduction_total = float(dfl[dfl['saved_emissions'] > 0]['saved_emissions'].sum())
+            results.append(EmissionReductions(
+                mode=str(label),
+                total=len(df),
+                reduced=round(reduction_total, 3)
+            ))
+
+        return [e for e in results if e.reduced > 0]
 
     def _compute_mode_pro_emission_reductions_v2(
         self, 
@@ -1037,29 +861,6 @@ class EmissionsService(BaseStatsService):
             journeys=total_journeys,
             emissions=total_emissions
         )]
-
-    def _merge_emissions(self, emissions1: list[Emissions], emissions2: list[Emissions]) -> list[Emissions]:
-        """Merge each Emissions into a list of Emissions."""
-        for em2 in emissions2:
-            em1 = next(
-                (e for e in emissions1 if e.mode == em2.mode), None)
-            if not em1:
-                emissions1.append(em2)
-                continue
-            em = Emissions(
-                mode=em1.mode,
-                total=em1.total + em2.total,
-                distances=em1.distances + em2.distances,
-                journeys=em1.journeys + em2.journeys,
-                emissions=em1.emissions + em2.emissions
-            )
-            # replace in emissions1
-            for i in range(len(emissions1)):
-                if emissions1[i].mode == em.mode:
-                    emissions1[i] = em
-                    break
-
-        return emissions1
 
     def _normalize_mode_name(self, df: pd.DataFrame, column: str) -> str:
         """Normalize mode naming, because recommendations use different terms."""

@@ -84,9 +84,14 @@ export const useStats = defineStore('stats', () => {
           })
           frequencies.value['freq_mod_complex'] = stats.mode_frequencies_complex_labels || []
           frequencies.value['freq_mod_simple'] = stats.mode_frequencies_simple_labels || []
-          emissions.value['freq_mod'] = stats.mode_emissions || []
-          emissions.value['reco_mod'] = stats.reco_mode_emissions || []
-          emissionsReductions.value['reductions_mod'] = stats.mode_emission_reductions || []
+          emissions.value['freq_mod_simple'] = stats.mode_emissions_simple_labels || []
+          emissions.value['freq_mod_complex'] = stats.mode_emissions_complex_labels || []
+          emissions.value['reco_mod_simple'] = stats.reco_mode_emissions_simple_labels || []
+          emissions.value['reco_mod_complex'] = stats.reco_mode_emissions_complex_labels || []
+          emissionsReductions.value['reductions_mod_simple'] =
+            stats.mode_emission_reductions_simple_labels || []
+          emissionsReductions.value['reductions_mod_complex'] =
+            stats.mode_emission_reductions_complex_labels || []
           links.value['mod_reco'] = stats.mode_links || {
             total: 0,
             data: [],

@@ -335,9 +335,12 @@ export interface Stats {
   frequencies: Frequencies[] | null
   mode_frequencies_complex_labels: Frequencies[] | null
   mode_frequencies_simple_labels: Frequencies[] | null
-  mode_emissions: Emissions[] | null
-  mode_emission_reductions: EmissionReduction[] | null
-  reco_mode_emissions: Emissions[] | null
+  mode_emissions_simple_labels: Emissions[] | null
+  mode_emissions_complex_labels: Emissions[] | null
+  mode_emission_reductions_simple_labels: EmissionReduction[] | null
+  mode_emission_reductions_complex_labels: EmissionReduction[] | null
+  reco_mode_emissions_simple_labels: Emissions[] | null
+  reco_mode_emissions_complex_labels: Emissions[] | null
   mode_links: StatLinks | null
   pro_frequencies: Frequencies[] | null
   pro_mode_frequencies: Frequencies[] | null

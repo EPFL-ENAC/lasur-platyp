@@ -4,14 +4,14 @@
     :loading="props.loading"
     :has-data="total > 0"
     :show-info="true"
-    :no-data-title="t('stats.emissions_reductions_share.title')"
+    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
     :option="option"
     :exportable="!!exportable"
   >
-    <p class="q-mb-xs">{{ t('stats.emissions_reductions_share.texts.default') }}</p>
+    <p class="q-mb-xs">{{ t(`stats.emissions_${props.chartTranslationName}.texts.default`) }}</p>
     <p v-if="biggestEmission">
       {{
-        t('stats.emissions_reductions_share.texts.specific', {
+        t(`stats.emissions_${props.chartTranslationName}.texts.specific`, {
           percentage: formatNumber(biggestEmission.percentage || 0),
           mode: keyLabel(biggestEmission.mode),
         })
@@ -41,6 +41,7 @@ const { t, locale } = useI18n()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
+  chartTranslationName: string
   reductions: EmissionReduction[] | null
   height?: number
   loading?: boolean
@@ -105,7 +106,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_reductions_share.labels.${shortKey(key)}`)
+  return t(`stats.emissions_${props.chartTranslationName}.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
@@ -134,7 +135,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_reductions_share.title`),
+      text: t(`stats.emissions_${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -160,7 +161,7 @@ function initChartOptions() {
     },
     series: [
       {
-        name: t(`stats.emissions_reductions_share.series`) || '',
+        name: t(`stats.emissions_${props.chartTranslationName}.series`) || '',
         type: 'pie',
         radius: ['40%', '70%'],
         top: 'middle',

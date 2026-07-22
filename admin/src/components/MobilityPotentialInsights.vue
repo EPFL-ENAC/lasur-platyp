@@ -160,7 +160,7 @@ const bestReduction = computed(() => {
       : null
 
   return {
-    mode: keyLabel(maxItem.mode),
+    mode: reductionModeLabel(maxItem.mode),
     reduction: maxItem.reduced * SCALE_FACTOR,
     percentage: Math.round((maxItem.reduced / totalReduction) * 100),
     extrapolatedReduction:
@@ -248,6 +248,28 @@ function keyLabel(key: string) {
 
   if (Number.isInteger(Number(key))) {
     return key
+  }
+
+  return t(`transportation_modes.${shortKey(key)}`)
+}
+
+function reductionModeLabel(key: string) {
+  if (key === 'null' || key === 'None') {
+    return t('stats.na')
+  }
+
+  if (Number.isInteger(Number(key))) {
+    return key
+  }
+
+  // reductionKey may point to the v3 simple/complex label reductions, whose
+  // values (e.g. 'TIM', 'car+pub') live in a different i18n namespace than
+  // plain transport modes
+  if (props.reductionKey?.includes('simple')) {
+    return t(`simple_labels.${shortKey(key)}`)
+  }
+  if (props.reductionKey?.includes('complex')) {
+    return t(`complex_labels.${shortKey(key)}`)
   }
 
   return t(`transportation_modes.${shortKey(key)}`)
