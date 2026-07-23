@@ -1,25 +1,25 @@
 env_path=../.env
 
 install:
-	poetry install
+	uv sync
 
 test:
-	poetry run pytest -s
+	uv run pytest -s
 
 run:
-	poetry run dotenv -f "$(env_path)" run uvicorn api.main:app
+	uv run dotenv -f "$(env_path)" run uvicorn api.main:app
 
 lint:
-	poetry run pre-commit run --all-files
+	uv run pre-commit run --all-files
 
 db-upgrade:
-	poetry run dotenv -f "$(env_path)" run alembic upgrade head
+	uv run dotenv -f "$(env_path)" run alembic upgrade head
 
 db-downgrade:
-	poetry run dotenv -f "$(env_path)" run alembic downgrade -1
+	uv run dotenv -f "$(env_path)" run alembic downgrade -1
 
 db-revision:
-	poetry run dotenv -f "$(env_path)" run alembic revision --autogenerate -m "$(name)"
+	uv run dotenv -f "$(env_path)" run alembic revision --autogenerate -m "$(name)"
 
 seed:
 	curl -X PUT 'http://localhost:8000/seed' -H 'accept: application/json'
@@ -59,10 +59,10 @@ download-france-osm:
 generate-boundaries: generate-filtering-boundaries generate-multilevel-boundaries
 
 generate-filtering-boundaries:
-	poetry run python scripts/create_filtering_boundaries.py
+	uv run python scripts/create_filtering_boundaries.py
 
 generate-multilevel-boundaries:
-	poetry run python scripts/create_multilevel_boundaries.py
+	uv run python scripts/create_multilevel_boundaries.py
 
 pmtiles:
 	for f in data/*.geojson; do \
