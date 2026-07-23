@@ -22,7 +22,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS } from './commons'
+import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -126,6 +126,12 @@ function initChartOptions() {
   }
 
   const categories = recoEmissions.sort((a, b) => b.reduced - a.reduced).map((item) => item.mode)
+
+  const colors = props.chartTranslationName.includes('simple')
+    ? SIMPLE_LABELS_COLORS
+    : props.chartTranslationName.includes('complex')
+      ? COMPLEX_LABELS_COLORS
+      : MODE_COLORS
 
   // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
   currentEmissions.value = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
@@ -247,7 +253,7 @@ function initChartOptions() {
           ...categories.map((cat) => ({
             value: (categoryEmissions[cat] || 0) * SCALE_FACTOR,
             itemStyle: {
-              color: MODE_COLORS[cat] || MODE_COLORS.default || '#ccc',
+              color: colors[shortKey(cat)] || colors.default || '#ccc',
             },
           })),
           {
