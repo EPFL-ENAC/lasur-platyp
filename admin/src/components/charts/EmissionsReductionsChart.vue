@@ -22,13 +22,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import {
-  MODE_COLORS,
-  SIMPLE_LABELS_COLORS,
-  COMPLEX_LABELS_COLORS,
-  simpleLabelSortOrder,
-  complexLabelSortOrder,
-} from './commons'
+import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -131,17 +125,7 @@ function initChartOptions() {
     return
   }
 
-  const categories = recoEmissions
-    .sort((a, b) => {
-      if (props.chartTranslationName.includes('simple')) {
-        return simpleLabelSortOrder(shortKey(a.mode)) - simpleLabelSortOrder(shortKey(b.mode))
-      }
-      if (props.chartTranslationName.includes('complex')) {
-        return complexLabelSortOrder(shortKey(a.mode)) - complexLabelSortOrder(shortKey(b.mode))
-      }
-      return b.reduced - a.reduced
-    })
-    .map((item) => item.mode)
+  const categories = recoEmissions.sort((a, b) => b.reduced - a.reduced).map((item) => item.mode)
 
   const colors = props.chartTranslationName.includes('simple')
     ? SIMPLE_LABELS_COLORS
