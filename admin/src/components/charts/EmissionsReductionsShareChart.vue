@@ -26,7 +26,14 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS, modeSortOrder } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  modeSortOrder,
+  simpleLabelSortOrder,
+  complexLabelSortOrder,
+} from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -121,7 +128,15 @@ function initChartOptions() {
     return
   }
 
-  recoEmissions.sort((a, b) => modeSortOrder(a.mode) - modeSortOrder(b.mode))
+  recoEmissions.sort((a, b) => {
+    if (props.chartTranslationName.includes('simple')) {
+      return simpleLabelSortOrder(shortKey(a.mode)) - simpleLabelSortOrder(shortKey(b.mode))
+    }
+    if (props.chartTranslationName.includes('complex')) {
+      return complexLabelSortOrder(shortKey(a.mode)) - complexLabelSortOrder(shortKey(b.mode))
+    }
+    return modeSortOrder(a.mode) - modeSortOrder(b.mode)
+  })
 
   const colors = props.chartTranslationName.includes('simple')
     ? SIMPLE_LABELS_COLORS

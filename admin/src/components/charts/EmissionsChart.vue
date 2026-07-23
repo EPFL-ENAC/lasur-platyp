@@ -33,7 +33,13 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  simpleLabelSortOrder,
+  complexLabelSortOrder,
+} from './commons'
 import { formatNumber } from 'src/utils/numbers'
 import type { Emissions } from 'src/models'
 
@@ -191,6 +197,12 @@ function initChartOptions() {
   let ubound = 0
   const preparedData = emissions
     .sort((a, b) => {
+      if (props.chartTranslationName === 'freq_mod_simple') {
+        return simpleLabelSortOrder(shortKey(a.mode)) - simpleLabelSortOrder(shortKey(b.mode))
+      }
+      if (props.chartTranslationName === 'freq_mod_complex') {
+        return complexLabelSortOrder(shortKey(a.mode)) - complexLabelSortOrder(shortKey(b.mode))
+      }
       const emaA = a.journeys ? a.emissions / a.journeys : 0
       const emaB = b.journeys ? b.emissions / b.journeys : 0
       return emaB - emaA
