@@ -533,7 +533,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_freq_mod_simple: {
-      title: 'Émissions de CO₂ par étiquette simple',
+      title: 'Émissions de CO₂ (simple)',
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -542,7 +542,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_freq_mod_complex: {
-      title: 'Émissions de CO₂ par étiquette détaillée',
+      title: 'Émissions de CO₂ (détail)',
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -567,7 +567,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_reductions_mod_simple: {
-      title: "Potentiel de réduction sur les émissions liées aux déplacements pendulaires, par étiquette simple",
+      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires (simple)',
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Étiquette simple actuelle',
       series: 'Réduction potentielle',
@@ -582,7 +582,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_reductions_mod_complex: {
-      title: "Potentiel de réduction sur les émissions liées aux déplacements pendulaires, par étiquette détaillée",
+      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires (détail)',
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Étiquette détaillée actuelle',
       series: 'Réduction potentielle',
@@ -611,7 +611,7 @@ Certains impacts sont aussi calculés :
       },
     },
     emissions_reductions_share_simple: {
-      title: "Répartition des gains d'émissions par étiquette simple",
+      title: "Répartition des gains d'émissions (simple)",
       series: 'Réduction potentielle',
       labels: {
         ...simpleLabels,
@@ -621,11 +621,11 @@ Certains impacts sont aussi calculés :
         default:
           'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque étiquette simple actuelle.',
         specific:
-          "{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.",
+          '{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
       },
     },
     emissions_reductions_share_complex: {
-      title: "Répartition des gains d'émissions par étiquette détaillée",
+      title: "Répartition des gains d'émissions (détail)",
       series: 'Réduction potentielle',
       labels: {
         ...complexLabels,
@@ -635,7 +635,7 @@ Certains impacts sont aussi calculés :
         default:
           'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque étiquette détaillée actuelle.',
         specific:
-          "{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.",
+          '{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
       },
     },
     emissions_freq_mod_pro: {

@@ -522,7 +522,7 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_freq_mod_simple: {
-      title: 'CO₂ emissions per simple label',
+      title: 'CO₂ emissions (simple)',
       yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
       xaxis: 'Journeys per year',
       labels: {
@@ -531,7 +531,7 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_freq_mod_complex: {
-      title: 'CO₂ emissions per detailed label',
+      title: 'CO₂ emissions (detailed)',
       yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
       xaxis: 'Journeys per year',
       labels: {
@@ -556,7 +556,7 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_reductions_mod_simple: {
-      title: 'Potential reductions in commuting emissions, by simple label',
+      title: 'Potential reductions in commuting emissions (simple)',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Current simple label',
@@ -571,7 +571,7 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_reductions_mod_complex: {
-      title: 'Potential reductions in commuting emissions, by detailed label',
+      title: 'Potential reductions in commuting emissions (detailed)',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Current detailed label',
@@ -600,21 +600,20 @@ Some environmental impacts have also been calculated:
       },
     },
     emissions_reductions_share_simple: {
-      title: 'Distribution of emissions reductions by simple label',
+      title: 'Distribution of emissions reductions (simple)',
       series: 'Potential reduction',
       labels: {
         ...simpleLabels,
         ...emissionsLabels,
       },
       texts: {
-        default:
-          'This chart shows the share of CO₂ emissions reduction per current simple label.',
+        default: 'This chart shows the share of CO₂ emissions reduction per current simple label.',
         specific:
           '{percentage}% of potential reduction depend on journeys currently labeled {mode}.',
       },
     },
     emissions_reductions_share_complex: {
-      title: 'Distribution of emissions reductions by detailed label',
+      title: 'Distribution of emissions reductions (detailed)',
       series: 'Potential reduction',
       labels: {
         ...complexLabels,
