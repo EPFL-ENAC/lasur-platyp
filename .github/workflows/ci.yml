@@ -16,18 +16,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: '3.11'
 
-      - name: Install Poetry
-        run: pip install poetry
-
       - name: Install dependencies
-        run: poetry install
+        run: uv sync --locked
 
       - name: Run tests
-        run: poetry run pytest -s
+        run: uv run pytest -s
 
   frontend-collect:
     runs-on: ubuntu-latest
