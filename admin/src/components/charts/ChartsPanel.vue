@@ -437,6 +437,13 @@ const onTabChanged = (newTab: string) => {
   preferencesStore.statsSectionsExpandedState.mobilityPotentials = newTab === 'potentials'
   preferencesStore.statsSectionsExpandedState.behaviouralChanges = newTab === 'behavioural'
 }
+
+defineExpose({
+  freqModalType,
+  emModalType,
+  redModalType,
+  redShareModalType,
+})
 </script>
 
 <style lang="css" scoped>
