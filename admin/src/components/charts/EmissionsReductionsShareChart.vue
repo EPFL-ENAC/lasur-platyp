@@ -26,7 +26,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS, modeSortOrder } from './commons'
+import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS, modeSortOrder } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -123,6 +123,12 @@ function initChartOptions() {
 
   recoEmissions.sort((a, b) => modeSortOrder(a.mode) - modeSortOrder(b.mode))
 
+  const colors = props.chartTranslationName.includes('simple')
+    ? SIMPLE_LABELS_COLORS
+    : props.chartTranslationName.includes('complex')
+      ? COMPLEX_LABELS_COLORS
+      : MODE_COLORS
+
   total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {
     grid: {
@@ -174,7 +180,7 @@ function initChartOptions() {
           name: keyLabel(item.mode),
           value: item.reduced,
         })),
-        color: recoEmissions.map((item) => MODE_COLORS[item.mode] || '#FCC447'),
+        color: recoEmissions.map((item) => colors[shortKey(item.mode)] || '#FCC447'),
       },
     ],
   }
