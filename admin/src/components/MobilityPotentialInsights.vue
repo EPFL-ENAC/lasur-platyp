@@ -1,11 +1,5 @@
 <template>
-  <q-markdown
-    v-if="message"
-    :src="message"
-    no-heading-anchor-links
-    no-linkify
-    class="compact text-caption q-px-md q-pb-md q-mt-sm"
-  />
+  <q-markdown v-if="message" :src="message" no-heading-anchor-links no-linkify class="compact" />
   <div v-else>
     {{ t('stats.no_data') }}
   </div>
