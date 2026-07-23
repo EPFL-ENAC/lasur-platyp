@@ -41,7 +41,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="freqModalType === 'simple'" :org-names="orgs">
         <simple-labels-share-chart
           :height="height"
           :frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
@@ -49,7 +49,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="freqModalType === 'detailed'" :org-names="orgs">
         <complex-labels-share-chart
           :height="height"
           :frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
@@ -87,7 +87,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="emModalType === 'simple'" :org-names="orgs">
         <emissions-chart
           chart-translation-name="freq_mod_simple"
           :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
@@ -98,7 +98,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="emModalType === 'detailed'" :org-names="orgs">
         <emissions-chart
           chart-translation-name="freq_mod_complex"
           :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
@@ -175,7 +175,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="redModalType === 'simple'" :org-names="orgs">
         <emissions-reductions-chart
           chart-translation-name="reductions_mod_simple"
           :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
@@ -186,7 +186,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="redModalType === 'detailed'" :org-names="orgs">
         <emissions-reductions-chart
           chart-translation-name="reductions_mod_complex"
           :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
@@ -197,7 +197,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="redShareModalType === 'simple'" :org-names="orgs">
         <emissions-reductions-share-chart
           chart-translation-name="reductions_share_simple"
           :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
@@ -206,7 +206,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="redShareModalType === 'detailed'" :org-names="orgs">
         <emissions-reductions-share-chart
           chart-translation-name="reductions_share_complex"
           :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
@@ -340,11 +340,19 @@ const route = useRoute()
 const stats = ref<StatsState | null>(null)
 const orgs = ref<string[]>([])
 const campaigns = ref<string[]>([])
+const freqModalType = ref('simple')
+const emModalType = ref('simple')
+const redModalType = ref('simple')
+const redShareModalType = ref('simple')
 
 onMounted(() => {
   stats.value = getStateFromLocalStorage(route.query.statsStateId as string)
   orgs.value = (route.query.orgs as string)?.split(';').map(decodeURIComponent) || []
   campaigns.value = (route.query.campaigns as string)?.split(';').map(decodeURIComponent) || []
+  freqModalType.value = (route.query.freqModalType as string) || 'simple'
+  emModalType.value = (route.query.emModalType as string) || 'simple'
+  redModalType.value = (route.query.redModalType as string) || 'simple'
+  redShareModalType.value = (route.query.redShareModalType as string) || 'simple'
 
   window.addEventListener('beforeunload', cleanUpLocalStorage)
 })

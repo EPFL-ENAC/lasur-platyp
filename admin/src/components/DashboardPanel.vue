@@ -110,6 +110,7 @@
     </div>
     <div v-else>
       <charts-panel
+        ref="chartsPanelRef"
         :percent="percent"
         :height="height"
         :collaborators-count="totalCollaboratorsCount"
@@ -139,6 +140,7 @@ const campaignService = services.make('campaign')
 
 const percent = ref(true)
 const height = ref(400)
+const chartsPanelRef = ref<InstanceType<typeof ChartsPanel> | null>(null)
 const companyMap = ref<{ [key: string]: Company }>({})
 const campaignMap = ref<{ [key: string]: Campaign }>({})
 const showMapFilter = ref(false)
@@ -272,6 +274,11 @@ async function goToReport() {
   )
 
   url.searchParams.set('statsStateId', id)
+
+  url.searchParams.set('freqModalType', chartsPanelRef.value?.freqModalType ?? 'simple')
+  url.searchParams.set('emModalType', chartsPanelRef.value?.emModalType ?? 'simple')
+  url.searchParams.set('redModalType', chartsPanelRef.value?.redModalType ?? 'simple')
+  url.searchParams.set('redShareModalType', chartsPanelRef.value?.redShareModalType ?? 'simple')
 
   window.open(url.toString(), '_blank')
 }
