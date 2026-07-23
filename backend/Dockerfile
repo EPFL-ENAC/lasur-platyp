@@ -6,7 +6,7 @@ ENV UV_LINK_MODE=copy
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y g++ libpq-dev libgl1 gdal-bin libgdal-dev
+RUN apt-get update && apt-get install -y git g++ libpq-dev libgl1 gdal-bin libgdal-dev
 
 COPY uv.lock pyproject.toml /app/
 RUN uv sync --locked --no-install-project --no-dev
