@@ -40,7 +40,7 @@ RECOS_PRO = [
 ]
 
 DAYS_PER_YEAR_FACTOR = {
-    'week': 45,  # worked weeks
+    'week': 47,  # worked weeks
     'month': 11,  # worked months
     'year': 1,
 }
