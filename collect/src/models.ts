@@ -52,6 +52,7 @@ export interface RecordData {
   company_vehicle?: boolean
   travel_time: number
   equipments: string[]
+  equipments_custom?: string | undefined
   constraints: string[]
   constraints_custom?: string | undefined
   freq_mod_journeys: Journey[]
