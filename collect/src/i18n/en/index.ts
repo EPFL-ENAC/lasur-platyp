@@ -311,4 +311,5 @@ export default {
   dark_mode: 'Dark mode',
   transit_lines: 'Public transport network',
   print: 'Print',
+  eurogeographics_attributions: 'EuroGeographics for the administrative boundaries',
 }

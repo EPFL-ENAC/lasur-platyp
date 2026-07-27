@@ -324,4 +324,5 @@ export default {
   dark_mode: 'Mode sombre',
   transit_lines: 'Réseau transports publics',
   print: 'Imprimer',
+  eurogeographics_attributions: 'EuroGeographics pour les limites administratives',
 }
