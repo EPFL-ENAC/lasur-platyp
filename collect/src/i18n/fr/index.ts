@@ -63,7 +63,7 @@ export default {
     equipments_option: {
       bike: 'Vélo',
       tpu_unireso: 'Unireso',
-      tpu_leman_pass: 'Leman Pass',
+      tpu_leman_pass: 'Léman Pass',
       train_demi_tarif: 'Demi-tarif',
       train_abo_gen: 'Abonnement général',
       moto: 'Moto / scooter / cyclomoteur',

@@ -63,8 +63,8 @@ export default {
     equipments_option: {
       bike: 'Bicycle',
       tpu_unireso: 'Unireso',
-      tpu_leman_pass: 'Leman Pass',
-      train_demi_tarif: 'Half-faire Travelcard',
+      tpu_leman_pass: 'Léman Pass',
+      train_demi_tarif: 'Half-fare Travelcard',
       train_abo_gen: 'GA Travelcard',
       moto: 'Motorcycle/scooter/moped',
       ebike: 'Electric bicycle',

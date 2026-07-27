@@ -745,7 +745,7 @@ Some environmental impacts have also been calculated:
 
         mob_subs: 'Mobility sub.',
         tpu_unireso: 'Unireso',
-        tpu_leman_pass: 'Leman Pass',
+        tpu_leman_pass: 'Léman Pass',
         train_demi_tarif: 'Half-fare Travelcard',
         train_abo_gen: 'GA Travelcard',
         inter: 'Intermodality',
