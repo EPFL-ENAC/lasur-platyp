@@ -62,13 +62,16 @@ export default {
     equipments: 'De quels équipements de mobilité disposez-vous pour vos déplacements quotidiens ?',
     equipments_option: {
       bike: 'Vélo',
-      upt_subs: 'Abonnement de transports publics urbains',
-      train_subs: 'Abonnement de train',
+      tpu_unireso: 'Unireso',
+      tpu_leman_pass: 'Leman Pass',
+      train_demi_tarif: 'Demi-tarif',
+      train_abo_gen: 'Abonnement général',
       moto: 'Moto / scooter / cyclomoteur',
       ebike: 'Vélo à assistance électrique',
       mob_subs: 'Abonnement de mobilité partagée (Mobility, Donkey Republic, etc.)',
       car: 'Voiture (conducteur/passager)',
       ev: 'Voiture électrique',
+      other: 'Autre (à préciser)',
     },
     freq_mod:
       'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',

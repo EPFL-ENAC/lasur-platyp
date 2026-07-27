@@ -360,7 +360,7 @@
               />
             </q-card-section>
           </q-card>
-          <q-card flat>
+          <q-card flat class="grid-item-full-row">
             <q-card-section>
               <equipment-recommendation-matrix-chart
                 :equipmentsStats="stats.equipmentsStats"
@@ -451,5 +451,9 @@ defineExpose({
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
   gap: 2rem;
+}
+
+.grid-item-full-row {
+  grid-column: 1 / -1;
 }
 </style>

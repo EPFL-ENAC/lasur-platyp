@@ -255,8 +255,10 @@ export function makeDefaultBehaviorChangeStats(): BehaviorChangeStats {
 export interface EquipmentPerRecommendation {
   bike: number
   ebike: number
-  upt_subs: number
-  train_subs: number
+  tpu_unireso: number
+  tpu_leman_pass: number
+  train_demi_tarif: number
+  train_abo_gen: number
   mob_subs: number
   moto: number
   car: number
@@ -295,8 +297,10 @@ export const recommendationLabelsReversed = recommendationLabels.toReversed()
 export const equipmentLabels = [
   'bike',
   'ebike',
-  'upt_subs',
-  'train_subs',
+  'tpu_unireso',
+  'tpu_leman_pass',
+  'train_demi_tarif',
+  'train_abo_gen',
   'mob_subs',
   'moto',
   'car',
@@ -305,17 +309,17 @@ export const equipmentLabels = [
 ] as const
 
 export const recommendationToEquipmentMap: {
-  [key in (typeof recommendationLabels)[number]]: (typeof equipmentLabels)[number] | null
+  [key in (typeof recommendationLabels)[number]]: (typeof equipmentLabels)[number][] | null
 } = {
   marche: null,
-  velo: 'bike',
-  vae: 'ebike',
+  velo: ['bike'],
+  vae: ['ebike'],
   cargo: null,
-  train: 'train_subs',
-  tpu: 'upt_subs',
-  covoit: 'mob_subs',
-  elec: 'ev',
-  inter: 'inter',
+  train: ['train_demi_tarif', 'train_abo_gen'],
+  tpu: ['tpu_unireso', 'tpu_leman_pass'],
+  covoit: ['mob_subs'],
+  elec: ['ev'],
+  inter: ['inter'],
 }
 
 export interface EquipmentsStats {

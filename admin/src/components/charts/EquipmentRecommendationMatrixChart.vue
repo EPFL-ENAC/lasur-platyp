@@ -1,25 +1,26 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="total > 0"
-    :show-info="total > 0"
-    :no-data-title="t('stats.equipments_by_recommendations.title')"
-    :option="option"
-    :exportable="!!exportable"
-  >
-    <p class="q-mb-xs">{{ t('stats.equipments_by_recommendations.texts.default') }}</p>
-    <p v-if="analysisText">
-      {{ t('stats.equipments_by_recommendations.texts.specific', analysisText) }}
-    </p>
-  </e-charts-shell>
-  <div class="options" v-if="props.hasOptions && total > 0">
+  <div>
     <q-toggle
+      v-if="withOptions"
       v-model="simpleMode"
       :label="t('stats.equipments_by_recommendations.simpleMode')"
       color="primary"
     />
-    <div class="text-caption">
+    <e-charts-shell
+      :height="height"
+      :loading="props.loading"
+      :has-data="total > 0"
+      :show-info="total > 0"
+      :no-data-title="t('stats.equipments_by_recommendations.title')"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <p class="q-mb-xs">{{ t('stats.equipments_by_recommendations.texts.default') }}</p>
+      <p v-if="analysisText">
+        {{ t('stats.equipments_by_recommendations.texts.specific', analysisText) }}
+      </p>
+    </e-charts-shell>
+    <div v-if="withOptions" class="text-caption">
       {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
     </div>
   </div>
@@ -77,6 +78,10 @@ const total = ref(0)
 
 const simpleMode = ref(false)
 
+const withOptions = computed(() => {
+  return props.hasOptions && total.value > 0
+})
+
 const recommendationLabelsFiltered = computed(() => {
   return recommendationLabelsReversed
 
@@ -115,13 +120,14 @@ const analysisText = computed(() => {
   let smallestValue = Infinity
 
   for (const rec of recommendationLabelsFiltered.value) {
-    const eq = recommendationToEquipmentMap[rec as keyof EquipmentRecommendationMatrix]
+    const eqs = recommendationToEquipmentMap[rec as keyof EquipmentRecommendationMatrix]
 
-    if (eq) {
-      const value =
+    if (eqs) {
+      const row =
         props.equipmentsStats.equipment_recommendation_matrix[
           rec as keyof EquipmentRecommendationMatrix
-        ][eq as keyof EquipmentPerRecommendation]
+        ]
+      const value = eqs.reduce((sum, eq) => sum + row[eq as keyof EquipmentPerRecommendation], 0)
       if (value < smallestValue && value > threshold) {
         smallestValue = value
         smallestReco = rec
@@ -161,7 +167,7 @@ function transformMatrixToData(matrix: EquipmentRecommendationMatrix) {
   recommendationLabelsFiltered.value.forEach((recLabel, recIdx) => {
     const row = matrix[recLabel as keyof EquipmentRecommendationMatrix]
     equipmentLabels.forEach((eqLabel, eqIdx) => {
-      if (simpleMode.value && eqLabel !== recommendationToEquipmentMap[recLabel]) {
+      if (simpleMode.value && !recommendationToEquipmentMap[recLabel]?.includes(eqLabel)) {
         return
       }
 

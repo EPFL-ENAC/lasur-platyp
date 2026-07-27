@@ -70,7 +70,7 @@ def test_compute_equipments_frequencies():
             Frequency(value='mob_subs', count=8, sum=None),
             Frequency(value='train_subs', count=7, sum=None),
             Frequency(value='moto', count=6, sum=None),
-            Frequency(value='upt_subs', count=2, sum=None),
+            Frequency(value='tpu_unireso', count=2, sum=None),
             Frequency(value='ebike', count=2, sum=None),
             Frequency(value='car', count=2, sum=None),
             Frequency(value='bike', count=2, sum=None),

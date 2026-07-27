@@ -753,13 +753,15 @@ Certains impacts sont aussi calculés :
       tooltip: `{count} des participant·e·s qui ont obtenu la recommandation "{reco}" sont équipés avec "{equipment}".<br />
       Cela représente {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".
       `,
-      simpleMode: 'Mode simple',
+      simpleMode: 'Équipements correspondant uniquement aux recommandations',
       labels: {
         ...transportationModes,
 
         mob_subs: "Abo. d'autopartage",
-        train_subs: 'Abo. de train',
-        upt_subs: 'Abo. de transports publics',
+        tpu_unireso: 'Unireso',
+        tpu_leman_pass: 'Léman Pass',
+        train_demi_tarif: 'Demi-tarif',
+        train_abo_gen: 'Abo. général',
         inter: 'Intermodalité',
         tpu: 'Transports publics',
 

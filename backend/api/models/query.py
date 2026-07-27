@@ -224,7 +224,6 @@ class JourneyEnergyStats(BaseModel):
     current: EnergyByJourney
     reco: EnergyByJourney
     gains: JourneyEnergyGains
-    
 
 
 class BehaviorChangeLever(BaseModel):
@@ -250,16 +249,19 @@ class BehaviorChangeByModeBase(BaseModel):
 class BehaviorChangeByModeLever(BehaviorChangeByModeBase):
     levers: List[BehaviorChangeLever] = []
 
+
 class BehaviorChangeByModeMotivation(BehaviorChangeByModeBase):
     motivations: List[BehaviorChangeMotivation] = []
 
 
 class BehaviorChangeStatsBase(BaseModel):
     total_responses: int
-    aggregation_type: str # "all_aggregated", "mode_split", or "mixed"
+    aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
+
 
 class BehaviorChangeStatsLever(BehaviorChangeStatsBase):
     by_mode_levers: List[BehaviorChangeByModeLever]
+
 
 class BehaviorChangeStatsMotivation(BehaviorChangeStatsBase):
     by_mode_motivation: List[BehaviorChangeByModeMotivation] = []
@@ -275,8 +277,10 @@ class BehaviorChangeStats(BaseModel):
 class EquipmentPerRecommendation(BaseModel):
     bike: int = 0
     ebike: int = 0
-    upt_subs: int = 0
-    train_subs: int = 0
+    tpu_unireso: int = 0
+    tpu_leman_pass: int = 0
+    train_demi_tarif: int = 0
+    train_abo_gen: int = 0
     mob_subs: int = 0
     moto: int = 0
     car: int = 0
@@ -299,9 +303,11 @@ class EquipmentRecommendationMatrix(BaseModel):
     elec: EquipmentPerRecommendation = EquipmentPerRecommendation()
     inter: EquipmentPerRecommendation = EquipmentPerRecommendation()
 
+
 class EquipmentsStats(BaseModel):
     total: int
     equipment_recommendation_matrix: EquipmentRecommendationMatrix
+
 
 class Stats(BaseModel):
     total: int = 0

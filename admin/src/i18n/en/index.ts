@@ -739,13 +739,15 @@ Some environmental impacts have also been calculated:
       title: 'Equipment by recommendation',
       tooltip: `{count} of the participants who got the recommendation "{reco}" are equipped with "{equipment}". <br />
       This represents {percentage}% of participants who got the recommendation "{reco}".`,
-      simpleMode: 'Simple mode',
+      simpleMode: 'Equipments matching recommendation only',
       labels: {
         ...transportationModes,
 
         mob_subs: 'Mobility sub.',
-        train_subs: 'Train sub.',
-        upt_subs: 'Public transport sub.',
+        tpu_unireso: 'Unireso',
+        tpu_leman_pass: 'Leman Pass',
+        train_demi_tarif: 'Half-fare Travelcard',
+        train_abo_gen: 'GA Travelcard',
         inter: 'Intermodality',
         tpu: 'Public transport',
 
