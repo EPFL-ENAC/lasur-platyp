@@ -58,8 +58,9 @@ const workplaceOptions = computed<Option[]>(() => {
 function onWorkplaceSelected() {
   if (selectedWorkplace.value === OTHER_WORKPLACE_OPTION) {
     survey.record.data.workplace = {
-      lat: 0,
-      lon: 0,
+      // default is geneva
+      lat: 46.2044,
+      lon: 6.1432,
       address: '',
       name: OTHER_WORKPLACE_OPTION,
     }
