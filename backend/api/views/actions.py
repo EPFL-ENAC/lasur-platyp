@@ -17,12 +17,12 @@ async def find(
     sort: str = Query(None),
     range: str = Query("[0,99]"),
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin()),
+    user: User = Depends(kc_service.get_user_info()),
 ) -> CompanyActionResult:
     """Search for company actions"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await CompanyActionService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"])
+        return await CompanyActionService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -30,26 +30,26 @@ async def find(
 @router.get("/{id}", response_model=CompanyAction, response_model_exclude_none=True)
 async def get(id: int,
               session: AsyncSession = Depends(get_session),
-              user: User = Depends(kc_service.require_admin())) -> CompanyAction:
+              user: User = Depends(kc_service.get_user_info())) -> CompanyAction:
     """Get a company action by id"""
-    return await CompanyActionService(session).get(id)
+    return await CompanyActionService(session).get(id, user)
 
 
 @router.delete("/{id}", response_model=CompanyAction, response_model_exclude_none=True)
 async def delete(
     id: int,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> CompanyAction:
     """Delete a company action by id"""
-    return await CompanyActionService(session).delete(id)
+    return await CompanyActionService(session).delete(id, user)
 
 
 @router.post("/", response_model=CompanyAction, response_model_exclude_none=True)
 async def create(
     item: CompanyActionDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> CompanyAction:
     """Create a company action"""
     return await CompanyActionService(session).create(item, user)
@@ -60,7 +60,7 @@ async def update(
     id: int,
     item: CompanyActionDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> CompanyAction:
     """Update a company action by id"""
     return await CompanyActionService(session).update(id, item, user)

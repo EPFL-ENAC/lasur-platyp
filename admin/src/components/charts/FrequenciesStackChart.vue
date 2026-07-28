@@ -1,28 +1,20 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="stats.loading"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :no-data-title="t(`stats.${props.chartTranslationName}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  />
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import { type EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -32,36 +24,39 @@ import {
 import type { Frequencies } from 'src/models'
 import { MODE_COLORS } from './commons'
 
-const { t } = useI18n()
-const stats = useStats()
+const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  type: string
+  chartTranslationName: string
+  frequencies?: Frequencies[] | Frequencies | null
   groups: string[]
+  percent?: boolean
   xaxis?: string
   yaxis?: string
   height?: number
+  loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
 watch(
-  () => stats.loading,
+  () => props.loading,
   () => {
-    if (stats.loading) {
+    if (props.loading) {
       initChartOptions()
     }
   },
 )
 
-watch([() => props.height], () => {
-  if (!stats.loading) {
+watch([() => props.height, locale, () => props.percent], () => {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -78,20 +73,20 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.${props.type}.labels.${shortKey(key)}`)
+  return t(`stats.${props.chartTranslationName}.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.frequencies || !stats.frequencies[props.type]) {
+  if (!props.frequencies) {
     return
   }
 
   let dataset: { key: string; name: string; value: number }[] = []
   total.value = 0
-  if (Array.isArray(stats.frequencies[props.type])) {
-    dataset = (stats.frequencies[props.type] as Frequencies[]).map((item: Frequencies) => {
+  if (Array.isArray(props.frequencies)) {
+    dataset = (props.frequencies as Frequencies[]).map((item: Frequencies) => {
       total.value = item.total
       return {
         key: shortKey(item.field),
@@ -100,7 +95,7 @@ function initChartOptions() {
       }
     })
   } else {
-    const frequencies = stats.frequencies[props.type] as Frequencies
+    const frequencies = props.frequencies as Frequencies
     dataset = frequencies.data.map((item) => ({
       key: shortKey(item.value),
       name: keyLabel(item.value),
@@ -128,34 +123,70 @@ function initChartOptions() {
     return modes_order.indexOf(a) - modes_order.indexOf(b)
   })
 
-  const series = sorted_modes.map((mode) => {
-    return {
-      name: t(`stats.${props.type}.labels.${mode}`),
-      type: 'bar' as const,
-      stack: 'total',
-      emphasis: {
-        focus: 'series' as const,
-      },
-      color: MODE_COLORS[mode] || '#ccc',
-      data: props.groups.map((grp) => {
-        const item = dataset.find((d) => d.key === `${grp}_${mode}`)
-        return item ? item.value : 0
-      }),
+  let series: {
+    name: string
+    type: 'bar'
+    stack: string
+    emphasis: {
+      focus: 'series'
     }
-  })
+    color: string
+    data: number[]
+  }[] = []
+
+  if (props.percent) {
+    const sumByGroup: Record<string, number> = {}
+    dataset.forEach((item) => {
+      const grp = props.groups.find((g) => item.key.startsWith(g))
+      if (grp) {
+        sumByGroup[grp] = (sumByGroup[grp] || 0) + item.value
+      }
+    })
+    series = sorted_modes.map((mode) => {
+      return {
+        name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
+        type: 'bar' as const,
+        stack: 'total',
+        emphasis: {
+          focus: 'series' as const,
+        },
+        color: MODE_COLORS[mode] || '#ccc',
+        data: props.groups.map((grp) => {
+          const item = dataset.find((d) => d.key === `${grp}_${mode}`)
+          return item ? (item.value / (sumByGroup[grp] || 1)) * 100 : 0
+        }),
+      }
+    })
+  } else {
+    series = sorted_modes.map((mode) => {
+      return {
+        name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
+        type: 'bar' as const,
+        stack: 'total',
+        emphasis: {
+          focus: 'series' as const,
+        },
+        color: MODE_COLORS[mode] || '#ccc',
+        data: props.groups.map((grp) => {
+          const item = dataset.find((d) => d.key === `${grp}_${mode}`)
+          return item ? item.value : 0
+        }),
+      }
+    })
+  }
 
   const newOption: EChartsOption = {
     grid: {
       left: '20',
       right: '20',
       top: '60',
-      bottom: '40',
+      bottom: '60',
       containLabel: true,
     },
     animation: false,
     height: props.height - 120,
     title: {
-      text: t(`stats.${props.type}.title`),
+      text: t(`stats.${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -169,9 +200,21 @@ function initChartOptions() {
         // Use axis to trigger tooltip
         type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: (params: any) => {
+        let res = `${params[0].name}<br/>`
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        params.forEach((item: any) => {
+          // item.value is the data point value
+          const val = props.percent ? `${item.value.toFixed(1)}%` : item.value
+
+          res += `${item.marker} ${item.seriesName}: <b>${val}</b><br/>`
+        })
+        return res
+      },
     },
     legend: {
-      show: false,
+      show: true,
       bottom: 0, // position at the bottom
       left: 'center', // center horizontally
     },
@@ -180,12 +223,12 @@ function initChartOptions() {
       nameLocation: 'end',
       nameGap: 30,
       type: 'category',
-      data: props.groups.map((g) => t(`stats.${props.type}.labels.${g}`)),
+      data: props.groups.map((g) => t(`stats.${props.chartTranslationName}.labels.${g}`)),
     },
     xAxis: {
       name: props.xaxis || t('stats.nb_employees'),
       nameLocation: 'middle',
-      nameGap: 30,
+      nameGap: 20,
       type: 'value',
     },
     series: series,

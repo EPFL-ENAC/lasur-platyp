@@ -15,9 +15,9 @@ export const useSurvey = defineStore(
   () => {
     const stepNames = [
       'agreement',
-      'age_class',
       'employment',
-      'places',
+      'workplace',
+      'origin_places',
       'travel_time',
       'constraints',
       'equipments',
@@ -26,9 +26,10 @@ export const useSurvey = defineStore(
       'freq_mod_pro',
       'importance',
       'needs',
+      'age_class',
       'recommendations',
       'change',
-      'change2',
+      'email',
       'comments',
       'final',
     ]
@@ -37,32 +38,97 @@ export const useSurvey = defineStore(
     const record = ref<Record>({} as Record)
     const started = ref(false)
     const step = ref(0)
+    const changeStepIndex = ref(0)
     const timestamp = ref(Date.now())
     const recommendation = ref<Recommendation>({})
 
     const stepName = computed(() => stepNames[step.value - 1])
+    const previousStepName = computed(() => stepNames[step.value - 2])
 
     function init(cr: Record) {
       record.value = cr
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       started.value = false
       step.value = 1
+      changeStepIndex.value = 0
       timestamp.value = Date.now()
     }
 
     function finish() {
       record.value = {} as Record
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       tokenOrSlug.value = null
     }
 
     function reset() {
       record.value = {} as Record
-      recommendation.value = {} as Recommendation
+      recommendation.value = {}
       started.value = false
       step.value = 0
+      changeStepIndex.value = 0
       timestamp.value = Date.now()
       tokenOrSlug.value = null
+    }
+
+    /**
+     * Raw reco_inter indices of the first occurrence of each unique recommended mode,
+     * in order of appearance. The same mode can appear several times in reco_inter;
+     * this drives the 'change' step so it is only shown once per unique mode.
+     */
+    function uniqueChangeIndices() {
+      const recoInter = recommendation.value.reco?.reco_inter
+      if (!recoInter || !recoInter.length) return [0]
+      const seen = new Set<string>()
+      const indices: number[] = []
+      recoInter.forEach((mode, i) => {
+        if (!seen.has(mode)) {
+          seen.add(mode)
+          indices.push(i)
+        }
+      })
+      return indices
+    }
+
+    /**
+     * Number of 'change' sub-steps, one per unique recommended mode (reco_inter).
+     * At least one, so the step is still shown when there is no recommendation.
+     */
+    function changeStepsCount() {
+      return uniqueChangeIndices().length
+    }
+
+    /**
+     * Raw reco_inter/changes index of the recommendation currently shown in the
+     * 'change' step, mapping the deduplicated changeStepIndex back to the first
+     * occurrence of that mode.
+     */
+    const currentChangeIndex = computed(() => uniqueChangeIndices()[changeStepIndex.value] ?? 0)
+
+    /**
+     * All raw reco_inter indices sharing the same mode as the given index.
+     */
+    function changeGroupIndices(index: number) {
+      const recoInter = recommendation.value.reco?.reco_inter
+      if (!recoInter || !recoInter.length) return [index]
+      const mode = recoInter[index]
+      return recoInter.reduce<number[]>((acc, m, i) => {
+        if (m === mode) acc.push(i)
+        return acc
+      }, [])
+    }
+
+    /**
+     * Copy the answer at `index` to every other reco_inter occurrence sharing the
+     * same mode, so a recommendation repeated several times is answered once in the
+     * UI but still recorded for each occurrence.
+     */
+    function syncChangeGroup(index: number) {
+      const changes = record.value.data.changes
+      const source = changes?.[index]
+      if (!changes || !source) return
+      changeGroupIndices(index).forEach((i) => {
+        if (i !== index) changes[i] = { ...source }
+      })
     }
 
     function isBeforeStep(name: string) {
@@ -73,25 +139,41 @@ export const useSurvey = defineStore(
       return step.value > stepNames.indexOf(name) + 1
     }
 
-    function incStep() {
+    function incStep(withProfessionalQuestions = true) {
+      if (stepName.value === 'change' && changeStepIndex.value < changeStepsCount() - 1) {
+        changeStepIndex.value += 1
+        timestamp.value = Date.now()
+        return
+      }
       step.value += 1
-      let skipped = skipIncSteps()
+      if (stepName.value === 'change') {
+        changeStepIndex.value = 0
+      }
+      let skipped = skipIncSteps(withProfessionalQuestions)
       while (skipped) {
-        skipped = skipIncSteps()
+        skipped = skipIncSteps(withProfessionalQuestions)
       }
       timestamp.value = Date.now()
     }
 
-    function decStep() {
+    function decStep(withProfessionalQuestions = true) {
+      if (stepName.value === 'change' && changeStepIndex.value > 0) {
+        changeStepIndex.value -= 1
+        timestamp.value = Date.now()
+        return
+      }
       step.value -= 1
-      let skipped = skipDecSteps()
+      if (stepName.value === 'change') {
+        changeStepIndex.value = changeStepsCount() - 1
+      }
+      let skipped = skipDecSteps(withProfessionalQuestions)
       while (skipped) {
-        skipped = skipDecSteps()
+        skipped = skipDecSteps(withProfessionalQuestions)
       }
       timestamp.value = Date.now()
     }
 
-    function skipIncSteps() {
+    function skipIncSteps(withProfessionalQuestions = true) {
       if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         record.value.data = {
           ...record.value.data,
@@ -100,20 +182,29 @@ export const useSurvey = defineStore(
         step.value += 1
         return true
       }
+      if (!withProfessionalQuestions && stepName.value === 'travel_pro') {
+        step.value += 1
+        return true
+      }
 
       return false
     }
 
-    function skipDecSteps() {
+    function skipDecSteps(withProfessionalQuestions = true) {
       if (stepName.value === 'freq_mod_pro' && !record.value.data.travel_pro) {
         step.value -= 1
         return true
       }
+      if (!withProfessionalQuestions && stepName.value === 'travel_pro') {
+        step.value -= 1
+        return true
+      }
+
       return false
     }
 
     function getFreqMod(mode: string) {
-      if (record.value.data.freq_mod_journeys && record.value.data.freq_mod_journeys.length) {
+      if (record.value.data?.freq_mod_journeys && record.value.data?.freq_mod_journeys.length) {
         let freq = 0
         record.value.data.freq_mod_journeys.forEach((j) => {
           // unique values of modes
@@ -183,42 +274,32 @@ export const useSurvey = defineStore(
       return !['car', 'moto'].includes(mode)
     }
 
-    function isRecommendationInUse() {
+    function isRecommendationAtIndexInUse(index: number) {
       if (
         recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length
+        recommendation.value.reco.reco_inter &&
+        recommendation.value.reco.reco_inter.length > index
       ) {
         const freqMods = getFreqMods()
-        const mode = recommendation.value.reco.reco_dt2[0]
-        return mode !== undefined && freqMods[mode] !== undefined && freqMods[mode] > 0
-      }
-      return false
-    }
+        const mode = recommendation.value.reco.reco_inter[index]
+        if (!mode) return false
 
-    function isRecommendation2InUse() {
-      if (
-        recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length > 1
-      ) {
-        const freqMods = getFreqMods()
-        const mode = recommendation.value.reco.reco_dt2[1]
-        return mode !== undefined && freqMods[mode] !== undefined && freqMods[mode] > 0
+        const translatedMode = RecoToMode[mode] || mode
+        return freqMods[translatedMode] !== undefined && freqMods[translatedMode] > 0
       }
       return false
     }
 
     /**
-     * Check if a mode is one of the recommendations (reco_dt2).
+     * Check if a mode is one of the recommendations (reco_inter).
      */
     function isModeInRecommendation(mode: string) {
       if (
         recommendation.value.reco &&
-        recommendation.value.reco.reco_dt2 &&
-        recommendation.value.reco.reco_dt2.length
+        recommendation.value.reco.reco_inter &&
+        recommendation.value.reco.reco_inter.length
       ) {
-        return recommendation.value.reco.reco_dt2.some(
+        return recommendation.value.reco.reco_inter.some(
           (reco) => (RecoToMode[reco] || reco) === mode,
         )
       }
@@ -231,7 +312,9 @@ export const useSurvey = defineStore(
       record,
       started,
       step,
+      changeStepIndex,
       stepName,
+      previousStepName,
       timestamp,
       recommendation,
       init,
@@ -241,12 +324,15 @@ export const useSurvey = defineStore(
       isAfterStep,
       incStep,
       decStep,
+      changeStepsCount,
+      currentChangeIndex,
+      changeGroupIndices,
+      syncChangeGroup,
       getFreqMod,
       getMainFreqMod,
       isModeSustainable,
       isModeInRecommendation,
-      isRecommendationInUse,
-      isRecommendation2InUse,
+      isRecommendationAtIndexInUse,
     }
   },
   { persist: true },

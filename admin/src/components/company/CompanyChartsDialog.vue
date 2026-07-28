@@ -10,6 +10,7 @@
           <q-btn flat icon="map" @click="showMapFilter = true">
             <q-badge v-if="areaCount > 0" color="orange" floating rounded />
           </q-btn>
+          <q-btn flat icon="picture_as_pdf" @click="goToReport" />
         </q-toolbar>
       </q-card-section>
       <q-separator />
@@ -19,8 +20,8 @@
           <q-spinner-dots color="primary" size="50px" />
         </div>
       </q-card-section>
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('close')" color="secondary" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn :label="t('close')" color="primary" v-close-popup />
       </q-card-actions>
     </q-card>
     <area-dialog
@@ -118,5 +119,21 @@ function onHide() {
 function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
   areaFilter.value = area
   onQuery()
+}
+
+async function goToReport() {
+  const id = stats.dumpToLocalStorage()
+
+  const url = new URL(window.location.href)
+  url.pathname = '/admin/report'
+
+  url.searchParams.set('orgs', props.company.name)
+  if (props.campaign) {
+    url.searchParams.set('campaigns', props.campaign.name)
+  }
+
+  url.searchParams.set('statsStateId', id)
+
+  window.open(url.toString(), '_blank')
 }
 </script>

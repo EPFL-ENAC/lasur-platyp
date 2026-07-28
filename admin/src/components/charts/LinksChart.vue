@@ -1,70 +1,80 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="stats.loading"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-info="total > 0"
+    :no-data-title="t(`stats.${props.type}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  >
+    <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
+    <p v-if="mostRecommendedTarget">
+      {{
+        t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
+      }}
+    </p>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { SankeyChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Links } from 'src/models'
+import type { StatLinks } from 'src/models'
 import { MODE_COLORS } from './commons'
 
-const { t } = useI18n()
-const stats = useStats()
+const { t, locale } = useI18n()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   type: string
+  links: StatLinks | null
   height?: number
+  loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
 watch(
-  () => stats.loading,
+  () => props.loading,
   () => {
-    if (stats.loading) {
+    if (props.loading) {
       initChartOptions()
     }
   },
 )
 
-watch([() => props.height], () => {
-  if (!stats.loading) {
+watch([() => props.height, locale], () => {
+  if (!props.loading) {
     initChartOptions()
   }
 })
 
 onMounted(() => {
   initChartOptions()
+})
+
+const mostRecommendedTarget = computed(() => {
+  if (total.value < 5) return null
+  const links = props.links
+  if (!links) return null
+
+  return links.most_recommended_target
 })
 
 function keyLabel(key: string) {
@@ -75,27 +85,28 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.${props.type}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 function initChartOptions() {
   const recoSuffix = ' '
   option.value = {}
   total.value = 0
-  if (!stats.links || !stats.links[props.type]) {
+  if (!props.links) {
     return
   }
 
-  const links = stats.links[props.type] as Links
+  const links = props.links
   if (links.data.length === 0) {
     return
   }
-  total.value = links.total || 0
+  total.value = links.total ?? 0
   const linksData = links.data.map((item) => ({
     source: keyLabel(item.source),
     target: keyLabel(item.target) + recoSuffix,
     value: item.value,
   }))
+
   const nodes = new Set<string>()
   links.data.forEach((item) => {
     nodes.add(item.source)

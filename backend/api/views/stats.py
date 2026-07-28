@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
-from api.models.query import Stats, LocationFilter
+from api.models.query import Stats, CampaignStats, LocationFilter
 from api.services.records import RecordService
+from api.services.campaigns import CampaignService
 from api.services.stats.stats import StatsService
 from enacit4r_sql.utils.query import validate_params, ValidationError, paramAsDict
 
@@ -23,11 +24,27 @@ async def compute_all_statistics(
             del filter_dict['workplace_location']
         validated = validate_params(filter_dict, None, None, None)
         service = RecordService(session)
-        df = await service.get_dataframe(validated["filter"], flat=True)
+        df = await service.get_dataframe(validated["filter"], flat=True, user=user, special_permissions="read-aggregated")
         if workplace_filter:
             workplace_filter = LocationFilter.model_validate(
                 workplace_filter, by_alias=True)
             df = service.filter_by_workplace_location(df, workplace_filter)
+        
         return StatsService().compute_stats(df)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
+
+
+@router.get("/campaign/{id}", response_model_exclude_none=True)
+async def compute_campaign_statistics(
+    id: int,
+    user: User = Depends(kc_service.get_user_info()),
+    session: AsyncSession = Depends(get_session),
+) -> CampaignStats:
+    """Compute statistics for a campaign"""
+    campaign = await CampaignService(session).get(id, user, special_permissions="read-aggregated")
+    service = RecordService(session)
+    df = await service.get_dataframe(
+        {"campaign_id": id}, flat=True, user=user, special_permissions="read-aggregated")
+    stats_service = StatsService()
+    return stats_service.compute_campaign_stats(campaign, df)

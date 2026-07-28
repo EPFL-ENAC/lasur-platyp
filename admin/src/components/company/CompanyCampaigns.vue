@@ -1,8 +1,8 @@
 <template>
   <div>
     <q-btn
-      v-if="authStore.isAdmin"
-      size="sm"
+      v-if="isCompanyAdmin"
+      size="md"
       color="primary"
       :disable="campaignsStore.loading"
       :label="t('add')"
@@ -62,6 +62,7 @@ import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.
 const { t } = useI18n()
 const authStore = useAuthStore()
 const campaignsStore = useCampaigns()
+const router = useRouter()
 
 interface Props {
   company: Company
@@ -73,12 +74,22 @@ const showDialog = ref(false)
 const selected = ref<Campaign>()
 const campaigns = computed<Campaign[]>(() => campaignsStore.items || [])
 
+const isCompanyAdmin = computed(() => {
+  if (!props.company) return false
+  return authStore.isAdmin || props.company.administrators?.includes(authStore.profile?.email || '')
+})
+
 onMounted(onInit)
 
 watch(
   () => campaignsStore.items,
   () => {
     const ids = campaignsStore.items.map((item) => item.id + '')
+    const queryCampaign = router.currentRoute.value.query.campaign as string | undefined
+    if (queryCampaign && ids.includes(queryCampaign)) {
+      tab.value = queryCampaign
+      return
+    }
     if (tab.value === undefined || (ids.length > 0 && !ids.includes(tab.value))) {
       tab.value = campaigns.value.length ? campaigns.value[0]?.id + '' : ''
     }
@@ -86,7 +97,7 @@ watch(
 )
 
 function onInit() {
-  campaignsStore.company = props.company
+  campaignsStore.companyId = props.company.id
   campaignsStore.load().catch(notifyError)
 }
 
@@ -94,6 +105,8 @@ function onAdd() {
   selected.value = {
     name: '',
     company_id: props.company.id,
+    open_workplaces: false,
+    with_professional_questions: true,
   } as Campaign
   showDialog.value = true
 }

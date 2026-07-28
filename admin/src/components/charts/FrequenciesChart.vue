@@ -1,28 +1,20 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="stats.loading"
-    />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.${props.type}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
+  <e-charts-shell
+    :height="height"
+    :loading="props.loading"
+    :has-data="hasData"
+    :no-data-title="t(`stats.${props.chartTranslationName}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  />
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -31,37 +23,46 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from 'src/models'
 
-const { t } = useI18n()
-const stats = useStats()
+const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
-  type: string
+  chartTranslationName: string
+  frequencies?: Frequencies | null
   xaxis?: string
   yaxis?: string
   rangeStep?: number
   percent?: boolean
   height?: number
+  loading?: boolean
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
+const hasData = computed(() => {
+  if (!props.frequencies) {
+    return false
+  }
+  return props.frequencies.data.length > 0
+})
+
 watch(
-  () => stats.loading,
+  () => props.loading,
   () => {
-    if (stats.loading) {
+    if (props.loading) {
       initChartOptions()
     }
   },
 )
 
-watch([() => props.percent, () => props.height], () => {
-  if (!stats.loading) {
+watch([() => props.percent, () => props.height, locale], () => {
+  if (!props.loading) {
     initChartOptions()
   }
 })
@@ -78,17 +79,17 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.${props.type}.labels.${key}`)
+  return t(`stats.${props.chartTranslationName}.labels.${key}`)
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
-  if (!stats.frequencies || !stats.frequencies[props.type]) {
+  if (!props.frequencies) {
     return
   }
 
-  const frequencies = stats.frequencies[props.type] as Frequencies
+  const frequencies = props.frequencies as Frequencies
 
   if (props.rangeStep) {
     initValuesChartOptions(frequencies)
@@ -128,7 +129,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.${props.type}.title`),
+      text: t(`stats.${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -162,7 +163,6 @@ function initValuesChartOptions(frequencies: Frequencies) {
         data: values,
         type: 'bar',
         barCategoryGap: '0',
-        color: '#008066',
       },
     ],
   }
@@ -196,7 +196,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.${props.type}.title`),
+      text: t(`stats.${props.chartTranslationName}.title`),
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -229,7 +229,6 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       {
         data: values,
         type: 'bar',
-        color: '#008066',
       },
     ],
   }

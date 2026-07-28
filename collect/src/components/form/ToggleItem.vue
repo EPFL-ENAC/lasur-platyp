@@ -1,18 +1,24 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
+    <QuestionText v-if="label" :label="label" :class="`${labelClass}`" />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="row justify-center q-mt-lg">
       <span
-        class="text-h4 q-mt-md q-mr-lg cursor-pointer"
-        :class="selected ? 'text-grey-6' : 'text-white'"
+        class="text-h5 q-mr-lg cursor-pointer"
+        :class="selected ? 'text-muted' : 'text-foreground'"
         @click="selected = false"
         >{{ leftLabel }}</span
       >
-      <q-toggle v-model="selected" color="primary" size="80px" />
+      <q-toggle
+        v-model="selected"
+        :color="props.color ?? 'primary'"
+        :toggle-indeterminate="required !== true"
+        dense
+        size="80px"
+      />
       <span
-        class="text-h4 q-mt-md q-ml-lg cursor-pointer"
-        :class="selected ? 'text-white' : 'text-grey-6'"
+        class="text-h5 q-ml-lg cursor-pointer"
+        :class="selected ? 'text-foreground' : 'text-muted'"
         @click="selected = true"
         >{{ rightLabel }}</span
       >
@@ -21,13 +27,17 @@
 </template>
 
 <script setup lang="ts">
+import QuestionText from './QuestionText.vue'
+
 interface Props {
   modelValue: boolean | undefined
   label?: string
+  labelClass?: string
   leftLabel?: string
   rightLabel?: string
   hint?: string
   required?: boolean
+  color?: string
 }
 
 const props = defineProps<Props>()
@@ -37,4 +47,6 @@ const selected = computed({
   get: () => props.modelValue,
   set: (val: boolean) => emit('update:modelValue', val),
 })
+
+const labelClass = computed(() => props.labelClass || 'text-h4')
 </script>

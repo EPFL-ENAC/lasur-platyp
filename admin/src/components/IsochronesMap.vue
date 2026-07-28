@@ -19,7 +19,7 @@
     </div>
     <div class="container">
       <q-btn
-        :label="t('record.pois')"
+        :label="t('record.map_options')"
         icon="layers"
         color="white"
         text-color="grey-10"
@@ -29,6 +29,16 @@
       >
         <q-menu>
           <q-list>
+            <q-item-label class="text-h6 q-ma-sm">{{ t('record.transit') }}</q-item-label>
+            <q-item clickable>
+              <q-item-section>{{ t('record.transit_options.show_lines') }}</q-item-section>
+              <q-item-section side>
+                <q-toggle v-model="showTransitLines" @update:model-value="toggleTransitLines" />
+              </q-item-section>
+            </q-item>
+
+            <q-separator spaced />
+            <q-item-label class="text-h6 q-ma-sm">{{ t('record.pois') }}</q-item-label>
             <template v-for="pois in poisOptions" :key="pois.value">
               <q-item clickable>
                 <q-item-section>{{ pois.label }}</q-item-section>
@@ -46,7 +56,7 @@
         </q-menu>
       </q-btn>
       <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapview" />
-      <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders">
+      <div class="colors q-pa-sm bg-white text-foreground text-caption rounded-borders">
         <div class="row q-gutter-sm">
           <div
             v-for="cutoff in selectedModeCutoffSec"
@@ -57,6 +67,11 @@
               :style="`width: 15px; height: 15px; background-color: ${getCutoffColor(cutoff)}; border: 1px solid #5a3fc0; margin-right: 5px;`"
             ></div>
             <div>{{ t('record.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
+          </div>
+
+          <div class="legend-transit-lines">
+            <div class="purple-bar"></div>
+            <div>{{ t('transit_lines') }}</div>
           </div>
         </div>
       </div>
@@ -97,7 +112,7 @@ const isochronesData = ref<GeoJSON.FeatureCollection>()
 const selectedMode = ref<string>('WALK')
 const selectedModeCutoffSec = ref<number[]>([]) // in seconds
 const modeOptions = computed(() => {
-  return ['WALK', 'BIKE', 'EBIKE', 'CAR', 'TRANSIT', 'RAIL', 'BUS'].map((m) => {
+  return ['WALK', 'BIKE', 'EBIKE', 'TRANSIT' /* 'RAIL', 'BUS' */].map((m) => {
     return { label: t(`record.mode.${m.toLowerCase()}`), value: m }
   })
 })
@@ -105,7 +120,7 @@ const poisOptions = computed(() =>
   ['food', 'education', 'service', 'health', 'leisure', 'transport', 'commerce'].map((cat) => ({
     label: t(`record.categories.${cat}`),
     value: cat,
-    color: categoryToColor(cat)?.name || 'grey-8',
+    color: categoryToColor(cat)?.name || 'foreground',
   })),
 )
 const showPoisMap = ref<{ [key: string]: boolean }>({
@@ -117,6 +132,8 @@ const showPoisMap = ref<{ [key: string]: boolean }>({
   transport: false,
   commerce: false,
 })
+
+const showTransitLines = ref(true)
 
 onMounted(onInit)
 
@@ -169,22 +186,18 @@ async function loadIsochronesData() {
       bikeSpeed = 17
       cutoffSec = [600, 1200, 1800, 2400, 3600]
       break
-    case 'CAR':
-      mode = 'CAR'
-      cutoffSec = [1200, 2400]
-      break
     case 'TRANSIT':
       mode = 'TRANSIT'
       cutoffSec = [1200, 2400, 3600]
       break
-    case 'RAIL':
+    /* case 'RAIL':
       mode = 'RAIL'
       cutoffSec = [1200, 2400, 3600]
       break
     case 'BUS':
       mode = 'BUS'
       cutoffSec = [1200, 2400, 3600]
-      break
+      break */
     default:
       cutoffSec = [300, 600, 900, 1200, 1800]
       break
@@ -213,6 +226,9 @@ async function loadIsochronesData() {
             loadPois(selected)
           }
         }
+        if (data.transit) {
+          addTransitLinesToMap(data.transit)
+        }
       }
     })
     .catch((err) => {
@@ -233,7 +249,7 @@ async function loadPois(categories: string[]) {
     bbox,
   })
   if (data) {
-    showPois(data)
+    showPois(categories, data)
   }
   loadingIsochrones.value = false
 }
@@ -287,7 +303,7 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
   })
 }
 
-function showPois(geojson: GeoJSON.FeatureCollection) {
+function showPois(categories: string[], geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
   const sources: { [key: string]: GeoJSON.FeatureCollection } = {}
   // set a color property based on category
@@ -317,6 +333,7 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
   })
   // add a layer per category
   Object.entries(sources).forEach(([cat, data]) => {
+    if (!categories.includes(cat)) return
     const layerId = `pois-layer-${cat}`
     if (map.value?.getSource(layerId)) {
       ;(map.value?.getSource(layerId) as GeoJSONSource).setData(data)
@@ -341,6 +358,41 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
       }
     }
   })
+}
+
+function addTransitLinesToMap(geojson: GeoJSON.FeatureCollection) {
+  if (!map.value) return
+  if (map.value.getSource('transit-lines')) {
+    ;(map.value.getSource('transit-lines') as GeoJSONSource).setData(geojson)
+    return
+  }
+
+  map.value.addSource('transit-lines', {
+    type: 'geojson',
+    data: geojson,
+  })
+  map.value.addLayer({
+    id: 'transit-lines-layer',
+    type: 'line',
+    source: 'transit-lines',
+    paint: {
+      'line-color': '#5a3fc0',
+      'line-width': 2,
+    },
+    layout: {
+      visibility: showTransitLines.value ? 'visible' : 'none',
+    },
+  })
+}
+
+function toggleTransitLines() {
+  if (map.value?.getLayer('transit-lines-layer')) {
+    map.value.setLayoutProperty(
+      'transit-lines-layer',
+      'visibility',
+      showTransitLines.value ? 'visible' : 'none',
+    )
+  }
 }
 
 function onShowPoisMap(name: string) {
@@ -419,5 +471,16 @@ function getCutoffColor(cutoff: number): string {
   z-index: 10;
   bottom: 10px;
   left: 10px;
+}
+
+.legend-transit-lines {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.purple-bar {
+  width: 1rem;
+  height: 0.25rem;
+  background-color: #5a3fc0;
 }
 </style>

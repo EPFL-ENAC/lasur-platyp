@@ -21,7 +21,7 @@ async def find(
     """Search for records"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await RecordService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"])
+        return await RecordService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -31,7 +31,7 @@ async def get(id: int,
               user: User = Depends(kc_service.require_admin()),
               session: AsyncSession = Depends(get_session)) -> Record:
     """Get a record by id"""
-    return await RecordService(session).get(id)
+    return await RecordService(session).get(id, user)
 
 
 @router.delete("/{id}", response_model=Record, response_model_exclude_none=True)
@@ -41,7 +41,7 @@ async def delete(
     user: User = Depends(kc_service.require_admin())
 ) -> Record:
     """Delete a record by id"""
-    return await RecordService(session).delete(id)
+    return await RecordService(session).delete(id, user)
 
 
 @router.get("/flat", response_model_exclude_none=True)
@@ -56,7 +56,7 @@ async def compute_flat(
     try:
         validated = validate_params(filter, None, None, None)
         service = RecordService(session)
-        df = await service.get_dataframe(validated["filter"], flat=True)
+        df = await service.get_dataframe(validated["filter"], flat=True, user=user)
         if completed:
             df = service.filter_completed(df)
         return Response(content=df.to_csv(date_format="%Y-%m-%dT%H:%M:%S.%f", index=False), media_type="text/csv")

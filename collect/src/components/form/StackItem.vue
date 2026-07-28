@@ -15,7 +15,7 @@
             draggable="true"
             @dragstart="onDragStart"
             v-ripple
-            class="rounded-borders q-mt-md q-mb-md bg-teal-1 text-grey-8"
+            class="rounded-borders q-mt-md q-mb-md bordered-secondary"
             style="cursor: move"
           >
             <q-item-section v-if="q.screen.gt.xs" avatar>
@@ -23,11 +23,11 @@
             </q-item-section>
             <q-item-section>
               <div class="row" :class="optionLabelClass">
-                <span class="on-right"
-                  >{{ `${withPosition ? idx + 1 + ' - ' : ''}` }}{{ getOption(sel)?.label }}</span
-                >
+                <span class="on-right">
+                  {{ `${withPosition ? idx + 1 + ' - ' : ''}` }}{{ getOption(sel)?.label }}
+                </span>
               </div>
-              <q-item-label v-if="getOption(sel)?.hint" class="text-h6">
+              <q-item-label v-if="getOption(sel)?.hint" class="text-h6 on-right">
                 {{ getOption(sel)?.hint }}
               </q-item-label>
             </q-item-section>
@@ -44,13 +44,22 @@
             :id="option.value"
             draggable="true"
             @dragstart="onDragStart"
-            :icon="option.icon"
             :title="option.label"
             color="secondary"
             size="xl"
-            class="on-right on-left q-mb-md"
+            class="on-right on-left q-mb-md bordered-secondary"
             @click="onAdd(option)"
-          />
+          >
+            <q-img
+              v-if="option.icon?.endsWith('.svg')"
+              :src="option.icon"
+              style="width: 40px; height: 40px"
+              no-spinner
+              no-transition
+              class="icon-white"
+            />
+            <q-icon v-else :name="option.icon" color="white" size="lg" />
+          </q-btn>
           <q-btn
             v-else
             :id="option.value"
@@ -58,7 +67,7 @@
             :title="option.label"
             color="secondary"
             size="xl"
-            class="on-right on-left q-mb-md"
+            class="on-right on-left q-mb-md bordered-secondary"
           >
             <q-menu auto-close>
               <q-list>
@@ -75,6 +84,7 @@
                       :src="child.icon"
                       style="width: 40px; height: 40px"
                       no-spinner
+                      no-transition
                       class="icon-primary"
                     />
                     <q-icon v-else :name="child.icon" color="primary" size="lg" />
@@ -244,10 +254,16 @@ function onDropInsert(e: DragEvent, index: number) {
 .drop-zone {
   border: dashed 4px #ccc;
 }
+
 .drag-enter {
   // border: dashed 4px $secondary !important;
 }
+
 .icon-primary {
-  filter: invert(26%) sepia(77%) saturate(3932%) hue-rotate(140deg) brightness(102%) contrast(99%);
+  filter: invert(52%) sepia(88%) saturate(138%) hue-rotate(3deg) brightness(95%) contrast(246%);
+}
+
+.icon-white {
+  filter: invert(100%);
 }
 </style>

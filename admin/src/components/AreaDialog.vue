@@ -16,9 +16,9 @@
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('cancel')" color="secondary" @click="onCancel" v-close-popup />
-        <q-btn flat :label="t('select')" color="primary" @click="onSelect" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn outline :label="t('cancel')" color="field" @click="onCancel" v-close-popup />
+        <q-btn :label="t('select')" color="primary" @click="onSelect" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>

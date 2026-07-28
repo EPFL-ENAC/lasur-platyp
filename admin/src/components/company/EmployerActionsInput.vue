@@ -1,15 +1,16 @@
 <template>
   <div>
-    <div class="q-mb-sm text-grey-8">{{ label }}</div>
+    <div class="q-mb-sm text-foreground">{{ label }}</div>
     <div>{{ hint }}</div>
     <q-tabs
       v-model="tab"
       dense
       no-caps
-      class="text-grey"
       active-color="secondary"
-      active-bg-color="grey-4"
-      indicator-color="primary"
+      active-bg-color="white"
+      active-class="tab-active"
+      indicator-color="transparent"
+      class="bg-secondary-ultra-light"
       align="left"
     >
       <q-tab name="personnal" :label="t('actions.personnal')" />

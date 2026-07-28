@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <QuestionText
+      :label="label ?? ''"
+      :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`"
+    />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <q-rating
       v-model="selected"
@@ -14,6 +17,8 @@
 </template>
 
 <script setup lang="ts">
+import QuestionText from './QuestionText.vue'
+
 interface Props {
   modelValue: number | undefined
   label?: string
@@ -27,13 +32,18 @@ const emit = defineEmits(['update:modelValue'])
 
 const selected = ref<number>(0)
 
-onMounted(() => {
-  if (props.modelValue === undefined) {
-    emit('update:modelValue', 0)
-  } else {
-    selected.value = props.modelValue
-  }
-})
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (value === undefined) {
+      selected.value = 0
+      emit('update:modelValue', 0)
+    } else {
+      selected.value = value
+    }
+  },
+  { immediate: true },
+)
 
 function onUpdate() {
   if (selected.value === undefined || selected.value === 0) selected.value = 1

@@ -1,10 +1,11 @@
+import logging
 from datetime import datetime
 import secrets
 from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from api.db import get_session, AsyncSession
 from api.models.domain import Campaign, Workplace
-from api.models.query import RecordDraft, RecordRead, RecordComments, CampaignInfo
+from api.models.query import RecordCertificate, RecordDraft, RecordRead, RecordComments, CampaignInfo
 from api.services.participants import ParticipantService
 from api.services.campaigns import CampaignService
 from api.services.companies import CompanyService
@@ -18,13 +19,16 @@ router = APIRouter()
 @router.get("/info/{tokenOrSlug}", response_model=CampaignInfo, response_model_exclude_none=True)
 async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) -> CampaignInfo:
     """Get campaign info by participant token or campaign slug"""
+
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
+
     try:
         campaign = await CampaignService(session).get_by_slug(tokenOrSlug)
     except:
         campaign = None
+
     if not campaign:
         try:
             cr = await RecordService(session).get_by_token(tokenOrSlug)
@@ -32,8 +36,10 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
                 campaign = await CampaignService(session).get(cr.campaign_id)
         except:
             campaign = None
+
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
+
     company = await CompanyService(session).get(campaign.company_id)
     return CampaignInfo(
         name=campaign.name,
@@ -41,7 +47,10 @@ async def get_info(tokenOrSlug: str, session: AsyncSession = Depends(get_session
         contact_email=campaign.contact_email if campaign.contact_email else company.contact_email,
         contact_name=campaign.contact_name if campaign.contact_name else company.contact_name,
         info_url=campaign.info_url if campaign.info_url else company.info_url,
-        workplaces=campaign.workplaces
+        workplaces=campaign.workplaces,
+        with_professional_questions=campaign.with_professional_questions,
+        open_workplaces=campaign.open_workplaces,
+        rewards_message=campaign.rewards_message
     )
 
 
@@ -60,14 +69,19 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         _check_campaign(campaign)
         # this is a campaign's slug then initialize a new record
         wp = get_first_workplace(campaign)
-        data = {
-            "workplace": {
-                "name": wp.name,
-                "address": wp.address,
-                "lon": wp.lon,
-                "lat": wp.lat
+        if wp is None:
+            data = {
+                "workplace": None
             }
-        }
+        else:
+            data = {
+                "workplace": {
+                    "name": wp.name,
+                    "address": wp.address,
+                    "lon": wp.lon,
+                    "lat": wp.lat
+                }
+            }
         return RecordDraft(token=secrets.token_urlsafe(16), data=data)
 
     # 2. this is a participant's token: try to get the record in case it was already saved
@@ -76,6 +90,7 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
         cr = await RecordService(session).get_by_token(tokenOrSlug)
     except:
         cr = None  # 404 if not found
+
     if cr is not None:
         campaign = await CampaignService(session).get(cr.campaign_id)
         _check_campaign(campaign)
@@ -90,12 +105,16 @@ async def get(tokenOrSlug: str, session: AsyncSession = Depends(get_session)) ->
     _check_campaign(campaign)
     wp = get_first_workplace(campaign)
     data = participant.data
-    data["workplace"] = {
-        "name": wp.name,
-        "address": wp.address,
-        "lon": wp.lon,
-        "lat": wp.lat
-    }
+    if wp is not None:
+        data["workplace"] = {
+            "name": wp.name,
+            "address": wp.address,
+            "lon": wp.lon,
+            "lat": wp.lat
+        }
+    else:
+        data["workplace"] = None
+
     return RecordDraft(token=tokenOrSlug, data=data)
 
 
@@ -109,6 +128,7 @@ async def createOrUpdate(
     if tokenOrSlug is None:
         raise HTTPException(
             status_code=400, detail="Missing token or slug")
+
     campaign = None
     if tokenOrSlug != item.token:
         # this is a campaign's slug
@@ -117,7 +137,29 @@ async def createOrUpdate(
         # this is a participant's token
         participant = await ParticipantService(session).get_by_token(tokenOrSlug)
         campaign = await CampaignService(session).get(participant.campaign_id)
+
     return await RecordService(session).createOrUpdate(item, campaign)
+
+
+@router.get("/certificate/{token}", response_model=RecordCertificate, response_model_exclude_none=True)
+async def get_final(token: str, session: AsyncSession = Depends(get_session)) -> RecordCertificate:
+    """Get a record by participant token, only if the participant has completed the survey"""
+    if token is None:
+        raise HTTPException(status_code=400, detail="Missing token")
+
+    record = await RecordService(session).get_by_token(token)
+
+    if record is None:
+        raise HTTPException(status_code=404, detail="Record not found")
+    if record.response_id_in_campaign is None and not record.data.get("changes", None):
+        raise HTTPException(
+            status_code=400, detail="Participant has not completed the survey yet")
+
+    campaign = await CampaignService(session).get(record.campaign_id)
+    if campaign is None:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+    return RecordCertificate(response_id_in_campaign=record.response_id_in_campaign, rewards_message=campaign.rewards_message or {})
 
 
 @router.put("/record/{token}/comments", response_model=RecordRead, response_model_exclude_none=True)
@@ -133,6 +175,13 @@ async def saveComments(
     recordService = RecordService(session)
     record = await recordService.get_by_token(token)
     record.comments = data.comments
+    try:
+        participantService = ParticipantService(session)
+        participant = await participantService.get_by_token(token)
+        participant.status = "completed"
+        await participantService.update(participant.id, participant)
+    except:
+        pass
     return await recordService.update(record.id, record)
 
 
@@ -146,20 +195,26 @@ async def getTypo(token: str, locale: str = "en", session: AsyncSession = Depend
     record = await recordService.get_by_token(token)
     response = {}
     service = ModalTypoService()
-    reco = service.get_recommendation_multi(record)
+    reco = service.get_recommendation_inter(record)
+    logging.info(f"Modal typo recommendation for record {record.id}: {reco}")
     response["reco"] = reco
     reco_pro = None
     if "scores" in reco:
         reco_pro = service.get_recommendation_pro(record, reco["scores"])
         response["reco_pro"] = reco_pro
-    if "reco_dt2" in reco and reco_pro is not None:
+    if "reco_inter" in reco and reco_pro is not None:
         company = await CompanyService(session).get(record.company_id)
         campaign = await CampaignService(session).get(record.campaign_id)
         custom_actions = await CompanyActionService(session).get_company_actions(company.id)
         actions = service.get_recommendation_employer_actions(
-            company, campaign, custom_actions, locale, reco["reco_dt2"], reco_pro["reco_pros"])
+            company, campaign, custom_actions, locale, reco["reco_inter"], reco_pro["reco_pros"])
         response["reco_actions"] = actions
     record.typo = response
+    # remove access and scores from record.typo.reco
+    if "reco" in record.typo and "access" in record.typo["reco"]:
+        del record.typo["reco"]["access"]
+    if "reco" in record.typo and "scores" in record.typo["reco"]:
+        del record.typo["reco"]["scores"]
     record.comments = None  # clear comments
     await recordService.update(record.id, record)
     return response
@@ -183,20 +238,20 @@ def _check_campaign(campaign: Campaign):
             status_code=400, detail="Campaign has already ended")
 
 
-def get_first_workplace(campaign: Campaign) -> Workplace:
+def get_first_workplace(campaign: Campaign) -> Workplace | None:
     """Get the first workplace of a campaign
 
     Args:
-        campaign (Campaign): The campaign
+        campaign (Campaign): The campaign. Can be None if there are no workplaces and open_workplaces is true.
 
     Raises:
-        ValueError: if no workplace is defined
+        ValueError: if no workplace is defined and open_workplaces is false
 
     Returns:
         Workplace: The first workplace
     """
     firstWorkplace = campaign.workplaces[0] if campaign.workplaces else None
-    if firstWorkplace is None:
+    if firstWorkplace is None and not campaign.open_workplaces:
         raise HTTPException(
             status_code=400, detail="Invalid campaign: no workplaces defined")
     return firstWorkplace

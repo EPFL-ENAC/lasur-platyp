@@ -3,7 +3,7 @@ export interface ParticipantData {
     age_class: string
     employment_rate: number
     remote_work_rate: number
-    company_vehicle: boolean
+    company_vehicle?: boolean
   }
 }
 
@@ -22,10 +22,24 @@ export interface Journey {
   days: number
 }
 
+export type BoundaryLevel = 'national' | 'regional' | 'local'
+
+export interface PlaceLocation {
+  lat: number
+  lon: number
+  level: BoundaryLevel
+  feature_id?: string | number | undefined
+}
+
 export interface ProJourney {
   mode: string
   days: number
-  hex_id: string | undefined
+  days_per: 'week' | 'month' | 'year'
+  is_company_vehicle?: boolean | undefined
+  constraints?: string[]
+  /** @deprecated superseded by `location`, kept for backward compatibility with older records */
+  hex_id?: string | undefined
+  location?: PlaceLocation | undefined
 }
 
 export interface RecordData {
@@ -35,10 +49,11 @@ export interface RecordData {
   age_class: string
   employment_rate: number
   remote_work_rate: number
-  company_vehicle: boolean
+  company_vehicle?: boolean
   travel_time: number
   equipments: string[]
   constraints: string[]
+  constraints_custom?: string | undefined
   freq_mod_journeys: Journey[]
 
   travel_pro: boolean
@@ -60,19 +75,25 @@ export interface RecordData {
   comments: string
   workplace: AddressLocation
   origin: AddressLocation
-  change: Change
-  change2: Change
+  changes: Change[]
 }
 
 export interface Record {
   data: RecordData
   typo: Recommendation | null
   token: string
+  email_hash: string | null
+  response_id_in_campaign: number | null
+}
+
+export interface RecordCertificate {
+  response_id_in_campaign: number | null
+  rewards_message: { [key: string]: string } | null
 }
 
 export interface Recommendation {
   reco?: {
-    reco_dt2: string[]
+    reco_inter: string[]
     scores: {
       covoit: number
       elec: number
@@ -121,6 +142,9 @@ export interface CampaignInfo {
   contact_email?: string
   info_url?: string
   workplaces: AddressLocation[]
+  with_professional_questions?: boolean
+  open_workplaces?: boolean
+  rewards_message?: { [key: string]: string }
 }
 
 export interface IsochronesParams {
@@ -141,4 +165,23 @@ export interface IsochronesData {
 export interface PoisParams {
   categories: string[]
   bbox: [number, number, number, number]
+}
+
+export interface RecommendationsPreviewData {
+  perso: {
+    mainFm: string
+    isModeSustainable: boolean
+    isModeOptions: boolean
+    recoDt: string[]
+    center: [number, number] | null
+    mesureDt1: string[]
+    mesureDt2: string[]
+    globalActions: string[]
+  }
+  pro: {
+    recoPros: string[]
+    proJourneyLocations: (PlaceLocation | undefined)[]
+    mesurePro: string[][]
+    globalActions: string[]
+  }
 }

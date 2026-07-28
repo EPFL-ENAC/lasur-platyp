@@ -5,9 +5,12 @@ from sqlalchemy.orm import selectinload
 from fastapi import HTTPException
 from api.models.domain import Campaign, Workplace
 from api.models.query import CampaignResult, CampaignDraft
+from api.services.authz import ACLService
+from api.services.companies import CompanyService
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
-from api.auth import User
+from api.auth import User, require_admin_or_perm, is_admin
+from api.services.entities import EntityService
 
 
 class CampaignQueryBuilder(QueryBuilder):
@@ -19,7 +22,7 @@ class CampaignQueryBuilder(QueryBuilder):
 
     def build_query_with_joins(self, total_count, filter, fields=None):
         start, end, query = self.build_query(total_count, fields)
-        if fields is None or (len(fields) > 0 and "workplaces" in fields):
+        if fields is None or fields == [] or (len(fields) > 0 and "workplaces" in fields):
             query = self._apply_joins(query, filter).options(
                 selectinload(Campaign.workplaces))
         return start, end, query
@@ -29,17 +32,37 @@ class CampaignQueryBuilder(QueryBuilder):
         return query
 
 
-class CampaignService:
+class CampaignService(EntityService):
 
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session)
+
+    async def list_permitted_ids(self, user: User, permission: str) -> list[int]:
+        """List all campaign ids the user has the given permission on
+
+        Uses an efficient single-query approach to avoid N+1 query problems.
+        """
+        # Use ACLService to get all permitted company IDs in a single query
+        acl_service = ACLService(self.session)
+        permitted_company_ids = await acl_service.get_permitted_resource_ids(
+            "company", permission, user.email
+        )
+        if not permitted_company_ids:
+            return []
+
+        res = await self.session.exec(
+            select(Campaign.id).where(
+                Campaign.company_id.in_(permitted_company_ids))
+        )
+        ids = res.all()
+        return ids
 
     async def count(self) -> int:
         """Count all campaigns"""
         count = (await self.session.exec(text("select count(id) from campaign"))).scalar()
         return count
 
-    async def get(self, id: int) -> Campaign:
+    async def get(self, id: int, user: User = None, special_permissions: str = "read") -> Campaign:
         """Get a campaign by id"""
         res = await self.session.exec(
             select(Campaign)
@@ -49,6 +72,8 @@ class CampaignService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", special_permissions)
         return entity
 
     async def get_by_slug(self, slug: str) -> Campaign:
@@ -63,7 +88,7 @@ class CampaignService:
                 status_code=404, detail="Campaign not found")
         return entity
 
-    async def delete(self, id: int) -> Campaign:
+    async def delete(self, id: int, user: User = None) -> Campaign:
         """Delete a campaign by id"""
         res = await self.session.exec(
             select(Campaign).where(Campaign.id == id)
@@ -72,12 +97,30 @@ class CampaignService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
         await self.session.delete(entity)
         await self.session.commit()
         return entity
 
-    async def find(self, filter: dict, fields: list, sort: list, range: list) -> CampaignResult:
+    async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None, special_permissions: str = "read") -> CampaignResult:
         """Get all campaigns matching filter and range"""
+        # Add permission filter
+        if user is not None and not is_admin(user):
+            permitted_company_ids = await CompanyService(self.session).list_permitted_ids(user, special_permissions)
+            if filter is None:
+                filter = {}
+            if permitted_company_ids:
+                if "company_id" in filter:
+                    filter["company_id"] = self.merge_ids_filter(
+                        filter["company_id"], permitted_company_ids)
+                else:
+                    filter["company_id"] = permitted_company_ids
+            else:
+                # No permitted companies, return empty result
+                # Assuming no company has company_id -1
+                filter["company_id"] = [-1]
+
         builder = CampaignQueryBuilder(
             Campaign, filter, sort, range, {})
 
@@ -106,6 +149,10 @@ class CampaignService:
         workplaces = payload.workplaces
         payload_dict = payload.model_dump(exclude={'workplaces'})
         entity = Campaign(**payload_dict)
+
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
         if user:
@@ -133,6 +180,10 @@ class CampaignService:
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Campaign not found")
+
+        if user is not None and not is_admin(user):
+            await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+
         for key, value in payload.model_dump().items():
             # print(key, value)
             if key not in ["id", "created_at", "updated_at", "created_by", "updated_by", "workplaces"]:

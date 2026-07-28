@@ -4,24 +4,45 @@
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t(editMode ? 'edit' : 'add') }}</div>
         <q-space />
-        <q-btn flat icon="close" color="primary" v-close-popup />
+        <q-btn flat icon="close" color="field" v-close-popup />
       </q-card-actions>
       <q-separator />
 
       <q-card-section>
         <q-form ref="form">
           <q-input
-            filled
+            outlined
+            rounded
+            color="field"
             v-model="selected.name"
             :label="t('name') + ' *'"
             lazy-rules
             :rules="[(val) => !!val || t('field_required')]"
           />
           <q-select
-            filled
+            outlined
+            rounded
+            color="field"
             v-model="selected.administrators"
-            :label="t('company.administrators')"
+            :label="t('company.administrators') + ' *'"
             :hint="t('company.administrators_hint')"
+            use-input
+            use-chips
+            multiple
+            hide-dropdown-icon
+            input-debounce="0"
+            new-value-mode="add-unique"
+            class="q-mb-md"
+            :rules="[(val) => (!!val && val.length > 0) || t('field_required')]"
+          />
+          <q-select
+            outlined
+            rounded
+            color="field"
+            :model-value="selected.mobility_advisors || []"
+            @update:model-value="(val) => (selected.mobility_advisors = val)"
+            :label="t('company.mobility_advisors')"
+            :hint="t('company.mobility_advisors_hint')"
             use-input
             use-chips
             multiple
@@ -31,14 +52,18 @@
             class="q-mb-md"
           />
           <q-input
-            filled
+            outlined
+            rounded
+            color="field"
             v-model="selected.contact_name"
             :label="t('company.contact_name')"
             :hint="t('company.contact_name_hint')"
             class="q-mb-md"
           />
           <q-input
-            filled
+            outlined
+            rounded
+            color="field"
             v-model="selected.contact_email"
             :label="t('company.contact_email')"
             :hint="t('company.contact_email_hint')"
@@ -49,7 +74,9 @@
             class="q-mb-md"
           />
           <q-input
-            filled
+            outlined
+            rounded
+            color="field"
             v-model="selected.info_url"
             :label="t('company.info_url')"
             :hint="t('company.info_url_hint')"
@@ -57,19 +84,20 @@
             :rules="[(val) => !val || /^(http|https):/.test(val) || t('valid_url_required')]"
             class="q-mb-md"
           />
-          <employer-actions-input
-            v-model="selected.actions"
-            :company="selected"
-            :label="t('company.actions')"
-            class="q-mt-lg"
+          <q-toggle
+            v-model="selected.can_be_cited"
+            :label="t('company.can_be_cited_toggle')"
+            :true-value="false"
+            :false-value="true"
+            class="q-mb-md"
           />
         </q-form>
       </q-card-section>
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn outline :label="t('cancel')" color="field" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
@@ -78,7 +106,6 @@
 
 <script setup lang="ts">
 import type { Company } from 'src/models'
-import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
 import { notifyError } from 'src/utils/notify'
 
 interface DialogProps {
@@ -90,6 +117,7 @@ const props = defineProps<DialogProps>()
 const emit = defineEmits(['update:modelValue', 'saved'])
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 const services = useServices()
 const service = services.make('company')
 
@@ -97,6 +125,7 @@ const form = ref()
 const showDialog = ref(props.modelValue)
 const selected = ref<Company>({
   name: '',
+  can_be_cited: true,
 } as Company)
 const editMode = ref(false)
 
@@ -106,8 +135,11 @@ watch(
     if (value) {
       // deep copy
       selected.value = JSON.parse(JSON.stringify(props.item))
-      if (selected.value.administrators === undefined) {
-        selected.value.administrators = []
+      if (
+        selected.value.administrators === undefined ||
+        selected.value.administrators.length === 0
+      ) {
+        selected.value.administrators = authStore.profile?.email ? [authStore.profile.email] : []
       }
       editMode.value = selected.value.id !== undefined
     }

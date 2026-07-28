@@ -4,7 +4,7 @@
       <q-card-actions>
         <div class="text-h6 q-ml-sm">{{ t(editMode ? 'edit' : 'add') }}</div>
         <q-space />
-        <q-btn flat icon="close" color="primary" v-close-popup />
+        <q-btn flat icon="close" color="field" v-close-popup />
       </q-card-actions>
       <q-separator />
 
@@ -14,38 +14,44 @@
             v-model="tab"
             dense
             no-caps
-            class="text-grey"
             active-color="secondary"
-            active-bg-color="grey-4"
-            indicator-color="primary"
+            active-bg-color="white"
+            active-class="tab-active"
+            indicator-color="transparent"
+            class="bg-secondary-ultra-light"
             align="left"
           >
             <q-tab name="general" :label="t('general')" />
             <q-tab
               name="workplaces"
               :label="t('campaign.workplaces.title')"
-              :alert="selected.workplaces?.length ? false : 'negative'"
+              :alert="validWorkplaces ? false : 'negative'"
             />
           </q-tabs>
-          <q-separator />
           <q-tab-panels animated v-model="tab">
             <q-tab-panel name="general">
               <q-input
-                filled
+                outlined
+                rounded
+                color="field"
                 v-model="selected.name"
                 :label="t('name') + ' *'"
                 lazy-rules
                 :rules="[(val) => !!val || t('field_required')]"
               />
               <q-input
-                filled
+                outlined
+                rounded
+                color="field"
                 v-model="selected.contact_name"
                 :label="t('campaign.contact_name')"
                 :hint="t('campaign.contact_name_hint')"
                 class="q-mb-md"
               />
               <q-input
-                filled
+                outlined
+                rounded
+                color="field"
                 v-model="selected.contact_email"
                 :label="t('campaign.contact_email')"
                 :hint="t('campaign.contact_email_hint')"
@@ -57,7 +63,9 @@
                 class="q-mb-md"
               />
               <q-input
-                filled
+                outlined
+                rounded
+                color="field"
                 v-model="selected.info_url"
                 :label="t('campaign.info_url')"
                 :hint="t('campaign.info_url_hint')"
@@ -66,8 +74,21 @@
                 class="q-mb-md"
               />
               <q-input
+                outlined
+                rounded
+                color="field"
+                v-model.number="selected.nb_employees"
+                type="number"
+                :min="0"
+                :label="t('campaign.nb_employees')"
+                :hint="t('campaign.nb_employees_hint')"
+                class="q-mb-md"
+              />
+              <q-input
                 v-if="editMode"
-                filled
+                outlined
+                rounded
+                color="field"
                 v-model="selected.slug"
                 :label="t('campaign.slug') + ' *'"
                 :hint="t('campaign.slug_hint')"
@@ -84,7 +105,9 @@
                 </template>
               </q-input>
               <q-input
-                filled
+                outlined
+                rounded
+                color="field"
                 v-model="selected.start_date"
                 :label="t('start_date')"
                 class="q-mb-md"
@@ -101,7 +124,14 @@
                   </q-icon>
                 </template>
               </q-input>
-              <q-input filled v-model="selected.end_date" :label="t('end_date')" class="q-mb-md">
+              <q-input
+                outlined
+                rounded
+                color="field"
+                v-model="selected.end_date"
+                :label="t('end_date')"
+                class="q-mb-md"
+              >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -114,22 +144,70 @@
                   </q-icon>
                 </template>
               </q-input>
-              <q-toggle
-                v-model="withActions"
-                :label="t('campaign.with_actions')"
-                @update:model-value="onWithActionsChanged"
-              />
-              <employer-actions-input
-                v-if="withActions"
-                v-model="selected.actions"
-                :company="props.company"
-                :label="t('company.actions')"
-                class="q-mt-lg"
-              />
+              <div>
+                <q-toggle
+                  v-model="selected.with_professional_questions"
+                  :label="t('campaign.with_professional_questions')"
+                />
+                <p class="text-hint q-mb-md">{{ t('campaign.with_professional_questions_hint') }}</p>
+              </div>
+              <div>
+                <q-toggle
+                  v-model="withActions"
+                  :label="t('campaign.with_actions')"
+                  @update:model-value="onWithActionsChanged"
+                />
+                <p class="text-hint q-mb-md">{{ t('campaign.employer_measures_hint') }}</p>
+                <employer-actions-input
+                  v-if="withActions"
+                  v-model="selected.actions"
+                  :company="props.company"
+                  :label="t('company.actions')"
+                  class="q-mt-lg"
+                />
+              </div>
+              <div>
+                <q-toggle
+                  v-model="withRewards"
+                  :label="t('campaign.rewards.toggle')"
+                  @update:model-value="onWithRewardsChanged"
+                />
+                <p class="text-hint q-mb-md">{{ t('campaign.rewards.hint') }}</p>
+
+                <div v-if="selected.rewards_message">
+                  <template v-for="locale in availableLocales" :key="locale">
+                    <q-input
+                      v-if="withRewards"
+                      outlined
+                      rounded
+                      color="field"
+                      type="textarea"
+                      v-model="selected.rewards_message[locale]"
+                      :label="
+                        t('campaign.rewards.message_placeholder', {}, { locale }) +
+                        ` (${locale.toUpperCase()})`
+                      "
+                      class="q-mb-md"
+                    />
+                  </template>
+                </div>
+              </div>
             </q-tab-panel>
             <q-tab-panel name="workplaces">
               <div class="text-hint q-mb-md">
                 {{ t('campaign.workplaces.hint') }}
+              </div>
+              <div class="q-mb-md">
+                <q-toggle
+                  v-model="selected.open_workplaces"
+                  :label="t('campaign.workplaces.open_workplaces')"
+                />
+                <div class="text-hint q-mt-xs">
+                  {{ t('campaign.workplaces.open_workplaces_hint') }}
+                </div>
+              </div>
+              <div class="q-mb-md">
+                {{ t('campaign.workplaces.workplaces_list') }}
               </div>
               <div v-if="selected.workplaces && selected.workplaces.length > 0">
                 <q-list
@@ -146,7 +224,8 @@
                       <workplace-input
                         v-if="selected.workplaces[index]"
                         v-model="selected.workplaces[index]"
-                    /></q-item-section>
+                      />
+                    </q-item-section>
                     <q-item-section side>
                       <q-btn
                         flat
@@ -177,9 +256,10 @@
                   @click="onUpload"
                 />
                 <q-btn
-                  flat
+                  v-if="selected.workplaces && selected.workplaces.length > 0"
+                  outline
                   size="sm"
-                  color="primary"
+                  color="field"
                   :label="t('download_csv')"
                   icon="download"
                   class="on-right"
@@ -196,8 +276,8 @@
 
       <q-separator />
 
-      <q-card-actions align="right" class="bg-grey-3">
-        <q-btn flat :label="t('cancel')" color="secondary" v-close-popup />
+      <q-card-actions align="right">
+        <q-btn outline color="field" :label="t('cancel')" v-close-popup />
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
@@ -222,17 +302,25 @@ interface DialogProps {
 const props = defineProps<DialogProps>()
 const emit = defineEmits(['update:modelValue', 'saved'])
 
-const { t } = useI18n()
+const { t, availableLocales } = useI18n()
 const campaignsStore = useCampaigns()
 
 const form = ref()
 const showDialog = ref(props.modelValue)
 const selected = ref<Campaign>({
   name: '',
+  with_professional_questions: true,
 } as Campaign)
 const withActions = ref(false)
+const withRewards = ref(false)
 const editMode = ref(false)
 const tab = ref('general')
+
+const validWorkplaces = computed(
+  () =>
+    selected.value.open_workplaces ||
+    (selected.value.workplaces && selected.value.workplaces.length > 0),
+)
 
 onMounted(() => {
   if (props.modelValue) {
@@ -266,6 +354,9 @@ function onInit() {
         ? selected.value.actions[key].length > 0
         : false,
     ).length > 0
+
+  withRewards.value = !!selected.value.rewards_message
+
   editMode.value = selected.value.id !== undefined
   if (editMode.value && !selected.value.slug) {
     selected.value.slug = generateSlug()
@@ -290,9 +381,13 @@ async function onSave() {
   const valid = await form.value.validate()
   if (!valid) return
   if (selected.value === undefined) return
-  if (!selected.value.workplaces || selected.value.workplaces.length === 0) {
+  if (!validWorkplaces.value) {
     notifyError(t('campaign.workplaces.required'))
     return
+  }
+  // check it is valid number as empty input field returns ''
+  if (typeof selected.value.nb_employees !== 'number') {
+    delete selected.value.nb_employees
   }
   selected.value.start_date =
     selected.value.start_date === '' ? undefined : selected.value.start_date
@@ -319,6 +414,25 @@ async function onSave() {
 function onWithActionsChanged(value: boolean) {
   if (!value) {
     selected.value.actions = {}
+  }
+}
+
+function onWithRewardsChanged(value: boolean) {
+  if (value) {
+    if (!selected.value.rewards_message) {
+      selected.value.rewards_message = {}
+    }
+    availableLocales.forEach((locale) => {
+      if (!selected.value.rewards_message || !selected.value.rewards_message[locale]) {
+        selected.value.rewards_message![locale] = t(
+          'campaign.rewards.default_message',
+          {},
+          { locale },
+        )
+      }
+    })
+  } else {
+    selected.value.rewards_message = undefined
   }
 }
 

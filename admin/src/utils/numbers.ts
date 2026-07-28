@@ -20,9 +20,26 @@ export function formatCoordinates(lat: number, lon: number) {
   return `${latDMS} ${latDirection}, ${lonDMS} ${lonDirection}`
 }
 
+const numberFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 })
+
+export function formatNumber(value: number | null | undefined): string {
+  if (value === null || value === undefined) {
+    return 'N/A'
+  }
+  return numberFormatter.format(value)
+}
+
 export function toMaxDecimals(x: number | null, n: number): number | null {
   if (x === null) {
     return null
   }
   return +x.toFixed(n)
+}
+
+export function checkUrlParamNumber(param: string | string[] | null | undefined): number | null {
+  if (!param || Array.isArray(param)) {
+    return null
+  }
+  const num = Number(param)
+  return Number.isFinite(num) ? num : null
 }

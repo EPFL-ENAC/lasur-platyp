@@ -1,7 +1,11 @@
 <template>
   <div>
-    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <QuestionText
+      :label="label ?? ''"
+      :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`"
+    />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
+    <div v-if="multiple" class="text-h6 text-italic">{{ t('form.multiple_options') }}</div>
     <div class="q-mt-lg">
       <div :class="col ? 'row q-col-gutter-md' : ''">
         <template v-for="(group, idx) in optionGroups" :key="idx">
@@ -10,12 +14,18 @@
               <template v-for="option in group" :key="option.value">
                 <q-item
                   :active="isSelected(option)"
-                  active-class="bg-teal-1 text-grey-8"
+                  active-class="bg-primary text-secondary"
                   v-ripple
                   clickable
-                  class="rounded-borders q-mb-md bg-primary text-green-3"
+                  class="rounded-borders q-mb-md"
                   @click="onOption(option)"
                 >
+                  <q-item-section avatar>
+                    <q-icon
+                      :name="iconSet[isSelected(option) ? 1 : 0]"
+                      :color="isSelected(option) ? 'secondary' : 'primary'"
+                    />
+                  </q-item-section>
                   <q-item-section>
                     <q-item-label class="text-h4" :class="optionLabelClass">{{
                       option.label
@@ -36,6 +46,8 @@
 
 <script setup lang="ts">
 import type { Option } from 'src/components/form/models'
+import QuestionText from './QuestionText.vue'
+
 interface Props {
   modelValue: string | string[] | undefined
   label?: string
@@ -50,6 +62,15 @@ interface Props {
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
+
+const { t } = useI18n()
+
+const iconSet = computed(() => {
+  if (props.multiple) {
+    return ['check_box_outline_blank', 'check_box']
+  }
+  return ['radio_button_unchecked', 'radio_button_checked']
+})
 
 const selected = computed(() => {
   if (props.multiple) {
@@ -113,3 +134,11 @@ function onOption(option: Option) {
   }
 }
 </script>
+
+<style scoped>
+.q-item {
+  background: var(--field-bg);
+  color: var(--foreground-color);
+  border: 1px solid var(--secondary-border-color);
+}
+</style>

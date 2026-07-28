@@ -40,21 +40,26 @@
         </q-menu>
       </q-btn>
       <div
-        :id="`map-${reco}`"
+        :id="mapContainerId"
         :style="`--t-height: ${height || '400px'}; --t-width: ${width || '100%'};`"
         class="map-view"
       ></div>
-      <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders q-mr-sm">
+      <div class="colors q-pa-sm bg-white text-grey-8 text-caption rounded-borders">
         <div class="row q-gutter-sm">
           <div
-            v-for="(cutoff, index) in selectedModeCutoffSec"
+            v-for="cutoff in selectedModeCutoffSec"
             :key="`color-${cutoff}`"
             class="row items-center"
           >
             <div
-              :style="`width: 15px; height: 15px; background-color: rgba(90, 63, 192, ${cutoffSecTransparency(index)}); border: 1px solid #5a3fc0; margin-right: 5px;`"
+              :style="`width: 15px; height: 15px; background-color: ${getCutoffColor(cutoff)}; border: 1px solid #5a3fc0; margin-right: 5px;`"
             ></div>
             <div>{{ t('isochrones.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
+          </div>
+
+          <div class="legend-transit-lines">
+            <div class="purple-bar"></div>
+            <div>{{ t('transit_lines') }}</div>
           </div>
         </div>
       </div>
@@ -88,6 +93,8 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 
+const mapContainerId = `map-${props.reco}-${useId()}`
+
 const map = ref<Map>()
 let marker: Marker | undefined
 const loadingIsochrones = ref(true)
@@ -112,11 +119,28 @@ const showPoisMap = ref<{ [key: string]: boolean }>({
   commerce: false,
 })
 
+const ISOCHRONE_CUTOFF_COLORS: { [key: number]: string } = {
+  // dark green
+  300: '#1b5e20',
+  // lighter green
+  600: '#4caf50',
+  // lightest green
+  900: '#a5d6a7',
+  // yellow
+  1200: '#ffeb3b',
+  // orange
+  1800: '#ff9800',
+  // red
+  2400: '#f44336',
+  // dark red
+  3600: '#b71c1c',
+}
+
 onMounted(onInit)
 
 function onInit() {
   map.value = new Map({
-    container: `map-${props.reco}`,
+    container: mapContainerId,
     center: props.center,
     style: style,
     trackResize: true,
@@ -144,6 +168,10 @@ function onInit() {
     case 'vae':
     case 'cargo':
       selectedMode.value = 'EBIKE'
+      break
+    case 'train':
+    case 'tpu':
+      selectedMode.value = 'TRANSIT'
       break
     default:
       selectedMode.value = 'WALK'
@@ -179,6 +207,10 @@ async function loadIsochronesData() {
       mode = 'BICYCLE'
       bikeSpeed = 17
       cutoffSec = [600, 1200, 1800, 2400, 3600]
+      break
+    case 'TRANSIT':
+      mode = 'TRANSIT'
+      cutoffSec = [1200, 2400, 3600]
       break
     default:
       cutoffSec = [300, 600, 900, 1200, 1800]
@@ -230,7 +262,7 @@ async function loadPois(categories: string[]) {
     bbox,
   })
   if (data) {
-    showPois(data)
+    showPois(categories, data)
   }
   loadingPois.value = false
 }
@@ -249,7 +281,26 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
       type: 'fill',
       source: 'isochrones',
       paint: {
-        'fill-color': '#5a3fc0',
+        // fill color depends on the time property with default value #5a3fc0
+        'fill-color': [
+          'interpolate',
+          ['linear'],
+          ['get', 'time'],
+          300,
+          getCutoffColor(300),
+          600,
+          getCutoffColor(600),
+          900,
+          getCutoffColor(900),
+          1200,
+          getCutoffColor(1200),
+          1800,
+          getCutoffColor(1800),
+          2400,
+          getCutoffColor(2400),
+          3600,
+          getCutoffColor(3600),
+        ],
         'fill-opacity': 0.3,
         'fill-outline-color': '#5a3fc0',
       },
@@ -265,7 +316,7 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
   })
 }
 
-function showPois(geojson: GeoJSON.FeatureCollection) {
+function showPois(categories: string[], geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
   const sources: { [key: string]: GeoJSON.FeatureCollection } = {}
   // set a color property based on category
@@ -295,6 +346,7 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
   })
   // add a layer per category
   Object.entries(sources).forEach(([cat, data]) => {
+    if (!categories.includes(cat)) return
     const layerId = `pois-layer-${cat}`
     if (map.value?.getSource(layerId)) {
       ;(map.value?.getSource(layerId) as GeoJSONSource).setData(data)
@@ -324,7 +376,8 @@ function showPois(geojson: GeoJSON.FeatureCollection) {
 function onShowPoisMap(name: string) {
   if (!map.value) return
   const layerId = `pois-layer-${name}`
-  const hasLayer = map.value.getLayer(layerId) !== undefined
+  const layer = map.value.getLayer(layerId)
+  const hasLayer = layer !== undefined
   if (!hasLayer) {
     // load POIs in the current map bbox
     if (map.value) {
@@ -363,9 +416,8 @@ function categoryToColor(str: string): { name: string; hex: string } | undefined
   }
 }
 
-function cutoffSecTransparency(index: number): number {
-  const total = selectedModeCutoffSec.value.length
-  return 0.1 + (0.7 * (total - index + 1)) / total
+function getCutoffColor(cutoff: number): string {
+  return ISOCHRONE_CUTOFF_COLORS[cutoff] || '#5a3fc0'
 }
 </script>
 
@@ -390,5 +442,16 @@ function cutoffSecTransparency(index: number): number {
   z-index: 10;
   bottom: 10px;
   left: 10px;
+}
+
+.legend-transit-lines {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.purple-bar {
+  width: 1rem;
+  height: 0.25rem;
+  background-color: #5a3fc0;
 }
 </style>

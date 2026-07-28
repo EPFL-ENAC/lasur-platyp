@@ -1,6 +1,24 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md">{{ t('companies') }}</div>
+    <div class="title-bar q-pa-md">
+      <div class="text-h4 text-title">{{ t('companies') }}</div>
+
+      <div class="title-toolbar">
+        <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <q-btn
+          size="md"
+          color="primary"
+          :disable="loading"
+          :label="t('add')"
+          icon="add"
+          @click="onAdd"
+        />
+      </div>
+    </div>
     <q-separator />
     <div class="q-pa-md">
       <q-table
@@ -12,43 +30,44 @@
         v-model:pagination="pagination"
         :loading="loading"
         :filter="filter"
+        table-header-class="bg-secondary-ultra-light text-secondary"
         binary-state-sort
         @request="onRequest"
         :rows-per-page-options="[10, 25, 50]"
       >
-        <template v-slot:top>
-          <q-btn
-            v-if="authStore.isAdmin"
-            size="sm"
-            color="primary"
-            :disable="loading"
-            :label="t('add')"
-            icon="add"
-            @click="onAdd"
-          />
-          <q-space />
-          <q-input dense debounce="300" v-model="filter" clearable>
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
         <template v-slot:body-cell-name="props">
           <q-td :props="props">
-            <router-link :to="`/company/${props.row.id}`" class="modus">{{
-              props.row.name
-            }}</router-link>
+            <router-link
+              v-if="authStore.isAdminOfThisCompany(props.row)"
+              :to="`/company/${props.row.id}`"
+              class="modus"
+            >
+              {{ props.row.name }}
+            </router-link>
+            <span v-else class="modus">
+              {{ props.row.name }}
+            </span>
           </q-td>
         </template>
         <template v-slot:body-cell-administrators="props">
           <q-td :props="props">
-            <q-badge color="accent" :label="props.row.administrators.length || 0" />
+            <q-badge color="primary" :label="props.row.administrators.length || 0" />
+          </q-td>
+        </template>
+        <template v-slot:body-cell-can_be_cited="props">
+          <q-td :props="props">
+            <q-icon
+              :name="props.row.can_be_cited ? 'check_circle' : 'cancel'"
+              :color="props.row.can_be_cited ? 'positive' : 'negative'"
+              size="sm"
+            />
           </q-td>
         </template>
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              color="grey-8"
+              v-if="authStore.isAdminOfThisCompany(props.row)"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -58,7 +77,8 @@
             >
             </q-btn>
             <q-btn
-              color="grey-8"
+              v-if="authStore.isAdminOfThisCompany(props.row)"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -68,7 +88,8 @@
             >
             </q-btn>
             <q-btn
-              color="grey-8"
+              v-if="authStore.isAdminOfThisCompany(props.row)"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -132,6 +153,22 @@ const columns = computed(() => {
       label: t('company.administrators'),
       align: DefaultAlignment,
       field: 'administrators',
+      sortable: true,
+    },
+    {
+      name: 'your_role',
+      required: true,
+      label: t('company.your_role'),
+      align: DefaultAlignment,
+      field: (row: Company) => t(`company.roles.${authStore.roleInThisCompany(row)}`),
+      sortable: false,
+    },
+    {
+      name: 'can_be_cited',
+      required: true,
+      label: t('company.can_be_cited'),
+      align: DefaultAlignment,
+      field: 'can_be_cited',
       sortable: true,
     },
     {
@@ -227,7 +264,7 @@ function fetchFromServer(
 const onRequest = makePaginationRequestHandler(fetchFromServer, pagination)
 
 function onAdd() {
-  selected.value = { name: '', administrators: [] }
+  selected.value = { name: '', can_be_cited: true, administrators: [] }
   showEditDialog.value = true
 }
 

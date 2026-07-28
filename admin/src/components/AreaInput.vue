@@ -1,11 +1,16 @@
 <template>
   <div>
     <div class="map" ref="mapContainer"></div>
-    <div class="box-info row">
-      <q-icon name="info" size="xs" class="q-mr-sm" />
-      <span>
-        {{ t(`draw_mode.${drawMode}_hint`) }}
-      </span>
+    <div class="box-info">
+      <q-icon name="info" size="md" class="q-mr-sm" />
+      <div>
+        <div>
+          {{ t(`draw_mode.${drawMode}_hint`) }}
+        </div>
+        <div>
+          {{ t('draw_mode.zoom_hint') }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -66,7 +71,11 @@ onMounted(() => {
 
   // Delete polygon
   map.value.on('draw.delete', () => {
-    emit('update:modelValue', draw.value?.getAll())
+    let allFeatures = draw.value?.getAll()
+    if (allFeatures && allFeatures.features.length === 0) {
+      allFeatures = undefined
+    }
+    emit('update:modelValue', allFeatures)
   })
 
   // Track mode changes
@@ -128,5 +137,11 @@ function isValidPolygon(feature: GeoJSON.Feature | undefined): boolean {
 .map {
   height: 500px;
   width: 100%;
+}
+
+.box-info {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 </style>

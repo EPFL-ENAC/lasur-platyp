@@ -25,9 +25,11 @@ declare global {
   const defineComponent: typeof import('vue')['defineComponent']
   const defineStore: typeof import('pinia')['defineStore']
   const effectScope: typeof import('vue')['effectScope']
+  const flushStateFromLocalStorage: typeof import('./stores/stats')['flushStateFromLocalStorage']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getStateFromLocalStorage: typeof import('./stores/stats')['getStateFromLocalStorage']
   const h: typeof import('vue')['h']
   const inject: typeof import('vue')['inject']
   const isProxy: typeof import('vue')['isProxy']
@@ -67,6 +69,7 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
+  const stateFromCompressedURL: (typeof import('./stores/stats'))['stateFromCompressedURL']
   const storeToRefs: typeof import('pinia')['storeToRefs']
   const stores: typeof import('./stores/index')['default']
   const toRaw: typeof import('vue')['toRaw']
@@ -79,7 +82,7 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuthStore: typeof import('./stores/auth')['useAuthStore']
   const useCampaigns: typeof import('./stores/campaigns')['useCampaigns']
-  const useCounterStore: typeof import('./stores/example-store')['useCounterStore']
+  const useCounterStore: (typeof import('./stores/example-store'))['useCounterStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useI18n: typeof import('vue-i18n')['useI18n']
@@ -88,6 +91,7 @@ declare global {
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
   const useParticipants: typeof import('./stores/participants')['useParticipants']
+  const usePreferencesStore: typeof import('./stores/preferences')['usePreferencesStore']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useServices: typeof import('./stores/services')['useServices']
@@ -103,14 +107,20 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
+  export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
   export type { PiniaCustomProperties } from './stores/index'
   import('./stores/index')
   // @ts-ignore
+  export type { StatsSectionsExpandedState } from './stores/preferences'
+  import('./stores/preferences')
+  // @ts-ignore
   export type { Service } from './stores/services'
   import('./stores/services')
+  // @ts-ignore
+  export type { StatsState } from './stores/stats'
+  import('./stores/stats')
 }
 
 // for vue template auto import
@@ -137,9 +147,11 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly flushStateFromLocalStorage: UnwrapRef<typeof import('./stores/stats')['flushStateFromLocalStorage']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getStateFromLocalStorage: UnwrapRef<typeof import('./stores/stats')['getStateFromLocalStorage']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
@@ -199,6 +211,7 @@ declare module 'vue' {
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useParticipants: UnwrapRef<typeof import('./stores/participants')['useParticipants']>
+    readonly usePreferencesStore: UnwrapRef<typeof import('./stores/preferences')['usePreferencesStore']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useServices: UnwrapRef<typeof import('./stores/services')['useServices']>

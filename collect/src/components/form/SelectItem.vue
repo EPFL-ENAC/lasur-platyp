@@ -18,10 +18,11 @@
         input-debounce="0"
         map-options
         emit-value
-        filled
         hide-dropdown-icon
-        bg-color="primary"
-        input-class="text-h6 text-white"
+        outlined
+        color="field"
+        bg-color="field"
+        input-class="text-h6"
         :placeholder="!selectModel ? t('form.search_or_select_option') : ''"
         @filter="filterFn"
         @blur="onBlur"
@@ -29,17 +30,14 @@
       >
         <template v-slot:selected>
           <template v-for="option in options" :key="option.value">
-            <div v-if="isSelected(option) && !filtering" class="text-white">
+            <div v-if="isSelected(option) && !filtering">
               <div :class="optionLabelClass">{{ option.label }}</div>
               <div v-if="option.hint" class="text-subtitle1">{{ option.hint }}</div>
             </div>
           </template>
         </template>
         <template v-slot:option="scope">
-          <q-item
-            v-bind="scope.itemProps"
-            :class="scope.selected ? 'text-primary' : 'bg-primary text-grey-3'"
-          >
+          <q-item v-bind="scope.itemProps">
             <q-item-section v-if="scope.opt.icon" avatar>
               <q-icon :name="scope.opt.icon" />
             </q-item-section>

@@ -1,38 +1,37 @@
 <template>
-  <div :style="`height: ${height}px; width: 100%;`">
-    <e-charts
-      v-if="total > 0"
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      :loading="stats.loading"
+  <e-charts-shell
+    :height="height"
+    :loading="stats.loading"
+    :has-data="total > 0"
+    :show-info="total > 0"
+    :no-data-title="t(`stats.emissions_${props.reco}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  >
+    <p class="q-mb-xs">{{ t(`stats.emissions_${props.reco}.texts.default`) }}</p>
+    <q-markdown
+      v-if="textLabels"
+      :src="t(`stats.emissions_${props.reco}.texts.specific`, textLabels)"
     />
-    <div v-else>
-      <div class="text-h6 text-center">{{ t(`stats.emissions_${props.reco}.title`) }}</div>
-      <div class="text-subtitle1 text-grey-8 text-center">{{ t('stats.no_data') }}</div>
-    </div>
-  </div>
+  </e-charts-shell>
 </template>
 
 <script setup lang="ts">
-import ECharts from 'vue-echarts'
+import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { CustomChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { initOptions, updateOptions } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { toMaxDecimals } from 'src/utils/numbers'
-// import { MODE_COLORS } from './commons'
+import { formatNumber } from 'src/utils/numbers'
+import { MODE_COLORS } from './commons'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const stats = useStats()
 use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
@@ -42,14 +41,32 @@ interface Props {
   yaxis?: string
   rangeStep?: number
   height?: number
+  exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
+  exportable: true,
 })
 
-const chart = shallowRef(null)
 const option = ref<EChartsOption>({})
 const total = ref(0)
+const currentEmissions = ref(0)
+const newEmissions = ref(0)
+
+const textLabels = computed(() => {
+  if (total.value < 5) return null
+
+  return {
+    current_emissions: formatNumber(currentEmissions.value / 1000),
+    new_emissions: formatNumber(newEmissions.value / 1000),
+    cheeseburgers: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 18.8)),
+    vacuum: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 73.43)),
+    shirt: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 13.23466)),
+    laptop: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 192.62)),
+    email_sent: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.002462)),
+    visio_hour: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.057063)),
+  }
+})
 
 watch([() => stats.loading], () => {
   if (stats.loading) {
@@ -57,7 +74,7 @@ watch([() => stats.loading], () => {
   }
 })
 
-watch([() => props.height], () => {
+watch([() => props.height, locale], () => {
   if (!stats.loading) {
     initChartOptions()
   }
@@ -75,7 +92,7 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_${props.reco}.labels.${shortKey(key)}`)
+  return t(`transportation_modes.${shortKey(key)}`)
 }
 
 function initChartOptions() {
@@ -99,18 +116,18 @@ function initChartOptions() {
     .map((item) => item.mode)
 
   // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
-  const currentEmissions = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
+  currentEmissions.value = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
   const categoryEmissions: { [key: string]: number } = {}
   recoEmissions.forEach((item) => {
     categoryEmissions[item.mode] = item.emissions
   })
-  const savedEmissions =
-    currentEmissions - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
+  newEmissions.value =
+    currentEmissions.value - Object.values(categoryEmissions).reduce((a, b) => a + b, 0)
 
   const categoriesLabels = [
-    keyLabel('current'),
+    t(`stats.emissions_${props.reco}.labels.current`),
     ...categories.map((cat) => keyLabel(cat)),
-    keyLabel('saved'),
+    t(`stats.emissions_${props.reco}.labels.postSaving`),
   ]
 
   total.value = emissions[0]?.total || 0
@@ -140,14 +157,7 @@ function initChartOptions() {
       formatter: function (params: any) {
         const tar = params[1]
         if (!tar) return ''
-        return (
-          tar.name +
-          '<br/>' +
-          tar.seriesName +
-          ' : ' +
-          new Intl.NumberFormat().format(toMaxDecimals(tar.value, 0) || 0) +
-          ' kgCO₂eq'
-        )
+        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' kgCO₂eq'
       },
     },
     legend: {
@@ -159,6 +169,9 @@ function initChartOptions() {
       axisLabel: {
         rotate: 30,
       },
+      name: t(`stats.emissions_${props.reco}.xaxis`) || '',
+      nameLocation: 'middle',
+      nameGap: 90,
     },
     yAxis: {
       name: props.yaxis || '',
@@ -191,7 +204,7 @@ function initChartOptions() {
               }
               sum += categoryEmissions[c] || 0
             }
-            return currentEmissions - sum - (categoryEmissions[cat] || 0)
+            return currentEmissions.value - sum - (categoryEmissions[cat] || 0)
           }),
           0,
         ],
@@ -207,13 +220,28 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return new Intl.NumberFormat().format(toMaxDecimals(params.value as number, 0) || 0)
+            return formatNumber(params.value as number)
           },
         },
         data: [
-          currentEmissions,
-          ...categories.map((cat) => categoryEmissions[cat] || 0),
-          savedEmissions,
+          {
+            value: currentEmissions.value,
+            itemStyle: {
+              color: '#000',
+            },
+          },
+          ...categories.map((cat) => ({
+            value: categoryEmissions[cat] || 0,
+            itemStyle: {
+              color: MODE_COLORS[cat] || MODE_COLORS.default || '#ccc',
+            },
+          })),
+          {
+            value: newEmissions.value,
+            itemStyle: {
+              color: '#000',
+            },
+          },
         ],
       },
     ],

@@ -1,10 +1,11 @@
 <template>
   <q-page>
-    <div class="text-h5 q-pa-md">{{ t('users') }}</div>
+    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('users') }}</h4>
     <q-separator />
     <div class="q-pa-md">
       <q-table
         flat
+        table-header-class="bg-secondary-ultra-light text-secondary"
         :rows="usersStore.users"
         :columns="columns"
         row-key="id"
@@ -20,7 +21,7 @@
             @click="onAdd"
           />
           <q-space />
-          <q-input dense debounce="300" v-model="filter" clearable>
+          <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -60,7 +61,7 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -71,7 +72,7 @@
             >
             </q-btn>
             <q-btn
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense
@@ -82,7 +83,7 @@
             >
             </q-btn>
             <q-btn
-              color="grey-8"
+              color="foreground"
               size="12px"
               flat
               dense

@@ -1,0 +1,223 @@
+<template>
+  <q-page>
+    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('doc') }}</h4>
+    <q-separator />
+    <div class="q-pa-md">
+      <q-markdown
+        :src="locale === 'fr' ? WelcomeFr : WelcomeEn"
+        no-heading-anchor-links
+        class="q-mb-xl"
+      />
+      <div>
+        <div v-for="section in sections" :key="section.title" class="q-mb-md">
+          <h6 class="text-h6 q-mb-xs">{{ section.title }}</h6>
+          <p class="q-mb-md">{{ section.description ?? '' }}</p>
+
+          <template v-for="entry in section.entries" :key="entry.title">
+            <q-separator />
+
+            <q-expansion-item
+              switch-toggle-side
+              :label="entry.title"
+              :caption="entry.caption"
+              class="bg-white"
+              :content-inset-level="1"
+              header-class="text-secondary"
+            >
+              <div class="q-pa-md">
+                <q-markdown v-if="entry.markdown" :src="entry.markdown" no-heading-anchor-links />
+              </div>
+            </q-expansion-item>
+          </template>
+          <q-separator />
+        </div>
+      </div>
+    </div>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import WelcomeEn from 'src/assets/docs/en/welcome.md'
+import WelcomeFr from 'src/assets/docs/fr/welcome.md'
+import PrivacyEn from 'src/assets/docs/en/general/privacy.md'
+import PrivacyFr from 'src/assets/docs/fr/general/privacy.md'
+import TermsEn from 'src/assets/docs/en/general/terms.md'
+import TermsFr from 'src/assets/docs/fr/general/terms.md'
+import WhatNextEn from 'src/assets/docs/en/general/what_next.md'
+import WhatNextFr from 'src/assets/docs/fr/general/what_next.md'
+import NeedMoreHelpEn from 'src/assets/docs/en/general/need_more_help.md'
+import NeedMoreHelpFr from 'src/assets/docs/fr/general/need_more_help.md'
+import CreateEn from 'src/assets/docs/en/organisations/create.md'
+import CreateFr from 'src/assets/docs/fr/organisations/create.md'
+import OrgSettingsEn from 'src/assets/docs/en/organisations/settings.md'
+import OrgSettingsFr from 'src/assets/docs/fr/organisations/settings.md'
+import EmployerMeasuresEn from 'src/assets/docs/en/organisations/employer_measures.md'
+import EmployerMeasuresFr from 'src/assets/docs/fr/organisations/employer_measures.md'
+import CustomMeasuresEn from 'src/assets/docs/en/organisations/custom_measures.md'
+import CustomMeasuresFr from 'src/assets/docs/fr/organisations/custom_measures.md'
+import BestPracticesEn from 'src/assets/docs/en/organisations/best_practices.md'
+import BestPracticesFr from 'src/assets/docs/fr/organisations/best_practices.md'
+import CommonIssuesEn from 'src/assets/docs/en/organisations/common_issues.md'
+import CommonIssuesFr from 'src/assets/docs/fr/organisations/common_issues.md'
+import MobilityAdvisorEn from 'src/assets/docs/en/organisations/mobility_advisor.md'
+import MobilityAdvisorFr from 'src/assets/docs/fr/organisations/mobility_advisor.md'
+import CampaignSettingsEn from 'src/assets/docs/en/campaigns/settings.md'
+import CampaignSettingsFr from 'src/assets/docs/fr/campaigns/settings.md'
+import CampaignCommonIssuesEn from 'src/assets/docs/en/campaigns/common_issues.md'
+import CampaignCommonIssuesFr from 'src/assets/docs/fr/campaigns/common_issues.md'
+import CampaignBestPracticesEn from 'src/assets/docs/en/campaigns/best_practices.md'
+import CampaignBestPracticesFr from 'src/assets/docs/fr/campaigns/best_practices.md'
+import CampaignShareLinkEn from 'src/assets/docs/en/campaigns/share_link.md'
+import CampaignShareLinkFr from 'src/assets/docs/fr/campaigns/share_link.md'
+import CampaignIsochroneEn from 'src/assets/docs/en/campaigns/display_isochrone.md'
+import CampaignIsochroneFr from 'src/assets/docs/fr/campaigns/display_isochrone.md'
+import CampaignRewardEn from 'src/assets/docs/en/campaigns/reward.md'
+import CampaignRewardFr from 'src/assets/docs/fr/campaigns/reward.md'
+import CampaignDashboardEn from 'src/assets/docs/en/campaigns/dashboard.md'
+import CampaignDashboardFr from 'src/assets/docs/fr/campaigns/dashboard.md'
+import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import { useQuasar } from 'quasar'
+import { isFirstVisit } from 'src/utils/localStorage'
+
+const $q = useQuasar()
+const { locale, t } = useI18n()
+
+interface DocEntry {
+  title: string
+  caption: string
+  markdown: string
+}
+
+interface DocSection {
+  title: string
+  description?: string
+  entries: DocEntry[]
+}
+
+const sections = computed<DocSection[]>(() => [
+  {
+    title: t('docs.organisations.title'),
+    entries: [
+      {
+        title: t('docs.organisations.create.title'),
+        caption: t('docs.organisations.create.caption'),
+        markdown: locale.value === 'fr' ? CreateFr : CreateEn,
+      },
+      {
+        title: t('docs.organisations.settings.title'),
+        caption: t('docs.organisations.settings.caption'),
+        markdown: locale.value === 'fr' ? OrgSettingsFr : OrgSettingsEn,
+      },
+      {
+        title: t('docs.organisations.employer_measures.title'),
+        caption: t('docs.organisations.employer_measures.caption'),
+        markdown: locale.value === 'fr' ? EmployerMeasuresFr : EmployerMeasuresEn,
+      },
+      {
+        title: t('docs.organisations.custom_measures.title'),
+        caption: t('docs.organisations.custom_measures.caption'),
+        markdown: locale.value === 'fr' ? CustomMeasuresFr : CustomMeasuresEn,
+      },
+      {
+        title: t('docs.organisations.mobility_advisor.title'),
+        caption: t('docs.organisations.mobility_advisor.caption'),
+        markdown: locale.value === 'fr' ? MobilityAdvisorFr : MobilityAdvisorEn,
+      },
+      {
+        title: t('docs.organisations.common_issues.title'),
+        caption: t('docs.organisations.common_issues.caption'),
+        markdown: locale.value === 'fr' ? CommonIssuesFr : CommonIssuesEn,
+      },
+      {
+        title: t('docs.organisations.best_practices.title'),
+        caption: t('docs.organisations.best_practices.caption'),
+        markdown: locale.value === 'fr' ? BestPracticesFr : BestPracticesEn,
+      },
+    ],
+  },
+  {
+    title: t('docs.campaigns.title'),
+    description: t('docs.campaigns.description'),
+    entries: [
+      {
+        title: t('docs.campaigns.settings.title'),
+        caption: t('docs.campaigns.settings.caption'),
+        markdown: locale.value === 'fr' ? CampaignSettingsFr : CampaignSettingsEn,
+      },
+      {
+        title: t('docs.campaigns.share_link.title'),
+        caption: t('docs.campaigns.share_link.caption'),
+        markdown: locale.value === 'fr' ? CampaignShareLinkFr : CampaignShareLinkEn,
+      },
+      {
+        title: t('docs.campaigns.isochrone.title'),
+        caption: t('docs.campaigns.isochrone.caption'),
+        markdown: locale.value === 'fr' ? CampaignIsochroneFr : CampaignIsochroneEn,
+      },
+      {
+        title: t('docs.campaigns.dashboard.title'),
+        caption: t('docs.campaigns.dashboard.caption'),
+        markdown: locale.value === 'fr' ? CampaignDashboardFr : CampaignDashboardEn,
+      },
+      {
+        title: t('docs.campaigns.reward.title'),
+        caption: t('docs.campaigns.reward.caption'),
+        markdown: locale.value === 'fr' ? CampaignRewardFr : CampaignRewardEn,
+      },
+      {
+        title: t('docs.campaigns.common_issues.title'),
+        caption: t('docs.campaigns.common_issues.caption'),
+        markdown: locale.value === 'fr' ? CampaignCommonIssuesFr : CampaignCommonIssuesEn,
+      },
+      {
+        title: t('docs.campaigns.best_practices.title'),
+        caption: t('docs.campaigns.best_practices.caption'),
+        markdown: locale.value === 'fr' ? CampaignBestPracticesFr : CampaignBestPracticesEn,
+      },
+    ],
+  },
+  {
+    title: t('docs.general.title'),
+    entries: [
+      {
+        title: t('docs.general.terms.title'),
+        caption: t('docs.general.terms.caption'),
+        markdown: locale.value === 'fr' ? TermsFr : TermsEn,
+      },
+      {
+        title: t('docs.general.privacy.title'),
+        caption: t('docs.general.privacy.caption'),
+        markdown: locale.value === 'fr' ? PrivacyFr : PrivacyEn,
+      },
+      {
+        title: t('docs.general.what_next.title'),
+        caption: t('docs.general.what_next.caption'),
+        markdown: locale.value === 'fr' ? WhatNextFr : WhatNextEn,
+      },
+      {
+        title: t('docs.general.need_more_help.title'),
+        caption: t('docs.general.need_more_help.caption'),
+        markdown: locale.value === 'fr' ? NeedMoreHelpFr : NeedMoreHelpEn,
+      },
+    ],
+  },
+])
+
+onMounted(() => {
+  if (isFirstVisit()) {
+    $q.dialog({
+      component: MarkdownDialog,
+      componentProps: {
+        text: t('introduction_text'),
+        title: t('welcome'),
+      },
+    })
+  }
+})
+</script>
+
+<style scoped>
+.bordered {
+  border: 1px solid #ccc;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <q-page class="bg-secondary text-white">
+  <q-page>
     <q-linear-progress
       v-if="survey.started"
       size="10px"
@@ -51,9 +51,7 @@
                   v-model="tkSlug"
                   :label="t('token')"
                   outlined
-                  dark
-                  color="white"
-                  class="text-white"
+                  color="field"
                   debounce="300"
                   @update:model-value="onToken"
                 />
@@ -66,7 +64,7 @@
                 size="lg"
                 @click="onStart"
                 :disable="survey.tokenOrSlug === null"
-                class="q-mt-md"
+                class="q-px-md q-mt-md"
               />
             </div>
             <div class="q-mt-lg">
@@ -149,7 +147,7 @@ async function onInit() {
 async function onToken() {
   if (tkSlug.value && tkSlug.value.trim().length > 0) {
     return collector
-      .load(tkSlug.value.trim())
+      .loadRecordDraft(tkSlug.value.trim())
       .then((cr: Record) => {
         survey.tokenOrSlug = tkSlug.value.trim()
         survey.init(cr)
@@ -165,10 +163,11 @@ async function reset() {
 }
 
 function onStart() {
+  if (!survey.tokenOrSlug) return
   survey.started = true
   survey.step = 1
   tkSlug.value = ''
-  void collector.loadInfo(survey.record.token)
+  void collector.loadInfo(survey.tokenOrSlug)
 }
 
 function onLocaleSelection(localeOpt: { label: string; value: string }) {

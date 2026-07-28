@@ -16,12 +16,12 @@ async def find(
     sort: str = Query(None),
     range: str = Query("[0,99]"),
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin()),
+    user: User = Depends(kc_service.get_user_info()),
 ) -> CampaignResult:
     """Search for campaigns"""
     try:
         validated = validate_params(filter, sort, range, select)
-        return await CampaignService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"])
+        return await CampaignService(session).find(validated["filter"], validated["fields"], validated["sort"], validated["range"], user, special_permissions="read-aggregated")
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -29,27 +29,27 @@ async def find(
 @router.get("/{id}", response_model=CampaignRead, response_model_exclude_none=True)
 async def get(id: int,
               session: AsyncSession = Depends(get_session),
-              user: User = Depends(kc_service.require_admin())
+              user: User = Depends(kc_service.get_user_info())
               ) -> Campaign:
     """Get a campaign by id"""
-    return await CampaignService(session).get(id)
+    return await CampaignService(session).get(id, user)
 
 
 @router.delete("/{id}", response_model=Campaign, response_model_exclude_none=True)
 async def delete(
     id: int,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Campaign:
     """Delete a campaign by id"""
-    return await CampaignService(session).delete(id)
+    return await CampaignService(session).delete(id, user)
 
 
 @router.post("/", response_model=Campaign, response_model_exclude_none=True)
 async def create(
     item: CampaignDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Campaign:
     """Create a campaign"""
     return await CampaignService(session).create(item, user)
@@ -60,7 +60,7 @@ async def update(
     id: int,
     item: CampaignDraft,
     session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.require_admin())
+    user: User = Depends(kc_service.get_user_info())
 ) -> Campaign:
     """Update a campaign by id"""
     return await CampaignService(session).update(id, item, user)
