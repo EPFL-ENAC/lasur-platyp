@@ -18,7 +18,7 @@ function makeRecord(rec: Partial<Record>): Record {
     company_vehicle: null,
     travel_time: 5,
     equipments: [],
-    constraints: [],
+    constraints: ['none'],
     freq_mod_journeys: [{ modes: [], days: 1 }],
     travel_pro: false,
     freq_mod_pro_journeys: [],

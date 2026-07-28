@@ -30,12 +30,12 @@ const survey = useSurvey()
 const q = useQuasar()
 
 const constraintsOptions = computed<Option[]>(() => [
+  { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
   { value: 'dependent', label: t('form.constraints_option.dependent') },
   { value: 'heavy', label: t('form.constraints_option.heavy') },
   { value: 'night', label: t('form.constraints_option.night') },
   { value: 'disabled', label: t('form.constraints_option.disabled') },
   { value: 'other', label: t('form.constraints_option.other') },
-  { value: 'none', label: t('form.constraints_option.none'), exclusive: true },
 ])
 
 function cleanupConstraints() {
