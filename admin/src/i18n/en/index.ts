@@ -38,6 +38,10 @@ const transportationModes = {
   plane: 'Plane',
   boat: 'Boat',
 
+  // --- Intermodal ---
+  inter_ma_tp: 'Active mobility + Public transport',
+  inter_tim_tp: 'Individual motorized transport + Public transport',
+
   // --- Alternative & Abstract ---
   avoid: 'Avoid travel',
   inter: 'Intermodality',
@@ -697,9 +701,13 @@ Some environmental impacts have also been calculated:
       title: 'Support measures requested to adopt mobility recommendations',
       labels: {
         finance: 'Financial incentives',
+        test: 'Test periods',
+        coaching: 'Individual coaching',
+        events: 'Mobility events',
         flexibility: 'Flexibility',
         collective: 'Collective measures',
-        environment: 'Environmental improvements',
+        environment: 'Workplace adjustments and amenities',
+        company_vehicle: 'Company vehicle',
         autres: 'Other',
         total: 'Total',
 

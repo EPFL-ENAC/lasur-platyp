@@ -155,6 +155,8 @@ export const MODE_COLORS: { [key: string]: string } = {
   truck: '#842152',
   elec_truck: '#C2307A',
   visio: '#D1D1D1',
+  inter_ma_tp: '#D2F08D',
+  inter_tim_tp: '#C50B07',
   default: '#ccc',
 }
 
@@ -163,6 +165,10 @@ export const CATEGORY_COLORS: { [key: string]: string } = {
   finance: '#caad2e',
   environment: '#357165',
   flexibility: '#22cdf6',
+  test: '#f38989',
+  coaching: '#f2b4a3',
+  events: '#ffdbc2',
+  company_vehicle: '#78c1a3',
   default: '#ccc',
 }
 

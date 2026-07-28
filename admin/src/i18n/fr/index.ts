@@ -38,6 +38,10 @@ const transportationModes = {
   plane: 'Avion',
   boat: 'Bateau',
 
+  // --- Intermodal ---
+  inter_ma_tp: 'Mobilité active + Transports publics',
+  inter_tim_tp: 'Transports individuels motorisés + Transports publics',
+
   // --- Alternative & Abstract ---
   avoid: 'Éviter le déplacement',
   inter: 'Intermodalité',
@@ -710,9 +714,13 @@ Certains impacts sont aussi calculés :
       title: 'Mesures souhaitées pour adopter les recommandations de mobilité durable formulées',
       labels: {
         finance: 'Aides financières',
+        test: 'Périodes de test',
+        coaching: 'Accompagnement personnalisé',
+        events: 'Evènements autour de la mobilité',
+        company_vehicle: "Véhicule d'entreprise",
         flexibility: 'Flexibilité',
         collective: 'Changement collectif',
-        environment: 'Aménagement environnement',
+        environment: 'Ajustements et équipements des espaces de travail',
         autres: 'Autres',
         total: 'Total',
 

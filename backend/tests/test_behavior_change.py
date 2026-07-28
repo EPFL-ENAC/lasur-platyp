@@ -485,7 +485,7 @@ def test_zero_counts_included():
     assert level_1.percentage == 0.0
 
     # All 5 lever categories should be present
-    assert len(mode_stats_levers.levers) == 5
+    assert len(mode_stats_levers.levers) == 9
     flexibility = next(
         l for l in mode_stats_levers.levers if l.category == 'flexibility')
     assert flexibility.count == 0
