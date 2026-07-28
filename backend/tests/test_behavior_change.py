@@ -75,7 +75,7 @@ def test_levers_less_than_10_responses_all_aggregated():
     assert result.levers.total_responses == 8
     assert result.levers.aggregation_type == 'all_aggregated'
     assert len(result.levers.by_mode_levers) == 1
-    assert result.levers.by_mode_levers[0].mode == 'Tous modes'
+    assert result.levers.by_mode_levers[0].mode == 'allModes'
     assert result.levers.by_mode_levers[0].response_count == 8
 
 
@@ -98,7 +98,7 @@ def test_levers_10_or_more_no_mode_above_threshold():
     assert result.levers.total_responses == 10
     assert result.levers.aggregation_type == 'all_aggregated'
     assert len(result.levers.by_mode_levers) == 1
-    assert result.levers.by_mode_levers[0].mode == 'Tous modes'
+    assert result.levers.by_mode_levers[0].mode == 'allModes'
 
 
 def test_levers_one_mode_above_threshold():
@@ -120,15 +120,18 @@ def test_levers_one_mode_above_threshold():
     assert len(result.levers.by_mode_levers) == 3  # velo, Autres, Total
 
     # Check velo stats
-    velo_stats = next(m for m in result.levers.by_mode_levers if m.mode == 'velo')
+    velo_stats = next(
+        m for m in result.levers.by_mode_levers if m.mode == 'velo')
     assert velo_stats.response_count == 15
 
     # Check Autres stats (train + tpu)
-    autres_stats = next(m for m in result.levers.by_mode_levers if m.mode == 'Autres')
+    autres_stats = next(
+        m for m in result.levers.by_mode_levers if m.mode == 'Autres')
     assert autres_stats.response_count == 8
 
     # Check Total stats
-    total_stats = next(m for m in result.levers.by_mode_levers if m.mode == 'Total')
+    total_stats = next(
+        m for m in result.levers.by_mode_levers if m.mode == 'Total')
     assert total_stats.response_count == 23
 
 
@@ -150,13 +153,16 @@ def test_levers_multiple_modes_above_threshold():
     assert result.levers.aggregation_type == 'mixed'
     assert len(result.levers.by_mode_levers) == 4  # velo, train, Autres, Total
 
-    velo_stats = next(m for m in result.levers.by_mode_levers if m.mode == 'velo')
+    velo_stats = next(
+        m for m in result.levers.by_mode_levers if m.mode == 'velo')
     assert velo_stats.response_count == 15
 
-    train_stats = next(m for m in result.levers.by_mode_levers if m.mode == 'train')
+    train_stats = next(
+        m for m in result.levers.by_mode_levers if m.mode == 'train')
     assert train_stats.response_count == 12
 
-    autres_stats = next(m for m in result.levers.by_mode_levers if m.mode == 'Autres')
+    autres_stats = next(
+        m for m in result.levers.by_mode_levers if m.mode == 'Autres')
     assert autres_stats.response_count == 5
 
 
@@ -179,7 +185,7 @@ def test_motivation_less_than_10_responses_all_aggregated():
     assert result.motivation.total_responses == 8
     assert result.motivation.aggregation_type == 'all_aggregated'
     assert len(result.motivation.by_mode_motivation) == 1
-    assert result.motivation.by_mode_motivation[0].mode == 'Tous modes'
+    assert result.motivation.by_mode_motivation[0].mode == 'allModes'
     assert result.motivation.by_mode_motivation[0].response_count == 8
 
 
@@ -200,7 +206,7 @@ def test_motivation_10_or_more_no_mode_above_threshold():
     assert result.motivation.total_responses == 10
     assert result.motivation.aggregation_type == 'all_aggregated'
     assert len(result.motivation.by_mode_motivation) == 1
-    assert result.motivation.by_mode_motivation[0].mode == 'Tous modes'
+    assert result.motivation.by_mode_motivation[0].mode == 'allModes'
 
 
 def test_motivation_one_mode_above_threshold():
@@ -219,9 +225,11 @@ def test_motivation_one_mode_above_threshold():
 
     assert result.motivation.total_responses == 23
     assert result.motivation.aggregation_type == 'mixed'
-    assert len(result.motivation.by_mode_motivation) == 3  # velo, Autres, Total
+    # velo, Autres, Total
+    assert len(result.motivation.by_mode_motivation) == 3
 
-    velo_stats = next(m for m in result.motivation.by_mode_motivation if m.mode == 'velo')
+    velo_stats = next(
+        m for m in result.motivation.by_mode_motivation if m.mode == 'velo')
     assert velo_stats.response_count == 15
 
     autres_stats = next(
@@ -249,9 +257,11 @@ def test_motivation_multiple_modes_above_threshold():
 
     assert result.motivation.total_responses == 32
     assert result.motivation.aggregation_type == 'mixed'
-    assert len(result.motivation.by_mode_motivation) == 4  # velo, train, Autres, Total
+    # velo, train, Autres, Total
+    assert len(result.motivation.by_mode_motivation) == 4
 
-    velo_stats = next(m for m in result.motivation.by_mode_motivation if m.mode == 'velo')
+    velo_stats = next(
+        m for m in result.motivation.by_mode_motivation if m.mode == 'velo')
     assert velo_stats.response_count == 15
 
     train_stats = next(
@@ -298,7 +308,8 @@ def test_independent_aggregation_different_splits():
     assert result.levers.aggregation_type == 'mixed'
 
     # Motivation: velo and train individually, tpu in Autres, plus Total
-    assert len(result.motivation.by_mode_motivation) == 4  # velo, train, Autres, Total
+    # velo, train, Autres, Total
+    assert len(result.motivation.by_mode_motivation) == 4
     motivation_modes = [m.mode for m in result.motivation.by_mode_motivation]
     assert 'velo' in motivation_modes
     assert 'train' in motivation_modes
@@ -353,7 +364,8 @@ def test_unified_aggregation_option_a_edge_cases():
     assert result.motivation.aggregation_type == 'mixed'
 
     # Check modes: bike, train, car individually; walk+bus in Autres; plus Total
-    assert len(result.levers.by_mode_levers) == 5  # bike, train, car, Autres, Total
+    # bike, train, car, Autres, Total
+    assert len(result.levers.by_mode_levers) == 5
     lever_modes = [m.mode for m in result.levers.by_mode_levers]
     assert 'bike' in lever_modes
     assert 'train' in lever_modes
@@ -371,7 +383,8 @@ def test_unified_aggregation_option_a_edge_cases():
     assert 'Total' in motivation_modes
 
     # Verify response counts
-    bike_levers = next(m for m in result.levers.by_mode_levers if m.mode == 'bike')
+    bike_levers = next(
+        m for m in result.levers.by_mode_levers if m.mode == 'bike')
     assert bike_levers.response_count == 12
 
     train_motivation = next(
@@ -466,7 +479,8 @@ def test_zero_counts_included():
 
     # All 5 motivation levels should be present
     assert len(mode_stats_motivation.motivations) == 5
-    level_1 = next(m for m in mode_stats_motivation.motivations if m.level == 1)
+    level_1 = next(
+        m for m in mode_stats_motivation.motivations if m.level == 1)
     assert level_1.count == 0
     assert level_1.percentage == 0.0
 

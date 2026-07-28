@@ -11,7 +11,8 @@ from api.services.stats.commons import BaseStatsService
 class BehaviorChangeService(BaseStatsService):
     """Service for computing behavior change statistics (motivation and levers)."""
 
-    LEVER_CATEGORIES = ['finance', 'flexibility', 'collective', 'environment', 'other']
+    LEVER_CATEGORIES = ['finance', 'flexibility',
+                        'collective', 'environment', 'other']
     MOTIVATION_LEVELS = [5, 4, 3, 2, 1]
 
     # Older records stored a single `change` object, then a `change`/`change2` pair,
@@ -23,7 +24,8 @@ class BehaviorChangeService(BaseStatsService):
     # not tied to a specific journey, instead of one reco_inter.N per journey.
     # Map them onto the equivalent reco_inter indices so they feed into the same
     # aggregation.
-    LEGACY_RECO_COLUMNS = {'typo.reco.reco_dt2.0': 0, 'typo.reco.reco_dt2.1': 1}
+    LEGACY_RECO_COLUMNS = {
+        'typo.reco.reco_dt2.0': 0, 'typo.reco.reco_dt2.1': 1}
 
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
@@ -39,14 +41,17 @@ class BehaviorChangeService(BaseStatsService):
 
         if len(df_long) == 0:
             return BehaviorChangeStats(
-                levers=BehaviorChangeStatsLever(by_mode_levers=[], total_responses=0, aggregation_type='all_aggregated'),
-                motivation=BehaviorChangeStatsMotivation(by_mode_motivation=[], total_responses=0, aggregation_type='all_aggregated'),
+                levers=BehaviorChangeStatsLever(
+                    by_mode_levers=[], total_responses=0, aggregation_type='all_aggregated'),
+                motivation=BehaviorChangeStatsMotivation(
+                    by_mode_motivation=[], total_responses=0, aggregation_type='all_aggregated'),
                 other_levers=[]
             )
 
         # Count actual responses per mode (not just recommendations)
         lever_counts_per_mode = self._count_lever_responses_per_mode(df_long)
-        motivation_counts_per_mode = self._count_motivation_responses_per_mode(df_long)
+        motivation_counts_per_mode = self._count_motivation_responses_per_mode(
+            df_long)
 
         total_lever_responses = sum(lever_counts_per_mode.values())
         total_motivation_responses = sum(motivation_counts_per_mode.values())
@@ -117,7 +122,8 @@ class BehaviorChangeService(BaseStatsService):
         reco_dt2 or the changes columns."""
         indices = set()
         reco_pattern = re.compile(rf'^{re.escape(self.reco_prefix)}(\d+)$')
-        change_pattern = re.compile(rf'^{re.escape(self.change_prefix)}(\d+)\.')
+        change_pattern = re.compile(
+            rf'^{re.escape(self.change_prefix)}(\d+)\.')
         for col in df.columns:
             m = reco_pattern.match(col) or change_pattern.match(col)
             if m:
@@ -126,8 +132,10 @@ class BehaviorChangeService(BaseStatsService):
 
     def _lever_indices(self, df: pd.DataFrame) -> List[int]:
         """Indices of the lever choice columns (data.changes.<i>.levers.<j>)."""
-        pattern = re.compile(rf'^{re.escape(self.change_prefix)}\d+\.levers\.(\d+)$')
-        indices = {int(m.group(1)) for col in df.columns for m in [pattern.match(col)] if m}
+        pattern = re.compile(
+            rf'^{re.escape(self.change_prefix)}\d+\.levers\.(\d+)$')
+        indices = {int(m.group(1))
+                   for col in df.columns for m in [pattern.match(col)] if m}
         return sorted(indices)
 
     def _build_long_dataframe(self) -> pd.DataFrame:
@@ -237,7 +245,7 @@ class BehaviorChangeService(BaseStatsService):
         all_modes = set(lever_counts.keys()) | set(motivation_counts.keys())
 
         if not all_modes:
-            return 'all_aggregated', {'Tous modes': df}
+            return 'all_aggregated', {'allModes': df}
 
         # Calculate total responses (use max to avoid double-counting)
         total_lever = sum(lever_counts.values())
@@ -246,7 +254,7 @@ class BehaviorChangeService(BaseStatsService):
 
         # Case 1: Less than 10 total responses in either metric - aggregate everything
         if total_responses < 10:
-            return 'all_aggregated', {'Tous modes': df}
+            return 'all_aggregated', {'allModes': df}
 
         # Case 2: Check which modes meet threshold (>=10 in EITHER metric)
         modes_above_threshold = {}
@@ -255,11 +263,12 @@ class BehaviorChangeService(BaseStatsService):
             motivation_count = motivation_counts.get(mode, 0)
             # Mode qualifies if EITHER metric has >=10 responses
             if lever_count >= 10 or motivation_count >= 10:
-                modes_above_threshold[mode] = max(lever_count, motivation_count)
+                modes_above_threshold[mode] = max(
+                    lever_count, motivation_count)
 
         if len(modes_above_threshold) == 0:
             # No individual mode has 10+ responses in either metric
-            return 'all_aggregated', {'Tous modes': df}
+            return 'all_aggregated', {'allModes': df}
 
         # Case 3: Mixed - some modes above, some below threshold
         mode_groups = {}
@@ -426,7 +435,8 @@ class BehaviorChangeService(BaseStatsService):
         motivation_list = []
         for level in self.MOTIVATION_LEVELS:
             count = motivation_counts.get(level, 0)
-            percentage = round((count / response_count * 100), 2) if response_count > 0 else 0.0
+            percentage = round((count / response_count * 100),
+                               2) if response_count > 0 else 0.0
             motivation_list.append(BehaviorChangeMotivation(
                 level=level,
                 count=int(count),
