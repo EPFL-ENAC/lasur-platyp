@@ -24,11 +24,44 @@
       <ChoiceItem
         :label="t('form.change_levers')"
         :options="[
-          { value: 'finance', label: t('form.change_levers_option.financial_support') },
-          { value: 'flexibility', label: t('form.change_levers_option.work_flexibility') },
-          { value: 'collective', label: t('form.change_levers_option.collective_changes') },
-          { value: 'environment', label: t('form.change_levers_option.work_environment') },
-          { value: 'other', label: t('form.change_levers_option.other') },
+          {
+            value: 'flexibility',
+            label: t('form.change_levers_option.work_flexibility'),
+            hint: t('form.change_levers_option.work_flexibility_hint'),
+          },
+          {
+            value: 'test',
+            label: t('form.change_levers_option.test'),
+            hint: t('form.change_levers_option.test_hint'),
+          },
+          {
+            value: 'coaching',
+            label: t('form.change_levers_option.coaching'),
+          },
+          {
+            value: 'events',
+            label: t('form.change_levers_option.events'),
+            hint: t('form.change_levers_option.events_hint'),
+          },
+          {
+            value: 'environment',
+            label: t('form.change_levers_option.work_environment'),
+            hint: t('form.change_levers_option.work_environment_hint'),
+          },
+          {
+            value: 'company_vehicle',
+            label: t('form.change_levers_option.company_vehicle'),
+            hint: t('form.change_levers_option.company_vehicle_hint'),
+          },
+          {
+            value: 'finance',
+            label: t('form.change_levers_option.financial_support'),
+            hint: t('form.change_levers_option.financial_support_hint'),
+          },
+          {
+            value: 'other',
+            label: t('form.change_levers_option.other'),
+          },
         ]"
         v-model="change.levers"
         multiple

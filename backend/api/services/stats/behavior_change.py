@@ -11,7 +11,7 @@ from api.services.stats.commons import BaseStatsService
 class BehaviorChangeService(BaseStatsService):
     """Service for computing behavior change statistics (motivation and levers)."""
 
-    LEVER_CATEGORIES = ['finance', 'flexibility',
+    LEVER_CATEGORIES = ['finance', 'test', 'coaching', 'events', 'company_vehicle', 'flexibility',
                         'collective', 'environment', 'other']
     MOTIVATION_LEVELS = [5, 4, 3, 2, 1]
 

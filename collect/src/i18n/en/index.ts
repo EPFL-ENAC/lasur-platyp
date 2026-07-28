@@ -160,11 +160,21 @@ export default {
       'What would help you to use this mode of transport (even if you already partially use it)?',
     change_levers_option: {
       financial_support: 'Financial support',
-      work_flexibility: 'Greater flexibility at work (schedules, remote working, etc.)',
-      collective_changes:
-        'Collective changes (organisation communication, colleague involvement, etc.)',
-      work_environment:
-        'Workplace adjustments (showers, bicycle secure parking, company shuttle, carpool meeting points, etc.)',
+      financial_support_hint:
+        'For renting or buying a vehicle, for buying a public transport pass, for equipment, etc.',
+      test: 'Test periods',
+      test_hint: 'For example, a few weeks to test equipment or another transport mode, etc.',
+      coaching: 'Individual coaching',
+      events: 'Mobility events',
+      events_hint: 'For example, Bike to work, outings, lunches, etc.',
+      company_vehicle: 'Company vehicle available at workplace',
+      company_vehicle_hint: 'For example, bike, car, utility vehicle, etc.',
+      work_flexibility: 'Greater flexibility at work',
+      work_flexibility_hint:
+        'For example, the possibility of working from home, flexible working hours, etc.',
+      work_environment: 'Workplace adjustments and amenities',
+      work_environment_hint:
+        'For example, showers, bicycle secure parking, company shuttle, carpool meeting points, etc.',
       other: 'Other',
     },
     change_other_levers_specify: 'Please specify what other measures would help you',

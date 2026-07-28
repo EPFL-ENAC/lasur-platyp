@@ -697,9 +697,13 @@ Some environmental impacts have also been calculated:
       title: 'Support measures requested to adopt mobility recommendations',
       labels: {
         finance: 'Financial incentives',
+        test: 'Test periods',
+        coaching: 'Individual coaching',
+        events: 'Mobility events',
         flexibility: 'Flexibility',
         collective: 'Collective measures',
-        environment: 'Environmental improvements',
+        environment: 'Workplace adjustments and amenities',
+        company_vehicle: 'Company vehicle',
         autres: 'Other',
         total: 'Total',
 

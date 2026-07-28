@@ -30,7 +30,7 @@
                     <q-item-label class="text-h4" :class="optionLabelClass">{{
                       option.label
                     }}</q-item-label>
-                    <q-item-label v-if="option.hint" class="text-h6">
+                    <q-item-label v-if="option.hint" class="">
                       {{ option.hint }}
                     </q-item-label>
                   </q-item-section>

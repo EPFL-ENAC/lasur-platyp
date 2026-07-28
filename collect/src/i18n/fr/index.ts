@@ -168,11 +168,22 @@ export default {
       "Qu'est-ce qui vous aiderait à utiliser ce mode de transport (même si vous l'utilisez déjà partiellement) ?",
     change_levers_option: {
       financial_support: 'Une aide financière',
-      work_flexibility: 'Une plus grande flexibilité au travail (horaires, télétravail, etc.)',
-      collective_changes:
-        "Des changements collectifs (communication de l'organisation, participation de collègues, etc.)",
-      work_environment:
-        "Des aménagements sur le lieu de travail (douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.)",
+      financial_support_hint:
+        "Pour louer ou acheter un véhicule, acheter un abonnement de transport public, pour de l'équipement, etc.",
+      test: 'Périodes de test',
+      test_hint:
+        'Par exemple, quelques semaines pour tester un équipement ou un autre mode de transport, etc.',
+      coaching: 'Accompagnement personnalisé',
+      events: 'Evènements autour de la mobilité',
+      events_hint: 'Par exemple, Bike to work, sorties, repas, etc.',
+      company_vehicle: "Véhicule d'entreprise disponible sur site",
+      company_vehicle_hint: 'Par exemple, vélo, voiture, camionnette, etc.',
+      work_flexibility: 'Une plus grande flexibilité au travail',
+      work_flexibility_hint:
+        'Par exemple, la possibilité de télétravailler, des horaires de travail flexibles, etc.',
+      work_environment: 'Ajustements et équipements des espaces de travail',
+      work_environment_hint:
+        "Par exemple, douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.",
       other: 'Autre',
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',

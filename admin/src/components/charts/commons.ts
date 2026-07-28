@@ -163,6 +163,10 @@ export const CATEGORY_COLORS: { [key: string]: string } = {
   finance: '#caad2e',
   environment: '#357165',
   flexibility: '#22cdf6',
+  test: '#f38989',
+  coaching: '#f2b4a3',
+  events: '#ffdbc2',
+  company_vehicle: '#78c1a3',
   default: '#ccc',
 }
 
