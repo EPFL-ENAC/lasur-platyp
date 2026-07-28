@@ -236,6 +236,8 @@ export default {
     walking: 'La marche',
     bike: 'Le vélo',
     pub: 'Les transports publics',
+    inter_ma_tp: 'Mobilité active + transports publics',
+    inter_tim_tp: 'Transport motorisé individuel + transports publics',
     avoid:
       'Visez à réduire la fréquence de vos déplacements de longue distance et, dans la mesure du possible, privilégiez les solutions de vidéoconférence.',
   },

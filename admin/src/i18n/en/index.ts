@@ -38,6 +38,10 @@ const transportationModes = {
   plane: 'Plane',
   boat: 'Boat',
 
+  // --- Intermodal ---
+  inter_ma_tp: 'Active mobility + Public transport',
+  inter_tim_tp: 'Individual motorized transport + Public transport',
+
   // --- Alternative & Abstract ---
   avoid: 'Avoid travel',
   inter: 'Intermodality',

@@ -5,7 +5,7 @@
     <q-card class="bg-primary-muted q-mb-xl">
       <q-card-section class="q-pa-sm">
         <div class="text-h5 text-secondary text-center">
-          {{ t(`reco.${recoInter}`) }}
+          {{ t(`reco.${recoInter}`) }} {{ recoSimple }}
         </div>
       </q-card-section>
     </q-card>
@@ -23,46 +23,7 @@
       />
       <ChoiceItem
         :label="t('form.change_levers')"
-        :options="[
-          {
-            value: 'flexibility',
-            label: t('form.change_levers_option.work_flexibility'),
-            hint: t('form.change_levers_option.work_flexibility_hint'),
-          },
-          {
-            value: 'test',
-            label: t('form.change_levers_option.test'),
-            hint: t('form.change_levers_option.test_hint'),
-          },
-          {
-            value: 'coaching',
-            label: t('form.change_levers_option.coaching'),
-          },
-          {
-            value: 'events',
-            label: t('form.change_levers_option.events'),
-            hint: t('form.change_levers_option.events_hint'),
-          },
-          {
-            value: 'environment',
-            label: t('form.change_levers_option.work_environment'),
-            hint: t('form.change_levers_option.work_environment_hint'),
-          },
-          {
-            value: 'company_vehicle',
-            label: t('form.change_levers_option.company_vehicle'),
-            hint: t('form.change_levers_option.company_vehicle_hint'),
-          },
-          {
-            value: 'finance',
-            label: t('form.change_levers_option.financial_support'),
-            hint: t('form.change_levers_option.financial_support_hint'),
-          },
-          {
-            value: 'other',
-            label: t('form.change_levers_option.other'),
-          },
-        ]"
+        :options="changeOptions"
         v-model="change.levers"
         multiple
         label-class="text-h4 text-bold q-mb-md"
@@ -121,6 +82,70 @@ const recoInter = computed(() =>
     ? survey.recommendation.reco.reco_inter[props.idx]
     : '',
 )
+const recoSimple = computed(() =>
+  survey.recommendation.reco?.reco_simple && survey.recommendation.reco.reco_simple.length
+    ? survey.recommendation.reco.reco_simple[props.idx]
+    : '',
+)
+
+const changeOptions = computed(() => {
+  // if marche: no test
+  const opts = []
+
+  if (recoInter.value !== 'elec') {
+    opts.push({
+      value: 'flexibility',
+      label: t('form.change_levers_option.work_flexibility'),
+      hint: t('form.change_levers_option.work_flexibility_hint'),
+    })
+  }
+  if (recoInter.value !== 'marche') {
+    opts.push({
+      value: 'test',
+      label: t('form.change_levers_option.test'),
+      hint: t('form.change_levers_option.test_hint'),
+    })
+  }
+  if (!['elec', 'covoit'].includes(recoInter.value)) {
+    opts.push({
+      value: 'coaching',
+      label: t('form.change_levers_option.coaching'),
+    })
+  }
+  if (!['tpu', 'elec', 'inter_tim_tp'].includes(recoInter.value)) {
+    opts.push({
+      value: 'events',
+      label: t('form.change_levers_option.events'),
+      hint: t('form.change_levers_option.events_hint'),
+    })
+  }
+  if (!['tpu', 'covoit', 'inter_tim_tp'].includes(recoInter.value)) {
+    opts.push({
+      value: 'environment',
+      label: t('form.change_levers_option.work_environment'),
+      hint: t('form.change_levers_option.work_environment_hint'),
+    })
+  }
+  if (recoInter.value !== 'elec') {
+    opts.push({
+      value: 'company_vehicle',
+      label: t('form.change_levers_option.company_vehicle'),
+      hint: t('form.change_levers_option.company_vehicle_hint'),
+    })
+  }
+  if (recoInter.value !== 'covoit') {
+    opts.push({
+      value: 'finance',
+      label: t('form.change_levers_option.financial_support'),
+      hint: t('form.change_levers_option.financial_support_hint'),
+    })
+  }
+  opts.push({
+    value: 'other',
+    label: t('form.change_levers_option.other'),
+  })
+  return opts
+})
 
 function onSave() {
   emit('update:modelValue')

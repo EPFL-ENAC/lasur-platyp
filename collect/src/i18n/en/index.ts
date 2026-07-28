@@ -224,6 +224,8 @@ export default {
     walking: 'Walking',
     bike: 'Bike',
     pub: 'Public transport',
+    inter_ma_tp: 'Active mobility + public transport',
+    inter_tim_tp: 'Individual motorized transport + public transport)',
     avoid:
       'Aim to reduce the frequency of long-distance travel, and, where possible, leverage video-conferencing solutions',
   },
