@@ -49,8 +49,9 @@ class EquipmentsService(BaseStatsService):
                     reco_totals[reco] += 1
                     for equip_col in equip_cols:
                         equip = row_data[equip_col]
-                        if equip in ["train_subs", "upt_subs"]:
-                            # Legacy equipment, skip them
+                        if equip in ["train_subs", "upt_subs", "other"]:
+                            # Legacy (train_subs, upt_subs) or free-text
+                            # (other) equipment, not tracked in the matrix
                             continue
 
                         if pd.notna(equip):
