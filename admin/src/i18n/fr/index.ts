@@ -464,7 +464,7 @@ Certains impacts sont aussi calculés :
           'Le détail des autres contraintes est accessible en téléchargeant le détail des données.',
       },
     },
-    locationsHeatmap: {
+    locations_heatmap: {
       title: 'Répartition géographique des lieux de résidence et de travail',
       households: 'Lieux de domicile',
       households_number: 'Nombre de domiciles',
@@ -1004,4 +1004,6 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   mobility_statistics: 'Statistiques de mobilité',
   transit_lines: 'Réseau transports publics',
   documentation: 'Documentation',
+  less_details: 'Moins de détails',
+  more_details: 'Plus de détails',
 }

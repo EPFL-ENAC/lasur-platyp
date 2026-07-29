@@ -25,7 +25,7 @@
       >
         <div class="legend-item">
           <span class="legend-swatch dot"></span>
-          <span class="legend-label">{{ t('stats.locationsHeatmap.workplaces') }}</span>
+          <span class="legend-label">{{ t('stats.locations_heatmap.workplaces') }}</span>
         </div>
         <div class="legend-item">
           <span class="legend-swatch">
@@ -44,11 +44,11 @@
               />
             </svg>
           </span>
-          <span class="legend-label">{{ t('stats.locationsHeatmap.households') }}</span>
+          <span class="legend-label">{{ t('stats.locations_heatmap.households') }}</span>
         </div>
         <div>
           <div class="text-hint">
-            <span class="legend-label">{{ t('stats.locationsHeatmap.households_number') }}</span>
+            <span class="legend-label">{{ t('stats.locations_heatmap.households_number') }}</span>
           </div>
           <div class="gradient-container">
             <div

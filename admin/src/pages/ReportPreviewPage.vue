@@ -32,7 +32,7 @@
           {{ t('stats.sections.home_to_work') }}
         </h2>
         <location-chart
-          :title="t('stats.locationsHeatmap.title')"
+          :title="t('stats.locations_heatmap.title')"
           :height="height"
           :home-locations-heatmap="stats.homeLocationsHeatmap"
           :workplace-locations="stats.workplaceLocations"
