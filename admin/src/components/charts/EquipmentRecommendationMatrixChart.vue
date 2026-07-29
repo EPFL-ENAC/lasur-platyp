@@ -1,17 +1,13 @@
 <template>
   <chart-panel
-    :title="t('stats.sections.behavioural_changes.equipment.title')"
-    :description="t('stats.sections.behavioural_changes.equipment.description')"
-    :details="t('stats.sections.behavioural_changes.equipment.details')"
+    :title="t('stats.equipments_by_recommendations.title')"
+    :description="t('stats.equipments_by_recommendations.texts.default')"
+    :details="
+      analysisText ? t('stats.equipments_by_recommendations.texts.specific', analysisText) : ''
+    "
     :inline="inline"
   >
     <div>
-      <q-toggle
-        v-if="withOptions"
-        v-model="simpleMode"
-        :label="t('stats.equipments_by_recommendations.simpleMode')"
-        color="primary"
-      />
       <e-charts-shell
         :height="height"
         :loading="props.loading"
@@ -21,11 +17,13 @@
         :option="option"
         :exportable="!inline"
       >
-        <p class="q-mb-xs">{{ t('stats.equipments_by_recommendations.texts.default') }}</p>
-        <p v-if="analysisText">
-          {{ t('stats.equipments_by_recommendations.texts.specific', analysisText) }}
-        </p>
       </e-charts-shell>
+      <q-toggle
+        v-if="withOptions"
+        v-model="simpleMode"
+        :label="t('stats.equipments_by_recommendations.simpleMode')"
+        color="primary"
+      />
       <div v-if="withOptions" class="text-caption">
         {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
       </div>

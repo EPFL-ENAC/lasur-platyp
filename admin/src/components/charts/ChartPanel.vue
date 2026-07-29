@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="text-h6 text-primary q-mb-md">{{ title }}</div>
-    <q-markdown v-if="description" class="compact q-mt-sm" :src="description" />
+    <q-markdown
+      v-if="description"
+      class="compact q-mt-sm"
+      :class="!details ? 'q-mb-md' : ''"
+      :src="description"
+    />
     <details-panel v-if="details" :inline="inline" class="q-mb-md">
       <q-markdown class="compact" :src="details" />
       <slot name="details"></slot>
