@@ -17,7 +17,6 @@
         })
       }}
     </p>
-    <q-markdown :src="t('stats.freq_mod.texts.default')" />
   </e-charts-shell>
 </template>
 

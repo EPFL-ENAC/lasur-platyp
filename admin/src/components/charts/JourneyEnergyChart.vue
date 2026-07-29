@@ -1,26 +1,34 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="total > 0"
-    :show-info="total > 0"
-    :no-data-title="t(`stats.energy_journey.title_${props.type}`)"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t(`stats.journey_energy.${props.type}.title`)"
+    :description="t(`stats.journey_energy.${props.type}.description`)"
+    :details="t(`stats.journey_energy.${props.type}.details`)"
+    :inline="inline"
   >
-    <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
-    <q-markdown
-      v-if="textLabelsCurrent"
-      :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)"
-    />
-    <q-markdown
-      v-if="textLabelsReco"
-      :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)"
-    />
-  </e-charts-shell>
+    <e-charts-shell
+      :height="height"
+      :loading="props.loading"
+      :has-data="total > 0"
+      :show-info="total > 0"
+      :no-data-title="t(`stats.energy_journey.title_${props.type}`)"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
+      <q-markdown
+        v-if="textLabelsCurrent"
+        :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)"
+      />
+      <q-markdown
+        v-if="textLabelsReco"
+        :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)"
+      />
+    </e-charts-shell>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -57,6 +65,7 @@ interface Props {
   height?: number
   loading?: boolean
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -95,8 +104,7 @@ const textLabelsReco = computed(() => {
         100,
     ),
     percent_potential: formatNumber(
-      (props.journeyEnergyStats.gains.reco_above_who_count /
-        props.journeyEnergyStats.reco.total) *
+      (props.journeyEnergyStats.gains.reco_above_who_count / props.journeyEnergyStats.reco.total) *
         100,
     ),
   }

@@ -1,71 +1,79 @@
 <template>
-  <chart-shell
-    :height="height"
-    :loading="!hasData"
-    :has-data="hasData"
-    :show-info="hasData"
-    :no-data-title="props.title"
-    :no-data-text="t('stats.no_data')"
-    :exportable="!!exportable"
-    :capture-raw-image="captureRawImage"
+  <chart-panel
+    :title="t('stats.locations_heatmap.title')"
+    :description="t('stats.locations_heatmap.description')"
+    :details="t('stats.locations_heatmap.details')"
+    :inline="inline"
   >
-    <div ref="wrapper">
-      <div class="title text-center q-mb-md">{{ props.title }}</div>
-      <location-heatmap
-        ref="heatmap"
-        :h3Heatmap="props.homeLocationsHeatmap"
-        :dots="props.workplaceLocations"
-        :heatmap-gradient="gradient"
-        :center="[7.4474, 46.9481]"
-        :zoom="5"
-        :fit-bounds-margins="2"
-        :height="mapHeight"
-        :map-id="id"
-        :no-controls="props.noControls"
-      >
-        <div class="legend-item">
-          <span class="legend-swatch dot"></span>
-          <span class="legend-label">{{ t('stats.locations_heatmap.workplaces') }}</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-swatch">
-            <svg
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              height="16"
-              width="16"
-              viewBox="0 0 726 628"
-            >
-              <polygon
-                points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314"
-                :fill="gradient.colorAt(0)"
-                :stroke="gradient.colorAt(0)"
-                stroke-width="4"
-              />
-            </svg>
-          </span>
-          <span class="legend-label">{{ t('stats.locations_heatmap.households') }}</span>
-        </div>
-        <div>
-          <div class="text-hint">
-            <span class="legend-label">{{ t('stats.locations_heatmap.households_number') }}</span>
+    <chart-shell
+      :height="height"
+      :loading="!hasData"
+      :has-data="hasData"
+      :show-info="hasData"
+      :no-data-title="t('stats.locations_heatmap.title')"
+      :no-data-text="t('stats.no_data')"
+      :exportable="!inline"
+      :capture-raw-image="captureRawImage"
+    >
+      <div ref="wrapper">
+        <div class="title text-center q-mb-md">{{ t('stats.locations_heatmap.title') }}</div>
+        <location-heatmap
+          ref="heatmap"
+          :h3Heatmap="props.homeLocationsHeatmap"
+          :dots="props.workplaceLocations"
+          :heatmap-gradient="gradient"
+          :center="[7.4474, 46.9481]"
+          :zoom="5"
+          :fit-bounds-margins="2"
+          :height="mapHeight"
+          :map-id="id"
+          :no-controls="props.noControls"
+        >
+          <div class="legend-item">
+            <span class="legend-swatch dot"></span>
+            <span class="legend-label">{{ t('stats.locations_heatmap.workplaces') }}</span>
           </div>
-          <div class="gradient-container">
-            <div
-              class="gradient-bar"
-              :style="{ background: gradient.toCSSGradient('to right') }"
-            ></div>
-            <div class="gradient-labels">
-              <span>1</span>
-              <span>{{ max }}</span>
+          <div class="legend-item">
+            <span class="legend-swatch">
+              <svg
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                height="16"
+                width="16"
+                viewBox="0 0 726 628"
+              >
+                <polygon
+                  points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314"
+                  :fill="gradient.colorAt(0)"
+                  :stroke="gradient.colorAt(0)"
+                  stroke-width="4"
+                />
+              </svg>
+            </span>
+            <span class="legend-label">{{ t('stats.locations_heatmap.households') }}</span>
+          </div>
+          <div>
+            <div class="text-hint">
+              <span class="legend-label">{{ t('stats.locations_heatmap.households_number') }}</span>
+            </div>
+            <div class="gradient-container">
+              <div
+                class="gradient-bar"
+                :style="{ background: gradient.toCSSGradient('to right') }"
+              ></div>
+              <div class="gradient-labels">
+                <span>1</span>
+                <span>{{ max }}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </location-heatmap>
-    </div>
-  </chart-shell>
+        </location-heatmap>
+      </div>
+    </chart-shell>
+  </chart-panel>
 </template>
 <script setup lang="ts">
+import ChartPanel from './ChartPanel.vue'
 import html2canvas from 'html2canvas'
 import { GradientScale } from 'src/utils/colors'
 import ChartShell from './ChartShell.vue'
@@ -76,12 +84,11 @@ import type { H3Heatmap, LatLon } from 'src/models'
 const { t } = useI18n()
 
 interface Props {
-  title: string
   homeLocationsHeatmap: H3Heatmap
   workplaceLocations: LatLon[]
   height?: number
   noControls?: boolean
-  exportable?: boolean
+  inline?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

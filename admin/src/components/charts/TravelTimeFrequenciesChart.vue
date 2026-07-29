@@ -1,21 +1,29 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="hasData"
-    :show-info="total > 0"
-    :no-data-title="t('stats.travel_time.title')"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t('stats.travel_time.title')"
+    :description="t('stats.travel_time.description')"
+    :details="t('stats.travel_time.details')"
+    :inline="inline"
   >
-    <p v-if="hasData && medianValue" class="q-mb-xs">
-      {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
-    </p>
-    <p>{{ t('stats.travel_time.texts.default') }}</p>
-  </e-charts-shell>
+    <e-charts-shell
+      :height="height"
+      :loading="props.loading"
+      :has-data="hasData"
+      :show-info="total > 0"
+      :no-data-title="t('stats.travel_time.title')"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <p v-if="hasData && medianValue" class="q-mb-xs">
+        {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
+      </p>
+      <p>{{ t('stats.travel_time.texts.default') }}</p>
+    </e-charts-shell>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -41,6 +49,7 @@ interface Props {
   percent?: boolean
   height?: number
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,

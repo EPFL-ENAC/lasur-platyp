@@ -1,32 +1,40 @@
 <template>
-  <div>
-    <q-toggle
-      v-if="withOptions"
-      v-model="simpleMode"
-      :label="t('stats.equipments_by_recommendations.simpleMode')"
-      color="primary"
-    />
-    <e-charts-shell
-      :height="height"
-      :loading="props.loading"
-      :has-data="total > 0"
-      :show-info="total > 0"
-      :no-data-title="t('stats.equipments_by_recommendations.title')"
-      :option="option"
-      :exportable="!!exportable"
-    >
-      <p class="q-mb-xs">{{ t('stats.equipments_by_recommendations.texts.default') }}</p>
-      <p v-if="analysisText">
-        {{ t('stats.equipments_by_recommendations.texts.specific', analysisText) }}
-      </p>
-    </e-charts-shell>
-    <div v-if="withOptions" class="text-caption">
-      {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
+  <chart-panel
+    :title="t('stats.sections.behavioural_changes.equipment.title')"
+    :description="t('stats.sections.behavioural_changes.equipment.description')"
+    :details="t('stats.sections.behavioural_changes.equipment.details')"
+    :inline="inline"
+  >
+    <div>
+      <q-toggle
+        v-if="withOptions"
+        v-model="simpleMode"
+        :label="t('stats.equipments_by_recommendations.simpleMode')"
+        color="primary"
+      />
+      <e-charts-shell
+        :height="height"
+        :loading="props.loading"
+        :has-data="total > 0"
+        :show-info="total > 0"
+        :no-data-title="t('stats.equipments_by_recommendations.title')"
+        :option="option"
+        :exportable="!inline"
+      >
+        <p class="q-mb-xs">{{ t('stats.equipments_by_recommendations.texts.default') }}</p>
+        <p v-if="analysisText">
+          {{ t('stats.equipments_by_recommendations.texts.specific', analysisText) }}
+        </p>
+      </e-charts-shell>
+      <div v-if="withOptions" class="text-caption">
+        {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
+      </div>
     </div>
-  </div>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -66,11 +74,10 @@ interface Props {
   height?: number
   loading?: boolean
   hasOptions?: boolean
-  exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
-  exportable: true,
 })
 
 const option = ref<EChartsOption>({})

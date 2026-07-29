@@ -1,20 +1,28 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="hasData"
-    :show-info="!!hasOther"
-    :no-data-title="t('stats.constraints.title')"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t('stats.constraints.title')"
+    :description="t('stats.constraints.description')"
+    :details="t('stats.constraints.details')"
+    :inline="inline"
   >
-    <div class="q-mt-md text-italic">
-      {{ t('stats.constraints.texts.other') }}
-    </div>
-  </e-charts-shell>
+    <e-charts-shell
+      :height="height"
+      :loading="props.loading"
+      :has-data="hasData"
+      :show-info="!!hasOther"
+      :no-data-title="t('stats.constraints.title')"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <div class="q-mt-md text-italic">
+        {{ t('stats.constraints.texts.other') }}
+      </div>
+    </e-charts-shell>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -40,6 +48,7 @@ interface Props {
   height?: number
   loading?: boolean
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,

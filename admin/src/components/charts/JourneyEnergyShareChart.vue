@@ -1,27 +1,35 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="total > 0"
-    :show-info="total > 0"
-    :no-data-title="t('stats.energy_journey.title_share')"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t('stats.sections.home_to_work.journey_energy_share.title')"
+    :description="t('stats.sections.home_to_work.journey_energy_share.description')"
+    :details="t('stats.sections.home_to_work.journey_energy_share.details')"
+    :inline="inline"
   >
-    <p class="q-mb-xs">{{ t('stats.energy_journey.texts.default_share') }}</p>
-    <q-markdown
-      v-if="total > 5 && biggestShare"
-      :src="
-        t('stats.energy_journey.texts.specific_share', {
-          percentage: formatNumber(biggestShare.percentage),
-          mode: keyLabel(biggestShare.mode),
-        })
-      "
-    />
-  </e-charts-shell>
+    <e-charts-shell
+      :height="height"
+      :loading="props.loading"
+      :has-data="total > 0"
+      :show-info="total > 0"
+      :no-data-title="t('stats.energy_journey.title_share')"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <p class="q-mb-xs">{{ t('stats.energy_journey.texts.default_share') }}</p>
+      <q-markdown
+        v-if="total > 5 && biggestShare"
+        :src="
+          t('stats.energy_journey.texts.specific_share', {
+            percentage: formatNumber(biggestShare.percentage),
+            mode: keyLabel(biggestShare.mode),
+          })
+        "
+      />
+    </e-charts-shell>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -46,6 +54,7 @@ interface Props {
   height?: number
   loading?: boolean
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
