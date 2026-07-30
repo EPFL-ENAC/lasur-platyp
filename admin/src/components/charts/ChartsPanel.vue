@@ -43,19 +43,16 @@
             :frequencies="getFreq('travel_time')"
             :xaxis="t('stats.travel_time.xaxis')"
             :range-step="5"
-            :percent="percent"
             :height="height"
             :loading="stats.loading"
           />
           <equipment-frequencies-chart
             :frequencies="getFreq('equipments')"
-            :percent="percent"
             :height="height"
             :loading="stats.loading"
           />
           <mobility-constraints-frequencies-chart
             :frequencies="getFreq('constraints')"
-            :percent="percent"
             :height="height"
             :loading="stats.loading"
           />
@@ -77,7 +74,6 @@
           <freq-mod-pro-chart
             :frequencies="getFreqArray('freq_mod_pro')"
             :height="height"
-            :percent="percent"
             :loading="stats.loading"
           />
           <emissions-mod-pro-chart
@@ -161,13 +157,11 @@
             :behavior-change-stats="stats.behaviorChange"
             :height="height"
             :loading="stats.loading"
-            :percent="percent"
           />
           <motivation-change-chart
             :behavior-change-stats="stats.behaviorChange"
             :height="height"
             :loading="stats.loading"
-            :percent="percent"
           />
           <equipment-recommendation-matrix-chart
             class="grid-item-full-row"
@@ -207,7 +201,6 @@ import type { Frequencies } from 'src/models'
 
 interface Props {
   height: number
-  percent: boolean
   collaboratorsCount?: number | undefined
 }
 

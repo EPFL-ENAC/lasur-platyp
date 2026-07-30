@@ -9,6 +9,16 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onTogglePercent">
+              <q-item-section side>
+                <q-icon
+                  :name="stats.constraintsPercent ? 'check_box' : 'check_box_outline_blank'"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('stats.percent_employees') }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -61,7 +71,6 @@ interface Props {
   xaxis?: string
   yaxis?: string
   rangeStep?: number
-  percent?: boolean
   height?: number
   loading?: boolean
   exportable?: boolean
@@ -80,6 +89,12 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 function onChartDownload() {
   shellRef.value?.handleExport()
+}
+
+const stats = useStats()
+
+function onTogglePercent() {
+  stats.constraintsPercent = !stats.constraintsPercent
 }
 
 const option = ref<EChartsOption>({})
@@ -105,7 +120,7 @@ watch(
   },
 )
 
-watch([() => props.percent, () => props.height, locale], () => {
+watch([() => stats.constraintsPercent, () => props.height, locale], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -159,7 +174,11 @@ function initValuesChartOptions(frequencies: Frequencies) {
   const values =
     categories?.map((category) => {
       const item = frequencies.data.find((item) => item.value === `${category}`)
-      return item ? (props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count) : 0
+      return item
+        ? stats.constraintsPercent
+          ? ((item.count / total.value) * 100).toFixed(2)
+          : item.count
+        : 0
     }) || []
 
   const newOption: EChartsOption = {
@@ -184,7 +203,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${stats.constraintsPercent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -197,7 +216,9 @@ function initValuesChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     yAxis: {
-      name: props.yaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      name:
+        props.yaxis ||
+        (stats.constraintsPercent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
@@ -218,7 +239,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
   const dataset = frequencies.data.map((item) => ({
     key: item.value || 'null',
     name: keyLabel(item.value || 'null'),
-    value: props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count,
+    value: stats.constraintsPercent ? ((item.count / total.value) * 100).toFixed(2) : item.count,
   }))
 
   // Extract category names and values for yAxis and series
@@ -251,7 +272,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+      formatter: `<b>{b}</b><br/>{c} ${stats.constraintsPercent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -264,7 +285,9 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     xAxis: {
-      name: props.xaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      name:
+        props.xaxis ||
+        (stats.constraintsPercent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',

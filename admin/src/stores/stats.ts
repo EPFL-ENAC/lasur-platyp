@@ -51,6 +51,13 @@ export const useStats = defineStore('stats', () => {
   const redModalType = ref('simple')
   const redShareModalType = ref('simple')
 
+  const travelTimePercent = ref(true)
+  const equipmentsPercent = ref(true)
+  const constraintsPercent = ref(true)
+  const freqModProPercent = ref(true)
+  const leversPercent = ref(true)
+  const motivationPercent = ref(true)
+
   const loading = ref(false)
 
   async function loadStats(filter: Filter | undefined = undefined) {
@@ -184,6 +191,12 @@ export const useStats = defineStore('stats', () => {
     emModalType,
     redModalType,
     redShareModalType,
+    travelTimePercent,
+    equipmentsPercent,
+    constraintsPercent,
+    freqModProPercent,
+    leversPercent,
+    motivationPercent,
     loading,
     loadStats,
     getCampaignStats,

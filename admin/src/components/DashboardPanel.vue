@@ -75,9 +75,6 @@
         <q-btn icon="settings" size="sm" color="field" outline>
           <q-menu>
             <q-list style="min-width: 100px">
-              <q-item>
-                <q-checkbox v-model="percent" :label="t('stats.percent_employees')" />
-              </q-item>
               <q-item class="q-mb-md q-mr-sm">
                 <div style="width: 200px">
                   <div>{{ t('stats.charts_height') }}</div>
@@ -109,11 +106,7 @@
       </div>
     </div>
     <div v-else>
-      <charts-panel
-        :percent="percent"
-        :height="height"
-        :collaborators-count="totalCollaboratorsCount"
-      />
+      <charts-panel :height="height" :collaborators-count="totalCollaboratorsCount" />
     </div>
     <area-dialog
       v-model="showMapFilter"
@@ -137,7 +130,6 @@ const services = useServices()
 const companyService = services.make('company')
 const campaignService = services.make('campaign')
 
-const percent = ref(true)
 const height = ref(400)
 const companyMap = ref<{ [key: string]: Company }>({})
 const campaignMap = ref<{ [key: string]: Campaign }>({})
@@ -277,6 +269,13 @@ async function goToReport() {
   url.searchParams.set('emModalType', stats.emModalType)
   url.searchParams.set('redModalType', stats.redModalType)
   url.searchParams.set('redShareModalType', stats.redShareModalType)
+
+  url.searchParams.set('travelTimePercent', String(stats.travelTimePercent))
+  url.searchParams.set('equipmentsPercent', String(stats.equipmentsPercent))
+  url.searchParams.set('constraintsPercent', String(stats.constraintsPercent))
+  url.searchParams.set('freqModProPercent', String(stats.freqModProPercent))
+  url.searchParams.set('leversPercent', String(stats.leversPercent))
+  url.searchParams.set('motivationPercent', String(stats.motivationPercent))
 
   window.open(url.toString(), '_blank')
 }
