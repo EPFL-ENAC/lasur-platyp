@@ -4,7 +4,25 @@
     :description="t('stats.reco_inter.description')"
     :inline="inline"
   >
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <share-chart
+      ref="chartRef"
       chartTranslationName="reco_inter"
       :frequencies="frequencies"
       :height="height"
@@ -28,5 +46,15 @@ interface Props {
 
 defineProps<Props>()
 
+type ShareChartExposed = {
+  handleExport: () => Promise<void>
+}
+
+const chartRef = useTemplateRef<ShareChartExposed>('chartRef')
+
 const { t } = useI18n()
+
+function onChartDownload() {
+  chartRef.value?.handleExport()
+}
 </script>

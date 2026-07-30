@@ -5,7 +5,35 @@
     :inline="inline"
   >
     <div>
+      <q-toolbar v-if="!inline" class="chart-toolbar">
+        <q-space />
+        <q-btn flat icon="more_vert">
+          <q-menu>
+            <q-list style="min-width: 200px">
+              <q-item v-if="withOptions" clickable v-close-popup @click="onToggleSimpleMode">
+                <q-item-section side>
+                  <q-icon :name="simpleMode ? 'check_box' : 'check_box_outline_blank'" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{
+                    t('stats.equipments_by_recommendations.simpleMode')
+                  }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="onChartDownload">
+                <q-item-section side>
+                  <q-icon name="download" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ t('download') }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </q-toolbar>
       <e-charts-shell
+        ref="shellRef"
         :height="height"
         :loading="props.loading"
         :has-data="total > 0"
@@ -15,12 +43,6 @@
         :exportable="!inline"
       >
       </e-charts-shell>
-      <q-toggle
-        v-if="withOptions"
-        v-model="simpleMode"
-        :label="t('stats.equipments_by_recommendations.simpleMode')"
-        color="primary"
-      />
       <q-markdown
         v-if="analysisText"
         compact
@@ -80,10 +102,24 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
 })
 
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
+
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
 const simpleMode = ref(false)
+
+function onToggleSimpleMode() {
+  simpleMode.value = !simpleMode.value
+}
 
 const withOptions = computed(() => {
   return props.hasOptions && total.value > 0

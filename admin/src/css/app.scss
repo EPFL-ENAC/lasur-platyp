@@ -212,3 +212,10 @@ li + li {
   margin-top: 0;
   margin-bottom: 0.25rem;
 }
+
+.chart-toolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+}

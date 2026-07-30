@@ -1,17 +1,6 @@
 <template>
   <div class="chart-shell">
     <div :style="containerStyle" class="chart-shell__visual">
-      <div class="toolbar-overlay">
-        <q-btn
-          v-if="hasData && exportable"
-          dense
-          unelevated
-          icon="download"
-          :disable="loading || exporting || !captureRawImage"
-          @click="handleExport"
-        />
-      </div>
-
       <div v-if="hasData" class="chart-shell__content">
         <slot />
       </div>

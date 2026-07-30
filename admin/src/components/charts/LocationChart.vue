@@ -4,7 +4,25 @@
     :description="t('stats.locations_heatmap.description')"
     :inline="inline"
   >
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <chart-shell
+      ref="shellRef"
       :height="height"
       :loading="!hasData"
       :has-data="hasData"
@@ -102,8 +120,17 @@ type LocationHeatmapExposed = {
   exportImage: () => Promise<string | null>
 }
 
+type ChartShellExposed = {
+  handleExport: () => Promise<void>
+}
+
 const heatmap = useTemplateRef<LocationHeatmapExposed>('heatmap')
 const wrapper = useTemplateRef<HTMLDivElement>('wrapper')
+const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {

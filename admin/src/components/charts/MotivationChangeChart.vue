@@ -4,7 +4,25 @@
     :description="t('stats.behavior_change_motivation.texts.info')"
     :inline="inline"
   >
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <behavior-change-chart
+      ref="chartRef"
       type="motivation"
       :behavior-change-stats="behaviorChangeStats"
       :height="height"
@@ -32,7 +50,17 @@ interface Props {
 
 const props = defineProps<Props>()
 
+type BehaviorChangeChartExposed = {
+  handleExport: () => Promise<void>
+}
+
+const chartRef = useTemplateRef<BehaviorChangeChartExposed>('chartRef')
+
 const { t } = useI18n()
+
+function onChartDownload() {
+  chartRef.value?.handleExport()
+}
 
 const total = computed(() => props.behaviorChangeStats?.motivation?.total_responses ?? 0)
 

@@ -4,22 +4,38 @@
     :description="t('stats.emissions_freq_mod.description')"
     :inline="inline"
   >
-    <div v-if="!inline">
-      <q-btn-toggle
-        v-model="stats.emModalType"
-        :options="[
-          { label: t('stats.freq_mod.modal_split.simple'), value: 'simple' },
-          { label: t('stats.freq_mod.modal_split.detailed'), value: 'detailed' },
-        ]"
-        outlined
-        unelevated
-        no-caps
-        color="grey"
-        toggle-color="primary"
-      />
-    </div>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleEmModalType">
+              <q-item-section side>
+                <q-icon :name="stats.emModalType === 'simple' ? 'lens' : 'pie_chart'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.emModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.simple')
+                    : t('stats.freq_mod.modal_split.detailed')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <emissions-chart
       v-if="stats.emModalType === 'simple'"
+      ref="simpleChartRef"
       chartTranslationName="freq_mod_simple"
       :emissions="simpleEmissions"
       :xaxis="t('stats.emissions_freq_mod_simple.xaxis')"
@@ -30,6 +46,7 @@
     />
     <emissions-chart
       v-if="stats.emModalType === 'detailed'"
+      ref="detailedChartRef"
       chartTranslationName="freq_mod_complex"
       :emissions="detailedEmissions"
       :xaxis="t('stats.emissions_freq_mod_complex.xaxis')"
@@ -56,7 +73,23 @@ interface Props {
 
 defineProps<Props>()
 
+type EmissionsChartExposed = {
+  handleExport: () => Promise<void>
+}
+
+const simpleChartRef = useTemplateRef<EmissionsChartExposed>('simpleChartRef')
+const detailedChartRef = useTemplateRef<EmissionsChartExposed>('detailedChartRef')
+
 const stats = useStats()
 
 const { t } = useI18n()
+
+function onToggleEmModalType() {
+  stats.emModalType = stats.emModalType === 'simple' ? 'detailed' : 'simple'
+}
+
+function onChartDownload() {
+  const chartRef = stats.emModalType === 'simple' ? simpleChartRef : detailedChartRef
+  chartRef.value?.handleExport()
+}
 </script>

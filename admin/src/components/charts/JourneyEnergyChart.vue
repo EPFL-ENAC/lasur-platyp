@@ -4,7 +4,25 @@
     :description="t(`stats.energy_journey.description_${props.type}`)"
     :inline="inline"
   >
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <e-charts-shell
+      ref="shellRef"
       :height="height"
       :loading="props.loading"
       :has-data="total > 0"
@@ -72,6 +90,16 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { t, locale } = useI18n()
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
 
 const option = ref<EChartsOption>({})
 const total = ref(0)

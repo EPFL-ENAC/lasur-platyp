@@ -4,22 +4,38 @@
     :description="t('stats.emissions_reductions_share.description')"
     :inline="inline"
   >
-    <div v-if="!inline">
-      <q-btn-toggle
-        v-model="stats.redShareModalType"
-        :options="[
-          { label: t('stats.freq_mod.modal_split.simple'), value: 'simple' },
-          { label: t('stats.freq_mod.modal_split.detailed'), value: 'detailed' },
-        ]"
-        outlined
-        unelevated
-        no-caps
-        color="grey"
-        toggle-color="primary"
-      />
-    </div>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleRedShareModalType">
+              <q-item-section side>
+                <q-icon :name="stats.redShareModalType === 'simple' ? 'lens' : 'pie_chart'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.redShareModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.simple')
+                    : t('stats.freq_mod.modal_split.detailed')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <emissions-reductions-share-chart
       v-if="stats.redShareModalType === 'simple'"
+      ref="simpleChartRef"
       chartTranslationName="reductions_share_simple"
       :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
       :height="height"
@@ -28,6 +44,7 @@
     />
     <emissions-reductions-share-chart
       v-if="stats.redShareModalType === 'detailed'"
+      ref="detailedChartRef"
       chartTranslationName="reductions_share_complex"
       :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
       :height="height"
@@ -49,7 +66,23 @@ interface Props {
 
 defineProps<Props>()
 
+type EmissionsReductionsShareChartExposed = {
+  handleExport: () => Promise<void>
+}
+
+const simpleChartRef = useTemplateRef<EmissionsReductionsShareChartExposed>('simpleChartRef')
+const detailedChartRef = useTemplateRef<EmissionsReductionsShareChartExposed>('detailedChartRef')
+
 const stats = useStats()
 
 const { t } = useI18n()
+
+function onToggleRedShareModalType() {
+  stats.redShareModalType = stats.redShareModalType === 'simple' ? 'detailed' : 'simple'
+}
+
+function onChartDownload() {
+  const chartRef = stats.redShareModalType === 'simple' ? simpleChartRef : detailedChartRef
+  chartRef.value?.handleExport()
+}
 </script>

@@ -4,7 +4,7 @@
     :description="t('stats.freq_mod.description')"
     :inline="inline"
   >
-    <q-toolbar v-if="!inline">
+    <q-toolbar v-if="!inline" class="chart-toolbar">
       <q-space />
       <q-btn flat icon="more_vert">
         <q-menu>

@@ -4,7 +4,25 @@
     :description="t('stats.emissions_reductions_mod_pro.description')"
     :inline="inline"
   >
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <emissions-reductions-chart
+      ref="chartRef"
       chartTranslationName="reductions_mod_pro"
       :emissions="emissions"
       :reductions="reductions"
@@ -31,5 +49,15 @@ interface Props {
 
 defineProps<Props>()
 
+type EmissionsReductionsChartExposed = {
+  handleExport: () => Promise<void>
+}
+
+const chartRef = useTemplateRef<EmissionsReductionsChartExposed>('chartRef')
+
 const { t } = useI18n()
+
+function onChartDownload() {
+  chartRef.value?.handleExport()
+}
 </script>
