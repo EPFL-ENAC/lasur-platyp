@@ -37,6 +37,7 @@
       :loading="props.loading"
       :has-data="hasData"
       :show-info="!!hasOther"
+      :show-table="!exportable"
       :no-data-title="t('stats.constraints.title')"
       :option="option"
       :exportable="!!exportable"

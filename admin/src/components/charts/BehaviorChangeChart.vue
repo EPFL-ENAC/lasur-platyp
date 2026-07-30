@@ -5,6 +5,7 @@
       :height="height"
       :loading="props.loading"
       :has-data="total > 0"
+      :show-table="!exportable"
       :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
       :option="option"
       :exportable="!!exportable"

@@ -399,6 +399,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     participants_median: 'Médiane des participant·e·s',
     geneva_median: 'Médiane de la région de Genève',
     reference_data: 'Données de référence (canton de Genève)',
+    table: {
+      category: 'Catégorie',
+      value: 'Valeur',
+      link: 'Liaison',
+    },
     units: {
       tco2eq_per_year: 'tCO₂eq/an',
     },

@@ -5,6 +5,7 @@
     :loading="props.loading"
     :has-data="total > 0"
     :show-info="total > 0"
+    :show-table="!exportable"
     :no-data-title="t(`stats.${props.type}.title`)"
     :option="option"
     :exportable="!!exportable"

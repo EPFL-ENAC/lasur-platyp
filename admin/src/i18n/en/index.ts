@@ -390,6 +390,11 @@ Thank you for your valuable contribution! If you have any questions, please cont
     participants_median: 'Participants median',
     geneva_median: 'Geneva area median',
     reference_data: 'Reference data (Geneva canton)',
+    table: {
+      category: 'Category',
+      value: 'Value',
+      link: 'Link',
+    },
     units: {
       tco2eq_per_year: 'tCO₂eq/year',
     },
