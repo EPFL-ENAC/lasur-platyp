@@ -1,32 +1,62 @@
 <template>
-  <div>
-    <q-toggle
-      v-if="withOptions"
-      v-model="simpleMode"
-      :label="t('stats.equipments_by_recommendations.simpleMode')"
-      color="primary"
-    />
-    <e-charts-shell
-      :height="height"
-      :loading="props.loading"
-      :has-data="total > 0"
-      :show-info="total > 0"
-      :no-data-title="t('stats.equipments_by_recommendations.title')"
-      :option="option"
-      :exportable="!!exportable"
-    >
-      <p class="q-mb-xs">{{ t('stats.equipments_by_recommendations.texts.default') }}</p>
-      <p v-if="analysisText">
-        {{ t('stats.equipments_by_recommendations.texts.specific', analysisText) }}
-      </p>
-    </e-charts-shell>
-    <div v-if="withOptions" class="text-caption">
-      {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
+  <chart-panel
+    :title="t('stats.equipments_by_recommendations.title')"
+    :description="t('stats.equipments_by_recommendations.texts.default')"
+    :inline="inline"
+  >
+    <div>
+      <q-toolbar v-if="!inline" class="chart-toolbar">
+        <q-space />
+        <q-btn flat icon="more_vert">
+          <q-menu>
+            <q-list style="min-width: 200px">
+              <q-item v-if="withOptions" clickable v-close-popup @click="onToggleSimpleMode">
+                <q-item-section side>
+                  <q-icon :name="simpleMode ? 'check_box' : 'check_box_outline_blank'" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{
+                    t('stats.equipments_by_recommendations.simpleMode')
+                  }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="onChartDownload">
+                <q-item-section side>
+                  <q-icon name="download" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ t('download') }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </q-toolbar>
+      <e-charts-shell
+        ref="shellRef"
+        :height="height"
+        :loading="props.loading"
+        :has-data="total > 0"
+        :show-info="total > 0"
+        :no-data-title="t('stats.equipments_by_recommendations.title')"
+        :option="option"
+        :exportable="!inline"
+      >
+      </e-charts-shell>
+      <q-markdown
+        v-if="analysisText"
+        compact
+        :src="t('stats.equipments_by_recommendations.texts.specific', analysisText)"
+      />
+      <div v-if="withOptions" class="text-caption">
+        {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
+      </div>
     </div>
-  </div>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -66,17 +96,30 @@ interface Props {
   height?: number
   loading?: boolean
   hasOptions?: boolean
-  exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
-  exportable: true,
 })
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
 const simpleMode = ref(false)
+
+function onToggleSimpleMode() {
+  simpleMode.value = !simpleMode.value
+}
 
 const withOptions = computed(() => {
   return props.hasOptions && total.value > 0

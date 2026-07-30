@@ -1,5 +1,6 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
@@ -54,6 +55,16 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
 const total = ref(0)

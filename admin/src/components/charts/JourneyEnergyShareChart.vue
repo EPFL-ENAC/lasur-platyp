@@ -1,27 +1,51 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="total > 0"
-    :show-info="total > 0"
-    :no-data-title="t('stats.energy_journey.title_share')"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t('stats.energy_journey.title_share')"
+    :description="t('stats.energy_journey.description_share')"
+    :inline="inline"
   >
-    <p class="q-mb-xs">{{ t('stats.energy_journey.texts.default_share') }}</p>
-    <q-markdown
-      v-if="total > 5 && biggestShare"
-      :src="
-        t('stats.energy_journey.texts.specific_share', {
-          percentage: formatNumber(biggestShare.percentage),
-          mode: keyLabel(biggestShare.mode),
-        })
-      "
-    />
-  </e-charts-shell>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
+    <e-charts-shell
+      ref="shellRef"
+      :height="height"
+      :loading="props.loading"
+      :has-data="total > 0"
+      :show-info="total > 0"
+      :no-data-title="t('stats.energy_journey.title_share')"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <q-markdown
+        v-if="total > 5 && biggestShare"
+        :src="
+          t('stats.energy_journey.texts.specific_share', {
+            percentage: formatNumber(biggestShare.percentage),
+            mode: keyLabel(biggestShare.mode),
+          })
+        "
+      />
+    </e-charts-shell>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -46,6 +70,7 @@ interface Props {
   height?: number
   loading?: boolean
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -55,6 +80,16 @@ const props = withDefaults(defineProps<Props>(), {
 interface AddedEnergyShare {
   mode: string
   percentage: number
+}
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
 }
 
 const option = ref<EChartsOption>({})

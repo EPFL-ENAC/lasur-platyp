@@ -1,5 +1,6 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
@@ -8,7 +9,6 @@
     :option="option"
     :exportable="!!exportable"
   >
-    <p class="q-mb-xs">{{ t(`stats.emissions_${props.chartTranslationName}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
       :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels)"
@@ -49,6 +49,16 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
 const total = ref(0)

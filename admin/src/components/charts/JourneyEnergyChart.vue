@@ -1,26 +1,51 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="total > 0"
-    :show-info="total > 0"
-    :no-data-title="t(`stats.energy_journey.title_${props.type}`)"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t(`stats.energy_journey.title_${props.type}`)"
+    :description="t(`stats.energy_journey.description_${props.type}`)"
+    :inline="inline"
   >
-    <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
-    <q-markdown
-      v-if="textLabelsCurrent"
-      :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)"
-    />
-    <q-markdown
-      v-if="textLabelsReco"
-      :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)"
-    />
-  </e-charts-shell>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
+    <e-charts-shell
+      ref="shellRef"
+      :height="height"
+      :loading="props.loading"
+      :has-data="total > 0"
+      :show-info="total > 0"
+      :no-data-title="t(`stats.energy_journey.title_${props.type}`)"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
+      <q-markdown
+        v-if="textLabelsCurrent"
+        :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)"
+      />
+      <q-markdown
+        v-if="textLabelsReco"
+        :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)"
+      />
+    </e-charts-shell>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -57,6 +82,7 @@ interface Props {
   height?: number
   loading?: boolean
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -64,6 +90,16 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { t, locale } = useI18n()
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
@@ -95,8 +131,7 @@ const textLabelsReco = computed(() => {
         100,
     ),
     percent_potential: formatNumber(
-      (props.journeyEnergyStats.gains.reco_above_who_count /
-        props.journeyEnergyStats.reco.total) *
+      (props.journeyEnergyStats.gains.reco_above_who_count / props.journeyEnergyStats.reco.total) *
         100,
     ),
   }

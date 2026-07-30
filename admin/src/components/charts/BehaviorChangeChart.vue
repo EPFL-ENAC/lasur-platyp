@@ -1,16 +1,16 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="total > 0"
-    :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
-    :option="option"
-    :show-info="total > 0"
-    :exportable="!!exportable"
-  >
-    <p class="q-mb-xs">{{ t(`stats.behavior_change_${props.type}.texts.info`) }}</p>
-    <q-markdown :src="chartDescription" />
-  </e-charts-shell>
+  <div>
+    <e-charts-shell
+      ref="shellRef"
+      :height="height"
+      :loading="props.loading"
+      :has-data="total > 0"
+      :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
+      :option="option"
+      :exportable="!!exportable"
+    />
+    <q-markdown v-if="props.description" compact :src="props.description" class="q-mt-sm" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -42,63 +42,25 @@ interface Props {
   loading?: boolean
   percent?: boolean
   exportable?: boolean
+  description?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
 
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
 const option = ref<EChartsOption>({})
 const total = ref(0)
-
-const chartDescription = computed(() => {
-  if (total.value < 5) {
-    return t(`stats.behavior_change_${props.type}.texts.default`)
-  }
-
-  if (props.type === 'motivation') {
-    return t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues.value)
-  }
-
-  return `${t(`stats.behavior_change_${props.type}.texts.default`)}\n\n${t(
-    `stats.behavior_change_${props.type}.texts.specific`,
-    descriptionValues.value,
-  )}`
-})
-
-const descriptionValues = computed(() => {
-  if (props.type === 'levers') {
-    const levers = props.behaviorChangeStats?.levers
-    if (!levers) {
-      return {}
-    }
-
-    const mostNeededLever = levers.by_mode_levers
-      .flatMap((item) => item.levers.map((lever) => ({ ...lever, mode: item.mode })))
-      .sort((a, b) => b.count - a.count)[0]
-    if (!mostNeededLever) {
-      return {}
-    }
-
-    return {
-      lever: keyLabel(mostNeededLever.category),
-    }
-  }
-
-  const motivation = props.behaviorChangeStats?.motivation
-  if (!motivation) {
-    return {}
-  }
-
-  const motivatedByMode = motivation.by_mode_motivation.map((item) => {
-    return item.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
-  })
-  return {
-    percentage: formatNumber(
-      motivatedByMode.reduce((sum, p) => sum + p, 0) / motivatedByMode.length,
-    ),
-  }
-})
 
 watch([() => props.loading], () => {
   if (props.loading) {

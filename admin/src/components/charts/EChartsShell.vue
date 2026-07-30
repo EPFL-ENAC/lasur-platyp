@@ -1,5 +1,6 @@
 <template>
   <chart-shell
+    ref="shellRef"
     :height="height"
     :has-data="hasData"
     :show-info="showInfo"
@@ -68,9 +69,18 @@ const props = withDefaults(defineProps<Props>(), {
   exportPixelRatio: 8,
 })
 
+type ChartShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
 const $q = useQuasar()
 const { t } = useI18n()
 const chart = shallowRef<InstanceType<typeof ECharts> | null>(null)
+const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
 
 const resolvedExportBackgroundColor = computed(() => {
   if (props.exportBackgroundColor) {

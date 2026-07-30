@@ -46,6 +46,11 @@ export const useStats = defineStore('stats', () => {
   const behaviorChange = ref<BehaviorChangeStats>({} as BehaviorChangeStats)
   const equipmentsStats = ref<EquipmentsStats | null>(null)
 
+  const freqModalType = ref('simple')
+  const emModalType = ref('simple')
+  const redModalType = ref('simple')
+  const redShareModalType = ref('simple')
+
   const loading = ref(false)
 
   async function loadStats(filter: Filter | undefined = undefined) {
@@ -175,6 +180,10 @@ export const useStats = defineStore('stats', () => {
     workplaceLocations,
     journeyEnergyStats,
     equipmentsStats,
+    freqModalType,
+    emModalType,
+    redModalType,
+    redShareModalType,
     loading,
     loadStats,
     getCampaignStats,

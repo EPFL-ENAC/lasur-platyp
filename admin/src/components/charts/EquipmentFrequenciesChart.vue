@@ -1,18 +1,43 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="hasData"
-    :show-info="!!props.percent"
-    :no-data-title="t('stats.equipments.title')"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t('stats.equipments.title')"
+    :description="t('stats.equipments.description')"
+    :inline="inline"
   >
-    <q-markdown :src="t('stats.equipments.mrmt_source')" />
-  </e-charts-shell>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
+    <e-charts-shell
+      ref="shellRef"
+      :height="height"
+      :loading="props.loading"
+      :has-data="hasData"
+      :show-info="!!props.percent"
+      :no-data-title="t('stats.equipments.title')"
+      :option="option"
+      :exportable="!!exportable"
+    >
+      <q-markdown :src="t('stats.equipments.mrmt_source')" />
+    </e-charts-shell>
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -45,11 +70,22 @@ interface Props {
   percent?: boolean
   height?: number
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
 
 const option = ref<EChartsOption>({})
 const total = ref(0)

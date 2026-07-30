@@ -32,28 +32,20 @@
           {{ t('stats.sections.home_to_work') }}
         </h2>
         <location-chart
-          :title="t('stats.locationsHeatmap.title')"
           :height="height"
           :home-locations-heatmap="stats.homeLocationsHeatmap"
           :workplace-locations="stats.workplaceLocations"
-          :exportable="false"
           no-controls
+          inline
         />
       </report-page>
 
-      <report-page v-if="freqModalType === 'simple'" :org-names="orgs">
-        <simple-labels-share-chart
+      <report-page :org-names="orgs">
+        <freq-mod-chart
           :height="height"
-          :frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
-          :exportable="false"
-        />
-      </report-page>
-
-      <report-page v-if="freqModalType === 'detailed'" :org-names="orgs">
-        <complex-labels-share-chart
-          :height="height"
-          :frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
-          :exportable="false"
+          :simple-frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
+          :detailed-frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
+          inline
         />
       </report-page>
 
@@ -65,6 +57,7 @@
           :percent="percent"
           :height="height"
           :exportable="false"
+          inline
         />
       </report-page>
 
@@ -74,38 +67,26 @@
           :percent="percent"
           :height="height"
           :exportable="false"
+          inline
         />
       </report-page>
 
       <report-page :org-names="orgs">
-        <frequencies-chart
-          chart-translation-name="constraints"
+        <mobility-constraints-frequencies-chart
           :frequencies="getFreq('constraints')"
           :percent="percent"
           :height="height"
           :exportable="false"
+          inline
         />
       </report-page>
 
-      <report-page v-if="emModalType === 'simple'" :org-names="orgs">
-        <emissions-chart
-          chart-translation-name="freq_mod_simple"
-          :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
-          :xaxis="t('stats.emissions_freq_mod_simple.xaxis')"
-          :yaxis="t('stats.emissions_freq_mod_simple.yaxis')"
+      <report-page :org-names="orgs">
+        <emissions-mod-chart
           :height="height"
-          :exportable="false"
-        />
-      </report-page>
-
-      <report-page v-if="emModalType === 'detailed'" :org-names="orgs">
-        <emissions-chart
-          chart-translation-name="freq_mod_complex"
-          :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
-          :xaxis="t('stats.emissions_freq_mod_complex.xaxis')"
-          :yaxis="t('stats.emissions_freq_mod_complex.yaxis')"
-          :height="height"
-          :exportable="false"
+          :simple-emissions="stats.emissions?.['freq_mod_simple'] ?? null"
+          :detailed-emissions="stats.emissions?.['freq_mod_complex'] ?? null"
+          inline
         />
       </report-page>
 
@@ -115,6 +96,7 @@
           :journey-energy-stats="stats.journeyEnergyStats"
           :height="height"
           :exportable="false"
+          inline
         />
       </report-page>
 
@@ -122,25 +104,19 @@
         <h2 class="text-h6 q-mt-xl q-mb-md">
           {{ t('stats.sections.professional_travel') }}
         </h2>
-        <frequencies-stack-chart
-          chart-translation-name="freq_mod_pro"
+        <freq-mod-pro-chart
           :frequencies="getFreqArray('freq_mod_pro')"
-          :groups="['local', 'national', 'europe', 'inter']"
-          :xaxis="t('stats.freq_mod_pro.xaxis')"
           :height="height"
           :percent="percent"
-          :exportable="false"
+          inline
         />
       </report-page>
 
       <report-page :org-names="orgs">
-        <emissions-chart
-          chart-translation-name="freq_mod_pro"
+        <emissions-mod-pro-chart
           :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
-          :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
-          :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
           :height="height"
-          :exportable="false"
+          inline
         />
       </report-page>
 
@@ -158,61 +134,19 @@
         <h2 class="text-h6 q-mb-md">
           {{ t('stats.sections.home_to_work') }}
         </h2>
-        <share-chart
-          chart-translation-name="reco_inter"
-          :frequencies="getFreq('reco_inter')"
-          :height="height"
-          :exportable="false"
-        />
+        <freq-reco-chart :frequencies="getFreq('reco_inter')" :height="height" inline />
       </report-page>
 
       <report-page :org-names="orgs">
-        <links-chart
-          type="mod_reco"
-          :links="stats.links['mod_reco'] ?? null"
-          :height="height"
-          :exportable="false"
-        />
+        <links-reco-chart :links="stats.links['mod_reco'] ?? null" :height="height" inline />
       </report-page>
 
-      <report-page v-if="redModalType === 'simple'" :org-names="orgs">
-        <emissions-reductions-chart
-          chart-translation-name="reductions_mod_simple"
-          :emissions="stats.emissions?.['freq_mod_simple'] ?? null"
-          :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
-          :yaxis="t('stats.emissions_reductions_mod_simple.yaxis')"
-          :height="height"
-          :exportable="false"
-        />
+      <report-page :org-names="orgs">
+        <emissions-reductions-mod-chart :height="height" inline />
       </report-page>
 
-      <report-page v-if="redModalType === 'detailed'" :org-names="orgs">
-        <emissions-reductions-chart
-          chart-translation-name="reductions_mod_complex"
-          :emissions="stats.emissions?.['freq_mod_complex'] ?? null"
-          :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
-          :yaxis="t('stats.emissions_reductions_mod_complex.yaxis')"
-          :height="height"
-          :exportable="false"
-        />
-      </report-page>
-
-      <report-page v-if="redShareModalType === 'simple'" :org-names="orgs">
-        <emissions-reductions-share-chart
-          chart-translation-name="reductions_share_simple"
-          :reductions="stats.emissionsReductions?.['reductions_mod_simple'] ?? null"
-          :height="height"
-          :exportable="false"
-        />
-      </report-page>
-
-      <report-page v-if="redShareModalType === 'detailed'" :org-names="orgs">
-        <emissions-reductions-share-chart
-          chart-translation-name="reductions_share_complex"
-          :reductions="stats.emissionsReductions?.['reductions_mod_complex'] ?? null"
-          :height="height"
-          :exportable="false"
-        />
+      <report-page :org-names="orgs">
+        <emissions-reductions-mod-share-chart :height="height" inline />
       </report-page>
 
       <report-page :org-names="orgs">
@@ -221,6 +155,7 @@
           :journey-energy-stats="stats.journeyEnergyStats"
           :height="height"
           :exportable="false"
+          inline
         />
       </report-page>
 
@@ -229,6 +164,7 @@
           :journey-energy-stats="stats.journeyEnergyStats"
           :height="height"
           :exportable="false"
+          inline
         />
       </report-page>
 
@@ -236,13 +172,15 @@
         <h2 class="text-h6 q-mt-none q-mb-md">
           {{ t('stats.sections.professional_travel') }}
         </h2>
-        <emissions-reductions-chart
-          chart-translation-name="reductions_mod_pro"
+        <freq-reco-pro-chart :frequencies="getFreq('reco_pros')" :height="height" inline />
+      </report-page>
+
+      <report-page :org-names="orgs">
+        <emissions-reductions-mod-pro-chart
           :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
           :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
-          :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
           :height="height"
-          :exportable="false"
+          inline
         />
       </report-page>
 
@@ -254,22 +192,20 @@
           class="compact text-body2 q-mb-lg"
           :src="t('stats.sections.behavioural_changes.description')"
         />
-        <behavior-change-chart
+        <levers-change-chart
           :height="height"
-          type="levers"
           :behavior-change-stats="stats.behaviorChange"
           :percent="percent"
-          :exportable="false"
+          inline
         />
       </report-page>
 
       <report-page :org-names="orgs">
-        <behavior-change-chart
+        <motivation-change-chart
           :height="height"
-          type="motivation"
           :behavior-change-stats="stats.behaviorChange"
           :percent="percent"
-          :exportable="false"
+          inline
         />
       </report-page>
 
@@ -278,6 +214,7 @@
           :height="height"
           :equipments-stats="stats.equipmentsStats"
           :exportable="false"
+          inline
         />
       </report-page>
 
@@ -303,20 +240,23 @@
 <script setup lang="ts">
 import ReportPage from 'src/components/ReportPage.vue'
 import EquipmentFrequenciesChart from 'src/components/charts/EquipmentFrequenciesChart.vue'
-import FrequenciesChart from 'src/components/charts/FrequenciesChart.vue'
-import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
+import MobilityConstraintsFrequenciesChart from 'src/components/charts/MobilityConstraintsFrequenciesChart.vue'
 import TravelTimeFrequenciesChart from 'src/components/charts/TravelTimeFrequenciesChart.vue'
 import LocationChart from 'src/components/charts/LocationChart.vue'
-import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
-import EmissionsReductionsChart from 'src/components/charts/EmissionsReductionsChart.vue'
-import EmissionsReductionsShareChart from 'src/components/charts/EmissionsReductionsShareChart.vue'
-import LinksChart from 'src/components/charts/LinksChart.vue'
-import ShareChart from 'src/components/charts/ShareChart.vue'
-import SimpleLabelsShareChart from 'src/components/charts/SimpleLabelsShareChart.vue'
-import ComplexLabelsShareChart from 'src/components/charts/ComplexLabelsShareChart.vue'
+import FreqModChart from 'src/components/charts/FreqModChart.vue'
+import FreqModProChart from 'src/components/charts/FreqModProChart.vue'
+import FreqRecoChart from 'src/components/charts/FreqRecoChart.vue'
+import FreqRecoProChart from 'src/components/charts/FreqRecoProChart.vue'
+import EmissionsModChart from 'src/components/charts/EmissionsModChart.vue'
+import EmissionsModProChart from 'src/components/charts/EmissionsModProChart.vue'
+import EmissionsReductionsModChart from 'src/components/charts/EmissionsReductionsModChart.vue'
+import EmissionsReductionsModProChart from 'src/components/charts/EmissionsReductionsModProChart.vue'
+import EmissionsReductionsModShareChart from 'src/components/charts/EmissionsReductionsModShareChart.vue'
+import LinksRecoChart from 'src/components/charts/LinksRecoChart.vue'
 import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
-import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
+import LeversChangeChart from 'src/components/charts/LeversChangeChart.vue'
+import MotivationChangeChart from 'src/components/charts/MotivationChangeChart.vue'
 import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
 import {
   type StatsState,
@@ -337,22 +277,25 @@ withDefaults(defineProps<Props>(), {
 
 const { t, locale } = useI18n()
 const route = useRoute()
+const statsStore = useStats()
 const stats = ref<StatsState | null>(null)
 const orgs = ref<string[]>([])
 const campaigns = ref<string[]>([])
-const freqModalType = ref('simple')
-const emModalType = ref('simple')
-const redModalType = ref('simple')
-const redShareModalType = ref('simple')
 
 onMounted(() => {
   stats.value = getStateFromLocalStorage(route.query.statsStateId as string)
   orgs.value = (route.query.orgs as string)?.split(';').map(decodeURIComponent) || []
   campaigns.value = (route.query.campaigns as string)?.split(';').map(decodeURIComponent) || []
-  freqModalType.value = (route.query.freqModalType as string) || 'simple'
-  emModalType.value = (route.query.emModalType as string) || 'simple'
-  redModalType.value = (route.query.redModalType as string) || 'simple'
-  redShareModalType.value = (route.query.redShareModalType as string) || 'simple'
+  statsStore.freqModalType = (route.query.freqModalType as string) || 'simple'
+  statsStore.emModalType = (route.query.emModalType as string) || 'simple'
+  statsStore.redModalType = (route.query.redModalType as string) || 'simple'
+  statsStore.redShareModalType = (route.query.redShareModalType as string) || 'simple'
+
+  // EmissionsReductionsModChart/EmissionsReductionsModShareChart read these directly from the store
+  if (stats.value) {
+    statsStore.emissions = stats.value.emissions
+    statsStore.emissionsReductions = stats.value.emissionsReductions
+  }
 
   window.addEventListener('beforeunload', cleanUpLocalStorage)
 })
