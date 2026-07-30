@@ -9,6 +9,14 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onTogglePercent">
+              <q-item-section side>
+                <q-icon :name="stats.motivationPercent ? 'check_box' : 'check_box_outline_blank'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('stats.percent_employees') }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -27,7 +35,7 @@
       :behavior-change-stats="behaviorChangeStats"
       :height="height"
       :loading="loading"
-      :percent="percent"
+      :percent="stats.motivationPercent"
       :exportable="!inline"
       :description="chartDescription"
     />
@@ -42,7 +50,6 @@ import type { BehaviorChangeStats } from 'src/models'
 
 interface Props {
   height: number
-  percent: boolean
   loading?: boolean
   behaviorChangeStats: BehaviorChangeStats | null
   inline?: boolean
@@ -57,6 +64,12 @@ type BehaviorChangeChartExposed = {
 const chartRef = useTemplateRef<BehaviorChangeChartExposed>('chartRef')
 
 const { t } = useI18n()
+
+const stats = useStats()
+
+function onTogglePercent() {
+  stats.motivationPercent = !stats.motivationPercent
+}
 
 function onChartDownload() {
   chartRef.value?.handleExport()

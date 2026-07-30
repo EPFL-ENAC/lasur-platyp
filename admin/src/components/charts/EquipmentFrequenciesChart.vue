@@ -9,6 +9,14 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onTogglePercent">
+              <q-item-section side>
+                <q-icon :name="stats.equipmentsPercent ? 'check_box' : 'check_box_outline_blank'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('stats.percent_employees') }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -26,7 +34,7 @@
       :height="height"
       :loading="props.loading"
       :has-data="hasData"
-      :show-info="!!props.percent"
+      :show-info="stats.equipmentsPercent"
       :no-data-title="t('stats.equipments.title')"
       :option="option"
       :exportable="!!exportable"
@@ -67,7 +75,6 @@ interface Props {
   loading?: boolean
   xaxis?: string
   yaxis?: string
-  percent?: boolean
   height?: number
   exportable?: boolean
   inline?: boolean
@@ -85,6 +92,12 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 function onChartDownload() {
   shellRef.value?.handleExport()
+}
+
+const stats = useStats()
+
+function onTogglePercent() {
+  stats.equipmentsPercent = !stats.equipmentsPercent
 }
 
 const option = ref<EChartsOption>({})
@@ -106,7 +119,7 @@ watch(
   },
 )
 
-watch([() => props.percent, () => props.height, locale], () => {
+watch([() => stats.equipmentsPercent, () => props.height, locale], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -154,14 +167,16 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     .map((item) => ({
       key: item.value || 'null',
       name: keyLabel(item.value || 'null'),
-      value: props.percent ? Number(((item.count / total.value) * 100).toFixed(2)) : item.count,
+      value: stats.equipmentsPercent
+        ? Number(((item.count / total.value) * 100).toFixed(2))
+        : item.count,
     }))
     .reverse()
 
   const categories = dataset.map((item) => item.name)
   const values = dataset.map((item) => item.value)
 
-  const mrmtValues = props.percent
+  const mrmtValues = stats.equipmentsPercent
     ? dataset.map((item) => {
         const mrmt = MRMT_VALUES_PERCENT[item.key as keyof typeof MRMT_VALUES_PERCENT]
         return mrmt ?? null
@@ -183,7 +198,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       data: values,
     },
   ]
-  if (props.percent) {
+  if (stats.equipmentsPercent) {
     series.push({
       name: t('stats.reference_data'),
       type: 'pictorialBar',
@@ -239,7 +254,9 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     xAxis: {
-      name: props.xaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      name:
+        props.xaxis ||
+        (stats.equipmentsPercent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 25,
       type: 'value',

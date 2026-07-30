@@ -54,7 +54,6 @@
           :frequencies="getFreq('travel_time')"
           :xaxis="t('stats.travel_time.xaxis')"
           :range-step="5"
-          :percent="percent"
           :height="height"
           :exportable="false"
           inline
@@ -64,7 +63,6 @@
       <report-page :org-names="orgs">
         <equipment-frequencies-chart
           :frequencies="getFreq('equipments')"
-          :percent="percent"
           :height="height"
           :exportable="false"
           inline
@@ -74,7 +72,6 @@
       <report-page :org-names="orgs">
         <mobility-constraints-frequencies-chart
           :frequencies="getFreq('constraints')"
-          :percent="percent"
           :height="height"
           :exportable="false"
           inline
@@ -104,12 +101,7 @@
         <h2 class="text-h6 q-mt-xl q-mb-md">
           {{ t('stats.sections.professional_travel') }}
         </h2>
-        <freq-mod-pro-chart
-          :frequencies="getFreqArray('freq_mod_pro')"
-          :height="height"
-          :percent="percent"
-          inline
-        />
+        <freq-mod-pro-chart :frequencies="getFreqArray('freq_mod_pro')" :height="height" inline />
       </report-page>
 
       <report-page :org-names="orgs">
@@ -195,7 +187,6 @@
         <levers-change-chart
           :height="height"
           :behavior-change-stats="stats.behaviorChange"
-          :percent="percent"
           inline
         />
       </report-page>
@@ -204,7 +195,6 @@
         <motivation-change-chart
           :height="height"
           :behavior-change-stats="stats.behaviorChange"
-          :percent="percent"
           inline
         />
       </report-page>
@@ -267,12 +257,10 @@ import type { Frequencies } from 'src/models'
 
 interface Props {
   height: number
-  percent: boolean
 }
 
 withDefaults(defineProps<Props>(), {
   height: 400,
-  percent: true,
 })
 
 const { t, locale } = useI18n()
@@ -290,6 +278,13 @@ onMounted(() => {
   statsStore.emModalType = (route.query.emModalType as string) || 'simple'
   statsStore.redModalType = (route.query.redModalType as string) || 'simple'
   statsStore.redShareModalType = (route.query.redShareModalType as string) || 'simple'
+
+  statsStore.travelTimePercent = route.query.travelTimePercent !== 'false'
+  statsStore.equipmentsPercent = route.query.equipmentsPercent !== 'false'
+  statsStore.constraintsPercent = route.query.constraintsPercent !== 'false'
+  statsStore.freqModProPercent = route.query.freqModProPercent !== 'false'
+  statsStore.leversPercent = route.query.leversPercent !== 'false'
+  statsStore.motivationPercent = route.query.motivationPercent !== 'false'
 
   // EmissionsReductionsModChart/EmissionsReductionsModShareChart read these directly from the store
   if (stats.value) {

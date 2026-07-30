@@ -9,6 +9,14 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onTogglePercent">
+              <q-item-section side>
+                <q-icon :name="stats.freqModProPercent ? 'check_box' : 'check_box_outline_blank'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('stats.percent_employees') }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -28,7 +36,7 @@
       :groups="['local', 'national', 'europe', 'inter']"
       :xaxis="t('stats.freq_mod_pro.xaxis')"
       :height="height"
-      :percent="percent"
+      :percent="stats.freqModProPercent"
       :loading="loading"
       :exportable="!inline"
     />
@@ -42,7 +50,6 @@ import type { Frequencies } from 'src/models'
 
 interface Props {
   height: number
-  percent: boolean
   loading?: boolean
   frequencies: Frequencies[] | null
   inline?: boolean
@@ -57,6 +64,12 @@ type FrequenciesStackChartExposed = {
 const chartRef = useTemplateRef<FrequenciesStackChartExposed>('chartRef')
 
 const { t } = useI18n()
+
+const stats = useStats()
+
+function onTogglePercent() {
+  stats.freqModProPercent = !stats.freqModProPercent
+}
 
 function onChartDownload() {
   chartRef.value?.handleExport()
