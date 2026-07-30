@@ -1,8 +1,7 @@
 <template>
   <chart-panel
-    :title="t('stats.sections.professional_travel.share.title')"
-    :description="t('stats.sections.professional_travel.share.description')"
-    :details="t('stats.sections.professional_travel.share.details')"
+    :title="t('stats.reco_pros.title')"
+    :description="t('stats.reco_pros.description')"
     :inline="inline"
   >
     <share-chart

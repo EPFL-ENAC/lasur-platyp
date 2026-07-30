@@ -1,8 +1,7 @@
 <template>
   <chart-panel
-    :title="t('stats.sections.home_to_work.links.title')"
-    :description="t('stats.sections.home_to_work.links.description')"
-    :details="t('stats.sections.home_to_work.links.details')"
+    :title="t('stats.mod_reco.title')"
+    :description="t('stats.mod_reco.description')"
     :inline="inline"
   >
     <links-chart

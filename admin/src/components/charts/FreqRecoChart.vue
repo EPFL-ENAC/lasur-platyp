@@ -1,8 +1,7 @@
 <template>
   <chart-panel
-    :title="t('stats.sections.home_to_work.title')"
-    :description="t('stats.sections.home_to_work.description')"
-    :details="t('stats.sections.home_to_work.details')"
+    :title="t('stats.reco_inter.title')"
+    :description="t('stats.reco_inter.description')"
     :inline="inline"
   >
     <share-chart

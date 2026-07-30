@@ -60,6 +60,10 @@ const props = withDefaults(defineProps<Props>(), {
   logoWidthRatio: 0.12,
 })
 
+defineExpose({
+  handleExport,
+})
+
 const exporting = ref(false)
 
 const containerStyle = computed<CSSProperties>(() => ({

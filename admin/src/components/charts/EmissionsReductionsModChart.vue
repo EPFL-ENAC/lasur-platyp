@@ -1,8 +1,7 @@
 <template>
   <chart-panel
-    :title="t('stats.sections.home_to_work.reductions.title')"
-    :description="t('stats.sections.home_to_work.reductions.description')"
-    :details="t('stats.sections.home_to_work.reductions.details')"
+    :title="t('stats.emissions_reductions_mod.title')"
+    :description="t('stats.emissions_reductions_mod.description')"
     :inline="inline"
   >
     <div v-if="!inline">

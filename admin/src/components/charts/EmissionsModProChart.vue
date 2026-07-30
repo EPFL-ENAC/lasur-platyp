@@ -2,7 +2,6 @@
   <chart-panel
     :title="t('stats.emissions_freq_mod_pro.title')"
     :description="t('stats.emissions_freq_mod_pro.description')"
-    :details="t('stats.emissions_freq_mod_pro.details')"
     :inline="inline"
   >
     <emissions-chart

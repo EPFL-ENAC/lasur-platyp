@@ -8,7 +8,6 @@
     :option="option"
     :exportable="!!exportable"
   >
-    <p class="q-mb-xs">{{ t(`stats.emissions_${props.chartTranslationName}.texts.default`) }}</p>
     <q-markdown
       v-if="textLabels"
       :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels)"

@@ -2,7 +2,6 @@
   <chart-panel
     :title="t('stats.equipments.title')"
     :description="t('stats.equipments.description')"
-    :details="t('stats.equipments.details')"
     :inline="inline"
   >
     <e-charts-shell

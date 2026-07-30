@@ -405,9 +405,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
-        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.
-
-Certains impacts sont aussi calculés :
+        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
+        details: `Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
 - sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
       },
@@ -434,10 +433,16 @@ Certains impacts sont aussi calculés :
     },
     equipments: {
       title: 'Équipements de mobilité',
+      description:
+        "Ce graphique montre les équipements de mobilité à disposition des participant·e·s pour leurs déplacements domicile-travail. Ces données sont comparées aux données de référence, issues du Microrecensement Mobilité et Transports de 2021, pour le canton de Genève.\n\nDans un autre graphique ci-après, la possession des équipements est croisée avec les recommandations formulées par Mobilise aux participant·e·s. Cela permet de comprendre si les personnes à qui Mobilyse recommande un mode de transport dispose déjà de l'équipement nécessaire pour adopter cette recommandation.",
       labels: {
         bike: 'Vélo',
         upt_subs: 'Abonnement de transports\npublics urbains',
+        tpu_unireso: 'Unireso',
+        tpu_leman_pass: 'Léman Pass',
         train_subs: 'Abonnement de train',
+        train_demi_tarif: 'Demi-tarif',
+        tain_abo_gen: 'Abonnement général',
         car_driver: 'Voiture (en tant que conducteur)',
         moto: 'Moto / scooter / cyclomoteur',
         ebike: 'Vélo à assistance électrique',
@@ -451,6 +456,8 @@ Certains impacts sont aussi calculés :
     },
     constraints: {
       title: 'Contraintes de mobilité',
+      description:
+        'Ce graphique montre les contraintes de mobilité avec lesquelles les participant·e·s doivent composer plusieurs fois dans la semaine, pour se rendre au travail. Le détail des contraintes "Autre" est disponible en téléchargeant les données désagrégées.',
       labels: {
         dependent: 'Emmener des enfants\nou des personnes dépendantes',
         heavy: 'Transport de matériel\nlourd ou encombrant',
@@ -469,9 +476,13 @@ Certains impacts sont aussi calculés :
       households: 'Lieux de domicile',
       households_number: 'Nombre de domiciles',
       workplaces: 'Lieux de travail enregistrés',
+      description:
+        'Ce graphique montre la répartition géographique des lieux de résidence des participant·e·s, ainsi que leur lieux de travail. Ces lieux de résidence sont groupés par zone afin de ne pas afficher de données personnelles. Lorsque vous cliquez sur un lieu de travail (ou de domicile), les lieux de résidence (respectivement les lieux de travail) sont filtrées pour afficher uniquement les flux qui y sont rattachés.',
     },
     travel_time: {
       title: 'Temps de trajet',
+      description:
+        'Ce graphique montre le temps de trajet domicile-travail déclaré par les participant·e·s pour se rendre au travail depuis leur lieu de domicile (seul le trajet aller est représenté).',
       xaxis: 'Temps (min)',
       texts: {
         default:
@@ -482,12 +493,16 @@ Certains impacts sont aussi calculés :
     },
     reco_inter: {
       title: 'Répartition modale potentielle',
+      description:
+        "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le mode qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
       labels: {
         ...transportationModes,
       },
     },
     reco_pros: {
       title: 'Recommandations (professionnel)',
+      description:
+        "Ce graphique montre les solutions de mobilité proposées pour les déplacements professionnels. Contrairement aux recommandations pour les déplacements domicile-travail pour lesquelles on assigne à chaque personne la recommandation principale qui lui a été faite (une personne = une recommandation), on affiche ici les recommandations à l'échelle du déplacement (un déplacement déclaré = une recommandation).",
       labels: {
         ...transportationModes,
       },
@@ -496,6 +511,8 @@ Certains impacts sont aussi calculés :
       title: 'Répartition modale',
       title_simple: 'Répartition modale (simple)',
       title_detailed: 'Répartition modale (détaillée)',
+      description:
+        'Ce graphique montre la répartition modale des participant·e·s, en affectant à chaque participant·e·s le mode principal utilisé lors de ses déplacements domicile-travail.',
       title_mrmt: 'Données de référence (canton de Genève)',
       labels: {
         ...transportationModes,
@@ -513,6 +530,8 @@ Certains impacts sont aussi calculés :
     },
     freq_mod_pro: {
       title: 'Répartition modale (déplacements professionnels)',
+      description:
+        "Ce graphique montre la répartition modale des déplacements professionnels, pour les différentes échelles de déplacement, des déplacements locaux aux déplacements internationaux. Contrairement à la répartition modale des déplacements domicile-travail, ces parts modales ne sont pas calculées à l'échelle de la personne (une personne = un mode) mais à l'échelle du déplacement (un déplacement déclaré = un mode).",
       xaxis: 'Trajets par année',
       labels: {
         ...transportationModes,
@@ -525,6 +544,8 @@ Certains impacts sont aussi calculés :
     },
     emissions_freq_mod: {
       title: 'Émissions de CO₂ par mode de transport',
+      description:
+        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements domicile-travail des participant·e·s. En abscisse se lit le nombre de trajets effectués par mode de transport, par année. En ordonnée se trouvent les émissions carbone par trajet effectué. L'aire de chaque rectangle correspond ainsi aux émissions de chaque mode de transport par année, en tCO2éq, qui sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -556,6 +577,8 @@ Certains impacts sont aussi calculés :
     },
     emissions_reductions_mod: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
+      description:
+        "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -564,8 +587,6 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
@@ -579,8 +600,6 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque étiquette simple actuelle, dans le cas où les participant·e·s de ce groupe suivent leur recommandation : c'est le potentiel gain en termes d'émissions.",
         specific:
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
@@ -594,22 +613,20 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque étiquette détaillée actuelle, dans le cas où les participant·e·s de ce groupe suivent leur recommandation : c'est le potentiel gain en termes d'émissions.",
         specific:
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_share: {
       title: "Répartition des gains d'émissions par mode de transport",
+      description:
+        'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
       series: 'Réduction potentielle',
       labels: {
         ...transportationModes,
         ...emissionsLabels,
       },
       texts: {
-        default:
-          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
         specific:
           "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
       },
@@ -622,8 +639,6 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque étiquette simple actuelle.',
         specific:
           '{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
       },
@@ -636,14 +651,14 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque étiquette détaillée actuelle.',
         specific:
           '{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
       },
     },
     emissions_freq_mod_pro: {
       title: 'Émissions de CO₂ par mode de transport (déplacements professionnels)',
+      description:
+        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse se lit le nombre de trajets effectués par mode de transport, par année. En ordonnée se trouvent les émissions carbone par trajet effectué. L'aire de chaque rectangle correspond ainsi aux émissions de chaque mode de transport par année, en tCO2éq, qui sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -657,6 +672,8 @@ Certains impacts sont aussi calculés :
     },
     emissions_reductions_mod_pro: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements professionnels',
+      description:
+        "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -664,17 +681,15 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
           'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
       title: 'Recommandations de report modal',
+      description:
+        'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
       texts: {
-        default:
-          'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
         specific:
           'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les participant·e·s.',
       },
@@ -690,9 +705,15 @@ Certains impacts sont aussi calculés :
     },
     energy_journey: {
       title_current: 'Dépenses énergétiques quotidiennes moyennes lors des déplacements',
+      description_current:
+        'Ce graphique montre les dépenses énergétiques quotidiennes dues aux déplacements domicile-travail (aller et retour) de chaque participant·e, en kcal/jour, en se basant sur le compendium des activités physiques qui donne les dépenses énergétiques par activité et par durée (lien : https://pacompendium.com/).',
       title_reco: 'Dépenses énergétiques quotidiennes moyennes potentielles lors des déplacements',
+      description_reco:
+        "Ce graphique montre les dépenses énergétiques quotidiennes potentielles qui seraient dues aux déplacements domicile-travail de chaque participant·e, en kcal/jour, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Les dépenses sont basées sur le compendium des activités physiques qui donne les dépenses énergétiques par activité et par durée (lien : https://pacompendium.com/). Chaque barre représente un·e participant·e.",
       title_share:
         'Modes de transport avec le potentiel de gain le plus élevé en matière de dépenses énergétiques ',
+      description_share:
+        "Ce graphique montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
       yaxis: 'Énergie dépensée (kcal/jour/pers)',
       xaxis: 'Ensemble des participant·e·s (trié·e·s par énergie dépensée)',
       whoMin: 'Activité physique minimum recommandée par l’OMS',
@@ -704,8 +725,6 @@ Certains impacts sont aussi calculés :
           'Actuellement, les participant·e·s dépensent en moyenne {energy} kcal/jour/pers pour leurs déplacements domicile-travail.',
         specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers (l'équivalent de {yoga_min} minutes de yoga par personne et par jour).
           De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d’activité physique journalière de l’OMS. Le taux des participant·e·s dépensant au moins ce que recommande l'OMS grâce aux déplacements domicile-travail passerait d'environ {percent_current}% actuellement à environ {percent_potential}% potentiellement.`,
-        default_share:
-          "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
         specific_share:
           "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
       },
@@ -1004,6 +1023,7 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   mobility_statistics: 'Statistiques de mobilité',
   transit_lines: 'Réseau transports publics',
   documentation: 'Documentation',
-  less_details: 'Moins de détails',
+  read_less: 'Afficher moins',
+  read_more: 'Lire la suite',
   more_details: 'Plus de détails',
 }

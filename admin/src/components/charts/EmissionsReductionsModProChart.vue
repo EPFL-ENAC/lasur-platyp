@@ -1,8 +1,7 @@
 <template>
   <chart-panel
-    :title="t('stats.sections.professional_travel.reductions.title')"
-    :description="t('stats.sections.professional_travel.reductions.description')"
-    :details="t('stats.sections.professional_travel.reductions.details')"
+    :title="t('stats.emissions_reductions_mod_pro.title')"
+    :description="t('stats.emissions_reductions_mod_pro.description')"
     :inline="inline"
   >
     <emissions-reductions-chart

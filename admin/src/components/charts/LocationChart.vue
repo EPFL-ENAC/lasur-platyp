@@ -2,7 +2,6 @@
   <chart-panel
     :title="t('stats.locations_heatmap.title')"
     :description="t('stats.locations_heatmap.description')"
-    :details="t('stats.locations_heatmap.details')"
     :inline="inline"
   >
     <chart-shell

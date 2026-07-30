@@ -8,7 +8,6 @@
     :option="option"
     :exportable="!!exportable"
   >
-    <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
     <p v-if="mostRecommendedTarget">
       {{
         t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })

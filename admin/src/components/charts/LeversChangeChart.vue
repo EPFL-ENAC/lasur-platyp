@@ -2,7 +2,6 @@
   <chart-panel
     :title="t('stats.behavior_change_levers.title')"
     :description="t('stats.behavior_change_levers.texts.info')"
-    :details="chartDescription"
     :inline="inline"
   >
     <behavior-change-chart
@@ -12,6 +11,7 @@
       :loading="loading"
       :percent="percent"
       :exportable="!inline"
+      :description="chartDescription"
     />
   </chart-panel>
 </template>

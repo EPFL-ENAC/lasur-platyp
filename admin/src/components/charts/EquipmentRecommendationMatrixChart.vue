@@ -2,9 +2,6 @@
   <chart-panel
     :title="t('stats.equipments_by_recommendations.title')"
     :description="t('stats.equipments_by_recommendations.texts.default')"
-    :details="
-      analysisText ? t('stats.equipments_by_recommendations.texts.specific', analysisText) : ''
-    "
     :inline="inline"
   >
     <div>
@@ -23,6 +20,11 @@
         v-model="simpleMode"
         :label="t('stats.equipments_by_recommendations.simpleMode')"
         color="primary"
+      />
+      <q-markdown
+        v-if="analysisText"
+        compact
+        :src="t('stats.equipments_by_recommendations.texts.specific', analysisText)"
       />
       <div v-if="withOptions" class="text-caption">
         {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}

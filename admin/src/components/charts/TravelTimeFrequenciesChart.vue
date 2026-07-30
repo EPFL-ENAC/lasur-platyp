@@ -2,7 +2,6 @@
   <chart-panel
     :title="t('stats.travel_time.title')"
     :description="t('stats.travel_time.description')"
-    :details="t('stats.travel_time.details')"
     :inline="inline"
   >
     <e-charts-shell

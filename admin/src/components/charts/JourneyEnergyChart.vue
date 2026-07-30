@@ -1,8 +1,7 @@
 <template>
   <chart-panel
-    :title="t(`stats.journey_energy.${props.type}.title`)"
-    :description="t(`stats.journey_energy.${props.type}.description`)"
-    :details="t(`stats.journey_energy.${props.type}.details`)"
+    :title="t(`stats.energy_journey.title_${props.type}`)"
+    :description="t(`stats.energy_journey.description_${props.type}`)"
     :inline="inline"
   >
     <e-charts-shell

@@ -2,7 +2,6 @@
   <chart-panel
     :title="t('stats.freq_mod_pro.title')"
     :description="t('stats.freq_mod_pro.description')"
-    :details="t('stats.freq_mod_pro.details')"
     :inline="inline"
   >
     <frequencies-stack-chart

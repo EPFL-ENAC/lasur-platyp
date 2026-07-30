@@ -1,8 +1,7 @@
 <template>
   <chart-panel
-    :title="t('stats.sections.home_to_work.journey_energy_share.title')"
-    :description="t('stats.sections.home_to_work.journey_energy_share.description')"
-    :details="t('stats.sections.home_to_work.journey_energy_share.details')"
+    :title="t('stats.energy_journey.title_share')"
+    :description="t('stats.energy_journey.description_share')"
     :inline="inline"
   >
     <e-charts-shell
@@ -14,7 +13,6 @@
       :option="option"
       :exportable="!!exportable"
     >
-      <p class="q-mb-xs">{{ t('stats.energy_journey.texts.default_share') }}</p>
       <q-markdown
         v-if="total > 5 && biggestShare"
         :src="

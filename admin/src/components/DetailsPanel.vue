@@ -6,7 +6,7 @@
       class="q-mb-md text-secondary row items-center inline-flex no-wrap"
       @click.prevent="onToggleDetails"
     >
-      {{ showDetails ? t('less_details') : t('more_details') }}
+      {{ showDetails ? t('read_less') : t('read_more') }}
       <q-icon :name="showDetails ? 'keyboard_arrow_up' : 'keyboard_arrow_down'" />
     </a>
     <slot v-if="inline || showDetails" />

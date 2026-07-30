@@ -7,10 +7,9 @@
       :class="!details ? 'q-mb-md' : ''"
       :src="description"
     />
-    <details-panel v-if="details" :inline="inline" class="q-mb-md">
+    <div v-if="details" class="q-mb-md">
       <q-markdown class="compact" :src="details" />
-      <slot name="details"></slot>
-    </details-panel>
+    </div>
 
     <q-card flat>
       <q-card-section>
@@ -21,8 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import DetailsPanel from 'src/components/DetailsPanel.vue'
-
 interface Props {
   title: string
   description?: string

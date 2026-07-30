@@ -1,12 +1,15 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="total > 0"
-    :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
-    :option="option"
-    :exportable="!!exportable"
-  />
+  <div>
+    <e-charts-shell
+      :height="height"
+      :loading="props.loading"
+      :has-data="total > 0"
+      :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
+      :option="option"
+      :exportable="!!exportable"
+    />
+    <q-markdown v-if="props.description" compact :src="props.description" class="q-mt-sm" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -38,6 +41,7 @@ interface Props {
   loading?: boolean
   percent?: boolean
   exportable?: boolean
+  description?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
