@@ -1,5 +1,8 @@
 import { registerTheme, type SetOptionOpts } from 'echarts'
 import { getCssVar } from 'quasar'
+import type { InjectionKey, Ref } from 'vue'
+
+export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
 
 export const initOptions: InitOptions = {
   renderer: 'svg',

@@ -35,6 +35,7 @@
       :loading="props.loading"
       :has-data="hasData"
       :show-info="stats.equipmentsPercent"
+      :show-table="!exportable"
       :no-data-title="t('stats.equipments.title')"
       :option="option"
       :exportable="!!exportable"

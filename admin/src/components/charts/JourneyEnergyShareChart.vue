@@ -27,6 +27,7 @@
       :loading="props.loading"
       :has-data="total > 0"
       :show-info="total > 0"
+      :show-table="!exportable"
       :no-data-title="t('stats.energy_journey.title_share')"
       :option="option"
       :exportable="!!exportable"

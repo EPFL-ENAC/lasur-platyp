@@ -5,6 +5,7 @@
     :loading="props.loading"
     :has-data="hasData"
     :show-info="total > 0"
+    :show-table="!exportable"
     :no-data-title="t('stats.freq_mod.title_detailed')"
     :option="option"
     :exportable="!!exportable"

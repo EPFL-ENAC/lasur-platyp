@@ -25,6 +25,10 @@
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
     />
 
+    <template #table>
+      <e-charts-table v-if="(showTable || dialogOpen) && !loading" :option="option" />
+    </template>
+
     <template #info>
       <slot />
     </template>
@@ -37,13 +41,15 @@ import type { EChartsType } from 'echarts/core'
 import { useQuasar } from 'quasar'
 import ECharts from 'vue-echarts'
 import ChartShell from './ChartShell.vue'
-import { initOptions, updateOptions } from './commons'
+import EChartsTable from './EChartsTable.vue'
+import { chartPanelDialogOpenKey, initOptions, updateOptions } from './commons'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 
 interface Props {
   height?: number | undefined
   hasData: boolean
   showInfo?: boolean
+  showTable?: boolean
   loading?: boolean
   noDataTitle: string
   noDataText?: string
@@ -81,6 +87,7 @@ const $q = useQuasar()
 const { t } = useI18n()
 const chart = shallowRef<InstanceType<typeof ECharts> | null>(null)
 const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
+const dialogOpen = inject(chartPanelDialogOpenKey, ref(false))
 
 const resolvedExportBackgroundColor = computed(() => {
   if (props.exportBackgroundColor) {

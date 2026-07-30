@@ -38,6 +38,7 @@
         :loading="props.loading"
         :has-data="total > 0"
         :show-info="total > 0"
+        :show-table="inline"
         :no-data-title="t('stats.equipments_by_recommendations.title')"
         :option="option"
         :exportable="!inline"

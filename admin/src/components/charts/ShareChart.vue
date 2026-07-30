@@ -4,6 +4,7 @@
     :height="height"
     :loading="props.loading"
     :has-data="hasData"
+    :show-table="!exportable"
     :no-data-title="t(`stats.${props.chartTranslationName}.title`)"
     :option="option"
     :exportable="!!exportable"

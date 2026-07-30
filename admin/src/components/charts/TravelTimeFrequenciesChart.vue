@@ -35,6 +35,7 @@
       :loading="props.loading"
       :has-data="hasData"
       :show-info="total > 0"
+      :show-table="!exportable"
       :no-data-title="t('stats.travel_time.title')"
       :option="option"
       :exportable="!!exportable"

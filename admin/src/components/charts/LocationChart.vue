@@ -3,6 +3,7 @@
     :title="t('stats.locations_heatmap.title')"
     :description="t('stats.locations_heatmap.description')"
     :inline="inline"
+    no-details
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
       <q-space />
