@@ -52,7 +52,7 @@
             class="row items-center"
           >
             <div
-              :style="`width: 15px; height: 15px; background-color: ${getCutoffColor(cutoff)}; border: 1px solid #5a3fc0; margin-right: 5px;`"
+              :style="`width: 15px; height: 15px; background-color: rgba(${hexToRgb(getCutoffColor(cutoff))}, 0.3); border: 1px solid #5a3fc0; margin-right: 5px;`"
             ></div>
             <div>{{ t('isochrones.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
           </div>
@@ -242,6 +242,9 @@ async function loadIsochronesData() {
             })
           }
         }
+        if (data.transit) {
+          addTransitLinesToMap(data.transit)
+        }
       }
     })
     .catch((err) => {
@@ -313,6 +316,28 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
       map.value.removeLayer(layerId)
       map.value.removeSource(layerId)
     }
+  })
+}
+
+function addTransitLinesToMap(geojson: GeoJSON.FeatureCollection) {
+  if (!map.value) return
+  if (map.value.getSource('transit-lines')) {
+    ;(map.value.getSource('transit-lines') as GeoJSONSource).setData(geojson)
+    return
+  }
+
+  map.value.addSource('transit-lines', {
+    type: 'geojson',
+    data: geojson,
+  })
+  map.value.addLayer({
+    id: 'transit-lines-layer',
+    type: 'line',
+    source: 'transit-lines',
+    paint: {
+      'line-color': '#5a3fc0',
+      'line-width': 2,
+    },
   })
 }
 
@@ -418,6 +443,13 @@ function categoryToColor(str: string): { name: string; hex: string } | undefined
 
 function getCutoffColor(cutoff: number): string {
   return ISOCHRONE_CUTOFF_COLORS[cutoff] || '#5a3fc0'
+}
+
+function hexToRgb(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `${r}, ${g}, ${b}`
 }
 </script>
 

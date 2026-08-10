@@ -410,14 +410,14 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
-        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
+        description: `Les graphiques ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
         details: `Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
 - sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
       },
       mobility_potentials: {
         title: 'Potentiels de mobilité',
-        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
+        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphiques illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
           most_potential:
             "Le mode de transport avec le plus fort potentiel d'utilisateur·trices est : **{mode}** (recommandé à **{percentage}%** des participant·e·s ayant répondu)",
@@ -455,6 +455,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         car_passenger: 'Voiture (en tant que passager)',
         car: 'Voiture (conducteur/passager)',
         ev: 'Véhicule électrique',
+        other: 'Autre',
       },
       mrmt_source:
         'Données de référence, canton de Genève [Microrecensement Mobilité et Transports, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
@@ -583,7 +584,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     emissions_reductions_mod: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
       description:
-        "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -625,7 +626,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     emissions_reductions_share: {
       title: "Répartition des gains d'émissions par mode de transport",
       description:
-        'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
+        'Ce graphique affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
       series: 'Réduction potentielle',
       labels: {
         ...transportationModes,
@@ -693,7 +694,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     mod_reco: {
       title: 'Recommandations de report modal',
       description:
-        'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+        'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
       texts: {
         specific:
           'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les participant·e·s.',
@@ -703,7 +704,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: 'Recommandations de changement modal (professionnel)',
       texts: {
         default:
-          'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+          'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
         specific:
           'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.',
       },
@@ -719,10 +720,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         'Modes de transport avec le potentiel de gain le plus élevé en matière de dépenses énergétiques ',
       description_share:
         "Ce graphique montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
-      yaxis: 'Énergie dépensée (kcal/jour/pers)',
+      yaxis: 'Énergie dépensée (kcal/jour)',
       xaxis: 'Ensemble des participant·e·s (trié·e·s par énergie dépensée)',
-      whoMin: 'Activité physique minimum recommandée par l’OMS',
-      participantsAverage: 'Activité physique moyenne des participants',
+      whoMin: 'Dépense énergétique quotidienne recommandée par l’OMS (150 kcal/jour)',
+      participantsAverage: 'Dépense énergétique quotidienne moyenne des participant·e·s',
       texts: {
         default:
           "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers, soit l'équivalent de 37 min de marche, 23min de fitness ou 14min de football par jour.",
@@ -775,9 +776,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       texts: {
         info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         default:
-          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
+          'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
         specific:
-          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
+          'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
       },
     },
     equipments_by_recommendations: {
@@ -859,16 +860,30 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       hint: 'Sélectionnez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
     },
   },
-  data_protection_notice: {
+data_protection_notice: {
     title: 'Notice sur la protection des données',
-    content: `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
+    content: `La base de données que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil Mobilyse contient des données désagrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 
-Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n’est pas exclu que certaines données agrégées permettent, directement ou indirectement, d’identifier une ou plusieurs personnes.
-Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l’UE).
+Cependant, il n'est pas exclu que certaines données agrégées permettent, indirectement, d'identifier une ou plusieurs personnes.
 
-En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l’identification individuelle d’une collaboratrice ou d'un collaborateur sans base légale valable.
+Dans ce cas, la base de données pourrait contenir des données soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE), dans le cas où vous choisiriez de les croiser avec d'autres sources de données en votre possession.
 
-Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en conséquence.
+En acceptant de télécharger cette base de données, vous vous engagez à la traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l'identification individuelle d'une collaboratrice ou d'un collaborateur sans base légale valable.
+
+Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en conséquence.
+
+Dernière mise à jour : mars 2026`,
+  },
+  report_data_protection_notice: {
+    title: 'Notice sur la protection des données',
+    content: `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
+
+Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n'est pas exclu que certaines données agrégées permettent, directement ou indirectement, d'identifier une ou plusieurs personnes.
+Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE).
+
+En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l'identification individuelle d'une collaboratrice ou d'un collaborateur sans base légale valable.
+
+Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en conséquence.
 
 *Dernière mise à jour : mars 2026*`,
   },
@@ -906,7 +921,7 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
 
 ---
 
-¹ **Liste de conseillers spécialisés et informations complémentaires :** Mobility Management Suisse
+¹ **Liste de conseillers spécialisés et informations complémentaires :** [Mobility Management Suisse](https://mms-gms.ch/f/conseil-specialise)
 ² **Soutien financier ou ressources :** programmes communaux et cantonaux ([Plan de mobilité - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite) ; [SIL - rsGE H 1 21.03 : Règlement sur les plans de mobilité d'entreprise (RPMob)](https://silgeneve.ch/legis/index.aspx)), programmes fédéraux ([Promotion d'initiatives de mobilité durable dans les entreprises](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5), etc.`,
   },
   action: 'Mesure',

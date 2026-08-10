@@ -123,12 +123,15 @@ import AreaDialog from 'src/components/AreaDialog.vue'
 import DownloadDataButton from 'src/components/DownloadDataButton.vue'
 import type { Company, Campaign } from 'src/models'
 import type { Filter } from 'src/components/models'
+import { useQuasar } from 'quasar'
+import MarkdownDialog from 'src/components/MarkdownDialog.vue'
 
 const { t } = useI18n()
 const stats = useStats()
 const services = useServices()
 const companyService = services.make('company')
 const campaignService = services.make('campaign')
+const $q = useQuasar()
 
 const height = ref(400)
 const companyMap = ref<{ [key: string]: Company }>({})
@@ -231,6 +234,20 @@ function onWorkplacesFilter(area: GeoJSON.FeatureCollection | undefined) {
 }
 
 async function goToReport() {
+  $q.dialog({
+    component: MarkdownDialog,
+    componentProps: {
+      text: t('report_data_protection_notice.content'),
+      title: t('report_data_protection_notice.title'),
+      canCancel: true,
+    },
+    persistent: true,
+  }).onOk(() => {
+    openReport()
+  })
+}
+
+async function openReport() {
   const id = stats.dumpToLocalStorage()
 
   const url = new URL(window.location.href)

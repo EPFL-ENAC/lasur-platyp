@@ -446,6 +446,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         car_passenger: 'Car (as passenger)',
         car: 'Car (driver/passenger)',
         ev: 'Electric vehicle',
+        other: 'Other',
       },
       mrmt_source:
         'Reference data, Geneva canton [Microcensus of Mobility and Transportation, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
@@ -707,10 +708,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title_share: 'Transport modes with highest potential energy gains',
       description_share:
         'This chart shows which modes of transport have the most potential for increased physical activity.',
-      yaxis: 'Energy expenditure (kcal)',
+      yaxis: 'Energy expenditure (kcal/day)',
       xaxis: 'Participants (sorted by energy expenditure)',
-      whoMin: 'WHO minimum recommended physical activity',
-      participantsAverage: 'Average physical activity expenditure of participants',
+      whoMin: 'Minimum daily energy expenditure recommended by the WHO (150 kcal/day)',
+      participantsAverage: 'Average daily energy expenditure of participants (kcal/day)',
       texts: {
         default:
           'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person, equivalent to 37 minutes of walking, 23 minutes of fitness, or 14 minutes of football per day.',
@@ -848,6 +849,19 @@ Thank you for your valuable contribution! If you have any questions, please cont
   },
   data_protection_notice: {
     title: 'Data Protection Notice',
+    content: `The database you are about to receive as part of the campaign launched via the Mobilyse tool contains disaggregated data derived from responses provided voluntarily and anonymously by your employees.
+
+However, it cannot be ruled out that certain aggregated data may, indirectly, allow one or more individuals to be identified.
+In this case, the report may contain data subject to applicable data protection legislation (such as the Federal Data Protection Act, or the GDPR if employees are based in the EU), if you choose to cross this database with other external data in your possession.
+
+By agreeing to receive this database, you agree to process it in accordance with these legal provisions, in particular by ensuring the confidentiality of the data and by avoiding any use that would allow the individual identification of an employee without a valid legal basis.
+
+Furthermore, we recommend that you adapt your processing register accordingly.
+
+Last updated: March 2026`,
+  },
+  report_data_protection_notice: {
+    title: 'Data Protection Notice',
     content: `The report you are about to receive as part of the campaign launched via the Mobilyse tool contains aggregated data derived from responses provided voluntarily and anonymously by your employees.
 
 However, depending on the size of your company and the structure of the responses, it cannot be ruled out that certain aggregated data may, directly or indirectly, allow one or more individuals to be identified.
@@ -891,7 +905,7 @@ Promoting sustainable mobility in the Greater Geneva](https://www.modus-ge.ch)`,
 
 ---
 
-¹ **List of specialist advisers and further information:** Mobility Management Suisse
+¹ **List of specialist advisers and further information:** [Mobility Management Suisse](https://mms-gms.ch/f/conseil-specialise)
 ² **Financial support or resources:** municipal and cantonal programmes ([Mobility Plan - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite); [SIL - rsGE H 1 21.03: Regulations on corporate mobility schemes (RPMob)](https://silgeneve.ch/legis/index.aspx)), federal programmes ([Promoting sustainable mobility initiatives in businesses](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5)), etc.`,
   },
   action: 'Measure',

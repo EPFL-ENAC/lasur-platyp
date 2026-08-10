@@ -152,7 +152,7 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
-    change: 'About the recommended mode of transport:',
+    change: 'About the mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
       'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-to-work commute?',
@@ -185,7 +185,7 @@ export default {
 **Important:** your email address is instantly encrypted and never stored by Mobilyse. Your employer cannot, under any circumstances, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
       label: 'Your email address (optional)',
     },
-    final: 'Your answers have been registered, thank you for your participation!',
+    final: 'Thank you for being part of the mobilyse adventure!',
     final_subtitle: 'Your contribution helps us build a more sustainable future.',
     final_car:
       'By the way, do you know the real cost of your car? Find out [here](https://comob.dev.stimul.io/) in 3 questions',

@@ -160,7 +160,7 @@ export default {
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
-    change: 'À propos du mode de transport recommandé :',
+    change: 'À propos du mode de transport:',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
       'Sur une échelle de 1 (pas intéressé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous prêt·e à adopter ce mode de transport pour vos déplacements domicile-travail ?',
@@ -194,11 +194,11 @@ export default {
 **Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par Mobilyse. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
       label: 'Votre adresse email (optionnelle)',
     },
-    final: 'Vos réponses ont été enregistrées, merci de votre participation !',
+    final: 'Merci d’avoir participé à mobilyse !',
     final_subtitle:
       'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
     final_car:
-      'Au fait, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
+      'A part ça, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
     final_rewards: {
       title: "L'organisation offre des récompenses pour les participants à ce questionnaire",
       download: 'Télécharger votre attestation de participation',
@@ -222,7 +222,7 @@ export default {
   },
   reco: {
     covoit: 'Le covoiturage',
-    elec: 'La voiture électrique',
+    elec: 'Le véhicule électrique',
     inter: "L'intermodalité",
     marche: 'La marche',
     tpu: 'Les transports publics',
