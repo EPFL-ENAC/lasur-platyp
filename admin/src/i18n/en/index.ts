@@ -707,10 +707,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title_share: 'Transport modes with highest potential energy gains',
       description_share:
         'This chart shows which modes of transport have the most potential for increased physical activity.',
-      yaxis: 'Energy expenditure (kcal)',
+      yaxis: 'Energy expenditure (kcal/day)',
       xaxis: 'Participants (sorted by energy expenditure)',
-      whoMin: 'WHO minimum recommended physical activity',
-      participantsAverage: 'Average physical activity expenditure of participants',
+      whoMin: 'Minimum daily energy expenditure recommended by the WHO (150 kcal/day)',
+      participantsAverage: 'Average daily energy expenditure of participants (kcal/day)',
       texts: {
         default:
           'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person, equivalent to 37 minutes of walking, 23 minutes of fitness, or 14 minutes of football per day.',

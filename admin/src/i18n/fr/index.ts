@@ -719,10 +719,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         'Modes de transport avec le potentiel de gain le plus élevé en matière de dépenses énergétiques ',
       description_share:
         "Ce graphique montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
-      yaxis: 'Énergie dépensée (kcal/jour/pers)',
+      yaxis: 'Énergie dépensée (kcal/jour)',
       xaxis: 'Ensemble des participant·e·s (trié·e·s par énergie dépensée)',
-      whoMin: 'Activité physique minimum recommandée par l’OMS',
-      participantsAverage: 'Activité physique moyenne des participants',
+      whoMin: 'Dépense énergétique quotidienne recommandée par l’OMS (150 kcal/jour)',
+      participantsAverage: 'Dépense énergétique quotidienne moyenne des participant·e·s',
       texts: {
         default:
           "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers, soit l'équivalent de 37 min de marche, 23min de fitness ou 14min de football par jour.",
