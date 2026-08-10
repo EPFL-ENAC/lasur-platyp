@@ -816,7 +816,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
   simple_labels: {
     ...simpleLabels,
   },
-  comlex_labels: {
+  complex_labels: {
     ...complexLabels,
   },
   record: {
