@@ -4,7 +4,7 @@
     <div class="q-pa-md">
       <q-card flat class="q-mb-lg">
         <q-card-section class="q-pb-none">
-          <q-markdown :src="t('introduction_text')" />
+          <q-markdown :src="introductionText" no-heading-anchor-links />
         </q-card-section>
 
         <q-card-actions align="right">
@@ -28,8 +28,12 @@
 </template>
 
 <script setup lang="ts">
+import IntroductionEn from 'src/assets/markdown/introduction-en.md'
+import IntroductionFr from 'src/assets/markdown/introduction-fr.md'
 import DashboardPanel from 'src/components/DashboardPanel.vue'
 import DataProtectionNoticeDialog from 'src/components/DataProtectionNoticeDialog.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+const introductionText = computed(() => locale.value === 'fr' ? IntroductionFr : IntroductionEn)
 </script>
