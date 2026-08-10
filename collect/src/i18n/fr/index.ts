@@ -194,11 +194,11 @@ export default {
 **Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par Mobilyse. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
       label: 'Votre adresse email (optionnelle)',
     },
-    final: 'Vos réponses ont été enregistrées, merci de votre participation !',
+    final: 'Merci d’avoir participé à mobilyse !',
     final_subtitle:
       'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
     final_car:
-      'Au fait, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
+      'A part ça, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
     final_rewards: {
       title: "L'organisation offre des récompenses pour les participants à ce questionnaire",
       download: 'Télécharger votre attestation de participation',

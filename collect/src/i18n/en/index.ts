@@ -185,7 +185,7 @@ export default {
 **Important:** your email address is instantly encrypted and never stored by Mobilyse. Your employer cannot, under any circumstances, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
       label: 'Your email address (optional)',
     },
-    final: 'Your answers have been registered, thank you for your participation!',
+    final: 'Thank you for being part of the mobilyse adventure!',
     final_subtitle: 'Your contribution helps us build a more sustainable future.',
     final_car:
       'By the way, do you know the real cost of your car? Find out [here](https://comob.dev.stimul.io/) in 3 questions',
