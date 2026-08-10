@@ -860,16 +860,30 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       hint: 'Sélectionnez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
     },
   },
-  data_protection_notice: {
+data_protection_notice: {
     title: 'Notice sur la protection des données',
-    content: `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
+    content: `La base de données que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil Mobilyse contient des données désagrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 
-Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n’est pas exclu que certaines données agrégées permettent, directement ou indirectement, d’identifier une ou plusieurs personnes.
-Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l’UE).
+Cependant, il n'est pas exclu que certaines données agrégées permettent, indirectement, d'identifier une ou plusieurs personnes.
 
-En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l’identification individuelle d’une collaboratrice ou d'un collaborateur sans base légale valable.
+Dans ce cas, la base de données pourrait contenir des données soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE), dans le cas où vous choisiriez de les croiser avec d'autres sources de données en votre possession.
 
-Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en conséquence.
+En acceptant de télécharger cette base de données, vous vous engagez à la traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l'identification individuelle d'une collaboratrice ou d'un collaborateur sans base légale valable.
+
+Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en conséquence.
+
+Dernière mise à jour : mars 2026`,
+  },
+  report_data_protection_notice: {
+    title: 'Notice sur la protection des données',
+    content: `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
+
+Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n'est pas exclu que certaines données agrégées permettent, directement ou indirectement, d'identifier une ou plusieurs personnes.
+Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE).
+
+En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l'identification individuelle d'une collaboratrice ou d'un collaborateur sans base légale valable.
+
+Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en conséquence.
 
 *Dernière mise à jour : mars 2026*`,
   },
