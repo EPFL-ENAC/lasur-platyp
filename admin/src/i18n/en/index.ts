@@ -379,6 +379,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     in_progress: 'In Progress',
     completed: 'Completed',
     pending: 'Pending',
+    options: 'Options',
     filter_by_zone: 'Filter by zone',
     switch_to_grid: 'Switch to grid view',
     pdf_report: 'PDF report',

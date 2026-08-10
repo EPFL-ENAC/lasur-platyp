@@ -388,6 +388,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     in_progress: 'En cours',
     completed: 'Terminé',
     pending: 'En attente',
+    options: 'Options',
     filter_by_zone: 'Filtrer par zone',
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
