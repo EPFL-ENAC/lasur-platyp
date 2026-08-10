@@ -222,7 +222,7 @@ export default {
   },
   reco: {
     covoit: 'Le covoiturage',
-    elec: 'La voiture électrique',
+    elec: 'Le véhicule électrique',
     inter: "L'intermodalité",
     marche: 'La marche',
     tpu: 'Les transports publics',
