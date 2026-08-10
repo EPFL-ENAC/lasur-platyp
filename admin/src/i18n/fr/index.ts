@@ -410,14 +410,14 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
-        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
+        description: `Les graphiques ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
         details: `Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
 - sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
       },
       mobility_potentials: {
         title: 'Potentiels de mobilité',
-        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
+        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphiques illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
           most_potential:
             "Le mode de transport avec le plus fort potentiel d'utilisateur·trices est : **{mode}** (recommandé à **{percentage}%** des participant·e·s ayant répondu)",
@@ -584,7 +584,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     emissions_reductions_mod: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
       description:
-        "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -626,7 +626,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     emissions_reductions_share: {
       title: "Répartition des gains d'émissions par mode de transport",
       description:
-        'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
+        'Ce graphique affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
       series: 'Réduction potentielle',
       labels: {
         ...transportationModes,
@@ -694,7 +694,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     mod_reco: {
       title: 'Recommandations de report modal',
       description:
-        'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+        'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
       texts: {
         specific:
           'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les participant·e·s.',
@@ -704,7 +704,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: 'Recommandations de changement modal (professionnel)',
       texts: {
         default:
-          'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+          'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
         specific:
           'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.',
       },
@@ -776,9 +776,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       texts: {
         info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         default:
-          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
+          'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
         specific:
-          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
+          'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
       },
     },
     equipments_by_recommendations: {
