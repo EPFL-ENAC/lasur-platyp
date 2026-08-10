@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="text-h3 q-pa-md text-title">{{ t('dashboard') }}</div>
+    <div class="text-h4 q-pa-md text-title">{{ t('dashboard') }}</div>
     <div class="q-pa-md">
       <q-expansion-item
         v-model="isIntroductionExpanded"
