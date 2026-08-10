@@ -5,7 +5,7 @@
     <q-card class="bg-primary-muted q-mb-xl">
       <q-card-section class="q-pa-sm">
         <div class="text-h5 text-secondary text-center">
-          {{ t(`reco.${recoInter}`) }} {{ recoSimple }}
+          {{ t(`reco.${recoInter}`) }}
         </div>
       </q-card-section>
     </q-card>

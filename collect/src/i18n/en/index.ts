@@ -152,7 +152,7 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
-    change: 'About the recommended mode of transport:',
+    change: 'About the mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
       'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-to-work commute?',
