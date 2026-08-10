@@ -455,6 +455,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         car_passenger: 'Voiture (en tant que passager)',
         car: 'Voiture (conducteur/passager)',
         ev: 'Véhicule électrique',
+        other: 'Autre',
       },
       mrmt_source:
         'Données de référence, canton de Genève [Microrecensement Mobilité et Transports, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',

@@ -446,6 +446,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         car_passenger: 'Car (as passenger)',
         car: 'Car (driver/passenger)',
         ev: 'Electric vehicle',
+        other: 'Other',
       },
       mrmt_source:
         'Reference data, Geneva canton [Microcensus of Mobility and Transportation, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
