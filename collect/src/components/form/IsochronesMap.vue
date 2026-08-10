@@ -242,6 +242,9 @@ async function loadIsochronesData() {
             })
           }
         }
+        if (data.transit) {
+          addTransitLinesToMap(data.transit)
+        }
       }
     })
     .catch((err) => {
@@ -313,6 +316,28 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
       map.value.removeLayer(layerId)
       map.value.removeSource(layerId)
     }
+  })
+}
+
+function addTransitLinesToMap(geojson: GeoJSON.FeatureCollection) {
+  if (!map.value) return
+  if (map.value.getSource('transit-lines')) {
+    ;(map.value.getSource('transit-lines') as GeoJSONSource).setData(geojson)
+    return
+  }
+
+  map.value.addSource('transit-lines', {
+    type: 'geojson',
+    data: geojson,
+  })
+  map.value.addLayer({
+    id: 'transit-lines-layer',
+    type: 'line',
+    source: 'transit-lines',
+    paint: {
+      'line-color': '#5a3fc0',
+      'line-width': 2,
+    },
   })
 }
 
