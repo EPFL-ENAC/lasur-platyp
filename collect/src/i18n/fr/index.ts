@@ -314,6 +314,7 @@ export default {
   isochrones: {
     accessible_areas:
       "Saviez-vous que vous avez accès aux zones et points d'intérêts ci-dessous {mode} ?",
+    map_description: 'La carte ci-dessous représente la zone accessible avec {mode} depuis votre lieu de travail.',
     pois: "Points d'intérêt",
     modes: {
       walk: 'à pied',

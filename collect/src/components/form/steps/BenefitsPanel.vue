@@ -6,13 +6,13 @@
 
     <q-btn
       v-else
-      :label="t('benefits.show')"
-      color="foreground"
+      class="benefits-btn"
       size="md"
-      icon-right="workspace_premium"
       no-caps
       dense
     >
+      <q-icon name="workspace_premium" class="q-mr-xs" />
+      {{ t('benefits.show') }}
       <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'">
         <q-markdown :src="getBenefits(reco, locale)" />
       </q-menu>
@@ -35,3 +35,10 @@ withDefaults(
   },
 )
 </script>
+
+<style scoped>
+.benefits-btn {
+  background-color: #168654 !important;
+  color: white !important;
+}
+</style>

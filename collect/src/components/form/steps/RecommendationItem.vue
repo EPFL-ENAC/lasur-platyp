@@ -5,9 +5,9 @@
         {{ indexLabel }}
       </q-item-label>
 
-      <q-item-label v-if="bravo !== undefined && bravo > 0" :class="'text-h6'">
+      <div v-if="bravo !== undefined && bravo > 0" class="bravo-box">
         {{ t(`bravo.${bravo}`) }}
-      </q-item-label>
+      </div>
 
       <q-item-label v-if="bravo !== 2" :class="recoClass || 'text-h5'">
         {{ recoLabel }}
@@ -53,3 +53,15 @@ withDefaults(
   },
 )
 </script>
+
+<style scoped>
+.bravo-box {
+  color: #168654;
+  background-color: #f5fbf9;
+  border: 1px solid #cedfd7;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+</style>
