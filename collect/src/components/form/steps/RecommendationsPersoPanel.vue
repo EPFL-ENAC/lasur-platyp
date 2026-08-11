@@ -70,7 +70,7 @@
           {{
             t('form.actions_global', {
               count: globalActions.length,
-              actions: globalActions.join('; '),
+              actions: globalActions.map(getActionLabel).join('; '),
             })
           }}
         </div>
@@ -87,6 +87,11 @@ import type { Journey } from 'src/models'
 import { getModeIcon } from 'src/utils/modeicons'
 
 const { t } = useI18n()
+
+const getActionLabel = (key: string): string => {
+  const label = t(`actions.${key}`)
+  return label.startsWith('actions.') ? key : label
+}
 
 const props = defineProps<{
   journeys: Journey[]
