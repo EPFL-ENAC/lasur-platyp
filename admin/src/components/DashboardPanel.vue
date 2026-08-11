@@ -46,53 +46,37 @@
         @update:model-value="onFilter"
         class="on-left"
       />
-      <q-btn-group unelevated outline class="bg-field">
-        <q-btn
-          class="right-border"
-          size="sm"
-          icon="map"
-          color="field"
-          outline
-          dense
-          :label="t('stats.filter_by_zone')"
-          no-caps
-          @click="onMapFilter"
-        >
-          <q-badge v-if="areaCount > 0" color="orange" floating rounded />
-        </q-btn>
-        <q-btn
-          class="right-border"
-          size="sm"
-          color="field"
-          outline
-          dense
-          icon="picture_as_pdf"
-          :disable="stats.loading"
-          :label="t('stats.pdf_report')"
-          no-caps
-          @click="goToReport"
-        />
-        <q-btn icon="settings" size="sm" color="field" outline>
-          <q-menu>
-            <q-list style="min-width: 100px">
-              <q-item class="q-mb-md q-mr-sm">
-                <div style="width: 200px">
-                  <div>{{ t('stats.charts_height') }}</div>
-                  <q-slider
-                    v-model="height"
-                    :min="200"
-                    :max="600"
-                    :step="50"
-                    label
-                    switch-label-side
-                    style="max-width: 200px"
-                  />
-                </div>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-      </q-btn-group>
+      <q-btn size="sm" color="field" outline no-caps>
+        {{ t('stats.options') }} <q-icon name="arrow_drop_down" />
+        <q-menu>
+          <q-list style="min-width: 150px">
+            <q-item clickable v-close-popup @click="onMapFilter">
+              <q-item-section icon="map">{{ t('stats.filter_by_zone') }}</q-item-section>
+              <q-item-section side>
+                <q-badge v-if="areaCount > 0" color="orange" />
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="goToReport" :disable="stats.loading">
+              <q-item-section icon="picture_as_pdf">{{ t('stats.pdf_report') }}</q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item class="q-mr-sm">
+              <div style="width: 200px">
+                <div>{{ t('stats.charts_height') }}</div>
+                <q-slider
+                  v-model="height"
+                  :min="200"
+                  :max="600"
+                  :step="50"
+                  label
+                  switch-label-side
+                  style="max-width: 200px"
+                />
+              </div>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
 
       <download-data-button
         :company-filter="companyFilter"

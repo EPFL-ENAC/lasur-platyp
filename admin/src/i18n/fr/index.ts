@@ -388,6 +388,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     in_progress: 'En cours',
     completed: 'Terminé',
     pending: 'En attente',
+    options: 'Options',
     filter_by_zone: 'Filtrer par zone',
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
@@ -815,7 +816,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
   simple_labels: {
     ...simpleLabels,
   },
-  comlex_labels: {
+  complex_labels: {
     ...complexLabels,
   },
   record: {
@@ -947,7 +948,7 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
   campaign_removed: 'Campagne supprimée',
   content: 'Contenu',
   doc: 'Documentation',
-  dashboard: 'Tableau de bord',
+  dashboard: 'Résultats',
   data: 'Données',
   download_csv: 'Télécharger CSV',
   overview: 'Vue d’ensemble',

@@ -82,11 +82,6 @@ const recoInter = computed(() =>
     ? survey.recommendation.reco.reco_inter[props.idx]
     : '',
 )
-const recoSimple = computed(() =>
-  survey.recommendation.reco?.reco_simple && survey.recommendation.reco.reco_simple.length
-    ? survey.recommendation.reco.reco_simple[props.idx]
-    : '',
-)
 
 const changeOptions = computed(() => {
   // if marche: no test

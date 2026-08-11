@@ -159,6 +159,9 @@ const MRMT_VALUES_PERCENT = {
   moto: 20,
   ebike: 15,
   mob_subs: 3,
+  tpu_unireso: 26,
+  train_demi_tarif: 15,
+  train_abo_gen: 4,
 }
 
 function initLabelsChartOptions(frequencies: Frequencies) {
