@@ -29,7 +29,7 @@
         />
 
         <RecommendationsProPanel
-          class="q-mt-xl"
+          class="q-mt-xl print-page-break"
           :reco-pros="data.pro.recoPros"
           :pro-journey-locations="data.pro.proJourneyLocations"
           :mesure-pro="data.pro.mesurePro"
@@ -101,6 +101,10 @@ const printReport = () => {
   @page {
     size: A4 portrait;
     margin: 0;
+  }
+
+  .print-page-break {
+    page-break-before: always;
   }
 
   .print-hide,

@@ -168,9 +168,11 @@ export default {
     recommendations_header:
       'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
     recommendations_preamble:
-      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour chacun des déplacements domicile-travail et professionnels que vous avez renseignés.',
+      "En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.",
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
+    recommendations_pro_preamble:
+      "Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.",
     recommendations_print: {
       title: 'Recommandations de mobilité',
     },

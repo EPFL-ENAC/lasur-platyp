@@ -162,8 +162,10 @@ export default {
     recommendations_header:
       'Recommended transport modes for declared home-to-work and professional journeys',
     recommendations_preamble:
-      'Based on your situation, we propose below one or more modes of transport that seem suitable for each of the home-to-work and professional journeys you have indicated.',
+      'Based on your situation, we propose below one or more modes of transport that seem suitable for your home-to-work journey.',
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
+    recommendations_pro_preamble:
+      'Here are our recommended transport modes for your professional journeys based on your responses.',
     recommendations_print: {
       title: 'Mobility Recommendations',
     },

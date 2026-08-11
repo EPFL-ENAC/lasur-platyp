@@ -80,8 +80,37 @@
       </div>
     </div>
     <div v-if="survey.stepName === 'recommendations'">
-      <RecommendationsPanel />
+      <div class="row justify-end q-mb-md">
+        <q-btn color="primary" icon="print" :label="t('print')" @click="openPrintPreview" />
+      </div>
+      <div class="q-mb-lg">
+        <div class="text-h5 text-bold q-mb-md">{{ t(`form.recommendations_preamble`) }}</div>
+      </div>
+      <RecommendationsPersoPanel
+        :main-fm="mainFm"
+        :is-mode-sustainable="isModeSustainable"
+        :is-mode-options="isModeOptions"
+        :reco-inter="recoInter"
+        :bravo="bravo"
+        :center="center"
+        :mesure-dt1="mesureDt1"
+        :mesure-dt2="mesureDt2"
+        :global-actions="globalActionsPerso"
+        :benefits-expanded="false"
+      />
       <InfoPanel class="q-mt-lg" />
+    </div>
+    <div v-if="survey.stepName === 'recommendations_pro' && recoPros.length">
+      <div class="q-mb-lg">
+        <div class="text-h6 text-bold q-mb-sm">{{ t(`form.recommendations_pro_preamble`) }}</div>
+      </div>
+      <RecommendationsProPanel
+        :reco-pros="recoPros"
+        :pro-journey-locations="proJourneyLocations"
+        :mesure-pro="mesurePro"
+        :global-actions="globalActionsPro"
+        :benefits-expanded="false"
+      />
     </div>
     <div v-if="survey.stepName === 'change'">
       <ChangePanel :idx="survey.currentChangeIndex" @update:modelValue="onSave" />
@@ -158,18 +187,91 @@ import TravelTimePanel from 'src/components/form/steps/TravelTimePanel.vue'
 import TravelProPanel from 'src/components/form/steps/TravelProPanel.vue'
 import ImportancePanel from 'src/components/form/steps/ImportancePanel.vue'
 import NeedsPanel from 'src/components/form/steps/NeedsPanel.vue'
-import RecommendationsPanel from 'src/components/form/steps/RecommendationsPanel.vue'
+import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
+import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
 import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
 import EmailPanel from './steps/EmailPanel.vue'
 import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
 import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
+import type { RecommendationsPreviewData } from 'src/models'
 import { notifyError } from 'src/utils/notify'
+import { resolveLocation } from 'src/utils/boundaries'
 
 const { t, locale } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
+const router = useRouter()
 
 const plainEmail = ref('')
+
+const mainFm = computed(() => survey.getMainFreqMod())
+const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
+const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
+
+const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
+const recoPros = computed(() => survey.recommendation.reco_pro?.reco_pros || [])
+const bravo = computed(() => survey.recommendation.reco?.bravo || [])
+const center = computed(() => {
+  const loc = survey.record.data.origin
+  if (!loc?.lon || !loc?.lat) return null
+  return [loc.lon, loc.lat] as [number, number]
+})
+
+const mesureDt1 = computed(() =>
+  (function (v) {
+    if (Array.isArray(v)) return v
+    if (v === undefined || v === null) return []
+    return [v]
+  })(survey.recommendation.reco_actions?.mesure_dt1),
+)
+const mesureDt2 = computed(() =>
+  (function (v) {
+    if (Array.isArray(v)) return v
+    if (v === undefined || v === null) return []
+    return [v]
+  })(survey.recommendation.reco_actions?.mesure_dt2),
+)
+const globalActionsPerso = computed(() => survey.recommendation.reco_actions?.mesures_globa || [])
+const mesurePro = computed(() => survey.recommendation.reco_actions?.mesure_pro || [])
+const globalActionsPro = computed(() => survey.recommendation.reco_actions?.mesures_pro_globa || [])
+
+const proJourneyLocations = computed(() =>
+  (survey.record.data.freq_mod_pro_journeys || []).map((j) =>
+    resolveLocation(j.location, j.hex_id),
+  ),
+)
+
+const previewData = computed<RecommendationsPreviewData>(() => ({
+  perso: {
+    mainFm: mainFm.value,
+    isModeSustainable: isModeSustainable.value,
+    isModeOptions: isModeOptions.value,
+    recoInter: recoInter.value,
+    bravo: bravo.value,
+    center: center.value,
+    mesureDt1: mesureDt1.value,
+    mesureDt2: mesureDt2.value,
+    globalActions: globalActionsPerso.value,
+  },
+  pro: {
+    recoPros: recoPros.value,
+    proJourneyLocations: proJourneyLocations.value,
+    mesurePro: mesurePro.value,
+    globalActions: globalActionsPro.value,
+  },
+}))
+
+function openPrintPreview() {
+  const payload = JSON.stringify(previewData.value)
+  const routeData = router.resolve({
+    path: '/print-reco',
+    query: {
+      data: encodeURIComponent(payload),
+      locale: locale.value,
+    },
+  })
+  window.open(routeData.href, '_blank')
+}
 
 onMounted(() => {
   if (survey.tokenOrSlug) {
@@ -268,6 +370,7 @@ function nextStep() {
     void collector.loadInfo(survey.tokenOrSlug)
     if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
+      survey.recommendationLoaded = false
       survey.record.data.comments = ''
       collector
         .save(survey.tokenOrSlug, survey.record, plainEmail.value)
@@ -278,13 +381,14 @@ function nextStep() {
         .then((resp) => {
           survey.recommendation = resp
           survey.record.typo = resp
+          survey.recommendationLoaded = true
         })
         .catch(notifyError)
     } else if (survey.isBeforeStep('recommendations')) {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.stepName === 'change') {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
-    } else if (survey.previousStepName === 'email') {
+    } else if (survey.previousStepName === 'email' || survey.previousStepName === 'recommendations_pro') {
       // step was just incremented, so we check previous step
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     }
@@ -301,7 +405,7 @@ function prevStep() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
   if (
-    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(
+    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations', 'recommendations_pro'].includes(
       survey.stepName || '',
     )
   ) {
