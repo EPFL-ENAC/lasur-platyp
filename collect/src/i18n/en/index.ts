@@ -301,9 +301,13 @@ export default {
     hide: 'Hide benefits',
   },
   contact: {
-    description:
-      'For more information about the mobility at {company_name}, please contact: {contact_name} {contact_email}',
-    website: 'Please visit the information page at {info_url}',
+    header:
+      'For more information about mobility at {company_name}',
+    contact_line:
+      'Please contact: {contact_name}',
+    copy_email: 'Copy email address',
+    more_info: 'More information',
+    copied: 'Email copied to clipboard',
   },
   isochrones: {
     accessible_areas:

@@ -312,9 +312,13 @@ export default {
     hide: 'Masquer les avantages',
   },
   contact: {
-    description:
-      "Pour plus d'informations sur la mobilité à {company_name}, veuillez contacter : {contact_name} {contact_email}",
-    website: "Veuillez visiter la page d'informations à {info_url}",
+    header:
+      "Pour plus d'informations sur la mobilité à {company_name}",
+    contact_line:
+      "Veuillez contacter : {contact_name}",
+    copy_email: 'Copier l’adresse e-mail',
+    more_info: "Plus d'informations",
+    copied: 'E-mail copié dans le presse-papiers',
   },
   isochrones: {
     accessible_areas:
