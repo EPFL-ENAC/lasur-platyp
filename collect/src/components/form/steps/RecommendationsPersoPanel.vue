@@ -3,33 +3,66 @@
     <q-card flat>
       <q-card-section>
         <SectionItem :label="t('form.recommendations')" />
-        <template v-for="(reco, idx) in recoInter" :key="idx">
-          <q-separator v-if="idx > 0" />
-          <RecommendationItem
-            :reco="reco"
-            :reco-label="t(`reco.${reco}`)"
-            :bravo="bravo[idx]"
-            :index-label="
-              t(
-                isModeSustainable && isModeOptions
-                  ? 'form.journey.label_option_idx'
-                  : 'form.journey.label_idx',
-                { index: idx + 1 },
-              )
-            "
-            :actions="getActions(idx)"
-            :benefits-expanded="!!benefitsExpanded"
+        <q-tabs
+          v-model="activeTab"
+          dense
+          class="text-grey q-mt-md"
+          active-color="primary"
+          indicator-color="primary"
+          align="left"
+          narrow-indicator
+        >
+          <q-tab v-for="(_, idx) in journeys" :key="idx" :name="String(idx)">
+            <div class="row items-center no-wrap q-gutter-xs">
+              <template v-for="(mode, mIdx) in journeys[idx].modes" :key="mIdx">
+                <q-img
+                  v-if="getModeIcon(mode)?.isSvg"
+                  :src="getModeIcon(mode)!.icon"
+                  style="width: 24px; height: 24px"
+                  no-spinner
+                  no-transition
+                  class="icon-primary"
+                />
+                <q-icon
+                  v-else
+                  :name="getModeIcon(mode)?.icon"
+                  size="sm"
+                  class="text-primary"
+                />
+              </template>
+              <span class="text-subtitle2 q-ml-xs">
+                {{ t('form.journey.label_idx', { index: idx + 1 }) }}
+              </span>
+            </div>
+          </q-tab>
+        </q-tabs>
+        <q-tab-panels v-model="activeTab" animated class="bg-transparent">
+          <q-tab-panel
+            v-for="(_, idx) in journeys"
+            :key="idx"
+            :name="String(idx)"
+            class="full-height"
           >
-            <IsochronesMap
-              v-if="showIsochrones(reco) && center"
-              :center="center"
-              :reco="reco"
-              :height="'400px'"
-              :zoom="zoomIsochrones(reco)"
-              class="q-mt-sm"
-            />
-          </RecommendationItem>
-        </template>
+            <template v-if="recoInter[idx] !== undefined">
+              <RecommendationItem
+                :reco="recoInter[idx]"
+                :reco-label="t(`reco.${recoInter[idx]}`)"
+                :bravo="bravo[idx]"
+                :actions="getActions(idx)"
+                :benefits-expanded="!!benefitsExpanded"
+              >
+                <IsochronesMap
+                  v-if="showIsochrones(recoInter[idx]) && center"
+                  :center="center"
+                  :reco="recoInter[idx]"
+                  :height="'400px'"
+                  :zoom="zoomIsochrones(recoInter[idx])"
+                  class="q-mt-sm"
+                />
+              </RecommendationItem>
+            </template>
+          </q-tab-panel>
+        </q-tab-panels>
       </q-card-section>
 
       <q-card-section v-if="globalActions.length" class="q-pt-none">
@@ -50,13 +83,13 @@
 import SectionItem from 'src/components/form/SectionItem.vue'
 import IsochronesMap from 'src/components/form/IsochronesMap.vue'
 import RecommendationItem from './RecommendationItem.vue'
+import type { Journey } from 'src/models'
+import { getModeIcon } from 'src/utils/modeicons'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  mainFm: string
-  isModeSustainable: boolean
-  isModeOptions: boolean
+  journeys: Journey[]
   recoInter: string[]
   bravo: number[]
   center: [number, number] | null
@@ -65,6 +98,8 @@ const props = defineProps<{
   globalActions: string[]
   benefitsExpanded?: boolean
 }>()
+
+const activeTab = ref(String(props.journeys.length > 0 ? 0 : -1))
 
 function showIsochrones(reco: string) {
   return ['marche', 'velo', 'vae', 'cargo', 'train', 'tpu'].includes(reco)
@@ -80,3 +115,9 @@ function getActions(idx: number) {
   return []
 }
 </script>
+
+<style scoped lang="scss">
+.icon-primary {
+  filter: invert(52%) sepia(88%) saturate(138%) hue-rotate(3deg) brightness(95%) contrast(246%);
+}
+</style>

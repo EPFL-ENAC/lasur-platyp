@@ -88,9 +88,7 @@
         <div>{{ t(`form.recommendations_preamble`) }}</div>
       </div>
       <RecommendationsPersoPanel
-        :main-fm="mainFm"
-        :is-mode-sustainable="isModeSustainable"
-        :is-mode-options="isModeOptions"
+        :journeys="freqModJourneys"
         :reco-inter="recoInter"
         :bravo="bravo"
         :center="center"
@@ -107,6 +105,7 @@
         <div>{{ t(`form.recommendations_pro_preamble`) }}</div>
       </div>
       <RecommendationsProPanel
+        :pro-journeys="freqModProJourneys"
         :reco-pros="recoPros"
         :pro-journey-locations="proJourneyLocations"
         :mesure-pro="mesurePro"
@@ -195,7 +194,7 @@ import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
 import EmailPanel from './steps/EmailPanel.vue'
 import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
 import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
-import type { RecommendationsPreviewData } from 'src/models'
+import type { Journey, ProJourney, RecommendationsPreviewData } from 'src/models'
 import { notifyError } from 'src/utils/notify'
 import { resolveLocation } from 'src/utils/boundaries'
 
@@ -209,6 +208,12 @@ const plainEmail = ref('')
 const mainFm = computed(() => survey.getMainFreqMod())
 const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
 const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
+const freqModJourneys = computed<Journey[]>(() =>
+  survey.record.data?.freq_mod_journeys || [],
+)
+const freqModProJourneys = computed<ProJourney[]>(() =>
+  survey.record.data?.freq_mod_pro_journeys || [],
+)
 
 const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
 const recoPros = computed(() => survey.recommendation.reco_pro?.reco_pros || [])
@@ -248,6 +253,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     mainFm: mainFm.value,
     isModeSustainable: isModeSustainable.value,
     isModeOptions: isModeOptions.value,
+    journeys: freqModJourneys.value,
     recoInter: recoInter.value,
     bravo: bravo.value,
     center: center.value,
@@ -256,6 +262,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     globalActions: globalActionsPerso.value,
   },
   pro: {
+    proJourneys: freqModProJourneys.value,
     recoPros: recoPros.value,
     proJourneyLocations: proJourneyLocations.value,
     mesurePro: mesurePro.value,

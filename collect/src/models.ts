@@ -173,6 +173,7 @@ export interface RecommendationsPreviewData {
     mainFm: string
     isModeSustainable: boolean
     isModeOptions: boolean
+    journeys: Journey[]
     recoInter: string[]
     center: [number, number] | null
     mesureDt1: string[]
@@ -180,6 +181,7 @@ export interface RecommendationsPreviewData {
     globalActions: string[]
   }
   pro: {
+    proJourneys: ProJourney[]
     recoPros: string[]
     proJourneyLocations: (PlaceLocation | undefined)[]
     mesurePro: string[][]
