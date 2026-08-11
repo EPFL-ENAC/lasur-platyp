@@ -266,6 +266,8 @@ export default {
   bravo: {
     1: 'Félicitations ! Votre habitude de déplacement est déjà quelque peu durable.',
     2: 'Félicitations ! Votre habitude de déplacement est déjà durable.',
+    recommends: 'Mobilyse recommande le mode de transport suivant :',
+    recommends_also: 'Mobilyse recommande également le mode de transport suivant :',
   },
   actions: {
     budget: 'Budget mobilité',

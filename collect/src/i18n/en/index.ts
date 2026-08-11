@@ -251,8 +251,10 @@ export default {
       'Aim to reduce the frequency of long-distance travel, and, where possible, leverage video-conferencing solutions',
   },
   bravo: {
-    1: 'Congratulations! Your commuting habit is somewhat already sustainable.',
-    2: 'Congratulations! Your commuting habit already sustainable.',
+    1: 'Congratulations! Your commuting habit is already somewhat sustainable.',
+    2: 'Congratulations! Your commuting habit is already sustainable.',
+    recommends: 'Mobilyse recommends the following mode:',
+    recommends_also: 'Mobilyse also recommends the following mode:',
   },
   actions: {
     budget: 'Sustainable mobility budget',
