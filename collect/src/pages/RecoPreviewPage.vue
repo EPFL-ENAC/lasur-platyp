@@ -2,7 +2,7 @@
   <div class="bg-grey-3">
     <q-toolbar class="bg-white text-primary q-py-sm toolbar print-hide">
       <div class="text-weight-bold text-h6">
-        {{ t('form.recommendations_header') }}
+        {{ t('form.recommendations_print.header') }}
       </div>
       <q-space />
       <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />

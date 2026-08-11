@@ -159,15 +159,16 @@ export default {
     needs_hint: 'On a scale of 1 (not at all suitable) to 5 (completely suitable)',
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations: 'Recommended modes of transport for your home-to-work journeys:',
-    recommendations_header:
-      'Recommended transport modes for declared home-to-work and professional journeys',
+    recommendations_header: 'Daily mobility recommendation(s)',
     recommendations_preamble:
       'Based on your situation, we propose below one or more modes of transport that seem suitable for your home-to-work journey.',
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
+    recommendations_pro_header: 'Professional mobility recommendation(s)',
     recommendations_pro_preamble:
       'Here are our recommended transport modes for your professional journeys based on your responses.',
     recommendations_print: {
       title: 'Mobility Recommendations',
+      header: 'Recommended transport modes for declared home-to-work and professional journeys',
     },
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:

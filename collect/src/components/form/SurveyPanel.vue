@@ -84,7 +84,8 @@
         <q-btn color="primary" icon="print" :label="t('print')" @click="openPrintPreview" />
       </div>
       <div class="q-mb-lg">
-        <div class="text-h5 text-bold q-mb-md">{{ t(`form.recommendations_preamble`) }}</div>
+        <div class="text-h5 text-bold q-mb-md">{{ t(`form.recommendations_header`) }}</div>
+        <div>{{ t(`form.recommendations_preamble`) }}</div>
       </div>
       <RecommendationsPersoPanel
         :main-fm="mainFm"
@@ -102,7 +103,8 @@
     </div>
     <div v-if="survey.stepName === 'recommendations_pro' && recoPros.length">
       <div class="q-mb-lg">
-        <div class="text-h6 text-bold q-mb-sm">{{ t(`form.recommendations_pro_preamble`) }}</div>
+        <div class="text-h5 text-bold q-mb-sm">{{ t(`form.recommendations_pro_header`) }}</div>
+        <div>{{ t(`form.recommendations_pro_preamble`) }}</div>
       </div>
       <RecommendationsProPanel
         :reco-pros="recoPros"
