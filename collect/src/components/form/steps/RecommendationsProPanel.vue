@@ -45,7 +45,6 @@
               <RecommendationItem
                 :reco="recoPros[idx]"
                 :reco-label="t(`reco.${recoPros[idx]}`)"
-                :actions="getActions(idx)"
                 :benefits-expanded="!!benefitsExpanded"
               >
                 <PlaceItem
@@ -100,10 +99,6 @@ const props = defineProps<{
 }>()
 
 const activeTab = ref(String(props.proJourneys.length > 0 ? 0 : -1))
-
-function getActions(index: number) {
-  return props.mesurePro[index] || []
-}
 </script>
 
 <style scoped lang="scss">

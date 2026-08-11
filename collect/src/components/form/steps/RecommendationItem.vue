@@ -52,14 +52,6 @@
         <BenefitsPanel v-if="!hasBenefits(reco) || benefitsExpanded" :reco="reco" class="q-mt-sm" :expanded="!!benefitsExpanded" />
       </template>
       <slot />
-      <q-item-label v-if="actions?.length" class="text-body1 text-green-2 text-bold q-mt-md">
-        {{
-          t('form.actions', {
-            count: actions.length,
-            actions: actions.map(getActionLabel).join('; '),
-          })
-        }}
-      </q-item-label>
     </div>
   </div>
 </template>
@@ -68,10 +60,6 @@ import BenefitsPanel from 'src/components/form/steps/BenefitsPanel.vue'
 import { hasBenefits, getBenefits } from 'src/utils/benefits'
 const { locale, t } = useI18n()
 
-const getActionLabel = (key: string): string => {
-  const label = t(`actions.${key}`)
-  return label.startsWith('actions.') ? key : label
-}
 withDefaults(
   defineProps<{
     reco: string
@@ -80,14 +68,12 @@ withDefaults(
     indexLabel?: string
     recoClass?: string
     wrapperClass?: string
-    actions?: string[]
     benefitsExpanded?: boolean
   }>(),
   {
     recoClass: 'text-h5',
     wrapperClass: '',
     benefitsExpanded: false,
-    actions: () => [],
   },
 )
 </script>

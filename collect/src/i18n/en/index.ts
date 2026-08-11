@@ -173,6 +173,12 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
+    employer_measures_header: 'Your employer also offers the following measures',
+    employer_measures_description:
+      'As an employee of {organisation}, you are entitled to the following measures',
+    employer_measures_header: 'Your employer also offers the following measures',
+    employer_measures_description:
+      'As an employee of {organisation}, you are entitled to the following measures',
     change: 'About the mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:

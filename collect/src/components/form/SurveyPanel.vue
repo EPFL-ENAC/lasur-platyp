@@ -95,6 +95,7 @@
         :mesure-dt1="mesureDt1"
         :mesure-dt2="mesureDt2"
         :global-actions="globalActionsPerso"
+        :company-name="collector.info.company_name"
         :benefits-expanded="false"
       />
       <InfoPanel class="q-mt-lg" />
