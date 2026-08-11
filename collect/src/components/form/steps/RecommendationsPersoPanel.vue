@@ -149,7 +149,7 @@ function zoomIsochrones(reco: string) {
   filter: invert(52%) sepia(88%) saturate(138%) hue-rotate(3deg) brightness(95%) contrast(246%);
 }
 .employer-measures-header {
-  color: #C79232;
+  color: $brand-yellow-600;
   font-size: 1.15rem;
   font-weight: 700;
   margin: 8px 0 8px;
@@ -166,7 +166,7 @@ function zoomIsochrones(reco: string) {
   margin-bottom: 8px;
 }
 .action-chip {
-  background-color: #FEF8E7;
+  background-color: $brand-yellow-50;
   border: 1px solid #ccc;
   border-radius: 9999px;
   padding: 6px 14px;

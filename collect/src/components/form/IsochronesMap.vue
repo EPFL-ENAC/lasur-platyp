@@ -456,11 +456,11 @@ function hexToRgb(hex: string): string {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .isochrones-subtitle {
   font-size: 16px;
   font-weight: 500;
-  color: #C79232;
+  color: $brand-yellow-600;
   margin-bottom: 8px;
 }
 .map-view {
