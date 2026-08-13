@@ -22,12 +22,7 @@
         @update:model-value="onAddressInput"
         @keyup.enter="onSuggestAddress"
       >
-        <q-menu
-          v-model="showSuggestions"
-          no-parent-event
-          no-focus
-          auto-close
-        >
+        <q-menu v-model="showSuggestions" no-parent-event no-focus auto-close>
           <q-list style="min-width: 100px">
             <q-item
               v-for="sugg in suggestions"
@@ -89,7 +84,7 @@ const props = withDefaults(
   }>(),
   {
     readonly: false,
-  }
+  },
 )
 
 const suggestions = ref<Suggestion[]>([])
