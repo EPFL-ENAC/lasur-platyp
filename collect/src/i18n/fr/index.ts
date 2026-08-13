@@ -184,7 +184,7 @@ export default {
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
     employer_measures_header: 'Votre employeur propose également les mesures suivantes',
     employer_measures_description:
-      'En tant qu’employé·e de {organisation}, vous bénéficiez des mesures suivantes',
+      'En tant que collaborateur·trice de {organisation}, vous pourriez bénéficier aussi des mesures d’accompagnement suivantes:',
     change: 'À propos du mode de transport:',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
