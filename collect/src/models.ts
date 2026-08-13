@@ -124,6 +124,10 @@ export interface Recommendation {
     mesures_globa?: string[]
     mesure_pro: string[][]
     mesures_pro_globa?: string[]
+    mesures_pro_velo?: string[]
+    mesures_pro_tpu?: string[]
+    mesures_pro_train?: string[]
+    mesures_pro_elec?: string[]
   }
   reco_pro?: {
     reco_pros: string[]
