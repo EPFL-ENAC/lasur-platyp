@@ -52,7 +52,7 @@
                   :map-id="`map-pro-${idx}`"
                   :model-value="proJourneyLocations[idx]"
                   read-only
-                  :height="'200px'"
+                  :height="'400px'"
                   class="q-mt-sm q-mb-sm"
                 />
               </RecommendationItem>
