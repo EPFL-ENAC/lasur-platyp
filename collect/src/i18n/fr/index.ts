@@ -166,12 +166,12 @@ export default {
     recommendations:
       'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
     recommendations_header:
-      'Recommandation(s) domicile-travail',
+      'Recommandations de Mobilyse pour les déplacements domicile-travail',
     recommendations_preamble:
       "En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.",
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
-    recommendations_pro_header: 'Recommandation(s) mobilité professionnelle',
+    recommendations_pro_header: 'Recommandations de Mobilyse pour les déplacements professionnels',
     recommendations_pro_preamble:
       "Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.",
     recommendations_print: {
