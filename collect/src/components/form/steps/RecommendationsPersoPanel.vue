@@ -2,7 +2,7 @@
   <div>
     <q-card flat>
       <q-card-section>
-        <SectionItem :label="t('form.recommendations')" />
+        <SectionItem/>
         <q-tabs
           v-model="activeTab"
           dense

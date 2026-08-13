@@ -2,7 +2,7 @@
   <div v-if="recoPros.length">
     <q-card flat>
       <q-card-section>
-        <SectionItem :label="t('form.recommendations_pro')" />
+        <SectionItem/>
         <q-tabs
           v-model="activeTab"
           dense
