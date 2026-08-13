@@ -114,6 +114,7 @@
         :company-name="collector.info.company_name"
         :benefits-expanded="false"
       />
+      <InfoPanel class="q-mt-lg" />
     </div>
     <div v-if="survey.stepName === 'change'">
       <ChangePanel :idx="survey.currentChangeIndex" @update:modelValue="onSave" />
