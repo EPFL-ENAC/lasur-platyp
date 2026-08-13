@@ -6,24 +6,14 @@
     <AddressInput v-model="addressLocation" :readonly="props.readonly" />
 
     <div>
-      <div
-        :id="mapId"
-        :style="`--t-height: ${height || '400px'}`"
-        class="mapinput"
-      />
+      <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapinput" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { AddressLocation } from 'src/models'
-import {
-  AttributionControl,
-  FullscreenControl,
-  Map,
-  Marker,
-  NavigationControl,
-} from 'maplibre-gl'
+import { AttributionControl, FullscreenControl, Map, Marker, NavigationControl } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { style } from 'src/utils/maps'
 import AddressInput from './AddressInput.vue'
@@ -66,10 +56,7 @@ function initMap() {
   const center: [number, number] = props.center
     ? [props.center[0], props.center[1]]
     : currentValue
-      ? [
-          currentValue.lon || defaultCenter[0],
-          currentValue.lat || defaultCenter[1],
-        ]
+      ? [currentValue.lon || defaultCenter[0], currentValue.lat || defaultCenter[1]]
       : defaultCenter
 
   map.value = new Map({
@@ -121,14 +108,8 @@ function onUpdateMarker(flyTo = true) {
     marker = undefined
   }
 
-  if (
-    addressLocation.value?.lat != null &&
-    addressLocation.value?.lon != null
-  ) {
-    marker = new Marker().setLngLat([
-      addressLocation.value.lon,
-      addressLocation.value.lat,
-    ])
+  if (addressLocation.value?.lat != null && addressLocation.value?.lon != null) {
+    marker = new Marker().setLngLat([addressLocation.value.lon, addressLocation.value.lat])
     marker.addTo(map.value)
 
     if (flyTo) {

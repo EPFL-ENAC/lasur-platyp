@@ -213,7 +213,12 @@ function nextStep() {
     }
   }
   if (survey.stepName === 'intermodality') {
-    for (const journey of survey.record.data.freq_mod_journeys || []) {
+    const journeys = survey.record.data.freq_mod_journeys || []
+    if (journeys.length === 0) {
+      notifyError(t('form.error.journey_mode'))
+      return
+    }
+    for (const journey of journeys) {
       if (journey.modes === undefined || journey.modes.length === 0) {
         notifyError(t('form.error.journey_mode'))
         return

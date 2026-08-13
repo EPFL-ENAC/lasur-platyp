@@ -89,45 +89,34 @@ const props = defineProps<Props>()
 const modelValue = defineModel<number | undefined>()
 
 const inputWidth = computed(() => {
-  const length =
-    modelValue.value !== undefined ? modelValue.value.toString().length : 1
+  const length = modelValue.value !== undefined ? modelValue.value.toString().length : 1
   return `${Math.max(length, 1)}ch`
 })
 
 function decrement() {
-  const value =
-    modelValue.value === undefined
-      ? (props.min ?? 0)
-      : modelValue.value
+  const value = modelValue.value === undefined ? (props.min ?? 0) : modelValue.value
 
   const newValue = value - (props.step ?? 1)
-  modelValue.value =
-    props.min !== undefined && newValue < props.min ? props.min : newValue
+  modelValue.value = props.min !== undefined && newValue < props.min ? props.min : newValue
 }
 
 function increment() {
   const value = modelValue.value === undefined ? 0 : modelValue.value
   const newValue = value + (props.step ?? 1)
-  modelValue.value =
-    props.max !== undefined && newValue > props.max ? props.max : newValue
+  modelValue.value = props.max !== undefined && newValue > props.max ? props.max : newValue
 }
 
 function decrement2() {
-  const value =
-    modelValue.value === undefined
-      ? (props.min ?? 0)
-      : modelValue.value
+  const value = modelValue.value === undefined ? (props.min ?? 0) : modelValue.value
 
   const newValue = value - (props.step2 ?? 5)
-  modelValue.value =
-    props.min !== undefined && newValue < props.min ? props.min : newValue
+  modelValue.value = props.min !== undefined && newValue < props.min ? props.min : newValue
 }
 
 function increment2() {
   const value = modelValue.value === undefined ? 0 : modelValue.value
   const newValue = value + (props.step2 ?? 5)
-  modelValue.value =
-    props.max !== undefined && newValue > props.max ? props.max : newValue
+  modelValue.value = props.max !== undefined && newValue > props.max ? props.max : newValue
 }
 
 const labelClass = computed(() => props.labelClass || 'text-h4')
