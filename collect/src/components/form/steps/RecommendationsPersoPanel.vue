@@ -68,7 +68,7 @@
         v-if="hasActions"
         class="q-pt-none employer-measures-section"
       >
-        <h5 class="employer-measures-header">{{ t('form.employer_measures_header') }}</h5>
+        <h6 class="employer-measures-header">{{ t('form.employer_measures_header') }}</h6>
         <p class="employer-measures-description">
           {{ t('form.employer_measures_description', { organisation: companyName }) }}
         </p>
@@ -150,8 +150,8 @@ function zoomIsochrones(reco: string) {
 }
 .employer-measures-header {
   color: $brand-yellow-600;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 400;
   margin: 8px 0 8px;
 }
 .employer-measures-description {

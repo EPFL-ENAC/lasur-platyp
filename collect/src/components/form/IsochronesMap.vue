@@ -458,8 +458,8 @@ function hexToRgb(hex: string): string {
 
 <style scoped lang="scss">
 .isochrones-subtitle {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 400;
   color: $brand-yellow-600;
   margin-bottom: 8px;
 }
