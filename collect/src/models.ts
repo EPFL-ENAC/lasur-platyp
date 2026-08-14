@@ -124,6 +124,10 @@ export interface Recommendation {
     mesures_globa?: string[]
     mesure_pro: string[][]
     mesures_pro_globa?: string[]
+    mesures_pro_velo?: string[]
+    mesures_pro_tpu?: string[]
+    mesures_pro_train?: string[]
+    mesures_pro_elec?: string[]
   }
   reco_pro?: {
     reco_pros: string[]
@@ -173,6 +177,7 @@ export interface RecommendationsPreviewData {
     mainFm: string
     isModeSustainable: boolean
     isModeOptions: boolean
+    journeys: Journey[]
     recoInter: string[]
     center: [number, number] | null
     mesureDt1: string[]
@@ -180,6 +185,7 @@ export interface RecommendationsPreviewData {
     globalActions: string[]
   }
   pro: {
+    proJourneys: ProJourney[]
     recoPros: string[]
     proJourneyLocations: (PlaceLocation | undefined)[]
     mesurePro: string[][]

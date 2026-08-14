@@ -5,15 +5,61 @@
         {{ indexLabel }}
       </q-item-label>
 
-      <q-item-label v-if="bravo !== undefined && bravo > 0" :class="'text-h6'">
-        {{ t(`bravo.${bravo}`) }}
-      </q-item-label>
+      <div v-if="bravo !== undefined && bravo > 0" class="bravo-box">
+        <div class="bravo-text">
+          {{ t(`bravo.${bravo}`) }}
+        </div>
+        <div v-if="hasBenefits(reco) && !benefitsExpanded" class="bravo-btn-wrapper">
+          <q-btn
+            class="benefits-btn"
+            size="md"
+            no-caps
+            dense
+          >
+            <q-icon name="workspace_premium" class="q-mr-xs" />
+            {{ t('benefits.show') }}
+            <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'" anchor="top end" self="top start">
+              <q-markdown :src="getBenefits(reco, locale)" />
+            </q-menu>
+          </q-btn>
+        </div>
+      </div>
 
-      <q-item-label v-if="bravo !== 2" :class="recoClass || 'text-h5'">
-        {{ recoLabel }}
-      </q-item-label>
+      <template v-if="bravo !== 2">
+        <div v-if="bravo !== undefined && bravo > 0" class="reco-intro">
+          {{ t('bravo.recommends_also') }}
+        </div>
 
-      <BenefitsPanel :reco="reco" class="q-mt-sm" :expanded="!!benefitsExpanded" />
+        <div v-if="bravo === 0" class="reco-intro">
+          {{ t('bravo.recommends') }}
+        </div>
+
+        <div v-if="bravo === 0" class="reco-label-row">
+          <q-item-label :class="recoClass || 'text-h5'" class="reco-label-item">
+            {{ recoLabel }}
+          </q-item-label>
+          <div v-if="hasBenefits(reco) && !benefitsExpanded" class="reco-btn-wrapper">
+            <q-btn
+              class="benefits-btn"
+              size="md"
+              no-caps
+              dense
+            >
+              <q-icon name="workspace_premium" class="q-mr-xs" />
+              {{ t('benefits.show') }}
+              <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'" anchor="top end" self="top start">
+                <q-markdown :src="getBenefits(reco, locale)" />
+              </q-menu>
+            </q-btn>
+          </div>
+        </div>
+
+        <q-item-label v-else :class="recoClass || 'text-h5'">
+          {{ recoLabel }}
+        </q-item-label>
+
+        <BenefitsPanel v-if="!hasBenefits(reco) || benefitsExpanded" :reco="reco" class="q-mt-sm" :expanded="!!benefitsExpanded" />
+      </template>
 
       <slot />
 
@@ -31,8 +77,9 @@
 
 <script setup lang="ts">
 import BenefitsPanel from 'src/components/form/steps/BenefitsPanel.vue'
+import { hasBenefits, getBenefits } from 'src/utils/benefits'
 
-const { t } = useI18n()
+const { locale, t } = useI18n()
 
 withDefaults(
   defineProps<{
@@ -53,3 +100,48 @@ withDefaults(
   },
 )
 </script>
+
+<style scoped lang="scss">
+.bravo-box {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  color: #168654;
+  background-color: #f5fbf9;
+  border: 1px solid #cedfd7;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+.bravo-text {
+  flex: 1;
+}
+.bravo-btn-wrapper {
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+.reco-intro {
+  color: $brand-yellow-600;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.reco-label-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.reco-label-item {
+  flex: 1;
+}
+.reco-btn-wrapper {
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+.benefits-btn {
+  background-color: #168654 !important;
+  color: white !important;
+}
+</style>

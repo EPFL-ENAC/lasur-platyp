@@ -1,11 +1,14 @@
 <template>
   <div>
-    <div class="text-subtitle1 q-mb-sm">
+    <div class="isochrones-subtitle">
       {{
         t('isochrones.accessible_areas', {
           mode: t(`isochrones.modes.${selectedMode.toLowerCase()}`),
         })
       }}
+    </div>
+    <div class="text-body2 q-mb-sm">
+      {{ t('isochrones.map_description', { mode: t(`isochrones.modes.${selectedMode.toLowerCase()}`) }) }}
     </div>
     <div v-if="loadingIsochrones">
       <q-spinner-dots color="primary" size="50px" />
@@ -453,7 +456,13 @@ function hexToRgb(hex: string): string {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.isochrones-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: $brand-yellow-600;
+  margin-bottom: 8px;
+}
 .map-view {
   position: relative;
   z-index: 1;

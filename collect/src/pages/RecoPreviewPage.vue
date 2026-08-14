@@ -2,7 +2,7 @@
   <div class="bg-grey-3">
     <q-toolbar class="bg-white text-primary q-py-sm toolbar print-hide">
       <div class="text-weight-bold text-h6">
-        {{ t('form.recommendations_header') }}
+        {{ t('form.recommendations_print.header') }}
       </div>
       <q-space />
       <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />
@@ -16,9 +16,7 @@
         </h1>
 
         <RecommendationsPersoPanel
-          :main-fm="data.perso.mainFm"
-          :is-mode-sustainable="data.perso.isModeSustainable"
-          :is-mode-options="data.perso.isModeOptions"
+          :journeys="data.perso.journeys"
           :reco-inter="data.perso.recoInter"
           :bravo="data.perso.bravo"
           :center="data.perso.center"
@@ -29,7 +27,8 @@
         />
 
         <RecommendationsProPanel
-          class="q-mt-xl"
+          class="q-mt-xl print-page-break"
+          :pro-journeys="data.pro.proJourneys"
           :reco-pros="data.pro.recoPros"
           :pro-journey-locations="data.pro.proJourneyLocations"
           :mesure-pro="data.pro.mesurePro"
@@ -98,9 +97,23 @@ const printReport = () => {
 }
 
 @media print {
+  :deep(.q-tabs) {
+    display: none !important;
+  }
+  :deep(.q-tab-panels) {
+    display: block !important;
+  }
+  :deep(.q-tab-panel) {
+    display: block !important;
+    visibility: visible !important;
+  }
   @page {
     size: A4 portrait;
     margin: 0;
+  }
+
+  .print-page-break {
+    page-break-before: always;
   }
 
   .print-hide,

@@ -80,7 +80,40 @@
       </div>
     </div>
     <div v-if="survey.stepName === 'recommendations'">
-      <RecommendationsPanel />
+      <div class="row justify-end q-mb-md">
+        <q-btn color="primary" icon="print" :label="t('print')" @click="openPrintPreview" />
+      </div>
+      <div class="q-mb-lg">
+        <div class="text-h5 text-bold q-mb-md">{{ t(`form.recommendations_header`) }}</div>
+        <div>{{ t(`form.recommendations_preamble`) }}</div>
+      </div>
+      <RecommendationsPersoPanel
+        :journeys="freqModJourneys"
+        :reco-inter="recoInter"
+        :bravo="bravo"
+        :center="center"
+        :mesure-dt1="mesureDt1"
+        :mesure-dt2="mesureDt2"
+        :global-actions="globalActionsPerso"
+        :company-name="collector.info.company_name"
+        :benefits-expanded="false"
+      />
+      <InfoPanel class="q-mt-lg" />
+    </div>
+    <div v-if="survey.stepName === 'recommendations_pro' && recoPros.length">
+      <div class="q-mb-lg">
+        <div class="text-h5 text-bold q-mb-sm">{{ t(`form.recommendations_pro_header`) }}</div>
+        <div>{{ t(`form.recommendations_pro_preamble`) }}</div>
+      </div>
+      <RecommendationsProPanel
+        :pro-journeys="freqModProJourneys"
+        :reco-pros="recoPros"
+        :pro-journey-locations="proJourneyLocations"
+        :mesure-pro="mesurePro"
+        :global-actions="globalActionsPro"
+        :company-name="collector.info.company_name"
+        :benefits-expanded="false"
+      />
       <InfoPanel class="q-mt-lg" />
     </div>
     <div v-if="survey.stepName === 'change'">
@@ -158,18 +191,132 @@ import TravelTimePanel from 'src/components/form/steps/TravelTimePanel.vue'
 import TravelProPanel from 'src/components/form/steps/TravelProPanel.vue'
 import ImportancePanel from 'src/components/form/steps/ImportancePanel.vue'
 import NeedsPanel from 'src/components/form/steps/NeedsPanel.vue'
-import RecommendationsPanel from 'src/components/form/steps/RecommendationsPanel.vue'
+import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
+import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
 import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
 import EmailPanel from './steps/EmailPanel.vue'
 import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
 import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
+import type { Journey, ProJourney, RecommendationsPreviewData } from 'src/models'
 import { notifyError } from 'src/utils/notify'
+import { resolveLocation } from 'src/utils/boundaries'
 
 const { t, locale } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
+const router = useRouter()
 
 const plainEmail = ref('')
+
+const mainFm = computed(() => survey.getMainFreqMod())
+const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
+const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
+const freqModJourneys = computed<Journey[]>(() =>
+  survey.record.data?.freq_mod_journeys || [],
+)
+const freqModProJourneys = computed<ProJourney[]>(() =>
+  survey.record.data?.freq_mod_pro_journeys || [],
+)
+
+const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
+const recoPros = computed(() => survey.recommendation.reco_pro?.reco_pros || [])
+const bravo = computed(() => survey.recommendation.reco?.bravo || [])
+const center = computed(() => {
+  const loc = survey.record.data.origin
+  if (!loc?.lon || !loc?.lat) return null
+  return [loc.lon, loc.lat] as [number, number]
+})
+
+const mesureDt1 = computed(() =>
+  (function (v) {
+    if (Array.isArray(v)) return v
+    if (v === undefined || v === null) return []
+    return [v]
+  })(survey.recommendation.reco_actions?.mesure_dt1),
+)
+const mesureDt2 = computed(() =>
+  (function (v) {
+    if (Array.isArray(v)) return v
+    if (v === undefined || v === null) return []
+    return [v]
+  })(survey.recommendation.reco_actions?.mesure_dt2),
+)
+const globalActionsPerso = computed(() => survey.recommendation.reco_actions?.mesures_globa || [])
+const mesurePro = computed<string[][]>(() => {
+  const ra = survey.recommendation.reco_actions
+  const recos = recoPros.value
+  if (!ra || !recos.length) return []
+
+  const v2Fallback = (r: string): string[] => {
+    const lookup: Record<string, string | undefined> = {
+      elec: ra.mesures_pro_elec,
+      elec_truck: ra.mesures_pro_elec,
+      velo: ra.mesures_pro_velo,
+      vae: ra.mesures_pro_velo,
+      bike: ra.mesures_pro_velo,
+      cargo: ra.mesures_pro_velo,
+      tpu: ra.mesures_pro_tpu,
+      pub: ra.mesures_pro_tpu,
+      train: ra.mesures_pro_train,
+    }
+    return lookup[r] || []
+  }
+
+  // V1: use mesure_pro from API if available, normalize type issues
+  const raw = ra.mesure_pro
+  if (raw && raw.length > 0) {
+    return recos.map((r, i) => {
+      const entry = raw[i]
+      if (Array.isArray(entry) && entry.length > 0) return entry
+      if (typeof entry === 'string' && entry.length > 0) return [entry]
+      return v2Fallback(r)
+    })
+  }
+
+  // V2: derive from mesures_pro_* via mode mapping
+  return recos.map((r) => v2Fallback(r))
+})
+const globalActionsPro = computed(() => survey.recommendation.reco_actions?.mesures_pro_globa || [])
+
+const proJourneyLocations = computed(() =>
+  (survey.record.data.freq_mod_pro_journeys || []).map((j) =>
+    resolveLocation(j.location, j.hex_id),
+  ),
+)
+
+const previewData = computed<RecommendationsPreviewData>(() => ({
+  perso: {
+    mainFm: mainFm.value,
+    isModeSustainable: isModeSustainable.value,
+    isModeOptions: isModeOptions.value,
+    journeys: freqModJourneys.value,
+    recoInter: recoInter.value,
+    bravo: bravo.value,
+    center: center.value,
+    mesureDt1: mesureDt1.value,
+    mesureDt2: mesureDt2.value,
+    globalActions: globalActionsPerso.value,
+  },
+  pro: {
+    proJourneys: freqModProJourneys.value,
+    recoPros: recoPros.value,
+    proJourneyLocations: proJourneyLocations.value,
+    mesurePro: mesurePro.value,
+    globalActions: globalActionsPro.value,
+  },
+}))
+
+function openPrintPreview() {
+  const payload = JSON.stringify(previewData.value)
+  const routeData = router.resolve({
+    path: '/print-reco',
+    query: {
+      data: encodeURIComponent(payload),
+      locale: locale.value,
+    },
+  })
+  window.open(routeData.href, '_blank')
+}
 
 onMounted(() => {
   if (survey.tokenOrSlug) {
@@ -268,6 +415,7 @@ function nextStep() {
     void collector.loadInfo(survey.tokenOrSlug)
     if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
+      survey.recommendationLoaded = false
       survey.record.data.comments = ''
       collector
         .save(survey.tokenOrSlug, survey.record, plainEmail.value)
@@ -278,13 +426,14 @@ function nextStep() {
         .then((resp) => {
           survey.recommendation = resp
           survey.record.typo = resp
+          survey.recommendationLoaded = true
         })
         .catch(notifyError)
     } else if (survey.isBeforeStep('recommendations')) {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.stepName === 'change') {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
-    } else if (survey.previousStepName === 'email') {
+    } else if (survey.previousStepName === 'email' || survey.previousStepName === 'recommendations_pro') {
       // step was just incremented, so we check previous step
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     }
@@ -301,7 +450,7 @@ function prevStep() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
   if (
-    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(
+    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations', 'recommendations_pro'].includes(
       survey.stepName || '',
     )
   ) {

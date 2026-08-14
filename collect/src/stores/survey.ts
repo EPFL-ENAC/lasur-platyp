@@ -28,6 +28,7 @@ export const useSurvey = defineStore(
       'needs',
       'age_class',
       'recommendations',
+      'recommendations_pro',
       'change',
       'email',
       'comments',
@@ -41,6 +42,7 @@ export const useSurvey = defineStore(
     const changeStepIndex = ref(0)
     const timestamp = ref(Date.now())
     const recommendation = ref<Recommendation>({})
+    const recommendationLoaded = ref(false)
 
     const stepName = computed(() => stepNames[step.value - 1])
     const previousStepName = computed(() => stepNames[step.value - 2])
@@ -48,6 +50,7 @@ export const useSurvey = defineStore(
     function init(cr: Record) {
       record.value = cr
       recommendation.value = {}
+      recommendationLoaded.value = false
       started.value = false
       step.value = 1
       changeStepIndex.value = 0
@@ -57,12 +60,14 @@ export const useSurvey = defineStore(
     function finish() {
       record.value = {} as Record
       recommendation.value = {}
+      recommendationLoaded.value = false
       tokenOrSlug.value = null
     }
 
     function reset() {
       record.value = {} as Record
       recommendation.value = {}
+      recommendationLoaded.value = false
       started.value = false
       step.value = 0
       changeStepIndex.value = 0
@@ -186,6 +191,10 @@ export const useSurvey = defineStore(
         step.value += 1
         return true
       }
+      if (recommendationLoaded.value && stepName.value === 'recommendations_pro' && !recommendation.value.reco_pro?.reco_pros?.length) {
+        step.value += 1
+        return true
+      }
 
       return false
     }
@@ -196,6 +205,10 @@ export const useSurvey = defineStore(
         return true
       }
       if (!withProfessionalQuestions && stepName.value === 'travel_pro') {
+        step.value -= 1
+        return true
+      }
+      if (recommendationLoaded.value && stepName.value === 'recommendations_pro' && !recommendation.value.reco_pro?.reco_pros?.length) {
         step.value -= 1
         return true
       }
@@ -317,6 +330,7 @@ export const useSurvey = defineStore(
       previousStepName,
       timestamp,
       recommendation,
+      recommendationLoaded,
       init,
       finish,
       reset,

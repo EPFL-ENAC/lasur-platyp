@@ -159,17 +159,23 @@ export default {
     needs_hint: 'On a scale of 1 (not at all suitable) to 5 (completely suitable)',
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations: 'Recommended modes of transport for your home-to-work journeys:',
-    recommendations_header:
-      'Recommended transport modes for declared home-to-work and professional journeys',
+    recommendations_header: 'Mobilyse’s recommendations for commuting',
     recommendations_preamble:
-      'Based on your situation, we propose below one or more modes of transport that seem suitable for each of the home-to-work and professional journeys you have indicated.',
+      'Based on your situation, we propose below one or more modes of transport that seem suitable for your home-to-work journey.',
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
+    recommendations_pro_header: 'Mobilyse’s recommendations for professional travels',
+    recommendations_pro_preamble:
+      'Here are our recommended transport modes for your professional journeys based on your responses.',
     recommendations_print: {
       title: 'Mobility Recommendations',
+      header: 'Recommended transport modes for declared home-to-work and professional journeys',
     },
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
+    employer_measures_header: 'Your employer also offers the following measures',
+    employer_measures_description:
+      'As an employee of {organisation}, you may also benefit from the following support measures',
     change: 'About the mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
@@ -248,8 +254,10 @@ export default {
       'Aim to reduce the frequency of long-distance travel, and, where possible, leverage video-conferencing solutions',
   },
   bravo: {
-    1: 'Congratulations! Your commuting habit is somewhat already sustainable.',
-    2: 'Congratulations! Your commuting habit already sustainable.',
+    1: 'Congratulations! Your commuting habit is already somewhat sustainable.',
+    2: 'Congratulations! Your commuting habit is already sustainable.',
+    recommends: 'Mobilyse recommends the following mode:',
+    recommends_also: 'Mobilyse also recommends the following mode:',
   },
   actions: {
     budget: 'Sustainable mobility budget',
@@ -290,13 +298,18 @@ export default {
     hide: 'Hide benefits',
   },
   contact: {
-    description:
-      'For more information about the mobility at {company_name}, please contact: {contact_name} {contact_email}',
-    website: 'Please visit the information page at {info_url}',
+    header:
+      'For more information about mobility at {company_name}',
+    contact_line:
+      'Please contact: {contact_name}',
+    copy_email: 'Copy email address',
+    more_info: 'More information',
+    copied: 'Email copied to clipboard',
   },
   isochrones: {
     accessible_areas:
       'Did you know that you can access the following areas and points of interest {mode}?',
+    map_description: 'The map below shows the area you can reach with {mode} from your workplace.',
     pois: 'Points of interest',
     modes: {
       walk: 'on foot',

@@ -166,18 +166,25 @@ export default {
     recommendations:
       'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
     recommendations_header:
-      'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
+      'Recommandations de Mobilyse pour les déplacements domicile-travail',
     recommendations_preamble:
-      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour chacun des déplacements domicile-travail et professionnels que vous avez renseignés.',
+      "En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.",
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
+    recommendations_pro_header: 'Recommandations de Mobilyse pour les déplacements professionnels',
+    recommendations_pro_preamble:
+      "Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.",
     recommendations_print: {
       title: 'Recommandations de mobilité',
+      header: 'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
     },
     actions:
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
+    employer_measures_header: 'Votre employeur propose également les mesures suivantes',
+    employer_measures_description:
+      'En tant que collaborateur·trice de {organisation}, vous pourriez bénéficier aussi des mesures d’accompagnement suivantes:',
     change: 'À propos du mode de transport:',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
@@ -262,6 +269,8 @@ export default {
   bravo: {
     1: 'Félicitations ! Votre habitude de déplacement est déjà quelque peu durable.',
     2: 'Félicitations ! Votre habitude de déplacement est déjà durable.',
+    recommends: 'Mobilyse recommande le mode de transport suivant :',
+    recommends_also: 'Mobilyse recommande également le mode de transport suivant :',
   },
   actions: {
     budget: 'Budget mobilité',
@@ -303,13 +312,18 @@ export default {
     hide: 'Masquer les avantages',
   },
   contact: {
-    description:
-      "Pour plus d'informations sur la mobilité à {company_name}, veuillez contacter : {contact_name} {contact_email}",
-    website: "Veuillez visiter la page d'informations à {info_url}",
+    header:
+      "Pour plus d'informations sur la mobilité à {company_name}",
+    contact_line:
+      "Veuillez contacter : {contact_name}",
+    copy_email: 'Copier l’adresse e-mail',
+    more_info: "Plus d'informations",
+    copied: 'E-mail copié dans le presse-papiers',
   },
   isochrones: {
     accessible_areas:
       "Saviez-vous que vous avez accès aux zones et points d'intérêts ci-dessous {mode} ?",
+    map_description: 'La carte ci-dessous représente la zone accessible avec {mode} depuis votre lieu de travail.',
     pois: "Points d'intérêt",
     modes: {
       walk: 'à pied',
