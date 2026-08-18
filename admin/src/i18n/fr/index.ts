@@ -452,7 +452,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     equipments: {
       title: 'Équipements de mobilité',
       description:
-        "Ce graphique montre les équipements de mobilité à disposition des participant·e·s pour leurs déplacements domicile-travail. Ces données sont comparées aux données de référence, issues du Microrecensement Mobilité et Transports de 2021, pour le canton de Genève.\n\nDans un autre graphique ci-après, la possession des équipements est croisée avec les recommandations formulées par Mobilise aux participant·e·s. Cela permet de comprendre si les personnes à qui Mobilyse recommande un mode de transport dispose déjà de l'équipement nécessaire pour adopter cette recommandation.",
+        "Ce graphique montre les équipements de mobilité à disposition des participant·e·s pour leurs déplacements domicile-travail. Ces données sont comparées aux données de référence, issues du Microrecensement Mobilité et Transports de 2021, pour le canton de Genève.\n\nDans un autre graphique ci-après, la possession des équipements est croisée avec les recommandations formulées par Mobilise aux participant·e·s. Cela permet de comprendre si les personnes à qui Mobilyse recommande un mode de transport dispose déjà de l'équipement nécessaire pour adopter cette recommandation.\n\nLe détail des autres contraintes est accessibles en téléchargeant le détail des données.",
       labels: {
         bike: 'Vélo',
         upt_subs: 'Abonnement de transports\npublics urbains',
