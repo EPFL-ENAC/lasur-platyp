@@ -398,6 +398,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',
     total: 'N: {count}',
+    total_participants: 'Number of participants: {count}',
+    total_trips: 'Number of trips: {count}',
     no_data: 'No data available',
     observed: 'Data from participants',
     participants_median: 'Participants median',

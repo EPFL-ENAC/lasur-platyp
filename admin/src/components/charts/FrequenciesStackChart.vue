@@ -207,7 +207,7 @@ function initChartOptions() {
     height: props.height - 120,
     title: {
       text: t(`stats.${props.chartTranslationName}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_trips`, { count: total.value }),
       left: 'center',
       top: 0,
       textStyle: {
@@ -215,22 +215,11 @@ function initChartOptions() {
       },
     },
     tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        // Use axis to trigger tooltip
-        type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
-      },
+      trigger: 'item',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter: (params: any) => {
-        let res = `${params[0].name}<br/>`
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        params.forEach((item: any) => {
-          // item.value is the data point value
-          const val = props.percent ? `${item.value.toFixed(1)}%` : item.value
-
-          res += `${item.marker} ${item.seriesName}: <b>${val}</b><br/>`
-        })
-        return res
+        const val = props.percent ? `${Math.round(params.value)}%` : params.value
+        return `${params.marker} ${params.seriesName}: <b>${val}</b>`
       },
     },
     legend: {

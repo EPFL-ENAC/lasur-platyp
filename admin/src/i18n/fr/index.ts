@@ -407,6 +407,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     nb_employees: 'Nombre de participant·e·s',
     percent_employees: '% de participant·e·s',
     total: 'N : {count}',
+    total_participants: 'Nombre de participant·e·s: {count}',
+    total_trips: 'Nombre de trajets: {count}',
     no_data: 'Aucune donnée disponible',
     observed: 'Données des participant·e·s',
     participants_median: 'Médiane des participant·e·s',
