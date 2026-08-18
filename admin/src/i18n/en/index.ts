@@ -50,13 +50,13 @@ const transportationModes = {
   unknown: 'Unknown',
 }
 
-const simpleLabels = {
-  MA: 'Active mobility',
-  TP: 'Public transport',
-  'MA+TP': 'Active mobility + Public transport',
-  'MA+TIM': 'Active mobility + Individual motorized transport',
-  'TIM+TP': 'Individual motorized transport + Public transport',
-  TIM: 'Individual motorized transport',
+const simpleShortLabels = {
+  MA: 'AM',
+  TP: 'PT',
+  'MA+TP': 'AM+PT',
+  'MA+TIM': 'AM+IMT',
+  'TIM+TP': 'IMT+PT',
+  TIM: 'IMT',
 }
 
 const complexLabels = {
@@ -570,7 +570,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
       xaxis: 'Journeys per year',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
     },
@@ -643,7 +643,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Distribution of emissions reductions (simple)',
       series: 'Potential reduction',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
       texts: {
@@ -814,7 +814,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     ...transportationModes,
   },
   simple_labels: {
-    ...simpleLabels,
+    ...simpleShortLabels,
   },
   complex_labels: {
     ...complexLabels,

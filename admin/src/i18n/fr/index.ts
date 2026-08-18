@@ -50,13 +50,13 @@ const transportationModes = {
   unknown: 'Inconnu',
 }
 
-const simpleLabels = {
-  MA: 'Mobilité active',
-  TP: 'Transports publics',
-  'MA+TP': 'Mobilité active + Transports publics',
-  'MA+TIM': 'Mobilité active + Transports individuels motorisés',
-  'TIM+TP': 'Transports individuels motorisés + Transports publics',
-  TIM: 'Transports individuels motorisés',
+const simpleShortLabels = {
+  MA: 'MA',
+  TP: 'TP',
+  'MA+TP': 'MA+TP',
+  'MA+TIM': 'MA+TIM',
+  'TIM+TP': 'TIM+TP',
+  TIM: 'TIM',
 }
 
 const complexLabels = {
@@ -581,7 +581,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
     },
@@ -654,7 +654,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: "Répartition des gains d'émissions (simple)",
       series: 'Réduction potentielle',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
       texts: {
@@ -827,7 +827,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     ...transportationModes,
   },
   simple_labels: {
-    ...simpleLabels,
+    ...simpleShortLabels,
   },
   complex_labels: {
     ...complexLabels,
