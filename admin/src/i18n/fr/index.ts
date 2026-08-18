@@ -433,13 +433,13 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphiques illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
           most_potential:
-            "Le mode de transport avec le plus fort potentiel d'utilisateur·trices est : **{mode}** (recommandé à **{percentage}%** des participant·e·s ayant répondu)",
+            "Le mode de transport avec le plus fort potentiel d'utilisateur·trice·s est : **{mode}** (recommandé à **{percentage}%** des participant·e·s)",
           biggest_emission_reduction:
             'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
           biggest_emission_reduction_extrapolation:
             'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
           biggest_physical_activity_gain:
-            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce scénario permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
+            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce mode permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
         },
       },
       behavioural_changes: {

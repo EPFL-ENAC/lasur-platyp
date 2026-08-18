@@ -206,7 +206,7 @@ const companyMap = ref<{ [key: string]: Company }>({})
 const campaignMap = ref<{ [key: string]: Campaign }>({})
 const showMapFilter = ref(false)
 
-const companyFilter = ref<string[]>([])
+const companyFilter = ref<number[]>([])
 const companyOptions = computed(() => {
   return Object.values(companyMap.value)
     .map((company) => ({
@@ -216,7 +216,7 @@ const companyOptions = computed(() => {
     .sort((a, b) => a.label.localeCompare(b.label))
 })
 
-const mainGroupFilter = ref<string[]>([])
+const mainGroupFilter = ref<number[]>([])
 const campaignOptions = computed(() => {
   return Object.values(campaignMap.value)
     .map((campaign) => ({
@@ -229,10 +229,10 @@ const campaignOptions = computed(() => {
 const selectedCampaigns = computed(() => {
   const allCampaigns = Object.values(campaignMap.value)
   const filteredByCompanies = companyFilter.value.length
-    ? allCampaigns.filter((campaign) => companyFilter.value.includes(`${campaign.company_id}`))
+    ? allCampaigns.filter((campaign) => companyFilter.value.includes(campaign.company_id))
     : allCampaigns
   const filteredByCampaigns = mainGroupFilter.value.length
-    ? filteredByCompanies.filter((campaign) => mainGroupFilter.value.includes(`${campaign.id}`))
+    ? filteredByCompanies.filter((campaign) => mainGroupFilter.value.includes(campaign.id))
     : filteredByCompanies
   return filteredByCampaigns
 })
