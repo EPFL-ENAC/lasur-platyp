@@ -502,7 +502,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     reco_inter: {
       title: 'Potential modal split',
       description:
-        'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the mode of transport recommended for their home-to-work commute.',
+        'This graph shows the breakdown of the modes of transportation recommended by Mobilyse for each participant.',
       labels: {
         ...transportationModes,
       },
@@ -520,7 +520,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title_simple: 'Modal split (simple)',
       title_detailed: 'Modal split (detailed)',
       description:
-        'This chart illustrates the modal split among participants, with each participant categorised according to their main mode of transport for commuting. ',
+        'This graph shows the percentage of participants who primarily use each mode of transportation for their commute to and from work.',
       title_mrmt: 'Reference data (Geneva canton)',
       labels: {
         ...transportationModes,

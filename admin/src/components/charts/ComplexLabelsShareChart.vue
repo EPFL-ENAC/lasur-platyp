@@ -28,7 +28,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { COMPLEX_LABELS_COLORS, complexLabelSortOrder } from './commons'
+import { COMPLEX_LABELS_COLORS, complexLabelSortOrder, computePercentages } from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
@@ -164,8 +164,11 @@ function initChartOptions() {
     .toSorted((a, b) => b.value - a.value)
   topModes.value = sortedByValue.slice(0, 3).map((item) => item.name)
 
+  // Add rounded percentages that sum to 100
+  const datasetWithPercent = computePercentages(dataset)
+
   // Extract category names and values for series
-  const categories = dataset.map((item) => item.key)
+  const categories = datasetWithPercent.map((item) => item.key)
   const colors = categories.map((category) => COMPLEX_LABELS_COLORS[category] || '#ccc')
 
   if (categories.length === 0) {
@@ -195,12 +198,13 @@ function initChartOptions() {
     ],
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c} ({d}%)',
+      formatter: (params) => `<b>${params.name}</b><br/>${params.data.percent}%`,
     },
     legend: {
       show: true,
       bottom: 0,
       left: 'center',
+      selectedMode: false,
     },
     series: [
       {
@@ -212,9 +216,9 @@ function initChartOptions() {
         label: {
           margin: 0,
           fontWeight: 'bold',
-          formatter: '{d}% ({c})',
+          formatter: (params) => `${params.data.percent}%`,
         },
-        data: dataset,
+        data: datasetWithPercent,
       },
     ],
   }

@@ -513,7 +513,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     reco_inter: {
       title: 'Répartition modale potentielle',
       description:
-        "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le mode qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
+        "Ce graphique montre la répartition des modes de transports recommandés par Mobilyse pour chaque participant·e.",
       labels: {
         ...transportationModes,
       },
@@ -531,7 +531,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title_simple: 'Répartition modale (simple)',
       title_detailed: 'Répartition modale (détaillée)',
       description:
-        'Ce graphique montre la répartition modale des participant·e·s, en affectant à chaque participant·e·s le mode principal utilisé lors de ses déplacements domicile-travail.',
+        'Ce graphique montre la part des participant·e·s utilisant principalement chaque mode, sur leur déplacement domicile-travail.',
       title_mrmt: 'Données de référence (canton de Genève)',
       labels: {
         ...transportationModes,

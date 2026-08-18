@@ -260,3 +260,43 @@ export const COMPLEX_LABELS_COLORS: { [key: string]: string } = {
   other_inter: '#AB8D74',
   default: '#ccc',
 }
+
+/**
+ * Compute rounded percentages that sum to exactly 100 using largest-remainder
+ * method. Each returned item carries a `percent` field alongside its original
+ * properties.
+ */
+export function computePercentages<T extends { value: number }>(
+  items: T[],
+): (T & { percent: number })[] {
+  const total = items.reduce((sum, item) => sum + item.value, 0)
+  if (total === 0) {
+    return items.map((item) => ({ ...item, percent: 0 }))
+  }
+
+  const raw = items.map((item) => {
+    const pct = (item.value / total) * 100
+    return {
+      ...item,
+      floor: Math.floor(pct),
+      frac: pct - Math.floor(pct),
+    }
+  })
+
+  const sumFloored = raw.reduce((sum, item) => sum + item.floor, 0)
+  let surplus = 100 - sumFloored
+
+  // Distribute surplus to items with largest fractional parts
+  const sorted = raw
+    .map((item, idx) => ({ ...item, idx }))
+    .sort((a, b) => b.frac - a.frac)
+
+  const percents = raw.map((item) => item.floor)
+  for (const item of sorted) {
+    if (surplus <= 0) break
+    percents[item.idx] += 1
+    surplus -= 1
+  }
+
+  return items.map((item, idx) => ({ ...item, percent: percents[idx] }))
+}
