@@ -519,7 +519,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     reco_pros: {
-      title: 'Recommandations (professionnel)',
+      title: 'Recommandations (déplacements professionnel)',
       description:
         "Ce graphique montre les solutions de mobilité proposées pour les déplacements professionnels. Contrairement aux recommandations pour les déplacements domicile-travail pour lesquelles on assigne à chaque personne la recommandation principale qui lui a été faite (une personne = une recommandation), on affiche ici les recommandations à l'échelle du déplacement (un déplacement déclaré = une recommandation).",
       labels: {

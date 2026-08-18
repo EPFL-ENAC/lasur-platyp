@@ -508,7 +508,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
     },
     reco_pros: {
-      title: 'Recommendations (professional)',
+      title: 'Recommendations (professional travels)',
       description:
         'This chart shows the mobility solutions recommended for professional trips. Unlike the recommendations for home-to-work commuting, where each person is assigned the main recommendation made to them (one person = one recommendation), here the recommendations are shown at the trip level (one reported journey = one recommendation).',
       labels: {
