@@ -862,6 +862,16 @@ Thank you for your valuable contribution! If you have any questions, please cont
     },
   },
   data_protection_notice: {
+    title: 'Data confidentiality',
+    content: `The results you are about to access contain only data that has been provided voluntarily, anonymised and aggregated by campaign and geographical area. No personal data is available.
+
+However, we cannot rule out the possibility that, where the number of participants is small, it may be possible to indirectly identify a participant by cross-referencing the data with external data specific to your organisation.
+
+By accessing the results, you agree to process them in accordance with the applicable legal framework, in particular by respecting data privacy and without seeking to identify participants without a valid legal basis.
+
+Last updated: August 2026.`,
+  },
+  database_data_protection_notice: {
     title: 'Data Protection Notice',
     content: `The database you are about to receive as part of the campaign launched via the Mobilyse tool contains disaggregated data derived from responses provided voluntarily and anonymously by your employees.
 

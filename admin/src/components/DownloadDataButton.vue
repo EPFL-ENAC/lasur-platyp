@@ -38,8 +38,8 @@ function onDownload(completedOnly: boolean) {
   $q.dialog({
     component: MarkdownDialog,
     componentProps: {
-      text: t('data_protection_notice.content'),
-      title: t('data_protection_notice.title'),
+      text: t('database_data_protection_notice.content'),
+      title: t('database_data_protection_notice.title'),
       canCancel: true,
     },
     persistent: true,
