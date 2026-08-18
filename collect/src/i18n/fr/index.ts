@@ -13,6 +13,8 @@ export default {
       journey_days: 'Veuillez spécifier le nombre de jours par semaine pour chaque trajet',
       pro_journey_mode: 'Veuillez spécifier le mode de transport pour chaque trajet',
       pro_journey_hex_id: 'Veuillez spécifier la destination pour chaque trajet',
+      pro_journey_days: 'Veuillez préciser un nombre de jours valide',
+      travel_time: 'Veuillez préciser votre temps de trajet',
       change_motivation_required: "Veuillez indiquer votre volonté d'adopter ce mode de transport",
       invalid_email: 'Veuillez entrer une adresse email valide',
     },
