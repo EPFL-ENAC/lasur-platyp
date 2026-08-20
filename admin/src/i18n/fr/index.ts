@@ -396,10 +396,12 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     add_more_comparisons: 'Ajouter des comparaisons',
     cross_sectional: 'Transversal',
     longitudinal: 'Longitudinal',
-    comparison_summary_title: 'Résumé de la comparaison',
-    comparison_pending_note:
-      'Les graphiques de comparaison détaillés pour chaque section arrivent bientôt.',
     too_few_records: 'Données insuffisantes pour : {groups}',
+    modal_evolution: {
+      title: 'Évolution des pratiques modales',
+      description:
+        "Ce diagramme montre comment les participant·e·s présent·e·s dans plusieurs groupes sélectionnés sont passé·e·s d'un mode de transport dominant à un autre entre les groupes, sur la base de leur mode recommandé le plus fréquent dans chaque groupe.",
+    },
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
     nb_employees: 'Nombre de participant·e·s',
@@ -733,6 +735,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         "Ce graphique montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
       yaxis: 'Énergie dépensée (kcal/jour)',
       xaxis: 'Ensemble des participant·e·s (trié·e·s par énergie dépensée)',
+      who_above_count: "Participant·e·s au-dessus de la recommandation de l'OMS",
       whoMin: 'Dépense énergétique quotidienne recommandée par l’OMS (150 kcal/jour)',
       participantsAverage: 'Dépense énergétique quotidienne moyenne des participant·e·s',
       texts: {

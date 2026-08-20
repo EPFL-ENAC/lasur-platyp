@@ -235,6 +235,10 @@ export function complexLabelSortOrder(key: string): number {
   return COMPLEX_LABELS_IDEAL_ORDER[key] || COMPLEX_LABELS_IDEAL_ORDER.default!
 }
 
+// Used to distinguish comparison groups (Main Group + up to 4 "compare with" groups) when
+// groups, rather than modes, are the dimension being colored.
+export const GROUP_COLORS = ['#4C7B31', '#860706', '#6093D3', '#caad2e', '#7030A0']
+
 export const COMPLEX_LABELS_COLORS: { [key: string]: string } = {
   walking: '#DEF1D3',
   bike: '#8ABA6F',

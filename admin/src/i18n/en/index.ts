@@ -387,9 +387,12 @@ Thank you for your valuable contribution! If you have any questions, please cont
     add_more_comparisons: 'Add more comparisons',
     cross_sectional: 'Cross-sectional',
     longitudinal: 'Longitudinal',
-    comparison_summary_title: 'Comparison summary',
-    comparison_pending_note: 'Detailed comparison charts for each section are coming soon.',
     too_few_records: 'Not enough records for: {groups}',
+    modal_evolution: {
+      title: 'Evolution of modal practices',
+      description:
+        'This diagram shows how participants present in several selected groups moved from one dominant transport mode to another between groups, based on their most frequent recommended mode in each group.',
+    },
     switch_to_grid: 'Switch to grid view',
     pdf_report: 'PDF report',
     nb_employees: 'Number of employees',
@@ -720,6 +723,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         'This chart shows which modes of transport have the most potential for increased physical activity.',
       yaxis: 'Energy expenditure (kcal/day)',
       xaxis: 'Participants (sorted by energy expenditure)',
+      who_above_count: 'Participants above WHO recommendation',
       whoMin: 'Minimum daily energy expenditure recommended by the WHO (150 kcal/day)',
       participantsAverage: 'Average daily energy expenditure of participants (kcal/day)',
       texts: {

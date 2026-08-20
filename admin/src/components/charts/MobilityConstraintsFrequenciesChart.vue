@@ -56,6 +56,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
+import { buildGroupedHorizontalBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -66,6 +67,9 @@ import type { Frequencies } from 'src/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   frequencies?: Frequencies | null
@@ -92,8 +96,6 @@ function onChartDownload() {
   shellRef.value?.handleExport()
 }
 
-const stats = useStats()
-
 function onTogglePercent() {
   stats.constraintsPercent = !stats.constraintsPercent
 }
@@ -102,6 +104,11 @@ const option = ref<EChartsOption>({})
 const total = ref(0)
 
 const hasData = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some((group) =>
+      group.frequencies?.some((freq) => freq.field === 'constraints' && freq.data.length > 0),
+    )
+  }
   if (!props.frequencies) {
     return false
   }
@@ -109,6 +116,13 @@ const hasData = computed(() => {
 })
 
 const hasOther = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some((group) =>
+      group.frequencies?.some(
+        (freq) => freq.field === 'constraints' && freq.data.some((item) => item.value === 'other'),
+      ),
+    )
+  }
   return props.frequencies?.data.some((item) => item.value === 'other')
 })
 
@@ -143,6 +157,11 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -309,5 +328,59 @@ function makeCategories(max: number, step = 5) {
     arr.push(`${i}`)
   }
   return arr
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupFrequencies = groups.map((group) => ({
+    name: group.name,
+    frequencies: group.frequencies?.find((freq) => freq.field === 'constraints') ?? null,
+  }))
+  if (groupFrequencies.every((group) => !group.frequencies?.data.length)) {
+    return
+  }
+
+  const groupDatasets: ComparisonGroupDataset[] = groupFrequencies.map((group) => {
+    total.value += group.frequencies?.total ?? 0
+    return {
+      name: group.name,
+      items: (group.frequencies?.data ?? []).map((item) => ({
+        key: item.value || 'null',
+        name: keyLabel(item.value || 'null'),
+        value: item.count,
+      })),
+    }
+  })
+
+  const totalByCategory = new Map<string, number>()
+  const categoryNames = new Map<string, string>()
+  groupDatasets.forEach((group) => {
+    group.items.forEach((item) => {
+      totalByCategory.set(item.key, (totalByCategory.get(item.key) ?? 0) + item.value)
+      if (!categoryNames.has(item.key)) {
+        categoryNames.set(item.key, item.name)
+      }
+    })
+  })
+  const categories = Array.from(totalByCategory.keys()).sort(
+    (a, b) => (totalByCategory.get(b) ?? 0) - (totalByCategory.get(a) ?? 0),
+  )
+  if (categories.length === 0) {
+    return
+  }
+
+  option.value = buildGroupedHorizontalBarOption({
+    groupDatasets,
+    categories,
+    categoryNames,
+    percent: stats.constraintsPercent,
+    title: t(`stats.constraints.title`),
+    totalLabel: t('stats.total', { count: total.value }),
+    height: props.height - 100,
+    xAxisName: stats.constraintsPercent ? t('stats.percent_employees') : t('stats.nb_employees'),
+  })
 }
 </script>

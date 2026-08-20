@@ -26,9 +26,10 @@
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { PieChart } from 'echarts/charts'
+import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { COMPLEX_LABELS_COLORS, complexLabelSortOrder } from './commons'
+import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -38,7 +39,18 @@ import {
 import type { Frequencies } from 'src/models'
 
 const { t, locale } = useI18n()
-use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([
+  SVGRenderer,
+  PieChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   frequencies: Frequencies | Frequencies[] | null
@@ -66,6 +78,11 @@ const total = ref(0)
 const topModes = ref<string[]>([])
 
 const hasData = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some(
+      (group) => (group.mode_frequencies_complex_labels?.length ?? 0) > 0,
+    )
+  }
   if (!props.frequencies) {
     return false
   }
@@ -105,6 +122,11 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -201,5 +223,45 @@ function initChartOptions() {
 
 function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+  topModes.value = []
+
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length === 0) {
+    return
+  }
+
+  const groupDatasets: ComparisonGroupDataset[] = groups.map((group) => {
+    total.value += group.total
+    return {
+      name: group.name,
+      items: (group.mode_frequencies_complex_labels || []).map((item) => ({
+        key: shortKey(item.field),
+        name: keyLabel(item.field),
+        value: item.data
+          .map((d) => (d.sum === undefined ? d.count : d.sum))
+          .reduce((a, b) => a + b, 0),
+      })),
+    }
+  })
+
+  const keyOrder = Array.from(
+    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+  ).sort((a, b) => complexLabelSortOrder(a) - complexLabelSortOrder(b))
+
+  option.value = buildGroupStackedBarOption({
+    groupDatasets,
+    colors: COMPLEX_LABELS_COLORS,
+    percent: true,
+    title: t('stats.freq_mod.title_detailed'),
+    totalLabel: t('stats.total', { count: total.value }),
+    height: props.height,
+    yAxisName: '%',
+    keyOrder,
+  })
 }
 </script>
