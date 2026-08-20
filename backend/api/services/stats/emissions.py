@@ -1,4 +1,5 @@
 import re
+import numpy as np
 import pandas as pd
 from api.models.query import EmissionReductions, Emissions
 from api.services.stats.commons import BaseStatsService, MODES_PRO, normalize_pro_days_to_yearly
@@ -33,12 +34,12 @@ class EmissionsService(BaseStatsService):
 
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
+        self._pro_journey_cache = {}
         # Calculate distance_km to workplace for each record
         if self.df.empty:
             self.df['distance_km'] = pd.Series(dtype=float)
         else:
-            self.df['distance_km'] = self.df.apply(
-                self._calculate_distance_home_to_work, axis=1)
+            self.df['distance_km'] = self._calculate_distance_home_to_work_series(self.df)
 
     def compute_modes_emissions_simple_labels(self, apply_reco: bool = False) -> list[Emissions]:
         """
@@ -167,28 +168,29 @@ class EmissionsService(BaseStatsService):
         """
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
-        
+
         if len(col_days) == 0:
             return None
-        
-        journeys_list = []
-        for idx, row in df.iterrows():
-            for col in col_days:
-                days = row[col]
-                if pd.notna(days) and days > 0:
-                    # Extract journey number from column name
-                    journey_id = col.split('.')[2]
-                    journeys_list.append({
-                        'token': row.get('token', idx),
-                        'journey': journey_id,
-                        'days': days,
-                        'dist': row['distance_km']
-                    })
-        
-        if len(journeys_list) == 0:
+
+        # Reshape wide day-per-journey columns into one row per (record, journey),
+        # vectorized instead of a Python-level iterrows/column scan.
+        journey_id_by_col = {c: c.split('.')[2] for c in col_days}
+        stacked = df[col_days].stack()  # drops NaN by default
+        stacked = stacked[stacked > 0]
+        if stacked.empty:
             return None
-        
-        return pd.DataFrame(journeys_list)
+
+        row_idx = stacked.index.get_level_values(0)
+        col_idx = stacked.index.get_level_values(1)
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+
+        return pd.DataFrame({
+            'token': token_series.loc[row_idx].to_numpy(),
+            'journey': col_idx.map(journey_id_by_col).to_numpy(),
+            'days': stacked.to_numpy(),
+            'dist': df['distance_km'].loc[row_idx].to_numpy(),
+        })
 
     def _build_modes_dataframe(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
@@ -207,24 +209,25 @@ class EmissionsService(BaseStatsService):
         Returns:
             DataFrame with columns ['token', 'journey', 'mode'] or None if no data
         """
-        modes_list = []
-        for idx, row in df.iterrows():
-            for col in df.columns:
-                if '.freq_mod_journeys.' in col and '.modes.' in col:
-                    mode_val = row[col]
-                    if pd.notna(mode_val):
-                        parts = col.split('.')
-                        journey_id = parts[2]
-                        modes_list.append({
-                            'token': row.get('token', idx),
-                            'journey': journey_id,
-                            'mode': mode_val
-                        })
-        
-        if len(modes_list) == 0:
+        mode_cols = [c for c in df.columns if '.freq_mod_journeys.' in c and '.modes.' in c]
+        if not mode_cols:
             return None
-        
-        return pd.DataFrame(modes_list)
+
+        journey_id_by_col = {c: c.split('.')[2] for c in mode_cols}
+        stacked = df[mode_cols].stack()  # drops NaN by default
+        if stacked.empty:
+            return None
+
+        row_idx = stacked.index.get_level_values(0)
+        col_idx = stacked.index.get_level_values(1)
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+
+        return pd.DataFrame({
+            'token': token_series.loc[row_idx].to_numpy(),
+            'journey': col_idx.map(journey_id_by_col).to_numpy(),
+            'mode': stacked.to_numpy(),
+        })
 
     def _calculate_intermodality_attributes(self, combined_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -275,21 +278,19 @@ class EmissionsService(BaseStatsService):
         Returns:
             DataFrame with added columns: ['mode_fraction', 'dist_mode']
         """
-        def calc_mode_fraction(row):
-            if row['is_intermodal']:
-                if row['has_train']:
-                    if row['is_train']:
-                        return 0.8
-                    else:
-                        # 0.2 / (n_modes - 1) where n_modes includes walking
-                        return 0.2 / (row['n_modes'] - 1)
-                else:
-                    # Equal split among all modes
-                    return 1.0 / row['n_modes']
-            else:
-                return 1.0
-        
-        combined_df['mode_fraction'] = combined_df.apply(calc_mode_fraction, axis=1)
+        with np.errstate(divide='ignore', invalid='ignore'):
+            # 0.2 / (n_modes - 1) where n_modes includes walking
+            train_other_fraction = 0.2 / (combined_df['n_modes'] - 1)
+            # Equal split among all modes
+            equal_split_fraction = 1.0 / combined_df['n_modes']
+
+        combined_df['mode_fraction'] = np.where(
+            combined_df['is_intermodal'],
+            np.where(combined_df['has_train'],
+                     np.where(combined_df['is_train'], 0.8, train_other_fraction),
+                     equal_split_fraction),
+            1.0
+        )
         
         # Apply to distance
         combined_df['dist_mode'] = combined_df['dist'] * combined_df['mode_fraction']
@@ -308,33 +309,47 @@ class EmissionsService(BaseStatsService):
             
         Returns:
             Enriched DataFrame with all journey attributes or None if no data
-            Columns: ['token', 'journey', 'days', 'dist', 'mode', 'is_train', 
-                     'is_walking', 'has_train', 'n_modes', 'is_intermodal', 
+            Columns: ['token', 'journey', 'days', 'dist', 'mode', 'is_train',
+                     'is_walking', 'has_train', 'n_modes', 'is_intermodal',
                      'mode_fraction', 'dist_mode']
+
+        Cached per (instance, df identity): callers commonly invoke this
+        repeatedly with the same frame (e.g. the cached _get_records_v3()
+        result). A copy is returned on every call since callers mutate the
+        result in place (adding computed columns).
         """
+        cache_key = id(df)
+        if cache_key in self._journey_attributes_cache:
+            cached = self._journey_attributes_cache[cache_key]
+            return None if cached is None else cached.copy()
+
         # Step 1: Build journeys dataframe
         journeys_df = self._build_journey_dataframe(df)
         if journeys_df is None:
+            self._journey_attributes_cache[cache_key] = None
             return None
-        
+
         # Step 2: Build modes dataframe
         modes_df = self._build_modes_dataframe(df)
         if modes_df is None:
+            self._journey_attributes_cache[cache_key] = None
             return None
-        
+
         # Step 3: Join journeys and modes
         combined_df = journeys_df.merge(modes_df, on=['token', 'journey'], how='inner')
-        
+
         if len(combined_df) == 0:
+            self._journey_attributes_cache[cache_key] = None
             return None
-        
+
         # Step 4: Calculate intermodality attributes
         combined_df = self._calculate_intermodality_attributes(combined_df)
-        
+
         # Step 5: Calculate mode fractions
         combined_df = self._calculate_mode_fractions(combined_df)
-        
-        return combined_df
+
+        self._journey_attributes_cache[cache_key] = combined_df
+        return combined_df.copy()
 
     def _calculate_journey_metrics(
         self, 
@@ -387,18 +402,45 @@ class EmissionsService(BaseStatsService):
             target_mode: Optional mode to filter by (if None, returns all modes)
             
         Returns:
-            DataFrame with columns ['token', 'journey_idx', 'mode', 'days', 'hex_id', 
-                                   'workplace_lat', 'workplace_lon', 'distance_km'] 
+            DataFrame with columns ['token', 'journey_idx', 'mode', 'days', 'hex_id',
+                                   'workplace_lat', 'workplace_lon', 'distance_km']
             or None if no data
+
+        Cached per (instance, df identity): compute_modes_pro_emissions() calls
+        this once per professional mode (~10x) with the same df. Building the
+        full (unfiltered) frame once and filtering it per mode avoids
+        rescanning every row x journey column for each mode.
         """
+        cache_key = id(df)
+        if cache_key not in self._pro_journey_cache:
+            self._pro_journey_cache[cache_key] = self._build_pro_journey_dataframe_uncached(df)
+
+        full = self._pro_journey_cache[cache_key]
+        if full is None:
+            return None
+        if target_mode is not None:
+            full = full[full['mode'] == target_mode]
+            if full.empty:
+                return None
+        return full.copy()
+
+    def _build_pro_journey_dataframe_uncached(self, df: pd.DataFrame) -> pd.DataFrame | None:
+        """All professional journeys across all modes, vectorized (no target_mode filter)."""
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_pro_journeys\..*\.days$', regex=True)]
-        
+
         if len(col_days) == 0:
             return None
-        
-        journeys_list = []
-        
+        if 'data.workplace.lat' not in df.columns or 'data.workplace.lon' not in df.columns:
+            return None
+
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+        workplace_lat_series = df['data.workplace.lat']
+        workplace_lon_series = df['data.workplace.lon']
+        has_workplace = workplace_lat_series.notna() & workplace_lon_series.notna()
+
+        frames = []
         for i in range(len(col_days)):
             col_mode_i = f'data.freq_mod_pro_journeys.{str(i)}.mode'
             if col_mode_i not in df.columns:
@@ -409,46 +451,74 @@ class EmissionsService(BaseStatsService):
             col_days_i = col_days[i]
             col_days_per_i = f'data.freq_mod_pro_journeys.{str(i)}.days_per'
 
-            for idx, row in df.iterrows():
-                mode = row.get(col_mode_i)
-                days_raw = row.get(col_days_i)
-                hex_id = row.get(col_hexid_i)
+            mode_s = df[col_mode_i]
+            days_s = df[col_days_i]
+            hexid_s = df[col_hexid_i]
+            days_per_s = df[col_days_per_i] if col_days_per_i in df.columns else pd.Series(
+                None, index=df.index)
 
-                # Filter by mode if specified
-                if target_mode is not None and mode != target_mode:
-                    continue
+            mask = mode_s.notna() & days_s.notna() & (
+                days_s > 0) & hexid_s.notna() & has_workplace
+            if not mask.any():
+                continue
 
-                if pd.notna(mode) and pd.notna(days_raw) and days_raw > 0 and pd.notna(hex_id):
-                    workplace_lat = row.get('data.workplace.lat')
-                    workplace_lon = row.get('data.workplace.lon')
+            sub_idx = df.index[mask]
+            frames.append(pd.DataFrame({
+                'token': token_series.loc[sub_idx].to_numpy(),
+                'journey_idx': i,
+                'mode': mode_s.loc[sub_idx].to_numpy(),
+                'days_raw': days_s.loc[sub_idx].to_numpy(),
+                'days_per': days_per_s.loc[sub_idx].to_numpy(),
+                'hex_id': hexid_s.loc[sub_idx].to_numpy(),
+                'workplace_lat': workplace_lat_series.loc[sub_idx].to_numpy(),
+                'workplace_lon': workplace_lon_series.loc[sub_idx].to_numpy(),
+            }))
 
-                    if pd.notna(workplace_lat) and pd.notna(workplace_lon):
-                        # Calculate distance to H3 hex
-                        distance_km = self._calculate_distance_to_h3(
-                            float(workplace_lat),
-                            float(workplace_lon),
-                            hex_id,
-                            mode
-                        )
-
-                        days_per = row.get(col_days_per_i) if col_days_per_i in df.columns else None
-                        days = normalize_pro_days_to_yearly(days_raw, days_per)
-
-                        journeys_list.append({
-                            'token': row.get('token', idx),
-                            'journey_idx': i,
-                            'mode': mode,
-                            'days': days,
-                            'hex_id': hex_id,
-                            'workplace_lat': workplace_lat,
-                            'workplace_lon': workplace_lon,
-                            'distance_km': distance_km
-                        })
-        
-        if len(journeys_list) == 0:
+        if not frames:
             return None
-        
-        return pd.DataFrame(journeys_list)
+
+        combined = pd.concat(frames, ignore_index=True)
+
+        # Small pure-Python helper applied only to surviving (record, journey)
+        # pairs, not the full rows x journeys space.
+        combined['days'] = combined.apply(
+            lambda r: normalize_pro_days_to_yearly(r['days_raw'], r['days_per']), axis=1)
+
+        # h3 has no bulk/vectorized distance API, so this stays a per-row
+        # apply -- but now computed exactly once per valid pair instead of
+        # once per pair per professional mode.
+        combined['distance_km'] = combined.apply(
+            lambda r: self._calculate_distance_to_h3(
+                float(r['workplace_lat']), float(r['workplace_lon']), r['hex_id'], r['mode']),
+            axis=1)
+
+        return combined[['token', 'journey_idx', 'mode', 'days', 'hex_id',
+                          'workplace_lat', 'workplace_lon', 'distance_km']]
+
+    def _build_label_frame(self, df: pd.DataFrame, label_prefix: str) -> pd.DataFrame | None:
+        """One row per (token, journey, label) for the given typo.reco.*_labels.N
+        columns, built the same explicit-suffix way as _reco_inter_columns."""
+        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+        label_cols = [c for c in df.columns if label_pattern.match(c)]
+        if not label_cols:
+            return None
+
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+        frames = []
+        for col in label_cols:
+            journey_id = label_pattern.match(col).group(1)
+            label_s = df[col].dropna()
+            if label_s.empty:
+                continue
+            frames.append(pd.DataFrame({
+                'token': token_series.loc[label_s.index].to_numpy(),
+                'journey': journey_id,
+                'label': label_s.to_numpy(),
+            }))
+        if not frames:
+            return None
+        return pd.concat(frames, ignore_index=True)
 
     def _compute_journey_emissions_by_label(self, df: pd.DataFrame, label_prefix: str, apply_reco: bool = False) -> list[Emissions]:
         """
@@ -508,20 +578,11 @@ class EmissionsService(BaseStatsService):
                 emissions=('co2_value', 'sum'), dist=('dist', 'first'), days=('days', 'first')
             ).reset_index()
 
-        # Label per (token, journey), built the same explicit-suffix way as
-        # _reco_inter_columns/_build_reco_weighted in commons.py.
-        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
-        label_cols = [c for c in df.columns if label_pattern.match(c)]
-        rows = []
-        for col in label_cols:
-            journey_id = label_pattern.match(col).group(1)
-            for idx, label in df[col].dropna().items():
-                token = df.at[idx, 'token'] if 'token' in df.columns else idx
-                rows.append({'token': token, 'journey': journey_id, 'label': label})
-        if not rows:
+        label_frame = self._build_label_frame(df, label_prefix)
+        if label_frame is None:
             return []
 
-        merged = journey_df.merge(pd.DataFrame(rows), on=['token', 'journey'], how='inner')
+        merged = journey_df.merge(label_frame, on=['token', 'journey'], how='inner')
 
         results = []
         for label in merged['label'].unique():
@@ -583,23 +644,34 @@ class EmissionsService(BaseStatsService):
         # (matched by index); legacy typo.reco.reco_dt2.0/.1 general
         # recommendations (not tied to a specific journey) apply independently to
         # every journey of the person, as originally computed.
-        new_reco_rows = []
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+
+        new_frames = []
         for col in self._reco_inter_columns(df):
             journey_id = col.rsplit('.', 1)[1]
-            for idx, reco in df[col].dropna().items():
-                token = df.at[idx, 'token'] if 'token' in df.columns else idx
-                new_reco_rows.append(
-                    {'token': token, 'journey': journey_id, 'reco_mode': reco})
-        new_reco_df = pd.DataFrame(
-            new_reco_rows, columns=['token', 'journey', 'reco_mode'])
+            reco_s = df[col].dropna()
+            if reco_s.empty:
+                continue
+            new_frames.append(pd.DataFrame({
+                'token': token_series.loc[reco_s.index].to_numpy(),
+                'journey': journey_id,
+                'reco_mode': reco_s.to_numpy(),
+            }))
+        new_reco_df = pd.concat(new_frames, ignore_index=True) if new_frames else pd.DataFrame(
+            columns=['token', 'journey', 'reco_mode'])
 
-        legacy_reco_rows = []
+        legacy_frames = []
         for col in self._reco_legacy_columns(df):
-            for idx, reco in df[col].dropna().items():
-                token = df.at[idx, 'token'] if 'token' in df.columns else idx
-                legacy_reco_rows.append({'token': token, 'reco_mode': reco})
-        legacy_reco_df = pd.DataFrame(
-            legacy_reco_rows, columns=['token', 'reco_mode'])
+            reco_s = df[col].dropna()
+            if reco_s.empty:
+                continue
+            legacy_frames.append(pd.DataFrame({
+                'token': token_series.loc[reco_s.index].to_numpy(),
+                'reco_mode': reco_s.to_numpy(),
+            }))
+        legacy_reco_df = pd.concat(legacy_frames, ignore_index=True) if legacy_frames else pd.DataFrame(
+            columns=['token', 'reco_mode'])
 
         if new_reco_df.empty and legacy_reco_df.empty:
             return None
@@ -616,24 +688,24 @@ class EmissionsService(BaseStatsService):
         # Normalize mode names
         journey_emissions['reco_mode'] = self._normalize_mode_name(journey_emissions, 'reco_mode')
 
-        def calc_reco_emissions(row):
-            reco_mode = row['reco_mode']
-            if pd.isna(reco_mode) or reco_mode not in MODE_EMISSIONS:
-                return None
+        reco_mode = journey_emissions['reco_mode']
+        valid_mode = reco_mode.notna() & reco_mode.isin(MODE_EMISSIONS.keys())
+        # If already intermodal and recommended mode is "inter", keep current emissions
+        keep_current = journey_emissions['is_intermodal'] & (reco_mode == 'inter')
 
-            if row['is_intermodal'] and reco_mode == 'inter':
-                # If already intermodal and recommended mode is "inter", keep current emissions
-                return row['emissions_dt']
+        reco_em = (
+            journey_emissions['dist'] * reco_mode.map(MODE_EMISSIONS) *
+            journey_emissions['days'] * 2 * 45 / 1000
+        )
+        emissions_dt = journey_emissions['emissions_dt']
+        # Only return the recommended emissions if it's a reduction compared to current emissions
+        reco_em_capped = np.where(
+            emissions_dt.notna(), np.minimum(reco_em, emissions_dt), reco_em)
 
-            reco_em = row['dist'] * MODE_EMISSIONS[reco_mode] * row['days'] * 2 * 45 / 1000
-
-            # Only return the recommended emissions if it's a reduction compared to current emissions
-            if pd.notna(row['emissions_dt']):
-                return min(reco_em, row['emissions_dt'])
-
-            return reco_em
-
-        journey_emissions['reco_emissions'] = journey_emissions.apply(calc_reco_emissions, axis=1)
+        journey_emissions['reco_emissions'] = np.where(
+            ~valid_mode, np.nan,
+            np.where(keep_current, emissions_dt, reco_em_capped)
+        )
 
         # Step 7: Calculate reductions per recommended mode (R lines 223-227)
         journey_emissions['saved_emissions'] = journey_emissions['emissions_dt'] - journey_emissions['reco_emissions']
@@ -659,20 +731,11 @@ class EmissionsService(BaseStatsService):
         if journey_emissions is None:
             return []
 
-        # Label per (token, journey), built the same explicit-suffix way as
-        # _compute_journey_emissions_by_label.
-        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
-        label_cols = [c for c in df.columns if label_pattern.match(c)]
-        rows = []
-        for col in label_cols:
-            journey_id = label_pattern.match(col).group(1)
-            for idx, label in df[col].dropna().items():
-                token = df.at[idx, 'token'] if 'token' in df.columns else idx
-                rows.append({'token': token, 'journey': journey_id, 'label': label})
-        if not rows:
+        label_frame = self._build_label_frame(df, label_prefix)
+        if label_frame is None:
             return []
 
-        merged = journey_emissions.merge(pd.DataFrame(rows), on=['token', 'journey'], how='inner')
+        merged = journey_emissions.merge(label_frame, on=['token', 'journey'], how='inner')
 
         results = []
         for label in merged['label'].unique():
@@ -713,18 +776,23 @@ class EmissionsService(BaseStatsService):
         """
         if len(df) == 0:
             return []
-        
+
         # Extract professional journey columns
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_pro_journeys\..*\.days$', regex=True)]
-        
+
         if len(col_days) == 0:
             return []
-        
-        # Dictionary to accumulate savings per recommended mode
-        savings_by_reco = {}
-        
-        # Process each journey index (0, 1, 2, ...)
+        if 'data.workplace.lat' not in df.columns or 'data.workplace.lon' not in df.columns:
+            return []
+
+        workplace_lat_series = df['data.workplace.lat']
+        workplace_lon_series = df['data.workplace.lon']
+        has_workplace = workplace_lat_series.notna() & workplace_lon_series.notna()
+
+        # Process each journey index (0, 1, 2, ...), vectorized across rows
+        # instead of a Python-level iterrows loop.
+        frames = []
         for i in range(len(col_days)):
             col_mode_i = f'data.freq_mod_pro_journeys.{i}.mode'
             col_reco_i = f'typo.reco_pro.reco_pros.{i}'
@@ -739,73 +807,73 @@ class EmissionsService(BaseStatsService):
                 col_days_i not in df.columns):
                 continue
 
-            # Process each row (person)
-            for idx, row in df.iterrows():
-                current_mode = row.get(col_mode_i)
-                reco_mode = row.get(col_reco_i)
-                days_raw = row.get(col_days_i)
-                hex_id = row.get(col_hexid_i)
-                days_per = row.get(col_days_per_i) if col_days_per_i in df.columns else None
-                days = normalize_pro_days_to_yearly(days_raw, days_per) if pd.notna(days_raw) else days_raw
-                
-                # Skip if missing data or no recommendation (per user requirement #3)
-                if (pd.isna(current_mode) or 
-                    pd.isna(reco_mode) or 
-                    pd.isna(days) or 
-                    days <= 0 or 
-                    pd.isna(hex_id)):
-                    continue
-                
-                # Get workplace coordinates
-                workplace_lat = row.get('data.workplace.lat')
-                workplace_lon = row.get('data.workplace.lon')
-                
-                if pd.isna(workplace_lat) or pd.isna(workplace_lon):
-                    continue
-                
-                # Calculate distance to H3 hex (uses existing method)
-                distance_km = self._calculate_distance_to_h3(
-                    float(workplace_lat),
-                    float(workplace_lon),
-                    hex_id,
-                    current_mode
-                )
-                
-                # Get emission factors with mode name normalization (per user requirement #1)
-                current_mode_normalized = self._normalize_mode_value(current_mode)
-                reco_mode_normalized = self._normalize_mode_value(reco_mode)
-                
-                current_emission_factor = MODE_EMISSIONS.get(current_mode_normalized, 0)
-                reco_emission_factor = MODE_EMISSIONS.get(reco_mode_normalized, 0)
-                
-                # Calculate emissions
-                # Formula: distance * emission_factor * days * 2 / 1000
-                # Note: No * 45 for professional travel (annual frequency, not weekly)
-                current_emissions = (
-                    distance_km * current_emission_factor * days * 2 / 1000
-                )
-                reco_emissions = (
-                    distance_km * reco_emission_factor * days * 2 / 1000
-                )
-                
-                # Calculate savings (positive = reduction, negative = increase)
-                savings = current_emissions - reco_emissions
-                
-                # Accumulate by recommended mode
-                if reco_mode_normalized not in savings_by_reco:
-                    savings_by_reco[reco_mode_normalized] = 0.0
-                savings_by_reco[reco_mode_normalized] += savings
-        
+            mode_s = df[col_mode_i]
+            reco_s = df[col_reco_i]
+            hexid_s = df[col_hexid_i]
+            days_raw_s = df[col_days_i]
+            days_per_s = df[col_days_per_i] if col_days_per_i in df.columns else pd.Series(
+                None, index=df.index)
+
+            mask = mode_s.notna() & reco_s.notna() & days_raw_s.notna(
+            ) & hexid_s.notna() & has_workplace
+            if not mask.any():
+                continue
+
+            sub_idx = df.index[mask]
+            frames.append(pd.DataFrame({
+                'mode': mode_s.loc[sub_idx].to_numpy(),
+                'reco_mode': reco_s.loc[sub_idx].to_numpy(),
+                'hex_id': hexid_s.loc[sub_idx].to_numpy(),
+                'days_raw': days_raw_s.loc[sub_idx].to_numpy(),
+                'days_per': days_per_s.loc[sub_idx].to_numpy(),
+                'workplace_lat': workplace_lat_series.loc[sub_idx].to_numpy(),
+                'workplace_lon': workplace_lon_series.loc[sub_idx].to_numpy(),
+            }))
+
+        if not frames:
+            return []
+
+        combined = pd.concat(frames, ignore_index=True)
+
+        combined['days'] = combined.apply(
+            lambda r: normalize_pro_days_to_yearly(r['days_raw'], r['days_per']), axis=1)
+        # Skip if missing data or no recommendation (per user requirement #3)
+        combined = combined[combined['days'] > 0]
+        if combined.empty:
+            return []
+
+        # h3 has no bulk/vectorized distance API, so this stays a per-row
+        # apply, but only over surviving (record, journey) pairs.
+        combined['distance_km'] = combined.apply(
+            lambda r: self._calculate_distance_to_h3(
+                float(r['workplace_lat']), float(r['workplace_lon']), r['hex_id'], r['mode']),
+            axis=1)
+
+        # Get emission factors with mode name normalization (per user requirement #1)
+        mode_map = {
+            'covoit': 'carpool', 'velo': 'bike', 'marche': 'walking',
+            'tpu': 'pub', 'vae': 'ebike'
+        }
+        combined['current_mode_normalized'] = combined['mode'].replace(mode_map)
+        combined['reco_mode_normalized'] = combined['reco_mode'].replace(mode_map)
+        current_emission_factor = combined['current_mode_normalized'].map(
+            MODE_EMISSIONS).fillna(0)
+        reco_emission_factor = combined['reco_mode_normalized'].map(
+            MODE_EMISSIONS).fillna(0)
+
+        # Formula: distance * emission_factor * days * 2 / 1000
+        # Note: No * 45 for professional travel (annual frequency, not weekly)
+        savings = (
+            combined['distance_km'] * current_emission_factor * combined['days'] * 2 / 1000
+            - combined['distance_km'] * reco_emission_factor * combined['days'] * 2 / 1000
+        )
+        savings_by_reco = savings.groupby(combined['reco_mode_normalized']).sum()
+
         # Convert to EmissionReductions objects
-        results = []
-        for mode, reduced in savings_by_reco.items():
-            results.append(EmissionReductions(
-                mode=mode,
-                total=len(df),
-                reduced=float(reduced)
-            ))
-        
-        return results
+        return [
+            EmissionReductions(mode=mode, total=len(df), reduced=float(reduced))
+            for mode, reduced in savings_by_reco.items()
+        ]
 
     def _compute_mode_pro_emissions_v3(self, df: pd.DataFrame, mode: str, apply_reco: bool = False) -> list[Emissions]:
         """

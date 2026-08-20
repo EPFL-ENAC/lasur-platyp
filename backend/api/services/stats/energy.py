@@ -38,8 +38,7 @@ class EnergyService(BaseStatsService):
         if self.df.empty:
             self.df['distance_km'] = pd.Series(dtype=float)
         else:
-            self.df['distance_km'] = self.df.apply(
-                self._calculate_distance_home_to_work, axis=1)
+            self.df['distance_km'] = self._calculate_distance_home_to_work_series(self.df)
         # Calculate dynamic intermodal MET value from dataset
         self._calculate_intermodal_met()
 
@@ -78,16 +77,15 @@ class EnergyService(BaseStatsService):
         # Map MET values to modes
         df_inter['met_value'] = df_inter['mode'].map(MODE_MET).fillna(3.0 * 70)
         
-        # Calculate weighted MET: sum of (MET * time_fraction) for each journey
-        journey_mets = []
-        for (token, journey), group in df_inter.groupby(['token', 'journey']):
-            # Weighted average MET for this journey
-            weighted_met = (group['met_value'] * group['time_fraction']).sum()
-            journey_mets.append(weighted_met)
-        
+        # Calculate weighted MET: sum of (MET * time_fraction) for each
+        # journey, vectorized via groupby-sum instead of a Python loop over
+        # every group.
+        df_inter['weighted_met'] = df_inter['met_value'] * df_inter['time_fraction']
+        journey_mets = df_inter.groupby(['token', 'journey'])['weighted_met'].sum()
+
         # Mean of all intermodal journey METs
-        if journey_mets:
-            mean_inter_met = np.mean(journey_mets)
+        if not journey_mets.empty:
+            mean_inter_met = journey_mets.mean()
             MODE_MET['inter'] = round(mean_inter_met, 2)
             return round(mean_inter_met, 2)
         else:
@@ -190,41 +188,47 @@ class EnergyService(BaseStatsService):
         Returns:
             DataFrame with added 'time_fraction' column
         """
-        def calc_time_fraction(row):
-            if not row['is_intermodal'] and not row.get('is_walking_intermodal', False):
-                return 1.0
-            
-            total_time = row.get('travel_time', 0)
-            if total_time == 0:
-                return 0.0
-            
-            # Walking: 10 min per leg
-            if row['is_walking']:
-                walk_time_min = min(10, total_time)
-                return walk_time_min / total_time
-            
-            # Calculate remaining time after walking legs
-            walk_legs = row.get('n_walking', 0)
-            walk_total_min = min(walk_legs * 10, total_time)
-            remaining_time = total_time - walk_total_min
-            
-            if remaining_time <= 0:
-                return 0.0
-            
-            remaining_fraction = remaining_time / total_time
-            
-            non_walk_modes = row.get('n_modes', 1) - row.get('n_walking', 0)
-            # Train gets at least 50% of remaining time
-            if row.get('has_train', False):
+        # Vectorized re-implementation of the row-wise logic above (kept as
+        # comments for reference): a nested if/elif cascade over scalar
+        # columns translates directly to nested np.where, evaluated
+        # elementwise instead of once per row via DataFrame.apply(axis=1).
+        is_walking_intermodal = combined_df['is_walking_intermodal'] if 'is_walking_intermodal' in combined_df.columns else False
+        needs_split = combined_df['is_intermodal'] | is_walking_intermodal
 
-                if row['mode'] == 'train':
-                    return remaining_fraction * (0.5 + 0.5 / non_walk_modes)
-                else:
-                    return remaining_fraction * 0.5 / non_walk_modes
-            else:
-                return remaining_fraction / non_walk_modes
-        
-        combined_df['time_fraction'] = combined_df.apply(calc_time_fraction, axis=1)
+        total_time = combined_df['travel_time'] if 'travel_time' in combined_df.columns else 0
+        n_walking = combined_df['n_walking'] if 'n_walking' in combined_df.columns else 0
+        n_modes = combined_df['n_modes'] if 'n_modes' in combined_df.columns else 1
+        has_train = combined_df['has_train'] if 'has_train' in combined_df.columns else False
+
+        walk_time_min = np.minimum(10, total_time)
+        walk_total_min = np.minimum(n_walking * 10, total_time)
+        remaining_time = total_time - walk_total_min
+        non_walk_modes = n_modes - n_walking
+
+        with np.errstate(divide='ignore', invalid='ignore'):
+            walking_fraction = np.where(
+                total_time > 0, walk_time_min / total_time, 0.0)
+            remaining_fraction = np.where(
+                total_time > 0, remaining_time / total_time, 0.0)
+            train_self_fraction = remaining_fraction * (0.5 + 0.5 / non_walk_modes)
+            train_other_fraction = remaining_fraction * 0.5 / non_walk_modes
+            equal_split_fraction = remaining_fraction / non_walk_modes
+
+        # Train gets at least 50% of remaining time
+        non_walking_fraction = np.where(
+            remaining_time <= 0, 0.0,
+            np.where(has_train,
+                     np.where(combined_df['mode'] == 'train',
+                              train_self_fraction, train_other_fraction),
+                     equal_split_fraction)
+        )
+
+        combined_df['time_fraction'] = np.where(
+            ~needs_split, 1.0,
+            np.where(total_time == 0, 0.0,
+                     # Walking: 10 min per leg
+                     np.where(combined_df['is_walking'], walking_fraction, non_walking_fraction))
+        )
         return combined_df
 
     def _calculate_journey_energy(
@@ -432,20 +436,21 @@ class EnergyService(BaseStatsService):
         df_combined = self._calculate_journey_energy(df_combined, MODE_MET)
         df_combined['mode_normalized'] = self._normalize_mode_name(df_combined, 'mode')
         
-        # Build journey legs list
-        legs = []
-        for _, row in df_combined.iterrows():
-            energy_kcal = float(row['energy_kcal'])
-            
-            legs.append(JourneyEnergyLeg(
-                token=str(row['token']),
-                journey_id=str(row['journey']),
-                mode=row['mode_normalized'],
-                days=int(row['days']),
-                travel_time=float(row['travel_time'] * row['time_fraction']),
-                energy_kcal=energy_kcal,
-                is_intermodal=bool(row['is_intermodal'])
-            ))
+        # Build journey legs list. itertuples() yields namedtuples instead of
+        # constructing a Series per row (what iterrows() does), which is the
+        # main cost when this runs over every journey/mode leg.
+        legs = [
+            JourneyEnergyLeg(
+                token=str(row.token),
+                journey_id=str(row.journey),
+                mode=row.mode_normalized,
+                days=int(row.days),
+                travel_time=float(row.travel_time * row.time_fraction),
+                energy_kcal=float(row.energy_kcal),
+                is_intermodal=bool(row.is_intermodal)
+            )
+            for row in df_combined.itertuples(index=False)
+        ]
         
         energy_grouped_summed = df_combined.groupby('token')['energy_kcal'].sum().reset_index() if not df_combined.empty else None
         average_energy_per_unique_token = energy_grouped_summed['energy_kcal'].mean() if energy_grouped_summed is not None and not energy_grouped_summed.empty else None

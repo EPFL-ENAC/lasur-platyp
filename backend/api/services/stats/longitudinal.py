@@ -47,7 +47,15 @@ class LongitudinalService:
     def _primary_mode_by_participant(df: pd.DataFrame) -> pd.Series:
         """Most-frequent typo.reco.simple_labels.N value per participant (email_hash).
 
-        Tie-break: first encountered, in column-index then row order.
+        Tie-break: first encountered, in row-major then column order (i.e. all
+        of a row's label columns before moving to the next row).
+
+        Vectorized: reshapes to one row per (participant, observed label)
+        via stack() -- which preserves that exact row-major/column-minor
+        traversal order -- instead of a groupby -> iterrows -> column loop.
+        Per participant, picks the label with the highest count, breaking
+        ties by earliest first-seen position (a groupby-sort instead of a
+        Python-level max(..., key=...) over a running dict).
         """
         if df.empty or 'email_hash' not in df.columns:
             return pd.Series(dtype=object)
@@ -59,24 +67,25 @@ class LongitudinalService:
         if not label_cols:
             return pd.Series(dtype=object)
 
-        primary_modes = {}
-        for email_hash, participant_df in df.groupby('email_hash'):
-            counts = {}
-            order = []
-            for _, row in participant_df.iterrows():
-                for col in label_cols:
-                    value = row[col]
-                    if pd.isna(value):
-                        continue
-                    if value not in counts:
-                        counts[value] = 0
-                        order.append(value)
-                    counts[value] += 1
-            if not counts:
-                continue
-            primary_modes[email_hash] = max(order, key=lambda v: counts[v])
+        stacked = df[label_cols].stack()  # (row_idx, col) -> value, drops NaN by default
+        if stacked.empty:
+            return pd.Series(dtype=object)
 
-        return pd.Series(primary_modes)
+        row_idx = stacked.index.get_level_values(0)
+        long_df = pd.DataFrame({
+            'email_hash': df['email_hash'].loc[row_idx].to_numpy(),
+            'value': stacked.to_numpy(),
+            # global row-major, column-minor encounter order
+            'seq': range(len(stacked)),
+        })
+
+        agg = long_df.groupby(['email_hash', 'value']).agg(
+            count=('seq', 'size'), first_seq=('seq', 'min')
+        ).reset_index()
+        agg = agg.sort_values(
+            ['email_hash', 'count', 'first_seq'], ascending=[True, False, True])
+
+        return agg.groupby('email_hash').first()['value']
 
     @staticmethod
     def compute_mode_transitions(df: pd.DataFrame, groups: List[CampaignGroup]) -> List[ModeTransition]:
