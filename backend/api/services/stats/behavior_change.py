@@ -32,6 +32,14 @@ class BehaviorChangeService(BaseStatsService):
         self.reco_prefix = 'typo.reco.reco_inter.'
         self.change_prefix = 'data.changes.'
 
+    def _has_lever_response_mask(self, df: pd.DataFrame, lever_cols: list) -> pd.Series:
+        """Boolean mask: whether a row answered at least one lever question."""
+        if not lever_cols:
+            return pd.Series(False, index=df.index)
+        sub = df[lever_cols]
+        answered = sub.notna() & (sub != '') & (sub != 0.0) & (sub != '0.0')
+        return answered.any(axis=1)
+
     def compute_behavior_change_stats(self) -> BehaviorChangeStats:
         """Main entry point for computing behavior change statistics."""
 
@@ -187,14 +195,7 @@ class BehaviorChangeService(BaseStatsService):
             return {}
 
         # For each row, check if they answered at least one lever question
-        def has_lever_response(row):
-            for col in lever_cols:
-                val = row[col]
-                if pd.notna(val) and val != '' and val != 0.0 and val != '0.0':
-                    return True
-            return False
-
-        df_with_lever = df[df.apply(has_lever_response, axis=1)]
+        df_with_lever = df[self._has_lever_response_mask(df, lever_cols)]
 
         if len(df_with_lever) == 0:
             return {}
@@ -347,14 +348,7 @@ class BehaviorChangeService(BaseStatsService):
         lever_cols = [col for col in df.columns if col.startswith('levers.')]
 
         # Count unique people who answered at least one lever
-        def has_lever_response(row):
-            for col in lever_cols:
-                val = row[col]
-                if pd.notna(val) and val != '' and val != 0.0 and val != '0.0':
-                    return True
-            return False
-
-        people_with_levers = df[df.apply(has_lever_response, axis=1)]
+        people_with_levers = df[self._has_lever_response_mask(df, lever_cols)]
         response_count = len(people_with_levers)
 
         # Collect all lever selections for percentages

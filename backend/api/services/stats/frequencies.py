@@ -299,79 +299,47 @@ class FrequenciesService(BaseStatsService):
 
         return list(field_frequencies.values())
 
-    def _compute_mode_frequencies_simple_labels(
-        self, df: pd.DataFrame, mode: str
+    def _compute_mode_frequencies_by_label(
+        self, df: pd.DataFrame, mode: str, label_col_prefix: str
     ) -> Frequencies:
         """Compute a mode frequency from data.freq_mod_journeys, using the
-        aggregated typo.reco.simple_labels.{i} instead of the raw modes.* list,
-        so each journey's days are credited to exactly one label."""
+        aggregated typo.reco.{simple,complex}_labels.{i} instead of the raw
+        modes.* list, so each journey's days are credited to exactly one
+        label. Builds a days -> (count, sum) histogram vectorized per journey
+        index instead of a linear-search-per-row Python loop."""
         col_days = [
             col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
-        frequencies = []
+        totals: dict[str, list[int]] = {}
         for i in range(len(col_days)):
-            col_label_i = f"typo.reco.simple_labels.{str(i)}"
+            col_label_i = f"{label_col_prefix}.{str(i)}"
             if col_label_i not in df.columns:
                 continue
             col_days_i = col_days[i]
-            df_i = df[[col_days_i, col_label_i]].copy()
-            # skip journeys with no simple label
-            df_i = df_i.dropna(subset=[col_label_i])
-            # keep only journeys whose simple label is the target mode
-            df_i = df_i[df_i[col_label_i] == mode]
-            # count positive mod_days
-            df_i = df_i[df_i[col_days_i] > 0]
-            for _, row in df_i.iterrows():
-                days = int(row[col_days_i])
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
+            days_s = df[col_days_i]
+            label_s = df[col_label_i]
+            mask = label_s.notna() & (label_s == mode) & (days_s > 0)
+            if not mask.any():
+                continue
+            days_int = days_s[mask].astype(int)
+            for days_val, count in days_int.value_counts().items():
+                key = str(days_val)
+                bucket = totals.setdefault(key, [0, 0])
+                bucket[0] += int(count)
+                bucket[1] += int(days_val) * int(count)
 
+        frequencies = [
+            Frequency(value=key, count=count, sum=total_days)
+            for key, (count, total_days) in totals.items()
+        ]
         return Frequencies(field=mode, total=len(df), data=frequencies)
+
+    def _compute_mode_frequencies_simple_labels(
+        self, df: pd.DataFrame, mode: str
+    ) -> Frequencies:
+        return self._compute_mode_frequencies_by_label(df, mode, "typo.reco.simple_labels")
 
     def _compute_mode_frequencies_complex_labels(
         self, df: pd.DataFrame, mode: str
     ) -> Frequencies:
-        """Compute a mode frequency from data.freq_mod_journeys, using the
-        aggregated typo.reco.complex_labels.{i} instead of the raw modes.* list,
-        so each journey's days are credited to exactly one label."""
-        col_days = [
-            col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
-        frequencies = []
-        for i in range(len(col_days)):
-            col_label_i = f"typo.reco.complex_labels.{str(i)}"
-            if col_label_i not in df.columns:
-                continue
-            col_days_i = col_days[i]
-            df_i = df[[col_days_i, col_label_i]].copy()
-            # skip journeys with no complex label
-            df_i = df_i.dropna(subset=[col_label_i])
-            # keep only journeys whose complex label is the target mode
-            df_i = df_i[df_i[col_label_i] == mode]
-            # count positive mod_days
-            df_i = df_i[df_i[col_days_i] > 0]
-            for _, row in df_i.iterrows():
-                days = int(row[col_days_i])
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
-
-        return Frequencies(field=mode, total=len(df), data=frequencies)
+        return self._compute_mode_frequencies_by_label(df, mode, "typo.reco.complex_labels")
 

@@ -211,8 +211,12 @@ class RecordService(EntityService):
                 # Replace NaN with empty dict
                 df[col] = df[col].apply(
                     lambda x: x if isinstance(x, dict) else {})
-                # Flatten the JSON column
-                df_data = df[col].apply(self.flatten_json).apply(pd.Series)
+                # Flatten the JSON column. Building the DataFrame directly from
+                # the list of flattened dicts (instead of `.apply(pd.Series)`,
+                # which constructs and aligns a Series per row) avoids O(n) of
+                # that overhead for wide records.
+                flattened = df[col].apply(self.flatten_json)
+                df_data = pd.DataFrame(flattened.tolist(), index=df.index)
                 # Filter out empty columns
                 df_data = df_data.loc[:, df_data.notna().any()]
                 # Filter out columns with empty names

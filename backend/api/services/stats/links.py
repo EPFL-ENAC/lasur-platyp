@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from api.models.query import Link, Links, Recommendation, StatLinks
 from api.services.stats.commons import BaseStatsService
@@ -46,14 +47,9 @@ class LinksService(BaseStatsService):
         total_days_by_token = df[col_days].sum(
             axis=1) if len(col_days) and legacy_cols else None
 
-        counts = {}
-
-        def add(mode, reco, weight):
-            if pd.isna(reco) or pd.isna(weight):
-                return
-            mod_counts = counts.get(mode, {})
-            mod_counts[reco] = mod_counts.get(reco, 0) + weight
-            counts[mode] = mod_counts
+        # (mode, reco, weight) triples, accumulated via groupby-sum at the end
+        # instead of a Python-level dict built row by row.
+        frames = []
 
         for i in range(len(col_days)):
             col_modes_i = df.columns[df.columns.str.startswith(
@@ -62,36 +58,62 @@ class LinksService(BaseStatsService):
                 continue
             col_days_i = col_days[i]
             reco_col_i = f'typo.reco.reco_inter.{str(i)}'
-            cols_needed = [col_days_i] + col_modes_i.tolist()
-            if reco_col_i in df.columns:
-                cols_needed.append(reco_col_i)
-            cols_needed += [c for c in legacy_cols if c not in cols_needed]
-            df_i = df[cols_needed].copy()
-            # iterate rows
-            for idx, row in df_i.iterrows():
-                days = row[col_days_i]
-                if pd.isna(days) or int(days) <= 0:
-                    continue
-                for col in col_modes_i:
-                    mode = row[col]
-                    if pd.isna(mode):
-                        continue
-                    reco = row[reco_col_i] if reco_col_i in df_i.columns else None
-                    if pd.notna(reco):
-                        # new-style: this journey's own recommendation, weighted
-                        # by this journey's own days
-                        add(mode, reco, int(days))
-                    else:
-                        # legacy: general recommendation(s), weighted by the
-                        # person's total journey days
-                        token_days = total_days_by_token.loc[idx] if total_days_by_token is not None else None
-                        for legacy_col in legacy_cols:
-                            add(mode, row[legacy_col], int(token_days)
-                                if pd.notna(token_days) else None)
-        data = [Link(source=mod, target=reco, value=int(count)) for mod,
-                reco_counts in counts.items() for reco, count in reco_counts.items()]
-        links = Links(total=len(df), data=data)
-        return links
+
+            # int(days) <= 0 truncates toward zero, same as np.trunc for floats
+            days_trunc = np.trunc(df[col_days_i].astype(float))
+            valid_days = df[col_days_i].notna() & (days_trunc > 0)
+            if not valid_days.any():
+                continue
+
+            own_reco = df[reco_col_i] if reco_col_i in df.columns else pd.Series(
+                np.nan, index=df.index)
+            has_own_reco = own_reco.notna()
+
+            modes_sub = df.loc[valid_days, col_modes_i.tolist()]
+            stacked_modes = modes_sub.stack()  # drops NaN modes by default
+            if stacked_modes.empty:
+                continue
+            row_idx = stacked_modes.index.get_level_values(0)
+            modes_arr = stacked_modes.to_numpy()
+            weight_days = days_trunc.loc[row_idx].to_numpy()
+            has_own_arr = has_own_reco.loc[row_idx].to_numpy()
+
+            # New-style: this journey's own recommendation, weighted by this
+            # journey's own days
+            if has_own_arr.any():
+                frames.append(pd.DataFrame({
+                    'mode': modes_arr[has_own_arr],
+                    'reco': own_reco.loc[row_idx].to_numpy()[has_own_arr],
+                    'weight': weight_days[has_own_arr],
+                }))
+
+            # Legacy: general recommendation(s), weighted by the person's
+            # total journey days, one entry per legacy column
+            legacy_mask = ~has_own_arr
+            if legacy_mask.any() and legacy_cols and total_days_by_token is not None:
+                legacy_row_idx = row_idx[legacy_mask]
+                legacy_modes = modes_arr[legacy_mask]
+                token_days = total_days_by_token.loc[legacy_row_idx].to_numpy()
+                for legacy_col in legacy_cols:
+                    frames.append(pd.DataFrame({
+                        'mode': legacy_modes,
+                        'reco': df[legacy_col].loc[legacy_row_idx].to_numpy(),
+                        'weight': token_days,
+                    }))
+
+        if not frames:
+            return Links(total=len(df), data=[])
+
+        combined = pd.concat(frames, ignore_index=True)
+        combined = combined[combined['reco'].notna() & combined['weight'].notna()]
+        if combined.empty:
+            return Links(total=len(df), data=[])
+        combined['weight'] = combined['weight'].astype(int)
+
+        grouped = combined.groupby(['mode', 'reco'])['weight'].sum()
+        data = [Link(source=mode, target=reco, value=int(value))
+                for (mode, reco), value in grouped.items()]
+        return Links(total=len(df), data=data)
 
     def _compute_mode_reco_pro_links_v3(self, df: pd.DataFrame) -> Links:
         """Compute all mode recommendation links from a DataFrame of records."""
@@ -99,7 +121,7 @@ class LinksService(BaseStatsService):
         # New data version: get the series from data.freq_mod_pro_journeys
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_pro_journeys\..*\.days$', regex=True)]
-        counts = {}
+        frames = []
         for i in range(len(col_days)):
             col_mode_i = f'data.freq_mod_pro_journeys.{str(i)}.mode'
             if col_mode_i not in df.columns:
@@ -107,21 +129,24 @@ class LinksService(BaseStatsService):
             col_reco_i = f"typo.reco_pro.reco_pros.{str(i)}"
             if col_reco_i not in df.columns:
                 continue
-            # make a dataframe with only i columns
-            df_i = df[[col_mode_i, col_reco_i]].copy()
-            # iterate rows
-            for _, row in df_i.iterrows():
-                mode = row[col_mode_i]
-                reco = row[col_reco_i]
-                if pd.isna(mode) or pd.isna(reco):
-                    continue
-                mod_counts = counts.get(mode, {})
-                mod_counts[reco] = mod_counts.get(reco, 0) + 1
-                counts[mode] = mod_counts
-        data = [Link(source=mod, target=reco, value=int(count)) for mod,
-                reco_counts in counts.items() for reco, count in reco_counts.items()]
-        links = Links(total=len(df), data=data)
-        return links
+            mode_s = df[col_mode_i]
+            reco_s = df[col_reco_i]
+            mask = mode_s.notna() & reco_s.notna()
+            if not mask.any():
+                continue
+            frames.append(pd.DataFrame({
+                'mode': mode_s[mask].to_numpy(),
+                'reco': reco_s[mask].to_numpy(),
+            }))
+
+        if not frames:
+            return Links(total=len(df), data=[])
+
+        combined = pd.concat(frames, ignore_index=True)
+        grouped = combined.groupby(['mode', 'reco']).size()
+        data = [Link(source=mode, target=reco, value=int(value))
+                for (mode, reco), value in grouped.items()]
+        return Links(total=len(df), data=data)
 
     def _compute_stats_for_links(self, links: Links) -> StatLinks:
         value_per_target: dict[str, int] = {}
