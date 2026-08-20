@@ -69,6 +69,9 @@ async def compare_statistics(
         if request.mode == "longitudinal":
             df = LongitudinalService.filter_longitudinal(df, request.groups)
 
+        if df.empty or 'campaign_id' not in df.columns:
+            return ComparisonResult(groups=[], mode_transitions=None, warnings=[g.name for g in request.groups])
+
         warnings = []
         survived_groups = []
         for group in request.groups:
