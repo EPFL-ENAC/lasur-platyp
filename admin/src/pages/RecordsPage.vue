@@ -73,7 +73,7 @@
         </template>
         <template v-slot:body-cell-company_id="props">
           <q-td :props="props">
-            <router-link :to="`/company/${props.row.company_id}`" class="modus">
+            <router-link :to="`/company/${props.row.company_id}/campaign/${props.row.campaign_id}`" class="modus">
               {{ getCompanyName(props.row.company_id) }} ({{
                 getCampaignName(props.row.campaign_id)
               }})

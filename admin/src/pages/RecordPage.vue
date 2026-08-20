@@ -145,7 +145,7 @@ const items = computed<FieldItem[]>(() => {
         },
         {
           label: campaign.value?.name || val.campaign_id,
-          to: `/company/${val.company_id}?campaign=${val.campaign_id}`,
+          to: `/company/${val.company_id}/campaign/${val.campaign_id}`,
           icon: 'campaign',
         },
       ],
