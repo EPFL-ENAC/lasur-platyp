@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Literal, Optional, Dict
 
 from pydantic import BaseModel, Field
 from geojson_pydantic import Polygon, MultiPolygon
@@ -335,6 +335,36 @@ class Stats(BaseModel):
     journey_energy_stats: Optional[JourneyEnergyStats] = None
     behavior_change: Optional[BehaviorChangeStats] = None
     equipments_stats: Optional[EquipmentsStats] = None
+
+
+class CampaignGroup(BaseModel):
+    name: str
+    campaign_ids: List[int]
+
+
+class ComparisonRequest(BaseModel):
+    groups: List[CampaignGroup]
+    mode: Literal["cross_sectional", "longitudinal"] = "cross_sectional"
+    filter: Optional[dict] = None
+
+
+class ComparisonStats(Stats):
+    name: str
+    campaign_ids: List[int]
+
+
+class ModeTransition(BaseModel):
+    source_group: str
+    target_group: str
+    source_mode: str
+    target_mode: str
+    count: int
+
+
+class ComparisonResult(BaseModel):
+    groups: List[ComparisonStats] = []
+    mode_transitions: Optional[List[ModeTransition]] = None
+    warnings: Optional[List[str]] = None
 
 
 class GeoWithin(BaseModel):
