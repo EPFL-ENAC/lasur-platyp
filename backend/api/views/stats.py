@@ -54,6 +54,8 @@ async def compare_statistics(
             status_code=400, detail="At least 2 groups are required for comparison")
     try:
         filter_dict = dict(request.filter) if request.filter else {}
+        campaign_ids = [cid for g in request.groups for cid in g.campaign_ids]
+        filter_dict['campaign_id'] = {'$in': campaign_ids}
         workplace_filter = filter_dict.get('workplace_location', None)
         if 'workplace_location' in filter_dict:
             del filter_dict['workplace_location']
