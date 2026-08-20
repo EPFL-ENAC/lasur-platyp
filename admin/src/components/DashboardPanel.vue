@@ -166,7 +166,7 @@
       rounded
       class="bg-warning text-white q-mb-md"
     >
-      {{ t('stats.too_few_records', { groups: stats.privacyWarnings.join(', ') }) }}
+      {{ t('stats.too_few_records', { groups: `"${stats.privacyWarnings.join('", "')}"` }) }}
     </q-banner>
     <div v-if="stats.loading">
       <div class="spinner-container">

@@ -2,7 +2,7 @@
   <div v-if="recoPros.length">
     <q-card flat>
       <q-card-section>
-        <SectionItem/>
+        <SectionItem />
         <q-tabs
           v-model="activeTab"
           dense
@@ -39,7 +39,7 @@
             v-for="(journey, idx) in proJourneys"
             :key="idx"
             :name="String(idx)"
-            class="full-height"
+            class="full-height q-px-none"
           >
             <template v-if="recoPros[idx] !== undefined">
               <RecommendationItem
@@ -61,34 +61,20 @@
         </q-tab-panels>
       </q-card-section>
 
-      <q-card-section
-        v-if="hasActions"
-        class="q-pt-none employer-measures-section"
-      >
+      <q-card-section v-if="hasActions" class="q-pt-none employer-measures-section">
         <h6 class="employer-measures-header">{{ t('form.employer_measures_header') }}</h6>
-        <p
-          v-if="companyName"
-          class="employer-measures-description"
-        >
+        <p v-if="companyName" class="employer-measures-description">
           {{ t('form.employer_measures_description', { organisation: companyName }) }}
         </p>
 
         <div v-if="currentModeActions.length" class="actions-row">
-          <div
-            v-for="action in currentModeActions"
-            :key="action"
-            class="action-chip"
-          >
+          <div v-for="action in currentModeActions" :key="action" class="action-chip">
             {{ getActionLabel(action) }}
           </div>
         </div>
 
         <div v-if="globalActions.length" class="actions-row">
-          <div
-            v-for="action in globalActions"
-            :key="action"
-            class="action-chip"
-          >
+          <div v-for="action in globalActions" :key="action" class="action-chip">
             {{ getActionLabel(action) }}
           </div>
         </div>

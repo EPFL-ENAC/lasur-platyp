@@ -3,8 +3,12 @@
     <transition name="fade" mode="out-in">
       <!-- Phase 1: Select mode (first or next) -->
       <div v-if="phase === 'select-mode'" :key="'select'">
-        <div class="text-bold text-h4 q-mb-md">
-          {{ selectedModes.length === 0 ? t('form.journey.step.first_mode') : t('form.journey.step.next_mode') }}
+        <div class="text-bold text-h5 q-mb-md">
+          {{
+            selectedModes.length === 0
+              ? t('form.journey.step.first_mode')
+              : t('form.journey.step.next_mode')
+          }}
         </div>
 
         <div v-if="selectedModes.length > 0" class="row justify-center q-mb-lg">
@@ -99,7 +103,7 @@
 
       <!-- Phase 2: Switch confirm (Yes/No) -->
       <div v-else-if="phase === 'switch-confirm'" :key="'switch'">
-        <div class="text-bold text-h4 q-mb-md">
+        <div class="text-bold text-h5 q-mb-md">
           {{ t('form.journey.step.switch_question') }}
         </div>
         <div class="text-h6 q-mb-lg">{{ t('form.journey.step.switch_hint') }}</div>
@@ -112,8 +116,7 @@
             color="primary"
             no-caps
             :label="t('form.yes')"
-            class="full-width"
-            :style="{ maxWidth: '200px' }"
+            class="q-px-xl"
             @click="onSwitchAnswer(true)"
           />
           <q-btn
@@ -123,8 +126,7 @@
             color="accent"
             no-caps
             :label="t('form.no')"
-            class="full-width"
-            :style="{ maxWidth: '200px' }"
+            class="q-px-xl"
             @click="onSwitchAnswer(false)"
           />
         </div>
@@ -132,7 +134,7 @@
 
       <!-- Phase 3: Days slider -->
       <div v-else-if="phase === 'days'" :key="'days'">
-        <div class="text-bold text-h4 q-mb-md">
+        <div class="text-bold text-h5 q-mb-md">
           {{ t('form.journey.step.days_question') }}
         </div>
 
@@ -142,7 +144,12 @@
               <div class="row items-center journey-chip">
                 <span class="text-h6">{{ getOptionLabel(mode) }}</span>
               </div>
-              <q-icon v-if="idx < selectedModes.length - 1" name="arrow_forward" color="primary" size="sm" />
+              <q-icon
+                v-if="idx < selectedModes.length - 1"
+                name="arrow_forward"
+                color="primary"
+                size="sm"
+              />
             </template>
           </div>
         </div>
@@ -173,7 +180,7 @@
 
       <!-- Phase 4: Review + Save -->
       <div v-else-if="phase === 'review'" :key="'review'">
-        <div class="text-bold text-h4 q-mb-md">
+        <div class="text-bold text-h5 q-mb-md">
           {{ t('form.journey.step.review_title') }}
         </div>
 
@@ -184,7 +191,12 @@
                 <div class="row items-center journey-chip-large">
                   <span class="text-h6">{{ getOptionLabel(mode) }}</span>
                 </div>
-                <q-icon v-if="idx < selectedModes.length - 1" name="arrow_forward" color="primary" size="md" />
+                <q-icon
+                  v-if="idx < selectedModes.length - 1"
+                  name="arrow_forward"
+                  color="primary"
+                  size="md"
+                />
               </template>
             </div>
             <div class="text-h5">
@@ -201,8 +213,7 @@
             color="primary"
             no-caps
             :label="t('form.journey.step.save')"
-            class="full-width"
-            :style="{ maxWidth: '200px' }"
+            class="q-px-xl"
             @click="onSave"
           />
         </div>
@@ -210,7 +221,7 @@
 
       <!-- Phase 5: Add another -->
       <div v-else-if="phase === 'add-another'" :key="'add'">
-        <div class="text-bold text-h4 q-mb-md">
+        <div class="text-bold text-h5 q-mb-md">
           {{ t('form.journey.saved') }}
         </div>
         <div class="text-h6 q-mb-md">{{ t('form.journey.saved_detail') }}</div>
@@ -223,8 +234,7 @@
             color="primary"
             no-caps
             :label="t('form.journey.step.add_yes')"
-            class="full-width"
-            :style="{ maxWidth: '220px' }"
+            class="q-px-xl"
             @click="onStartNewJourney"
           />
           <q-btn
@@ -234,8 +244,7 @@
             color="accent"
             no-caps
             :label="t('form.journey.step.add_no')"
-            class="full-width"
-            :style="{ maxWidth: '220px' }"
+            class="q-px-xl"
             @click="onDone"
           />
         </div>
