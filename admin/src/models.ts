@@ -359,6 +359,32 @@ export interface Stats {
   equipments_stats: EquipmentsStats | null
 }
 
+export type ComparisonMode = 'cross_sectional' | 'longitudinal'
+
+export interface CampaignGroup {
+  name: string
+  campaign_ids: number[]
+}
+
+export interface ComparisonStats extends Stats {
+  name: string
+  campaign_ids: number[]
+}
+
+export interface ModeTransition {
+  source_group: string
+  target_group: string
+  source_mode: string
+  target_mode: string
+  count: number
+}
+
+export interface ComparisonResult {
+  groups: ComparisonStats[]
+  mode_transitions?: ModeTransition[]
+  warnings?: string[]
+}
+
 export interface IsochronesParams {
   lon: number
   lat: number

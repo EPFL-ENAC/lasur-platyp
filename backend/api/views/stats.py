@@ -74,7 +74,7 @@ async def compare_statistics(
         for group in request.groups:
             group_df = df[df['campaign_id'].isin(group.campaign_ids)]
             if len(group_df) < PRIVACY_LIMIT:
-                warnings.append(f"Not enough records for: {group.name}")
+                warnings.append(group.name)
                 continue
             survived_groups.append(group)
 

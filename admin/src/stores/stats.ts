@@ -2,7 +2,10 @@ import {
   type BehaviorChangeStats,
   makeDefaultBehaviorChangeStats,
   makeDefaultJourneyEnergyStats,
+  type CampaignGroup,
   type CampaignStats,
+  type ComparisonMode,
+  type ComparisonResult,
   type Emissions,
   type Frequencies,
   type H3Heatmap,
@@ -29,6 +32,9 @@ export interface StatsState {
   journeyEnergyStats: JourneyEnergyStats
   behaviorChange: BehaviorChangeStats
   equipmentsStats: EquipmentsStats | null
+  comparisonResults: ComparisonResult | null
+  privacyWarnings: string[]
+  comparisonMode: ComparisonMode | null
 }
 
 export const useStats = defineStore('stats', () => {
@@ -45,6 +51,10 @@ export const useStats = defineStore('stats', () => {
   const journeyEnergyStats = ref<JourneyEnergyStats>({} as JourneyEnergyStats)
   const behaviorChange = ref<BehaviorChangeStats>({} as BehaviorChangeStats)
   const equipmentsStats = ref<EquipmentsStats | null>(null)
+
+  const comparisonResults = ref<ComparisonResult | null>(null)
+  const privacyWarnings = ref<string[]>([])
+  const comparisonMode = ref<ComparisonMode | null>(null)
 
   const freqModalType = ref('simple')
   const emModalType = ref('simple')
@@ -71,6 +81,7 @@ export const useStats = defineStore('stats', () => {
     journeyEnergyStats.value = makeDefaultJourneyEnergyStats()
     behaviorChange.value = makeDefaultBehaviorChangeStats()
     equipmentsStats.value = null
+    resetComparison()
 
     return loadAllStats(filter).finally(() => {
       loading.value = false
@@ -157,6 +168,45 @@ export const useStats = defineStore('stats', () => {
     })
   }
 
+  async function loadComparison(
+    groups: CampaignGroup[],
+    mode: ComparisonMode,
+    geoFilter: Filter | undefined = undefined,
+  ) {
+    loading.value = true
+    comparisonResults.value = null
+    privacyWarnings.value = []
+    return authStore
+      .updateToken()
+      .then(() => {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`,
+          },
+        }
+        return api
+          .post('/stats/compare', { groups, mode, filter: geoFilter }, config)
+          .then((res) => {
+            const result = res.data as ComparisonResult
+            comparisonResults.value = result
+            privacyWarnings.value = result.warnings || []
+            comparisonMode.value = mode
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
+  function resetComparison() {
+    comparisonResults.value = null
+    privacyWarnings.value = []
+    comparisonMode.value = null
+  }
+
   function dumpToLocalStorage() {
     const id = getRandomId()
     setLocalStorage(makeStatsStateId(id), JSON.stringify(toJSONState()))
@@ -174,6 +224,9 @@ export const useStats = defineStore('stats', () => {
       journeyEnergyStats: journeyEnergyStats.value,
       behaviorChange: behaviorChange.value,
       equipmentsStats: equipmentsStats.value,
+      comparisonResults: comparisonResults.value,
+      privacyWarnings: privacyWarnings.value,
+      comparisonMode: comparisonMode.value,
     }
   }
 
@@ -187,6 +240,9 @@ export const useStats = defineStore('stats', () => {
     workplaceLocations,
     journeyEnergyStats,
     equipmentsStats,
+    comparisonResults,
+    privacyWarnings,
+    comparisonMode,
     freqModalType,
     emModalType,
     redModalType,
@@ -200,6 +256,8 @@ export const useStats = defineStore('stats', () => {
     loading,
     loadStats,
     getCampaignStats,
+    loadComparison,
+    resetComparison,
     toJSONState,
     dumpToLocalStorage,
   }

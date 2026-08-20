@@ -390,6 +390,16 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     pending: 'En attente',
     options: 'Options',
     filter_by_zone: 'Filtrer par zone',
+    main_group: 'Groupe principal',
+    compare_with: 'Comparer avec',
+    also_compare_with: 'Comparer également avec',
+    add_more_comparisons: 'Ajouter des comparaisons',
+    cross_sectional: 'Transversal',
+    longitudinal: 'Longitudinal',
+    comparison_summary_title: 'Résumé de la comparaison',
+    comparison_pending_note:
+      'Les graphiques de comparaison détaillés pour chaque section arrivent bientôt.',
+    too_few_records: 'Données insuffisantes pour : {groups}',
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
     nb_employees: 'Nombre de participant·e·s',
@@ -861,7 +871,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       hint: 'Sélectionnez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
     },
   },
-data_protection_notice: {
+  data_protection_notice: {
     title: 'Notice sur la protection des données',
     content: `La base de données que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil Mobilyse contient des données désagrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 

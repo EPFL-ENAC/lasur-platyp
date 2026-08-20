@@ -39,11 +39,70 @@
         outlined
         color="field"
         bg-color="field"
-        v-model="campaignFilter"
-        :label="t('campaigns')"
+        v-model="mainGroupFilter"
+        :label="t('stats.main_group')"
         :options="campaignOptions"
         style="min-width: 200px"
         @update:model-value="onFilter"
+        class="on-left"
+      />
+      <q-select
+        dense
+        multiple
+        emit-value
+        map-options
+        use-chips
+        rounded
+        outlined
+        color="field"
+        bg-color="field"
+        v-model="compareWithFilter"
+        :label="t('stats.compare_with')"
+        :options="compareWithOptions"
+        style="min-width: 200px"
+        @update:model-value="onFilter"
+        class="on-left"
+      />
+      <div
+        v-for="(group, index) in additionalCompareGroups"
+        :key="index"
+        class="row items-center on-left"
+      >
+        <q-select
+          dense
+          multiple
+          emit-value
+          map-options
+          use-chips
+          rounded
+          outlined
+          color="field"
+          bg-color="field"
+          v-model="additionalCompareGroups[index]"
+          :label="`${t('stats.also_compare_with')} ${index + 1}`"
+          :options="additionalGroupOptions(index)"
+          style="min-width: 200px"
+          @update:model-value="onFilter"
+        />
+        <q-btn
+          flat
+          round
+          dense
+          size="sm"
+          icon="close"
+          :aria-label="t('remove')"
+          @click="removeAdditionalGroup(index)"
+        />
+      </div>
+      <q-btn
+        flat
+        dense
+        no-caps
+        color="field"
+        icon="add"
+        :label="t('stats.add_more_comparisons')"
+        :disable="!canAddMoreComparisons"
+        @click="addComparisonGroup"
         class="on-left"
       />
       <q-btn size="sm" color="field" outline no-caps>
@@ -80,10 +139,35 @@
 
       <download-data-button
         :company-filter="companyFilter"
-        :campaign-filter="campaignFilter"
+        :campaign-filter="mainGroupFilter"
         class="on-right"
       />
     </div>
+    <div v-if="hasComparisonGroups" class="row items-center q-mb-md">
+      <q-btn-toggle
+        v-model="comparisonModeToggle"
+        no-caps
+        dense
+        rounded
+        unelevated
+        toggle-color="primary"
+        color="white"
+        text-color="primary"
+        :options="[
+          { label: t('stats.cross_sectional'), value: 'cross_sectional' },
+          { label: t('stats.longitudinal'), value: 'longitudinal' },
+        ]"
+        @update:model-value="onFilter"
+      />
+    </div>
+    <q-banner
+      v-if="stats.privacyWarnings.length > 0"
+      dense
+      rounded
+      class="bg-warning text-white q-mb-md"
+    >
+      {{ t('stats.too_few_records', { groups: stats.privacyWarnings.join(', ') }) }}
+    </q-banner>
     <div v-if="stats.loading">
       <div class="spinner-container">
         <q-spinner-dots size="64px" color="primary" />
@@ -105,7 +189,7 @@
 import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
 import AreaDialog from 'src/components/AreaDialog.vue'
 import DownloadDataButton from 'src/components/DownloadDataButton.vue'
-import type { Company, Campaign } from 'src/models'
+import type { Company, Campaign, CampaignGroup, ComparisonMode } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { useQuasar } from 'quasar'
 import MarkdownDialog from 'src/components/MarkdownDialog.vue'
@@ -132,7 +216,7 @@ const companyOptions = computed(() => {
     .sort((a, b) => a.label.localeCompare(b.label))
 })
 
-const campaignFilter = ref<string[]>([])
+const mainGroupFilter = ref<string[]>([])
 const campaignOptions = computed(() => {
   return Object.values(campaignMap.value)
     .map((campaign) => ({
@@ -147,8 +231,8 @@ const selectedCampaigns = computed(() => {
   const filteredByCompanies = companyFilter.value.length
     ? allCampaigns.filter((campaign) => companyFilter.value.includes(`${campaign.company_id}`))
     : allCampaigns
-  const filteredByCampaigns = campaignFilter.value.length
-    ? filteredByCompanies.filter((campaign) => campaignFilter.value.includes(`${campaign.id}`))
+  const filteredByCampaigns = mainGroupFilter.value.length
+    ? filteredByCompanies.filter((campaign) => mainGroupFilter.value.includes(`${campaign.id}`))
     : filteredByCompanies
   return filteredByCampaigns
 })
@@ -167,6 +251,62 @@ const areaCount = computed(() => {
   }
   return 0
 })
+
+// "Main Group" resolved to concrete campaign ids: explicit selection, or every
+// campaign currently in scope (company filter applied) when left empty.
+const mainGroupCampaignIds = computed<number[]>(() => {
+  return mainGroupFilter.value.length > 0
+    ? mainGroupFilter.value.map((id) => Number(id))
+    : selectedCampaigns.value.map((campaign) => campaign.id as number)
+})
+
+function optionsExcluding(excludeIds: (string | number)[]) {
+  const excludeSet = new Set(excludeIds.map((id) => `${id}`))
+  return campaignOptions.value.filter((option) => !excludeSet.has(`${option.value}`))
+}
+
+const compareWithFilter = ref<string[]>([])
+const compareWithOptions = computed(() => optionsExcluding(mainGroupCampaignIds.value))
+
+// Extra "Also compare with" rows, each a list of campaign ids for one more group.
+const additionalCompareGroups = ref<string[][]>([])
+
+function additionalGroupOptions(index: number) {
+  const excluded = [
+    ...mainGroupCampaignIds.value,
+    ...compareWithFilter.value,
+    ...additionalCompareGroups.value.flatMap((ids, i) => (i === index ? [] : ids)),
+  ]
+  return optionsExcluding(excluded)
+}
+
+// Main Group + up to 4 "compare with" groups, matching the comparison chart palette size.
+const MAX_COMPARISON_GROUPS = 5
+// The fixed "Compare with" row plus however many "Also compare with" rows were added.
+const MAX_COMPARE_WITH_ROWS = MAX_COMPARISON_GROUPS - 1
+const canAddMoreComparisons = computed(
+  () => 1 + additionalCompareGroups.value.length < MAX_COMPARE_WITH_ROWS,
+)
+
+const hasComparisonGroups = computed(
+  () =>
+    compareWithFilter.value.length > 0 ||
+    additionalCompareGroups.value.some((ids) => ids.length > 0),
+)
+
+const comparisonModeToggle = ref<ComparisonMode>('cross_sectional')
+
+function addComparisonGroup() {
+  additionalCompareGroups.value.push([])
+}
+
+function removeAdditionalGroup(index: number) {
+  const hadSelection = (additionalCompareGroups.value[index]?.length ?? 0) > 0
+  additionalCompareGroups.value.splice(index, 1)
+  if (hadSelection) {
+    onFilter()
+  }
+}
 
 onMounted(() => {
   stats.loadStats()
@@ -190,13 +330,10 @@ function getCompanyName(companyId: string | number | undefined): string {
   return companyMap.value[`${companyId}`]?.name || `${companyId}`
 }
 
-function onFilter() {
+function buildBaseFilter(): Filter {
   const query = {} as Filter
   if (companyFilter.value.length > 0) {
     query.company_id = { $in: companyFilter.value }
-  }
-  if (campaignFilter.value.length > 0) {
-    query.campaign_id = { $in: campaignFilter.value }
   }
   if (areaFilter.value) {
     query.workplace_location = {
@@ -204,6 +341,40 @@ function onFilter() {
         $geometry: areaFilter.value.features[0]?.geometry,
       },
     }
+  }
+  return query
+}
+
+function buildComparisonGroups(): CampaignGroup[] {
+  const groups: CampaignGroup[] = [
+    { name: t('stats.main_group'), campaign_ids: mainGroupCampaignIds.value },
+  ]
+  if (compareWithFilter.value.length > 0) {
+    groups.push({
+      name: t('stats.compare_with'),
+      campaign_ids: compareWithFilter.value.map((id) => Number(id)),
+    })
+  }
+  additionalCompareGroups.value.forEach((ids, index) => {
+    if (ids.length > 0) {
+      groups.push({
+        name: `${t('stats.also_compare_with')} ${index + 1}`,
+        campaign_ids: ids.map((id) => Number(id)),
+      })
+    }
+  })
+  return groups
+}
+
+function onFilter() {
+  if (hasComparisonGroups.value) {
+    stats.loadComparison(buildComparisonGroups(), comparisonModeToggle.value, buildBaseFilter())
+    return
+  }
+
+  const query = buildBaseFilter()
+  if (mainGroupFilter.value.length > 0) {
+    query.campaign_id = { $in: mainGroupFilter.value }
   }
   stats.loadStats(query)
 }
@@ -237,11 +408,23 @@ async function openReport() {
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'
 
+  // In comparison mode, the report should reflect every campaign across all groups,
+  // not just the Main Group.
+  const reportCampaignFilter = hasComparisonGroups.value
+    ? [
+        ...new Set([
+          ...mainGroupFilter.value,
+          ...compareWithFilter.value,
+          ...additionalCompareGroups.value.flat(),
+        ]),
+      ]
+    : mainGroupFilter.value
+
   let displayedOrgs =
     companyFilter.value.length > 0 ? companyFilter.value : Object.keys(companyMap.value)
 
-  let displayedCampaigns = campaignFilter.value
-  if (campaignFilter.value.length === 0) {
+  let displayedCampaigns = reportCampaignFilter
+  if (reportCampaignFilter.length === 0) {
     const campaignsInDisplayedOrgs = Object.values(campaignMap.value).filter(
       (campaign) => displayedOrgs.some((orgId) => orgId == `${campaign.company_id}`), // use loose equality to compare string and number IDs
     )
@@ -249,7 +432,7 @@ async function openReport() {
   } else {
     // If we filtered by campaigns, make sure we remove the orgs that are not in the filtered campaigns from the report filters
     displayedOrgs = displayedOrgs.filter((orgId) =>
-      campaignFilter.value.some(
+      reportCampaignFilter.some(
         (campaignId) => `${campaignMap.value[campaignId]?.company_id}` === orgId,
       ),
     )

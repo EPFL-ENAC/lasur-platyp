@@ -1,178 +1,212 @@
 <template>
   <div>
-    <q-tabs
-      v-model="tab"
-      dense
-      no-caps
-      class="text-grey"
-      active-color="secondary"
-      active-bg-color="grey-4"
-      indicator-color="primary"
-      align="left"
-      @update:model-value="onTabChanged"
-    >
-      <q-tab name="analysis" :label="t('stats.sections.mobility_analysis.title')" />
-      <q-tab name="potentials" :label="t('stats.sections.mobility_potentials.title')" />
-      <q-tab name="behavioural" :label="t('stats.sections.behavioural_changes.title')" />
-    </q-tabs>
-    <q-tab-panels v-model="tab">
-      <q-tab-panel name="analysis">
-        <div class="text-h5 q-mb-md">{{ t('stats.sections.mobility_analysis.title') }}</div>
-        <q-markdown
-          class="compact q-mt-sm"
-          :src="t('stats.sections.mobility_analysis.description')"
-        />
-        <details-panel class="q-mb-md">
-          <q-markdown class="compact" :src="t('stats.sections.mobility_analysis.details')" />
-        </details-panel>
+    <div v-if="stats.comparisonMode">
+      <div class="text-h6 q-mb-sm">{{ t('stats.comparison_summary_title') }}</div>
+      <q-markdown class="compact q-mb-md" :src="t('stats.comparison_pending_note')" />
+      <div class="row q-gutter-md">
+        <q-card
+          v-for="group in stats.comparisonResults?.groups ?? []"
+          :key="group.name"
+          flat
+          bordered
+          style="min-width: 220px"
+        >
+          <q-card-section>
+            <div class="text-subtitle1">{{ group.name }}</div>
+            <div class="text-caption text-grey-8">
+              {{ t('stats.total', { count: group.total }) }}
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+    <template v-else>
+      <q-tabs
+        v-model="tab"
+        dense
+        no-caps
+        class="text-grey"
+        active-color="secondary"
+        active-bg-color="grey-4"
+        indicator-color="primary"
+        align="left"
+        @update:model-value="onTabChanged"
+      >
+        <q-tab name="analysis" :label="t('stats.sections.mobility_analysis.title')" />
+        <q-tab name="potentials" :label="t('stats.sections.mobility_potentials.title')" />
+        <q-tab name="behavioural" :label="t('stats.sections.behavioural_changes.title')" />
+      </q-tabs>
+      <q-tab-panels v-model="tab">
+        <q-tab-panel name="analysis">
+          <div class="text-h5 q-mb-md">{{ t('stats.sections.mobility_analysis.title') }}</div>
+          <q-markdown
+            class="compact q-mt-sm"
+            :src="t('stats.sections.mobility_analysis.description')"
+          />
+          <details-panel class="q-mb-md">
+            <q-markdown class="compact" :src="t('stats.sections.mobility_analysis.details')" />
+          </details-panel>
 
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_analysis.title') }} - {{ t('stats.sections.home_to_work') }}</div>
-        <div class="grid-container">
-          <location-chart
-            :height="height"
-            :home-locations-heatmap="stats.homeLocationsHeatmap"
-            :workplace-locations="stats.workplaceLocations"
+          <div class="text-h6 q-my-md">
+            {{ t('stats.sections.mobility_analysis.title') }} -
+            {{ t('stats.sections.home_to_work') }}
+          </div>
+          <div class="grid-container">
+            <location-chart
+              :height="height"
+              :home-locations-heatmap="stats.homeLocationsHeatmap"
+              :workplace-locations="stats.workplaceLocations"
+            />
+            <freq-mod-chart
+              :height="height"
+              :simple-frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
+              :detailed-frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
+              :loading="stats.loading"
+            />
+            <travel-time-frequencies-chart
+              :frequencies="getFreq('travel_time')"
+              :xaxis="t('stats.travel_time.xaxis')"
+              :range-step="5"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <equipment-frequencies-chart
+              :frequencies="getFreq('equipments')"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <mobility-constraints-frequencies-chart
+              :frequencies="getFreq('constraints')"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <emissions-mod-chart
+              :height="height"
+              :simple-emissions="stats.emissions?.['freq_mod_simple'] ?? null"
+              :detailed-emissions="stats.emissions?.['freq_mod_complex'] ?? null"
+              :loading="stats.loading"
+            />
+            <journey-energy-chart
+              type="current"
+              :journey-energy-stats="stats.journeyEnergyStats"
+              :height="height"
+              :loading="stats.loading"
+            />
+          </div>
+          <div class="text-h6 q-my-md">
+            {{ t('stats.sections.mobility_analysis.title') }} -
+            {{ t('stats.sections.professional_travel') }}
+          </div>
+          <div class="grid-container">
+            <freq-mod-pro-chart
+              :frequencies="getFreqArray('freq_mod_pro')"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <emissions-mod-pro-chart
+              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
+              :height="height"
+              :loading="stats.loading"
+            />
+          </div>
+        </q-tab-panel>
+        <q-tab-panel name="potentials">
+          <div class="text-h5" data-section-name="mobility_potentials" expand-icon-toggle>
+            {{ t('stats.sections.mobility_potentials.title') }}
+          </div>
+          <q-markdown
+            class="compact q-mt-sm"
+            :src="t('stats.sections.mobility_potentials.description')"
           />
-          <freq-mod-chart
-            :height="height"
-            :simple-frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
-            :detailed-frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
-            :loading="stats.loading"
-          />
-          <travel-time-frequencies-chart
-            :frequencies="getFreq('travel_time')"
-            :xaxis="t('stats.travel_time.xaxis')"
-            :range-step="5"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <equipment-frequencies-chart
-            :frequencies="getFreq('equipments')"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <mobility-constraints-frequencies-chart
-            :frequencies="getFreq('constraints')"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <emissions-mod-chart
-            :height="height"
-            :simple-emissions="stats.emissions?.['freq_mod_simple'] ?? null"
-            :detailed-emissions="stats.emissions?.['freq_mod_complex'] ?? null"
-            :loading="stats.loading"
-          />
-          <journey-energy-chart
-            type="current"
-            :journey-energy-stats="stats.journeyEnergyStats"
-            :height="height"
-            :loading="stats.loading"
-          />
-        </div>
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_analysis.title') }} - {{ t('stats.sections.professional_travel') }}</div>
-        <div class="grid-container">
-          <freq-mod-pro-chart
-            :frequencies="getFreqArray('freq_mod_pro')"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <emissions-mod-pro-chart
-            :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
-            :height="height"
-            :loading="stats.loading"
-          />
-        </div>
-      </q-tab-panel>
-      <q-tab-panel name="potentials">
-        <div class="text-h5" data-section-name="mobility_potentials" expand-icon-toggle>
-          {{ t('stats.sections.mobility_potentials.title') }}
-        </div>
-        <q-markdown
-          class="compact q-mt-sm"
-          :src="t('stats.sections.mobility_potentials.description')"
-        />
-        <details-panel class="q-mb-md">
-          <mobility-potential-insights
-            frequency-key="reco_inter"
-            :reduction-key="
-              stats.redModalType === 'simple' ? 'reductions_mod_simple' : 'reductions_mod_complex'
-            "
-            :collaborators-count="collaboratorsCount || undefined"
-            class="q-mb-md"
-          />
-        </details-panel>
+          <details-panel class="q-mb-md">
+            <mobility-potential-insights
+              frequency-key="reco_inter"
+              :reduction-key="
+                stats.redModalType === 'simple' ? 'reductions_mod_simple' : 'reductions_mod_complex'
+              "
+              :collaborators-count="collaboratorsCount || undefined"
+              class="q-mb-md"
+            />
+          </details-panel>
 
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_potentials.title') }} - {{ t('stats.sections.home_to_work') }}</div>
-        <div class="grid-container">
-          <freq-reco-chart
-            :frequencies="getFreq('reco_inter')"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <links-reco-chart
-            :links="stats.links['mod_reco'] ?? null"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <emissions-reductions-mod-chart :height="height" :loading="stats.loading" />
-          <emissions-reductions-mod-share-chart :height="height" :loading="stats.loading" />
-          <journey-energy-chart
-            type="reco"
-            :height="height"
-            :journey-energy-stats="stats.journeyEnergyStats"
-            :loading="stats.loading"
-          />
-          <journey-energy-share-chart
-            :journeyEnergyStats="stats.journeyEnergyStats"
-            :height="height"
-            :loading="stats.loading"
-          />
-        </div>
+          <div class="text-h6 q-my-md">
+            {{ t('stats.sections.mobility_potentials.title') }} -
+            {{ t('stats.sections.home_to_work') }}
+          </div>
+          <div class="grid-container">
+            <freq-reco-chart
+              :frequencies="getFreq('reco_inter')"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <links-reco-chart
+              :links="stats.links['mod_reco'] ?? null"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <emissions-reductions-mod-chart :height="height" :loading="stats.loading" />
+            <emissions-reductions-mod-share-chart :height="height" :loading="stats.loading" />
+            <journey-energy-chart
+              type="reco"
+              :height="height"
+              :journey-energy-stats="stats.journeyEnergyStats"
+              :loading="stats.loading"
+            />
+            <journey-energy-share-chart
+              :journeyEnergyStats="stats.journeyEnergyStats"
+              :height="height"
+              :loading="stats.loading"
+            />
+          </div>
 
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_potentials.title') }} - {{ t('stats.sections.professional_travel') }}</div>
-        <div class="grid-container">
-          <freq-reco-pro-chart
-            :frequencies="getFreq('reco_pros')"
-            :height="height"
-            :loading="stats.loading"
+          <div class="text-h6 q-my-md">
+            {{ t('stats.sections.mobility_potentials.title') }} -
+            {{ t('stats.sections.professional_travel') }}
+          </div>
+          <div class="grid-container">
+            <freq-reco-pro-chart
+              :frequencies="getFreq('reco_pros')"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <emissions-reductions-mod-pro-chart
+              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
+              :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
+              :height="height"
+              :loading="stats.loading"
+            />
+          </div>
+        </q-tab-panel>
+        <q-tab-panel name="behavioural">
+          <div class="text-h5" data-section-name="behavioural_changes" expand-icon-toggle>
+            {{ t('stats.sections.behavioural_changes.title') }}
+          </div>
+          <q-markdown
+            class="compact q-pb-md q-mt-sm"
+            :src="t('stats.sections.behavioural_changes.description')"
           />
-          <emissions-reductions-mod-pro-chart
-            :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
-            :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
-            :height="height"
-            :loading="stats.loading"
-          />
-        </div>
-      </q-tab-panel>
-      <q-tab-panel name="behavioural">
-        <div class="text-h5" data-section-name="behavioural_changes" expand-icon-toggle>
-          {{ t('stats.sections.behavioural_changes.title') }}
-        </div>
-        <q-markdown
-          class="compact q-pb-md q-mt-sm"
-          :src="t('stats.sections.behavioural_changes.description')"
-        />
-        <div class="grid-container">
-          <levers-change-chart
-            :behavior-change-stats="stats.behaviorChange"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <motivation-change-chart
-            :behavior-change-stats="stats.behaviorChange"
-            :height="height"
-            :loading="stats.loading"
-          />
-          <equipment-recommendation-matrix-chart
-            class="grid-item-full-row"
-            :equipmentsStats="stats.equipmentsStats"
-            :height="height"
-            :loading="stats.loading"
-            has-options
-          />
-        </div>
-      </q-tab-panel>
-    </q-tab-panels>
+          <div class="grid-container">
+            <levers-change-chart
+              :behavior-change-stats="stats.behaviorChange"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <motivation-change-chart
+              :behavior-change-stats="stats.behaviorChange"
+              :height="height"
+              :loading="stats.loading"
+            />
+            <equipment-recommendation-matrix-chart
+              class="grid-item-full-row"
+              :equipmentsStats="stats.equipmentsStats"
+              :height="height"
+              :loading="stats.loading"
+              has-options
+            />
+          </div>
+        </q-tab-panel>
+      </q-tab-panels>
+    </template>
   </div>
 </template>
 <script setup lang="ts">
