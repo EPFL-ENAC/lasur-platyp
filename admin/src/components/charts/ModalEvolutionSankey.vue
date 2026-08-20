@@ -59,7 +59,7 @@ const hasData = computed(() => (stats.comparisonResults?.mode_transitions?.lengt
 watch(
   () => props.loading,
   () => {
-    if (props.loading) {
+    if (!props.loading) {
       initChartOptions()
     }
   },
