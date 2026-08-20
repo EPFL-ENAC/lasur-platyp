@@ -23,7 +23,15 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  modeSortOrder,
+  simpleLabelSortOrder,
+  complexLabelSortOrder,
+} from './commons'
+import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -31,10 +39,13 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { formatNumber } from 'src/utils/numbers'
-import type { EmissionReduction, Emissions } from 'src/models'
+import type { ComparisonStats, EmissionReduction, Emissions } from 'src/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   chartTranslationName: string
@@ -50,6 +61,19 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
+
+function findGroupReductions(groupStats: ComparisonStats): EmissionReduction[] | undefined {
+  switch (props.chartTranslationName) {
+    case 'reductions_mod_simple':
+      return groupStats.mode_emission_reductions_simple_labels ?? undefined
+    case 'reductions_mod_complex':
+      return groupStats.mode_emission_reductions_complex_labels ?? undefined
+    case 'reductions_mod_pro':
+      return groupStats.pro_mode_emission_reductions ?? undefined
+    default:
+      return undefined
+  }
+}
 
 type EChartsShellExposed = {
   handleExport: () => Promise<void>
@@ -67,6 +91,7 @@ const currentEmissions = ref(0)
 const newEmissions = ref(0)
 
 const textLabels = computed(() => {
+  if (isComparison.value) return null
   if (total.value < 5) return null
 
   return {
@@ -121,6 +146,11 @@ const SCALE_FACTOR = 1 / 1000 // convert from kg to tons
 const UNIT_LABEL = 'tCO₂eq'
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.emissions || !props.reductions) {
@@ -282,5 +312,57 @@ function initChartOptions() {
 
 function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupReductions = groups.map((group) => ({
+    name: group.name,
+    reductions: findGroupReductions(group) ?? [],
+  }))
+  if (groupReductions.every((group) => group.reductions.length === 0)) {
+    return
+  }
+
+  const colors = props.chartTranslationName.includes('simple')
+    ? SIMPLE_LABELS_COLORS
+    : props.chartTranslationName.includes('complex')
+      ? COMPLEX_LABELS_COLORS
+      : MODE_COLORS
+  const sortOrder = props.chartTranslationName.includes('simple')
+    ? simpleLabelSortOrder
+    : props.chartTranslationName.includes('complex')
+      ? complexLabelSortOrder
+      : modeSortOrder
+
+  const groupDatasets: ComparisonGroupDataset[] = groupReductions.map((group) => {
+    total.value += group.reductions[0]?.total ?? 0
+    return {
+      name: group.name,
+      items: group.reductions.map((item) => ({
+        key: shortKey(item.mode),
+        name: keyLabel(item.mode),
+        value: item.reduced,
+      })),
+    }
+  })
+
+  const keyOrder = Array.from(
+    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+  ).sort((a, b) => sortOrder(a) - sortOrder(b))
+
+  option.value = buildGroupStackedBarOption({
+    groupDatasets,
+    colors,
+    percent: false,
+    title: t(`stats.emissions_${props.chartTranslationName}.title`),
+    totalLabel: t('stats.total', { count: total.value }),
+    height: props.height - 100,
+    yAxisName: props.yaxis || UNIT_LABEL,
+    keyOrder,
+  })
 }
 </script>

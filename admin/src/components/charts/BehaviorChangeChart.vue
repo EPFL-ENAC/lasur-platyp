@@ -36,6 +36,9 @@ import type { BehaviorChangeStats } from 'src/models'
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
+
 interface Props {
   type: 'levers' | 'motivation'
   behaviorChangeStats: BehaviorChangeStats | null
@@ -94,7 +97,13 @@ function initChartOptions() {
   option.value = {}
   total.value = 0
 
-  const opt = props.type === 'levers' ? leversOptions() : motivationOptions()
+  const opt = isComparison.value
+    ? props.type === 'levers'
+      ? comparisonLeversOptions()
+      : comparisonMotivationOptions()
+    : props.type === 'levers'
+      ? leversOptions()
+      : motivationOptions()
   if (!opt) {
     return
   }
@@ -260,5 +269,120 @@ function getSortedModes<
   )
 
   return copy
+}
+
+function orderModes(modes: string[]): string[] {
+  const copy = [...modes]
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'other'),
+  )
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'Autres'),
+  )
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'allModes'),
+  )
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'Total'),
+  )
+  return copy
+}
+
+function comparisonLeversOptions() {
+  const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
+    name: group.name,
+    byMode: group.behavior_change?.levers?.by_mode_levers ?? [],
+    total: group.behavior_change?.levers?.total_responses ?? 0,
+  }))
+  if (groups.every((group) => group.byMode.length === 0)) {
+    return null
+  }
+
+  const modes = orderModes(
+    Array.from(new Set(groups.flatMap((group) => group.byMode.map((item) => item.mode)))),
+  )
+  const categories = Array.from(
+    new Set(
+      groups.flatMap((group) =>
+        group.byMode.flatMap((item) => item.levers.map((lever) => lever.category)),
+      ),
+    ),
+  )
+  if (modes.length === 0 || categories.length === 0) {
+    return null
+  }
+
+  const series: SeriesOption[] = []
+  groups.forEach((group, groupIndex) => {
+    categories.forEach((category) => {
+      series.push({
+        name: `${group.name} — ${keyLabel(category)}`,
+        type: 'bar',
+        stack: `group_${groupIndex}`,
+        emphasis: { focus: 'series' },
+        itemStyle: { color: CATEGORY_COLORS[category] || '#ccc' },
+        data: modes.map((mode) => {
+          const modeItem = group.byMode.find((item) => item.mode === mode)
+          const lever = modeItem?.levers.find((l) => l.category === category)
+          if (!lever) return 0
+          return props.percent ? lever.percentage : lever.count
+        }),
+      })
+    })
+  })
+
+  return {
+    series,
+    categories: modes.map((mode) => keyLabel(mode)),
+    total: groups.reduce((sum, group) => sum + group.total, 0),
+  }
+}
+
+function comparisonMotivationOptions() {
+  const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
+    name: group.name,
+    byMode: group.behavior_change?.motivation?.by_mode_motivation ?? [],
+    total: group.behavior_change?.motivation?.total_responses ?? 0,
+  }))
+  if (groups.every((group) => group.byMode.length === 0)) {
+    return null
+  }
+
+  const modes = orderModes(
+    Array.from(new Set(groups.flatMap((group) => group.byMode.map((item) => item.mode)))),
+  )
+  if (modes.length === 0) {
+    return null
+  }
+  const levels = [1, 2, 3, 4, 5]
+
+  const series: SeriesOption[] = []
+  groups.forEach((group, groupIndex) => {
+    levels.forEach((level) => {
+      series.push({
+        name: `${group.name} — ${keyLabel(`l${level.toString()}`)}`,
+        type: 'bar',
+        stack: `group_${groupIndex}`,
+        emphasis: { focus: 'series' },
+        itemStyle: { color: MOTIVATION_COLORS[level] || '#ccc' },
+        data: modes.map((mode) => {
+          const modeItem = group.byMode.find((item) => item.mode === mode)
+          const motivation = modeItem?.motivations.find((m) => m.level === level)
+          if (!motivation) return 0
+          return props.percent ? motivation.percentage : motivation.count
+        }),
+      })
+    })
+  })
+
+  return {
+    series,
+    categories: modes.map((mode) => keyLabel(mode)),
+    total: groups.reduce((sum, group) => sum + group.total, 0),
+  }
 }
 </script>

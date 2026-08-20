@@ -1,6 +1,6 @@
 <template>
   <div :class="wrapperClass">
-    <div class="q-pa-md">
+    <div class="q-pa-none">
       <q-item-label v-if="indexLabel" class="text-body1 text-primary text-bold">
         {{ indexLabel }}
       </q-item-label>
@@ -10,15 +10,15 @@
           {{ t(`bravo.${bravo}`) }}
         </div>
         <div v-if="hasBenefits(reco) && !benefitsExpanded" class="bravo-btn-wrapper">
-          <q-btn
-            class="benefits-btn"
-            size="md"
-            no-caps
-            dense
-          >
+          <q-btn class="benefits-btn" size="md" no-caps dense>
             <q-icon name="workspace_premium" class="q-mr-xs" />
             {{ t('benefits.show') }}
-            <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'" anchor="top end" self="top start">
+            <q-menu
+              class="q-mr-md bg-white text-secondary rounded-borders q-pa-md"
+              :max-width="'400px'"
+              anchor="top end"
+              self="top start"
+            >
               <q-markdown :src="getBenefits(reco, locale)" />
             </q-menu>
           </q-btn>
@@ -39,15 +39,15 @@
             {{ recoLabel }}
           </q-item-label>
           <div v-if="hasBenefits(reco) && !benefitsExpanded" class="reco-btn-wrapper">
-            <q-btn
-              class="benefits-btn"
-              size="md"
-              no-caps
-              dense
-            >
+            <q-btn class="benefits-btn" size="md" no-caps dense>
               <q-icon name="workspace_premium" class="q-mr-xs" />
               {{ t('benefits.show') }}
-              <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'" anchor="top end" self="top start">
+              <q-menu
+                class="q-mr-md bg-white text-secondary rounded-borders q-pa-md"
+                :max-width="'400px'"
+                anchor="top end"
+                self="top start"
+              >
                 <q-markdown :src="getBenefits(reco, locale)" />
               </q-menu>
             </q-btn>
@@ -58,7 +58,12 @@
           {{ recoLabel }}
         </q-item-label>
 
-        <BenefitsPanel v-if="!hasBenefits(reco) || benefitsExpanded" :reco="reco" class="q-mt-sm" :expanded="!!benefitsExpanded" />
+        <BenefitsPanel
+          v-if="!hasBenefits(reco) || benefitsExpanded"
+          :reco="reco"
+          class="q-mt-sm"
+          :expanded="!!benefitsExpanded"
+        />
       </template>
 
       <slot />

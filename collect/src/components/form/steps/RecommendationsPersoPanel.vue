@@ -2,7 +2,7 @@
   <div>
     <q-card flat>
       <q-card-section>
-        <SectionItem/>
+        <SectionItem />
         <q-tabs
           v-model="activeTab"
           dense
@@ -23,12 +23,7 @@
                   no-transition
                   class="icon-primary"
                 />
-                <q-icon
-                  v-else
-                  :name="getModeIcon(mode)?.icon"
-                  size="sm"
-                  class="text-primary"
-                />
+                <q-icon v-else :name="getModeIcon(mode)?.icon" size="sm" class="text-primary" />
               </template>
               <span class="text-subtitle2 q-ml-xs">
                 {{ t('form.journey.label_idx', { index: idx + 1 }) }}
@@ -41,7 +36,7 @@
             v-for="(_, idx) in journeys"
             :key="idx"
             :name="String(idx)"
-            class="full-height"
+            class="full-height q-px-none"
           >
             <template v-if="recoInter[idx] !== undefined">
               <RecommendationItem
@@ -64,31 +59,20 @@
         </q-tab-panels>
       </q-card-section>
 
-      <q-card-section
-        v-if="hasActions"
-        class="q-pt-none employer-measures-section"
-      >
+      <q-card-section v-if="hasActions" class="q-pt-none employer-measures-section">
         <h6 class="employer-measures-header">{{ t('form.employer_measures_header') }}</h6>
         <p class="employer-measures-description">
           {{ t('form.employer_measures_description', { organisation: companyName }) }}
         </p>
 
         <div v-if="currentModeActions.length" class="actions-row">
-          <div
-            v-for="action in currentModeActions"
-            :key="action"
-            class="action-chip"
-          >
+          <div v-for="action in currentModeActions" :key="action" class="action-chip">
             {{ getActionLabel(action) }}
           </div>
         </div>
 
         <div v-if="globalActions.length" class="actions-row">
-          <div
-            v-for="action in globalActions"
-            :key="action"
-            class="action-chip"
-          >
+          <div v-for="action in globalActions" :key="action" class="action-chip">
             {{ getActionLabel(action) }}
           </div>
         </div>

@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import EChartsShell from './EChartsShell.vue'
-import { type EChartsOption } from 'echarts'
+import { type EChartsOption, type SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
@@ -28,6 +28,9 @@ import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   chartTranslationName: string
@@ -89,6 +92,11 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -246,6 +254,103 @@ function initChartOptions() {
     series: series,
   }
   option.value = newOption
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const comparisonGroups = stats.comparisonResults?.groups ?? []
+  const groupFrequencies = comparisonGroups.map((group) => ({
+    name: group.name,
+    frequencies: group.pro_mode_frequencies || [],
+  }))
+  if (groupFrequencies.every((group) => group.frequencies.length === 0)) {
+    return
+  }
+
+  const datasets = groupFrequencies.map((group) => {
+    total.value += group.frequencies[0]?.total ?? 0
+    const byKey = new Map<string, number>()
+    group.frequencies.forEach((item) => {
+      byKey.set(
+        shortKey(item.field),
+        item.data.map((d) => (d.sum === undefined ? 0 : d.sum)).reduce((a, b) => a + b, 0),
+      )
+    })
+    return { name: group.name, byKey }
+  })
+
+  const modes = new Set<string>()
+  datasets.forEach((dataset) => {
+    dataset.byKey.forEach((_, key) => {
+      props.groups.forEach((scale) => {
+        if (key.startsWith(scale)) {
+          modes.add(key.replace(`${scale}_`, ''))
+        }
+      })
+    })
+  })
+  if (modes.size === 0) {
+    return
+  }
+
+  const modesOrder = ['plane', 'car', 'moto', 'pub', 'train', 'bike', 'walking']
+  const sortedModes = Array.from(modes).sort(
+    (a, b) => modesOrder.indexOf(a) - modesOrder.indexOf(b),
+  )
+
+  const series: SeriesOption[] = []
+  datasets.forEach((dataset, groupIndex) => {
+    sortedModes.forEach((mode) => {
+      series.push({
+        name: `${dataset.name} — ${t(`stats.${props.chartTranslationName}.labels.${mode}`)}`,
+        type: 'bar',
+        stack: `group_${groupIndex}`,
+        emphasis: { focus: 'series' },
+        color: MODE_COLORS[mode] || '#ccc',
+        data: props.groups.map((scale) => dataset.byKey.get(`${scale}_${mode}`) ?? 0),
+      })
+    })
+  })
+
+  option.value = {
+    grid: {
+      left: '20',
+      right: '20',
+      top: '60',
+      bottom: '60',
+      containLabel: true,
+    },
+    animation: false,
+    height: props.height - 120,
+    title: {
+      text: t(`stats.${props.chartTranslationName}.title`),
+      subtext: t('stats.total', { count: total.value }),
+      left: 'center',
+      top: 0,
+      textStyle: { fontSize: 16 },
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+    },
+    legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
+    yAxis: {
+      name: props.yaxis || '',
+      nameLocation: 'end',
+      nameGap: 30,
+      type: 'category',
+      data: props.groups.map((g) => t(`stats.${props.chartTranslationName}.labels.${g}`)),
+    },
+    xAxis: {
+      name: props.xaxis || t('stats.nb_employees'),
+      nameLocation: 'middle',
+      nameGap: 20,
+      type: 'value',
+    },
+    series,
+  }
 }
 
 function shortKey(key: string) {

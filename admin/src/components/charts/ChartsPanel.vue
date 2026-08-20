@@ -26,7 +26,10 @@
           <q-markdown class="compact" :src="t('stats.sections.mobility_analysis.details')" />
         </details-panel>
 
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_analysis.title') }} - {{ t('stats.sections.home_to_work') }}</div>
+        <div class="text-h6 q-my-md">
+          {{ t('stats.sections.mobility_analysis.title') }} -
+          {{ t('stats.sections.home_to_work') }}
+        </div>
         <div class="grid-container">
           <location-chart
             :height="height"
@@ -69,7 +72,10 @@
             :loading="stats.loading"
           />
         </div>
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_analysis.title') }} - {{ t('stats.sections.professional_travel') }}</div>
+        <div class="text-h6 q-my-md">
+          {{ t('stats.sections.mobility_analysis.title') }} -
+          {{ t('stats.sections.professional_travel') }}
+        </div>
         <div class="grid-container">
           <freq-mod-pro-chart
             :frequencies="getFreqArray('freq_mod_pro')"
@@ -102,7 +108,10 @@
           />
         </details-panel>
 
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_potentials.title') }} - {{ t('stats.sections.home_to_work') }}</div>
+        <div class="text-h6 q-my-md">
+          {{ t('stats.sections.mobility_potentials.title') }} -
+          {{ t('stats.sections.home_to_work') }}
+        </div>
         <div class="grid-container">
           <freq-reco-chart
             :frequencies="getFreq('reco_inter')"
@@ -129,7 +138,10 @@
           />
         </div>
 
-        <div class="text-h6 q-my-md">{{ t('stats.sections.mobility_potentials.title') }} - {{ t('stats.sections.professional_travel') }}</div>
+        <div class="text-h6 q-my-md">
+          {{ t('stats.sections.mobility_potentials.title') }} -
+          {{ t('stats.sections.professional_travel') }}
+        </div>
         <div class="grid-container">
           <freq-reco-pro-chart
             :frequencies="getFreq('reco_pros')"
@@ -143,6 +155,13 @@
             :loading="stats.loading"
           />
         </div>
+
+        <modal-evolution-sankey
+          v-if="stats.comparisonMode === 'longitudinal'"
+          :height="height"
+          :loading="stats.loading"
+          class="q-mt-md"
+        />
       </q-tab-panel>
       <q-tab-panel name="behavioural">
         <div class="text-h5" data-section-name="behavioural_changes" expand-icon-toggle>
@@ -196,6 +215,7 @@ import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareCha
 import LeversChangeChart from 'src/components/charts/LeversChangeChart.vue'
 import MotivationChangeChart from 'src/components/charts/MotivationChangeChart.vue'
 import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
+import ModalEvolutionSankey from 'src/components/charts/ModalEvolutionSankey.vue'
 import MobilityPotentialInsights from '../MobilityPotentialInsights.vue'
 import type { Frequencies } from 'src/models'
 

@@ -51,10 +51,11 @@
 <script setup lang="ts">
 import ChartPanel from 'src/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
-import type { EChartsOption } from 'echarts'
+import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
-import { BarChart } from 'echarts/charts'
+import { BarChart, LineChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
+import { GROUP_COLORS } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -64,7 +65,18 @@ import {
 import type { Frequencies } from 'src/models'
 
 const { t, locale } = useI18n()
-use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([
+  SVGRenderer,
+  BarChart,
+  LineChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   frequencies?: Frequencies | null
@@ -91,8 +103,6 @@ function onChartDownload() {
   shellRef.value?.handleExport()
 }
 
-const stats = useStats()
-
 function onTogglePercent() {
   stats.travelTimePercent = !stats.travelTimePercent
 }
@@ -102,6 +112,11 @@ const total = ref(0)
 const medianValue = ref<number | null>(null)
 
 const hasData = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some((group) =>
+      group.frequencies?.some((freq) => freq.field === 'travel_time' && freq.data.length > 0),
+    )
+  }
   if (!props.frequencies) {
     return false
   }
@@ -128,6 +143,11 @@ onMounted(() => {
 })
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -266,5 +286,91 @@ function makeCategories(max: number, step = 5) {
     arr.push(`${i}`)
   }
   return arr
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupFrequencies = groups.map((group) => ({
+    name: group.name,
+    frequencies: group.frequencies?.find((freq) => freq.field === 'travel_time') ?? null,
+  }))
+  if (groupFrequencies.every((group) => !group.frequencies?.data.length)) {
+    return
+  }
+
+  const max = Math.max(
+    ...groupFrequencies.flatMap(
+      (group) =>
+        group.frequencies?.data.map((item) => {
+          const value = Number(item.value)
+          return isNaN(value) ? 0 : value
+        }) ?? [],
+    ),
+    0,
+  )
+  const categories = makeCategories(max, props.rangeStep)
+
+  const series: SeriesOption[] = groupFrequencies.map((group, i) => {
+    const groupTotal = group.frequencies?.total || 0
+    total.value += groupTotal
+    return {
+      name: group.name,
+      type: 'line',
+      smooth: true,
+      symbol: 'none',
+      color: GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc',
+      data: categories.map((category) => {
+        const item = group.frequencies?.data.find((item) => item.value === `${category}`)
+        return item && groupTotal > 0 ? Number(((item.count / groupTotal) * 100).toFixed(2)) : 0
+      }),
+    }
+  })
+
+  option.value = {
+    grid: {
+      left: '40',
+      right: '20',
+      top: '80',
+      bottom: '40',
+      containLabel: true,
+    },
+    animation: false,
+    height: props.height - 100,
+    title: {
+      text: t(`stats.travel_time.title`),
+      subtext: t(`stats.total`, { count: total.value }),
+      left: 'center',
+      top: 0,
+      itemGap: 10,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+    },
+    legend: {
+      show: true,
+      bottom: 0,
+      type: 'scroll',
+    },
+    xAxis: {
+      type: 'category',
+      name: props.xaxis || '',
+      nameGap: 30,
+      nameLocation: 'middle',
+      data: categories,
+    },
+    yAxis: {
+      name: '%',
+      nameLocation: 'middle',
+      nameGap: 30,
+      type: 'value',
+    },
+    series,
+  }
 }
 </script>

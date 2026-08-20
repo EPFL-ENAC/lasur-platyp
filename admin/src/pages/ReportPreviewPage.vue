@@ -176,6 +176,10 @@
         />
       </report-page>
 
+      <report-page v-if="stats.comparisonMode === 'longitudinal'" :org-names="orgs">
+        <modal-evolution-sankey :height="height" :exportable="false" inline />
+      </report-page>
+
       <report-page :org-names="orgs">
         <h1 class="text-h4 q-mt-xl">
           {{ t('stats.sections.behavioural_changes.title') }}
@@ -248,6 +252,7 @@ import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareCha
 import LeversChangeChart from 'src/components/charts/LeversChangeChart.vue'
 import MotivationChangeChart from 'src/components/charts/MotivationChangeChart.vue'
 import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
+import ModalEvolutionSankey from 'src/components/charts/ModalEvolutionSankey.vue'
 import {
   type StatsState,
   flushStateFromLocalStorage,
@@ -286,10 +291,14 @@ onMounted(() => {
   statsStore.leversPercent = route.query.leversPercent !== 'false'
   statsStore.motivationPercent = route.query.motivationPercent !== 'false'
 
-  // EmissionsReductionsModChart/EmissionsReductionsModShareChart read these directly from the store
+  // EmissionsReductionsModChart/EmissionsReductionsModShareChart, and every chart's
+  // comparison-mode rendering, read these directly from the store
   if (stats.value) {
     statsStore.emissions = stats.value.emissions
     statsStore.emissionsReductions = stats.value.emissionsReductions
+    statsStore.comparisonResults = stats.value.comparisonResults
+    statsStore.comparisonMode = stats.value.comparisonMode
+    statsStore.privacyWarnings = stats.value.privacyWarnings
   }
 
   window.addEventListener('beforeunload', cleanUpLocalStorage)

@@ -15,19 +15,31 @@
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { PieChart } from 'echarts/charts'
+import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { MODE_COLORS, modeSortOrder } from './commons'
+import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { ComparisonStats, Frequencies } from 'src/models'
 
 const { t, locale } = useI18n()
-use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([
+  SVGRenderer,
+  PieChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   chartTranslationName: string
@@ -54,7 +66,19 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
+function findGroupFrequencies(groupStats: ComparisonStats): Frequencies | undefined {
+  return (
+    groupStats.frequencies?.find((freq) => freq.field === props.chartTranslationName) ||
+    groupStats.pro_frequencies?.find((freq) => freq.field === props.chartTranslationName)
+  )
+}
+
 const hasData = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some(
+      (group) => (findGroupFrequencies(group)?.data.length ?? 0) > 0,
+    )
+  }
   if (!props.frequencies) {
     return false
   }
@@ -94,6 +118,11 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -179,5 +208,43 @@ function initChartOptions() {
 
 function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length === 0) {
+    return
+  }
+
+  const groupDatasets: ComparisonGroupDataset[] = groups.map((group) => {
+    const frequencies = findGroupFrequencies(group)
+    total.value += frequencies?.total ?? 0
+    return {
+      name: group.name,
+      items: (frequencies?.data ?? []).map((item) => ({
+        key: shortKey(item.value),
+        name: keyLabel(item.value),
+        value: item.sum === undefined ? item.count : item.sum,
+      })),
+    }
+  })
+
+  const keyOrder = Array.from(
+    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+  ).sort((a, b) => modeSortOrder(a) - modeSortOrder(b))
+
+  option.value = buildGroupStackedBarOption({
+    groupDatasets,
+    colors: MODE_COLORS,
+    percent: true,
+    title: t(`stats.${props.chartTranslationName}.title`),
+    totalLabel: t('stats.total', { count: total.value }),
+    height: props.height,
+    yAxisName: '%',
+    keyOrder,
+  })
 }
 </script>
