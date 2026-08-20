@@ -279,20 +279,27 @@ class RecordService(EntityService):
         return df
 
     def flatten_json(self, obj, parent_key="", sep="."):
-        """Recursively flatten JSON with lists indexed."""
-        items = []
+        """Flatten JSON with lists indexed, iteratively.
 
-        if isinstance(obj, dict):
-            for k, v in obj.items():
-                new_key = f"{parent_key}{sep}{k}" if parent_key else k
-                items.extend(self.flatten_json(v, new_key, sep=sep).items())
-
-        elif isinstance(obj, list):
-            for i, v in enumerate(obj):
-                new_key = f"{parent_key}{sep}{i}"
-                items.extend(self.flatten_json(v, new_key, sep=sep).items())
-
-        else:
-            items.append((parent_key, obj))
-
-        return dict(items)
+        Equivalent to a recursive left-to-right pre-order flatten, but avoids
+        materializing an intermediate dict at every nesting level (the
+        recursive version built a dict just to immediately re-iterate it via
+        .items() into the parent's list) and the per-level Python call
+        overhead. Children are pushed in reverse so the explicit stack (LIFO)
+        pops them in the same left-to-right order as the original recursion.
+        """
+        result = {}
+        stack = [(parent_key, obj)]
+        while stack:
+            key, value = stack.pop()
+            if isinstance(value, dict):
+                for k, v in reversed(value.items()):
+                    new_key = f"{key}{sep}{k}" if key else k
+                    stack.append((new_key, v))
+            elif isinstance(value, list):
+                for i in range(len(value) - 1, -1, -1):
+                    new_key = f"{key}{sep}{i}" if key else str(i)
+                    stack.append((new_key, value[i]))
+            else:
+                result[key] = value
+        return result
