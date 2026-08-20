@@ -1,4 +1,5 @@
 env_path=../.env
+count ?= 10
 
 install:
 	uv sync
@@ -22,7 +23,7 @@ db-revision:
 	uv run dotenv -f "$(env_path)" run alembic revision --autogenerate -m "$(name)"
 
 seed:
-	curl -X PUT 'http://localhost:8000/seed' -H 'accept: application/json'
+	uv run dotenv -f "$(env_path)" run python scripts/seed_records.py --campaign-id $(campaign_id) --count $(count)
 
 #
 # Maps
