@@ -1,7 +1,7 @@
 import re
 import pandas as pd
 from api.models.query import Frequencies, Frequency
-from api.services.stats.commons import BaseStatsService, MODES_PRO, normalize_pro_days_to_yearly
+from api.services.stats.commons import BaseStatsService, MODES_PRO, DAYS_PER_YEAR_FACTOR, normalize_pro_days_to_yearly
 
 
 class FrequenciesService(BaseStatsService):
@@ -210,37 +210,36 @@ class FrequenciesService(BaseStatsService):
     # Internal functions
     #
 
+    def _distance_type(self, lat: float, lon: float, h3_index, mode: str) -> str:
+        dist = self._calculate_distance_to_h3(lat, lon, h3_index, mode)
+        if dist < 20:
+            return "local"
+        elif dist < 500:
+            return "national"
+        elif dist < 1500:
+            return "europe"
+        else:
+            return "inter"
+
     def _compute_mode_pro_frequencies_v3(
         self, df: pd.DataFrame, mode: str
     ) -> list[Frequencies]:
-        """Compute a mode frequency from a DataFrame of records."""
+        """Compute a mode frequency from a DataFrame of records.
 
-        def calculate_distance_type(row, i):
-            lat = float(row["data.workplace.lat"])
-            lon = float(row["data.workplace.lon"])
-            h3_index = row[f"data.freq_mod_pro_journeys.{str(i)}.hex_id"]
-            mode = row[f"data.freq_mod_pro_journeys.{str(i)}.mode"]
-            dist = self._calculate_distance_to_h3(lat, lon, h3_index, mode)
-            if dist < 20:
-                return "local"
-            elif dist < 500:
-                return "national"
-            elif dist < 1500:
-                return "europe"
-            else:
-                return "inter"
-
-        # New data version: get the series from data.freq_mod_pro_journeys
+        Builds a days -> (count, sum) histogram per field (distance_type_mode)
+        vectorized per journey index -- filtering, day normalization and
+        histogram aggregation are vectorized; only the h3 distance-type
+        lookup stays a per-row call (h3 has no bulk API), and only over the
+        already mode-filtered, positive-days subset rather than the full df.
+        """
         col_days = df.columns[
             df.columns.str.contains(
                 r"^data\.freq_mod_pro_journeys\..*\.days$", regex=True
             )
         ]
-        # print(
-        #     f"Computing mod frequencies for version 2.x using columns: {col_days.tolist()}")
-        field_frequencies = {}
+        # field -> {days_str: [count, sum]}
+        totals: dict[str, dict[str, list[int]]] = {}
         for i in range(len(col_days)):
-            # print("mode:", mode, "journey:", i)
             col_mode_i = f"data.freq_mod_pro_journeys.{str(i)}.mode"
             if col_mode_i not in df.columns:
                 continue
@@ -249,55 +248,45 @@ class FrequenciesService(BaseStatsService):
                 continue
             col_days_i = col_days[i]
             col_days_per_i = f"data.freq_mod_pro_journeys.{str(i)}.days_per"
-            # make a dataframe with only i columns and workplace lat/lon
-            extra_cols = [
-                col_days_per_i] if col_days_per_i in df.columns else []
-            df_i = df[
-                [
-                    "data.workplace.lat",
-                    "data.workplace.lon",
-                    col_days_i,
-                    col_mode_i,
-                    col_hexid_i,
-                ] + extra_cols
-            ].copy()
-            # Filter for the specific mode
-            df_i = df_i[df_i[col_mode_i] == mode]
-            # Skip if no records for this mode
-            if df_i.empty:
-                continue
-            # Calculate distance type from workplace to pro travel destination for each record
-            df_i["type"] = df_i.apply(
-                lambda row: calculate_distance_type(row, i), axis=1
-            )
-            # print(df_i)
-            # count positive mod_days
-            df_i = df_i[df_i[col_days_i] > 0]
-            for idx, row in df_i.iterrows():
-                days_per = row[col_days_per_i] if col_days_per_i in df_i.columns else None
-                days = int(normalize_pro_days_to_yearly(
-                    row[col_days_i], days_per))
-                type = row["type"]
-                field = f"{type}_{mode}"
-                if field not in field_frequencies:
-                    field_frequencies[field] = Frequencies(
-                        field=field, total=len(df), data=[]
-                    )
-                frequencies = field_frequencies[field].data
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
 
-        return list(field_frequencies.values())
+            days_s = df[col_days_i]
+            mask = (df[col_mode_i] == mode) & (days_s > 0)
+            if not mask.any():
+                continue
+
+            idx = df.index[mask]
+            workplace_lat = df["data.workplace.lat"].loc[idx]
+            workplace_lon = df["data.workplace.lon"].loc[idx]
+            hex_ids = df[col_hexid_i].loc[idx]
+            days_per_s = df[col_days_per_i].loc[idx] if col_days_per_i in df.columns else pd.Series(
+                None, index=idx)
+
+            # h3 distance-type lookup, per-row over the small filtered subset
+            types = pd.Series(
+                [self._distance_type(float(lat), float(lon), hex_id, mode)
+                 for lat, lon, hex_id in zip(workplace_lat, workplace_lon, hex_ids)],
+                index=idx,
+            )
+
+            factor = days_per_s.map(DAYS_PER_YEAR_FACTOR).fillna(1)
+            days_yearly = (days_s.loc[idx] * factor).astype(int)
+
+            hist = pd.DataFrame({"type": types.to_numpy(), "days": days_yearly.to_numpy()})
+            for (type_, days_val), count in hist.groupby(["type", "days"]).size().items():
+                field = f"{type_}_{mode}"
+                bucket = totals.setdefault(field, {})
+                entry = bucket.setdefault(str(days_val), [0, 0])
+                entry[0] += int(count)
+                entry[1] += int(days_val) * int(count)
+
+        return [
+            Frequencies(
+                field=field, total=len(df),
+                data=[Frequency(value=key, count=count, sum=total_days)
+                      for key, (count, total_days) in days_map.items()],
+            )
+            for field, days_map in totals.items()
+        ]
 
     def _compute_mode_frequencies_by_label(
         self, df: pd.DataFrame, mode: str, label_col_prefix: str

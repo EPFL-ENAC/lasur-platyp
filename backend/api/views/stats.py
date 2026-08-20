@@ -81,12 +81,11 @@ async def compare_statistics(
             if len(group_df) < PRIVACY_LIMIT:
                 warnings.append(group.name)
                 continue
-            survived_groups.append(group)
+            survived_groups.append((group, group_df))
 
         stats_service = StatsService()
         comparison_stats = []
-        for group in survived_groups:
-            group_df = df[df['campaign_id'].isin(group.campaign_ids)]
+        for group, group_df in survived_groups:
             stats = stats_service.compute_stats(group_df)
             comparison_stats.append(ComparisonStats(
                 **stats.model_dump(),
@@ -98,7 +97,7 @@ async def compare_statistics(
         if request.mode == "longitudinal":
             survived_campaign_ids = [
                 campaign_id
-                for group in survived_groups
+                for group, _ in survived_groups
                 for campaign_id in group.campaign_ids
             ]
             transitions_df = df[df['campaign_id'].isin(
