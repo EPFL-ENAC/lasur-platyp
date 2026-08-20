@@ -2,8 +2,8 @@
   <div>
     <div class="text-h6 text-primary q-mb-md">{{ title }}</div>
     <div v-if="combinedDescription" class="q-mt-sm q-mb-md">
-      <div :class="['q-chart-description', descriptionLines > 3 ? 'description-truncated' : '']">
-        <q-markdown compact :src="combinedDescription" />
+      <div class="q-chart-description">
+        <q-markdown compact :src="panelDescription" />
       </div>
     </div>
     <div v-if="!noDetails" class="q-mb-md">
@@ -75,14 +75,15 @@ const combinedDescription = computed(() => {
   if (props.chartInfoText) {
     parts.push(props.chartInfoText)
   }
-  return parts.join('\n\n') || ''
+  return parts.join('\n\n').trim() || ''
 })
 
-const descriptionLines = computed(() => {
-  const text = combinedDescription.value
-  if (!text) return 0
-  return text.split('\n').filter((line) => line.trim()).length
-})
+const panelDescription = computed(() =>
+  combinedDescription.value
+    .split('\n')
+    .map((line) => (line.trim() === '' ? '' : line))
+    .join('<br>'),
+)
 
 provide(chartPanelDialogOpenKey, showDialog)
 </script>
@@ -95,12 +96,9 @@ provide(chartPanelDialogOpenKey, showDialog)
 }
 
 .q-chart-description {
-  overflow: hidden;
-}
-
-.description-truncated {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
