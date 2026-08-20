@@ -62,10 +62,10 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
-    
+
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
-        
+
         return entity
 
     async def get_by_token(self, token: str) -> Record:
@@ -77,7 +77,7 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
-        
+
         return entity
 
     async def delete(self, id: int, user: User = None) -> Record:
@@ -157,14 +157,14 @@ class RecordService(EntityService):
         entity.company_id = campaign.company_id
 
         entity.response_id_in_campaign = current_count + 1
-        
+
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
-        
+
         self.session.add(entity)
         await self.session.commit()
         await self.session.refresh(entity)
-        
+
         return entity
 
     async def update(self, id: int, payload: RecordDraft, campaign: Campaign = None) -> Record:
@@ -200,7 +200,10 @@ class RecordService(EntityService):
         Returns:
             pd.DataFrame: A DataFrame representation of the records.
         """
-        results = await self.find(filter, fields=[], sort=[], range=[], user=user, special_permissions=special_permissions)
+        # Deterministic order: some downstream stats (e.g. longitudinal mode
+        # transitions' tie-breaking) depend on row order, which Postgres does
+        # not guarantee without an ORDER BY.
+        results = await self.find(filter, fields=[], sort=['id'], range=[], user=user, special_permissions=special_permissions)
         # Read results into a pandas DataFrame
         df = pd.DataFrame([result.model_dump() for result in results.data])
         if not flat:
@@ -293,7 +296,7 @@ class RecordService(EntityService):
         while stack:
             key, value = stack.pop()
             if isinstance(value, dict):
-                for k, v in reversed(value.items()):
+                for k, v in reversed(list(value.items())):
                     new_key = f"{key}{sep}{k}" if key else k
                     stack.append((new_key, v))
             elif isinstance(value, list):
