@@ -149,7 +149,9 @@
                   v-model="selected.with_professional_questions"
                   :label="t('campaign.with_professional_questions')"
                 />
-                <p class="text-hint q-mb-md">{{ t('campaign.with_professional_questions_hint') }}</p>
+                <p class="text-hint q-mb-md">
+                  {{ t('campaign.with_professional_questions_hint') }}
+                </p>
               </div>
               <div>
                 <q-toggle

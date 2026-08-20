@@ -1,7 +1,11 @@
 <template>
   <div>
     <div class="text-h6 text-primary q-mb-md">{{ title }}</div>
-    <q-markdown v-if="description" class="compact q-mt-sm q-mb-md" :src="description" />
+    <div v-if="combinedDescription" class="q-mt-sm q-mb-md">
+      <div :class="['q-chart-description', descriptionLines > 3 ? 'description-truncated' : '']">
+        <q-markdown compact :src="combinedDescription" />
+      </div>
+    </div>
     <div v-if="!noDetails" class="q-mb-md">
       <a
         href="#"
@@ -30,7 +34,11 @@
         <q-card-section>
           <div class="chart-panel-dialog-content">
             <div class="text-h6 text-primary q-mb-md">{{ title }}</div>
-            <q-markdown v-if="description" class="compact q-mt-sm q-mb-md" :src="description" />
+            <q-markdown
+              v-if="combinedDescription"
+              class="compact q-mt-sm q-mb-md"
+              :src="combinedDescription"
+            />
             <slot></slot>
           </div>
         </q-card-section>
@@ -50,13 +58,31 @@ const { t } = useI18n()
 interface Props {
   title: string
   description?: string
+  chartInfoText?: string
   inline?: boolean
   noDetails?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const showDialog = ref(false)
+
+const combinedDescription = computed(() => {
+  const parts: string[] = []
+  if (props.description) {
+    parts.push(props.description)
+  }
+  if (props.chartInfoText) {
+    parts.push(props.chartInfoText)
+  }
+  return parts.join('\n\n') || ''
+})
+
+const descriptionLines = computed(() => {
+  const text = combinedDescription.value
+  if (!text) return 0
+  return text.split('\n').filter((line) => line.trim()).length
+})
 
 provide(chartPanelDialogOpenKey, showDialog)
 </script>
@@ -66,5 +92,15 @@ provide(chartPanelDialogOpenKey, showDialog)
   width: 100%;
   max-width: 1024px;
   margin: 0 auto;
+}
+
+.q-chart-description {
+  overflow: hidden;
+}
+
+.description-truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 </style>

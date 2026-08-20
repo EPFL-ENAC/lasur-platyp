@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.mod_reco.title')"
     :description="t('stats.mod_reco.description')"
+    :chart-info-text="infoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -48,9 +49,15 @@ defineProps<Props>()
 
 type LinksChartExposed = {
   handleExport: () => Promise<void>
+  chartInfoText: string
 }
 
-const chartRef = useTemplateRef<LinksChartExposed>('chartRef')
+const chartRef = ref<LinksChartExposed | null>(null)
+const infoText = ref('')
+
+watch(chartRef, (newVal) => {
+  infoText.value = newVal?.chartInfoText || ''
+}, { flush: 'post' })
 
 const { t } = useI18n()
 

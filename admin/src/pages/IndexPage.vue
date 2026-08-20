@@ -45,14 +45,11 @@ import IntroductionEn from 'src/assets/markdown/introduction-en.md'
 import IntroductionFr from 'src/assets/markdown/introduction-fr.md'
 import DashboardPanel from 'src/components/DashboardPanel.vue'
 import DataProtectionNoticeDialog from 'src/components/DataProtectionNoticeDialog.vue'
-import {
-  isIndexIntroductionFirstView,
-  markIndexIntroductionSeen,
-} from 'src/utils/localStorage'
+import { isIndexIntroductionFirstView, markIndexIntroductionSeen } from 'src/utils/localStorage'
 
 const { t, locale } = useI18n()
 
-const introductionText = computed(() => locale.value === 'fr' ? IntroductionFr : IntroductionEn)
+const introductionText = computed(() => (locale.value === 'fr' ? IntroductionFr : IntroductionEn))
 
 // Introduction is expanded by default on first visit
 const isIntroductionExpanded = ref(isIndexIntroductionFirstView())

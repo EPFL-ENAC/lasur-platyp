@@ -1,4 +1,5 @@
 ### Welcome to the Mobilyse administration interface!
+
 Use the menu to navigate through the different sections, manage organisations, campaigns, and users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of Mobilyse.
 
 #### How to read the dashboard?

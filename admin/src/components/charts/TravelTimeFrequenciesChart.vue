@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.travel_time.title')"
     :description="t('stats.travel_time.description')"
+    :chart-info-text="chartInfoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -34,17 +35,11 @@
       :height="height"
       :loading="props.loading"
       :has-data="hasData"
-      :show-info="total > 0"
       :show-table="!exportable"
       :no-data-title="t('stats.travel_time.title')"
       :option="option"
       :exportable="!!exportable"
-    >
-      <p v-if="hasData && medianValue" class="q-mb-xs">
-        {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
-      </p>
-      <p>{{ t('stats.travel_time.texts.default') }}</p>
-    </e-charts-shell>
+    />
   </chart-panel>
 </template>
 
@@ -102,6 +97,22 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 function onChartDownload() {
   shellRef.value?.handleExport()
 }
+
+const chartInfoText = computed(() => {
+  const parts: string[] = []
+  if (hasData.value && medianValue.value != null) {
+    parts.push(t('stats.travel_time.texts.specific', { median: medianValue.value }))
+  }
+  parts.push(t('stats.travel_time.texts.default'))
+  return parts.join('\n\n')
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartInfoText.value
+  },
+})
 
 function onTogglePercent() {
   stats.travelTimePercent = !stats.travelTimePercent

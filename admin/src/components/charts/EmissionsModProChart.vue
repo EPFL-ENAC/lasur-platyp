@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.emissions_freq_mod_pro.title')"
     :description="t('stats.emissions_freq_mod_pro.description')"
+    :chart-info-text="infoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -50,9 +51,15 @@ defineProps<Props>()
 
 type EmissionsChartExposed = {
   handleExport: () => Promise<void>
+  chartInfoText: string
 }
 
-const chartRef = useTemplateRef<EmissionsChartExposed>('chartRef')
+const chartRef = ref<EmissionsChartExposed | null>(null)
+const infoText = ref('')
+
+watch(chartRef, (newVal) => {
+  infoText.value = newVal?.chartInfoText || ''
+}, { flush: 'post' })
 
 const { t } = useI18n()
 

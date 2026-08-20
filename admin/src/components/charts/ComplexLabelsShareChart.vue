@@ -4,22 +4,11 @@
     :height="height"
     :loading="props.loading"
     :has-data="hasData"
-    :show-info="total > 0"
     :show-table="!exportable"
     :no-data-title="t('stats.freq_mod.title_detailed')"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p v-if="topModes.length === 3" class="q-mb-xs">
-      {{
-        t('stats.freq_mod.texts.specific', {
-          top_1: topModes[0],
-          top_2: topModes[1],
-          top_3: topModes[2],
-        })
-      }}
-    </p>
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -69,6 +58,16 @@ type EChartsShellExposed = {
 
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    if (topModes.value.length === 3) {
+      return t('stats.freq_mod.texts.specific', {
+        top_1: topModes.value[0],
+        top_2: topModes.value[1],
+        top_3: topModes.value[2],
+      })
+    }
+    return ''
+  },
 })
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')

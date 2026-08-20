@@ -28,10 +28,6 @@
     <template #table>
       <e-charts-table v-if="(showTable || dialogOpen) && !loading" :option="option" />
     </template>
-
-    <template #info>
-      <slot />
-    </template>
   </chart-shell>
 </template>
 

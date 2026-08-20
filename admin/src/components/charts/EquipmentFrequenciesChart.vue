@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.equipments.title')"
     :description="t('stats.equipments.description')"
+    :chart-info-text="chartDescription"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -34,14 +35,11 @@
       :height="height"
       :loading="props.loading"
       :has-data="hasData"
-      :show-info="stats.equipmentsPercent"
       :show-table="!exportable"
       :no-data-title="t('stats.equipments.title')"
       :option="option"
       :exportable="!!exportable"
-    >
-      <q-markdown :src="t('stats.equipments.mrmt_source')" />
-    </e-charts-shell>
+    />
   </chart-panel>
 </template>
 
@@ -106,6 +104,8 @@ function onTogglePercent() {
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
+const chartDescription = computed(() => t('stats.equipments.mrmt_source'))
+
 const hasData = computed(() => {
   if (isComparison.value) {
     return (stats.comparisonResults?.groups ?? []).some((group) =>
@@ -116,6 +116,13 @@ const hasData = computed(() => {
     return false
   }
   return props.frequencies.data.length > 0
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartDescription.value
+  },
 })
 
 watch(

@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.energy_journey.title_share')"
     :description="t('stats.energy_journey.description_share')"
+    :chart-info-text="chartDescription"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -26,22 +27,11 @@
       :height="height"
       :loading="props.loading"
       :has-data="total > 0"
-      :show-info="total > 0"
       :show-table="!exportable"
       :no-data-title="t('stats.energy_journey.title_share')"
       :option="option"
       :exportable="!!exportable"
-    >
-      <q-markdown
-        v-if="total > 5 && biggestShare"
-        :src="
-          t('stats.energy_journey.texts.specific_share', {
-            percentage: formatNumber(biggestShare.percentage),
-            mode: keyLabel(biggestShare.mode),
-          })
-        "
-      />
-    </e-charts-shell>
+    />
   </chart-panel>
 </template>
 
@@ -89,6 +79,16 @@ type EChartsShellExposed = {
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
+function keyLabel(key: string) {
+  if (key === 'null' || key === 'None') {
+    return 'N/A'
+  }
+  if (Number.isInteger(Number(key))) {
+    return key
+  }
+  return t(`transportation_modes.${shortKey(key)}`)
+}
+
 function onChartDownload() {
   shellRef.value?.handleExport()
 }
@@ -96,6 +96,23 @@ function onChartDownload() {
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const biggestShare = ref<AddedEnergyShare | null>(null)
+
+const chartDescription = computed(() => {
+  if (total.value > 5 && biggestShare.value) {
+    return t('stats.energy_journey.texts.specific_share', {
+      percentage: formatNumber(biggestShare.value.percentage),
+      mode: keyLabel(biggestShare.value.mode),
+    })
+  }
+  return ''
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartDescription.value
+  },
+})
 
 watch([() => props.loading], () => {
   if (props.loading) {
@@ -112,17 +129,6 @@ watch([() => props.height, locale], () => {
 onMounted(() => {
   initChartOptions()
 })
-
-function keyLabel(key: string) {
-  if (key === 'null' || key === 'None') {
-    return 'N/A'
-  }
-  // is integer ?
-  if (Number.isInteger(Number(key))) {
-    return key
-  }
-  return t(`transportation_modes.${shortKey(key)}`)
-}
 
 function initChartOptions() {
   option.value = {}

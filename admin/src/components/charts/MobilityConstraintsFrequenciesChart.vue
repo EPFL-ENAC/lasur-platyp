@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.constraints.title')"
     :description="t('stats.constraints.description')"
+    :chart-info-text="chartDescription"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -36,16 +37,11 @@
       :height="height"
       :loading="props.loading"
       :has-data="hasData"
-      :show-info="!!hasOther"
       :show-table="!exportable"
       :no-data-title="t('stats.constraints.title')"
       :option="option"
       :exportable="!!exportable"
-    >
-      <div class="q-mt-md text-italic">
-        {{ t('stats.constraints.texts.other') }}
-      </div>
-    </e-charts-shell>
+    />
   </chart-panel>
 </template>
 
@@ -124,6 +120,20 @@ const hasOther = computed(() => {
     )
   }
   return props.frequencies?.data.some((item) => item.value === 'other')
+})
+
+const chartDescription = computed(() => {
+  if (hasOther.value) {
+    return t('stats.constraints.texts.other')
+  }
+  return ''
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartDescription.value
+  },
 })
 
 watch(

@@ -43,8 +43,13 @@ const map = ref<maplibregl.Map>()
  * feature's properties so that a previously selected boundary can be
  * re-highlighted when this component is remounted with the same modelValue.
  */
-function toInitSelection(modelValue: GeoJSON.FeatureCollection | undefined): PlaceLocation | undefined {
-  const properties = modelValue?.features[0]?.properties as Partial<PlaceLocation> | null | undefined
+function toInitSelection(
+  modelValue: GeoJSON.FeatureCollection | undefined,
+): PlaceLocation | undefined {
+  const properties = modelValue?.features[0]?.properties as
+    | Partial<PlaceLocation>
+    | null
+    | undefined
   const { level, feature_id, lat, lon } = properties || {}
   if (level === undefined || feature_id === undefined || lat === undefined || lon === undefined) {
     return undefined

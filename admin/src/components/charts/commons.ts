@@ -287,9 +287,7 @@ export function computePercentages<T extends { value: number }>(
   let surplus = 100 - sumFloored
 
   // Distribute surplus to items with largest fractional parts
-  const sorted = raw
-    .map((item, idx) => ({ ...item, idx }))
-    .sort((a, b) => b.frac - a.frac)
+  const sorted = raw.map((item, idx) => ({ ...item, idx })).sort((a, b) => b.frac - a.frac)
 
   const percents = raw.map((item) => item.floor)
   for (const item of sorted) {

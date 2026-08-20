@@ -462,7 +462,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         tpu_leman_pass: 'Léman Pass',
         train_subs: 'Abonnement de train',
         train_demi_tarif: 'Demi-tarif',
-        tain_abo_gen: 'Abonnement général',
+        train_abo_gen: 'Abonnement général',
         car_driver: 'Voiture (en tant que conducteur)',
         moto: 'Moto / scooter / cyclomoteur',
         ebike: 'Vélo à assistance électrique',
@@ -515,7 +515,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     reco_inter: {
       title: 'Répartition modale potentielle',
       description:
-        "Ce graphique montre la répartition des modes de transports recommandés par Mobilyse pour chaque participant·e.",
+        'Ce graphique montre la répartition des modes de transports recommandés par Mobilyse pour chaque participant·e.',
       labels: {
         ...transportationModes,
       },
@@ -885,8 +885,8 @@ Cependant, nous ne pouvons exclure qu'en cas de faible nombre de participant·e�
 En accédant aux résultats, vous acceptez de les traiter sous contrôle des bases légales valables, en particulier en respectant la confidentialité des données et sans chercher l'identification des participant·e·s sans base légale valable.
 
 Dernière modification : Août 2026.`,
-},
-database_data_protection_notice: {
+  },
+  database_data_protection_notice: {
     title: 'Notice sur la protection des données',
     content: `La base de données que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil Mobilyse contient des données désagrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 

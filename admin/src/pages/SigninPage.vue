@@ -3,11 +3,7 @@
     <q-page-container>
       <q-page class="flex flex-center auth-page">
         <div class="background-container">
-          <img
-            src="/admin/PATTERN-VIOLET.svg"
-            aria-hidden="true"
-            class="background-pattern"
-          />
+          <img src="/admin/PATTERN-VIOLET.svg" aria-hidden="true" class="background-pattern" />
         </div>
         <q-card :style="$q.screen.lt.sm ? { width: '80%' } : { width: '400px' }">
           <q-card-actions class="flex justify-center q-mt-xl q-ml-xl q-mr-xl q-mb-xs">
