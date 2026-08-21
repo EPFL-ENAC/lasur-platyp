@@ -1,6 +1,6 @@
 <template>
   <div class="map-container" :style="`--t-height: ${height || '400px'}`">
-    <div :id="mapId" class="mapview"></div>
+    <div ref="mapEl" class="mapview"></div>
 
     <!-- Legend Overlay -->
     <div class="map-legend">
@@ -37,13 +37,16 @@ interface Props {
   center: [number, number]
   height?: string
   zoom?: number
-  mapId: string
   fitBoundsMargins: number
   noControls?: boolean
 }
 const props = defineProps<Props>()
+
+const mapEl = useTemplateRef<HTMLDivElement>('mapEl')
+
 defineExpose({
   exportImage,
+  mapEl,
 })
 
 const map = ref<Map>()
@@ -121,7 +124,7 @@ function makeGeoJSON(): HeatmapGeoJSON {
 
 function onInit() {
   map.value = new Map({
-    container: props.mapId,
+    container: mapEl.value,
     center: props.center,
     style: style,
     trackResize: true,

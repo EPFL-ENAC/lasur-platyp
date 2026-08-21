@@ -43,7 +43,6 @@
           :zoom="5"
           :fit-bounds-margins="2"
           :height="mapHeight"
-          :map-id="id"
           :no-controls="props.noControls"
         >
           <div class="legend-item">
@@ -92,10 +91,10 @@
 <script setup lang="ts">
 import ChartPanel from './ChartPanel.vue'
 import html2canvas from 'html2canvas'
+import type { Ref } from 'vue'
 import { GradientScale } from 'src/utils/colors'
 import ChartShell from './ChartShell.vue'
 import LocationHeatmap from '../LocationHeatmap.vue'
-import { getRandomId } from 'src/utils/random'
 import type { H3Heatmap, LatLon } from 'src/models'
 
 const { t } = useI18n()
@@ -118,6 +117,7 @@ const mapHeight = computed(() => `${props.height - 50}px`)
 
 type LocationHeatmapExposed = {
   exportImage: () => Promise<string | null>
+  mapEl: Ref<HTMLDivElement | undefined>
 }
 
 type ChartShellExposed = {
@@ -149,7 +149,7 @@ async function captureRawImage(): Promise<string | null> {
   await nextTick()
 
   const wrapperEl = wrapper.value
-  const mapRootEl = document.getElementById(id.value)
+  const mapRootEl = heatmap.value.mapEl.value
 
   if (!mapRootEl) {
     console.warn('captureRawImage: map root not found')
@@ -174,7 +174,7 @@ async function captureRawImage(): Promise<string | null> {
       scale: window.devicePixelRatio || 2,
       logging: false,
       onclone: (clonedDocument) => {
-        const clonedMapRoot = clonedDocument.getElementById(id.value)
+        const clonedMapRoot = clonedDocument.getElementById(mapRootEl.id)
         if (!clonedMapRoot) return
 
         // Hide MapLibre-rendered parts only, keep legend visible.
@@ -237,8 +237,6 @@ const gradient = computed(() => {
     { value: maxValue, color: '#fde725' },
   ])
 })
-
-const id = ref(`location-heatmap-${getRandomId()}`)
 
 const hasData = computed(() => {
   const hasHeatmapData =
