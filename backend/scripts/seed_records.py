@@ -34,20 +34,36 @@ from api.models.domain import Campaign
 from api.models.query import RecordDraft
 from api.services.records import RecordService
 
-MODES = ["car", "moto", "pub", "train", "bike", "walking"]
-PRO_MODES = ["car", "train", "plane", "boat", "pub"]
+MODES = ["car", "carpool", "moto", "pub", "train", "bike", "walking"]
+MODES_WEIGHTS = [40, 5, 5, 10, 30, 20, 10]
+PRO_MODES = ["walking", "bike", "cargo", "pub", "moto",
+             "car", "truck", "train", "boat", "plane"]
+PRO_MODES_WEIGHTS = [5, 0, 5, 10, 30, 30, 20, 10, 1, 10]
 SIMPLE_MODES = ["MA", "TP", "MA+TP", "MA+TIM", "TIM+TP", "TIM"]
+SIMPLE_MODES_WEIGHTS = [20, 30, 20, 10, 10, 10]
 AGE_CLASSES = ["18-24", "25-44", "45-64", "65+"]
 CONSTRAINTS = ["none", "dependent", "heavy", "night", "disabled", "other"]
 EQUIPMENTS = ["bike", "ebike", "tpu_unireso", "tpu_leman_pass", "train_demi_tarif",
               "train_abo_gen", "mob_subs", "moto", "car", "ev"]
+EQUIPMENTS_WEIGHTS = [40, 20, 30, 20, 20, 5, 10, 5, 40, 5]
 LEVERS = ["environment", "flexibility", "collective",
           "finance", "company_vehicle", "coaching", "events", "other"]
 RECO_OPTIONS = ["tpu", "vae", "elec", "velo",
                 "cargo", "inter", "train", "covoit", "marche"]
+RECO_OPTIONS_WEIGHTS = [40, 10, 20, 10, 5, 10, 30, 10, 10]
 PT_PASSES = ["unireso", "cff", "leman_pass"]
 ACTIONS = ["budget", "wfh", "bike_parking", "shuttle", "carpool_matching"]
+ACTIONS_WEIGHTS = [40, 30, 20, 10, 10]
 PRO_FEATURE_IDS = ["FR_74218", "FRK11", "CH066", "CH024"]
+
+
+def weighted_sample(population: list, weights: list, k: int) -> list:
+    """Sample k distinct items from population without replacement, honoring weights."""
+    if k == 0:
+        return []
+    return [item for item, _ in sorted(
+        zip(population, weights), key=lambda pair: random.random() ** (1 / pair[1])
+    )[-k:]]
 
 
 def fake_location(center_lat: float = 46.2, center_lon: float = 6.14, spread: float = 0.08) -> dict:
@@ -65,14 +81,14 @@ def fake_hex_id() -> str:
 
 def fake_journey() -> dict:
     """A personal commute journey, possibly intermodal (e.g. bike-train-bike)."""
-    modes = [random.choice(MODES)]
+    modes = [random.choices(MODES, weights=MODES_WEIGHTS)[0]]
     if random.random() < 0.3:
-        modes = [modes[0], random.choice(MODES), modes[0]]
+        modes = [modes[0], random.choices(MODES, weights=MODES_WEIGHTS)[0], modes[0]]
     elif random.random() < 0.3:
-        modes.append(random.choice(MODES))
+        modes.append(random.choices(MODES, weights=MODES_WEIGHTS)[0])
     journey = {"days": random.randint(1, 5), "modes": modes}
     if random.random() < 0.3:
-        journey["days_per"] = random.choice(["week", "month", "year"])
+        journey["days_per"] = random.choices(["week", "month", "year"], weights=[50, 30, 20])[0]
     return journey
 
 
@@ -80,9 +96,9 @@ def fake_pro_journey() -> dict:
     """A professional (business travel) journey, e.g. to a client site."""
     return {
         "days": random.randint(1, 15),
-        "days_per": random.choice(["week", "month", "year"]),
+        "days_per": random.choices(["week", "month", "year"], weights=[50, 30, 20])[0],
         "hex_id": fake_hex_id(),
-        "mode": random.choice(PRO_MODES),
+        "mode": random.choices(PRO_MODES, weights=PRO_MODES_WEIGHTS)[0],
         "location": {
             "feature_id": random.choice(PRO_FEATURE_IDS),
             "level": random.choice(["local", "regional"]),
@@ -91,15 +107,23 @@ def fake_pro_journey() -> dict:
     }
 
 
+def fake_motivation() -> int:
+    return round(min(5, max(1, random.gauss(3, 1))))
+
+
 def fake_change() -> dict:
     """One entry in the 'intention to change commute habits' list."""
     change = {
         "levers": random.sample(LEVERS, k=random.randint(1, 3)),
-        "motivation": random.randint(1, 5),
+        "motivation": fake_motivation(),
     }
     if "other" in change["levers"] and random.random() < 0.5:
         change["other_levers"] = "flexible schedule"
     return change
+
+
+def fake_travel_time() -> int:
+    return round(min(60, max(5, random.gauss(30, 9))))
 
 
 def fake_data(workplace: dict) -> dict:
@@ -109,16 +133,16 @@ def fake_data(workplace: dict) -> dict:
     ]
     changes = [fake_change() for _ in range(random.choices(
         [0, 1, 2], weights=[40, 40, 20])[0])]
-    constraint = "none" if random.random() < 0.7 else random.choice(CONSTRAINTS)
+    constraint = "none" if random.random() < 0.7 else random.choices(CONSTRAINTS, weights=[10, 40, 30, 20, 10, 10])[0]
 
     return {
         "version": "3.0.0",
         "origin": {**fake_location(), "address": "Fake street, Geneva"},
         "workplace": workplace,
-        "age_class": random.choice(AGE_CLASSES),
-        "employment_rate": random.choice([50, 80, 90, 100]),
-        "remote_work_rate": random.choice([0, 20, 40, 60]),
-        "travel_time": random.randint(5, 60),
+        "age_class": random.choices(AGE_CLASSES, weights=[10, 40, 40, 10])[0],
+        "employment_rate": random.choices([50, 80, 90, 100], weights=[10, 20, 30, 40])[0],
+        "remote_work_rate": random.choices([0, 20, 40, 60], weights=[40, 30, 20, 10])[0],
+        "travel_time": fake_travel_time(),
         "travel_pro": random.choice([True, False]),
         **{f"needs_{m}": random.choice([0, 1]) for m in MODES},
         **{f"importance_{k}": random.randint(1, 5) for k in [
@@ -127,7 +151,7 @@ def fake_data(workplace: dict) -> dict:
         "freq_mod_pro_journeys": pro_journeys,
         "changes": changes,
         "constraints": [constraint],
-        "equipments": random.sample(EQUIPMENTS, k=random.randint(0, 3)),
+        "equipments": weighted_sample(EQUIPMENTS, EQUIPMENTS_WEIGHTS, k=random.randint(0, 3)),
         "company_vehicle": random.choice([True, False]),
         "confidentiality": True,
         "terms_conditions": True,
@@ -140,15 +164,15 @@ def fake_email_hash(participant_index: int) -> str:
 
 
 def fake_reco() -> dict:
-    primary = random.choice(RECO_OPTIONS)
-    secondary = primary if random.random() < 0.6 else random.choice(RECO_OPTIONS)
+    primary = random.choices(RECO_OPTIONS, weights=RECO_OPTIONS_WEIGHTS)[0]
+    secondary = primary if random.random() < 0.6 else random.choices(RECO_OPTIONS, weights=RECO_OPTIONS_WEIGHTS)[0]
     t_tim = random.randint(4, 30)
     return {
         "pt_pass": random.choice(PT_PASSES),
         "reco_inter": [primary, secondary],
-        "reco_simple": [random.choice(SIMPLE_MODES) for _ in range(2)],
-        "simple_labels": [random.choice(SIMPLE_MODES) for _ in range(2)],
-        "complex_labels": [random.choice(MODES), random.choice(MODES)],
+        "reco_simple": [random.choices(SIMPLE_MODES, weights=SIMPLE_MODES_WEIGHTS)[0] for _ in range(2)],
+        "simple_labels": [random.choices(SIMPLE_MODES, weights=SIMPLE_MODES_WEIGHTS)[0] for _ in range(2)],
+        "complex_labels": [random.choices(MODES, weights=MODES_WEIGHTS)[0], random.choices(MODES, weights=MODES_WEIGHTS)[0]],
         "bravo": [0] if random.random() < 0.7 else [0, random.randint(1, 2)],
         "t_traj_mm": {
             "oid": random.randint(1000, 3000),
@@ -161,12 +185,12 @@ def fake_reco() -> dict:
 
 
 def fake_reco_pro() -> dict:
-    return {"reco_pros": [random.choice(PRO_MODES)]}
+    return {"reco_pros": [random.choices(PRO_MODES, weights=PRO_MODES_WEIGHTS)[0]]}
 
 
 def fake_reco_actions() -> dict:
-    actions = {"mesures_globa": random.sample(ACTIONS, k=2) +
-               [random.choice(["global1", "global2"])]}
+    actions = {"mesures_globa": weighted_sample(ACTIONS, ACTIONS_WEIGHTS, k=2) +
+               [random.choices(["global1", "global2"], weights=[50, 20])[0]]}
     if random.random() < 0.5:
         actions["mesure_dt1"] = "tpg_pass"
         actions["mesure_dt2"] = "tpg_pass"
