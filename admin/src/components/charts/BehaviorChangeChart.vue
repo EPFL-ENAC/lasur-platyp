@@ -1,17 +1,14 @@
 <template>
-  <div>
-    <e-charts-shell
-      ref="shellRef"
-      :height="height"
-      :loading="props.loading"
-      :has-data="total > 0"
-      :show-table="!exportable"
-      :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
-      :option="option"
-      :exportable="!!exportable"
-    />
-    <q-markdown v-if="props.description" compact :src="props.description" class="q-mt-sm" />
-  </div>
+  <e-charts-shell
+    ref="shellRef"
+    :height="height"
+    :loading="props.loading"
+    :has-data="total > 0"
+    :show-table="!exportable"
+    :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
+    :option="option"
+    :exportable="!!exportable"
+  />
 </template>
 
 <script setup lang="ts">
@@ -59,6 +56,9 @@ type EChartsShellExposed = {
 
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return props.description || ''
+  },
 })
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')

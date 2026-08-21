@@ -2,6 +2,7 @@
   <chart-panel
     :title="t(`stats.energy_journey.title_${props.type}`)"
     :description="t(`stats.energy_journey.description_${props.type}`)"
+    :chart-info-text="chartInfoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -26,22 +27,11 @@
       :height="height"
       :loading="props.loading"
       :has-data="total > 0"
-      :show-info="total > 0"
       :show-table="!exportable"
       :no-data-title="t(`stats.energy_journey.title_${props.type}`)"
       :option="option"
       :exportable="!!exportable"
-    >
-      <p class="q-mb-xs">{{ t(`stats.energy_journey.texts.default`) }}</p>
-      <q-markdown
-        v-if="textLabelsCurrent"
-        :src="t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent)"
-      />
-      <q-markdown
-        v-if="textLabelsReco"
-        :src="t(`stats.energy_journey.texts.specific_reco`, textLabelsReco)"
-      />
-    </e-charts-shell>
+    />
   </chart-panel>
 </template>
 
@@ -141,6 +131,24 @@ const textLabelsReco = computed(() => {
         100,
     ),
   }
+})
+
+const chartInfoText = computed(() => {
+  const parts: string[] = [t(`stats.energy_journey.texts.default`)]
+  if (textLabelsCurrent.value) {
+    parts.push(t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent.value))
+  }
+  if (textLabelsReco.value) {
+    parts.push(t(`stats.energy_journey.texts.specific_reco`, textLabelsReco.value))
+  }
+  return parts.join('\n\n')
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartInfoText.value
+  },
 })
 
 watch([() => props.loading, () => props.height, locale], () => {

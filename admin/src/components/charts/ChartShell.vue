@@ -16,10 +16,6 @@
     <div v-if="hasData" class="q-mt-md">
       <slot name="table" />
     </div>
-
-    <div v-if="showInfo && $slots.info" class="q-mt-md chart-text">
-      <slot name="info" />
-    </div>
   </div>
 </template>
 

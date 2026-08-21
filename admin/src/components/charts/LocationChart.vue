@@ -3,7 +3,6 @@
     :title="t('stats.locations_heatmap.title')"
     :description="t('stats.locations_heatmap.description')"
     :inline="inline"
-    no-details
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
       <q-space />
@@ -44,7 +43,6 @@
           :zoom="5"
           :fit-bounds-margins="2"
           :height="mapHeight"
-          :map-id="id"
           :no-controls="props.noControls"
         >
           <div class="legend-item">
@@ -93,10 +91,10 @@
 <script setup lang="ts">
 import ChartPanel from './ChartPanel.vue'
 import html2canvas from 'html2canvas'
+import type { Ref } from 'vue'
 import { GradientScale } from 'src/utils/colors'
 import ChartShell from './ChartShell.vue'
 import LocationHeatmap from '../LocationHeatmap.vue'
-import { getRandomId } from 'src/utils/random'
 import type { H3Heatmap, LatLon } from 'src/models'
 
 const { t } = useI18n()
@@ -119,6 +117,7 @@ const mapHeight = computed(() => `${props.height - 50}px`)
 
 type LocationHeatmapExposed = {
   exportImage: () => Promise<string | null>
+  mapEl: Ref<HTMLDivElement | undefined>
 }
 
 type ChartShellExposed = {
@@ -150,15 +149,23 @@ async function captureRawImage(): Promise<string | null> {
   await nextTick()
 
   const wrapperEl = wrapper.value
-  const mapRootEl = document.getElementById(id.value)
+  const mapRootEl = heatmap.value.mapEl.value
 
   if (!mapRootEl) {
     console.warn('captureRawImage: map root not found')
     return null
   }
 
+  // MapLibre's map root is only a template ref and has no id, so html2canvas's
+  // onclone can't find it via getElementById. Assign a stable id just for the
+  // clone lookup, then restore it afterwards.
+  const MAP_ROOT_ID = 'map-root-export'
+  const previousId = mapRootEl.id
+  mapRootEl.id = MAP_ROOT_ID
+
   const mapImageUrl = await heatmap.value.exportImage()
   if (!mapImageUrl) {
+    mapRootEl.id = previousId
     return null
   }
 
@@ -175,7 +182,7 @@ async function captureRawImage(): Promise<string | null> {
       scale: window.devicePixelRatio || 2,
       logging: false,
       onclone: (clonedDocument) => {
-        const clonedMapRoot = clonedDocument.getElementById(id.value)
+        const clonedMapRoot = clonedDocument.getElementById(MAP_ROOT_ID)
         if (!clonedMapRoot) return
 
         // Hide MapLibre-rendered parts only, keep legend visible.
@@ -225,6 +232,8 @@ async function captureRawImage(): Promise<string | null> {
   } catch (error) {
     console.error('captureRawImage failed:', error)
     return null
+  } finally {
+    mapRootEl.id = previousId
   }
 }
 
@@ -238,8 +247,6 @@ const gradient = computed(() => {
     { value: maxValue, color: '#fde725' },
   ])
 })
-
-const id = ref(`location-heatmap-${getRandomId()}`)
 
 const hasData = computed(() => {
   const hasHeatmapData =

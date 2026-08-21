@@ -353,12 +353,21 @@ function nextStep() {
       return
     }
   }
-  if (survey.stepName === 'origin_places') {
+if (survey.stepName === 'origin_places') {
     if (survey.record.data.origin?.lat === undefined || survey.record.data.origin?.lat === 0) {
-      notifyError(t('form.error.origin'))
-      return
+        notifyError(t('form.error.origin'))
+        return
+      }
     }
-  }
+    if (survey.stepName === 'travel_time') {
+      if (
+        survey.record.data.travel_time === undefined ||
+        survey.record.data.travel_time <= 0
+      ) {
+        notifyError(t('form.error.travel_time'))
+        return
+      }
+    }
   if (survey.stepName === 'intermodality') {
     const journeys = survey.record.data.freq_mod_journeys || []
     if (journeys.length === 0) {
@@ -380,6 +389,9 @@ function nextStep() {
       }
       if (!journey.location && !journey.hex_id) {
         errors.push(t('form.error.pro_journey_hex_id'))
+      }
+      if (journey.days === undefined || journey.days <= 0) {
+        errors.push(t('form.error.pro_journey_days'))
       }
     }
     if (errors.length) {

@@ -50,13 +50,13 @@ const transportationModes = {
   unknown: 'Unknown',
 }
 
-const simpleLabels = {
-  MA: 'Active mobility',
-  TP: 'Public transport',
-  'MA+TP': 'Active mobility + Public transport',
-  'MA+TIM': 'Active mobility + Individual motorized transport',
-  'TIM+TP': 'Individual motorized transport + Public transport',
-  TIM: 'Individual motorized transport',
+const simpleShortLabels = {
+  MA: 'AM',
+  TP: 'PT',
+  'MA+TP': 'AM+PT',
+  'MA+TIM': 'AM+IMT',
+  'TIM+TP': 'IMT+PT',
+  TIM: 'IMT',
 }
 
 const complexLabels = {
@@ -398,6 +398,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',
     total: 'N: {count}',
+    total_participants: 'Number of participants: {count}',
+    total_trips: 'Number of trips: {count}',
     no_data: 'No data available',
     observed: 'Data from participants',
     participants_median: 'Participants median',
@@ -443,7 +445,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     equipments: {
       title: 'Mobility equipments',
       description:
-        "This chart shows the mobility equipment available to participants for their commute. These figures are compared with reference data from the 2021 Mobility and Transport Microcensus for the canton of Geneva.\n\nAnother chart further on shows how ownership of equipment compares with Mobilise's recommendations to participants. This helps to understand whether the participant already has access to the necessary equipment to follow the recommendation made to them.",
+        "This chart shows the mobility equipment available to participants for their commute. These figures are compared with reference data from the 2021 Mobility and Transport Microcensus for the canton of Geneva.\n\nAnother chart further on shows how ownership of equipment compares with Mobilise's recommendations to participants. This helps to understand whether the participant already has access to the necessary equipment to follow the recommendation made to them.\n\nOther equipments are available in detail if you download the dataset",
       labels: {
         bike: 'Bicycle',
         upt_subs: 'Urban public transport\nsubscription',
@@ -502,13 +504,13 @@ Thank you for your valuable contribution! If you have any questions, please cont
     reco_inter: {
       title: 'Potential modal split',
       description:
-        'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the mode of transport recommended for their home-to-work commute.',
+        'This graph shows the breakdown of the modes of transportation recommended by Mobilyse for each participant.',
       labels: {
         ...transportationModes,
       },
     },
     reco_pros: {
-      title: 'Recommendations (professional)',
+      title: 'Recommendations (professional travels)',
       description:
         'This chart shows the mobility solutions recommended for professional trips. Unlike the recommendations for home-to-work commuting, where each person is assigned the main recommendation made to them (one person = one recommendation), here the recommendations are shown at the trip level (one reported journey = one recommendation).',
       labels: {
@@ -520,7 +522,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title_simple: 'Modal split (simple)',
       title_detailed: 'Modal split (detailed)',
       description:
-        'This chart illustrates the modal split among participants, with each participant categorised according to their main mode of transport for commuting. ',
+        'This graph shows the percentage of participants who primarily use each mode of transportation for their commute to and from work.',
       title_mrmt: 'Reference data (Geneva canton)',
       labels: {
         ...transportationModes,
@@ -570,7 +572,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
       xaxis: 'Journeys per year',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
     },
@@ -643,7 +645,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Distribution of emissions reductions (simple)',
       series: 'Potential reduction',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
       texts: {
@@ -814,7 +816,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     ...transportationModes,
   },
   simple_labels: {
-    ...simpleLabels,
+    ...simpleShortLabels,
   },
   complex_labels: {
     ...complexLabels,
@@ -862,10 +864,20 @@ Thank you for your valuable contribution! If you have any questions, please cont
     },
   },
   data_protection_notice: {
+    title: 'Data confidentiality',
+    content: `The results you are about to access contain only data that has been provided voluntarily, anonymised and aggregated by campaign and geographical area. No personal data is available.
+
+However, we cannot rule out the possibility that, where the number of participants is small, it may be possible to indirectly identify a participant by cross-referencing the data with external data specific to your organisation.
+
+By accessing the results, you agree to process them in accordance with the applicable legal framework, in particular by respecting data privacy and without seeking to identify participants without a valid legal basis.
+
+Last updated: August 2026.`,
+  },
+  database_data_protection_notice: {
     title: 'Data Protection Notice',
     content: `The database you are about to receive as part of the campaign launched via the Mobilyse tool contains disaggregated data derived from responses provided voluntarily and anonymously by your employees.
 
-However, it cannot be ruled out that certain aggregated data may, indirectly, allow one or more individuals to be identified.
+However, it cannot be ruled out that certain disaggregated data may, indirectly, allow one or more individuals to be identified.
 In this case, the report may contain data subject to applicable data protection legislation (such as the Federal Data Protection Act, or the GDPR if employees are based in the EU), if you choose to cross this database with other external data in your possession.
 
 By agreeing to receive this database, you agree to process it in accordance with these legal provisions, in particular by ensuring the confidentiality of the data and by avoiding any use that would allow the individual identification of an employee without a valid legal basis.

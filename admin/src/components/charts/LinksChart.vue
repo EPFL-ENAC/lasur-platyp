@@ -4,18 +4,11 @@
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="total > 0"
     :show-table="!exportable"
     :no-data-title="t(`stats.${props.type}.title`)"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p v-if="mostRecommendedTarget">
-      {{
-        t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
-      }}
-    </p>
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -52,10 +45,6 @@ type EChartsShellExposed = {
   handleExport: () => Promise<void>
 }
 
-defineExpose({
-  handleExport: () => shellRef.value?.handleExport(),
-})
-
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
@@ -86,6 +75,18 @@ const mostRecommendedTarget = computed(() => {
   if (!links) return null
 
   return links.most_recommended_target
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    if (mostRecommendedTarget.value) {
+      return t(`stats.${props.type}.texts.specific`, {
+        mode: keyLabel(mostRecommendedTarget.value.target),
+      })
+    }
+    return ''
+  },
 })
 
 function keyLabel(key: string) {

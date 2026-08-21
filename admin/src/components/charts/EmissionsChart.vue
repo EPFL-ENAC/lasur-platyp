@@ -4,23 +4,11 @@
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="total > 0"
     :show-table="!exportable"
     :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
     :option="option"
     :exportable="!!exportable"
-  >
-    <q-markdown
-      v-if="emissionItemsLabels"
-      :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsLabels)"
-    />
-    <q-markdown
-      v-else-if="emissionItemsProLabels"
-      :src="
-        t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsProLabels)
-      "
-    />
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -85,10 +73,6 @@ function findGroupEmissions(groupStats: ComparisonStats): Emissions[] | undefine
 type EChartsShellExposed = {
   handleExport: () => Promise<void>
 }
-
-defineExpose({
-  handleExport: () => shellRef.value?.handleExport(),
-})
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
@@ -195,6 +179,29 @@ const emissionItemsProLabels = computed(() => {
     secondMode: keyLabel(eip.second.mode),
     remainingEmissions: formatNumber(Math.round(withoutFirstEmissions / withoutFirstJourneys)),
   }
+})
+
+const chartDescription = computed(() => {
+  if (emissionItemsLabels.value) {
+    return t(
+      `stats.emissions_${props.chartTranslationName}.texts.specific`,
+      emissionItemsLabels.value,
+    )
+  }
+  if (emissionItemsProLabels.value) {
+    return t(
+      `stats.emissions_${props.chartTranslationName}.texts.specific`,
+      emissionItemsProLabels.value,
+    )
+  }
+  return ''
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartDescription.value
+  },
 })
 
 function keyLabel(key: string) {

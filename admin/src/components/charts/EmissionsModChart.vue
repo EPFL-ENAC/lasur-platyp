@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.emissions_freq_mod.title')"
     :description="t('stats.emissions_freq_mod.description')"
+    :chart-info-text="infoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -75,14 +76,24 @@ defineProps<Props>()
 
 type EmissionsChartExposed = {
   handleExport: () => Promise<void>
+  chartInfoText: string
 }
 
-const simpleChartRef = useTemplateRef<EmissionsChartExposed>('simpleChartRef')
-const detailedChartRef = useTemplateRef<EmissionsChartExposed>('detailedChartRef')
+const simpleChartRef = ref<EmissionsChartExposed | null>(null)
+const detailedChartRef = ref<EmissionsChartExposed | null>(null)
 
 const stats = useStats()
 
 const { t } = useI18n()
+
+const infoText = ref('')
+
+watch([() => stats.emModalType, simpleChartRef, detailedChartRef], () => {
+  const active = stats.emModalType === 'simple' ? simpleChartRef : detailedChartRef
+  if (active.value) {
+    infoText.value = active.value.chartInfoText || ''
+  }
+})
 
 function onToggleEmModalType() {
   stats.emModalType = stats.emModalType === 'simple' ? 'detailed' : 'simple'

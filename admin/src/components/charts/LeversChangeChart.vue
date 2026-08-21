@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.behavior_change_levers.title')"
     :description="t('stats.behavior_change_levers.texts.info')"
+    :chart-info-text="infoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -59,9 +60,17 @@ const props = defineProps<Props>()
 
 type BehaviorChangeChartExposed = {
   handleExport: () => Promise<void>
+  chartInfoText: string
 }
 
-const chartRef = useTemplateRef<BehaviorChangeChartExposed>('chartRef')
+const chartRef = ref<BehaviorChangeChartExposed | null>(null)
+const infoText = ref('')
+
+watch([chartRef, () => props.behaviorChangeStats], ([newRef]) => {
+  if (newRef) {
+    infoText.value = newRef.chartInfoText || ''
+  }
+})
 
 const { t } = useI18n()
 

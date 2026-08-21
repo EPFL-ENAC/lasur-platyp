@@ -4,17 +4,11 @@
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="true"
     :show-table="!exportable"
     :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
     :option="option"
     :exportable="!!exportable"
-  >
-    <q-markdown
-      v-if="textLabels"
-      :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels)"
-    />
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -79,10 +73,6 @@ type EChartsShellExposed = {
   handleExport: () => Promise<void>
 }
 
-defineExpose({
-  handleExport: () => shellRef.value?.handleExport(),
-})
-
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
@@ -105,6 +95,16 @@ const textLabels = computed(() => {
     visio_hour: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 0.057063)),
     unit: UNIT_LABEL,
   }
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    if (textLabels.value) {
+      return t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels.value)
+    }
+    return ''
+  },
 })
 
 watch([() => props.loading], () => {

@@ -4,22 +4,11 @@
     :height="height"
     :loading="props.loading"
     :has-data="hasData"
-    :show-info="total > 0"
     :show-table="!exportable"
     :no-data-title="t('stats.freq_mod.title_simple')"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p v-if="topModes.length === 3" class="q-mb-xs">
-      {{
-        t('stats.freq_mod.texts.specific', {
-          top_1: topModes[0],
-          top_2: topModes[1],
-          top_3: topModes[2],
-        })
-      }}
-    </p>
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -28,7 +17,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { SIMPLE_LABELS_COLORS, simpleLabelSortOrder } from './commons'
+import { SIMPLE_LABELS_COLORS, simpleLabelSortOrder, computePercentages } from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
@@ -69,6 +58,16 @@ type EChartsShellExposed = {
 
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    if (topModes.value.length === 3) {
+      return t('stats.freq_mod.texts.specific', {
+        top_1: topModes.value[0],
+        top_2: topModes.value[1],
+        top_3: topModes.value[2],
+      })
+    }
+    return ''
+  },
 })
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
@@ -164,8 +163,11 @@ function initChartOptions() {
     .toSorted((a, b) => b.value - a.value)
   topModes.value = sortedByValue.slice(0, 3).map((item) => item.name)
 
+  // Add rounded percentages that sum to 100
+  const datasetWithPercent = computePercentages(dataset)
+
   // Extract category names and values for series
-  const categories = dataset.map((item) => item.key)
+  const categories = datasetWithPercent.map((item) => item.key)
   const colors = categories.map((category) => SIMPLE_LABELS_COLORS[category] || '#ccc')
 
   if (categories.length === 0) {
@@ -195,12 +197,13 @@ function initChartOptions() {
     ],
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c} ({d}%)',
+      formatter: (params) => `<b>${params.name}</b><br/>${params.data.percent}%`,
     },
     legend: {
       show: true,
       bottom: 0,
       left: 'center',
+      selectedMode: false,
     },
     series: [
       {
@@ -212,9 +215,9 @@ function initChartOptions() {
         label: {
           margin: 0,
           fontWeight: 'bold',
-          formatter: '{d}% ({c})',
+          formatter: (params) => `${params.data.percent}%`,
         },
-        data: dataset,
+        data: datasetWithPercent,
       },
     ],
   }

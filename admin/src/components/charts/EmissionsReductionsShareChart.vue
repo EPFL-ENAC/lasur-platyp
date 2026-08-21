@@ -4,21 +4,11 @@
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="true"
     :show-table="!exportable"
     :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p v-if="biggestEmission">
-      {{
-        t(`stats.emissions_${props.chartTranslationName}.texts.specific`, {
-          percentage: formatNumber(biggestEmission.percentage || 0),
-          mode: keyLabel(biggestEmission.mode),
-        })
-      }}
-    </p>
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -87,10 +77,6 @@ type EChartsShellExposed = {
   handleExport: () => Promise<void>
 }
 
-defineExpose({
-  handleExport: () => shellRef.value?.handleExport(),
-})
-
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 interface PercentageEmission {
@@ -124,6 +110,23 @@ const biggestEmission = computed<PercentageEmission | null>(() => {
   return biggest
 })
 
+const chartDescription = computed(() => {
+  if (biggestEmission.value) {
+    return t(`stats.emissions_${props.chartTranslationName}.texts.specific`, {
+      percentage: formatNumber(biggestEmission.value.percentage || 0),
+      mode: keyLabel(biggestEmission.value.mode),
+    })
+  }
+  return ''
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartDescription.value
+  },
+})
+
 watch([() => props.loading], () => {
   if (props.loading) {
     initChartOptions()
@@ -144,7 +147,6 @@ function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {
     return 'N/A'
   }
-  // is integer ?
   if (Number.isInteger(Number(key))) {
     return key
   }

@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.emissions_reductions_mod.title')"
     :description="t('stats.emissions_reductions_mod.description')"
+    :chart-info-text="infoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -72,14 +73,24 @@ defineProps<Props>()
 
 type EmissionsReductionsChartExposed = {
   handleExport: () => Promise<void>
+  chartInfoText: string
 }
 
-const simpleChartRef = useTemplateRef<EmissionsReductionsChartExposed>('simpleChartRef')
-const detailedChartRef = useTemplateRef<EmissionsReductionsChartExposed>('detailedChartRef')
+const simpleChartRef = ref<EmissionsReductionsChartExposed | null>(null)
+const detailedChartRef = ref<EmissionsReductionsChartExposed | null>(null)
 
 const stats = useStats()
 
 const { t } = useI18n()
+
+const infoText = ref('')
+
+watch([() => stats.redModalType, simpleChartRef, detailedChartRef], () => {
+  const active = stats.redModalType === 'simple' ? simpleChartRef : detailedChartRef
+  if (active.value) {
+    infoText.value = active.value.chartInfoText || ''
+  }
+})
 
 function onToggleRedModalType() {
   stats.redModalType = stats.redModalType === 'simple' ? 'detailed' : 'simple'

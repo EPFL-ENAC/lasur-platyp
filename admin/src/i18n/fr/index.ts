@@ -50,13 +50,13 @@ const transportationModes = {
   unknown: 'Inconnu',
 }
 
-const simpleLabels = {
-  MA: 'Mobilité active',
-  TP: 'Transports publics',
-  'MA+TP': 'Mobilité active + Transports publics',
-  'MA+TIM': 'Mobilité active + Transports individuels motorisés',
-  'TIM+TP': 'Transports individuels motorisés + Transports publics',
-  TIM: 'Transports individuels motorisés',
+const simpleShortLabels = {
+  MA: 'MA',
+  TP: 'TP',
+  'MA+TP': 'MA+TP',
+  'MA+TIM': 'MA+TIM',
+  'TIM+TP': 'TIM+TP',
+  TIM: 'TIM',
 }
 
 const complexLabels = {
@@ -407,6 +407,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     nb_employees: 'Nombre de participant·e·s',
     percent_employees: '% de participant·e·s',
     total: 'N : {count}',
+    total_participants: 'Nombre de participant·e·s: {count}',
+    total_trips: 'Nombre de trajets: {count}',
     no_data: 'Aucune donnée disponible',
     observed: 'Données des participant·e·s',
     participants_median: 'Médiane des participant·e·s',
@@ -433,13 +435,13 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphiques illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
           most_potential:
-            "Le mode de transport avec le plus fort potentiel d'utilisateur·trices est : **{mode}** (recommandé à **{percentage}%** des participant·e·s ayant répondu)",
+            "Le mode de transport avec le plus fort potentiel d'utilisateur·trice·s est : **{mode}** (recommandé à **{percentage}%** des participant·e·s)",
           biggest_emission_reduction:
             'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
           biggest_emission_reduction_extrapolation:
             'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
           biggest_physical_activity_gain:
-            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce scénario permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
+            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce mode permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
         },
       },
       behavioural_changes: {
@@ -452,7 +454,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     equipments: {
       title: 'Équipements de mobilité',
       description:
-        "Ce graphique montre les équipements de mobilité à disposition des participant·e·s pour leurs déplacements domicile-travail. Ces données sont comparées aux données de référence, issues du Microrecensement Mobilité et Transports de 2021, pour le canton de Genève.\n\nDans un autre graphique ci-après, la possession des équipements est croisée avec les recommandations formulées par Mobilise aux participant·e·s. Cela permet de comprendre si les personnes à qui Mobilyse recommande un mode de transport dispose déjà de l'équipement nécessaire pour adopter cette recommandation.",
+        "Ce graphique montre les équipements de mobilité à disposition des participant·e·s pour leurs déplacements domicile-travail. Ces données sont comparées aux données de référence, issues du Microrecensement Mobilité et Transports de 2021, pour le canton de Genève.\n\nDans un autre graphique ci-après, la possession des équipements est croisée avec les recommandations formulées par Mobilise aux participant·e·s. Cela permet de comprendre si les personnes à qui Mobilyse recommande un mode de transport dispose déjà de l'équipement nécessaire pour adopter cette recommandation.\n\nLe détail des autres équipements est accessible en téléchargeant le détail des données.",
       labels: {
         bike: 'Vélo',
         upt_subs: 'Abonnement de transports\npublics urbains',
@@ -460,7 +462,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         tpu_leman_pass: 'Léman Pass',
         train_subs: 'Abonnement de train',
         train_demi_tarif: 'Demi-tarif',
-        tain_abo_gen: 'Abonnement général',
+        train_abo_gen: 'Abonnement général',
         car_driver: 'Voiture (en tant que conducteur)',
         moto: 'Moto / scooter / cyclomoteur',
         ebike: 'Vélo à assistance électrique',
@@ -513,13 +515,13 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     reco_inter: {
       title: 'Répartition modale potentielle',
       description:
-        "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le mode qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
+        'Ce graphique montre la répartition des modes de transports recommandés par Mobilyse pour chaque participant·e.',
       labels: {
         ...transportationModes,
       },
     },
     reco_pros: {
-      title: 'Recommandations (professionnel)',
+      title: 'Recommandations (déplacements professionnels)',
       description:
         "Ce graphique montre les solutions de mobilité proposées pour les déplacements professionnels. Contrairement aux recommandations pour les déplacements domicile-travail pour lesquelles on assigne à chaque personne la recommandation principale qui lui a été faite (une personne = une recommandation), on affiche ici les recommandations à l'échelle du déplacement (un déplacement déclaré = une recommandation).",
       labels: {
@@ -531,7 +533,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title_simple: 'Répartition modale (simple)',
       title_detailed: 'Répartition modale (détaillée)',
       description:
-        'Ce graphique montre la répartition modale des participant·e·s, en affectant à chaque participant·e·s le mode principal utilisé lors de ses déplacements domicile-travail.',
+        'Ce graphique montre la part des participant·e·s utilisant principalement chaque mode, sur leur déplacement domicile-travail.',
       title_mrmt: 'Données de référence (canton de Genève)',
       labels: {
         ...transportationModes,
@@ -581,7 +583,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
     },
@@ -654,7 +656,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: "Répartition des gains d'émissions (simple)",
       series: 'Réduction potentielle',
       labels: {
-        ...simpleLabels,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
       texts: {
@@ -827,7 +829,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     ...transportationModes,
   },
   simple_labels: {
-    ...simpleLabels,
+    ...simpleShortLabels,
   },
   complex_labels: {
     ...complexLabels,
@@ -875,10 +877,20 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     },
   },
   data_protection_notice: {
+    title: 'Confidentialité des données',
+    content: `Les résultats auxquels vous allez accéder contiennent uniquement des données fournies volontairement, anonymisées et agrégées par campagne et zones géographiques. Aucune donnée personnelle n'est disponible.
+
+Cependant, nous ne pouvons exclure qu'en cas de faible nombre de participant·e·s, il soit possible d'identifier indirectement, en croisant avec des données extérieures propres à votre organisation, un·e participant·e.
+
+En accédant aux résultats, vous acceptez de les traiter sous contrôle des bases légales valables, en particulier en respectant la confidentialité des données et sans chercher l'identification des participant·e·s sans base légale valable.
+
+Dernière modification : Août 2026.`,
+  },
+  database_data_protection_notice: {
     title: 'Notice sur la protection des données',
     content: `La base de données que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil Mobilyse contient des données désagrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 
-Cependant, il n'est pas exclu que certaines données agrégées permettent, indirectement, d'identifier une ou plusieurs personnes.
+Cependant, il n'est pas exclu que certaines données désagrégées permettent, indirectement, d'identifier une ou plusieurs personnes.
 
 Dans ce cas, la base de données pourrait contenir des données soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE), dans le cas où vous choisiriez de les croiser avec d'autres sources de données en votre possession.
 

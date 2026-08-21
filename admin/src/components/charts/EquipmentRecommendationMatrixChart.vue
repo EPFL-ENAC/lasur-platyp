@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.equipments_by_recommendations.title')"
     :description="t('stats.equipments_by_recommendations.texts.default')"
+    :chart-info-text="chartInfoText"
     :inline="inline"
   >
     <div>
@@ -37,21 +38,12 @@
         :height="height"
         :loading="props.loading"
         :has-data="total > 0"
-        :show-info="total > 0"
         :show-table="inline"
         :no-data-title="t('stats.equipments_by_recommendations.title')"
         :option="option"
         :exportable="!inline"
       >
       </e-charts-shell>
-      <q-markdown
-        v-if="analysisText"
-        compact
-        :src="t('stats.equipments_by_recommendations.texts.specific', analysisText)"
-      />
-      <div v-if="withOptions" class="text-caption">
-        {{ t('stats.equipments_by_recommendations.texts.hover_hint') }}
-      </div>
     </div>
   </chart-panel>
 </template>
@@ -124,6 +116,24 @@ function onToggleSimpleMode() {
 
 const withOptions = computed(() => {
   return props.hasOptions && total.value > 0
+})
+
+const chartInfoText = computed(() => {
+  const parts: string[] = []
+  if (analysisText.value) {
+    parts.push(t('stats.equipments_by_recommendations.texts.specific', analysisText.value))
+  }
+  if (withOptions.value) {
+    parts.push(t('stats.equipments_by_recommendations.texts.hover_hint'))
+  }
+  return parts.join('\n\n')
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartInfoText.value
+  },
 })
 
 const recommendationLabelsFiltered = computed(() => {

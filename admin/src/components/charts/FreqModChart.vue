@@ -2,6 +2,7 @@
   <chart-panel
     :title="t('stats.freq_mod.title')"
     :description="t('stats.freq_mod.description')"
+    :chart-info-text="chartInfoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -49,7 +50,6 @@
       :loading="loading"
       :exportable="!inline"
     />
-    <q-markdown compact :src="t('stats.freq_mod.texts.default')" />
   </chart-panel>
 </template>
 
@@ -71,6 +71,7 @@ defineProps<Props>()
 
 type ShareChartExposed = {
   handleExport: () => Promise<void>
+  chartInfoText: string
 }
 
 const simpleChartRef = useTemplateRef<ShareChartExposed>('simpleChartRef')
@@ -88,4 +89,18 @@ function onChartDownload() {
   const chartRef = stats.freqModalType === 'simple' ? simpleChartRef : complexChartRef
   chartRef.value?.handleExport()
 }
+
+const chartInfoText = computed(() => {
+  const text = t('stats.freq_mod.texts.default')
+  let childText = ''
+  if (stats.freqModalType === 'simple' && simpleChartRef.value) {
+    childText = simpleChartRef.value.chartInfoText
+  } else if (stats.freqModalType === 'detailed' && complexChartRef.value) {
+    childText = complexChartRef.value.chartInfoText
+  }
+  if (childText) {
+    return `${text}\n\n${childText}`
+  }
+  return text
+})
 </script>
