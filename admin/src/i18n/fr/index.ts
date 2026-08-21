@@ -890,7 +890,7 @@ Dernière modification : Août 2026.`,
     title: 'Notice sur la protection des données',
     content: `La base de données que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil Mobilyse contient des données désagrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 
-Cependant, il n'est pas exclu que certaines données agrégées permettent, indirectement, d'identifier une ou plusieurs personnes.
+Cependant, il n'est pas exclu que certaines données désagrégées permettent, indirectement, d'identifier une ou plusieurs personnes.
 
 Dans ce cas, la base de données pourrait contenir des données soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE), dans le cas où vous choisiriez de les croiser avec d'autres sources de données en votre possession.
 

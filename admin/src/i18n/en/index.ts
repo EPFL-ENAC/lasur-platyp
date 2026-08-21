@@ -877,7 +877,7 @@ Last updated: August 2026.`,
     title: 'Data Protection Notice',
     content: `The database you are about to receive as part of the campaign launched via the Mobilyse tool contains disaggregated data derived from responses provided voluntarily and anonymously by your employees.
 
-However, it cannot be ruled out that certain aggregated data may, indirectly, allow one or more individuals to be identified.
+However, it cannot be ruled out that certain disaggregated data may, indirectly, allow one or more individuals to be identified.
 In this case, the report may contain data subject to applicable data protection legislation (such as the Federal Data Protection Act, or the GDPR if employees are based in the EU), if you choose to cross this database with other external data in your possession.
 
 By agreeing to receive this database, you agree to process it in accordance with these legal provisions, in particular by ensuring the confidentiality of the data and by avoiding any use that would allow the individual identification of an employee without a valid legal basis.
