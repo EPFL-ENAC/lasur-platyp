@@ -100,5 +100,7 @@ provide(chartPanelDialogOpenKey, showDialog)
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.5rem;
+  min-height: calc(3 * 1.5rem);
 }
 </style>
