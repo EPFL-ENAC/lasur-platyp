@@ -1,5 +1,5 @@
 <template>
-  <q-btn-dropdown color="primary" size="sm" icon="download" :label="t('download')">
+  <q-btn-dropdown color="primary" size="sm" icon="download" :label="t('download')" :disable="stats.loading">
     <q-list>
       <q-item clickable v-close-popup @click="onDownload(false)">
         <q-item-section>
@@ -33,6 +33,7 @@ const { t } = useI18n({ useScope: 'global' })
 const services = useServices()
 const $q = useQuasar()
 const service = services.make('record')
+const stats = useStats()
 
 function onDownload(completedOnly: boolean) {
   $q.dialog({

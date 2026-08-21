@@ -396,6 +396,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     add_more_comparisons: 'Ajouter des comparaisons',
     cross_sectional: 'Transversal',
     longitudinal: 'Longitudinal',
+    group_info: '{name}: {count} participants',
     too_few_records: 'Données insuffisantes pour : {groups}',
     modal_evolution: {
       title: 'Évolution des pratiques modales',

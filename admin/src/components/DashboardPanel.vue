@@ -17,6 +17,7 @@
         style="min-width: 200px"
         @update:model-value="onFilter"
         class="on-left"
+        :disable="stats.loading"
       >
         <template v-slot:option="{ itemProps, opt, selected }">
           <q-item v-bind="itemProps">
@@ -44,6 +45,7 @@
         :options="campaignOptions"
         style="min-width: 200px"
         @update:model-value="onFilter"
+        :disable="stats.loading"
         class="on-left"
       />
       <q-select
@@ -62,6 +64,7 @@
         style="min-width: 200px"
         @update:model-value="onFilter"
         class="on-left"
+        :disable="stats.loading"
       />
       <div
         v-for="(group, index) in additionalCompareGroups"
@@ -83,6 +86,7 @@
           :options="additionalGroupOptions(index)"
           style="min-width: 200px"
           @update:model-value="onFilter"
+          :disable="stats.loading"
         />
         <q-btn
           flat
@@ -92,6 +96,7 @@
           icon="close"
           :aria-label="t('remove')"
           @click="removeAdditionalGroup(index)"
+          :disable="stats.loading"
         />
       </div>
       <q-btn
@@ -101,11 +106,11 @@
         color="field"
         icon="add"
         :label="t('stats.add_more_comparisons')"
-        :disable="!canAddMoreComparisons"
+        :disable="!canAddMoreComparisons || stats.loading"
         @click="addComparisonGroup"
         class="on-left"
       />
-      <q-btn size="sm" color="field" outline no-caps>
+      <q-btn size="sm" color="field" outline no-caps :disable="stats.loading">
         {{ t('stats.options') }} <q-icon name="arrow_drop_down" />
         <q-menu>
           <q-list style="min-width: 150px">
@@ -158,7 +163,16 @@
           { label: t('stats.longitudinal'), value: 'longitudinal' },
         ]"
         @update:model-value="onFilter"
+        :disable="stats.loading"
       />
+    </div>
+    <div v-if="!stats.loading && hasComparisonGroups" class="q-mb-md" >
+      <q-separator class="q-mb-md" />
+      <div>
+        <q-chip v-for="(group, idx) in stats.comparisonResults?.groups" :key="group.name" class="text-white" :style="{ backgroundColor: GROUP_COLORS[idx % GROUP_COLORS.length] }">
+          {{ t('stats.group_info', { name: group.name, count: group.total }) }}
+        </q-chip>
+      </div>
     </div>
     <q-banner
       v-if="stats.privacyWarnings.length > 0"
@@ -193,6 +207,7 @@ import type { Company, Campaign, CampaignGroup, ComparisonMode } from 'src/model
 import type { Filter } from 'src/components/models'
 import { useQuasar } from 'quasar'
 import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import { GROUP_COLORS } from 'src/components/charts/commons'
 
 const { t } = useI18n()
 const stats = useStats()

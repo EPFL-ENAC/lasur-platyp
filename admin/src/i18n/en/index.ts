@@ -387,6 +387,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     add_more_comparisons: 'Add more comparisons',
     cross_sectional: 'Cross-sectional',
     longitudinal: 'Longitudinal',
+    group_info: '{name}: {count} participants',
     too_few_records: 'Not enough records for: {groups}',
     modal_evolution: {
       title: 'Evolution of modal practices',
