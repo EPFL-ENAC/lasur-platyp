@@ -505,7 +505,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     reco_inter: {
       title: 'Potential modal split',
       description:
-        'This graph shows the breakdown of the modes of transportation recommended by Mobilyse for each participant.',
+        'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the mode of transport recommended for their home-to-work commute.',
       labels: {
         ...transportationModes,
       },
@@ -758,9 +758,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
         allModes: 'All modes',
       },
       texts: {
-        info: 'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
+        info: 'This chart helps to understand how participants would like to be supported in evolving their mobility.',
         default:
-          'This chart helps to understand how participants would like to be supported in evolving their mobility.',
+          'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific: 'The support that participants feel they need most is {lever}.',
       },
     },
@@ -779,9 +779,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
         total: 'Total',
       },
       texts: {
-        info: 'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
+        info: 'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel.',
         default:
-          'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel.',
+          'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific:
           'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel, depending on the recommended mode. Overall, {percentage}% (combined rather motivated and very motivated) of participants are motivated to adopt the recommendations made to them.',
       },

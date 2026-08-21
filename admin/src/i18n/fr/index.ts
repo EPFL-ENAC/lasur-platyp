@@ -516,7 +516,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     reco_inter: {
       title: 'Répartition modale potentielle',
       description:
-        'Ce graphique montre la répartition des modes de transports recommandés par Mobilyse pour chaque participant·e.',
+        "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le mode qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
       labels: {
         ...transportationModes,
       },
@@ -770,9 +770,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         allModes: 'Tous les modes',
       },
       texts: {
-        info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
+        info: "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
         default:
-          "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
+          'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",
       },
     },
@@ -791,9 +791,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         total: 'Total',
       },
       texts: {
-        info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
+        info: 'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
         default:
-          'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
+          'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific:
           'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
       },
