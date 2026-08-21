@@ -156,8 +156,16 @@ async function captureRawImage(): Promise<string | null> {
     return null
   }
 
+  // MapLibre's map root is only a template ref and has no id, so html2canvas's
+  // onclone can't find it via getElementById. Assign a stable id just for the
+  // clone lookup, then restore it afterwards.
+  const MAP_ROOT_ID = 'map-root-export'
+  const previousId = mapRootEl.id
+  mapRootEl.id = MAP_ROOT_ID
+
   const mapImageUrl = await heatmap.value.exportImage()
   if (!mapImageUrl) {
+    mapRootEl.id = previousId
     return null
   }
 
@@ -174,7 +182,7 @@ async function captureRawImage(): Promise<string | null> {
       scale: window.devicePixelRatio || 2,
       logging: false,
       onclone: (clonedDocument) => {
-        const clonedMapRoot = clonedDocument.getElementById(mapRootEl.id)
+        const clonedMapRoot = clonedDocument.getElementById(MAP_ROOT_ID)
         if (!clonedMapRoot) return
 
         // Hide MapLibre-rendered parts only, keep legend visible.
@@ -224,6 +232,8 @@ async function captureRawImage(): Promise<string | null> {
   } catch (error) {
     console.error('captureRawImage failed:', error)
     return null
+  } finally {
+    mapRootEl.id = previousId
   }
 }
 

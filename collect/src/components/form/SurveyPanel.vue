@@ -354,7 +354,7 @@ function nextStep() {
     }
   }
 if (survey.stepName === 'origin_places') {
-      if (survey.record.data.origin?.lat === undefined || survey.record.data.origin?.lat === 0) {
+    if (survey.record.data.origin?.lat === undefined || survey.record.data.origin?.lat === 0) {
         notifyError(t('form.error.origin'))
         return
       }
