@@ -120,7 +120,11 @@ class BaseStatsService:
         journey_days_cols = [c for c in df.columns if re.fullmatch(
             r'data\.freq_mod_journeys\.\d+\.days', c)]
         if journey_days_cols and 'token' in df.columns:
-            days_by_token = df[journey_days_cols].sum(axis=1)
+            # Coerce before summing: some records have this field stored as a
+            # non-numeric string, which would otherwise raise (or
+            # string-concatenate instead of summing).
+            days_by_token = df[journey_days_cols].apply(
+                pd.to_numeric, errors='coerce').sum(axis=1)
             days_by_token.index = df['token']
             days_by_token = days_by_token.groupby(level=0).sum()
         else:
@@ -141,7 +145,10 @@ class BaseStatsService:
                 continue
             idx = reco_s.index
             tokens = token_series.loc[idx]
-            own_days = df[days_col].loc[idx] if days_col in df.columns else pd.Series(
+            # Coerce: some records store this field as a non-numeric string,
+            # which would otherwise raise in the arithmetic downstream
+            # (energy/emissions calculations multiply by 'days').
+            own_days = pd.to_numeric(df[days_col].loc[idx], errors='coerce') if days_col in df.columns else pd.Series(
                 np.nan, index=idx)
             fallback_days = tokens.map(days_by_token).fillna(1)
             days = own_days.where(own_days.notna(), fallback_days)
@@ -297,9 +304,11 @@ class BaseStatsService:
             return None
 
         # Reshape wide day-per-journey columns into one row per (record, journey),
-        # vectorized instead of a Python-level iterrows/column scan.
+        # vectorized instead of a Python-level iterrows/column scan. Coerce to
+        # numeric first: some records store this field as a non-numeric
+        # string, which would otherwise raise on `> 0`.
         journey_id_by_col = {c: c.split('.')[2] for c in col_days}
-        stacked = df[col_days].stack()  # drops NaN by default
+        stacked = df[col_days].apply(pd.to_numeric, errors='coerce').stack()  # drops NaN by default
         stacked = stacked[stacked > 0]
         if stacked.empty:
             return None

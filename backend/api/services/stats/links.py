@@ -43,8 +43,12 @@ class LinksService(BaseStatsService):
         """
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
+        # Coerce before summing/comparing: some records have this field
+        # stored as a non-numeric string, which would otherwise raise on
+        # `> 0` (or silently string-concatenate in the .sum() below).
+        col_days_numeric = df[col_days].apply(pd.to_numeric, errors='coerce')
         legacy_cols = self._reco_legacy_columns(df)
-        total_days_by_token = df[col_days].sum(
+        total_days_by_token = col_days_numeric.sum(
             axis=1) if len(col_days) and legacy_cols else None
 
         # (mode, reco, weight) triples, accumulated via groupby-sum at the end
@@ -60,8 +64,8 @@ class LinksService(BaseStatsService):
             reco_col_i = f'typo.reco.reco_inter.{str(i)}'
 
             # int(days) <= 0 truncates toward zero, same as np.trunc for floats
-            days_trunc = np.trunc(df[col_days_i].astype(float))
-            valid_days = df[col_days_i].notna() & (days_trunc > 0)
+            days_trunc = np.trunc(col_days_numeric[col_days_i])
+            valid_days = col_days_numeric[col_days_i].notna() & (days_trunc > 0)
             if not valid_days.any():
                 continue
 

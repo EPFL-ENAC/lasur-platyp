@@ -249,7 +249,11 @@ class FrequenciesService(BaseStatsService):
             col_days_i = col_days[i]
             col_days_per_i = f"data.freq_mod_pro_journeys.{str(i)}.days_per"
 
-            days_s = df[col_days_i]
+            # Coerce before comparing/using: some records have this field
+            # stored as a non-numeric string, which would otherwise raise on
+            # `> 0` (invalid values are treated as missing, same as skipping
+            # them would).
+            days_s = pd.to_numeric(df[col_days_i], errors='coerce')
             mask = (df[col_mode_i] == mode) & (days_s > 0)
             if not mask.any():
                 continue
@@ -304,7 +308,7 @@ class FrequenciesService(BaseStatsService):
             if col_label_i not in df.columns:
                 continue
             col_days_i = col_days[i]
-            days_s = df[col_days_i]
+            days_s = pd.to_numeric(df[col_days_i], errors='coerce')
             label_s = df[col_label_i]
             mask = label_s.notna() & (label_s == mode) & (days_s > 0)
             if not mask.any():

@@ -173,9 +173,11 @@ class EmissionsService(BaseStatsService):
             return None
 
         # Reshape wide day-per-journey columns into one row per (record, journey),
-        # vectorized instead of a Python-level iterrows/column scan.
+        # vectorized instead of a Python-level iterrows/column scan. Coerce to
+        # numeric first: some records store this field as a non-numeric
+        # string, which would otherwise raise on `> 0`.
         journey_id_by_col = {c: c.split('.')[2] for c in col_days}
-        stacked = df[col_days].stack()  # drops NaN by default
+        stacked = df[col_days].apply(pd.to_numeric, errors='coerce').stack()  # drops NaN by default
         stacked = stacked[stacked > 0]
         if stacked.empty:
             return None
@@ -452,7 +454,10 @@ class EmissionsService(BaseStatsService):
             col_days_per_i = f'data.freq_mod_pro_journeys.{str(i)}.days_per'
 
             mode_s = df[col_mode_i]
-            days_s = df[col_days_i]
+            # Coerce before comparing/using: some records have this field
+            # stored as a non-numeric string, which would otherwise raise on
+            # `> 0` (invalid values are treated as missing).
+            days_s = pd.to_numeric(df[col_days_i], errors='coerce')
             hexid_s = df[col_hexid_i]
             days_per_s = df[col_days_per_i] if col_days_per_i in df.columns else pd.Series(
                 None, index=df.index)
@@ -810,7 +815,10 @@ class EmissionsService(BaseStatsService):
             mode_s = df[col_mode_i]
             reco_s = df[col_reco_i]
             hexid_s = df[col_hexid_i]
-            days_raw_s = df[col_days_i]
+            # Coerce before using: some records have this field stored as a
+            # non-numeric string, which would otherwise raise downstream
+            # (normalize_pro_days_to_yearly's multiplication, or `> 0` below).
+            days_raw_s = pd.to_numeric(df[col_days_i], errors='coerce')
             days_per_s = df[col_days_per_i] if col_days_per_i in df.columns else pd.Series(
                 None, index=df.index)
 
