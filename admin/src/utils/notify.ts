@@ -31,7 +31,11 @@ const sessionExpiredPattern = /expired at \d+, time: \d+\(leeway: \d+\)/i
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isSessionExpiredError(error: any): boolean {
   const detail = error?.response?.data?.detail
-  return typeof detail === 'string' && sessionExpiredPattern.test(detail)
+  if (typeof detail === 'string' && sessionExpiredPattern.test(detail)) return true
+  // Covers the other expiry path: Keycloak's own token refresh failing
+  // client-side (e.g. expired refresh token), which never produces a
+  // response with a `detail` message — see stores/auth.ts's updateToken().
+  return useAuthStore().sessionExpired
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -57,19 +57,35 @@ export default boot(({ app, router }) => {
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 
+  const authStore = useAuthStore()
+
+  // Shared by both expiry paths: a backend-rejected request (below) and a
+  // client-side Keycloak refresh failure (authStore.sessionExpired, set from
+  // stores/auth.ts's updateToken() and watched below).
+  function handleExpiredSession() {
+    authStore.profile = undefined
+    authStore.realmRoles = []
+    if (router.currentRoute.value.path !== '/signin') {
+      notifyWarning('error.session_expired')
+      void router.push('/signin')
+    }
+  }
+
   api.interceptors.response.use(
     (response) => response,
     (error: unknown) => {
       if (isExpiredTokenError(error)) {
-        const authStore = useAuthStore()
-        authStore.profile = undefined
-        authStore.realmRoles = []
-        if (router.currentRoute.value.path !== '/signin') {
-          notifyWarning('error.session_expired')
-          void router.push('/signin')
-        }
+        authStore.sessionExpired = true
+        handleExpiredSession()
       }
       return Promise.reject(error)
+    },
+  )
+
+  watch(
+    () => authStore.sessionExpired,
+    (expired) => {
+      if (expired) handleExpiredSession()
     },
   )
 })

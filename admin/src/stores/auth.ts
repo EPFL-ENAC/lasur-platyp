@@ -9,6 +9,12 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => profile.value !== undefined)
   const isAdmin = computed(() => realmRoles.value.includes('platyp-admin'))
   const initialized = ref(false)
+  // Set when Keycloak itself fails to refresh the access token (e.g. the
+  // refresh token has expired). This happens client-side, before any request
+  // reaches the API, so the axios response interceptor in boot/api.ts never
+  // sees it — that boot file watches this flag instead to trigger the same
+  // "session expired" notification + redirect.
+  const sessionExpired = ref(false)
 
   const accessToken = computed(() => keycloak.token)
 
@@ -27,6 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (authenticated) {
         realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
         profile.value = await keycloak.loadUserProfile()
+        sessionExpired.value = false
         keycloak.onTokenExpired = () => void updateToken().catch(() => undefined)
       }
       return authenticated
@@ -76,6 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('Token refresh error:', error)
       profile.value = undefined
       realmRoles.value = []
+      sessionExpired.value = true
       throw error
     }
   }
@@ -101,6 +109,7 @@ export const useAuthStore = defineStore('auth', () => {
     accessToken,
     keycloak,
     initialized,
+    sessionExpired,
     init,
     login,
     logout,
