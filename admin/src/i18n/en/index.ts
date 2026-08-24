@@ -822,6 +822,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
   },
   transportation_modes: {
     ...transportationModes,
+    ...simpleShortLabels,
   },
   simple_labels: {
     ...simpleShortLabels,

@@ -150,11 +150,11 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly flushStateFromLocalStorage: UnwrapRef<typeof import('./stores/stats')['flushStateFromLocalStorage']>
+    readonly flushStateFromIndexedDB: UnwrapRef<typeof import('./stores/stats')['flushStateFromIndexedDB']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
-    readonly getStateFromLocalStorage: UnwrapRef<typeof import('./stores/stats')['getStateFromLocalStorage']>
+    readonly getStateFromIndexedDB: UnwrapRef<typeof import('./stores/stats')['getStateFromIndexedDB']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>

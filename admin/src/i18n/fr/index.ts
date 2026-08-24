@@ -835,6 +835,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
   },
   transportation_modes: {
     ...transportationModes,
+    ...simpleShortLabels,
   },
   simple_labels: {
     ...simpleShortLabels,
