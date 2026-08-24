@@ -255,8 +255,8 @@ import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentR
 import ModalEvolutionSankey from 'src/components/charts/ModalEvolutionSankey.vue'
 import {
   type StatsState,
-  flushStateFromLocalStorage,
-  getStateFromLocalStorage,
+  flushStateFromIndexedDB,
+  getStateFromIndexedDB,
 } from 'src/stores/stats'
 import type { Frequencies } from 'src/models'
 
@@ -275,8 +275,8 @@ const stats = ref<StatsState | null>(null)
 const orgs = ref<string[]>([])
 const campaigns = ref<string[]>([])
 
-onMounted(() => {
-  stats.value = getStateFromLocalStorage(route.query.statsStateId as string)
+onMounted(async () => {
+  stats.value = await getStateFromIndexedDB(route.query.statsStateId as string)
   orgs.value = (route.query.orgs as string)?.split(';').map(decodeURIComponent) || []
   campaigns.value = (route.query.campaigns as string)?.split(';').map(decodeURIComponent) || []
   statsStore.freqModalType = (route.query.freqModalType as string) || 'simple'
@@ -310,7 +310,7 @@ onUnmounted(() => {
 })
 
 function cleanUpLocalStorage() {
-  flushStateFromLocalStorage(route.query.statsStateId as string)
+  void flushStateFromIndexedDB(route.query.statsStateId as string)
 }
 
 const reportDate = computed(() => {

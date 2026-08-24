@@ -418,7 +418,7 @@ async function goToReport() {
 }
 
 async function openReport() {
-  const id = stats.dumpToLocalStorage()
+  const id = await stats.dumpToIndexedDB()
 
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'

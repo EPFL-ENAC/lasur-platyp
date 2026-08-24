@@ -17,7 +17,7 @@ import {
 } from 'src/models'
 import type { Filter } from 'src/components/models'
 import { api } from 'src/boot/api'
-import { getLocalStorageJSON, setLocalStorage } from 'src/utils/localStorage'
+import { getIndexedDB, removeIndexedDB, setIndexedDB } from 'src/utils/indexedDb'
 import { getRandomId } from 'src/utils/random'
 
 const authStore = useAuthStore()
@@ -207,9 +207,9 @@ export const useStats = defineStore('stats', () => {
     comparisonMode.value = null
   }
 
-  function dumpToLocalStorage() {
+  async function dumpToIndexedDB() {
     const id = getRandomId()
-    setLocalStorage(makeStatsStateId(id), JSON.stringify(toJSONState()))
+    await setIndexedDB(makeStatsStateId(id), toJSONState())
     return id
   }
 
@@ -259,7 +259,7 @@ export const useStats = defineStore('stats', () => {
     loadComparison,
     resetComparison,
     toJSONState,
-    dumpToLocalStorage,
+    dumpToIndexedDB,
   }
 })
 
@@ -267,10 +267,10 @@ function makeStatsStateId(uuid: string): string {
   return `stats_${uuid}`
 }
 
-export function getStateFromLocalStorage(id: string): StatsState | null {
-  return getLocalStorageJSON<StatsState | null>(makeStatsStateId(id), null)
+export async function getStateFromIndexedDB(id: string): Promise<StatsState | null> {
+  return getIndexedDB<StatsState>(makeStatsStateId(id))
 }
 
-export function flushStateFromLocalStorage(id: string): void {
-  localStorage.removeItem(makeStatsStateId(id))
+export async function flushStateFromIndexedDB(id: string): Promise<void> {
+  return removeIndexedDB(makeStatsStateId(id))
 }
