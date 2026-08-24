@@ -363,6 +363,7 @@ export type ComparisonMode = 'cross_sectional' | 'longitudinal'
 
 export interface CampaignGroup {
   name: string
+  label?: string
   campaign_ids: number[]
 }
 

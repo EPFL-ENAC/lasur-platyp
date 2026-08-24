@@ -393,10 +393,17 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     main_group: 'Groupe principal',
     compare_with: 'Comparer avec',
     also_compare_with: 'Comparer également avec',
+    group: {
+      M1: 'Groupe principal',
+      M2: 'Comparer avec',
+      M3: 'Comparer également avec 1',
+      M4: 'Comparer également avec 2',
+      M5: 'Comparer également avec 3',
+    },
     add_more_comparisons: 'Ajouter des comparaisons',
     cross_sectional: 'Transversal',
     longitudinal: 'Longitudinal',
-    group_info: '{name}: {count} participants',
+    group_info: '{count} participants',
     too_few_records: 'Données insuffisantes pour : {groups}',
     modal_evolution: {
       title: 'Évolution des pratiques modales',

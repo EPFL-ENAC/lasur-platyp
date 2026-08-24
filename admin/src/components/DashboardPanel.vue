@@ -166,12 +166,38 @@
         :disable="stats.loading"
       />
     </div>
-    <div v-if="!stats.loading && hasComparisonGroups" class="q-mb-md" >
+    <div v-if="!stats.loading && hasComparisonGroups" class="q-mb-md">
       <q-separator class="q-mb-md" />
       <div>
-        <q-chip v-for="(group, idx) in stats.comparisonResults?.groups" :key="group.name" class="text-white" :style="{ backgroundColor: GROUP_COLORS[idx % GROUP_COLORS.length] }">
-          {{ t('stats.group_info', { name: group.name, count: group.total }) }}
-        </q-chip>
+        <span
+          v-for="(group, idx) in stats.comparisonResults?.groups"
+          :key="group.name"
+          class="q-mr-md"
+        >
+          <span
+            :style="{
+              border: `1px solid ${GROUP_COLORS[idx % GROUP_COLORS.length]}`,
+              borderRadius: '4px',
+              color: GROUP_COLORS[idx % GROUP_COLORS.length],
+              padding: '2px 4px',
+              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+            }"
+            >{{ group.name }}</span
+          >
+          <span
+            class="text-bold q-ml-xs"
+            :style="{
+              color: GROUP_COLORS[idx % GROUP_COLORS.length],
+            }"
+            >{{ t(`stats.group.${group.name}`) }}</span
+          >
+          -
+          {{
+            t('stats.group_info', {
+              count: group.total,
+            })
+          }}
+        </span>
       </div>
     </div>
     <q-banner
@@ -362,21 +388,26 @@ function buildBaseFilter(): Filter {
 
 function buildComparisonGroups(): CampaignGroup[] {
   const groups: CampaignGroup[] = [
-    { name: t('stats.main_group'), campaign_ids: mainGroupCampaignIds.value },
+    { name: '', label: t('stats.main_group'), campaign_ids: mainGroupCampaignIds.value },
   ]
   if (compareWithFilter.value.length > 0) {
     groups.push({
-      name: t('stats.compare_with'),
+      name: '',
+      label: t('stats.compare_with'),
       campaign_ids: compareWithFilter.value.map((id) => Number(id)),
     })
   }
   additionalCompareGroups.value.forEach((ids, index) => {
     if (ids.length > 0) {
       groups.push({
-        name: `${t('stats.also_compare_with')} ${index + 1}`,
+        name: '',
+        label: `${t('stats.also_compare_with')} ${index + 1}`,
         campaign_ids: ids.map((id) => Number(id)),
       })
     }
+  })
+  groups.forEach((group, index) => {
+    group.name = `M${index + 1}`
   })
   return groups
 }

@@ -377,6 +377,13 @@ Thank you for your valuable contribution! If you have any questions, please cont
     charts_height: 'Charts height',
     records_count: 'Records count',
     in_progress: 'In Progress',
+    group: {
+      M1: 'Main Group',
+      M2: 'Compare with',
+      M3: 'Also compare with 1',
+      M4: 'Also compare with 2',
+      M5: 'Also compare with 3',
+    },
     completed: 'Completed',
     pending: 'Pending',
     options: 'Options',
@@ -387,7 +394,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     add_more_comparisons: 'Add more comparisons',
     cross_sectional: 'Cross-sectional',
     longitudinal: 'Longitudinal',
-    group_info: '{name}: {count} participants',
+    group_info: '{count} participants',
     too_few_records: 'Not enough records for: {groups}',
     modal_evolution: {
       title: 'Evolution of modal practices',
