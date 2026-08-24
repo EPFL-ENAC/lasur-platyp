@@ -1062,4 +1062,5 @@ Use the menu to navigate through the different sections, manage organisations, c
   read_less: 'Read less',
   read_more: 'Read more',
   more_details: 'More details',
+  no_data: 'No data available',
 }

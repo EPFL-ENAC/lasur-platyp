@@ -1080,4 +1080,5 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   read_less: 'Afficher moins',
   read_more: 'Lire la suite',
   more_details: 'Plus de détails',
+  no_data: 'Aucune donnée disponible',
 }
