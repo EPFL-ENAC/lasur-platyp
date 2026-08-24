@@ -16,7 +16,11 @@ export const useAuthStore = defineStore('auth', () => {
   // "session expired" notification + redirect.
   const sessionExpired = ref(false)
 
-  const accessToken = computed(() => keycloak.token)
+  // keycloak is a plain (non-reactive) Keycloak instance, so a `computed`
+  // reading keycloak.token would never invalidate: Vue has nothing to track
+  // and the value freezes at whatever it was on first access, even after
+  // updateToken() refreshes the underlying token. Track it explicitly instead.
+  const accessToken = ref<string | undefined>(keycloak.token)
 
   async function init() {
     if (isAuthenticated.value || initialized.value) return Promise.resolve(true)
@@ -34,7 +38,11 @@ export const useAuthStore = defineStore('auth', () => {
         realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
         profile.value = await keycloak.loadUserProfile()
         sessionExpired.value = false
+        accessToken.value = keycloak.token
         keycloak.onTokenExpired = () => void updateToken().catch(() => undefined)
+        keycloak.onAuthRefreshSuccess = () => {
+          accessToken.value = keycloak.token
+        }
       }
       return authenticated
     } catch (error) {
@@ -59,6 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
       // If keycloak was never initialized, just clear local state
       profile.value = undefined
       realmRoles.value = []
+      accessToken.value = undefined
       return
     }
     if (!isAuthenticated.value) return
@@ -69,6 +78,7 @@ export const useAuthStore = defineStore('auth', () => {
       .then(() => {
         profile.value = undefined
         realmRoles.value = []
+        accessToken.value = undefined
       })
   }
 
@@ -78,6 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function updateToken(minValidity = 30) {
     try {
       await keycloak.updateToken(minValidity)
+      accessToken.value = keycloak.token
       return keycloak.token
     } catch (error) {
       console.error('Token refresh error:', error)
