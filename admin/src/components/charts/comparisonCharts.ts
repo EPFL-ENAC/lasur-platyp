@@ -60,7 +60,7 @@ export function buildGroupStackedBarOption(params: {
   }))
 
   return {
-    grid: { left: '20', right: '20', top: '60', bottom: '60', containLabel: true },
+    grid: { left: '20', right: '20', top: '60', bottom: '75', containLabel: true },
     animation: false,
     height,
     title: {
@@ -83,7 +83,7 @@ export function buildGroupStackedBarOption(params: {
         return res
       },
     },
-    legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
+    legend: { show: true, bottom: 5, left: 'center', type: 'scroll' },
     xAxis: {
       type: 'category',
       data: groupDatasets.map((group) => group.name),
@@ -141,7 +141,7 @@ export function buildGroupedHorizontalBarOption(params: {
   }))
 
   return {
-    grid: { left: '20', right: '20', top: '60', bottom: '60', containLabel: true },
+    grid: { left: '20', right: '20', top: '60', bottom: '85', containLabel: true },
     animation: false,
     height,
     title: {
@@ -155,7 +155,7 @@ export function buildGroupedHorizontalBarOption(params: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
     },
-    legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
+    legend: { show: true, bottom: 5, left: 'center', type: 'scroll' },
     yAxis: {
       type: 'category',
       data: orderedCategories.map((key) => categoryNames.get(key) || key),
