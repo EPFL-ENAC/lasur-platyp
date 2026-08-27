@@ -518,6 +518,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
         specific:
           'Le temps de trajet domicile-travail médian des participant·e·s est de {median} minutes.',
+        comparison_item: '{median} minutes ({name})',
+        comparison:
+          "Ce graphique montre les temps de trajets domicile-travail des participant·e·s, pour chaque groupe. Les temps de trajets médians sont de {list}. Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024).",
       },
     },
     reco_inter: {

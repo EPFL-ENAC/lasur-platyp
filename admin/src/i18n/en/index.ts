@@ -507,6 +507,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
         default:
           'The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024)',
         specific: 'The median travel time from home to work for participants is {median} minutes.',
+        comparison_item: '{median} minutes ({name})',
+        comparison:
+          "This chart shows the participants' commuting times, broken down by group of campaign(s). The median commute times are {list}. The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024).",
       },
     },
     reco_inter: {

@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="t('stats.travel_time.title')"
-    :description="t('stats.travel_time.description')"
+    :description="descriptionText"
     :chart-info-text="chartInfoText"
     :inline="inline"
   >
@@ -98,7 +98,36 @@ function onChartDownload() {
   shellRef.value?.handleExport()
 }
 
+const descriptionText = computed(() =>
+  isComparison.value ? '' : t('stats.travel_time.description'),
+)
+
+const comparisonMedians = computed(() => {
+  if (!isComparison.value) return null
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const medians = groups
+    .map((group) => {
+      const freq = group.frequencies?.find((item) => item.field === 'travel_time')
+      const median = freq ? computeMedian(freq) : undefined
+      return median === undefined ? null : { name: group.name, median }
+    })
+    .filter((item): item is { name: string; median: number } => item !== null)
+
+  return medians.length > 0 ? medians : null
+})
+
 const chartInfoText = computed(() => {
+  const medians = comparisonMedians.value
+  if (medians) {
+    const list = medians
+      .map((item) =>
+        t('stats.travel_time.texts.comparison_item', { median: item.median, name: item.name }),
+      )
+      .join(', ')
+    return t('stats.travel_time.texts.comparison', { list })
+  }
+
   const parts: string[] = []
   if (hasData.value && medianValue.value != null) {
     parts.push(t('stats.travel_time.texts.specific', { median: medianValue.value }))
