@@ -583,6 +583,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
         ...simpleShortLabels,
         ...emissionsLabels,
       },
+      texts: {
+        comparison:
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
+      },
     },
     emissions_freq_mod_complex: {
       title: 'CO₂ emissions (detailed)',
@@ -591,6 +595,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       labels: {
         ...complexLabels,
         ...emissionsLabels,
+      },
+      texts: {
+        comparison:
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reductions_mod: {
@@ -686,6 +694,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       texts: {
         specific:
           '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
+        comparison:
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reductions_mod_pro: {

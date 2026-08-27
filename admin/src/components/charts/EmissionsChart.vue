@@ -181,7 +181,61 @@ const emissionItemsProLabels = computed(() => {
   }
 })
 
+const comparisonEmissionItems = computed(() => {
+  if (!isComparison.value) return null
+
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length < 2) return null
+
+  const lastGroup = groups[groups.length - 1]!
+  const prevGroup = groups[groups.length - 2]!
+  if (lastGroup.total < globalAnswersThreshold || prevGroup.total < globalAnswersThreshold) {
+    return null
+  }
+
+  const lastEmissions = findGroupEmissions(lastGroup) ?? []
+  const lastTotalEmissions = lastEmissions.reduce((sum, item) => sum + item.emissions, 0)
+  if (lastTotalEmissions === 0) return null
+
+  const topMode = lastEmissions.reduce((max, item) => (item.emissions > max.emissions ? item : max))
+
+  const prevEmissions = findGroupEmissions(prevGroup) ?? []
+  const prevTotalEmissions = prevEmissions.reduce((sum, item) => sum + item.emissions, 0)
+  const prevModeValue = prevEmissions.find((item) => item.mode === topMode.mode)?.emissions ?? 0
+
+  return {
+    lastGroup: lastGroup.name,
+    prevGroup: prevGroup.name,
+    mode: topMode.mode,
+    lastValue: topMode.emissions / 1000,
+    lastPercent: (topMode.emissions / lastTotalEmissions) * 100,
+    prevValue: prevModeValue / 1000,
+    prevPercent: prevTotalEmissions > 0 ? (prevModeValue / prevTotalEmissions) * 100 : 0,
+  }
+})
+
+const comparisonEmissionItemsLabels = computed(() => {
+  const ci = comparisonEmissionItems.value
+  if (!ci) return null
+
+  return {
+    lastGroup: ci.lastGroup,
+    prevGroup: ci.prevGroup,
+    mode: keyLabel(ci.mode),
+    lastValue: formatNumber(Number(ci.lastValue.toFixed(1))),
+    lastPercent: formatNumber(Math.round(ci.lastPercent)),
+    prevValue: formatNumber(Number(ci.prevValue.toFixed(1))),
+    prevPercent: formatNumber(Math.round(ci.prevPercent)),
+  }
+})
+
 const chartDescription = computed(() => {
+  if (comparisonEmissionItemsLabels.value) {
+    return t(
+      `stats.emissions_${props.chartTranslationName}.texts.comparison`,
+      comparisonEmissionItemsLabels.value,
+    )
+  }
   if (emissionItemsLabels.value) {
     return t(
       `stats.emissions_${props.chartTranslationName}.texts.specific`,

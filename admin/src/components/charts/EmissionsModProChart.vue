@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="t('stats.emissions_freq_mod_pro.title')"
-    :description="t('stats.emissions_freq_mod_pro.description')"
+    :description="descriptionText"
     :chart-info-text="infoText"
     :inline="inline"
   >
@@ -61,7 +61,13 @@ watch(chartRef, (newVal) => {
   infoText.value = newVal?.chartInfoText || ''
 }, { flush: 'post' })
 
+const stats = useStats()
+
 const { t } = useI18n()
+
+const descriptionText = computed(() =>
+  stats.comparisonMode ? '' : t('stats.emissions_freq_mod_pro.description'),
+)
 
 function onChartDownload() {
   chartRef.value?.handleExport()

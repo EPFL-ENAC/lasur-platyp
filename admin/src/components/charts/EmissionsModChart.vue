@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="t('stats.emissions_freq_mod.title')"
-    :description="t('stats.emissions_freq_mod.description')"
+    :description="descriptionText"
     :chart-info-text="infoText"
     :inline="inline"
   >
@@ -85,6 +85,10 @@ const detailedChartRef = ref<EmissionsChartExposed | null>(null)
 const stats = useStats()
 
 const { t } = useI18n()
+
+const descriptionText = computed(() =>
+  stats.comparisonMode ? '' : t('stats.emissions_freq_mod.description'),
+)
 
 const infoText = ref('')
 

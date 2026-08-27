@@ -594,6 +594,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         ...simpleShortLabels,
         ...emissionsLabels,
       },
+      texts: {
+        comparison:
+          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+      },
     },
     emissions_freq_mod_complex: {
       title: 'Émissions de CO₂ (détail)',
@@ -602,6 +606,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       labels: {
         ...complexLabels,
         ...emissionsLabels,
+      },
+      texts: {
+        comparison:
+          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod: {
@@ -697,6 +705,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       texts: {
         specific:
           '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
+        comparison:
+          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod_pro: {
