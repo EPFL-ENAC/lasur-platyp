@@ -133,7 +133,6 @@
                         :max="600"
                         :step="50"
                         label
-                        switch-label-side
                         style="max-width: 200px"
                       />
                     </div>
