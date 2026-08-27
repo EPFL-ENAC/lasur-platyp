@@ -11,8 +11,8 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import type { Option } from 'src/components/form/models'
-import ChoiceItem from 'src/components/form/ChoiceItem.vue'
+import type { Option } from '@/components/form/models'
+import ChoiceItem from '@/components/form/ChoiceItem.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

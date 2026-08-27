@@ -174,9 +174,9 @@
 </template>
 
 <script setup lang="ts">
-import AppFooter from 'src/components/AppFooter.vue'
+import AppFooter from '@/components/AppFooter.vue'
 import { Cookies, useQuasar } from 'quasar'
-import { locales } from 'boot/i18n'
+import { locales } from '@/boot/i18n'
 
 const authStore = useAuthStore()
 const { locale, t } = useI18n()

@@ -50,9 +50,9 @@
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar'
-import type { AppUser } from 'src/models'
-import { notifyError, notifySuccess } from 'src/utils/notify'
-import { generatePassword } from 'src/utils/generate'
+import type { AppUser } from '@/models'
+import { notifyError, notifySuccess } from '@/utils/notify'
+import { generatePassword } from '@/utils/generate'
 
 interface DialogProps {
   modelValue: boolean

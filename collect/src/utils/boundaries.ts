@@ -1,7 +1,12 @@
-import { type Map, type MapMouseEvent, addProtocol } from 'maplibre-gl'
+import {
+  type DataDrivenPropertyValueSpecification,
+  type Map,
+  type MapMouseEvent,
+  addProtocol,
+} from 'maplibre-gl'
 import { Protocol } from 'pmtiles'
-import type { BoundaryLevel, PlaceLocation } from 'src/models'
-import { H3Utils, type H3Index } from 'src/utils/h3'
+import type { BoundaryLevel, PlaceLocation } from '@/models'
+import { H3Utils, type H3Index } from '@/utils/h3'
 
 const protocol = new Protocol()
 addProtocol('pmtiles', protocol.tile)
@@ -54,7 +59,17 @@ const LEVEL_FLY_ZOOM: Record<BoundaryLevel, number> = {
 const HIGHLIGHT_COLOR = '#e6a21a'
 const TRANSPARENT = 'rgba(0, 0, 0, 0)'
 
-const BOUNDARIES_SOURCES = {
+type BoundariesSourceId = 'national_boundaries' | 'regional_boundaries' | 'local_boundaries'
+
+const BOUNDARIES_SOURCES: Record<
+  BoundariesSourceId,
+  {
+    url: string
+    minzoom: number
+    maxzoom: number
+    opacity: DataDrivenPropertyValueSpecification<number>
+  }
+> = {
   national_boundaries: {
     url: `${mapsUrl}national_boundaries.pmtiles`,
     minzoom: 0,
@@ -88,7 +103,9 @@ class BoundariesManager {
     this.map = map
     this.selectionHandler = selectionHandler
     this.currentSelection = initSelection
-    Object.keys(BOUNDARIES_SOURCES).forEach((sourceId) => this.addSource(sourceId))
+    ;(Object.keys(BOUNDARIES_SOURCES) as BoundariesSourceId[]).forEach((sourceId) =>
+      this.addSource(sourceId),
+    )
 
     if (this.selectionHandler) {
       this.map.on('click', (e: MapMouseEvent) => this.onClick(e))
@@ -164,7 +181,7 @@ class BoundariesManager {
     })
   }
 
-  private addSource(sourceId: string) {
+  private addSource(sourceId: BoundariesSourceId) {
     if (!this.map.getSource(sourceId)) {
       const source = BOUNDARIES_SOURCES[sourceId]
       // Add pmtiles source for boundaries

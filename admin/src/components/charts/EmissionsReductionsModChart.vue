@@ -60,8 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
-import EmissionsReductionsChart from 'src/components/charts/EmissionsReductionsChart.vue'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import EmissionsReductionsChart from '@/components/charts/EmissionsReductionsChart.vue'
 
 interface Props {
   height: number

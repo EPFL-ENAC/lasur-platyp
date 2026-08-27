@@ -14,11 +14,11 @@ import {
   type Stats,
   type EquipmentsStats,
   type EmissionReduction,
-} from 'src/models'
-import type { Filter } from 'src/components/models'
-import { api } from 'src/boot/api'
-import { getIndexedDB, removeIndexedDB, setIndexedDB } from 'src/utils/indexedDb'
-import { getRandomId } from 'src/utils/random'
+} from '@/models'
+import type { Filter } from '@/components/models'
+import { api } from '@/boot/api'
+import { getIndexedDB, removeIndexedDB, setIndexedDB } from '@/utils/indexedDb'
+import { getRandomId } from '@/utils/random'
 
 const authStore = useAuthStore()
 

@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import NumberItem from 'src/components/form/NumberItem.vue'
+import NumberItem from '@/components/form/NumberItem.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

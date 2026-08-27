@@ -49,10 +49,10 @@
 </template>
 
 <script setup lang="ts">
-import { geocoderApi, toAddress } from 'src/utils/geocoder'
+import { geocoderApi, toAddress } from '@/utils/geocoder'
 import type { Feature, Point } from 'geojson'
-import type { AddressLocation } from 'src/components/models'
-import { formatCoordinates } from 'src/utils/numbers'
+import type { AddressLocation } from '@/components/models'
+import { formatCoordinates } from '@/utils/numbers'
 
 const { t } = useI18n()
 

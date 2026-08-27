@@ -89,7 +89,7 @@ import {
   type GeoJSONSource,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style, ISOCHRONE_CUTOFF_COLORS } from 'src/utils/maps'
+import { style, ISOCHRONE_CUTOFF_COLORS } from '@/utils/maps'
 
 const isoService = useIsochrones()
 

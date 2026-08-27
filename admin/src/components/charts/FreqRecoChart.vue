@@ -33,9 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
-import ShareChart from 'src/components/charts/ShareChart.vue'
-import type { Frequencies } from 'src/models'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import ShareChart from '@/components/charts/ShareChart.vue'
+import type { Frequencies } from '@/models'
 
 interface Props {
   height: number

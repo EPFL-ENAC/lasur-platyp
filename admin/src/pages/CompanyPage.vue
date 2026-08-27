@@ -165,17 +165,17 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign, Company } from 'src/models'
-import type { Service } from 'src/stores/services'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import CustomActionsDialog from 'src/components/company/CustomActionsDialog.vue'
-import type { FieldItem } from 'src/components/FieldsList.vue'
-import FieldsList from 'src/components/FieldsList.vue'
-import CompanyDialog from 'src/components/company/CompanyDialog.vue'
-import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
-import { notifySuccess, notifyError } from 'src/utils/notify'
+import type { Campaign, Company } from '@/models'
+import type { Service } from '@/stores/services'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import CustomActionsDialog from '@/components/company/CustomActionsDialog.vue'
+import type { FieldItem } from '@/components/FieldsList.vue'
+import FieldsList from '@/components/FieldsList.vue'
+import CompanyDialog from '@/components/company/CompanyDialog.vue'
+import CompanyCampaignDialog from '@/components/company/CompanyCampaignDialog.vue'
+import { notifySuccess, notifyError } from '@/utils/notify'
 import type { QTableColumn } from 'quasar'
-import { checkUrlParamNumber } from 'src/utils/numbers'
+import { checkUrlParamNumber } from '@/utils/numbers'
 
 const route = useRoute()
 const router = useRouter()

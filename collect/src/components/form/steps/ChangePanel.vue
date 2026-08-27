@@ -48,9 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import SectionItem from 'src/components/form/SectionItem.vue'
-import RatingItem from 'src/components/form/RatingItem.vue'
-import ChoiceItem from 'src/components/form/ChoiceItem.vue'
+import SectionItem from '@/components/form/SectionItem.vue'
+import RatingItem from '@/components/form/RatingItem.vue'
+import ChoiceItem from '@/components/form/ChoiceItem.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()
@@ -79,7 +79,7 @@ const isRecoChange = computed(() => !survey.isRecommendationAtIndexInUse(props.i
 
 const recoInter = computed(() =>
   survey.recommendation.reco?.reco_inter && survey.recommendation.reco.reco_inter.length
-    ? survey.recommendation.reco.reco_inter[props.idx]
+    ? (survey.recommendation.reco.reco_inter[props.idx] ?? '')
     : '',
 )
 

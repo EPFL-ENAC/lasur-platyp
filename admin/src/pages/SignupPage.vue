@@ -127,10 +127,10 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
 import { Cookies, copyToClipboard } from 'quasar'
-import type { AppUser } from 'src/models'
-import { notifyError, notifySuccess } from 'src/utils/notify'
-import { generatePassword } from 'src/utils/generate'
-import { locales } from 'boot/i18n'
+import type { AppUser } from '@/models'
+import { notifyError, notifySuccess } from '@/utils/notify'
+import { generatePassword } from '@/utils/generate'
+import { locales } from '@/boot/i18n'
 
 const $q = useQuasar()
 const { t, locale } = useI18n()

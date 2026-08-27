@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Option } from 'src/components/form/models'
+import type { Option } from '@/components/form/models'
 import QuestionText from './QuestionText.vue'
 
 interface Props {

@@ -56,9 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import JourneyStepWizard from 'src/components/form/steps/JourneyStepWizard.vue'
-import type { Option } from 'src/components/form/models'
-import type { Journey } from 'src/models'
+import JourneyStepWizard from '@/components/form/steps/JourneyStepWizard.vue'
+import type { Option } from '@/components/form/models'
+import type { Journey } from '@/models'
 
 const { t } = useI18n()
 const survey = useSurvey()

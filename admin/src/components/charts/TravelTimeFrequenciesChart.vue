@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -57,7 +57,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
 use([

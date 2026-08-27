@@ -85,12 +85,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Company, Campaign } from 'src/models'
-import IsochronesMap from 'src/components/IsochronesMap.vue'
-import FieldsList from 'src/components/FieldsList.vue'
-import type { FieldItem } from 'src/components/FieldsList.vue'
-import type { Record } from 'src/models'
-import { notifyError } from 'src/utils/notify'
+import type { Company, Campaign } from '@/models'
+import IsochronesMap from '@/components/IsochronesMap.vue'
+import FieldsList from '@/components/FieldsList.vue'
+import type { FieldItem } from '@/components/FieldsList.vue'
+import type { Record } from '@/models'
+import { notifyError } from '@/utils/notify'
 
 interface Location {
   lat: number

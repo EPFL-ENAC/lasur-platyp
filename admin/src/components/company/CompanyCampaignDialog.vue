@@ -288,11 +288,11 @@
 
 <script setup lang="ts">
 import slug from 'slug'
-import type { Campaign, Company, Workplace } from 'src/models'
-import { notifyError } from 'src/utils/notify'
-import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
-import WorkplaceInput from 'src/components/company/WorkplaceInput.vue'
-import { generateToken } from 'src/utils/generate'
+import type { Campaign, Company, Workplace } from '@/models'
+import { notifyError } from '@/utils/notify'
+import EmployerActionsInput from '@/components/company/EmployerActionsInput.vue'
+import WorkplaceInput from '@/components/company/WorkplaceInput.vue'
+import { generateToken } from '@/utils/generate'
 import Papa from 'papaparse'
 
 interface DialogProps {

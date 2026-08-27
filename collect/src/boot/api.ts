@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app'
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
@@ -23,7 +23,7 @@ const api = axios.create({
   baseURL: baseUrl,
 })
 
-export default boot(({ app }) => {
+export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios

@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import { downloadDataUrl, mergeImageWithLogo } from 'src/utils/images'
+import { downloadDataUrl, mergeImageWithLogo } from '@/utils/images'
 
 interface Props {
   height?: number | undefined

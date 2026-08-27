@@ -44,10 +44,10 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
-import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
-import { formatNumber } from 'src/utils/numbers'
-import type { BehaviorChangeStats } from 'src/models'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import BehaviorChangeChart from '@/components/charts/BehaviorChangeChart.vue'
+import { formatNumber } from '@/utils/numbers'
+import type { BehaviorChangeStats } from '@/models'
 
 interface Props {
   height: number

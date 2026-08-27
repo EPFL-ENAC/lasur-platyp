@@ -18,10 +18,10 @@
 <script setup lang="ts">
 import { Map, Marker } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style } from 'src/utils/maps'
+import { style } from '@/utils/maps'
 import type { Position } from 'geojson'
-import type { PlaceLocation } from 'src/components/models'
-import { BoundariesManager } from 'src/utils/boundaries'
+import type { PlaceLocation } from '@/components/models'
+import { BoundariesManager } from '@/utils/boundaries'
 
 interface Props {
   modelValue?: GeoJSON.FeatureCollection | undefined

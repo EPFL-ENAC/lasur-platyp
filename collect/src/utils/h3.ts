@@ -1,5 +1,5 @@
 import * as h3 from 'h3-js'
-import type { BoundaryLevel, PlaceLocation } from 'src/models'
+import type { BoundaryLevel, PlaceLocation } from '@/models'
 
 // H3 types are available directly from the package
 type H3Index = h3.H3Index // This is actually a string

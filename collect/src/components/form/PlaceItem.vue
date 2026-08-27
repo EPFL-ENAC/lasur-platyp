@@ -11,9 +11,9 @@
 <script setup lang="ts">
 import { AttributionControl, FullscreenControl, Map, NavigationControl } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style } from 'src/utils/maps'
-import { BoundariesManager } from 'src/utils/boundaries'
-import type { PlaceLocation } from 'src/models'
+import { style } from '@/utils/maps'
+import { BoundariesManager } from '@/utils/boundaries'
+import type { PlaceLocation } from '@/models'
 
 const { t } = useI18n()
 
@@ -64,10 +64,11 @@ function onInit() {
     }),
   )
 
-  if (map.value) {
-    map.value.on('load', () => {
+  const mapInstance = map.value
+  if (mapInstance) {
+    mapInstance.on('load', () => {
       new BoundariesManager(
-        map.value,
+        mapInstance,
         initSelection,
         props.readOnly
           ? undefined

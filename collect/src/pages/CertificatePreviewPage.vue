@@ -28,8 +28,8 @@
 </template>
 
 <script setup lang="ts">
-import ReportPage from 'src/components/ReportPage.vue'
-import type { RecordCertificate } from 'src/models'
+import ReportPage from '@/components/ReportPage.vue'
+import type { RecordCertificate } from '@/models'
 
 const { t, locale } = useI18n()
 const collector = useCollector()

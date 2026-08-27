@@ -96,9 +96,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign } from 'src/models'
-import { makeSurveyLink } from 'src/utils/links'
-import { notifyError, notifySuccess } from 'src/utils/notify'
+import type { Campaign } from '@/models'
+import { makeSurveyLink } from '@/utils/links'
+import { notifyError, notifySuccess } from '@/utils/notify'
 
 const { t, locale } = useI18n()
 

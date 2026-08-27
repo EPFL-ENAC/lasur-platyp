@@ -28,7 +28,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber } from '@/utils/numbers'
 import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()

@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'

@@ -25,8 +25,8 @@ import {
 } from 'echarts/components'
 import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS, modeSortOrder } from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
-import { formatNumber } from 'src/utils/numbers'
-import type { ComparisonStats, Emissions } from 'src/models'
+import { formatNumber } from '@/utils/numbers'
+import type { ComparisonStats, Emissions } from '@/models'
 
 const { t, locale } = useI18n()
 use([

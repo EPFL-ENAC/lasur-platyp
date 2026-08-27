@@ -32,8 +32,8 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
-import type { ComparisonStats, EmissionReduction, Emissions } from 'src/models'
+import { formatNumber } from '@/utils/numbers'
+import type { ComparisonStats, EmissionReduction, Emissions } from '@/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])

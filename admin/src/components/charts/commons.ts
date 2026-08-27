@@ -292,9 +292,9 @@ export function computePercentages<T extends { value: number }>(
   const percents = raw.map((item) => item.floor)
   for (const item of sorted) {
     if (surplus <= 0) break
-    percents[item.idx] += 1
+    percents[item.idx] = (percents[item.idx] ?? 0) + 1
     surplus -= 1
   }
 
-  return items.map((item, idx) => ({ ...item, percent: percents[idx] }))
+  return items.map((item, idx) => ({ ...item, percent: percents[idx] ?? 0 }))
 }

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { keycloak } from 'src/boot/api'
+import { keycloak } from '@/boot/api'
 import type { KeycloakProfile } from 'keycloak-js'
-import type { Company } from 'src/models'
+import type { Company } from '@/models'
 
 export const useAuthStore = defineStore('auth', () => {
   const profile = ref<KeycloakProfile>()

@@ -19,10 +19,10 @@ import {
   type GeoJSONSource,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style } from 'src/utils/maps'
+import { style } from '@/utils/maps'
 import { cellToBoundary } from 'h3-js'
-import type { GradientScale } from 'src/utils/colors'
-import type { H3Heatmap, LatLon } from 'src/models'
+import type { GradientScale } from '@/utils/colors'
+import type { H3Heatmap, LatLon } from '@/models'
 
 interface HeatmapGeoJSON {
   shape: GeoJSON.FeatureCollection<GeoJSON.Polygon, { value: number }>
@@ -123,6 +123,8 @@ function makeGeoJSON(): HeatmapGeoJSON {
 }
 
 function onInit() {
+  if (!mapEl.value) return
+
   map.value = new Map({
     container: mapEl.value,
     center: props.center,

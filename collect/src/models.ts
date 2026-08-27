@@ -95,6 +95,7 @@ export interface RecordCertificate {
 export interface Recommendation {
   reco?: {
     reco_inter: string[]
+    bravo?: number[]
     scores: {
       covoit: number
       elec: number
@@ -122,7 +123,8 @@ export interface Recommendation {
     mesure_dt1: string[]
     mesure_dt2: string[]
     mesures_globa?: string[]
-    mesure_pro: string[][]
+    // V1 payloads may carry a plain string per recommendation instead of a list
+    mesure_pro: (string | string[])[]
     mesures_pro_globa?: string[]
     mesures_pro_velo?: string[]
     mesures_pro_tpu?: string[]
@@ -165,6 +167,7 @@ export interface IsochronesParams {
 export interface IsochronesData {
   isochrones: GeoJSON.FeatureCollection<GeoJSON.Geometry>
   pois: GeoJSON.FeatureCollection<GeoJSON.Geometry>
+  transit?: GeoJSON.FeatureCollection<GeoJSON.Geometry> | null
 }
 
 export interface PoisParams {
@@ -179,10 +182,12 @@ export interface RecommendationsPreviewData {
     isModeOptions: boolean
     journeys: Journey[]
     recoInter: string[]
+    bravo: number[]
     center: [number, number] | null
     mesureDt1: string[]
     mesureDt2: string[]
     globalActions: string[]
+    companyName: string
   }
   pro: {
     proJourneys: ProJourney[]

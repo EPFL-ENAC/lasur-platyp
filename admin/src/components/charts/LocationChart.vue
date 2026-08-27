@@ -92,10 +92,10 @@
 import ChartPanel from './ChartPanel.vue'
 import html2canvas from 'html2canvas'
 import type { Ref } from 'vue'
-import { GradientScale } from 'src/utils/colors'
+import { GradientScale } from '@/utils/colors'
 import ChartShell from './ChartShell.vue'
 import LocationHeatmap from '../LocationHeatmap.vue'
-import type { H3Heatmap, LatLon } from 'src/models'
+import type { H3Heatmap, LatLon } from '@/models'
 
 const { t } = useI18n()
 

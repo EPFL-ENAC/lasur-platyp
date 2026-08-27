@@ -177,29 +177,29 @@
 </template>
 
 <script setup lang="ts">
-import SectionItem from 'src/components/form/SectionItem.vue'
-import AgreementPanel from 'src/components/form/steps/AgreementPanel.vue'
-import AgePanel from 'src/components/form/steps/AgePanel.vue'
-import EmploymentPanel from 'src/components/form/steps/EmploymentPanel.vue'
-import OriginPlacePanel from 'src/components/form/steps/OriginPlacePanel.vue'
-import WorkplacePanel from 'src/components/form/steps/WorkplacePanel.vue'
-import EquipmentsPanel from 'src/components/form/steps/EquipmentsPanel.vue'
-import ConstraintsPanel from 'src/components/form/steps/ConstraintsPanel.vue'
-import JourneysPanel from 'src/components/form/steps/JourneysPanel.vue'
-import ProJourneysPanel from 'src/components/form/steps/ProJourneysPanel.vue'
-import TravelTimePanel from 'src/components/form/steps/TravelTimePanel.vue'
-import TravelProPanel from 'src/components/form/steps/TravelProPanel.vue'
-import ImportancePanel from 'src/components/form/steps/ImportancePanel.vue'
-import NeedsPanel from 'src/components/form/steps/NeedsPanel.vue'
-import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
-import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
-import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
+import SectionItem from '@/components/form/SectionItem.vue'
+import AgreementPanel from '@/components/form/steps/AgreementPanel.vue'
+import AgePanel from '@/components/form/steps/AgePanel.vue'
+import EmploymentPanel from '@/components/form/steps/EmploymentPanel.vue'
+import OriginPlacePanel from '@/components/form/steps/OriginPlacePanel.vue'
+import WorkplacePanel from '@/components/form/steps/WorkplacePanel.vue'
+import EquipmentsPanel from '@/components/form/steps/EquipmentsPanel.vue'
+import ConstraintsPanel from '@/components/form/steps/ConstraintsPanel.vue'
+import JourneysPanel from '@/components/form/steps/JourneysPanel.vue'
+import ProJourneysPanel from '@/components/form/steps/ProJourneysPanel.vue'
+import TravelTimePanel from '@/components/form/steps/TravelTimePanel.vue'
+import TravelProPanel from '@/components/form/steps/TravelProPanel.vue'
+import ImportancePanel from '@/components/form/steps/ImportancePanel.vue'
+import NeedsPanel from '@/components/form/steps/NeedsPanel.vue'
+import RecommendationsPersoPanel from '@/components/form/steps/RecommendationsPersoPanel.vue'
+import RecommendationsProPanel from '@/components/form/steps/RecommendationsProPanel.vue'
+import ChangePanel from '@/components/form/steps/ChangePanel.vue'
 import EmailPanel from './steps/EmailPanel.vue'
-import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
-import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
-import type { Journey, ProJourney, RecommendationsPreviewData } from 'src/models'
-import { notifyError } from 'src/utils/notify'
-import { resolveLocation } from 'src/utils/boundaries'
+import InfoPanel from '@/components/form/steps/InfoPanel.vue'
+import FinalPanel from '@/components/form/steps/FinalPanel.vue'
+import type { Journey, ProJourney, RecommendationsPreviewData } from '@/models'
+import { notifyError } from '@/utils/notify'
+import { resolveLocation } from '@/utils/boundaries'
 
 const { t, locale } = useI18n()
 const survey = useSurvey()
@@ -248,7 +248,7 @@ const mesurePro = computed<string[][]>(() => {
   if (!ra || !recos.length) return []
 
   const v2Fallback = (r: string): string[] => {
-    const lookup: Record<string, string | undefined> = {
+    const lookup: Record<string, string[] | undefined> = {
       elec: ra.mesures_pro_elec,
       elec_truck: ra.mesures_pro_elec,
       velo: ra.mesures_pro_velo,
@@ -296,6 +296,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     mesureDt1: mesureDt1.value,
     mesureDt2: mesureDt2.value,
     globalActions: globalActionsPerso.value,
+    companyName: collector.info.company_name,
   },
   pro: {
     proJourneys: freqModProJourneys.value,

@@ -226,14 +226,14 @@
 </template>
 
 <script setup lang="ts">
-import ChartsPanel from 'src/components/charts/ChartsPanel.vue'
-import AreaDialog from 'src/components/AreaDialog.vue'
-import DownloadDataButton from 'src/components/DownloadDataButton.vue'
-import type { Company, Campaign, CampaignGroup, ComparisonMode } from 'src/models'
-import type { Filter } from 'src/components/models'
+import ChartsPanel from '@/components/charts/ChartsPanel.vue'
+import AreaDialog from '@/components/AreaDialog.vue'
+import DownloadDataButton from '@/components/DownloadDataButton.vue'
+import type { Company, Campaign, CampaignGroup, ComparisonMode } from '@/models'
+import type { Filter } from '@/components/models'
 import { useQuasar } from 'quasar'
-import MarkdownDialog from 'src/components/MarkdownDialog.vue'
-import { GROUP_COLORS } from 'src/components/charts/commons'
+import MarkdownDialog from '@/components/MarkdownDialog.vue'
+import { GROUP_COLORS } from '@/components/charts/commons'
 
 const { t } = useI18n()
 const stats = useStats()
@@ -270,10 +270,15 @@ const campaignOptions = computed(() => {
 const selectedCampaigns = computed(() => {
   const allCampaigns = Object.values(campaignMap.value)
   const filteredByCompanies = companyFilter.value.length
-    ? allCampaigns.filter((campaign) => companyFilter.value.includes(campaign.company_id))
+    ? allCampaigns.filter(
+        (campaign) =>
+          campaign.company_id !== undefined && companyFilter.value.includes(campaign.company_id),
+      )
     : allCampaigns
   const filteredByCampaigns = mainGroupFilter.value.length
-    ? filteredByCompanies.filter((campaign) => mainGroupFilter.value.includes(campaign.id))
+    ? filteredByCompanies.filter(
+        (campaign) => campaign.id !== undefined && mainGroupFilter.value.includes(campaign.id),
+      )
     : filteredByCompanies
   return filteredByCampaigns
 })
@@ -466,10 +471,10 @@ async function openReport() {
       ]
     : mainGroupFilter.value
 
-  let displayedOrgs =
+  let displayedOrgs: (string | number)[] =
     companyFilter.value.length > 0 ? companyFilter.value : Object.keys(companyMap.value)
 
-  let displayedCampaigns = reportCampaignFilter
+  let displayedCampaigns: (string | number)[] = reportCampaignFilter
   if (reportCampaignFilter.length === 0) {
     const campaignsInDisplayedOrgs = Object.values(campaignMap.value).filter(
       (campaign) => displayedOrgs.some((orgId) => orgId == `${campaign.company_id}`), // use loose equality to compare string and number IDs

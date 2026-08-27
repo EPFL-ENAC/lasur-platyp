@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import type { ECBasicOption } from 'echarts/types/dist/shared'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber } from '@/utils/numbers'
 
 interface Props {
   option: ECBasicOption

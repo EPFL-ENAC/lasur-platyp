@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import ToggleItem from 'src/components/form/ToggleItem.vue'
+import ToggleItem from '@/components/form/ToggleItem.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

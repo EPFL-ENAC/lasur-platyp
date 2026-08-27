@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import SectionItem from 'src/components/form/SectionItem.vue'
+import SectionItem from '@/components/form/SectionItem.vue'
 
 const email = defineModel<string>()
 

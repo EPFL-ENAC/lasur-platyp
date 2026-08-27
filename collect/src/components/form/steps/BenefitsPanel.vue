@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { hasBenefits, getBenefits } from 'src/utils/benefits'
+import { hasBenefits, getBenefits } from '@/utils/benefits'
 
 const { locale, t } = useI18n()
 

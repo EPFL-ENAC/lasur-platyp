@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { Cookies, useQuasar } from 'quasar'
-import { locales, t } from 'boot/i18n'
+import { locales, t } from '@/boot/i18n'
 
 const { locale } = useI18n()
 const $q = useQuasar()
