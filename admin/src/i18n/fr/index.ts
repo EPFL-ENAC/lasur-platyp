@@ -527,6 +527,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       labels: {
         ...transportationModes,
       },
+      texts: {
+        comparison:
+          'Ce graphique montre la répartition modale potentielle des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
+      },
     },
     reco_pros: {
       title: 'Recommandations (déplacements professionnels)',
@@ -555,6 +559,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Le mode Voiture est le mode le plus utilisé dans le canton de Genève ([Microrecensement Mobilité et Transports, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
           'Le mode {top_1} est le plus utilisé par les participant·e·s, suivi de {top_2} et {top_3}.',
+        comparison:
+          'Ce graphique montre la répartition modale des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
       },
     },
     freq_mod_pro: {

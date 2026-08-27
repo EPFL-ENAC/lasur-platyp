@@ -1,7 +1,8 @@
 <template>
   <chart-panel
     :title="t('stats.reco_inter.title')"
-    :description="t('stats.reco_inter.description')"
+    :description="descriptionText"
+    :chart-info-text="infoText"
     :inline="inline"
   >
     <q-toolbar v-if="!inline" class="chart-toolbar">
@@ -48,11 +49,27 @@ defineProps<Props>()
 
 type ShareChartExposed = {
   handleExport: () => Promise<void>
+  chartInfoText: string
 }
 
 const chartRef = useTemplateRef<ShareChartExposed>('chartRef')
+const infoText = ref('')
+
+watch(
+  chartRef,
+  (newVal) => {
+    infoText.value = newVal?.chartInfoText || ''
+  },
+  { flush: 'post' },
+)
+
+const stats = useStats()
 
 const { t } = useI18n()
+
+const descriptionText = computed(() =>
+  stats.comparisonMode ? '' : t('stats.reco_inter.description'),
+)
 
 function onChartDownload() {
   chartRef.value?.handleExport()

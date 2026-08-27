@@ -29,6 +29,11 @@ export function formatNumber(value: number | null | undefined): string {
   return numberFormatter.format(value)
 }
 
+export function formatSignedPercent(value: number): string {
+  const rounded = Math.round(value)
+  return `${rounded > 0 ? '+' : ''}${formatNumber(rounded)}%`
+}
+
 export function toMaxDecimals(x: number | null, n: number): number | null {
   if (x === null) {
     return null
