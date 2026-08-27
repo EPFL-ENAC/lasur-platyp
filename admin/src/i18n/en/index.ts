@@ -398,8 +398,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     too_few_records: 'Not enough records for: {groups}',
     modal_evolution: {
       title: 'Evolution of modal practices',
-      description:
-        'This diagram shows how participants present in several selected groups moved from one dominant transport mode to another between groups, based on their most frequent recommended mode in each group.',
+      description: 'This graph shows the travel mode trends among the participants in each group.',
     },
     switch_to_grid: 'Switch to grid view',
     pdf_report: 'PDF report',

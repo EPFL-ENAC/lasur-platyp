@@ -408,7 +408,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     modal_evolution: {
       title: 'Évolution des pratiques modales',
       description:
-        "Ce diagramme montre comment les participant·e·s présent·e·s dans plusieurs groupes sélectionnés sont passé·e·s d'un mode de transport dominant à un autre entre les groupes, sur la base de leur mode recommandé le plus fréquent dans chaque groupe.",
+        "Ce graphe montre l'évolution des pratiques modales des participant·e·s présent·e·s dans chacun des groupes.",
     },
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
