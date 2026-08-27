@@ -401,8 +401,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       M5: 'Comparer également avec 3',
     },
     add_more_comparisons: 'Ajouter des comparaisons',
-    cross_sectional: 'Transversal',
-    longitudinal: 'Longitudinal',
+    cross_sectional_longitudinal: 'Transversal ou Longitudinal',
+    longitudinal:
+      'Montrer uniquement les données des participant·e·s ayant participé à au moins deux groupes',
     group_info: '{count} participants',
     too_few_records: 'Données insuffisantes pour : {groups}',
     modal_evolution: {
@@ -524,7 +525,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Le temps de trajet domicile-travail médian des participant·e·s est de {median} minutes.',
         comparison_item: '{median} minutes ({name})',
         comparison:
-          "Ce graphique montre les temps de trajets domicile-travail des participant·e·s, pour chaque groupe. Les temps de trajets médians sont de {list}. Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024).",
+          'Ce graphique montre les temps de trajets domicile-travail des participant·e·s, pour chaque groupe. Les temps de trajets médians sont de {list}. Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024).',
       },
     },
     reco_inter: {

@@ -1,70 +1,8 @@
 <template>
   <div>
-    <div class="filters-grid">
-      <q-select
-        dense
-        multiple
-        emit-value
-        map-options
-        use-chips
-        rounded
-        outlined
-        color="field"
-        bg-color="field"
-        v-model="companyFilter"
-        :label="t('companies')"
-        :options="companyOptions"
-        style="min-width: 200px"
-        @update:model-value="onFilter"
-        :disable="stats.loading"
-      >
-        <template v-slot:option="{ itemProps, opt, selected }">
-          <q-item v-bind="itemProps">
-            <q-item-section>
-              <q-item-label>{{ opt.label }}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-icon v-if="selected" name="check" />
-            </q-item-section>
-          </q-item>
-        </template>
-      </q-select>
-      <q-select
-        dense
-        multiple
-        emit-value
-        map-options
-        use-chips
-        rounded
-        outlined
-        color="field"
-        bg-color="field"
-        v-model="mainGroupFilter"
-        :label="t('stats.main_group')"
-        :options="campaignOptions"
-        style="min-width: 200px"
-        @update:model-value="onFilter"
-        :disable="stats.loading"
-      />
-      <div class="compare-group">
-        <q-select
-          dense
-          multiple
-          emit-value
-          map-options
-          use-chips
-          rounded
-          outlined
-          color="field"
-          bg-color="field"
-          v-model="compareWithFilter"
-          :label="t('stats.compare_with')"
-          :options="compareWithOptions"
-          style="min-width: 200px"
-          @update:model-value="onFilter"
-          :disable="stats.loading"
-        />
-        <div v-for="(group, index) in additionalCompareGroups" :key="index" class="compare-row">
+    <q-card flat class="q-mb-xl">
+      <q-card-section class="q-pb-none">
+        <div class="filters-grid">
           <q-select
             dense
             multiple
@@ -75,124 +13,189 @@
             outlined
             color="field"
             bg-color="field"
-            v-model="additionalCompareGroups[index]"
-            :label="`${t('stats.also_compare_with')} ${index + 1}`"
-            :options="additionalGroupOptions(index)"
+            v-model="companyFilter"
+            :label="t('companies')"
+            :options="companyOptions"
+            style="min-width: 200px"
+            @update:model-value="onFilter"
+            :disable="stats.loading"
+          >
+            <template v-slot:option="{ itemProps, opt, selected }">
+              <q-item v-bind="itemProps">
+                <q-item-section>
+                  <q-item-label>{{ opt.label }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-icon v-if="selected" name="check" />
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-select
+            dense
+            multiple
+            emit-value
+            map-options
+            use-chips
+            rounded
+            outlined
+            color="field"
+            bg-color="field"
+            v-model="mainGroupFilter"
+            :label="t('stats.main_group')"
+            :options="campaignOptions"
             style="min-width: 200px"
             @update:model-value="onFilter"
             :disable="stats.loading"
           />
-          <q-btn
-            flat
-            round
-            dense
-            size="sm"
-            icon="close"
-            :aria-label="t('remove')"
-            @click="removeAdditionalGroup(index)"
-            :disable="stats.loading"
-          />
-        </div>
-        <q-btn
-          flat
-          dense
-          no-caps
-          color="field"
-          icon="add"
-          :label="t('stats.add_more_comparisons')"
-          :disable="!canAddMoreComparisons || stats.loading"
-          @click="addComparisonGroup"
-          class="justify-self-start"
-        />
-      </div>
-      <div class="actions-group">
-        <q-btn size="sm" color="field" outline no-caps :disable="stats.loading">
-          {{ t('stats.options') }} <q-icon name="arrow_drop_down" />
-          <q-menu>
-            <q-list style="min-width: 150px">
-              <q-item clickable v-close-popup @click="onMapFilter">
-                <q-item-section icon="map">{{ t('stats.filter_by_zone') }}</q-item-section>
-                <q-item-section side>
-                  <q-badge v-if="areaCount > 0" color="orange" />
-                </q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup @click="goToReport" :disable="stats.loading">
-                <q-item-section icon="picture_as_pdf">{{ t('stats.pdf_report') }}</q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item class="q-mr-sm">
-                <div style="width: 200px">
-                  <div>{{ t('stats.charts_height') }}</div>
-                  <q-slider
-                    v-model="height"
-                    :min="200"
-                    :max="600"
-                    :step="50"
-                    label
-                    switch-label-side
-                    style="max-width: 200px"
-                  />
-                </div>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
+          <div class="compare-group">
+            <q-select
+              dense
+              multiple
+              emit-value
+              map-options
+              use-chips
+              rounded
+              outlined
+              color="field"
+              bg-color="field"
+              v-model="compareWithFilter"
+              :label="t('stats.compare_with')"
+              :options="compareWithOptions"
+              style="min-width: 200px"
+              @update:model-value="onFilter"
+              :disable="stats.loading"
+            />
+            <div v-for="(group, index) in additionalCompareGroups" :key="index" class="compare-row">
+              <q-select
+                dense
+                multiple
+                emit-value
+                map-options
+                use-chips
+                rounded
+                outlined
+                color="field"
+                bg-color="field"
+                v-model="additionalCompareGroups[index]"
+                :label="`${t('stats.also_compare_with')} ${index + 1}`"
+                :options="additionalGroupOptions(index)"
+                style="min-width: 200px"
+                @update:model-value="onFilter"
+                :disable="stats.loading"
+              />
+              <q-btn
+                flat
+                round
+                dense
+                size="sm"
+                icon="close"
+                :aria-label="t('remove')"
+                @click="removeAdditionalGroup(index)"
+                :disable="stats.loading"
+              />
+            </div>
+            <q-btn
+              flat
+              dense
+              no-caps
+              color="field"
+              icon="add"
+              :label="t('stats.add_more_comparisons')"
+              :disable="!canAddMoreComparisons || stats.loading"
+              @click="addComparisonGroup"
+              class="justify-self-start"
+            />
+          </div>
+          <div class="actions-group">
+            <q-btn size="md" color="field" outline no-caps :disable="stats.loading">
+              {{ t('stats.options') }} <q-icon name="arrow_drop_down" />
+              <q-menu>
+                <q-list style="min-width: 150px">
+                  <q-item clickable v-close-popup @click="onMapFilter">
+                    <q-item-section icon="map">{{ t('stats.filter_by_zone') }}</q-item-section>
+                    <q-item-section side>
+                      <q-badge v-if="areaCount > 0" color="orange" />
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable v-close-popup @click="goToReport" :disable="stats.loading">
+                    <q-item-section icon="picture_as_pdf">{{
+                      t('stats.pdf_report')
+                    }}</q-item-section>
+                  </q-item>
+                  <q-separator />
+                  <q-item class="q-mr-sm">
+                    <div style="width: 200px">
+                      <div>{{ t('stats.charts_height') }}</div>
+                      <q-slider
+                        v-model="height"
+                        :min="200"
+                        :max="600"
+                        :step="50"
+                        label
+                        switch-label-side
+                        style="max-width: 200px"
+                      />
+                    </div>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
 
-        <download-data-button :company-filter="companyFilter" :campaign-filter="mainGroupFilter" />
-      </div>
-    </div>
-    <div v-if="hasComparisonGroups" class="row items-center q-mb-md">
-      <q-btn-toggle
-        v-model="comparisonModeToggle"
-        no-caps
-        dense
-        rounded
-        unelevated
-        toggle-color="primary"
-        color="white"
-        text-color="primary"
-        :options="[
-          { label: t('stats.cross_sectional'), value: 'cross_sectional' },
-          { label: t('stats.longitudinal'), value: 'longitudinal' },
-        ]"
-        @update:model-value="onFilter"
-        :disable="stats.loading"
-      />
-    </div>
-    <div v-if="!stats.loading && hasComparisonGroups" class="q-mb-md">
-      <q-separator class="q-mb-md" />
-      <div>
-        <span
-          v-for="(group, idx) in stats.comparisonResults?.groups"
-          :key="group.name"
-          class="q-mr-md"
-        >
-          <span
-            :style="{
-              border: `1px solid ${GROUP_COLORS[idx % GROUP_COLORS.length]}`,
-              borderRadius: '4px',
-              color: GROUP_COLORS[idx % GROUP_COLORS.length],
-              padding: '2px 4px',
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-            }"
-            >{{ group.name }}</span
-          >
-          <span
-            class="text-bold q-ml-xs"
-            :style="{
-              color: GROUP_COLORS[idx % GROUP_COLORS.length],
-            }"
-            >{{ t(`stats.group.${group.name}`) }}</span
-          >
-          -
-          {{
-            t('stats.group_info', {
-              count: group.total,
-            })
-          }}
-        </span>
-      </div>
-    </div>
+            <download-data-button
+              :company-filter="companyFilter"
+              :campaign-filter="mainGroupFilter"
+            />
+          </div>
+        </div>
+        <div v-if="!stats.loading && hasComparisonGroups" class="q-mb-md">
+          <q-separator class="q-mb-md" />
+          <div>
+            <span
+              v-for="(group, idx) in stats.comparisonResults?.groups"
+              :key="group.name"
+              class="q-mr-md"
+            >
+              <span
+                :style="{
+                  border: `1px solid ${GROUP_COLORS[idx % GROUP_COLORS.length]}`,
+                  borderRadius: '4px',
+                  color: GROUP_COLORS[idx % GROUP_COLORS.length],
+                  padding: '2px 4px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                }"
+                >{{ group.name }}</span
+              >
+              <span
+                class="text-bold q-ml-xs"
+                :style="{
+                  color: GROUP_COLORS[idx % GROUP_COLORS.length],
+                }"
+                >{{ t(`stats.group.${group.name}`) }}</span
+              >
+              -
+              {{
+                t('stats.group_info', {
+                  count: group.total,
+                })
+              }}
+            </span>
+          </div>
+        </div>
+        <div v-if="hasComparisonGroups" class="q-mb-md">
+          <q-separator class="q-mb-md" />
+          <div style="margin-left: -8px">
+            <q-checkbox
+              v-model="isLongitudinal"
+              :label="t('stats.longitudinal')"
+              :title="t('stats.cross_sectional_longitudinal')"
+              :disable="stats.loading"
+            />
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+
     <q-banner
       v-if="stats.privacyWarnings.length > 0"
       dense
@@ -334,6 +337,14 @@ const hasComparisonGroups = computed(
 )
 
 const comparisonModeToggle = ref<ComparisonMode>('cross_sectional')
+
+const isLongitudinal = computed({
+  get: () => comparisonModeToggle.value === 'longitudinal',
+  set: (value: boolean) => {
+    comparisonModeToggle.value = value ? 'longitudinal' : 'cross_sectional'
+    onFilter()
+  },
+})
 
 function addComparisonGroup() {
   additionalCompareGroups.value.push([])

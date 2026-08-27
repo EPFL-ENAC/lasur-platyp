@@ -392,8 +392,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
     compare_with: 'Compare with',
     also_compare_with: 'Also compare with',
     add_more_comparisons: 'Add more comparisons',
-    cross_sectional: 'Cross-sectional',
-    longitudinal: 'Longitudinal',
+    cross_sectional_longitudinal: 'Cross-sectional or Longitudinal analysis',
+    longitudinal: 'Only show data from people who participated in at least two groups',
     group_info: '{count} participants',
     too_few_records: 'Not enough records for: {groups}',
     modal_evolution: {

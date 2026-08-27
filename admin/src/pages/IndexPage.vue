@@ -32,7 +32,6 @@
         </q-card>
       </q-expansion-item>
 
-      <div class="text-h6 q-mb-sm">{{ t('statistics') }}</div>
       <dashboard-panel />
     </div>
 

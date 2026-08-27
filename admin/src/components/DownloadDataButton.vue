@@ -1,5 +1,12 @@
 <template>
-  <q-btn-dropdown color="primary" size="sm" icon="download" :label="t('download')" :disable="stats.loading">
+  <q-btn-dropdown
+    color="primary"
+    size="md"
+    icon="download"
+    no-caps
+    :label="t('download')"
+    :disable="stats.loading"
+  >
     <q-list>
       <q-item clickable v-close-popup @click="onDownload(false)">
         <q-item-section>
