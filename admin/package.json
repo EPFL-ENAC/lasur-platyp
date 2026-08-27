@@ -57,5 +57,10 @@
     "node": "^28 || ^26 || ^24 || ^22 || ^20 || ^18",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
+  },
+  "allowScripts": {
+    "esbuild@0.27.7": true,
+    "vue-demi@0.13.11": true,
+    "@parcel/watcher@2.5.6": true
   }
 }
