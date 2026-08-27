@@ -16,7 +16,7 @@
       <q-tab name="behavioural" :label="t('stats.sections.behavioural_changes.title')" />
     </q-tabs>
     <q-tab-panels v-model="tab">
-      <q-tab-panel name="analysis">
+      <q-tab-panel name="analysis" class="q-px-none">
         <div class="text-h5 q-mb-md">{{ t('stats.sections.mobility_analysis.title') }}</div>
         <q-markdown
           class="compact q-mt-sm"
@@ -89,7 +89,7 @@
           />
         </div>
       </q-tab-panel>
-      <q-tab-panel name="potentials">
+      <q-tab-panel name="potentials" class="q-px-none">
         <div class="text-h5" data-section-name="mobility_potentials" expand-icon-toggle>
           {{ t('stats.sections.mobility_potentials.title') }}
         </div>
@@ -163,7 +163,7 @@
           class="q-mt-md"
         />
       </q-tab-panel>
-      <q-tab-panel name="behavioural">
+      <q-tab-panel name="behavioural" class="q-px-none">
         <div class="text-h5" data-section-name="behavioural_changes" expand-icon-toggle>
           {{ t('stats.sections.behavioural_changes.title') }}
         </div>
