@@ -454,6 +454,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Mobility equipments',
       description:
         "This chart shows the mobility equipment available to participants for their commute. These figures are compared with reference data from the 2021 Mobility and Transport Microcensus for the canton of Geneva.\n\nAnother chart further on shows how ownership of equipment compares with Mobilise's recommendations to participants. This helps to understand whether the participant already has access to the necessary equipment to follow the recommendation made to them.\n\nOther equipments are available in detail if you download the dataset",
+      description_comparison:
+        'This chart shows the rate of ownership of mobility equipment by campaign group(s).',
       labels: {
         bike: 'Bicycle',
         upt_subs: 'Urban public transport\nsubscription',
@@ -478,6 +480,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Mobility constraints',
       description:
         'This chart shows the mobility constraints that participants face several times a week when travelling to work. Details of the ‘Other’ constraints can be found in the disaggregated data (available for download).',
+      description_comparison:
+        'This graph shows the constraints affecting participants’ commuting mobility, by campaign group(s).',
       labels: {
         dependent: 'Accompanying children\nor dependent persons',
         heavy: 'Transporting heavy/bulky\nequipment',

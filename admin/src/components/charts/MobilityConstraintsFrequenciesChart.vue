@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="t('stats.constraints.title')"
-    :description="t('stats.constraints.description')"
+    :description="descriptionText"
     :chart-info-text="chartDescription"
     :inline="inline"
   >
@@ -98,6 +98,12 @@ function onTogglePercent() {
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
+
+const descriptionText = computed(() =>
+  isComparison.value
+    ? t('stats.constraints.description_comparison')
+    : t('stats.constraints.description'),
+)
 
 const hasData = computed(() => {
   if (isComparison.value) {
