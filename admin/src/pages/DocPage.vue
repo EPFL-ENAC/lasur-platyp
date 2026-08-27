@@ -1,7 +1,7 @@
 <template>
-  <q-page>
-    <div class="text-h6 q-ma-md text-title">{{ t('doc') }}</div>
-    <div class="q-ma-md">
+  <q-page class="q-pa-lg">
+    <div class="text-h6 text-title">{{ t('doc') }}</div>
+    <div class="q-my-md">
       <q-markdown
         :src="locale === 'fr' ? WelcomeFr : WelcomeEn"
         no-heading-anchor-links

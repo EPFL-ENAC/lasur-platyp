@@ -1,6 +1,6 @@
 <template>
-  <q-page>
-    <div class="title-bar q-ma-md">
+  <q-page class="q-pa-lg">
+    <div class="title-bar">
       <div class="text-h6 text-title">{{ t('companies') }}</div>
       <div class="title-toolbar">
         <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
@@ -18,7 +18,7 @@
         />
       </div>
     </div>
-    <div class="q-ma-md">
+    <div class="q-my-md">
       <q-table
         flat
         ref="tableRef"

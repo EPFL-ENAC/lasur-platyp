@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-lg">
       <q-card-section>
         <h5 class="text-h5 q-ma-none">{{ t('participation_following') }}</h5>
       </q-card-section>
@@ -12,7 +12,7 @@
       </q-card-section>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
         <h5 class="text-h5 q-ma-none">{{ t('overview') }}</h5>
       </q-card-section>
@@ -44,7 +44,7 @@
       </q-card-section>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
         <h5 class="text-h5 q-ma-none">
           {{ t('campaign.workplaces.title') }}
@@ -140,7 +140,7 @@
       </q-card-actions>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
         <h5 class="text-h5 q-ma-none">{{ t('participants') }}</h5>
       </q-card-section>

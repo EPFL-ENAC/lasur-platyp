@@ -1,6 +1,6 @@
 <template>
-  <q-page>
-    <div class="title-bar q-pa-md">
+  <q-page class="q-pa-lg">
+    <div class="title-bar">
       <div class="text-h6 row">
         <q-breadcrumbs gutter="sm" active-color="title">
           <q-breadcrumbs-el :label="t('companies')" to="/companies" />
@@ -19,7 +19,7 @@
       />
     </div>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-lg">
       <q-card-section>
         <h5 class="text-h5 q-my-none">{{ t('overview') }}</h5>
       </q-card-section>
@@ -46,7 +46,7 @@
       </template>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
         <h5 class="text-h5 q-my-none">{{ t('company.actions') }}</h5>
       </q-card-section>
@@ -77,7 +77,7 @@
 
     <q-table
       v-if="company"
-      class="q-ma-md"
+      class="q-my-xl"
       flat
       bordered
       :rows="campaigns"

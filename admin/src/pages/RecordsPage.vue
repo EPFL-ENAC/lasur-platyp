@@ -1,7 +1,7 @@
 <template>
-  <q-page>
-    <div class="text-h6 q-ma-md text-title">{{ t('records') }}</div>
-    <div class="q-ma-md">
+  <q-page class="q-pa-lg">
+    <div class="text-h6 text-title">{{ t('records') }}</div>
+    <div class="q-my-md">
       <q-table
         flat
         ref="tableRef"

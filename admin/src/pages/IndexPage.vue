@@ -1,7 +1,7 @@
 <template>
-  <q-page>
-    <div class="text-h6 q-ma-md text-title">{{ t('dashboard') }}</div>
-    <div class="q-ma-md">
+  <q-page class="q-pa-lg">
+    <div class="text-h6 text-title">{{ t('dashboard') }}</div>
+    <div>
       <div class="q-mb-xl">
         <div class="text-h5">{{ t('welcome') }}</div>
         <div class="q-my-md">{{ t('welcome_subtitle') }}</div>

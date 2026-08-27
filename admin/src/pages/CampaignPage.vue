@@ -1,6 +1,6 @@
 <template>
-  <q-page>
-    <div class="title-bar q-pa-md">
+  <q-page class="q-pa-lg">
+    <div class="title-bar">
       <div class="text-h6 row">
         <q-breadcrumbs gutter="sm" active-color="title">
           <q-breadcrumbs-el :label="t('companies')" to="/companies" />
