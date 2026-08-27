@@ -65,7 +65,7 @@
         </div>
         <div>
           <div v-for="(wp, index) in visibleWorkplaces" :key="index" class="workplace">
-            <div class="text-overline text-half-muted workplace-name">{{ wp.name }}</div>
+            <div class="text-h6 text-half-muted workplace-name">{{ wp.name }}</div>
             <div class="workplace-address">
               <div>{{ wp.address }}</div>
               <div class="q-mt-sm">
@@ -85,20 +85,23 @@
                 icon="map"
                 expand-icon="expand_more"
                 header-class="bg-super-muted"
+                @before-show="onWorkplaceExpand(index)"
               >
-                <div class="q-pa-sm">
+                <div class="q-py-sm">
                   <isochrones-map
+                    v-if="loadedIsochrones.has(index)"
                     :mapId="`map-workplace-${index}`"
                     :center="[wp.lon, wp.lat]"
                     :reco="wp.address"
                     height="400px"
                   />
-                  <div class="text-body2 q-mt-sm">
-                    {{ t('campaign.workplaces.isochrones_hint') }}
-                  </div>
                 </div>
               </q-expansion-item>
             </div>
+          </div>
+
+          <div v-if="visibleWorkplaces.length" class="text-body2 q-mt-sm">
+            {{ t('campaign.workplaces.isochrones_hint') }}
           </div>
         </div>
         <div class="row q-mt-sm">
@@ -206,6 +209,11 @@ const SHOW_WORKPLACES_MIN = 5
 
 const showEmailTemplateDialog = ref(false)
 const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
+const loadedIsochrones = ref<Set<number>>(new Set())
+
+function onWorkplaceExpand(index: number) {
+  loadedIsochrones.value.add(index)
+}
 
 const isCompanyAdmin = computed(() => {
   if (!props.company) return false
@@ -355,7 +363,7 @@ function onDownloadWorkplaces() {
 
 <style scoped>
 .workplace {
-  padding: 1rem 0.5rem;
+  padding: 1rem 0rem;
 
   display: grid;
   grid-template-areas:
@@ -363,8 +371,6 @@ function onDownloadWorkplaces() {
     'workplace-isochrone workplace-isochrone';
 
   gap: 1rem;
-
-  border-bottom: 1px solid var(--secondary-border-color);
 }
 
 .workplace-name {

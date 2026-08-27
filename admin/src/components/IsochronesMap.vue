@@ -1,77 +1,82 @@
 <template>
   <div>
-    <div v-if="modeOptions.length > 1" class="row q-mb-md">
-      <q-select
-        label="Mode"
-        v-model="selectedMode"
-        :loading="loadingIsochrones"
-        :disable="loadingIsochrones"
-        :options="modeOptions"
-        option-value="value"
-        option-label="label"
-        filled
-        emit-value
-        map-options
-        hide-dropdown-icon
-        style="min-width: 300px"
-        @update:model-value="loadIsochronesData"
-      />
+    <div v-if="loadingIsochrones" class="q-mb-md">
+      <q-spinner-dots size="64px" color="primary" />
     </div>
-    <div class="container">
-      <q-btn
-        :label="t('record.map_options')"
-        icon="layers"
-        color="white"
-        text-color="grey-10"
-        no-caps
-        class="layers bg-white"
-        size="12px"
-      >
-        <q-menu>
-          <q-list>
-            <q-item-label class="text-h6 q-ma-sm">{{ t('record.transit') }}</q-item-label>
-            <q-item clickable>
-              <q-item-section>{{ t('record.transit_options.show_lines') }}</q-item-section>
-              <q-item-section side>
-                <q-toggle v-model="showTransitLines" @update:model-value="toggleTransitLines" />
-              </q-item-section>
-            </q-item>
-
-            <q-separator spaced />
-            <q-item-label class="text-h6 q-ma-sm">{{ t('record.pois') }}</q-item-label>
-            <template v-for="pois in poisOptions" :key="pois.value">
+    <div v-show="!loadingIsochrones">
+      <div v-if="modeOptions.length > 1" class="row q-mb-md">
+        <q-select
+          label="Mode"
+          v-model="selectedMode"
+          :loading="loadingIsochrones"
+          :disable="loadingIsochrones"
+          :options="modeOptions"
+          option-value="value"
+          option-label="label"
+          filled
+          emit-value
+          map-options
+          hide-dropdown-icon
+          style="min-width: 300px"
+          @update:model-value="loadIsochronesData"
+        />
+      </div>
+      <div class="container">
+        <q-btn
+          :label="t('record.map_options')"
+          icon="layers"
+          color="white"
+          text-color="grey-10"
+          no-caps
+          class="layers bg-white"
+          size="12px"
+        >
+          <q-menu>
+            <q-list>
+              <q-item-label class="text-h6 q-ma-sm">{{ t('record.transit') }}</q-item-label>
               <q-item clickable>
-                <q-item-section>{{ pois.label }}</q-item-section>
+                <q-item-section>{{ t('record.transit_options.show_lines') }}</q-item-section>
                 <q-item-section side>
-                  <q-toggle
-                    v-model="showPoisMap[pois.value]"
-                    :color="pois.color"
-                    keep-color
-                    @update:model-value="onShowPoisMap(pois.value)"
-                  />
+                  <q-toggle v-model="showTransitLines" @update:model-value="toggleTransitLines" />
                 </q-item-section>
               </q-item>
-            </template>
-          </q-list>
-        </q-menu>
-      </q-btn>
-      <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapview" />
-      <div class="colors q-pa-sm bg-white text-foreground text-caption rounded-borders">
-        <div class="row q-gutter-sm">
-          <div
-            v-for="cutoff in selectedModeCutoffSec"
-            :key="`color-${cutoff}`"
-            class="row items-center"
-          >
-            <div
-              :style="`width: 15px; height: 15px; background-color: rgba(${hexToRgb(getCutoffColor(cutoff))}, 0.3); border: 1px solid #5a3fc0; margin-right: 5px;`"
-            ></div>
-            <div>{{ t('record.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
-          </div>
 
-          <div class="legend-transit-lines">
-            <div class="purple-bar"></div>
-            <div>{{ t('transit_lines') }}</div>
+              <q-separator spaced />
+              <q-item-label class="text-h6 q-ma-sm">{{ t('record.pois') }}</q-item-label>
+              <template v-for="pois in poisOptions" :key="pois.value">
+                <q-item clickable>
+                  <q-item-section>{{ pois.label }}</q-item-section>
+                  <q-item-section side>
+                    <q-toggle
+                      v-model="showPoisMap[pois.value]"
+                      :color="pois.color"
+                      keep-color
+                      @update:model-value="onShowPoisMap(pois.value)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-list>
+          </q-menu>
+        </q-btn>
+        <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapview" />
+        <div class="colors q-pa-sm bg-white text-foreground text-caption rounded-borders">
+          <div class="row q-gutter-sm">
+            <div
+              v-for="cutoff in selectedModeCutoffSec"
+              :key="`color-${cutoff}`"
+              class="row items-center"
+            >
+              <div
+                :style="`width: 15px; height: 15px; background-color: rgba(${hexToRgb(getCutoffColor(cutoff))}, 0.3); border: 1px solid #5a3fc0; margin-right: 5px;`"
+              ></div>
+              <div>{{ t('record.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
+            </div>
+
+            <div class="legend-transit-lines">
+              <div class="purple-bar"></div>
+              <div>{{ t('transit_lines') }}</div>
+            </div>
           </div>
         </div>
       </div>
