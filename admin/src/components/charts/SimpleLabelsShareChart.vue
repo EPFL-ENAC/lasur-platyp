@@ -19,13 +19,18 @@ import { use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { SIMPLE_LABELS_COLORS, simpleLabelSortOrder, computePercentages } from './commons'
-import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
+import {
+  buildGroupStackedBarOption,
+  findBiggestGroupDifference,
+  type ComparisonGroupDataset,
+} from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
+import { formatSignedPercent } from '@/utils/numbers'
 import type { Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
@@ -60,6 +65,15 @@ type EChartsShellExposed = {
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
   get chartInfoText() {
+    const diff = comparisonDifference.value
+    if (diff) {
+      return t('stats.freq_mod.texts.comparison', {
+        lastGroup: diff.lastGroupName,
+        prevGroup: diff.prevGroupName,
+        mode: diff.name,
+        diff: formatSignedPercent(diff.diffPercent),
+      })
+    }
     if (topModes.value.length === 3) {
       return t('stats.freq_mod.texts.specific', {
         top_1: topModes.value[0],
@@ -76,6 +90,11 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const topModes = ref<string[]>([])
+const comparisonGroupDatasets = ref<ComparisonGroupDataset[]>([])
+
+const comparisonDifference = computed(() =>
+  findBiggestGroupDifference(comparisonGroupDatasets.value, 'last_minus_prev'),
+)
 
 const hasData = computed(() => {
   if (isComparison.value) {
@@ -127,6 +146,7 @@ function initChartOptions() {
     return
   }
 
+  comparisonGroupDatasets.value = []
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -258,6 +278,8 @@ function initComparisonChartOptions() {
       })),
     }
   })
+
+  comparisonGroupDatasets.value = groupDatasets
 
   const keyOrder = Array.from(
     new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),

@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="t('stats.freq_mod.title')"
-    :description="t('stats.freq_mod.description')"
+    :description="descriptionText"
     :chart-info-text="chartInfoText"
     :inline="inline"
   >
@@ -81,6 +81,10 @@ const stats = useStats()
 
 const { t } = useI18n()
 
+const descriptionText = computed(() =>
+  stats.comparisonMode ? '' : t('stats.freq_mod.description'),
+)
+
 function onToggleFreqModalType() {
   stats.freqModalType = stats.freqModalType === 'simple' ? 'detailed' : 'simple'
 }
@@ -91,13 +95,16 @@ function onChartDownload() {
 }
 
 const chartInfoText = computed(() => {
-  const text = t('stats.freq_mod.texts.default')
   let childText = ''
   if (stats.freqModalType === 'simple' && simpleChartRef.value) {
     childText = simpleChartRef.value.chartInfoText
   } else if (stats.freqModalType === 'detailed' && complexChartRef.value) {
     childText = complexChartRef.value.chartInfoText
   }
+  if (stats.comparisonMode) {
+    return childText
+  }
+  const text = t('stats.freq_mod.texts.default')
   if (childText) {
     return `${text}\n\n${childText}`
   }

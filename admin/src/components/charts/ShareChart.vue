@@ -19,13 +19,18 @@ import { use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { MODE_COLORS, modeSortOrder, computePercentages } from './commons'
-import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
+import {
+  buildGroupStackedBarOption,
+  findBiggestGroupDifference,
+  type ComparisonGroupDataset,
+} from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
+import { formatSignedPercent } from '@/utils/numbers'
 import type { ComparisonStats, Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
@@ -60,12 +65,27 @@ type EChartsShellExposed = {
 
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    const diff = comparisonDifference.value
+    if (!diff) return ''
+    return t(`stats.${props.chartTranslationName}.texts.comparison`, {
+      lastGroup: diff.lastGroupName,
+      prevGroup: diff.prevGroupName,
+      mode: diff.name,
+      diff: formatSignedPercent(diff.diffPercent),
+    })
+  },
 })
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
+const comparisonGroupDatasets = ref<ComparisonGroupDataset[]>([])
+
+const comparisonDifference = computed(() =>
+  findBiggestGroupDifference(comparisonGroupDatasets.value, 'prev_minus_last'),
+)
 
 function findGroupFrequencies(groupStats: ComparisonStats): Frequencies | undefined {
   return (
@@ -124,6 +144,7 @@ function initChartOptions() {
     return
   }
 
+  comparisonGroupDatasets.value = []
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -243,6 +264,8 @@ function initComparisonChartOptions() {
       })),
     }
   })
+
+  comparisonGroupDatasets.value = groupDatasets
 
   const keyOrder = Array.from(
     new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),

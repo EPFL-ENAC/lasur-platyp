@@ -408,7 +408,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     modal_evolution: {
       title: 'Évolution des pratiques modales',
       description:
-        "Ce diagramme montre comment les participant·e·s présent·e·s dans plusieurs groupes sélectionnés sont passé·e·s d'un mode de transport dominant à un autre entre les groupes, sur la base de leur mode recommandé le plus fréquent dans chaque groupe.",
+        "Ce graphe montre l'évolution des pratiques modales des participant·e·s présent·e·s dans chacun des groupes.",
     },
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
@@ -463,6 +463,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: 'Équipements de mobilité',
       description:
         "Ce graphique montre les équipements de mobilité à disposition des participant·e·s pour leurs déplacements domicile-travail. Ces données sont comparées aux données de référence, issues du Microrecensement Mobilité et Transports de 2021, pour le canton de Genève.\n\nDans un autre graphique ci-après, la possession des équipements est croisée avec les recommandations formulées par Mobilise aux participant·e·s. Cela permet de comprendre si les personnes à qui Mobilyse recommande un mode de transport dispose déjà de l'équipement nécessaire pour adopter cette recommandation.\n\nLe détail des autres équipements est accessible en téléchargeant le détail des données.",
+      description_comparison:
+        'Ce graphique illustre le taux de possession d’équipements de mobilité par groupe de campagne(s).',
       labels: {
         bike: 'Vélo',
         upt_subs: 'Abonnement de transports\npublics urbains',
@@ -487,6 +489,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: 'Contraintes de mobilité',
       description:
         'Ce graphique montre les contraintes de mobilité avec lesquelles les participant·e·s doivent composer plusieurs fois dans la semaine, pour se rendre au travail. Le détail des contraintes "Autre" est disponible en téléchargeant les données désagrégées.',
+      description_comparison:
+        'Ce graphe montre les contraintes impactant la mobilité pendulaire des participant·e·s, par groupe de campagne(s).',
       labels: {
         dependent: 'Emmener des enfants\nou des personnes dépendantes',
         heavy: 'Transport de matériel\nlourd ou encombrant',
@@ -518,6 +522,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
         specific:
           'Le temps de trajet domicile-travail médian des participant·e·s est de {median} minutes.',
+        comparison_item: '{median} minutes ({name})',
+        comparison:
+          "Ce graphique montre les temps de trajets domicile-travail des participant·e·s, pour chaque groupe. Les temps de trajets médians sont de {list}. Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024).",
       },
     },
     reco_inter: {
@@ -526,6 +533,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le mode qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
       labels: {
         ...transportationModes,
+      },
+      texts: {
+        comparison:
+          'Ce graphique montre la répartition modale potentielle des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
       },
     },
     reco_pros: {
@@ -555,6 +566,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Le mode Voiture est le mode le plus utilisé dans le canton de Genève ([Microrecensement Mobilité et Transports, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
           'Le mode {top_1} est le plus utilisé par les participant·e·s, suivi de {top_2} et {top_3}.',
+        comparison:
+          'Ce graphique montre la répartition modale des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
       },
     },
     freq_mod_pro: {
@@ -594,6 +607,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         ...simpleShortLabels,
         ...emissionsLabels,
       },
+      texts: {
+        comparison:
+          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+      },
     },
     emissions_freq_mod_complex: {
       title: 'Émissions de CO₂ (détail)',
@@ -602,6 +619,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       labels: {
         ...complexLabels,
         ...emissionsLabels,
+      },
+      texts: {
+        comparison:
+          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod: {
@@ -697,6 +718,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       texts: {
         specific:
           '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
+        comparison:
+          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod_pro: {
@@ -757,6 +780,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d’activité physique journalière de l’OMS. Le taux des participant·e·s dépensant au moins ce que recommande l'OMS grâce aux déplacements domicile-travail passerait d'environ {percent_current}% actuellement à environ {percent_potential}% potentiellement.`,
         specific_share:
           "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
+        comparison:
+          "Ce graphe montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150 kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s ({lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s ({prevPercent}%) pour le groupe {prevGroup}).",
       },
     },
     behavior_change_levers: {

@@ -398,8 +398,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     too_few_records: 'Not enough records for: {groups}',
     modal_evolution: {
       title: 'Evolution of modal practices',
-      description:
-        'This diagram shows how participants present in several selected groups moved from one dominant transport mode to another between groups, based on their most frequent recommended mode in each group.',
+      description: 'This graph shows the travel mode trends among the participants in each group.',
     },
     switch_to_grid: 'Switch to grid view',
     pdf_report: 'PDF report',
@@ -454,6 +453,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Mobility equipments',
       description:
         "This chart shows the mobility equipment available to participants for their commute. These figures are compared with reference data from the 2021 Mobility and Transport Microcensus for the canton of Geneva.\n\nAnother chart further on shows how ownership of equipment compares with Mobilise's recommendations to participants. This helps to understand whether the participant already has access to the necessary equipment to follow the recommendation made to them.\n\nOther equipments are available in detail if you download the dataset",
+      description_comparison:
+        'This chart shows the rate of ownership of mobility equipment by campaign group(s).',
       labels: {
         bike: 'Bicycle',
         upt_subs: 'Urban public transport\nsubscription',
@@ -478,6 +479,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Mobility constraints',
       description:
         'This chart shows the mobility constraints that participants face several times a week when travelling to work. Details of the ‘Other’ constraints can be found in the disaggregated data (available for download).',
+      description_comparison:
+        'This graph shows the constraints affecting participants’ commuting mobility, by campaign group(s).',
       labels: {
         dependent: 'Accompanying children\nor dependent persons',
         heavy: 'Transporting heavy/bulky\nequipment',
@@ -507,6 +510,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
         default:
           'The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024)',
         specific: 'The median travel time from home to work for participants is {median} minutes.',
+        comparison_item: '{median} minutes ({name})',
+        comparison:
+          "This chart shows the participants' commuting times, broken down by group of campaign(s). The median commute times are {list}. The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024).",
       },
     },
     reco_inter: {
@@ -515,6 +521,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
         'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the mode of transport recommended for their home-to-work commute.',
       labels: {
         ...transportationModes,
+      },
+      texts: {
+        comparison:
+          'This graph shows the potential modal distribution of participants. The most striking difference among the campaigns {lastGroup} and {prevGroup} is in the mode: {mode} ({diff}).',
       },
     },
     reco_pros: {
@@ -544,6 +554,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
           'The mode Car is the most used in the Geneva canton ([Microrecensement Mobilité et Transports, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
           'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.',
+        comparison:
+          'This graph shows the modal distribution of participants. The most striking difference among the campaigns {lastGroup} and {prevGroup} is in the mode: {mode} ({diff}).',
       },
     },
     freq_mod_pro: {
@@ -583,6 +595,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
         ...simpleShortLabels,
         ...emissionsLabels,
       },
+      texts: {
+        comparison:
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
+      },
     },
     emissions_freq_mod_complex: {
       title: 'CO₂ emissions (detailed)',
@@ -591,6 +607,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       labels: {
         ...complexLabels,
         ...emissionsLabels,
+      },
+      texts: {
+        comparison:
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reductions_mod: {
@@ -686,6 +706,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       texts: {
         specific:
           '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
+        comparison:
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reductions_mod_pro: {
@@ -745,6 +767,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
           In addition, an additional {count} people will exceed the WHO’s daily physical activity recommendations. The proportion of participants who meet at least the WHO’s recommendations through their commute is expected to rise from around {percent_current}% to potentially around {percent_potential}%.`,
         specific_share:
           '{percentage}% of the improvement in physical activity among participants would come from {mode}.',
+        comparison:
+          'This graph shows the average daily energy expended by participants during their commutes, by campaign group (left axis). It also shows the number (or percentage) of people who reach the 150 kcal/day threshold recommended by the World Health Organization (for example, there are {lastCount} participants ({lastPercent}% of participants) in the {lastGroup} group, compared to {prevCount} participants ({prevPercent}%) in the {prevGroup} group).',
       },
     },
     behavior_change_levers: {

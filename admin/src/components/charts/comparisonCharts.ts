@@ -17,6 +17,60 @@ function groupTotal(group: ComparisonGroupDataset): number {
   return group.items.reduce((sum, item) => sum + item.value, 0)
 }
 
+export interface GroupDifference {
+  lastGroupName: string
+  prevGroupName: string
+  key: string
+  name: string
+  diffPercent: number
+}
+
+/**
+ * Finds, between the last two comparison groups (chronologically), the item whose
+ * percentage share differs the most (in absolute value) between the two groups.
+ * `diffDirection` controls the sign of the returned difference: 'last_minus_prev'
+ * reports (last% - prev%), 'prev_minus_last' reports (prev% - last%).
+ */
+export function findBiggestGroupDifference(
+  groupDatasets: ComparisonGroupDataset[],
+  diffDirection: 'last_minus_prev' | 'prev_minus_last',
+): GroupDifference | null {
+  if (groupDatasets.length < 2) return null
+
+  const lastGroup = groupDatasets[groupDatasets.length - 1]!
+  const prevGroup = groupDatasets[groupDatasets.length - 2]!
+  const lastTotal = groupTotal(lastGroup)
+  const prevTotal = groupTotal(prevGroup)
+  if (lastTotal === 0 || prevTotal === 0) return null
+
+  const keys = new Set([
+    ...lastGroup.items.map((item) => item.key),
+    ...prevGroup.items.map((item) => item.key),
+  ])
+
+  let best: GroupDifference | null = null
+  keys.forEach((key) => {
+    const lastItem = lastGroup.items.find((item) => item.key === key)
+    const prevItem = prevGroup.items.find((item) => item.key === key)
+    const lastPercent = ((lastItem?.value ?? 0) / lastTotal) * 100
+    const prevPercent = ((prevItem?.value ?? 0) / prevTotal) * 100
+    const diffPercent =
+      diffDirection === 'last_minus_prev' ? lastPercent - prevPercent : prevPercent - lastPercent
+
+    if (!best || Math.abs(diffPercent) > Math.abs(best.diffPercent)) {
+      best = {
+        lastGroupName: lastGroup.name,
+        prevGroupName: prevGroup.name,
+        key,
+        name: (lastItem ?? prevItem)!.name,
+        diffPercent,
+      }
+    }
+  })
+
+  return best
+}
+
 /**
  * x = comparison groups, stacks = a fixed set of colored categories (modes, labels, ...).
  * Used both for 100%-stacked share charts (percent: true) and absolute-value stacked
