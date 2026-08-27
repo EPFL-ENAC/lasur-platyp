@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="t(`stats.energy_journey.title_${props.type}`)"
-    :description="t(`stats.energy_journey.description_${props.type}`)"
+    :description="descriptionText"
     :chart-info-text="chartInfoText"
     :inline="inline"
   >
@@ -133,7 +133,56 @@ const textLabelsReco = computed(() => {
   }
 })
 
+const descriptionText = computed(() =>
+  isComparison.value && props.type === 'current'
+    ? ''
+    : t(`stats.energy_journey.description_${props.type}`),
+)
+
+const comparisonEnergyItems = computed(() => {
+  if (!isComparison.value || props.type !== 'current') return null
+
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length < 2) return null
+
+  const lastGroup = groups[groups.length - 1]!
+  const prevGroup = groups[groups.length - 2]!
+  const lastStats = lastGroup.journey_energy_stats?.current
+  const prevStats = prevGroup.journey_energy_stats?.current
+  if (!lastStats || !prevStats || lastStats.total === 0 || prevStats.total === 0) return null
+
+  const lastCount = lastGroup.journey_energy_stats?.gains.current_above_who_count ?? 0
+  const prevCount = prevGroup.journey_energy_stats?.gains.current_above_who_count ?? 0
+
+  return {
+    lastGroup: lastGroup.name,
+    prevGroup: prevGroup.name,
+    lastCount,
+    lastPercent: (lastCount / lastStats.total) * 100,
+    prevCount,
+    prevPercent: (prevCount / prevStats.total) * 100,
+  }
+})
+
+const comparisonEnergyItemsLabels = computed(() => {
+  const ci = comparisonEnergyItems.value
+  if (!ci) return null
+
+  return {
+    lastGroup: ci.lastGroup,
+    prevGroup: ci.prevGroup,
+    lastCount: formatNumber(ci.lastCount),
+    lastPercent: formatNumber(Math.round(ci.lastPercent)),
+    prevCount: formatNumber(ci.prevCount),
+    prevPercent: formatNumber(Math.round(ci.prevPercent)),
+  }
+})
+
 const chartInfoText = computed(() => {
+  if (comparisonEnergyItemsLabels.value) {
+    return t(`stats.energy_journey.texts.comparison`, comparisonEnergyItemsLabels.value)
+  }
+
   const parts: string[] = [t(`stats.energy_journey.texts.default`)]
   if (textLabelsCurrent.value) {
     parts.push(t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent.value))

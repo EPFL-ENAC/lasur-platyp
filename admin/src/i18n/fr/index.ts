@@ -780,6 +780,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d’activité physique journalière de l’OMS. Le taux des participant·e·s dépensant au moins ce que recommande l'OMS grâce aux déplacements domicile-travail passerait d'environ {percent_current}% actuellement à environ {percent_potential}% potentiellement.`,
         specific_share:
           "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
+        comparison:
+          "Ce graphe montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150 kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s ({lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s ({prevPercent}%) pour le groupe {prevGroup}).",
       },
     },
     behavior_change_levers: {

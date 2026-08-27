@@ -767,6 +767,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
           In addition, an additional {count} people will exceed the WHO’s daily physical activity recommendations. The proportion of participants who meet at least the WHO’s recommendations through their commute is expected to rise from around {percent_current}% to potentially around {percent_potential}%.`,
         specific_share:
           '{percentage}% of the improvement in physical activity among participants would come from {mode}.',
+        comparison:
+          'This graph shows the average daily energy expended by participants during their commutes, by campaign group (left axis). It also shows the number (or percentage) of people who reach the 150 kcal/day threshold recommended by the World Health Organization (for example, there are {lastCount} participants ({lastPercent}% of participants) in the {lastGroup} group, compared to {prevCount} participants ({prevPercent}%) in the {prevGroup} group).',
       },
     },
     behavior_change_levers: {
