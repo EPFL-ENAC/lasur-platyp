@@ -41,11 +41,11 @@
 </template>
 
 <script setup lang="ts">
-import IntroductionEn from 'src/assets/markdown/introduction-en.md'
-import IntroductionFr from 'src/assets/markdown/introduction-fr.md'
-import DashboardPanel from 'src/components/DashboardPanel.vue'
-import DataProtectionNoticeDialog from 'src/components/DataProtectionNoticeDialog.vue'
-import { isIndexIntroductionFirstView, markIndexIntroductionSeen } from 'src/utils/localStorage'
+import IntroductionEn from '@/assets/markdown/introduction-en.md'
+import IntroductionFr from '@/assets/markdown/introduction-fr.md'
+import DashboardPanel from '@/components/DashboardPanel.vue'
+import DataProtectionNoticeDialog from '@/components/DataProtectionNoticeDialog.vue'
+import { isIndexIntroductionFirstView, markIndexIntroductionSeen } from '@/utils/localStorage'
 
 const { t, locale } = useI18n()
 

@@ -1,8 +1,8 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app'
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import Keycloak from 'keycloak-js'
-import { notifyWarning, isSessionExpiredError } from 'src/utils/notify'
+import { notifyWarning, isSessionExpiredError } from '@/utils/notify'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -46,7 +46,7 @@ function isExpiredTokenError(error: unknown): boolean {
   return isSessionExpiredError(error)
 }
 
-export default boot(({ app, router }) => {
+export default defineBoot(({ app, router }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios

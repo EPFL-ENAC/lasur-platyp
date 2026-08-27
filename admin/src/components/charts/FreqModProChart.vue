@@ -44,9 +44,9 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
-import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
-import type { Frequencies } from 'src/models'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import FrequenciesStackChart from '@/components/charts/FrequenciesStackChart.vue'
+import type { Frequencies } from '@/models'
 
 interface Props {
   height: number

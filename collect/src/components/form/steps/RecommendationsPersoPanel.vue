@@ -14,7 +14,7 @@
         >
           <q-tab v-for="(_, idx) in journeys" :key="idx" :name="String(idx)">
             <div class="row items-center no-wrap q-gutter-xs">
-              <template v-for="(mode, mIdx) in journeys[idx].modes" :key="mIdx">
+              <template v-for="(mode, mIdx) in journeys[idx]?.modes" :key="mIdx">
                 <q-img
                   v-if="getModeIcon(mode)?.isSvg"
                   :src="getModeIcon(mode)!.icon"
@@ -82,11 +82,11 @@
 </template>
 
 <script setup lang="ts">
-import SectionItem from 'src/components/form/SectionItem.vue'
-import IsochronesMap from 'src/components/form/IsochronesMap.vue'
+import SectionItem from '@/components/form/SectionItem.vue'
+import IsochronesMap from '@/components/form/IsochronesMap.vue'
 import RecommendationItem from './RecommendationItem.vue'
-import type { Journey } from 'src/models'
-import { getModeIcon } from 'src/utils/modeicons'
+import type { Journey } from '@/models'
+import { getModeIcon } from '@/utils/modeicons'
 
 const { t } = useI18n()
 

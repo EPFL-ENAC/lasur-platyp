@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -50,8 +50,8 @@ import {
   MarkLineComponent,
 } from 'echarts/components'
 import { GROUP_COLORS, MODE_COLORS } from './commons'
-import type { JourneyEnergyData, JourneyEnergyStats } from 'src/models'
-import { formatNumber } from 'src/utils/numbers'
+import type { JourneyEnergyData, JourneyEnergyStats } from '@/models'
+import { formatNumber } from '@/utils/numbers'
 
 const stats = useStats()
 const isComparison = computed(() => !!stats.comparisonMode)

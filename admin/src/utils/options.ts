@@ -1,6 +1,6 @@
-import type { EmployerActions } from 'src/models'
-import type { FieldItem } from 'src/components/FieldsList.vue'
-import { t } from 'src/boot/i18n'
+import type { EmployerActions } from '@/models'
+import type { FieldItem } from '@/components/FieldsList.vue'
+import { t } from '@/boot/i18n'
 
 export const actionItems: FieldItem[] = [
   'mesures_globa',

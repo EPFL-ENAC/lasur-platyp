@@ -99,10 +99,10 @@
 
 <script setup lang="ts">
 import { Cookies } from 'quasar'
-import { locales } from 'boot/i18n'
-import SurveyPanel from 'src/components/form/SurveyPanel.vue'
-import { notifyError } from 'src/utils/notify'
-import type { Record } from 'src/models'
+import { locales } from '@/boot/i18n'
+import SurveyPanel from '@/components/form/SurveyPanel.vue'
+import { notifyError } from '@/utils/notify'
+import type { Record } from '@/models'
 
 const { locale, t } = useI18n()
 const route = useRoute()

@@ -232,33 +232,33 @@
 </template>
 
 <script setup lang="ts">
-import ReportPage from 'src/components/ReportPage.vue'
-import EquipmentFrequenciesChart from 'src/components/charts/EquipmentFrequenciesChart.vue'
-import MobilityConstraintsFrequenciesChart from 'src/components/charts/MobilityConstraintsFrequenciesChart.vue'
-import TravelTimeFrequenciesChart from 'src/components/charts/TravelTimeFrequenciesChart.vue'
-import LocationChart from 'src/components/charts/LocationChart.vue'
-import FreqModChart from 'src/components/charts/FreqModChart.vue'
-import FreqModProChart from 'src/components/charts/FreqModProChart.vue'
-import FreqRecoChart from 'src/components/charts/FreqRecoChart.vue'
-import FreqRecoProChart from 'src/components/charts/FreqRecoProChart.vue'
-import EmissionsModChart from 'src/components/charts/EmissionsModChart.vue'
-import EmissionsModProChart from 'src/components/charts/EmissionsModProChart.vue'
-import EmissionsReductionsModChart from 'src/components/charts/EmissionsReductionsModChart.vue'
-import EmissionsReductionsModProChart from 'src/components/charts/EmissionsReductionsModProChart.vue'
-import EmissionsReductionsModShareChart from 'src/components/charts/EmissionsReductionsModShareChart.vue'
-import LinksRecoChart from 'src/components/charts/LinksRecoChart.vue'
-import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
-import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
-import LeversChangeChart from 'src/components/charts/LeversChangeChart.vue'
-import MotivationChangeChart from 'src/components/charts/MotivationChangeChart.vue'
-import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
-import ModalEvolutionSankey from 'src/components/charts/ModalEvolutionSankey.vue'
+import ReportPage from '@/components/ReportPage.vue'
+import EquipmentFrequenciesChart from '@/components/charts/EquipmentFrequenciesChart.vue'
+import MobilityConstraintsFrequenciesChart from '@/components/charts/MobilityConstraintsFrequenciesChart.vue'
+import TravelTimeFrequenciesChart from '@/components/charts/TravelTimeFrequenciesChart.vue'
+import LocationChart from '@/components/charts/LocationChart.vue'
+import FreqModChart from '@/components/charts/FreqModChart.vue'
+import FreqModProChart from '@/components/charts/FreqModProChart.vue'
+import FreqRecoChart from '@/components/charts/FreqRecoChart.vue'
+import FreqRecoProChart from '@/components/charts/FreqRecoProChart.vue'
+import EmissionsModChart from '@/components/charts/EmissionsModChart.vue'
+import EmissionsModProChart from '@/components/charts/EmissionsModProChart.vue'
+import EmissionsReductionsModChart from '@/components/charts/EmissionsReductionsModChart.vue'
+import EmissionsReductionsModProChart from '@/components/charts/EmissionsReductionsModProChart.vue'
+import EmissionsReductionsModShareChart from '@/components/charts/EmissionsReductionsModShareChart.vue'
+import LinksRecoChart from '@/components/charts/LinksRecoChart.vue'
+import JourneyEnergyChart from '@/components/charts/JourneyEnergyChart.vue'
+import JourneyEnergyShareChart from '@/components/charts/JourneyEnergyShareChart.vue'
+import LeversChangeChart from '@/components/charts/LeversChangeChart.vue'
+import MotivationChangeChart from '@/components/charts/MotivationChangeChart.vue'
+import EquipmentRecommendationMatrixChart from '@/components/charts/EquipmentRecommendationMatrixChart.vue'
+import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import {
   type StatsState,
   flushStateFromIndexedDB,
   getStateFromIndexedDB,
-} from 'src/stores/stats'
-import type { Frequencies } from 'src/models'
+} from '@/stores/stats'
+import type { Frequencies } from '@/models'
 
 interface Props {
   height: number

@@ -81,8 +81,8 @@
 </template>
 
 <script setup lang="ts">
-import BenefitsPanel from 'src/components/form/steps/BenefitsPanel.vue'
-import { hasBenefits, getBenefits } from 'src/utils/benefits'
+import BenefitsPanel from '@/components/form/steps/BenefitsPanel.vue'
+import { hasBenefits, getBenefits } from '@/utils/benefits'
 
 const { locale, t } = useI18n()
 
@@ -90,7 +90,7 @@ withDefaults(
   defineProps<{
     reco: string
     recoLabel: string
-    bravo: number | undefined
+    bravo?: number | undefined
     indexLabel?: string
     recoClass?: string
     wrapperClass?: string

@@ -180,17 +180,17 @@
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar'
-import type { Campaign, Company, EmployerActions } from 'src/models'
-import CampaignCharts from 'src/components/charts/CampaignCharts.vue'
-import FieldsList from 'src/components/FieldsList.vue'
-import IsochronesMap from 'src/components/IsochronesMap.vue'
-import EmailTemplateDialog from 'src/components/EmailTemplateDialog.vue'
-import type { FieldItem } from 'src/components/FieldsList.vue'
-import { formatCoordinates } from 'src/utils/numbers'
-import { notifyInfo } from 'src/utils/notify'
-import { actionItems, actionProItems } from 'src/utils/options'
+import type { Campaign, Company, EmployerActions } from '@/models'
+import CampaignCharts from '@/components/charts/CampaignCharts.vue'
+import FieldsList from '@/components/FieldsList.vue'
+import IsochronesMap from '@/components/IsochronesMap.vue'
+import EmailTemplateDialog from '@/components/EmailTemplateDialog.vue'
+import type { FieldItem } from '@/components/FieldsList.vue'
+import { formatCoordinates } from '@/utils/numbers'
+import { notifyInfo } from '@/utils/notify'
+import { actionItems, actionProItems } from '@/utils/options'
 import Papa from 'papaparse'
-import { makeSurveyLink } from 'src/utils/links'
+import { makeSurveyLink } from '@/utils/links'
 
 const { t, locale } = useI18n()
 const authStore = useAuthStore()

@@ -1,4 +1,4 @@
-import type { Company, CompanyAction } from 'src/models'
+import type { Company, CompanyAction } from '@/models'
 const services = useServices()
 
 export const useActions = defineStore('actions', () => {

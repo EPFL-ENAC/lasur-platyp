@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import LocationItem from 'src/components/form/LocationItem.vue'
+import LocationItem from '@/components/form/LocationItem.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

@@ -54,10 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
-import SimpleLabelsShareChart from 'src/components/charts/SimpleLabelsShareChart.vue'
-import ComplexLabelsShareChart from 'src/components/charts/ComplexLabelsShareChart.vue'
-import type { Frequencies } from 'src/models'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import SimpleLabelsShareChart from '@/components/charts/SimpleLabelsShareChart.vue'
+import ComplexLabelsShareChart from '@/components/charts/ComplexLabelsShareChart.vue'
+import type { Frequencies } from '@/models'
 
 interface Props {
   height: number

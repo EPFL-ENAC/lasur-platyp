@@ -1,4 +1,4 @@
-import type { Campaign } from 'src/models'
+import type { Campaign } from '@/models'
 const services = useServices()
 
 export const useCampaigns = defineStore('campaigns', () => {

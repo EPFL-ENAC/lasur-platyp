@@ -12,10 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import type { AddressLocation } from 'src/models'
+import type { AddressLocation } from '@/models'
 import { AttributionControl, FullscreenControl, Map, Marker, NavigationControl } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style } from 'src/utils/maps'
+import { style } from '@/utils/maps'
 import AddressInput from './AddressInput.vue'
 
 interface Props {

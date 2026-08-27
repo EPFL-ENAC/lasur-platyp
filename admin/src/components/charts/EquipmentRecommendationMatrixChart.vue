@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -62,7 +62,7 @@ import {
   GridComponent,
   VisualMapComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber } from '@/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import {
   equipmentLabels,
@@ -71,7 +71,7 @@ import {
   type EquipmentsStats,
   recommendationLabelsReversed,
   recommendationToEquipmentMap,
-} from 'src/models'
+} from '@/models'
 
 const { t, locale } = useI18n()
 use([

@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import RatingItem from 'src/components/form/RatingItem.vue'
+import RatingItem from '@/components/form/RatingItem.vue'
 const { t } = useI18n()
 const survey = useSurvey()
 </script>

@@ -19,9 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import LocationItem from 'src/components/form/LocationItem.vue'
-import SelectItem from 'src/components/form/SelectItem.vue'
-import type { Option } from 'src/components/form/models'
+import LocationItem from '@/components/form/LocationItem.vue'
+import SelectItem from '@/components/form/SelectItem.vue'
+import type { Option } from '@/components/form/models'
 
 const { t } = useI18n()
 const survey = useSurvey()

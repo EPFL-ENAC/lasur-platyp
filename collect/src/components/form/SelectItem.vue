@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Option } from 'src/components/form/models'
+import type { Option } from '@/components/form/models'
 
 const { t } = useI18n()
 

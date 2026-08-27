@@ -56,8 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
-import EmissionsReductionsShareChart from 'src/components/charts/EmissionsReductionsShareChart.vue'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import EmissionsReductionsShareChart from '@/components/charts/EmissionsReductionsShareChart.vue'
 
 interface Props {
   height: number

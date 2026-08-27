@@ -80,7 +80,7 @@ import {
   type GeoJSONSource,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style } from 'src/utils/maps'
+import { style } from '@/utils/maps'
 
 const isoService = useIsochrones()
 

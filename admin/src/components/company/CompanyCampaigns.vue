@@ -54,10 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign, Company } from 'src/models'
-import { notifyError } from 'src/utils/notify'
-import CompanyCampaign from 'src/components/company/CompanyCampaign.vue'
-import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
+import type { Campaign, Company } from '@/models'
+import { notifyError } from '@/utils/notify'
+import CompanyCampaign from '@/components/company/CompanyCampaign.vue'
+import CompanyCampaignDialog from '@/components/company/CompanyCampaignDialog.vue'
 
 const { t } = useI18n()
 const authStore = useAuthStore()

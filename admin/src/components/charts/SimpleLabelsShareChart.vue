@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
+import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
@@ -25,7 +26,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
 use([
@@ -197,7 +198,12 @@ function initChartOptions() {
     ],
     tooltip: {
       trigger: 'item',
-      formatter: (params) => `<b>${params.name}</b><br/>${params.data.percent}%`,
+      formatter: (params: CallbackDataParams | CallbackDataParams[]) => {
+        const p = Array.isArray(params) ? params[0] : params
+        if (!p) return ''
+
+        return `<b>${p.name}</b><br/>${(p.data as { percent: number }).percent}%`
+      },
     },
     legend: {
       show: true,
@@ -215,7 +221,8 @@ function initChartOptions() {
         label: {
           margin: 0,
           fontWeight: 'bold',
-          formatter: (params) => `${params.data.percent}%`,
+          formatter: (params: CallbackDataParams) =>
+            `${(params.data as { percent: number }).percent}%`,
         },
         data: datasetWithPercent,
       },

@@ -23,6 +23,7 @@
           :mesure-dt1="data.perso.mesureDt1"
           :mesure-dt2="data.perso.mesureDt2"
           :global-actions="data.perso.globalActions"
+          :company-name="data.perso.companyName"
           :benefits-expanded="true"
         />
 
@@ -33,6 +34,7 @@
           :pro-journey-locations="data.pro.proJourneyLocations"
           :mesure-pro="data.pro.mesurePro"
           :global-actions="data.pro.globalActions"
+          :company-name="data.perso.companyName"
           :benefits-expanded="true"
         />
 
@@ -45,11 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import ReportPage from 'src/components/ReportPage.vue'
-import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
-import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
-import type { RecommendationsPreviewData } from 'src/models'
-import { locales } from 'boot/i18n'
+import ReportPage from '@/components/ReportPage.vue'
+import RecommendationsPersoPanel from '@/components/form/steps/RecommendationsPersoPanel.vue'
+import RecommendationsProPanel from '@/components/form/steps/RecommendationsProPanel.vue'
+import type { RecommendationsPreviewData } from '@/models'
+import { locales } from '@/boot/i18n'
 
 const { t, locale } = useI18n()
 const route = useRoute()

@@ -23,7 +23,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { StatLinks } from 'src/models'
+import type { StatLinks } from '@/models'
 import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()

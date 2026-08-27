@@ -34,9 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
-import LinksChart from 'src/components/charts/LinksChart.vue'
-import type { StatLinks } from 'src/models'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import LinksChart from '@/components/charts/LinksChart.vue'
+import type { StatLinks } from '@/models'
 
 interface Props {
   height: number

@@ -1,5 +1,5 @@
-import { api } from 'src/boot/api'
-import type { IsochronesParams, IsochronesData, PoisParams } from 'src/models'
+import { api } from '@/boot/api'
+import type { IsochronesParams, IsochronesData, PoisParams } from '@/models'
 
 export const CATEGORY_TAGS = {
   food: {

@@ -34,8 +34,8 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import ProJourneyItem from 'src/components/form/steps/ProJourneyItem.vue'
-import type { ProJourney } from 'src/models'
+import ProJourneyItem from '@/components/form/steps/ProJourneyItem.vue'
+import type { ProJourney } from '@/models'
 
 const { t } = useI18n()
 const q = useQuasar()

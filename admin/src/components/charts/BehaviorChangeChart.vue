@@ -24,11 +24,11 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber } from '@/utils/numbers'
 import type { CallbackDataParams, XAXisOption } from 'echarts/types/dist/shared'
-import { lowerCaseFirst } from 'src/utils/string'
-import { moveToStart } from 'src/utils/arrays'
-import type { BehaviorChangeStats } from 'src/models'
+import { lowerCaseFirst } from '@/utils/string'
+import { moveToStart } from '@/utils/arrays'
+import type { BehaviorChangeStats } from '@/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])

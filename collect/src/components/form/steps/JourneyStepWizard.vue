@@ -254,8 +254,8 @@
 </template>
 
 <script setup lang="ts">
-import SliderItem from 'src/components/form/SliderItem.vue'
-import type { Option } from 'src/components/form/models'
+import SliderItem from '@/components/form/SliderItem.vue'
+import type { Option } from '@/components/form/models'
 
 interface Props {
   label?: string

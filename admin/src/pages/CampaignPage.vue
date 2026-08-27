@@ -51,13 +51,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign, Company } from 'src/models'
-import type { Service } from 'src/stores/services'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import CompanyCampaign from 'src/components/company/CompanyCampaign.vue'
-import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
-import { notifySuccess, notifyError } from 'src/utils/notify'
-import { checkUrlParamNumber } from 'src/utils/numbers'
+import type { Campaign, Company } from '@/models'
+import type { Service } from '@/stores/services'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import CompanyCampaign from '@/components/company/CompanyCampaign.vue'
+import CompanyCampaignDialog from '@/components/company/CompanyCampaignDialog.vue'
+import { notifySuccess, notifyError } from '@/utils/notify'
+import { checkUrlParamNumber } from '@/utils/numbers'
 
 const route = useRoute()
 const router = useRouter()

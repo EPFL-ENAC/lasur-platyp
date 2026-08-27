@@ -130,13 +130,13 @@
 </template>
 
 <script setup lang="ts">
-import { DefaultAlignment, type Query } from 'src/components/models'
-import type { Record, Company, Campaign } from 'src/models'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import DownloadDataButton from 'src/components/DownloadDataButton.vue'
-import { makePaginationRequestHandler } from 'src/utils/pagination'
-import type { PaginationOptions } from 'src/utils/pagination'
-import { notifyError } from 'src/utils/notify'
+import { DefaultAlignment, type Query } from '@/components/models'
+import type { Record, Company, Campaign } from '@/models'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import DownloadDataButton from '@/components/DownloadDataButton.vue'
+import { makePaginationRequestHandler } from '@/utils/pagination'
+import type { PaginationOptions } from '@/utils/pagination'
+import { notifyError } from '@/utils/notify'
 
 const { t } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()

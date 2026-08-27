@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
+import InfoPanel from '@/components/form/steps/InfoPanel.vue'
 
 const { t, locale } = useI18n()
 const survey = useSurvey()

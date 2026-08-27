@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { EmissionReduction, Frequencies } from 'src/models'
-import { useStats } from 'src/stores/stats'
-import { formatNumber } from 'src/utils/numbers'
+import type { EmissionReduction, Frequencies } from '@/models'
+import { useStats } from '@/stores/stats'
+import { formatNumber } from '@/utils/numbers'
 
 interface Props {
   frequencyKey: string

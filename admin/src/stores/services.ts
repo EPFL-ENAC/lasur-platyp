@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { api } from 'src/boot/api'
-import type { Entity, Company, CompanyAction, Campaign, Participant, Record } from 'src/models'
-import type { Query } from 'src/components/models'
+import { api } from '@/boot/api'
+import type { Entity, Company, CompanyAction, Campaign, Participant, Record } from '@/models'
+import type { Query } from '@/components/models'
 
 const authStore = useAuthStore()
 

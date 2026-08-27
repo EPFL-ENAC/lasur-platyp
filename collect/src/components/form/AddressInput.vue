@@ -58,9 +58,9 @@
 
 <script setup lang="ts">
 import type { Feature, Point } from 'geojson'
-import type { AddressLocation } from 'src/models'
-import { geocoderApi, toAddress } from 'src/utils/geocoder'
-import { formatCoordinates } from 'src/utils/numbers'
+import type { AddressLocation } from '@/models'
+import { geocoderApi, toAddress } from '@/utils/geocoder'
+import { formatCoordinates } from '@/utils/numbers'
 
 const { t } = useI18n()
 

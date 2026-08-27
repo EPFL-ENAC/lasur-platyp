@@ -54,8 +54,8 @@
 </template>
 
 <script setup lang="ts">
-import type { EmployerActions, Company } from 'src/models'
-import { notifyError } from 'src/utils/notify'
+import type { EmployerActions, Company } from '@/models'
+import { notifyError } from '@/utils/notify'
 
 interface Props {
   modelValue: EmployerActions | undefined

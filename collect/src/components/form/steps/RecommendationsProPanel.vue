@@ -84,11 +84,11 @@
 </template>
 
 <script setup lang="ts">
-import SectionItem from 'src/components/form/SectionItem.vue'
+import SectionItem from '@/components/form/SectionItem.vue'
 import RecommendationItem from './RecommendationItem.vue'
-import PlaceItem from 'src/components/form/PlaceItem.vue'
-import type { PlaceLocation, ProJourney } from 'src/models'
-import { getModeIcon } from 'src/utils/modeicons'
+import PlaceItem from '@/components/form/PlaceItem.vue'
+import type { PlaceLocation, ProJourney } from '@/models'
+import { getModeIcon } from '@/utils/modeicons'
 
 const { t } = useI18n()
 

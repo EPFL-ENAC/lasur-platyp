@@ -32,9 +32,9 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber } from '@/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
-import type { ComparisonStats, EmissionReduction } from 'src/models'
+import type { ComparisonStats, EmissionReduction } from '@/models'
 
 const { t, locale } = useI18n()
 use([

@@ -24,7 +24,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { CampaignStats } from 'src/models'
+import type { CampaignStats } from '@/models'
 import { useQuasar } from 'quasar'
 
 interface Props {

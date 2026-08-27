@@ -23,7 +23,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { Frequencies } from '@/models'
 import { MODE_COLORS } from './commons'
 
 const { t, locale } = useI18n()

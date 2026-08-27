@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Record, Recommendation } from 'src/models'
+import type { Record, Recommendation } from '@/models'
 
 const RecoToMode: { [key: string]: string | undefined } = {
   marche: 'walking',

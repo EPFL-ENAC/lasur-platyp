@@ -109,12 +109,12 @@
 </template>
 
 <script setup lang="ts">
-import { DefaultAlignment } from 'src/components/models'
-import type { AppUser } from 'src/models'
-import UserDialog from 'src/components/user/UserDialog.vue'
-import UserPasswordDialog from 'src/components/user/UserPasswordDialog.vue'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import { notifyError } from 'src/utils/notify'
+import { DefaultAlignment } from '@/components/models'
+import type { AppUser } from '@/models'
+import UserDialog from '@/components/user/UserDialog.vue'
+import UserPasswordDialog from '@/components/user/UserPasswordDialog.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import { notifyError } from '@/utils/notify'
 
 const { t } = useI18n({ useScope: 'global' })
 const usersStore = useUsersStore()

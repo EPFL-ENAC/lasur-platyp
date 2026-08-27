@@ -17,16 +17,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Query } from 'src/components/models'
-import type { Record } from 'src/models'
+import type { Query } from '@/components/models'
+import type { Record } from '@/models'
 import Papa from 'papaparse'
 import { useQuasar } from 'quasar'
-import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import MarkdownDialog from '@/components/MarkdownDialog.vue'
 
 const props = defineProps<{
   filter?: string
-  companyFilter?: string[]
-  campaignFilter?: string[]
+  companyFilter?: (string | number)[]
+  campaignFilter?: (string | number)[]
 }>()
 
 const { t } = useI18n({ useScope: 'global' })

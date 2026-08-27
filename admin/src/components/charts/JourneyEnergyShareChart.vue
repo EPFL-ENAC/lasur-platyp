@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import ChartPanel from 'src/components/charts/ChartPanel.vue'
+import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
@@ -49,9 +49,9 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber } from '@/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
-import type { JourneyEnergyStats } from 'src/models'
+import type { JourneyEnergyStats } from '@/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])

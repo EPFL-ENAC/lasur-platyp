@@ -81,12 +81,12 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import PlaceItem from 'src/components/form/PlaceItem.vue'
-import NumberItem from 'src/components/form/NumberItem.vue'
-import ToggleItem from 'src/components/form/ToggleItem.vue'
-import type { Option } from 'src/components/form/models'
-import type { ProJourney, PlaceLocation } from 'src/models'
-import { H3Utils } from 'src/utils/h3'
+import PlaceItem from '@/components/form/PlaceItem.vue'
+import NumberItem from '@/components/form/NumberItem.vue'
+import ToggleItem from '@/components/form/ToggleItem.vue'
+import type { Option } from '@/components/form/models'
+import type { ProJourney, PlaceLocation } from '@/models'
+import { H3Utils } from '@/utils/h3'
 
 interface Props {
   modelValue: ProJourney

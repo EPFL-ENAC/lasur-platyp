@@ -105,7 +105,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import type { Option } from 'src/components/form/models'
+import type { Option } from '@/components/form/models'
 interface Props {
   modelValue: string | string[] | undefined
   label?: string | undefined

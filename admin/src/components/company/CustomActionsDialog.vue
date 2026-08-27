@@ -101,9 +101,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Company, CompanyAction } from 'src/models'
-import { actionGroupOptions } from 'src/utils/options'
-import { notifyError } from 'src/utils/notify'
+import type { Company, CompanyAction } from '@/models'
+import { actionGroupOptions } from '@/utils/options'
+import { notifyError } from '@/utils/notify'
 
 const { t } = useI18n()
 const actionsStore = useActions()

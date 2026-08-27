@@ -1,7 +1,7 @@
 import { type Map, type MapMouseEvent, addProtocol } from 'maplibre-gl'
 import { Protocol } from 'pmtiles'
 import type { Position } from 'geojson'
-import type { BoundaryLevel, PlaceLocation } from 'src/components/models'
+import type { BoundaryLevel, PlaceLocation } from '@/components/models'
 
 const protocol = new Protocol()
 addProtocol('pmtiles', protocol.tile)
