@@ -1027,7 +1027,9 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
   group: 'Groupe',
   help: 'Aide',
   identifier: 'Identifiant',
-  welcome: 'Bienvenue !',
+  welcome: "Bienvenue dans l'interface d'administration de Mobilyse !",
+  welcome_subtitle:
+    'Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateur·trice·s, et consulter les statistiques de mobilité. La section Documentation est notamment à votre disposition pour vous renseigner et vous guider sur les différentes fonctionnalités de Mobilyse.',
   introduction_text: `Bienvenue dans l'interface d'administration de Mobilyse !
 Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateurs, et consulter les statistiques de mobilité. La section Documentation est notamment à votre disposition pour vous renseigner et vous guider sur les différentes fonctionnalités de Mobilyse.`,
   label_en: 'Libellé (EN)',

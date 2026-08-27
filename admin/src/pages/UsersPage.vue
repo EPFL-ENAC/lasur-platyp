@@ -1,8 +1,7 @@
 <template>
   <q-page>
-    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('users') }}</h4>
-    <q-separator />
-    <div class="q-pa-md">
+    <div class="text-h6 q-ma-md text-title">{{ t('users') }}</div>
+    <div class="q-ma-md">
       <q-table
         flat
         table-header-class="bg-secondary-ultra-light text-secondary"

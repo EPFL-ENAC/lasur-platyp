@@ -1,7 +1,3 @@
-### Bienvenue dans l'interface d'administration de Mobilyse !
-
-Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateur·trice·s, et consulter les statistiques de mobilité. La section Documentation est notamment à votre disposition pour vous renseigner et vous guider sur les différentes fonctionnalités de Mobilyse.
-
 #### Comment lire le tableau de bord ?
 
 Dans ce tableau de bord se trouvent les résultats des campagnes que vous avez administrées, structurés en trois sections.

@@ -1,8 +1,7 @@
 <template>
   <q-page>
-    <div class="title-bar q-pa-md">
-      <div class="text-h4 text-title">{{ t('companies') }}</div>
-
+    <div class="title-bar q-ma-md">
+      <div class="text-h6 text-title">{{ t('companies') }}</div>
       <div class="title-toolbar">
         <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
           <template v-slot:append>
@@ -19,8 +18,7 @@
         />
       </div>
     </div>
-    <q-separator />
-    <div class="q-pa-md">
+    <div class="q-ma-md">
       <q-table
         flat
         ref="tableRef"

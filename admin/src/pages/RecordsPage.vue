@@ -1,9 +1,7 @@
 <template>
   <q-page>
-    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('records') }}</h4>
-    <q-separator />
-
-    <div class="q-pa-md">
+    <div class="text-h6 q-ma-md text-title">{{ t('records') }}</div>
+    <div class="q-ma-md">
       <q-table
         flat
         ref="tableRef"
@@ -73,7 +71,10 @@
         </template>
         <template v-slot:body-cell-company_id="props">
           <q-td :props="props">
-            <router-link :to="`/company/${props.row.company_id}/campaign/${props.row.campaign_id}`" class="modus">
+            <router-link
+              :to="`/company/${props.row.company_id}/campaign/${props.row.campaign_id}`"
+              class="modus"
+            >
               {{ getCompanyName(props.row.company_id) }} ({{
                 getCampaignName(props.row.campaign_id)
               }})

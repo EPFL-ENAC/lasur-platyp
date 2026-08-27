@@ -1009,7 +1009,9 @@ Promoting sustainable mobility in the Greater Geneva](https://www.modus-ge.ch)`,
   group: 'Group',
   help: 'Help',
   identifier: 'Identifier',
-  welcome: 'Welcome!',
+  welcome: 'Welcome to the Mobilyse administration interface!',
+  welcome_subtitle:
+    'Use the menu to navigate through the different sections and manage organisations, campaigns, users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of Mobilyse.',
   introduction_text: `Welcome to the Mobilyse administration interface!
 Use the menu to navigate through the different sections, manage organisations, campaigns, and users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of Mobilyse.`,
   label_en: 'Label (EN)',

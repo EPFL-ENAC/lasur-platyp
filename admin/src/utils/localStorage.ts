@@ -33,13 +33,3 @@ export function isFirstVisit(): boolean {
 export function markVisited(): void {
   setLocalStorage(alreadyVisitedKey, 'true')
 }
-
-const indexIntroSeenKey = 'indexIntroductionSeen' as const
-
-export function isIndexIntroductionFirstView(): boolean {
-  return !getLocalStorageBoolean(indexIntroSeenKey, false)
-}
-
-export function markIndexIntroductionSeen(): void {
-  setLocalStorage(indexIntroSeenKey, 'true')
-}
