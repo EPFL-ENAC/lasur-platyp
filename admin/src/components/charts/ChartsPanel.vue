@@ -119,7 +119,8 @@
             :loading="stats.loading"
           />
           <links-reco-chart
-            :links="stats.links['mod_reco'] ?? null"
+            :simple-links="stats.links['mod_reco_simple'] ?? null"
+            :detailed-links="stats.links['mod_reco_complex'] ?? null"
             :height="height"
             :loading="stats.loading"
           />

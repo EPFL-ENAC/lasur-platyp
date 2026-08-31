@@ -24,7 +24,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { StatLinks } from '@/models'
-import { MODE_COLORS } from './commons'
+import { COMPLEX_LABELS_COLORS, MODE_COLORS, SIMPLE_LABELS_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
@@ -32,6 +32,9 @@ use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent
 interface Props {
   type: string
   links: StatLinks | null
+  // How the link sources are labelled: the v3 typology labels
+  // (typo.reco.{simple,complex}_labels) or, when not set, raw transport modes
+  labelType?: 'simple' | 'complex'
   height?: number
   loading?: boolean
   exportable?: boolean
@@ -100,6 +103,26 @@ function keyLabel(key: string) {
   return t(`transportation_modes.${shortKey(key)}`)
 }
 
+// Link sources are typology labels when labelType is set, targets are always
+// recommended transport modes
+function sourceLabel(key: string) {
+  if (!props.labelType) {
+    return keyLabel(key)
+  }
+  if (key === 'null' || key === 'None') {
+    return 'N/A'
+  }
+  return t(`${props.labelType}_labels.${shortKey(key)}`)
+}
+
+function sourceColor(key: string) {
+  if (!props.labelType) {
+    return MODE_COLORS[key] || MODE_COLORS.default || '#ccc'
+  }
+  const colors = props.labelType === 'simple' ? SIMPLE_LABELS_COLORS : COMPLEX_LABELS_COLORS
+  return colors[shortKey(key)] || colors.default || '#ccc'
+}
+
 function initChartOptions() {
   const recoSuffix = ' '
   option.value = {}
@@ -114,16 +137,27 @@ function initChartOptions() {
   }
   total.value = links.total ?? 0
   const linksData = links.data.map((item) => ({
-    source: keyLabel(item.source),
+    source: sourceLabel(item.source),
     target: keyLabel(item.target) + recoSuffix,
     value: item.value,
   }))
 
-  const nodes = new Set<string>()
+  const sourceNodes = new Set<string>()
+  const targetNodes = new Set<string>()
   links.data.forEach((item) => {
-    nodes.add(item.source)
-    nodes.add(item.target + '_reco')
+    sourceNodes.add(item.source)
+    targetNodes.add(item.target)
   })
+  const nodes = [
+    ...Array.from(sourceNodes).map((key) => ({
+      name: sourceLabel(key),
+      itemStyle: { color: sourceColor(key) },
+    })),
+    ...Array.from(targetNodes).map((key) => ({
+      name: keyLabel(key) + recoSuffix,
+      itemStyle: { color: MODE_COLORS[key] || MODE_COLORS.default || '#ccc' },
+    })),
+  ]
 
   const newOption: EChartsOption = {
     grid: {
@@ -157,14 +191,7 @@ function initChartOptions() {
         emphasis: {
           focus: 'adjacency',
         },
-        data: Array.from(nodes).map((key) => ({
-          name: key.endsWith('_reco')
-            ? keyLabel(key.replace('_reco', '')) + recoSuffix
-            : keyLabel(key),
-          itemStyle: {
-            color: MODE_COLORS[key.replace('_reco', '')] || MODE_COLORS.default || '#ccc',
-          },
-        })),
+        data: nodes,
         links: linksData,
       },
     ],

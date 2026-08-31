@@ -130,7 +130,12 @@
       </report-page>
 
       <report-page :org-names="orgs">
-        <links-reco-chart :links="stats.links['mod_reco'] ?? null" :height="height" inline />
+        <links-reco-chart
+          :simple-links="stats.links['mod_reco_simple'] ?? null"
+          :detailed-links="stats.links['mod_reco_complex'] ?? null"
+          :height="height"
+          inline
+        />
       </report-page>
 
       <report-page :org-names="orgs">
@@ -283,6 +288,7 @@ onMounted(async () => {
   statsStore.emModalType = (route.query.emModalType as string) || 'simple'
   statsStore.redModalType = (route.query.redModalType as string) || 'simple'
   statsStore.redShareModalType = (route.query.redShareModalType as string) || 'simple'
+  statsStore.linksModalType = (route.query.linksModalType as string) || 'simple'
 
   statsStore.travelTimePercent = route.query.travelTimePercent !== 'false'
   statsStore.equipmentsPercent = route.query.equipmentsPercent !== 'false'

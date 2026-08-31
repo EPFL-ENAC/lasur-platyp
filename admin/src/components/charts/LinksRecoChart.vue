@@ -10,6 +10,18 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleLinksModalType">
+              <q-item-section side>
+                <q-icon :name="stats.linksModalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.linksModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -23,9 +35,21 @@
       </q-btn>
     </q-toolbar>
     <links-chart
-      ref="chartRef"
+      v-if="stats.linksModalType === 'simple'"
+      ref="simpleChartRef"
       type="mod_reco"
-      :links="links"
+      label-type="simple"
+      :links="simpleLinks"
+      :height="height"
+      :loading="loading"
+      :exportable="!inline"
+    />
+    <links-chart
+      v-if="stats.linksModalType === 'detailed'"
+      ref="detailedChartRef"
+      type="mod_reco"
+      label-type="complex"
+      :links="detailedLinks"
       :height="height"
       :loading="loading"
       :exportable="!inline"
@@ -41,7 +65,8 @@ import type { StatLinks } from '@/models'
 interface Props {
   height: number
   loading?: boolean
-  links: StatLinks | null
+  simpleLinks: StatLinks | null
+  detailedLinks: StatLinks | null
   inline?: boolean
 }
 
@@ -52,16 +77,29 @@ type LinksChartExposed = {
   chartInfoText: string
 }
 
-const chartRef = ref<LinksChartExposed | null>(null)
+const simpleChartRef = ref<LinksChartExposed | null>(null)
+const detailedChartRef = ref<LinksChartExposed | null>(null)
 const infoText = ref('')
 
-watch(chartRef, (newVal) => {
-  infoText.value = newVal?.chartInfoText || ''
-}, { flush: 'post' })
+const stats = useStats()
+
+watch(
+  [() => stats.linksModalType, simpleChartRef, detailedChartRef],
+  () => {
+    const active = stats.linksModalType === 'simple' ? simpleChartRef : detailedChartRef
+    infoText.value = active.value?.chartInfoText || ''
+  },
+  { flush: 'post' },
+)
 
 const { t } = useI18n()
 
+function onToggleLinksModalType() {
+  stats.linksModalType = stats.linksModalType === 'simple' ? 'detailed' : 'simple'
+}
+
 function onChartDownload() {
+  const chartRef = stats.linksModalType === 'simple' ? simpleChartRef : detailedChartRef
   chartRef.value?.handleExport()
 }
 </script>

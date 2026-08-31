@@ -345,7 +345,8 @@ export interface Stats {
   mode_emission_reductions_complex_labels: EmissionReduction[] | null
   reco_mode_emissions_simple_labels: Emissions[] | null
   reco_mode_emissions_complex_labels: Emissions[] | null
-  mode_links: StatLinks | null
+  mode_links_simple_labels: StatLinks | null
+  mode_links_complex_labels: StatLinks | null
   pro_frequencies: Frequencies[] | null
   pro_mode_frequencies: Frequencies[] | null
   pro_mode_emissions: Emissions[] | null
