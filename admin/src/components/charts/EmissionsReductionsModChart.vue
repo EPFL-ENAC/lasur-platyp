@@ -12,13 +12,13 @@
           <q-list style="min-width: 200px">
             <q-item clickable v-close-popup @click="onToggleRedModalType">
               <q-item-section side>
-                <q-icon :name="stats.redModalType === 'simple' ? 'lens' : 'pie_chart'" />
+                <q-icon :name="stats.redModalType === 'simple' ? 'pie_chart' : 'lens'" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{
                   stats.redModalType === 'simple'
-                    ? t('stats.freq_mod.modal_split.simple')
-                    : t('stats.freq_mod.modal_split.detailed')
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
                 }}</q-item-label>
               </q-item-section>
             </q-item>
