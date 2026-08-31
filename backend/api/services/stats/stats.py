@@ -22,6 +22,7 @@ class StatsService:
         constraints = freq_stats.compute_constraints_frequencies()
         travel_time = freq_stats.compute_travel_time_frequencies()
         recommendations = freq_stats.compute_recommendation_frequencies()
+        simple_recommendations = freq_stats.compute_recommendation_simple_frequencies()
         mode_frequencies_simple_labels = freq_stats.compute_modes_frequencies_simple_labels()
         mode_frequencies_complex_labels = freq_stats.compute_modes_frequencies_complex_labels()
         pro_mode_frequencies = freq_stats.compute_modes_pro_frequencies()
@@ -68,7 +69,8 @@ class StatsService:
                 equipments,
                 constraints,
                 travel_time,
-                recommendations
+                recommendations,
+                simple_recommendations
             ],
             mode_frequencies_simple_labels=mode_frequencies_simple_labels,
             mode_frequencies_complex_labels=mode_frequencies_complex_labels,

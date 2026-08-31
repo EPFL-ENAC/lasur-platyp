@@ -107,6 +107,42 @@ def test_frequencies_reco_inter_counts_and_weights_each_recommendation():
     assert by_value['train'].sum == 5
 
 
+def test_frequencies_reco_simple_counts_and_weights_each_recommendation():
+    df = new_style_df()
+    df['typo.reco.reco_simple.0'] = ['TP', 'TP']
+    df['typo.reco.reco_simple.1'] = ['MD', None]
+    result = FrequenciesService(df).compute_recommendation_simple_frequencies()
+
+    assert result.field == 'reco_simple'
+    by_value = {f.value: f for f in result.data}
+    # journey 0 of A (3 days) and journey 0 of B (5 days) both recommend 'TP'
+    assert by_value['TP'].count == 2
+    assert by_value['TP'].sum == 8
+    # journey 1 of A (2 days) recommends 'MD'
+    assert by_value['MD'].count == 1
+    assert by_value['MD'].sum == 2
+
+
+def test_frequencies_reco_simple_ignores_legacy_recommendations():
+    df = legacy_df()
+    result = FrequenciesService(df).compute_recommendation_simple_frequencies()
+
+    # typo.reco.reco_dt2 has no simple counterpart: nothing to report
+    assert result.field == 'reco_simple'
+    assert result.data == []
+
+
+def test_stats_frequencies_include_reco_inter_and_reco_simple():
+    df = new_style_df()
+    df['typo.reco.reco_simple.0'] = ['TP', 'TP']
+    df['typo.reco.reco_simple.1'] = ['MD', None]
+    stats = StatsService().compute_stats(df)
+
+    fields = [f.field for f in stats.frequencies]
+    assert 'reco_inter' in fields
+    assert 'reco_simple' in fields
+
+
 def test_links_reco_inter_matches_journey_not_always_first_index():
     df = new_style_df()
     result = LinksService(df).compute_mode_reco_links_complex_labels()

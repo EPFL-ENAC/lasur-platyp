@@ -517,11 +517,23 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
     },
     reco_inter: {
-      title: 'Potential modal split',
+      title: 'Potential modal split (detailed)',
       description:
         'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the mode of transport recommended for their home-to-work commute.',
       labels: {
         ...transportationModes,
+      },
+      texts: {
+        comparison:
+          'This graph shows the potential modal distribution of participants. The most striking difference among the campaigns {lastGroup} and {prevGroup} is in the mode: {mode} ({diff}).',
+      },
+    },
+    reco_simple: {
+      title: 'Potential modal split (simple)',
+      description:
+        'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the simple mobility typology recommended for their home-to-work commute.',
+      labels: {
+        ...simpleShortLabels,
       },
       texts: {
         comparison:

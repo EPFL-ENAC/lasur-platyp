@@ -18,7 +18,13 @@ import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS, modeSortOrder, computePercentages } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  modeSortOrder,
+  simpleLabelSortOrder,
+  computePercentages,
+} from './commons'
 import {
   buildGroupStackedBarOption,
   findBiggestGroupDifference,
@@ -33,7 +39,7 @@ import {
 import { formatSignedPercent } from '@/utils/numbers'
 import type { ComparisonStats, Frequencies } from '@/models'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 use([
   SVGRenderer,
   PieChart,
@@ -49,15 +55,23 @@ const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   chartTranslationName: string
+  // Which vocabulary the frequency values are expressed in: 'simple' for the
+  // simple typology labels, transport modes otherwise.
+  labelType?: 'simple' | 'mode'
   frequencies?: Frequencies | Frequencies[] | null
   height?: number
   loading?: boolean
   exportable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
+  labelType: 'mode',
   height: 400,
   exportable: true,
 })
+
+const labelColors = computed(() =>
+  props.labelType === 'simple' ? SIMPLE_LABELS_COLORS : MODE_COLORS,
+)
 
 type EChartsShellExposed = {
   handleExport: () => Promise<void>
@@ -135,7 +149,17 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
+  if (props.labelType === 'simple') {
+    const messageKey = `simple_labels.${shortKey(key)}`
+    if (te(messageKey)) {
+      return t(messageKey)
+    }
+  }
   return t(`transportation_modes.${shortKey(key)}`)
+}
+
+function labelSortOrder(key: string) {
+  return props.labelType === 'simple' ? simpleLabelSortOrder(key) : modeSortOrder(key)
 }
 
 function initChartOptions() {
@@ -172,14 +196,14 @@ function initChartOptions() {
     }))
     total.value = frequencies.total
   }
-  dataset.sort((a, b) => modeSortOrder(a.key) - modeSortOrder(b.key))
+  dataset.sort((a, b) => labelSortOrder(a.key) - labelSortOrder(b.key))
 
   // Add rounded percentages that sum to 100
   const datasetWithPercent = computePercentages(dataset)
 
   // Extract category names and values for series
   const categories = datasetWithPercent.map((item) => item.key)
-  const colors = categories.map((category) => MODE_COLORS[category] || '#ccc')
+  const colors = categories.map((category) => labelColors.value[category] || '#ccc')
 
   if (categories.length === 0) {
     return
@@ -269,11 +293,11 @@ function initComparisonChartOptions() {
 
   const keyOrder = Array.from(
     new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
-  ).sort((a, b) => modeSortOrder(a) - modeSortOrder(b))
+  ).sort((a, b) => labelSortOrder(a) - labelSortOrder(b))
 
   option.value = buildGroupStackedBarOption({
     groupDatasets,
-    colors: MODE_COLORS,
+    colors: labelColors.value,
     percent: true,
     title: t(`stats.${props.chartTranslationName}.title`),
     totalLabel: t('stats.total', { count: total.value }),

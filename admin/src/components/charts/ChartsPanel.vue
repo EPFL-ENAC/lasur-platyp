@@ -114,7 +114,8 @@
         </div>
         <div class="grid-container">
           <freq-reco-chart
-            :frequencies="getFreq('reco_inter')"
+            :simple-frequencies="getFreq('reco_simple')"
+            :detailed-frequencies="getFreq('reco_inter')"
             :height="height"
             :loading="stats.loading"
           />
