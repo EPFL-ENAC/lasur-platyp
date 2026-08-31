@@ -1,6 +1,6 @@
 <template>
   <chart-panel
-    :title="t('stats.energy_journey.title_share')"
+    :title="chartTitle"
     :description="t('stats.energy_journey.description_share')"
     :chart-info-text="chartDescription"
     :inline="inline"
@@ -10,6 +10,18 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleModalType">
+              <q-item-section side>
+                <q-icon :name="modalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  modalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -28,7 +40,7 @@
       :loading="props.loading"
       :has-data="total > 0"
       :show-table="!exportable"
-      :no-data-title="t('stats.energy_journey.title_share')"
+      :no-data-title="chartTitle"
       :option="option"
       :exportable="!!exportable"
     />
@@ -42,7 +54,7 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS, modeSortOrder } from './commons'
+import { MODE_COLORS, SIMPLE_LABELS_COLORS, modeSortOrder, simpleLabelSortOrder } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -69,7 +81,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface AddedEnergyShare {
-  mode: string
+  label: string
   percentage: number
 }
 
@@ -79,6 +91,13 @@ type EChartsShellExposed = {
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
+const modalType = ref<'simple' | 'detailed'>('simple')
+
+function onToggleModalType() {
+  modalType.value = modalType.value === 'simple' ? 'detailed' : 'simple'
+  initChartOptions()
+}
+
 function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {
     return 'N/A'
@@ -86,12 +105,18 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`transportation_modes.${shortKey(key)}`)
+  const namespace = modalType.value === 'simple' ? 'simple_labels' : 'transportation_modes'
+  return t(`${namespace}.${shortKey(key)}`)
 }
 
 function onChartDownload() {
   shellRef.value?.handleExport()
 }
+
+const chartTitle = computed(
+  () =>
+    `${t('stats.energy_journey.title_share')} (${t(`stats.freq_mod.modal_split.${modalType.value}`).toLowerCase()})`,
+)
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
@@ -101,7 +126,7 @@ const chartDescription = computed(() => {
   if (total.value > 5 && biggestShare.value) {
     return t('stats.energy_journey.texts.specific_share', {
       percentage: formatNumber(biggestShare.value.percentage),
-      mode: keyLabel(biggestShare.value.mode),
+      mode: keyLabel(biggestShare.value.label),
     })
   }
   return ''
@@ -134,24 +159,25 @@ function initChartOptions() {
   option.value = {}
   total.value = 0
 
-  const rawData = props.journeyEnergyStats?.gains?.gains_per_mode || []
+  const rawData = props.journeyEnergyStats?.gains?.gains_per_mode[modalType.value] || []
 
   if (rawData.length === 0) return
 
+  const sortOrder = modalType.value === 'simple' ? simpleLabelSortOrder : modeSortOrder
   const filtered = rawData.filter((item) => item.added_kcal > 0)
-  filtered.sort((a, b) => modeSortOrder(a.mode) - modeSortOrder(b.mode))
+  filtered.sort((a, b) => sortOrder(a.label) - sortOrder(b.label))
   total.value = filtered.length
 
   const sumPositiveEnergy = filtered.reduce((sum, item) => sum + item.added_kcal, 0)
 
   biggestShare.value = {
-    mode: '',
+    label: '',
     percentage: 0,
   }
   filtered.forEach((item) => {
     const percentage = sumPositiveEnergy > 0 ? (item.added_kcal / sumPositiveEnergy) * 100 : 0
     if (!biggestShare.value || percentage > biggestShare.value.percentage) {
-      biggestShare.value = { mode: item.mode, percentage }
+      biggestShare.value = { label: item.label, percentage }
     }
   })
 
@@ -166,7 +192,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.energy_journey.title_share`),
+      text: chartTitle.value,
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -201,10 +227,14 @@ function initChartOptions() {
           position: 'outer',
         },
         data: filtered.map((item) => ({
-          name: keyLabel(item.mode),
+          name: keyLabel(item.label),
           value: item.added_kcal,
         })),
-        color: filtered.map((item) => MODE_COLORS[item.mode] || '#FCC447'),
+        color: filtered.map(
+          (item) =>
+            (modalType.value === 'simple' ? SIMPLE_LABELS_COLORS : MODE_COLORS)[item.label] ||
+            '#FCC447',
+        ),
       },
     ],
   }
