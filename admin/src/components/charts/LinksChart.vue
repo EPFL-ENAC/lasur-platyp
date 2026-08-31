@@ -5,7 +5,7 @@
     :loading="props.loading"
     :has-data="total > 0"
     :show-table="!exportable"
-    :no-data-title="t(`stats.${props.type}.title`)"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
   />
@@ -26,7 +26,7 @@ import {
 import type { StatLinks } from '@/models'
 import { COMPLEX_LABELS_COLORS, MODE_COLORS, SIMPLE_LABELS_COLORS } from './commons'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
@@ -53,6 +53,20 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
+
+// simple/complex links show the same title: qualify it with the typology the
+// chart is currently rendering
+const chartTitle = computed(() => {
+  const title = t(`stats.${props.type}.title`)
+  if (!props.labelType) {
+    return title
+  }
+  const modalSplit =
+    props.labelType === 'simple'
+      ? t('stats.freq_mod.modal_split.simple')
+      : t('stats.freq_mod.modal_split.detailed')
+  return `${title} (${modalSplit.toLowerCase()})`
+})
 
 watch(
   () => props.loading,
@@ -108,16 +122,41 @@ function labelTypeLabel(key: string, labelType: 'simple' | 'complex') {
   if (key === 'null' || key === 'None') {
     return 'N/A'
   }
-  return t(`${labelType}_labels.${shortKey(key)}`)
+  const messageKey = `${labelType}_labels.${shortKey(key)}`
+  // recommendations may be expressed as a transport mode rather than a
+  // typology label: fall back to the mode vocabulary instead of showing the
+  // raw i18n key
+  return te(messageKey) ? t(messageKey) : keyLabel(key)
 }
 
 function labelTypeColor(key: string, labelType: 'simple' | 'complex') {
   const colors = labelType === 'simple' ? SIMPLE_LABELS_COLORS : COMPLEX_LABELS_COLORS
-  return colors[shortKey(key)] || colors.default || '#ccc'
+  return labelColor(colors, shortKey(key)) || modeColor(key)
+}
+
+/**
+ * Typology labels come from the data as-is: match them leniently so an
+ * unexpected case ('ma+tp') or component order ('TP+MA') still gets the color
+ * of the label it denotes, instead of falling back to the neutral default.
+ */
+function labelColor(colors: { [key: string]: string }, key: string) {
+  if (colors[key]) {
+    return colors[key]
+  }
+  const parts = key.toLowerCase().split('+')
+  const match = Object.keys(colors).find((candidate) => {
+    const candidateParts = candidate.toLowerCase().split('+')
+    return (
+      candidateParts.length === parts.length &&
+      candidateParts.every((part) => parts.includes(part)) &&
+      parts.every((part) => candidateParts.includes(part))
+    )
+  })
+  return match ? colors[match] : undefined
 }
 
 function modeColor(key: string) {
-  return MODE_COLORS[key] || MODE_COLORS.default || '#ccc'
+  return MODE_COLORS[shortKey(key)] || MODE_COLORS.default || '#ccc'
 }
 
 // Link sources are typology labels when labelType is set
@@ -185,7 +224,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 80,
     title: {
-      text: t(`stats.${props.type}.title`),
+      text: chartTitle.value,
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
