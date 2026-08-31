@@ -126,7 +126,12 @@
         <h2 class="text-h6 q-mb-md">
           {{ t('stats.sections.home_to_work') }}
         </h2>
-        <freq-reco-chart :frequencies="getFreq('reco_inter')" :height="height" inline />
+        <freq-reco-chart
+          :simple-frequencies="getFreq('reco_simple')"
+          :detailed-frequencies="getFreq('reco_inter')"
+          :height="height"
+          inline
+        />
       </report-page>
 
       <report-page :org-names="orgs">
@@ -289,6 +294,7 @@ onMounted(async () => {
   statsStore.redModalType = (route.query.redModalType as string) || 'simple'
   statsStore.redShareModalType = (route.query.redShareModalType as string) || 'simple'
   statsStore.linksModalType = (route.query.linksModalType as string) || 'simple'
+  statsStore.recoModalType = (route.query.recoModalType as string) || 'simple'
 
   statsStore.travelTimePercent = route.query.travelTimePercent !== 'false'
   statsStore.equipmentsPercent = route.query.equipmentsPercent !== 'false'

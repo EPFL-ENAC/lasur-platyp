@@ -3,7 +3,7 @@ import pandas as pd
 from api.models.query import Frequencies, Frequency
 from api.services.stats.commons import (
     BaseStatsService, MODES_PRO, DAYS_PER_YEAR_FACTOR, normalize_pro_days_to_yearly,
-    COMPLEX_LABEL_MERGE, merge_label_components,
+    COMPLEX_LABEL_MERGE, merge_label_components, RECO_INTER_PREFIX, RECO_SIMPLE_PREFIX,
 )
 
 
@@ -87,21 +87,19 @@ class FrequenciesService(BaseStatsService):
         typo.reco.reco_inter.N records, one per legacy typo.reco.reco_dt2.{0,1} for
         older records), weighted by the days of the journey(s) it applies to.
         """
-        reco_df = self._build_reco_weighted(self.df)
-        if reco_df is None:
-            return Frequencies(field="reco_inter", total=len(self.df), data=[])
+        return self._compute_recommendation_frequencies(
+            "reco_inter", RECO_INTER_PREFIX, include_legacy=True)
 
-        grouped = reco_df.groupby("reco_mode")["days"]
+    def compute_recommendation_simple_frequencies(self) -> Frequencies:
+        """Compute simple recommendation frequencies from a DataFrame of records.
 
-        return Frequencies(
-            field="reco_inter",
-            total=len(self.df),
-            data=[
-                Frequency(value=reco, count=int(
-                    counts.count()), sum=int(counts.sum()))
-                for reco, counts in grouped
-            ],
-        )
+        Same as compute_recommendation_frequencies, but over the simple typology
+        recommendation of each journey (typo.reco.reco_simple.N). There is no legacy
+        equivalent for it, so records collected before per-journey recommendations
+        contribute nothing here.
+        """
+        return self._compute_recommendation_frequencies(
+            "reco_simple", RECO_SIMPLE_PREFIX, include_legacy=False)
 
     def compute_recommendation_pro_frequencies(self) -> Frequencies:
         """Compute recommendation professional frequencies from a DataFrame of records."""
@@ -223,6 +221,26 @@ class FrequenciesService(BaseStatsService):
     #
     # Internal functions
     #
+
+    def _compute_recommendation_frequencies(
+        self, field: str, reco_prefix: str, include_legacy: bool
+    ) -> Frequencies:
+        reco_df = self._build_reco_weighted(
+            self.df, reco_prefix=reco_prefix, include_legacy=include_legacy)
+        if reco_df is None:
+            return Frequencies(field=field, total=len(self.df), data=[])
+
+        grouped = reco_df.groupby("reco_mode")["days"]
+
+        return Frequencies(
+            field=field,
+            total=len(self.df),
+            data=[
+                Frequency(value=reco, count=int(
+                    counts.count()), sum=int(counts.sum()))
+                for reco, counts in grouped
+            ],
+        )
 
     def _distance_type(self, lat: float, lon: float, h3_index, mode: str) -> str:
         dist = self._calculate_distance_to_h3(lat, lon, h3_index, mode)

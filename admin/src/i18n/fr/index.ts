@@ -530,11 +530,23 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     reco_inter: {
-      title: 'Répartition modale potentielle',
+      title: 'Répartition modale potentielle (détaillée)',
       description:
         "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le mode qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
       labels: {
         ...transportationModes,
+      },
+      texts: {
+        comparison:
+          'Ce graphique montre la répartition modale potentielle des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
+      },
+    },
+    reco_simple: {
+      title: 'Répartition modale potentielle (simple)',
+      description:
+        "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le type de mobilité simplifié qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
+      labels: {
+        ...simpleShortLabels,
       },
       texts: {
         comparison:

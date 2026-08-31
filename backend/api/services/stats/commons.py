@@ -70,6 +70,10 @@ def normalize_pro_days_to_yearly(days: float, days_per) -> float:
 
 
 RECO_INTER_PATTERN = re.compile(r'^typo\.reco\.reco_inter\.(\d+)$')
+# Per-journey recommendation column prefixes: reco_inter carries the intermodal
+# (detailed) recommendation, reco_simple the simple typology one.
+RECO_INTER_PREFIX = 'typo.reco.reco_inter'
+RECO_SIMPLE_PREFIX = 'typo.reco.reco_simple'
 # Legacy general recommendations (not tied to a specific journey), superseded by
 # typo.reco.reco_inter but still present on records collected before that change.
 RECO_LEGACY_COLUMNS = ['typo.reco.reco_dt2.0', 'typo.reco.reco_dt2.1']
@@ -82,10 +86,15 @@ class BaseStatsService:
         self._v3_cache = None
         self._journey_attributes_cache = {}
 
+    def _reco_journey_columns(self, df: pd.DataFrame, prefix: str = RECO_INTER_PREFIX) -> list[str]:
+        """{prefix}.N columns present in df, sorted by journey index N."""
+        pattern = re.compile(rf'^{re.escape(prefix)}\.(\d+)$')
+        cols = [c for c in df.columns if pattern.match(c)]
+        return sorted(cols, key=lambda c: int(pattern.match(c).group(1)))
+
     def _reco_inter_columns(self, df: pd.DataFrame) -> list[str]:
         """typo.reco.reco_inter.N columns present in df, sorted by journey index N."""
-        cols = [c for c in df.columns if RECO_INTER_PATTERN.match(c)]
-        return sorted(cols, key=lambda c: int(RECO_INTER_PATTERN.match(c).group(1)))
+        return self._reco_journey_columns(df, RECO_INTER_PREFIX)
 
     def _reco_legacy_columns(self, df: pd.DataFrame) -> list[str]:
         """typo.reco.reco_dt2.{0,1} columns present in df."""
@@ -99,7 +108,10 @@ class BaseStatsService:
             return pd.Series(False, index=df.index)
         return df[reco_cols].notna().any(axis=1)
 
-    def _build_reco_weighted(self, df: pd.DataFrame) -> pd.DataFrame | None:
+    def _build_reco_weighted(
+        self, df: pd.DataFrame, reco_prefix: str = RECO_INTER_PREFIX,
+        include_legacy: bool = True,
+    ) -> pd.DataFrame | None:
         """
         One row per recommendation instance that should be taken into account, with
         the journey-frequency weight it should count for: ['token', 'journey',
@@ -117,6 +129,11 @@ class BaseStatsService:
         Args:
             df: DataFrame of records (needs a 'token' column to key journeys/legacy
                 rows; falls back to the row index when absent)
+            reco_prefix: per-journey recommendation column prefix, either
+                typo.reco.reco_inter (intermodal, the default) or
+                typo.reco.reco_simple (simple typology)
+            include_legacy: whether to also emit the legacy typo.reco.reco_dt2.{0,1}
+                recommendations; only reco_inter has a legacy equivalent
 
         Returns:
             DataFrame with columns ['token', 'journey', 'reco_mode', 'days'] or None
@@ -148,8 +165,8 @@ class BaseStatsService:
         # column, concatenated at the end -- vectorized instead of a
         # Python-level `.items()` loop per column.
         frames = []
-        for col in self._reco_inter_columns(df):
-            journey_id = RECO_INTER_PATTERN.match(col).group(1)
+        for col in self._reco_journey_columns(df, reco_prefix):
+            journey_id = col.rsplit('.', 1)[1]
             days_col = f'data.freq_mod_journeys.{journey_id}.days'
             reco_s = df[col].dropna()
             if reco_s.empty:
@@ -170,7 +187,7 @@ class BaseStatsService:
                 'days': days.to_numpy(),
             }))
 
-        for col in self._reco_legacy_columns(df):
+        for col in (self._reco_legacy_columns(df) if include_legacy else []):
             journey_id = f'legacy_{col.rsplit(".", 1)[1]}'
             reco_s = df[col].dropna()
             if reco_s.empty:
