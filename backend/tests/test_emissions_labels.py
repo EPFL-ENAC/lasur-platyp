@@ -102,7 +102,9 @@ def test_compute_modes_emissions_complex_labels():
     result = service.compute_modes_emissions_complex_labels()
 
     by_label = {e.mode: e for e in result}
-    assert set(by_label.keys()) == {'car', 'car+pub', 'pub'}
+    # raw 'pub' is merged into 'tp' (along with 'train'), component-wise, so
+    # the intermodal 'car+pub' combo folds into 'car+tp' too
+    assert set(by_label.keys()) == {'car', 'car+tp', 'tp'}
     for emission in result:
         assert emission.total == 3
 
@@ -110,8 +112,8 @@ def test_compute_modes_emissions_complex_labels():
     # emissions computed by the existing v2 pipeline for the same journey
     # (same MODE_EMISSIONS factor, same distance, same days)
     assert by_label['car'].journeys == 3 * 2 * 45
-    assert by_label['car+pub'].journeys == 2 * 2 * 45
-    assert by_label['pub'].journeys == 5 * 2 * 45
+    assert by_label['car+tp'].journeys == 2 * 2 * 45
+    assert by_label['tp'].journeys == 5 * 2 * 45
 
 
 def test_compute_modes_emissions_labels_empty_when_no_v3_records():
@@ -159,10 +161,10 @@ def test_compute_modes_emissions_complex_labels_apply_reco():
     current = {e.mode: e for e in service.compute_modes_emissions_complex_labels()}
     reco = {e.mode: e for e in service.compute_modes_emissions_complex_labels(apply_reco=True)}
 
-    assert set(reco.keys()) == {'car', 'car+pub', 'pub'}
+    assert set(reco.keys()) == {'car', 'car+tp', 'tp'}
     assert reco['car'].emissions < current['car'].emissions
-    assert reco['pub'].emissions < current['pub'].emissions
-    assert reco['car+pub'].emissions == current['car+pub'].emissions
+    assert reco['tp'].emissions < current['tp'].emissions
+    assert reco['car+tp'].emissions == current['car+tp'].emissions
 
 
 def test_compute_modes_emissions_labels_apply_reco_empty_when_no_v3_records():
@@ -200,7 +202,7 @@ def test_compute_modes_emission_reductions_complex_labels():
     result = service.compute_modes_emission_reductions_complex_labels()
 
     by_label = {r.mode: r for r in result}
-    assert set(by_label.keys()) == {'car', 'pub'}
+    assert set(by_label.keys()) == {'car', 'tp'}
     for reduction in result:
         assert reduction.total == 3
         assert reduction.reduced > 0
