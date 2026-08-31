@@ -60,6 +60,7 @@ export const useStats = defineStore('stats', () => {
   const emModalType = ref('simple')
   const redModalType = ref('simple')
   const redShareModalType = ref('simple')
+  const linksModalType = ref('simple')
 
   const travelTimePercent = ref(true)
   const equipmentsPercent = ref(true)
@@ -115,7 +116,12 @@ export const useStats = defineStore('stats', () => {
             stats.mode_emission_reductions_simple_labels || []
           emissionsReductions.value['reductions_mod_complex'] =
             stats.mode_emission_reductions_complex_labels || []
-          links.value['mod_reco'] = stats.mode_links || {
+          links.value['mod_reco_simple'] = stats.mode_links_simple_labels || {
+            total: 0,
+            data: [],
+            most_recommended_target: null,
+          }
+          links.value['mod_reco_complex'] = stats.mode_links_complex_labels || {
             total: 0,
             data: [],
             most_recommended_target: null,
@@ -247,6 +253,7 @@ export const useStats = defineStore('stats', () => {
     emModalType,
     redModalType,
     redShareModalType,
+    linksModalType,
     travelTimePercent,
     equipmentsPercent,
     constraintsPercent,

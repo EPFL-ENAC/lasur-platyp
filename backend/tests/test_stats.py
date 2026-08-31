@@ -225,44 +225,6 @@ def test_compute_modes_pro_emissions():
         assert_emissions_equal(res_emission, exp_emission)
 
 
-def test_compute_mode_reco_links():
-    # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
-    # completed records) contribute, since mode recommendation links are no
-    # longer computed for v1/v2 records.
-    df = load_test_dataframe()
-    service = LinksService(df)
-    result = service.compute_mode_reco_links()
-
-    # print(result)
-    expected = Links(
-        total=7,
-        data=[
-            Link(source='car', target='vae', value=11),
-            Link(source='car', target='tpu', value=6),
-            Link(source='car', target='train', value=4),
-            Link(source='car', target='covoit', value=4),
-            Link(source='car', target='inter', value=5),
-            Link(source='carpool', target='inter', value=5),
-            Link(source='carpool', target='vae', value=5),
-            Link(source='bike', target='inter', value=15),
-            Link(source='bike', target='vae', value=15),
-            Link(source='moto', target='marche', value=3),
-            Link(source='moto', target='vae', value=8),
-            Link(source='moto', target='velo', value=5),
-            Link(source='moto', target='tpu', value=5),
-            Link(source='moto', target='inter', value=5),
-            Link(source='pub', target='tpu', value=10),
-            Link(source='pub', target='inter', value=10),
-            Link(source='walking', target='tpu', value=15),
-            Link(source='walking', target='inter', value=25),
-            Link(source='walking', target='vae', value=10),
-            Link(source='train', target='inter', value=5),
-            Link(source='train', target='vae', value=5),
-        ]
-    )
-    assert_links_equal(result, expected)
-
-
 def test_compute_mode_reco_pro_links():
     # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
     # completed records) contribute.

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from api.models.query import Link, Links, Recommendation, StatLinks
-from api.services.stats.commons import BaseStatsService
+from api.services.stats.commons import COMPLEX_LABEL_MERGE, BaseStatsService, merge_label_components
 
 
 class LinksService(BaseStatsService):
@@ -9,14 +9,27 @@ class LinksService(BaseStatsService):
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
 
-    def compute_mode_reco_links(self) -> StatLinks:
-        """Compute all mode recommendation links from a DataFrame of records (v3 only)."""
-        df_v3 = self._get_records_v3()
-        links = Links(total=0, data=[])
-        if not df_v3.empty:
-            links = self._compute_mode_reco_links_v3(df_v3)
+    def compute_mode_reco_links_simple_labels(self) -> StatLinks:
+        """Compute mode recommendation links from typo.reco.simple_labels to the
+        simple recommendation of the same journey, typo.reco.reco_simple.{i}
+        (v3 only): both ends are simple typology labels.
+        """
+        return self._compute_mode_reco_links(
+            "typo.reco.simple_labels", "typo.reco.reco_simple")
 
-        return self._compute_stats_for_links(links)
+    def compute_mode_reco_links_complex_labels(self) -> StatLinks:
+        """Compute mode recommendation links from typo.reco.complex_labels to the
+        recommended mode of the same journey, typo.reco.reco_inter.{i} (v3 only).
+
+        COMPLEX_LABEL_MERGE values are folded into their target bucket
+        component-wise, so both a plain label (e.g. "pub") and any '+'-joined
+        intermodal combination containing it (e.g. "car+pub") fold into the
+        matching target (e.g. "tp", "car+tp"), as in the complex label
+        frequencies and emissions.
+        """
+        return self._compute_mode_reco_links(
+            "typo.reco.complex_labels", "typo.reco.reco_inter",
+            merge_map=COMPLEX_LABEL_MERGE, legacy_recos=True)
 
     def compute_mode_reco_pro_links(self) -> StatLinks:
         """Compute all mode recommendation links from a DataFrame of records (v3 only)."""
@@ -31,15 +44,34 @@ class LinksService(BaseStatsService):
     # Internal functions
     #
 
-    def _compute_mode_reco_links_v3(self, df: pd.DataFrame) -> Links:
+    def _compute_mode_reco_links(
+        self, label_col_prefix: str, reco_col_prefix: str,
+        merge_map: dict[str, str] | None = None, legacy_recos: bool = False,
+    ) -> StatLinks:
+        df_v3 = self._get_records_v3()
+        links = Links(total=0, data=[])
+        if not df_v3.empty:
+            links = self._compute_mode_reco_links_v3(
+                df_v3, label_col_prefix, reco_col_prefix, merge_map, legacy_recos)
+
+        return self._compute_stats_for_links(links)
+
+    def _compute_mode_reco_links_v3(
+        self, df: pd.DataFrame, label_col_prefix: str, reco_col_prefix: str,
+        merge_map: dict[str, str] | None = None, legacy_recos: bool = False,
+    ) -> Links:
         """Compute all mode recommendation links from a DataFrame of records.
 
-        New-style records: link each journey's mode(s) to that same journey's own
-        recommendation (typo.reco.reco_inter.<journey index>), weighted by that
-        journey's `days`.
-        Legacy records (typo.reco.reco_dt2.0 / .1, not tied to a specific journey):
-        link every journey's mode(s) to each legacy recommendation, weighted by the
-        sum of the person's journey days (as originally computed).
+        Journeys are sourced by their aggregated typology label
+        (typo.reco.{simple,complex}_labels.{i}) instead of their raw modes.*
+        list, so each journey's days are credited to exactly one source label.
+
+        Each journey's label is linked to that same journey's own recommendation
+        (`{reco_col_prefix}.<journey index>`), weighted by that journey's `days`.
+        When `legacy_recos` is set, journeys of records collected before the
+        per-journey recommendations (typo.reco.reco_dt2.0 / .1, not tied to a
+        specific journey) are instead linked to each legacy recommendation,
+        weighted by the sum of the person's journey days (as originally computed).
         """
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
@@ -47,61 +79,59 @@ class LinksService(BaseStatsService):
         # stored as a non-numeric string, which would otherwise raise on
         # `> 0` (or silently string-concatenate in the .sum() below).
         col_days_numeric = df[col_days].apply(pd.to_numeric, errors='coerce')
-        legacy_cols = self._reco_legacy_columns(df)
+        legacy_cols = self._reco_legacy_columns(df) if legacy_recos else []
         total_days_by_token = col_days_numeric.sum(
             axis=1) if len(col_days) and legacy_cols else None
 
-        # (mode, reco, weight) triples, accumulated via groupby-sum at the end
+        # (label, reco, weight) triples, accumulated via groupby-sum at the end
         # instead of a Python-level dict built row by row.
         frames = []
 
         for i in range(len(col_days)):
-            col_modes_i = df.columns[df.columns.str.startswith(
-                f'data.freq_mod_journeys.{str(i)}.modes.')]
-            if col_modes_i.empty:
+            col_label_i = f'{label_col_prefix}.{str(i)}'
+            if col_label_i not in df.columns:
                 continue
             col_days_i = col_days[i]
-            reco_col_i = f'typo.reco.reco_inter.{str(i)}'
+            reco_col_i = f'{reco_col_prefix}.{str(i)}'
 
             # int(days) <= 0 truncates toward zero, same as np.trunc for floats
             days_trunc = np.trunc(col_days_numeric[col_days_i])
-            valid_days = col_days_numeric[col_days_i].notna() & (days_trunc > 0)
-            if not valid_days.any():
+            label_s = df[col_label_i]
+            valid = (col_days_numeric[col_days_i].notna()
+                     & (days_trunc > 0) & label_s.notna())
+            if not valid.any():
                 continue
 
-            own_reco = df[reco_col_i] if reco_col_i in df.columns else pd.Series(
-                np.nan, index=df.index)
+            labels = label_s[valid].astype(str)
+            if merge_map:
+                labels = labels.map(
+                    lambda label: merge_label_components(label, merge_map))
+            weight_days = days_trunc[valid]
+
+            own_reco = df[reco_col_i][valid] if reco_col_i in df.columns else pd.Series(
+                np.nan, index=labels.index)
             has_own_reco = own_reco.notna()
-
-            modes_sub = df.loc[valid_days, col_modes_i.tolist()]
-            stacked_modes = modes_sub.stack()  # drops NaN modes by default
-            if stacked_modes.empty:
-                continue
-            row_idx = stacked_modes.index.get_level_values(0)
-            modes_arr = stacked_modes.to_numpy()
-            weight_days = days_trunc.loc[row_idx].to_numpy()
-            has_own_arr = has_own_reco.loc[row_idx].to_numpy()
 
             # New-style: this journey's own recommendation, weighted by this
             # journey's own days
-            if has_own_arr.any():
+            if has_own_reco.any():
                 frames.append(pd.DataFrame({
-                    'mode': modes_arr[has_own_arr],
-                    'reco': own_reco.loc[row_idx].to_numpy()[has_own_arr],
-                    'weight': weight_days[has_own_arr],
+                    'mode': labels[has_own_reco].to_numpy(),
+                    'reco': own_reco[has_own_reco].to_numpy(),
+                    'weight': weight_days[has_own_reco].to_numpy(),
                 }))
 
             # Legacy: general recommendation(s), weighted by the person's
             # total journey days, one entry per legacy column
-            legacy_mask = ~has_own_arr
+            legacy_mask = ~has_own_reco
             if legacy_mask.any() and legacy_cols and total_days_by_token is not None:
-                legacy_row_idx = row_idx[legacy_mask]
-                legacy_modes = modes_arr[legacy_mask]
-                token_days = total_days_by_token.loc[legacy_row_idx].to_numpy()
+                legacy_idx = labels.index[legacy_mask]
+                token_days = total_days_by_token.loc[legacy_idx].to_numpy()
+                legacy_labels = labels.loc[legacy_idx].to_numpy()
                 for legacy_col in legacy_cols:
                     frames.append(pd.DataFrame({
-                        'mode': legacy_modes,
-                        'reco': df[legacy_col].loc[legacy_row_idx].to_numpy(),
+                        'mode': legacy_labels,
+                        'reco': df[legacy_col].loc[legacy_idx].to_numpy(),
                         'weight': token_days,
                     }))
 

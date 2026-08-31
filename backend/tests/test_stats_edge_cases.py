@@ -31,7 +31,7 @@ def test_empty_dataframe():
     assert result == []
 
     # Links service should handle empty dataframe
-    result = links_service.compute_mode_reco_links()
+    result = links_service.compute_mode_reco_links_simple_labels()
     assert isinstance(result, Links)
     assert result.total == 0
     assert result.data == []

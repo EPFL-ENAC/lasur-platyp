@@ -47,7 +47,8 @@ class StatsService:
         journey_energy_stats = energy_stats.compute_journey_energy_stats()
 
         links_stats = LinksService(df)
-        mode_links = links_stats.compute_mode_reco_links()
+        mode_links_simple_labels = links_stats.compute_mode_reco_links_simple_labels()
+        mode_links_complex_labels = links_stats.compute_mode_reco_links_complex_labels()
         pro_mode_links = links_stats.compute_mode_reco_pro_links()
 
         locations_stats = LocationsService(df)
@@ -82,7 +83,8 @@ class StatsService:
             reco_mode_energy=reco_mode_energy,
             journey_energy_stats=journey_energy_stats,
 
-            mode_links=mode_links,
+            mode_links_simple_labels=mode_links_simple_labels,
+            mode_links_complex_labels=mode_links_complex_labels,
 
             # professional
             pro_frequencies=[

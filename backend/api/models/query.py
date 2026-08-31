@@ -320,7 +320,8 @@ class Stats(BaseModel):
     reco_mode_emissions_complex_labels: Optional[List[Emissions]] = None
     mode_emission_reductions_simple_labels: Optional[List[EmissionReductions]] = None
     mode_emission_reductions_complex_labels: Optional[List[EmissionReductions]] = None
-    mode_links: Optional[StatLinks] = None
+    mode_links_simple_labels: Optional[StatLinks] = None
+    mode_links_complex_labels: Optional[StatLinks] = None
     pro_frequencies: Optional[List[Frequencies]] = None
     pro_mode_frequencies: Optional[List[Frequencies]] = None
     pro_mode_emissions: Optional[List[Emissions]] = None

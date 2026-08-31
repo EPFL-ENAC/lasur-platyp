@@ -26,8 +26,12 @@ def new_style_df() -> pd.DataFrame:
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
             'data.freq_mod_journeys.0.days': 3,
             'data.freq_mod_journeys.0.modes.0': 'car',
+            'typo.reco.simple_labels.0': 'TIM',
+            'typo.reco.complex_labels.0': 'car',
             'data.freq_mod_journeys.1.days': 2,
             'data.freq_mod_journeys.1.modes.0': 'bike',
+            'typo.reco.simple_labels.1': 'MD',
+            'typo.reco.complex_labels.1': 'bike',
             'typo.reco.reco_inter.0': 'inter',
             'typo.reco.reco_inter.1': 'velo',
         },
@@ -39,6 +43,8 @@ def new_style_df() -> pd.DataFrame:
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
             'data.freq_mod_journeys.0.days': 5,
             'data.freq_mod_journeys.0.modes.0': 'pub',
+            'typo.reco.simple_labels.0': 'TP',
+            'typo.reco.complex_labels.0': 'pub',
             'typo.reco.reco_inter.0': 'train',
         },
     ])
@@ -103,16 +109,17 @@ def test_frequencies_reco_inter_counts_and_weights_each_recommendation():
 
 def test_links_reco_inter_matches_journey_not_always_first_index():
     df = new_style_df()
-    result = LinksService(df).compute_mode_reco_links()
+    result = LinksService(df).compute_mode_reco_links_complex_labels()
 
     links = {(l.source, l.target): l.value for l in result.data}
-    # journey 0 (car, 3 days) recommends 'inter': linked to car, weighted by 3 days
+    # journey 0 (label 'car', 3 days) recommends 'inter': linked to car, weighted by 3 days
     assert links[('car', 'inter')] == 3
-    # journey 1 (bike, 2 days) recommends 'velo': linked to bike, weighted by 2 days,
+    # journey 1 (label 'bike', 2 days) recommends 'velo': linked to bike, weighted by 2 days,
     # NOT to 'inter' (which only applies to journey 0)
     assert ('bike', 'inter') not in links
     assert links[('bike', 'velo')] == 2
-    assert links[('pub', 'train')] == 5
+    # 'pub' folds into the merged 'tp' bucket of the complex labels
+    assert links[('tp', 'train')] == 5
 
 
 def test_equipments_reco_inter_counts_each_journey_recommendation():
