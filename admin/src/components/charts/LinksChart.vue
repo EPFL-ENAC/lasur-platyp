@@ -32,8 +32,9 @@ use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent
 interface Props {
   type: string
   links: StatLinks | null
-  // How the link sources are labelled: the v3 typology labels
-  // (typo.reco.{simple,complex}_labels) or, when not set, raw transport modes
+  // Which typology the links are expressed in: 'simple' links a simple label
+  // to a simple recommendation, 'complex' links a complex label to a
+  // recommended transport mode. When not set, both ends are transport modes.
   labelType?: 'simple' | 'complex'
   height?: number
   loading?: boolean
@@ -85,7 +86,7 @@ defineExpose({
   get chartInfoText() {
     if (mostRecommendedTarget.value) {
       return t(`stats.${props.type}.texts.specific`, {
-        mode: keyLabel(mostRecommendedTarget.value.target),
+        mode: targetLabel(mostRecommendedTarget.value.target),
       })
     }
     return ''
@@ -103,24 +104,39 @@ function keyLabel(key: string) {
   return t(`transportation_modes.${shortKey(key)}`)
 }
 
-// Link sources are typology labels when labelType is set, targets are always
-// recommended transport modes
-function sourceLabel(key: string) {
-  if (!props.labelType) {
-    return keyLabel(key)
-  }
+function labelTypeLabel(key: string, labelType: 'simple' | 'complex') {
   if (key === 'null' || key === 'None') {
     return 'N/A'
   }
-  return t(`${props.labelType}_labels.${shortKey(key)}`)
+  return t(`${labelType}_labels.${shortKey(key)}`)
+}
+
+function labelTypeColor(key: string, labelType: 'simple' | 'complex') {
+  const colors = labelType === 'simple' ? SIMPLE_LABELS_COLORS : COMPLEX_LABELS_COLORS
+  return colors[shortKey(key)] || colors.default || '#ccc'
+}
+
+function modeColor(key: string) {
+  return MODE_COLORS[key] || MODE_COLORS.default || '#ccc'
+}
+
+// Link sources are typology labels when labelType is set
+function sourceLabel(key: string) {
+  return props.labelType ? labelTypeLabel(key, props.labelType) : keyLabel(key)
 }
 
 function sourceColor(key: string) {
-  if (!props.labelType) {
-    return MODE_COLORS[key] || MODE_COLORS.default || '#ccc'
-  }
-  const colors = props.labelType === 'simple' ? SIMPLE_LABELS_COLORS : COMPLEX_LABELS_COLORS
-  return colors[shortKey(key)] || colors.default || '#ccc'
+  return props.labelType ? labelTypeColor(key, props.labelType) : modeColor(key)
+}
+
+// Simple links target the simple recommendation, which is a simple label too;
+// the other variants target a recommended transport mode
+function targetLabel(key: string) {
+  return props.labelType === 'simple' ? labelTypeLabel(key, 'simple') : keyLabel(key)
+}
+
+function targetColor(key: string) {
+  return props.labelType === 'simple' ? labelTypeColor(key, 'simple') : modeColor(key)
 }
 
 function initChartOptions() {
@@ -138,7 +154,7 @@ function initChartOptions() {
   total.value = links.total ?? 0
   const linksData = links.data.map((item) => ({
     source: sourceLabel(item.source),
-    target: keyLabel(item.target) + recoSuffix,
+    target: targetLabel(item.target) + recoSuffix,
     value: item.value,
   }))
 
@@ -154,8 +170,8 @@ function initChartOptions() {
       itemStyle: { color: sourceColor(key) },
     })),
     ...Array.from(targetNodes).map((key) => ({
-      name: keyLabel(key) + recoSuffix,
-      itemStyle: { color: MODE_COLORS[key] || MODE_COLORS.default || '#ccc' },
+      name: targetLabel(key) + recoSuffix,
+      itemStyle: { color: targetColor(key) },
     })),
   ]
 

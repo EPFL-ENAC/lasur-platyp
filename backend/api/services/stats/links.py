@@ -10,11 +10,16 @@ class LinksService(BaseStatsService):
         super().__init__(df)
 
     def compute_mode_reco_links_simple_labels(self) -> StatLinks:
-        """Compute all mode recommendation links from typo.reco.simple_labels (v3 only)."""
-        return self._compute_mode_reco_links("typo.reco.simple_labels")
+        """Compute mode recommendation links from typo.reco.simple_labels to the
+        simple recommendation of the same journey, typo.reco.reco_simple.{i}
+        (v3 only): both ends are simple typology labels.
+        """
+        return self._compute_mode_reco_links(
+            "typo.reco.simple_labels", "typo.reco.reco_simple")
 
     def compute_mode_reco_links_complex_labels(self) -> StatLinks:
-        """Compute all mode recommendation links from typo.reco.complex_labels (v3 only).
+        """Compute mode recommendation links from typo.reco.complex_labels to the
+        recommended mode of the same journey, typo.reco.reco_inter.{i} (v3 only).
 
         COMPLEX_LABEL_MERGE values are folded into their target bucket
         component-wise, so both a plain label (e.g. "pub") and any '+'-joined
@@ -23,7 +28,8 @@ class LinksService(BaseStatsService):
         frequencies and emissions.
         """
         return self._compute_mode_reco_links(
-            "typo.reco.complex_labels", COMPLEX_LABEL_MERGE)
+            "typo.reco.complex_labels", "typo.reco.reco_inter",
+            merge_map=COMPLEX_LABEL_MERGE, legacy_recos=True)
 
     def compute_mode_reco_pro_links(self) -> StatLinks:
         """Compute all mode recommendation links from a DataFrame of records (v3 only)."""
@@ -39,19 +45,20 @@ class LinksService(BaseStatsService):
     #
 
     def _compute_mode_reco_links(
-        self, label_col_prefix: str, merge_map: dict[str, str] | None = None
+        self, label_col_prefix: str, reco_col_prefix: str,
+        merge_map: dict[str, str] | None = None, legacy_recos: bool = False,
     ) -> StatLinks:
         df_v3 = self._get_records_v3()
         links = Links(total=0, data=[])
         if not df_v3.empty:
             links = self._compute_mode_reco_links_v3(
-                df_v3, label_col_prefix, merge_map)
+                df_v3, label_col_prefix, reco_col_prefix, merge_map, legacy_recos)
 
         return self._compute_stats_for_links(links)
 
     def _compute_mode_reco_links_v3(
-        self, df: pd.DataFrame, label_col_prefix: str,
-        merge_map: dict[str, str] | None = None,
+        self, df: pd.DataFrame, label_col_prefix: str, reco_col_prefix: str,
+        merge_map: dict[str, str] | None = None, legacy_recos: bool = False,
     ) -> Links:
         """Compute all mode recommendation links from a DataFrame of records.
 
@@ -59,12 +66,12 @@ class LinksService(BaseStatsService):
         (typo.reco.{simple,complex}_labels.{i}) instead of their raw modes.*
         list, so each journey's days are credited to exactly one source label.
 
-        New-style records: link each journey's label to that same journey's own
-        recommendation (typo.reco.reco_inter.<journey index>), weighted by that
-        journey's `days`.
-        Legacy records (typo.reco.reco_dt2.0 / .1, not tied to a specific journey):
-        link every journey's label to each legacy recommendation, weighted by the
-        sum of the person's journey days (as originally computed).
+        Each journey's label is linked to that same journey's own recommendation
+        (`{reco_col_prefix}.<journey index>`), weighted by that journey's `days`.
+        When `legacy_recos` is set, journeys of records collected before the
+        per-journey recommendations (typo.reco.reco_dt2.0 / .1, not tied to a
+        specific journey) are instead linked to each legacy recommendation,
+        weighted by the sum of the person's journey days (as originally computed).
         """
         col_days = df.columns[df.columns.str.contains(
             r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
@@ -72,7 +79,7 @@ class LinksService(BaseStatsService):
         # stored as a non-numeric string, which would otherwise raise on
         # `> 0` (or silently string-concatenate in the .sum() below).
         col_days_numeric = df[col_days].apply(pd.to_numeric, errors='coerce')
-        legacy_cols = self._reco_legacy_columns(df)
+        legacy_cols = self._reco_legacy_columns(df) if legacy_recos else []
         total_days_by_token = col_days_numeric.sum(
             axis=1) if len(col_days) and legacy_cols else None
 
@@ -85,7 +92,7 @@ class LinksService(BaseStatsService):
             if col_label_i not in df.columns:
                 continue
             col_days_i = col_days[i]
-            reco_col_i = f'typo.reco.reco_inter.{str(i)}'
+            reco_col_i = f'{reco_col_prefix}.{str(i)}'
 
             # int(days) <= 0 truncates toward zero, same as np.trunc for floats
             days_trunc = np.trunc(col_days_numeric[col_days_i])
