@@ -2,7 +2,10 @@ import re
 import numpy as np
 import pandas as pd
 from api.models.query import EmissionReductions, Emissions
-from api.services.stats.commons import BaseStatsService, MODES_PRO, normalize_pro_days_to_yearly
+from api.services.stats.commons import (
+    BaseStatsService, MODES_PRO, normalize_pro_days_to_yearly,
+    COMPLEX_LABEL_MERGE, merge_label_components,
+)
 
 MODE_EMISSIONS = {
     'walking': 0,
@@ -59,9 +62,12 @@ class EmissionsService(BaseStatsService):
         label; if apply_reco is True, the emissions value reported for each
         label is what the journeys in that label would emit by following
         their recommendation, instead of their current emissions.
+        COMPLEX_LABEL_MERGE values ("pub" and "train") are merged into "tp",
+        component-wise so intermodal combos fold too (e.g. "car+pub" -> "car+tp").
         """
         return self._compute_journey_emissions_by_label(
-            self._get_records_v3(), 'typo.reco.complex_labels', apply_reco)
+            self._get_records_v3(), 'typo.reco.complex_labels', apply_reco,
+            merge_labels=COMPLEX_LABEL_MERGE)
 
     def compute_modes_emission_reductions_simple_labels(self) -> list[EmissionReductions]:
         """Compute potential CO2 emission reductions grouped by typo.reco.simple_labels (v3 records only)."""
@@ -69,9 +75,13 @@ class EmissionsService(BaseStatsService):
             self._get_records_v3(), 'typo.reco.simple_labels')
 
     def compute_modes_emission_reductions_complex_labels(self) -> list[EmissionReductions]:
-        """Compute potential CO2 emission reductions grouped by typo.reco.complex_labels (v3 records only)."""
+        """Compute potential CO2 emission reductions grouped by typo.reco.complex_labels
+        (v3 records only). COMPLEX_LABEL_MERGE values ("pub" and "train") are
+        merged into "tp", component-wise so intermodal combos fold too
+        (e.g. "car+pub" -> "car+tp")."""
         return self._compute_journey_emission_reductions_by_label(
-            self._get_records_v3(), 'typo.reco.complex_labels')
+            self._get_records_v3(), 'typo.reco.complex_labels',
+            merge_labels=COMPLEX_LABEL_MERGE)
 
     def compute_modes_pro_emissions(self, apply_reco: bool = False) -> list[Emissions]:
         """Compute all CO2 emissions from a DataFrame of records for pro journeys (v3 only)."""
@@ -525,7 +535,10 @@ class EmissionsService(BaseStatsService):
             return None
         return pd.concat(frames, ignore_index=True)
 
-    def _compute_journey_emissions_by_label(self, df: pd.DataFrame, label_prefix: str, apply_reco: bool = False) -> list[Emissions]:
+    def _compute_journey_emissions_by_label(
+        self, df: pd.DataFrame, label_prefix: str, apply_reco: bool = False,
+        merge_labels: dict[str, str] | None = None,
+    ) -> list[Emissions]:
         """
         Aggregate journey-level CO2 emissions by a per-journey label column
         (typo.reco.simple_labels.N or typo.reco.complex_labels.N), crediting
@@ -553,6 +566,12 @@ class EmissionsService(BaseStatsService):
             apply_reco: if True, report recommended (post-reco) emissions
                 instead of current emissions; only journeys with a
                 recommendation are included
+            merge_labels: optional {raw_label: target_label} remap applied
+                component-wise (via merge_label_components) to observed
+                labels before grouping, so several raw labels -- and any
+                '+'-joined intermodal combination containing them -- fold
+                into a single bucket (e.g. merging "pub" and "train" into "tp"
+                also folds "car+pub" into "car+tp")
 
         Returns:
             List of Emissions objects (one per observed label)
@@ -586,6 +605,11 @@ class EmissionsService(BaseStatsService):
         label_frame = self._build_label_frame(df, label_prefix)
         if label_frame is None:
             return []
+
+        if merge_labels:
+            label_frame = label_frame.assign(
+                label=label_frame['label'].map(
+                    lambda label: merge_label_components(str(label), merge_labels)))
 
         merged = journey_df.merge(label_frame, on=['token', 'journey'], how='inner')
 
@@ -717,7 +741,10 @@ class EmissionsService(BaseStatsService):
 
         return journey_emissions
 
-    def _compute_journey_emission_reductions_by_label(self, df: pd.DataFrame, label_prefix: str) -> list[EmissionReductions]:
+    def _compute_journey_emission_reductions_by_label(
+        self, df: pd.DataFrame, label_prefix: str,
+        merge_labels: dict[str, str] | None = None,
+    ) -> list[EmissionReductions]:
         """
         Aggregate potential CO2 emission reductions by each journey's own v3
         typology label (typo.reco.simple_labels.N / typo.reco.complex_labels.N)
@@ -728,6 +755,12 @@ class EmissionsService(BaseStatsService):
             df: DataFrame of records already filtered to v3
             label_prefix: column prefix without the trailing journey index,
                 e.g. 'typo.reco.simple_labels'
+            merge_labels: optional {raw_label: target_label} remap applied
+                component-wise (via merge_label_components) to observed
+                labels before grouping, so several raw labels -- and any
+                '+'-joined intermodal combination containing them -- fold
+                into a single bucket (e.g. merging "pub" and "train" into "tp"
+                also folds "car+pub" into "car+tp")
 
         Returns:
             List of EmissionReductions objects (one per observed label)
@@ -739,6 +772,11 @@ class EmissionsService(BaseStatsService):
         label_frame = self._build_label_frame(df, label_prefix)
         if label_frame is None:
             return []
+
+        if merge_labels:
+            label_frame = label_frame.assign(
+                label=label_frame['label'].map(
+                    lambda label: merge_label_components(str(label), merge_labels)))
 
         merged = journey_emissions.merge(label_frame, on=['token', 'journey'], how='inner')
 

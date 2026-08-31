@@ -1,7 +1,10 @@
 import re
 import pandas as pd
 from api.models.query import Frequencies, Frequency
-from api.services.stats.commons import BaseStatsService, MODES_PRO, DAYS_PER_YEAR_FACTOR, normalize_pro_days_to_yearly
+from api.services.stats.commons import (
+    BaseStatsService, MODES_PRO, DAYS_PER_YEAR_FACTOR, normalize_pro_days_to_yearly,
+    COMPLEX_LABEL_MERGE, merge_label_components,
+)
 
 
 class FrequenciesService(BaseStatsService):
@@ -177,7 +180,11 @@ class FrequenciesService(BaseStatsService):
 
     def compute_modes_frequencies_complex_labels(self) -> list[Frequencies]:
         """Compute mode frequencies from typo.reco.complex_labels, one Frequencies
-        per label actually observed in the data (rather than a fixed mode list)."""
+        per label actually observed in the data (rather than a fixed mode list).
+        COMPLEX_LABEL_MERGE values are folded into their target bucket
+        component-wise, so both a plain label (e.g. "pub") and any '+'-joined
+        intermodal combination containing it (e.g. "car+pub", "pub+bike") fold
+        into the matching target (e.g. "tp", "car+tp", "tp+bike")."""
         df_v3 = self._get_records_v3()
         if df_v3.empty:
             return []
@@ -193,9 +200,16 @@ class FrequenciesService(BaseStatsService):
             str(label) for label in observed_labels if pd.notna(label)
         )
 
+        # merged target label -> raw labels that fold into it
+        merged_groups: dict[str, list[str]] = {}
+        for label in observed_labels:
+            target = merge_label_components(label, COMPLEX_LABEL_MERGE)
+            merged_groups.setdefault(target, []).append(label)
+
         results = [
-            self._compute_mode_frequencies_complex_labels(df_v3, label)
-            for label in observed_labels
+            self._compute_mode_frequencies_by_label(
+                df_v3, target, "typo.reco.complex_labels", raw_labels)
+            for target, raw_labels in sorted(merged_groups.items())
         ]
 
         # finalize totals and sort data
@@ -293,13 +307,18 @@ class FrequenciesService(BaseStatsService):
         ]
 
     def _compute_mode_frequencies_by_label(
-        self, df: pd.DataFrame, mode: str, label_col_prefix: str
+        self, df: pd.DataFrame, mode: str, label_col_prefix: str,
+        source_values: list[str] | None = None,
     ) -> Frequencies:
         """Compute a mode frequency from data.freq_mod_journeys, using the
         aggregated typo.reco.{simple,complex}_labels.{i} instead of the raw
         modes.* list, so each journey's days are credited to exactly one
         label. Builds a days -> (count, sum) histogram vectorized per journey
-        index instead of a linear-search-per-row Python loop."""
+        index instead of a linear-search-per-row Python loop.
+
+        `source_values` lets several raw label values be folded into a single
+        result `mode` (e.g. merging "train" into "pub"); defaults to [mode]."""
+        source_values = source_values or [mode]
         col_days = [
             col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
         totals: dict[str, list[int]] = {}
@@ -310,7 +329,7 @@ class FrequenciesService(BaseStatsService):
             col_days_i = col_days[i]
             days_s = pd.to_numeric(df[col_days_i], errors='coerce')
             label_s = df[col_label_i]
-            mask = label_s.notna() & (label_s == mode) & (days_s > 0)
+            mask = label_s.notna() & label_s.isin(source_values) & (days_s > 0)
             if not mask.any():
                 continue
             days_int = days_s[mask].astype(int)
@@ -330,9 +349,4 @@ class FrequenciesService(BaseStatsService):
         self, df: pd.DataFrame, mode: str
     ) -> Frequencies:
         return self._compute_mode_frequencies_by_label(df, mode, "typo.reco.simple_labels")
-
-    def _compute_mode_frequencies_complex_labels(
-        self, df: pd.DataFrame, mode: str
-    ) -> Frequencies:
-        return self._compute_mode_frequencies_by_label(df, mode, "typo.reco.complex_labels")
 

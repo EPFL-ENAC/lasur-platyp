@@ -46,6 +46,17 @@ DAYS_PER_YEAR_FACTOR = {
     'year': 1,
 }
 
+# typo.reco.complex_labels values to fold into a single bucket: {raw_value: target_bucket}
+COMPLEX_LABEL_MERGE = {"pub": "tp", "train": "tp"}
+
+
+def merge_label_components(label: str, merge_map: dict[str, str]) -> str:
+    """Apply a component-wise merge to a (possibly '+'-joined intermodal)
+    complex label, so both a plain label and any combination containing it
+    fold into the same target, e.g. with merge_map={'pub': 'tp'}:
+    'pub' -> 'tp', 'car+pub' -> 'car+tp', 'pub+bike' -> 'tp+bike'."""
+    return "+".join(merge_map.get(part, part) for part in label.split("+"))
+
 
 def normalize_pro_days_to_yearly(days: float, days_per) -> float:
     """Convert pro journey days count to an annual equivalent.
