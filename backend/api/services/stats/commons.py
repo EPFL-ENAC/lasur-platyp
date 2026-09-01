@@ -206,6 +206,31 @@ class BaseStatsService:
             return None
         return pd.concat(frames, ignore_index=True)
 
+    def _build_label_frame(self, df: pd.DataFrame, label_prefix: str) -> pd.DataFrame | None:
+        """One row per (token, journey, label) for the given typo.reco.*_labels.N
+        columns, built the same explicit-suffix way as _reco_inter_columns."""
+        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+        label_cols = [c for c in df.columns if label_pattern.match(c)]
+        if not label_cols:
+            return None
+
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+        frames = []
+        for col in label_cols:
+            journey_id = label_pattern.match(col).group(1)
+            label_s = df[col].dropna()
+            if label_s.empty:
+                continue
+            frames.append(pd.DataFrame({
+                'token': token_series.loc[label_s.index].to_numpy(),
+                'journey': journey_id,
+                'label': label_s.to_numpy(),
+            }))
+        if not frames:
+            return None
+        return pd.concat(frames, ignore_index=True)
+
     def _get_records_v3(self) -> pd.DataFrame:
         """Get records with data.version starting with '3.'
 

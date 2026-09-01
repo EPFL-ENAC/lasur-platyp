@@ -154,27 +154,31 @@ export interface StatLinks extends Links {
   } | null
 }
 
-export interface JourneyEnergyData {
-  days: number
-  energy_kcal: number
-  is_intermodal: boolean
-  journey_id: string
-  mode: string
+export interface EnergyByLabel {
   token: string
-  travel_time: number
+  label: string
+  energy_kcal: number
+}
+export interface EnergyBreakdown {
+  simple: EnergyByLabel[]
+  detailed: EnergyByLabel[]
 }
 export interface JourneyEnergy {
   total: number
-  data: JourneyEnergyData[]
   average_energy_per_unique_token?: number | null
+  breakdown: EnergyBreakdown
 }
-export interface JourneyEnergyGainsByMode {
-  mode: string
+export interface JourneyEnergyGainsByLabel {
+  label: string
   added_kcal: number
+}
+export interface JourneyEnergyGainsBreakdown {
+  simple: JourneyEnergyGainsByLabel[]
+  detailed: JourneyEnergyGainsByLabel[]
 }
 export interface JourneyEnergyGains {
   total: number
-  gains_per_mode: JourneyEnergyGainsByMode[]
+  gains_per_mode: JourneyEnergyGainsBreakdown
   current_above_who_count: number
   reco_above_who_count: number
 }
@@ -186,9 +190,14 @@ export interface JourneyEnergyStats {
 
 export function makeDefaultJourneyEnergyStats(): JourneyEnergyStats {
   return {
-    current: { total: 0, data: [] },
-    reco: { total: 0, data: [] },
-    gains: { total: 0, gains_per_mode: [], current_above_who_count: 0, reco_above_who_count: 0 },
+    current: { total: 0, breakdown: { simple: [], detailed: [] } },
+    reco: { total: 0, breakdown: { simple: [], detailed: [] } },
+    gains: {
+      total: 0,
+      gains_per_mode: { simple: [], detailed: [] },
+      current_above_who_count: 0,
+      reco_above_who_count: 0,
+    },
   }
 }
 

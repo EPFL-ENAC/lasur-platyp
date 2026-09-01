@@ -178,7 +178,8 @@ class StatLinks(Links):
 
 
 class JourneyEnergyLeg(BaseModel):
-    """Energy expenditure for a single journey leg (per person)."""
+    """Energy expenditure for a single journey leg (per person). Internal to
+    EnergyService (used to compute gains); not part of the public payload."""
     token: str
     journey_id: str
     mode: str
@@ -198,23 +199,44 @@ class EnergyExpenditure(BaseModel):
     avg_daily_kcal: float
 
 
+class EnergyByLabel(BaseModel):
+    """A participant's energy expenditure credited to one typology bucket."""
+    token: str
+    label: str
+    energy_kcal: float
+
+
+class EnergyBreakdown(BaseModel):
+    """Per-participant energy expenditure, grouped by label at two typology
+    granularities: simple (typo.reco.simple_labels / reco_simple) and detailed
+    (typo.reco.complex_labels / reco_inter)."""
+    simple: List[EnergyByLabel] = []
+    detailed: List[EnergyByLabel] = []
+
+
 class EnergyByJourney(BaseModel):
-    """Energy expenditure broken down by journey legs."""
+    """Energy expenditure summary for current or recommended journeys."""
     total: int
-    data: List[JourneyEnergyLeg] = []
     average_energy_per_unique_token: Optional[float] = None
+    breakdown: EnergyBreakdown = EnergyBreakdown()
 
 
-class JourneyEnergyGainsByMode(BaseModel):
-    """Energy gain (reduction) thanks to a specific mode if recommendations were followed."""
-    mode: str
+class JourneyEnergyGainsByLabel(BaseModel):
+    """Energy gain (reduction) credited to one typology bucket if recommendations were followed."""
+    label: str
     added_kcal: float
+
+
+class JourneyEnergyGainsBreakdown(BaseModel):
+    """Energy gains broken down by label, at simple and detailed typology granularities."""
+    simple: List[JourneyEnergyGainsByLabel] = []
+    detailed: List[JourneyEnergyGainsByLabel] = []
 
 
 class JourneyEnergyGains(BaseModel):
     """Energy gain (reduction) for a journey leg if recommendations were followed."""
     total: float
-    gains_per_mode: List[JourneyEnergyGainsByMode] = []
+    gains_per_mode: JourneyEnergyGainsBreakdown = JourneyEnergyGainsBreakdown()
     current_above_who_count: int = 0
     reco_above_who_count: int = 0
 

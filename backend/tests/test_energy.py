@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
-from api.models.query import EnergyExpenditure, EnergyByJourney, JourneyEnergyLeg
+from api.models.query import EnergyExpenditure, EnergyByJourney, JourneyEnergyStats
+from api.services.stats.commons import COMPLEX_LABEL_MERGE
 from api.services.stats.energy import EnergyService
 
 
@@ -211,105 +212,131 @@ def test_compute_modes_energy_comparison():
     assert len(reco_dict) > 0
 
 
-def test_compute_journey_energy_current():
-    """Test computation of per-journey energy for current modes."""
+def test_compute_journey_energy_stats_current_breakdown():
+    """Test the simple/detailed breakdown of current-mode energy stats."""
     df = load_test_dataframe()
     service = EnergyService(df)
-    
-    result = service.compute_journey_energy(apply_reco=False)
-    
-    # Should return an EnergyByJourney object
-    assert isinstance(result, EnergyByJourney)
-    assert isinstance(result.data, list)
-    
-    # Each leg should be a JourneyEnergyLeg
-    for leg in result.data:
-        assert isinstance(leg, JourneyEnergyLeg)
-        assert leg.mode is not None
-        assert leg.energy_kcal >= 0
+
+    result = service.compute_journey_energy_stats()
+
+    assert isinstance(result, JourneyEnergyStats)
+    assert isinstance(result.current, EnergyByJourney)
+    assert isinstance(result.current.breakdown.simple, list)
+    assert isinstance(result.current.breakdown.detailed, list)
+
+    for item in result.current.breakdown.simple + result.current.breakdown.detailed:
+        assert item.token is not None
+        assert item.label is not None
+        assert item.energy_kcal >= 0
+
+    # Detailed labels fold pub/train into "tp" (component-wise, so combos too)
+    detailed_labels = {item.label for item in result.current.breakdown.detailed}
+    assert not (detailed_labels & set(COMPLEX_LABEL_MERGE.keys()))
 
 
-def test_compute_journey_energy_reco():
-    """Test computation of per-journey energy for recommended modes."""
+def test_compute_journey_energy_stats_reco_breakdown():
+    """Test the simple/detailed breakdown of recommended-mode energy stats."""
     df = load_test_dataframe()
     service = EnergyService(df)
-    
-    result = service.compute_journey_energy(apply_reco=True)
-    
-    # Should return an EnergyByJourney object
-    assert isinstance(result, EnergyByJourney)
-    assert isinstance(result.data, list)
+
+    result = service.compute_journey_energy_stats()
+
+    assert isinstance(result.reco, EnergyByJourney)
+    assert isinstance(result.reco.breakdown.simple, list)
+    assert isinstance(result.reco.breakdown.detailed, list)
+
+    for item in result.reco.breakdown.simple + result.reco.breakdown.detailed:
+        assert item.energy_kcal >= 0
+
+    # Detailed reco labels are real modes, same vocabulary as compute_modes_energy(apply_reco=True)
+    reco_mode_energy = service.compute_modes_energy(apply_reco=True)
+    real_modes = {e.mode for e in reco_mode_energy}
+    detailed_labels = {item.label for item in result.reco.breakdown.detailed}
+    assert detailed_labels <= real_modes
+
+    # Simple reco labels are abstract typology buckets, distinct from real modes
+    simple_labels = {item.label for item in result.reco.breakdown.simple}
+    if simple_labels:
+        assert not simple_labels.issubset(real_modes) or len(real_modes) == 0
 
 
-def test_journey_energy_leg_count():
-    """Test that journey legs are properly counted (outbound + return)."""
+def test_journey_energy_stats_real_mode_invariant():
+    """
+    The underlying per-participant kcal total must not depend on which
+    breakdown (simple vs detailed) it's grouped by -- only the bucketing
+    changes, never the MET-based figure itself (computed from real modes).
+    """
     df = load_test_dataframe()
     service = EnergyService(df)
-    
-    result = service.compute_journey_energy(apply_reco=False)
-    
-    # Should have some legs
-    assert len(result.data) >= 0
+
+    result = service.compute_journey_energy_stats()
+
+    def totals_by_token(items):
+        totals: dict[str, float] = {}
+        for item in items:
+            totals[item.token] = totals.get(item.token, 0) + item.energy_kcal
+        return totals
+
+    current_simple_totals = totals_by_token(result.current.breakdown.simple)
+    current_detailed_totals = totals_by_token(result.current.breakdown.detailed)
+
+    common_tokens = set(current_simple_totals) & set(current_detailed_totals)
+    for token in common_tokens:
+        assert abs(current_simple_totals[token] - current_detailed_totals[token]) < 0.05
+
+
+def test_journey_energy_gains_breakdown():
+    """Test that gains are broken down by both simple and detailed labels."""
+    df = load_test_dataframe()
+    service = EnergyService(df)
+
+    result = service.compute_journey_energy_stats()
+
+    assert isinstance(result.gains.gains_per_mode.simple, list)
+    assert isinstance(result.gains.gains_per_mode.detailed, list)
+    for item in result.gains.gains_per_mode.simple + result.gains.gains_per_mode.detailed:
+        assert item.label is not None
 
 
 def test_energy_positive_values():
     """Test that all energy values are positive (or zero for non-commuting)."""
     df = load_test_dataframe()
     service = EnergyService(df)
-    
+
     # Test aggregated energy
     mode_energy = service.compute_modes_energy(apply_reco=False)
     for energy in mode_energy:
         assert energy.energy_kcal >= 0
-    
-    # Test per-journey energy
-    journey_energy = service.compute_journey_energy(apply_reco=False)
-    for leg in journey_energy.data:
-        assert leg.energy_kcal >= 0
+
+    # Test per-participant breakdown energy
+    journey_energy = service.compute_journey_energy_stats()
+    for item in journey_energy.current.breakdown.simple + journey_energy.current.breakdown.detailed:
+        assert item.energy_kcal >= 0
 
 
 def test_energy_formula():
     """Test that energy calculation follows the correct formula."""
     df = load_test_dataframe()
     service = EnergyService(df)
-    
+
     # Just check that we can compute energy
     result = service.compute_modes_energy(apply_reco=False)
     assert len(result) >= 0  # May be empty if no data matches
-
-
-def test_intermodal_energy_allocation():
-    """Test that intermodal journeys properly allocate energy to walking."""
-    df = load_test_dataframe()
-    service = EnergyService(df)
-    
-    # Compute journey energy
-    result = service.compute_journey_energy(apply_reco=False)
-    
-    # Check that we got some data
-    assert isinstance(result, EnergyByJourney)
-    
-    # Find intermodal journeys (if any)
-    intermodal_legs = [leg for leg in result.data if leg.is_intermodal]
-    
-    # If we have intermodal journeys, check they have reasonable values
-    if intermodal_legs:
-        for leg in intermodal_legs:
-            assert leg.energy_kcal >= 0
 
 
 def test_empty_dataframe():
     """Test handling of empty DataFrame."""
     df = pd.DataFrame()
     service = EnergyService(df)
-    
+
     result = service.compute_modes_energy(apply_reco=False)
     assert result == []
-    
-    result = service.compute_journey_energy(apply_reco=False)
-    assert isinstance(result, EnergyByJourney)
-    assert result.total == 0
-    assert result.data == []
+
+    result = service.compute_journey_energy_stats()
+    assert isinstance(result, JourneyEnergyStats)
+    assert result.current.total == 0
+    assert result.current.breakdown.simple == []
+    assert result.current.breakdown.detailed == []
 
 
 def test_met_values_defined():

@@ -1,6 +1,6 @@
 <template>
   <chart-panel
-    :title="t(`stats.energy_journey.title_${props.type}`)"
+    :title="chartTitle"
     :description="descriptionText"
     :chart-info-text="chartInfoText"
     :inline="inline"
@@ -10,6 +10,18 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item v-if="!isComparison" clickable v-close-popup @click="onToggleModalType">
+              <q-item-section side>
+                <q-icon :name="modalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  modalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -28,7 +40,7 @@
       :loading="props.loading"
       :has-data="total > 0"
       :show-table="!exportable"
-      :no-data-title="t(`stats.energy_journey.title_${props.type}`)"
+      :no-data-title="chartTitle"
       :option="option"
       :exportable="!!exportable"
     />
@@ -49,8 +61,16 @@ import {
   GridComponent,
   MarkLineComponent,
 } from 'echarts/components'
-import { GROUP_COLORS, MODE_COLORS } from './commons'
-import type { JourneyEnergyData, JourneyEnergyStats } from '@/models'
+import {
+  GROUP_COLORS,
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  modeSortOrder,
+  simpleLabelSortOrder,
+  complexLabelSortOrder,
+} from './commons'
+import type { EnergyByLabel, JourneyEnergyStats } from '@/models'
 import { formatNumber } from '@/utils/numbers'
 
 const stats = useStats()
@@ -94,6 +114,41 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 function onChartDownload() {
   shellRef.value?.handleExport()
 }
+
+const modalType = ref<'simple' | 'detailed'>('simple')
+
+function onToggleModalType() {
+  modalType.value = modalType.value === 'simple' ? 'detailed' : 'simple'
+  initChartOptions()
+}
+
+// Which label vocabulary/colors to use for the current (type, modalType) combination:
+// - simple labels (MA/TP/...) are shared between current and reco.
+// - detailed current labels come from typo.reco.complex_labels (can be '+'-joined combos).
+// - detailed reco labels come from typo.reco.reco_inter (a single real mode, never joined).
+const labelNamespace = computed(() => {
+  if (modalType.value === 'simple') return 'simple_labels'
+  return props.type === 'current' ? 'complex_labels' : 'transportation_modes'
+})
+const labelColors = computed(() => {
+  if (modalType.value === 'simple') return SIMPLE_LABELS_COLORS
+  return props.type === 'current' ? COMPLEX_LABELS_COLORS : MODE_COLORS
+})
+function labelSortOrder(label: string): number {
+  if (modalType.value === 'simple') return simpleLabelSortOrder(label)
+  return props.type === 'current' ? complexLabelSortOrder(label) : modeSortOrder(label)
+}
+function labelText(label: string): string {
+  return t(`${labelNamespace.value}.${label}`)
+}
+
+// Comparison mode doesn't use the simple/detailed breakdown at all (the toggle
+// is hidden there too), so the title stays plain in that case.
+const chartTitle = computed(() => {
+  const base = t(`stats.energy_journey.title_${props.type}`)
+  if (isComparison.value) return base
+  return `${base} (${t(`stats.freq_mod.modal_split.${modalType.value}`).toLowerCase()})`
+})
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
@@ -219,7 +274,8 @@ function initChartOptions() {
 
   if (!props.journeyEnergyStats) return
 
-  const rawData = props.journeyEnergyStats[props.type]?.data || []
+  const rawData: EnergyByLabel[] =
+    props.journeyEnergyStats[props.type]?.breakdown[modalType.value] || []
   total.value = rawData.length
 
   if (total.value === 0) return
@@ -233,15 +289,16 @@ function initChartOptions() {
     props.journeyEnergyStats.gains.reco_above_who_count -
     props.journeyEnergyStats.gains.current_above_who_count
 
+  // Data already summed per (token, label) backend-side: no leg-level aggregation left to do here.
   const tokenMap: Record<string, Record<string, number>> = {}
-  const modesSet = new Set<string>()
+  const labelsSet = new Set<string>()
 
-  rawData.forEach((item: JourneyEnergyData) => {
+  rawData.forEach((item) => {
     if (!tokenMap[item.token]) {
       tokenMap[item.token] = {}
     }
-    tokenMap[item.token]![item.mode] = (tokenMap[item.token]![item.mode] || 0) + item.energy_kcal
-    modesSet.add(item.mode)
+    tokenMap[item.token]![item.label] = (tokenMap[item.token]![item.label] || 0) + item.energy_kcal
+    labelsSet.add(item.label)
   })
 
   // 2. Sort tokens by total energy (descending)
@@ -251,20 +308,20 @@ function initChartOptions() {
     return totalB - totalA
   })
 
-  const modes = Array.from(modesSet)
+  const labels = Array.from(labelsSet).sort((a, b) => labelSortOrder(a) - labelSortOrder(b))
 
-  // 3. Create Series (one series per mode for stacking)
-  const series: SeriesOption[] = modes.map((mode) => {
+  // 3. Create Series (one series per label for stacking)
+  const series: SeriesOption[] = labels.map((label) => {
     return {
-      name: t(`transportation_modes.${mode}`),
+      name: labelText(label),
       type: 'bar',
       stack: 'total', // This enables the stacking
       emphasis: { focus: 'series' },
       itemStyle: {
-        color: MODE_COLORS[mode] || MODE_COLORS['default'] || '#000000',
+        color: labelColors.value[label] || labelColors.value['default'] || '#000000',
       },
       data: sortedTokens.map((token) => {
-        const value = tokenMap[token]![mode] || 0
+        const value = tokenMap[token]![label] || 0
         return parseFloat(value.toFixed(2))
       }),
     }
@@ -280,7 +337,7 @@ function initChartOptions() {
       containLabel: true,
     },
     title: {
-      text: t(`stats.energy_journey.title_${props.type}`),
+      text: chartTitle.value,
       left: 'center',
       textStyle: { fontSize: 16 },
     },
@@ -295,8 +352,8 @@ function initChartOptions() {
       bottom: 0,
       icon: 'circle',
       data: [
-        ...modes.map((mode) => ({
-          name: t(`transportation_modes.${mode}`),
+        ...labels.map((label) => ({
+          name: labelText(label),
           icon: 'circle',
         })),
         {
@@ -411,7 +468,7 @@ function initComparisonChartOptions() {
 
   const avgKcal = groupStats.map((group) => {
     const journeyStats = group.stats?.[props.type]
-    total.value += journeyStats?.data.length ?? 0
+    total.value += journeyStats?.total ?? 0
     return parseFloat((journeyStats?.average_energy_per_unique_token ?? 0).toFixed(2))
   })
   const aboveWhoCount = groupStats.map((group) => {
@@ -468,7 +525,7 @@ function initComparisonChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.energy_journey.title_${props.type}`),
+      text: chartTitle.value,
       left: 'center',
       textStyle: { fontSize: 16 },
     },

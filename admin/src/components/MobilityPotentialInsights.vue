@@ -162,8 +162,15 @@ const bestReduction = computed(() => {
   }
 })
 
+// Mirrors the same simple/detailed granularity as the emission reductions
+// insight above (props.reductionKey), so both insights stay consistent.
+const energyGainsGranularity = computed(() =>
+  props.reductionKey?.includes('simple') ? 'simple' : 'detailed',
+)
+
 const bestPhysicalActivity = computed(() => {
-  const gainsPerMode = statsStore.journeyEnergyStats?.gains?.gains_per_mode ?? []
+  const gainsPerMode =
+    statsStore.journeyEnergyStats?.gains?.gains_per_mode[energyGainsGranularity.value] ?? []
   if (!gainsPerMode.length) {
     return null
   }
@@ -182,7 +189,7 @@ const bestPhysicalActivity = computed(() => {
     statsStore.journeyEnergyStats!.gains.current_above_who_count
 
   return {
-    mode: keyLabel(maxItem.mode),
+    mode: physicalActivityLabel(maxItem.label),
     collaboratorsCount: Math.max(additionalCollaborators, 0),
   }
 })
@@ -242,6 +249,24 @@ function keyLabel(key: string) {
 
   if (Number.isInteger(Number(key))) {
     return key
+  }
+
+  return t(`transportation_modes.${shortKey(key)}`)
+}
+
+function physicalActivityLabel(key: string) {
+  if (key === 'null' || key === 'None') {
+    return t('stats.na')
+  }
+
+  if (Number.isInteger(Number(key))) {
+    return key
+  }
+
+  // Detailed energy gains are keyed by a real single mode (typo.reco.reco_inter),
+  // not a '+'-joined complex label, unlike the emission reductions above.
+  if (energyGainsGranularity.value === 'simple') {
+    return t(`simple_labels.${shortKey(key)}`)
   }
 
   return t(`transportation_modes.${shortKey(key)}`)
