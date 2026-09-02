@@ -295,6 +295,8 @@ onMounted(async () => {
   statsStore.redShareModalType = (route.query.redShareModalType as string) || 'simple'
   statsStore.linksModalType = (route.query.linksModalType as string) || 'simple'
   statsStore.recoModalType = (route.query.recoModalType as string) || 'simple'
+  statsStore.leversModalType = (route.query.leversModalType as string) || 'simple'
+  statsStore.motivationModalType = (route.query.motivationModalType as string) || 'simple'
 
   statsStore.travelTimePercent = route.query.travelTimePercent !== 'false'
   statsStore.equipmentsPercent = route.query.equipmentsPercent !== 'false'

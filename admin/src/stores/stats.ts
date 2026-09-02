@@ -62,6 +62,8 @@ export const useStats = defineStore('stats', () => {
   const redShareModalType = ref('simple')
   const linksModalType = ref('simple')
   const recoModalType = ref('simple')
+  const leversModalType = ref('simple')
+  const motivationModalType = ref('simple')
 
   const travelTimePercent = ref(true)
   const equipmentsPercent = ref(true)
@@ -256,6 +258,8 @@ export const useStats = defineStore('stats', () => {
     redShareModalType,
     linksModalType,
     recoModalType,
+    leversModalType,
+    motivationModalType,
     travelTimePercent,
     equipmentsPercent,
     constraintsPercent,

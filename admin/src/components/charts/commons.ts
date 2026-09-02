@@ -1,6 +1,8 @@
 import { registerTheme, type SetOptionOpts } from 'echarts'
 import { getCssVar } from 'quasar'
 import type { InjectionKey, Ref } from 'vue'
+import type { BehaviorChangeByModeLever, BehaviorChangeByModeMotivation } from '@/models'
+import { getRecoSimpleLabel } from '@/utils/modalities'
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
 
@@ -311,4 +313,97 @@ export function computePercentages<T extends { value: number }>(
   }
 
   return items.map((item, idx) => ({ ...item, percent: percents[idx] ?? 0 }))
+}
+
+/**
+ * Recategorise behaviour-change stats from recommended modes to simple typology
+ * labels: 'velo' and 'marche' both become 'MA', 'tpu' and 'train' become 'TP',
+ * and so on.
+ *
+ * Entries whose mode is not a recommendation — the 'Total', 'allModes' and
+ * 'Autres' aggregate buckets the backend adds — are left untouched: they
+ * already span several modes and folding them into a label would double count.
+ *
+ * Counts are summed. Percentages are recomputed over `denominatorOf`, and only
+ * for rows that actually merged, so that a row coming from a single mode keeps
+ * the percentages the backend computed for it.
+ */
+function aggregateByModeSimpleLabel<E extends { count: number; percentage: number }>(
+  byMode: ModeBucket<E>[],
+  keyOf: (entry: E) => string | number,
+  denominatorOf: (responseCount: number, entries: E[]) => number,
+): ModeBucket<E>[] {
+  const merged = new Map<string, { bucket: ModeBucket<E>; sources: number }>()
+
+  byMode.forEach((item) => {
+    const mode = getRecoSimpleLabel(item.mode) ?? item.mode
+    const target = merged.get(mode)
+    if (!target) {
+      merged.set(mode, {
+        bucket: { ...item, mode, entries: item.entries.map((entry) => ({ ...entry })) },
+        sources: 1,
+      })
+      return
+    }
+    target.sources += 1
+    target.bucket.response_count += item.response_count
+    item.entries.forEach((entry) => {
+      const known = target.bucket.entries.find((e) => keyOf(e) === keyOf(entry))
+      if (known) {
+        known.count += entry.count
+      } else {
+        target.bucket.entries.push({ ...entry })
+      }
+    })
+  })
+
+  return Array.from(merged.values())
+    .map(({ bucket, sources }) => {
+      if (sources === 1) {
+        return bucket
+      }
+      const total = denominatorOf(bucket.response_count, bucket.entries)
+      return {
+        ...bucket,
+        entries: bucket.entries.map((entry) => ({
+          ...entry,
+          percentage: total > 0 ? Math.round((entry.count / total) * 10000) / 100 : 0,
+        })),
+      }
+    })
+    .sort((a, b) => simpleLabelSortOrder(a.mode) - simpleLabelSortOrder(b.mode))
+}
+
+interface ModeBucket<E> {
+  mode: string
+  response_count: number
+  entries: E[]
+}
+
+/**
+ * Lever stats by simple typology label. Lever percentages are shares of all the
+ * lever selections of the group, the denominator the backend uses.
+ */
+export function aggregateLeversBySimpleLabel(
+  byMode: BehaviorChangeByModeLever[],
+): BehaviorChangeByModeLever[] {
+  return aggregateByModeSimpleLabel(
+    byMode.map(({ levers, ...item }) => ({ ...item, entries: levers })),
+    (lever) => lever.category,
+    (_responseCount, entries) => entries.reduce((sum, entry) => sum + entry.count, 0),
+  ).map(({ entries, ...bucket }) => ({ ...bucket, levers: entries }))
+}
+
+/**
+ * Motivation stats by simple typology label. Motivation percentages are shares
+ * of the people who answered the question, the denominator the backend uses.
+ */
+export function aggregateMotivationBySimpleLabel(
+  byMode: BehaviorChangeByModeMotivation[],
+): BehaviorChangeByModeMotivation[] {
+  return aggregateByModeSimpleLabel(
+    byMode.map(({ motivations, ...item }) => ({ ...item, entries: motivations })),
+    (motivation) => motivation.level,
+    (responseCount) => responseCount,
+  ).map(({ entries, ...bucket }) => ({ ...bucket, motivations: entries }))
 }
