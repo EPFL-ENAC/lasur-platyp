@@ -8,12 +8,13 @@ import {
   type BehaviorChangeByModeMotivation,
   type EquipmentPerRecommendation,
   type EmissionReduction,
+  type Emissions,
   type EquipmentRecommendationMatrix,
   type equipmentLabels,
   type Frequencies,
   type Frequency,
 } from '@/models'
-import { getRecoSimpleLabel } from '@/utils/modalities'
+import { getProModalityLabels, getRecoSimpleLabel } from '@/utils/modalities'
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
 
@@ -518,6 +519,31 @@ export function aggregateReductionsBySimpleLabel(
       return
     }
     known.reduced += item.reduced
+    known.total = Math.max(known.total, item.total)
+  })
+
+  return Array.from(merged.values())
+}
+
+/**
+ * Emissions recategorised from professional transport modes to simple typology
+ * labels. Journeys, distances and emissions are summed; `total` is the number
+ * of records the backend computed them over, identical on every row, so it is
+ * carried over as is. A mode with no simple label stays a row of its own.
+ */
+export function aggregateEmissionsBySimpleLabel(emissions: Emissions[]): Emissions[] {
+  const merged = new Map<string, Emissions>()
+
+  emissions.forEach((item) => {
+    const mode = getProModalityLabels(item.mode)?.simple ?? item.mode
+    const known = merged.get(mode)
+    if (!known) {
+      merged.set(mode, { ...item, mode })
+      return
+    }
+    known.distances += item.distances
+    known.journeys += item.journeys
+    known.emissions += item.emissions
     known.total = Math.max(known.total, item.total)
   })
 

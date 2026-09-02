@@ -5,7 +5,7 @@
     :loading="props.loading"
     :has-data="total > 0"
     :show-table="!exportable"
-    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
   />
@@ -23,7 +23,14 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { MODE_COLORS, SIMPLE_LABELS_COLORS, COMPLEX_LABELS_COLORS, modeSortOrder } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  aggregateEmissionsBySimpleLabel,
+  modeSortOrder,
+  simpleLabelSortOrder,
+} from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import { formatNumber } from '@/utils/numbers'
 import type { ComparisonStats, Emissions } from '@/models'
@@ -45,19 +52,56 @@ const isComparison = computed(() => !!stats.comparisonMode)
 interface Props {
   chartTranslationName: string
   emissions?: Emissions[] | null
+  // Fold transport modes into simple typology labels before charting, for the
+  // data the backend only ships in detailed form.
+  foldModeToSimple?: boolean
   xaxis?: string
   yaxis?: string
   rangeStep?: number
   height?: number
   loading?: boolean
   exportable?: boolean
+  // Overrides the title taken from `chartTranslationName`.
+  title?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
 
+const chartTitle = computed(
+  () => props.title || t(`stats.emissions_${props.chartTranslationName}.title`),
+)
+
+const labelType = computed<'simple' | 'complex' | 'mode'>(() => {
+  if (props.foldModeToSimple || props.chartTranslationName.includes('simple')) {
+    return 'simple'
+  }
+  return props.chartTranslationName.includes('complex') ? 'complex' : 'mode'
+})
+
+const labelColors = computed(() => {
+  if (labelType.value === 'simple') return SIMPLE_LABELS_COLORS
+  return labelType.value === 'complex' ? COMPLEX_LABELS_COLORS : MODE_COLORS
+})
+
+// The description texts below stay on the raw modes: they name a specific mode
+// ('plane', 'car'), which the fold would have dissolved into a typology bucket.
+const emissions = computed(() =>
+  props.emissions && props.foldModeToSimple
+    ? aggregateEmissionsBySimpleLabel(props.emissions)
+    : props.emissions,
+)
+
 function findGroupEmissions(groupStats: ComparisonStats): Emissions[] | undefined {
+  const found = findRawGroupEmissions(groupStats)
+  if (!found || !props.foldModeToSimple) {
+    return found
+  }
+  return aggregateEmissionsBySimpleLabel(found)
+}
+
+function findRawGroupEmissions(groupStats: ComparisonStats): Emissions[] | undefined {
   switch (props.chartTranslationName) {
     case 'freq_mod_simple':
       return groupStats.mode_emissions_simple_labels ?? undefined
@@ -85,7 +129,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => props.foldModeToSimple, () => props.title], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -258,6 +302,10 @@ defineExpose({
   },
 })
 
+function labelSortOrder(key: string) {
+  return labelType.value === 'simple' ? simpleLabelSortOrder(key) : modeSortOrder(key)
+}
+
 function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {
     return 'N/A'
@@ -277,24 +325,19 @@ function initChartOptions() {
 
   option.value = {}
   total.value = 0
-  if (!props.emissions) {
+  if (!emissions.value) {
     return
   }
 
-  const emissions = props.emissions || []
-  if (emissions.length === 0) {
+  const modeEmissions = emissions.value
+  if (modeEmissions.length === 0) {
     return
   }
 
-  const colors =
-    props.chartTranslationName === 'freq_mod_simple'
-      ? SIMPLE_LABELS_COLORS
-      : props.chartTranslationName === 'freq_mod_complex'
-        ? COMPLEX_LABELS_COLORS
-        : MODE_COLORS
+  const colors = labelColors.value
 
   let ubound = 0
-  const preparedData = emissions
+  const preparedData = [...modeEmissions]
     .sort((a, b) => {
       const emaA = a.journeys ? a.emissions / a.journeys : 0
       const emaB = b.journeys ? b.emissions / b.journeys : 0
@@ -318,7 +361,7 @@ function initChartOptions() {
       return data
     })
 
-  total.value = emissions[0]?.total || 0
+  total.value = modeEmissions[0]?.total || 0
 
   const newOption: EChartsOption = {
     grid: {
@@ -331,7 +374,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 120,
     title: {
-      text: t(`stats.emissions_${props.chartTranslationName}.title`),
+      text: chartTitle.value,
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -451,12 +494,7 @@ function initComparisonChartOptions() {
     return
   }
 
-  const colors =
-    props.chartTranslationName === 'freq_mod_simple'
-      ? SIMPLE_LABELS_COLORS
-      : props.chartTranslationName === 'freq_mod_complex'
-        ? COMPLEX_LABELS_COLORS
-        : MODE_COLORS
+  const colors = labelColors.value
 
   const groupDatasets: ComparisonGroupDataset[] = groupEmissions.map((group) => {
     total.value += group.emissions[0]?.total ?? 0
@@ -472,13 +510,13 @@ function initComparisonChartOptions() {
 
   const keyOrder = Array.from(
     new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
-  ).sort((a, b) => modeSortOrder(a) - modeSortOrder(b))
+  ).sort((a, b) => labelSortOrder(a) - labelSortOrder(b))
 
   option.value = buildGroupStackedBarOption({
     groupDatasets,
     colors,
     percent: false,
-    title: t(`stats.emissions_${props.chartTranslationName}.title`),
+    title: chartTitle.value,
     totalLabel: t('stats.total', { count: total.value }),
     height: props.height - 120,
     yAxisName: props.yaxis || 'kgCO₂eq',

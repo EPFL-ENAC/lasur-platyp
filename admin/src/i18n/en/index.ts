@@ -714,6 +714,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       xaxis: 'Journeys per year',
       labels: {
         ...transportationModes,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
       texts: {
