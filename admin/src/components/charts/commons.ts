@@ -1,7 +1,15 @@
 import { registerTheme, type SetOptionOpts } from 'echarts'
 import { getCssVar } from 'quasar'
 import type { InjectionKey, Ref } from 'vue'
-import type { BehaviorChangeByModeLever, BehaviorChangeByModeMotivation } from '@/models'
+import {
+  recommendationLabels,
+  recommendationToEquipmentMap,
+  type BehaviorChangeByModeLever,
+  type BehaviorChangeByModeMotivation,
+  type EquipmentPerRecommendation,
+  type EquipmentRecommendationMatrix,
+  type equipmentLabels,
+} from '@/models'
 import { getRecoSimpleLabel } from '@/utils/modalities'
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
@@ -406,4 +414,56 @@ export function aggregateMotivationBySimpleLabel(
     (motivation) => motivation.level,
     (responseCount) => responseCount,
   ).map(({ entries, ...bucket }) => ({ ...bucket, motivations: entries }))
+}
+
+/**
+ * Equipment matrix rows recategorised from recommendations to simple typology
+ * labels: 'marche', 'velo', 'vae' and 'cargo' all become 'MA', and so on.
+ * Counts are summed field by field, `total` included — a row total counts
+ * recommendation instances, so summing gives the instances of the bucket.
+ *
+ * 'inter' has no simple label of its own (the typology splits intermodality
+ * into 'MA+TP' and 'TIM+TP') and stays a row of its own.
+ */
+export function aggregateEquipmentMatrixBySimpleLabel(
+  matrix: EquipmentRecommendationMatrix,
+): Record<string, EquipmentPerRecommendation> {
+  const merged: Record<string, EquipmentPerRecommendation> = {}
+
+  recommendationLabels.forEach((reco) => {
+    const label = getRecoSimpleLabel(reco) ?? reco
+    const row = matrix[reco]
+    const target = merged[label]
+    if (!target) {
+      merged[label] = { ...row }
+      return
+    }
+    ;(Object.keys(target) as (keyof EquipmentPerRecommendation)[]).forEach((field) => {
+      target[field] += row[field]
+    })
+  })
+
+  return merged
+}
+
+/**
+ * The equipments that match each row of {@link aggregateEquipmentMatrixBySimpleLabel}:
+ * the union of the equipments of the recommendations folded into that label.
+ */
+export function aggregateRecommendationEquipmentsBySimpleLabel(): Record<
+  string,
+  (typeof equipmentLabels)[number][] | null
+> {
+  const merged: Record<string, (typeof equipmentLabels)[number][] | null> = {}
+
+  recommendationLabels.forEach((reco) => {
+    const label = getRecoSimpleLabel(reco) ?? reco
+    const equipments = recommendationToEquipmentMap[reco]
+    if (!equipments) {
+      return
+    }
+    merged[label] = Array.from(new Set([...(merged[label] ?? []), ...equipments]))
+  })
+
+  return merged
 }
