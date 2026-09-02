@@ -11,7 +11,9 @@
  * - a *simple* label: the typology bucket ('MA', 'TP', 'TIM' and their
  *   intermodal combinations)
  * - a *complex* label: the detailed mode, or a '+'-joined intermodal pair
- *   ordered as travelled (the last leg comes last)
+ *   ordered as travelled (the last leg comes last). The transit side of a pair
+ *   is the merged 'tp' bucket, as the backend stats and the `complex_labels`
+ *   translations have it — 'pub' and 'train' only stand on their own.
  *
  * The same simple typology is also derived from a recommendation — the
  * `reco_sim` mapping for commuting (`typo.reco.reco_inter` values) and its
@@ -130,11 +132,11 @@ function orderedPair(modes: string[], lastFamily: string[], a: string, b: string
  * Multi-mode journeys go through the intermodal rules, in the order the Python
  * implementation applies them (first match wins):
  *
- *   1. active + transit      -> 'MA+TP'   'pub+bike' | 'bike+pub'
- *   2. motorized + transit   -> 'TIM+TP'  'pub+car'  | 'car+pub'
+ *   1. active + transit      -> 'MA+TP'   'tp+bike' | 'bike+tp'
+ *   2. motorized + transit   -> 'TIM+TP'  'tp+car'  | 'car+tp'
  *   3. active + motorized    -> 'MA+TIM'  'car+bike' | 'bike+car'
- *   4. pub + train only      -> 'TP'      'pub'
- *   5. walking + transit     -> 'MA+TP'   'pub+walk' | 'walk+pub'
+ *   4. pub + train only      -> 'TP'      'tp'
+ *   5. walking + transit     -> 'MA+TP'   'tp+walk' | 'walk+tp'
  *   6. anything else         -> 'MA+TIM'  'other_inter'
  *
  * Returns null for an empty or fully unknown single modality, so callers can
@@ -156,19 +158,19 @@ export function getModalityLabels(modes: string[] | null | undefined): ModalityL
   const motorized = hasAny(modes, MOTORIZED_MODES)
 
   if (active && transit) {
-    return { simple: 'MA+TP', complex: orderedPair(modes, ACTIVE_MODES, 'pub', 'bike') }
+    return { simple: 'MA+TP', complex: orderedPair(modes, ACTIVE_MODES, 'tp', 'bike') }
   }
   if (motorized && transit) {
-    return { simple: 'TIM+TP', complex: orderedPair(modes, MOTORIZED_MODES, 'pub', 'car') }
+    return { simple: 'TIM+TP', complex: orderedPair(modes, MOTORIZED_MODES, 'tp', 'car') }
   }
   if (active && motorized) {
     return { simple: 'MA+TIM', complex: orderedPair(modes, ACTIVE_MODES, 'car', 'bike') }
   }
   if (modes.includes('pub') && modes.includes('train')) {
-    return { simple: 'TP', complex: 'pub' }
+    return { simple: 'TP', complex: 'tp' }
   }
   if (modes.includes('walking') && transit) {
-    return { simple: 'MA+TP', complex: orderedPair(modes, ['walking'], 'pub', 'walk') }
+    return { simple: 'MA+TP', complex: orderedPair(modes, ['walking'], 'tp', 'walk') }
   }
   return { simple: 'MA+TIM', complex: 'other_inter' }
 }
