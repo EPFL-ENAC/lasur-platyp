@@ -5,7 +5,7 @@
     :loading="props.loading"
     :has-data="hasData"
     :show-table="!exportable"
-    :no-data-title="t(`stats.${props.chartTranslationName}.title`)"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
   />
@@ -21,6 +21,7 @@ import { SVGRenderer } from 'echarts/renderers'
 import {
   MODE_COLORS,
   SIMPLE_LABELS_COLORS,
+  aggregateFrequenciesBySimpleLabel,
   modeSortOrder,
   simpleLabelSortOrder,
   computePercentages,
@@ -58,15 +59,30 @@ interface Props {
   // Which vocabulary the frequency values are expressed in: 'simple' for the
   // simple typology labels, transport modes otherwise.
   labelType?: 'simple' | 'mode'
+  // Fold recommendation values into simple typology labels before charting,
+  // for the data the backend only ships in detailed form.
+  foldRecoToSimple?: boolean
   frequencies?: Frequencies | Frequencies[] | null
   height?: number
   loading?: boolean
   exportable?: boolean
+  // Overrides the title taken from `chartTranslationName`.
+  title?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   labelType: 'mode',
   height: 400,
   exportable: true,
+})
+
+const chartTitle = computed(() => props.title || t(`stats.${props.chartTranslationName}.title`))
+
+// A list of Frequencies is one datum per field, a shape the fold does not apply to.
+const frequencies = computed(() => {
+  if (!props.frequencies || Array.isArray(props.frequencies) || !props.foldRecoToSimple) {
+    return props.frequencies
+  }
+  return aggregateFrequenciesBySimpleLabel(props.frequencies)
 })
 
 const labelColors = computed(() =>
@@ -102,10 +118,13 @@ const comparisonDifference = computed(() =>
 )
 
 function findGroupFrequencies(groupStats: ComparisonStats): Frequencies | undefined {
-  return (
+  const found =
     groupStats.frequencies?.find((freq) => freq.field === props.chartTranslationName) ||
     groupStats.pro_frequencies?.find((freq) => freq.field === props.chartTranslationName)
-  )
+  if (!found || !props.foldRecoToSimple) {
+    return found
+  }
+  return aggregateFrequenciesBySimpleLabel(found)
 }
 
 const hasData = computed(() => {
@@ -114,12 +133,12 @@ const hasData = computed(() => {
       (group) => (findGroupFrequencies(group)?.data.length ?? 0) > 0,
     )
   }
-  if (!props.frequencies) {
+  if (!frequencies.value) {
     return false
   }
-  return Array.isArray(props.frequencies)
-    ? props.frequencies.length > 0
-    : props.frequencies.data.length > 0
+  return Array.isArray(frequencies.value)
+    ? frequencies.value.length > 0
+    : frequencies.value.data.length > 0
 })
 
 watch(
@@ -131,11 +150,20 @@ watch(
   },
 )
 
-watch([() => props.height, locale], () => {
-  if (!props.loading) {
-    initChartOptions()
-  }
-})
+watch(
+  [
+    () => props.height,
+    locale,
+    () => props.labelType,
+    () => props.foldRecoToSimple,
+    () => props.title,
+  ],
+  () => {
+    if (!props.loading) {
+      initChartOptions()
+    }
+  },
+)
 
 onMounted(() => {
   initChartOptions()
@@ -171,13 +199,13 @@ function initChartOptions() {
   comparisonGroupDatasets.value = []
   option.value = {}
   total.value = 0
-  if (!props.frequencies) {
+  if (!frequencies.value) {
     return
   }
 
   let dataset: { key: string; name: string; value: number }[] = []
-  if (Array.isArray(props.frequencies)) {
-    dataset = (props.frequencies as Frequencies[]).map((item: Frequencies) => {
+  if (Array.isArray(frequencies.value)) {
+    dataset = (frequencies.value as Frequencies[]).map((item: Frequencies) => {
       total.value = item.total
       return {
         key: shortKey(item.field),
@@ -188,13 +216,13 @@ function initChartOptions() {
       }
     })
   } else {
-    const frequencies = props.frequencies as Frequencies
-    dataset = frequencies.data.map((item) => ({
+    const single = frequencies.value as Frequencies
+    dataset = single.data.map((item) => ({
       key: shortKey(item.value),
       name: keyLabel(item.value),
       value: item.sum === undefined ? item.count : item.sum,
     }))
-    total.value = frequencies.total
+    total.value = single.total
   }
   dataset.sort((a, b) => labelSortOrder(a.key) - labelSortOrder(b.key))
 
@@ -220,7 +248,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.${props.chartTranslationName}.title`),
+      text: chartTitle.value,
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -299,7 +327,7 @@ function initComparisonChartOptions() {
     groupDatasets,
     colors: labelColors.value,
     percent: true,
-    title: t(`stats.${props.chartTranslationName}.title`),
+    title: chartTitle.value,
     totalLabel: t('stats.total', { count: total.value }),
     height: props.height,
     yAxisName: '%',

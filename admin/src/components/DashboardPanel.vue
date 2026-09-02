@@ -512,6 +512,7 @@ async function openReport() {
   url.searchParams.set('leversModalType', stats.leversModalType)
   url.searchParams.set('motivationModalType', stats.motivationModalType)
   url.searchParams.set('equipmentsModalType', stats.equipmentsModalType)
+  url.searchParams.set('recoProModalType', stats.recoProModalType)
 
   url.searchParams.set('travelTimePercent', String(stats.travelTimePercent))
   url.searchParams.set('equipmentsPercent', String(stats.equipmentsPercent))

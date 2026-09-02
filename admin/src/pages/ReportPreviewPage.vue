@@ -298,6 +298,7 @@ onMounted(async () => {
   statsStore.leversModalType = (route.query.leversModalType as string) || 'simple'
   statsStore.motivationModalType = (route.query.motivationModalType as string) || 'simple'
   statsStore.equipmentsModalType = (route.query.equipmentsModalType as string) || 'simple'
+  statsStore.recoProModalType = (route.query.recoProModalType as string) || 'simple'
 
   statsStore.travelTimePercent = route.query.travelTimePercent !== 'false'
   statsStore.equipmentsPercent = route.query.equipmentsPercent !== 'false'

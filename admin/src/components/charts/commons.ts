@@ -9,6 +9,8 @@ import {
   type EquipmentPerRecommendation,
   type EquipmentRecommendationMatrix,
   type equipmentLabels,
+  type Frequencies,
+  type Frequency,
 } from '@/models'
 import { getRecoSimpleLabel } from '@/utils/modalities'
 
@@ -466,4 +468,32 @@ export function aggregateRecommendationEquipmentsBySimpleLabel(): Record<
   })
 
   return merged
+}
+
+/**
+ * Frequencies recategorised from recommendations to simple typology labels,
+ * for the data the backend only ships in detailed form (professional
+ * recommendations). Counts are summed; a value with no simple label — 'avoid'
+ * (do not travel) — stays an entry of its own.
+ */
+export function aggregateFrequenciesBySimpleLabel(frequencies: Frequencies): Frequencies {
+  const merged = new Map<string, Frequency>()
+
+  frequencies.data.forEach((item) => {
+    const value = getRecoSimpleLabel(item.value) ?? item.value
+    const known = merged.get(value)
+    if (!known) {
+      merged.set(value, { ...item, value })
+      return
+    }
+    // `sum`, when the backend sets it, is what the charts plot instead of the
+    // count, so it accumulates the same way — falling back to the count for
+    // the entries that carry none. Computed before `count` moves.
+    if (known.sum !== undefined || item.sum !== undefined) {
+      known.sum = (known.sum ?? known.count) + (item.sum ?? item.count)
+    }
+    known.count += item.count
+  })
+
+  return { ...frequencies, data: Array.from(merged.values()) }
 }
