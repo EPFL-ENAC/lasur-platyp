@@ -3,10 +3,10 @@
  * mobility-toolkit `typo_modal/service.py` (`TypoModalService.compute_reco_inter`).
  *
  * A "raw modality" is a transport mode as recorded by the collect app. Home-work
- * journeys carry an ordered list of modes (`Journey.modes`), the last one being
- * the leg that ends the journey; professional journeys carry a single mode
- * (`ProJourney.mode`) drawn from a wider vocabulary (cargo bike, truck, boat,
- * plane). From a modality, two labels are derived:
+ * journeys carry an ordered list of modes, the last one being the leg that ends
+ * the journey; professional journeys carry a single mode drawn from a wider
+ * vocabulary (cargo bike, truck, boat, plane). From a modality, two labels are
+ * derived:
  *
  * - a *simple* label: the typology bucket ('MA', 'TP', 'TIM' and their
  *   intermodal combinations)
@@ -27,16 +27,6 @@ export type SimpleLabel = (typeof SIMPLE_LABELS)[number]
 /** Whether a key is a simple typology label rather than a mode or an aggregate bucket. */
 export function isSimpleLabel(key: string | null | undefined): key is SimpleLabel {
   return !!key && (SIMPLE_LABELS as readonly string[]).includes(key)
-}
-
-export interface Journey {
-  modes: string[]
-  days?: number
-}
-
-export interface ProJourney {
-  mode: string
-  days?: number
 }
 
 export interface ModalityLabels {
@@ -119,27 +109,6 @@ const ACTIVE_MODES = ['bike', 'ebike']
 const TRANSIT_MODES = ['pub', 'train']
 const MOTORIZED_MODES = ['car', 'carpool', 'moto']
 
-/**
- * Fold 'pub' and 'train' into a single 'tp' bucket, as the backend stats do
- * (see `COMPLEX_LABEL_MERGE` in api/services/stats/commons.py).
- */
-export const COMPLEX_LABEL_MERGE: Record<string, string> = { pub: 'tp', train: 'tp' }
-
-/**
- * Apply a component-wise merge to a (possibly '+'-joined intermodal) complex
- * label, so a plain label and any combination containing it fold into the same
- * target: with the default map, 'pub' -> 'tp', 'car+pub' -> 'car+tp'.
- */
-export function mergeLabelComponents(
-  label: string,
-  mergeMap: Record<string, string> = COMPLEX_LABEL_MERGE,
-): string {
-  return label
-    .split('+')
-    .map((part) => mergeMap[part] ?? part)
-    .join('+')
-}
-
 function hasAny(modes: string[], family: string[]): boolean {
   return modes.some((mode) => family.includes(mode))
 }
@@ -204,23 +173,8 @@ export function getModalityLabels(modes: string[] | null | undefined): ModalityL
   return { simple: 'MA+TIM', complex: 'other_inter' }
 }
 
-/** Simple typology bucket of a raw modality. */
-export function getSimpleLabel(modes: string[] | null | undefined): SimpleLabel | null {
-  return getModalityLabels(modes)?.simple ?? null
-}
-
 /**
- * Detailed label of a raw modality. Pass `merged` to fold 'pub'/'train' into
- * 'tp', matching the buckets the backend stats endpoints return.
- */
-export function getComplexLabel(modes: string[] | null | undefined, merged = false): string | null {
-  const complex = getModalityLabels(modes)?.complex ?? null
-  if (complex === null) return null
-  return merged ? mergeLabelComponents(complex) : complex
-}
-
-/**
- * Labels of a professional modality: the single mode of a `ProJourney`.
+ * Labels of a professional modality: the single mode of a professional journey.
  * Long-distance and freight modes keep their own complex label ('plane',
  * 'boat', 'truck', 'cargo') and are folded into the simple typology by family.
  */
@@ -236,18 +190,4 @@ export function getProModalityLabels(mode: string | null | undefined): ModalityL
 export function getRecoSimpleLabel(reco: string | null | undefined): SimpleLabel | null {
   if (!reco) return null
   return MODE_TO_SIMPLE_LABEL[reco] ?? null
-}
-
-/** Labels of every home-work journey of a record, in journey order. */
-export function getJourneyLabels(
-  journeys: Journey[] | null | undefined,
-): (ModalityLabels | null)[] {
-  return (journeys || []).map((journey) => getModalityLabels(journey.modes))
-}
-
-/** Labels of every professional journey of a record, in journey order. */
-export function getProJourneyLabels(
-  journeys: ProJourney[] | null | undefined,
-): (ModalityLabels | null)[] {
-  return (journeys || []).map((journey) => getProModalityLabels(journey.mode))
 }
