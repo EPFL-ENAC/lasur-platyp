@@ -7,6 +7,7 @@ import {
   type BehaviorChangeByModeLever,
   type BehaviorChangeByModeMotivation,
   type EquipmentPerRecommendation,
+  type EmissionReduction,
   type EquipmentRecommendationMatrix,
   type equipmentLabels,
   type Frequencies,
@@ -496,4 +497,29 @@ export function aggregateFrequenciesBySimpleLabel(frequencies: Frequencies): Fre
   })
 
   return { ...frequencies, data: Array.from(merged.values()) }
+}
+
+/**
+ * Emission reductions recategorised from recommended modes to simple typology
+ * labels. Reductions are summed; `total` is the number of records the backend
+ * computed them over, identical on every row, so it is carried over as is. A
+ * mode with no simple label — 'avoid' (do not travel) — stays a row of its own.
+ */
+export function aggregateReductionsBySimpleLabel(
+  reductions: EmissionReduction[],
+): EmissionReduction[] {
+  const merged = new Map<string, EmissionReduction>()
+
+  reductions.forEach((item) => {
+    const mode = getRecoSimpleLabel(item.mode) ?? item.mode
+    const known = merged.get(mode)
+    if (!known) {
+      merged.set(mode, { ...item, mode })
+      return
+    }
+    known.reduced += item.reduced
+    known.total = Math.max(known.total, item.total)
+  })
+
+  return Array.from(merged.values())
 }
