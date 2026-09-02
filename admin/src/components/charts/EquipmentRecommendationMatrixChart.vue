@@ -1,6 +1,6 @@
 <template>
   <chart-panel
-    :title="t('stats.equipments_by_recommendations.title')"
+    :title="chartTitle"
     :description="t('stats.equipments_by_recommendations.texts.default')"
     :chart-info-text="chartInfoText"
     :inline="inline"
@@ -11,6 +11,18 @@
         <q-btn flat icon="more_vert">
           <q-menu>
             <q-list style="min-width: 200px">
+              <q-item clickable v-close-popup @click="onToggleModalType">
+                <q-item-section side>
+                  <q-icon :name="stats.equipmentsModalType === 'simple' ? 'pie_chart' : 'lens'" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{
+                    stats.equipmentsModalType === 'simple'
+                      ? t('stats.freq_mod.modal_split.detailed')
+                      : t('stats.freq_mod.modal_split.simple')
+                  }}</q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item v-if="withOptions" clickable v-close-popup @click="onToggleSimpleMode">
                 <q-item-section side>
                   <q-icon :name="simpleMode ? 'check_box' : 'check_box_outline_blank'" />
@@ -39,7 +51,7 @@
         :loading="props.loading"
         :has-data="total > 0"
         :show-table="inline"
-        :no-data-title="t('stats.equipments_by_recommendations.title')"
+        :no-data-title="chartTitle"
         :option="option"
         :exportable="!inline"
       >
@@ -67,11 +79,16 @@ import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import {
   equipmentLabels,
   type EquipmentPerRecommendation,
-  type EquipmentRecommendationMatrix,
   type EquipmentsStats,
   recommendationLabelsReversed,
   recommendationToEquipmentMap,
 } from '@/models'
+import {
+  aggregateEquipmentMatrixBySimpleLabel,
+  aggregateRecommendationEquipmentsBySimpleLabel,
+  simpleLabelSortOrder,
+} from './commons'
+import { isSimpleLabel } from '@/utils/modalities'
 
 const { t, locale } = useI18n()
 use([
@@ -100,6 +117,21 @@ type EChartsShellExposed = {
 }
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+const stats = useStats()
+
+const modalType = computed(() => (stats.equipmentsModalType === 'simple' ? 'simple' : 'detailed'))
+
+const chartTitle = computed(
+  () =>
+    `${t('stats.equipments_by_recommendations.title')} (${t(
+      `stats.freq_mod.modal_split.${modalType.value}`,
+    ).toLowerCase()})`,
+)
+
+function onToggleModalType() {
+  stats.equipmentsModalType = stats.equipmentsModalType === 'simple' ? 'detailed' : 'simple'
+}
 
 function onChartDownload() {
   shellRef.value?.handleExport()
@@ -136,19 +168,40 @@ defineExpose({
   },
 })
 
-const recommendationLabelsFiltered = computed(() => {
-  return recommendationLabelsReversed
-
-  // We disable filtering in simple mode for now, kept as a comment for reference in case we want to re-enable it in the future.
-  /* if (!simpleMode.value) {
-    return recommendationLabelsReversed
+// The recommendation axis: one row per recommendation, or per simple typology
+// label when they are folded. Least to most sustainable, bottom to top, as
+// ECharts renders the first category at the bottom.
+//
+// We disable filtering of the rows without matching equipments for now, kept as
+// a comment for reference in case we want to re-enable it in the future.
+// return [
+//   ...recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r]),
+//   'marche', // always shown, even out of the mapping: it is a common recommendation
+// ]
+const recommendationRows = computed<string[]>(() => {
+  if (modalType.value !== 'simple') {
+    return [...recommendationLabelsReversed]
   }
-
-  const walking: 'marche' = 'marche' as const
-
-  return [...recommendationLabelsReversed.filter((r) => !!recommendationToEquipmentMap[r]), walking] // we always want to show "marche" in simple mode, even if it's not in the mapping, because it's a common recommendation
-  */
+  return Object.keys(recommendationMatrix.value).sort(
+    (a, b) => simpleLabelSortOrder(b) - simpleLabelSortOrder(a),
+  )
 })
+
+const recommendationMatrix = computed<Record<string, EquipmentPerRecommendation>>(() => {
+  const matrix = props.equipmentsStats?.equipment_recommendation_matrix
+  if (!matrix) {
+    return {}
+  }
+  return modalType.value === 'simple'
+    ? aggregateEquipmentMatrixBySimpleLabel(matrix)
+    : { ...matrix }
+})
+
+const rowEquipments = computed<Record<string, (typeof equipmentLabels)[number][] | null>>(() =>
+  modalType.value === 'simple'
+    ? aggregateRecommendationEquipmentsBySimpleLabel()
+    : recommendationToEquipmentMap,
+)
 
 watch([() => props.loading], () => {
   if (props.loading) {
@@ -156,7 +209,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale, simpleMode], () => {
+watch([() => props.height, locale, simpleMode, modalType], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -170,17 +223,14 @@ const analysisText = computed(() => {
   if (!props.equipmentsStats) return null
 
   const threshold = 5
-  let smallestReco: keyof EquipmentRecommendationMatrix | null = null
+  let smallestReco: string | null = null
   let smallestValue = Infinity
 
-  for (const rec of recommendationLabelsFiltered.value) {
-    const eqs = recommendationToEquipmentMap[rec as keyof EquipmentRecommendationMatrix]
+  for (const rec of recommendationRows.value) {
+    const eqs = rowEquipments.value[rec]
+    const row = recommendationMatrix.value[rec]
 
-    if (eqs) {
-      const row =
-        props.equipmentsStats.equipment_recommendation_matrix[
-          rec as keyof EquipmentRecommendationMatrix
-        ]
+    if (eqs && row) {
       const value = eqs.reduce((sum, eq) => sum + row[eq as keyof EquipmentPerRecommendation], 0)
       if (value < smallestValue && value > threshold) {
         smallestValue = value
@@ -191,10 +241,8 @@ const analysisText = computed(() => {
 
   if (!smallestReco) return null
 
-  const smallestRecoContent =
-    props.equipmentsStats.equipment_recommendation_matrix[
-      smallestReco as keyof EquipmentRecommendationMatrix
-    ]
+  const smallestRecoContent = recommendationMatrix.value[smallestReco]
+  if (!smallestRecoContent) return null
   const percentage =
     smallestRecoContent.total > 0 ? (smallestValue / smallestRecoContent.total) * 100 : 0
 
@@ -212,16 +260,23 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
+  // simple typology labels live in their own namespace
+  if (isSimpleLabel(key)) {
+    return t(`simple_labels.${key}`)
+  }
   return t(`stats.equipments_by_recommendations.labels.${shortKey(key)}`)
 }
 
-function transformMatrixToData(matrix: EquipmentRecommendationMatrix) {
+function transformMatrixToData() {
   const data: [number, number, number][] = []
 
-  recommendationLabelsFiltered.value.forEach((recLabel, recIdx) => {
-    const row = matrix[recLabel as keyof EquipmentRecommendationMatrix]
+  recommendationRows.value.forEach((recLabel, recIdx) => {
+    const row = recommendationMatrix.value[recLabel]
+    if (!row) {
+      return
+    }
     equipmentLabels.forEach((eqLabel, eqIdx) => {
-      if (simpleMode.value && !recommendationToEquipmentMap[recLabel]?.includes(eqLabel)) {
+      if (simpleMode.value && !rowEquipments.value[recLabel]?.includes(eqLabel)) {
         return
       }
 
@@ -241,10 +296,10 @@ function matrixPositionToLabels(
   x: number,
   y: number,
 ): {
-  recommendation: keyof EquipmentRecommendationMatrix
+  recommendation: string
   equipment: keyof EquipmentPerRecommendation
 } | null {
-  const recommendation = recommendationLabelsFiltered.value[y]
+  const recommendation = recommendationRows.value[y]
   const equipment = equipmentLabels[x]
   if (!recommendation || !equipment) return null
 
@@ -261,7 +316,7 @@ function initChartOptions() {
 
   total.value = props.equipmentsStats.total
 
-  const data = transformMatrixToData(props.equipmentsStats.equipment_recommendation_matrix)
+  const data = transformMatrixToData()
 
   // total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {
@@ -274,7 +329,7 @@ function initChartOptions() {
     },
     height: props.height - 100,
     title: {
-      text: t(`stats.equipments_by_recommendations.title`),
+      text: chartTitle.value,
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -286,12 +341,9 @@ function initChartOptions() {
     // 4. ADD: xAxis and yAxis are REQUIRED for heatmap
     yAxis: {
       type: 'category',
-      data: recommendationLabelsFiltered.value.map((l) => {
-        const reco =
-          props.equipmentsStats!.equipment_recommendation_matrix[
-            l as keyof EquipmentRecommendationMatrix
-          ]
-        return `${keyLabel(l)} (${reco.total})`
+      data: recommendationRows.value.map((l) => {
+        const reco = recommendationMatrix.value[l]
+        return `${keyLabel(l)} (${reco?.total ?? 0})`
       }),
       splitArea: { show: true },
       axisLabel: {
@@ -337,10 +389,7 @@ function initChartOptions() {
 
         const reco = keyLabel(labels.recommendation)
         const equipment = keyLabel(labels.equipment)
-        const count =
-          props.equipmentsStats.equipment_recommendation_matrix[labels.recommendation][
-            labels.equipment
-          ]
+        const count = recommendationMatrix.value[labels.recommendation]?.[labels.equipment] ?? 0
 
         return t(`stats.equipments_by_recommendations.tooltip`, {
           reco,
@@ -365,10 +414,7 @@ function initChartOptions() {
               (params.value as [number, number, number])[1],
             )
             if (!labels) return ''
-            const count =
-              props.equipmentsStats!.equipment_recommendation_matrix[labels.recommendation][
-                labels.equipment
-              ]
+            const count = recommendationMatrix.value[labels.recommendation]?.[labels.equipment] ?? 0
 
             return `${formatNumber(count)} (${formatNumber((params.value as [number, number, number])[2] || 0)}%)`
           },

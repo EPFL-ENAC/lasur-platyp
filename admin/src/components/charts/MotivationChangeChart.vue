@@ -1,6 +1,6 @@
 <template>
   <chart-panel
-    :title="t('stats.behavior_change_motivation.title')"
+    :title="chartTitle"
     :description="t('stats.behavior_change_motivation.texts.info')"
     :chart-info-text="infoText"
     :inline="inline"
@@ -10,6 +10,18 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleModalType">
+              <q-item-section side>
+                <q-icon :name="stats.motivationModalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.motivationModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onTogglePercent">
               <q-item-section side>
                 <q-icon :name="stats.motivationPercent ? 'check_box' : 'check_box_outline_blank'" />
@@ -37,6 +49,7 @@
       :height="height"
       :loading="loading"
       :percent="stats.motivationPercent"
+      :modal-type="modalType"
       :exportable="!inline"
       :description="chartDescription"
     />
@@ -75,6 +88,19 @@ watch([chartRef, () => props.behaviorChangeStats], ([newRef]) => {
 const { t } = useI18n()
 
 const stats = useStats()
+
+const modalType = computed(() => (stats.motivationModalType === 'simple' ? 'simple' : 'detailed'))
+
+const chartTitle = computed(
+  () =>
+    `${t('stats.behavior_change_motivation.title')} (${t(
+      `stats.freq_mod.modal_split.${modalType.value}`,
+    ).toLowerCase()})`,
+)
+
+function onToggleModalType() {
+  stats.motivationModalType = stats.motivationModalType === 'simple' ? 'detailed' : 'simple'
+}
 
 function onTogglePercent() {
   stats.motivationPercent = !stats.motivationPercent

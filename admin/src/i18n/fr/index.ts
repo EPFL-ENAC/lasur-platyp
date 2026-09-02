@@ -591,6 +591,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       xaxis: 'Trajets par année',
       labels: {
         ...transportationModes,
+        ...simpleShortLabels,
         local: 'Local',
         region: 'Régional',
         national: 'National',
@@ -727,6 +728,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       xaxis: 'Trajets par année',
       labels: {
         ...transportationModes,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
       texts: {

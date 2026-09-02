@@ -5,7 +5,7 @@
     :loading="props.loading"
     :has-data="total > 0"
     :show-table="!exportable"
-    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
   />
@@ -21,6 +21,7 @@ import {
   MODE_COLORS,
   SIMPLE_LABELS_COLORS,
   COMPLEX_LABELS_COLORS,
+  aggregateReductionsBySimpleLabel,
   modeSortOrder,
   simpleLabelSortOrder,
   complexLabelSortOrder,
@@ -35,7 +36,7 @@ import {
 import { formatNumber } from '@/utils/numbers'
 import type { ComparisonStats, EmissionReduction, Emissions } from '@/models'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 const stats = useStats()
@@ -45,18 +46,60 @@ interface Props {
   chartTranslationName: string
   emissions: Emissions[] | null
   reductions: EmissionReduction[] | null
+  // Fold recommended modes into simple typology labels before charting, for
+  // the data the backend only ships in detailed form.
+  foldRecoToSimple?: boolean
   yaxis?: string
   rangeStep?: number
   height?: number
   loading?: boolean
   exportable?: boolean
+  // Overrides the title taken from `chartTranslationName`.
+  title?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
 
+const chartTitle = computed(
+  () => props.title || t(`stats.emissions_${props.chartTranslationName}.title`),
+)
+
+// Which vocabulary the categories are expressed in, and so which labels,
+// colors and ordering they take.
+const labelType = computed<'simple' | 'complex' | 'mode'>(() => {
+  if (props.foldRecoToSimple || props.chartTranslationName.includes('simple')) {
+    return 'simple'
+  }
+  return props.chartTranslationName.includes('complex') ? 'complex' : 'mode'
+})
+
+const labelColors = computed(() => {
+  if (labelType.value === 'simple') return SIMPLE_LABELS_COLORS
+  return labelType.value === 'complex' ? COMPLEX_LABELS_COLORS : MODE_COLORS
+})
+
+function labelSortOrder(key: string): number {
+  if (labelType.value === 'simple') return simpleLabelSortOrder(key)
+  return labelType.value === 'complex' ? complexLabelSortOrder(key) : modeSortOrder(key)
+}
+
+const reductions = computed(() =>
+  props.reductions && props.foldRecoToSimple
+    ? aggregateReductionsBySimpleLabel(props.reductions)
+    : props.reductions,
+)
+
 function findGroupReductions(groupStats: ComparisonStats): EmissionReduction[] | undefined {
+  const found = findRawGroupReductions(groupStats)
+  if (!found || !props.foldRecoToSimple) {
+    return found
+  }
+  return aggregateReductionsBySimpleLabel(found)
+}
+
+function findRawGroupReductions(groupStats: ComparisonStats): EmissionReduction[] | undefined {
   switch (props.chartTranslationName) {
     case 'reductions_mod_simple':
       return groupStats.mode_emission_reductions_simple_labels ?? undefined
@@ -113,7 +156,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => props.foldRecoToSimple, () => props.title], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -133,10 +176,14 @@ function keyLabel(key: string) {
   }
   // for the simple/complex label variants, categories are v3 typology
   // labels (e.g. 'TIM', 'car+pub'), not plain transport modes
-  if (props.chartTranslationName.includes('simple')) {
-    return t(`simple_labels.${shortKey(key)}`)
-  }
-  if (props.chartTranslationName.includes('complex')) {
+  if (labelType.value === 'simple') {
+    // a folded value with no simple label of its own, such as 'avoid', keeps
+    // its transport mode label
+    const messageKey = `simple_labels.${shortKey(key)}`
+    if (te(messageKey)) {
+      return t(messageKey)
+    }
+  } else if (labelType.value === 'complex') {
     return t(`complex_labels.${shortKey(key)}`)
   }
   return t(`transportation_modes.${shortKey(key)}`)
@@ -153,7 +200,7 @@ function initChartOptions() {
 
   option.value = {}
   total.value = 0
-  if (!props.emissions || !props.reductions) {
+  if (!props.emissions || !reductions.value) {
     return
   }
 
@@ -161,18 +208,16 @@ function initChartOptions() {
   if (emissions.length === 0) {
     return
   }
-  const recoEmissions = props.reductions || []
+  const recoEmissions = reductions.value || []
   if (recoEmissions.length === 0) {
     return
   }
 
-  const categories = recoEmissions.sort((a, b) => b.reduced - a.reduced).map((item) => item.mode)
+  const categories = [...recoEmissions]
+    .sort((a, b) => b.reduced - a.reduced)
+    .map((item) => item.mode)
 
-  const colors = props.chartTranslationName.includes('simple')
-    ? SIMPLE_LABELS_COLORS
-    : props.chartTranslationName.includes('complex')
-      ? COMPLEX_LABELS_COLORS
-      : MODE_COLORS
+  const colors = labelColors.value
 
   // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
   currentEmissions.value = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
@@ -201,7 +246,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_${props.chartTranslationName}.title`),
+      text: chartTitle.value,
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -327,16 +372,7 @@ function initComparisonChartOptions() {
     return
   }
 
-  const colors = props.chartTranslationName.includes('simple')
-    ? SIMPLE_LABELS_COLORS
-    : props.chartTranslationName.includes('complex')
-      ? COMPLEX_LABELS_COLORS
-      : MODE_COLORS
-  const sortOrder = props.chartTranslationName.includes('simple')
-    ? simpleLabelSortOrder
-    : props.chartTranslationName.includes('complex')
-      ? complexLabelSortOrder
-      : modeSortOrder
+  const colors = labelColors.value
 
   const groupDatasets: ComparisonGroupDataset[] = groupReductions.map((group) => {
     total.value += group.reductions[0]?.total ?? 0
@@ -352,13 +388,13 @@ function initComparisonChartOptions() {
 
   const keyOrder = Array.from(
     new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
-  ).sort((a, b) => sortOrder(a) - sortOrder(b))
+  ).sort((a, b) => labelSortOrder(a) - labelSortOrder(b))
 
   option.value = buildGroupStackedBarOption({
     groupDatasets,
     colors,
     percent: false,
-    title: t(`stats.emissions_${props.chartTranslationName}.title`),
+    title: chartTitle.value,
     totalLabel: t('stats.total', { count: total.value }),
     height: props.height - 100,
     yAxisName: props.yaxis || UNIT_LABEL,

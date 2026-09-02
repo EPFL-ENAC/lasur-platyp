@@ -5,7 +5,7 @@
     :loading="props.loading"
     :has-data="total > 0"
     :show-table="!exportable"
-    :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
   />
@@ -17,7 +17,12 @@ import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { CATEGORY_COLORS, MOTIVATION_COLORS } from './commons'
+import {
+  aggregateLeversBySimpleLabel,
+  aggregateMotivationBySimpleLabel,
+  CATEGORY_COLORS,
+  MOTIVATION_COLORS,
+} from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -28,7 +33,12 @@ import { formatNumber } from '@/utils/numbers'
 import type { CallbackDataParams, XAXisOption } from 'echarts/types/dist/shared'
 import { lowerCaseFirst } from '@/utils/string'
 import { moveToStart } from '@/utils/arrays'
-import type { BehaviorChangeStats } from '@/models'
+import { isSimpleLabel } from '@/utils/modalities'
+import type {
+  BehaviorChangeByModeLever,
+  BehaviorChangeByModeMotivation,
+  BehaviorChangeStats,
+} from '@/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
@@ -44,10 +54,22 @@ interface Props {
   percent?: boolean
   exportable?: boolean
   description?: string
+  // 'detailed' charts the data as it comes, one row per recommended mode;
+  // 'simple' folds those modes into the simple typology labels. Left undefined,
+  // the chart has no modal split and its title stays plain.
+  modalType?: 'simple' | 'detailed'
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
+})
+
+const chartTitle = computed(() => {
+  const base = t(`stats.behavior_change_${props.type}.title`)
+  if (!props.modalType) {
+    return base
+  }
+  return `${base} (${t(`stats.freq_mod.modal_split.${props.modalType}`).toLowerCase()})`
 })
 
 type EChartsShellExposed = {
@@ -72,7 +94,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale, () => props.percent], () => {
+watch([() => props.height, locale, () => props.percent, () => props.modalType], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -90,7 +112,22 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
+  // simple typology labels live in their own namespace, and are case sensitive
+  if (isSimpleLabel(key)) {
+    return t(`simple_labels.${key}`)
+  }
   return t(`stats.behavior_change_${props.type}.labels.${shortKey(key)}`)
+}
+
+/** Rows as charted: recommended modes, or the simple labels they fold into. */
+function leversByMode(byMode: BehaviorChangeByModeLever[]): BehaviorChangeByModeLever[] {
+  return props.modalType === 'simple' ? aggregateLeversBySimpleLabel(byMode) : byMode
+}
+
+function motivationByMode(
+  byMode: BehaviorChangeByModeMotivation[],
+): BehaviorChangeByModeMotivation[] {
+  return props.modalType === 'simple' ? aggregateMotivationBySimpleLabel(byMode) : byMode
 }
 
 function initChartOptions() {
@@ -121,7 +158,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 140,
     title: {
-      text: t(`stats.behavior_change_${props.type}.title`),
+      text: chartTitle.value,
       subtext: t(`stats.total`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -157,11 +194,12 @@ function leversOptions() {
   if (!behaviorChangeData) {
     return null
   }
+  const byMode = leversByMode(behaviorChangeData.by_mode_levers)
   const allCategories = new Set<string>(
-    behaviorChangeData.by_mode_levers.flatMap((item) => item.levers.map((lever) => lever.category)),
+    byMode.flatMap((item) => item.levers.map((lever) => lever.category)),
   )
 
-  const sorted = getSortedModes(behaviorChangeData.by_mode_levers)
+  const sorted = getSortedModes(byMode)
 
   return {
     series: Array.from(allCategories).map((category) => ({
@@ -204,7 +242,7 @@ function motivationOptions() {
   }
   const levels = [1, 2, 3, 4, 5]
 
-  const sorted = getSortedModes(behaviorChangeData.by_mode_motivation)
+  const sorted = getSortedModes(motivationByMode(behaviorChangeData.by_mode_motivation))
 
   return {
     series: levels.map((level) => ({
@@ -295,7 +333,7 @@ function orderModes(modes: string[]): string[] {
 function comparisonLeversOptions() {
   const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
     name: group.name,
-    byMode: group.behavior_change?.levers?.by_mode_levers ?? [],
+    byMode: leversByMode(group.behavior_change?.levers?.by_mode_levers ?? []),
     total: group.behavior_change?.levers?.total_responses ?? 0,
   }))
   if (groups.every((group) => group.byMode.length === 0)) {
@@ -345,7 +383,7 @@ function comparisonLeversOptions() {
 function comparisonMotivationOptions() {
   const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
     name: group.name,
-    byMode: group.behavior_change?.motivation?.by_mode_motivation ?? [],
+    byMode: motivationByMode(group.behavior_change?.motivation?.by_mode_motivation ?? []),
     total: group.behavior_change?.motivation?.total_responses ?? 0,
   }))
   if (groups.every((group) => group.byMode.length === 0)) {

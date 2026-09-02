@@ -1,14 +1,22 @@
 <template>
-  <chart-panel
-    :title="t('stats.reco_pros.title')"
-    :description="t('stats.reco_pros.description')"
-    :inline="inline"
-  >
+  <chart-panel :title="chartTitle" :description="t('stats.reco_pros.description')" :inline="inline">
     <q-toolbar v-if="!inline" class="chart-toolbar">
       <q-space />
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleModalType">
+              <q-item-section side>
+                <q-icon :name="stats.recoProModalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.recoProModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -24,6 +32,9 @@
     <share-chart
       ref="chartRef"
       chartTranslationName="reco_pros"
+      :label-type="modalType === 'simple' ? 'simple' : 'mode'"
+      :fold-reco-to-simple="modalType === 'simple'"
+      :title="chartTitle"
       :frequencies="frequencies"
       :height="height"
       :loading="loading"
@@ -53,6 +64,21 @@ type ShareChartExposed = {
 const chartRef = useTemplateRef<ShareChartExposed>('chartRef')
 
 const { t } = useI18n()
+
+const stats = useStats()
+
+const modalType = computed(() => (stats.recoProModalType === 'simple' ? 'simple' : 'detailed'))
+
+const chartTitle = computed(
+  () =>
+    `${t('stats.reco_pros.title')} (${t(
+      `stats.freq_mod.modal_split.${modalType.value}`,
+    ).toLowerCase()})`,
+)
+
+function onToggleModalType() {
+  stats.recoProModalType = stats.recoProModalType === 'simple' ? 'detailed' : 'simple'
+}
 
 function onChartDownload() {
   chartRef.value?.handleExport()

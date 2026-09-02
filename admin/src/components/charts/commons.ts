@@ -1,6 +1,20 @@
 import { registerTheme, type SetOptionOpts } from 'echarts'
 import { getCssVar } from 'quasar'
 import type { InjectionKey, Ref } from 'vue'
+import {
+  recommendationLabels,
+  recommendationToEquipmentMap,
+  type BehaviorChangeByModeLever,
+  type BehaviorChangeByModeMotivation,
+  type EquipmentPerRecommendation,
+  type EmissionReduction,
+  type Emissions,
+  type EquipmentRecommendationMatrix,
+  type equipmentLabels,
+  type Frequencies,
+  type Frequency,
+} from '@/models'
+import { getProModalityLabels, getRecoSimpleLabel } from '@/utils/modalities'
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
 
@@ -311,4 +325,227 @@ export function computePercentages<T extends { value: number }>(
   }
 
   return items.map((item, idx) => ({ ...item, percent: percents[idx] ?? 0 }))
+}
+
+/**
+ * Recategorise behaviour-change stats from recommended modes to simple typology
+ * labels: 'velo' and 'marche' both become 'MA', 'tpu' and 'train' become 'TP',
+ * and so on.
+ *
+ * Entries whose mode is not a recommendation — the 'Total', 'allModes' and
+ * 'Autres' aggregate buckets the backend adds — are left untouched: they
+ * already span several modes and folding them into a label would double count.
+ *
+ * Counts are summed. Percentages are recomputed over `denominatorOf`, and only
+ * for rows that actually merged, so that a row coming from a single mode keeps
+ * the percentages the backend computed for it.
+ */
+function aggregateByModeSimpleLabel<E extends { count: number; percentage: number }>(
+  byMode: ModeBucket<E>[],
+  keyOf: (entry: E) => string | number,
+  denominatorOf: (responseCount: number, entries: E[]) => number,
+): ModeBucket<E>[] {
+  const merged = new Map<string, { bucket: ModeBucket<E>; sources: number }>()
+
+  byMode.forEach((item) => {
+    const mode = getRecoSimpleLabel(item.mode) ?? item.mode
+    const target = merged.get(mode)
+    if (!target) {
+      merged.set(mode, {
+        bucket: { ...item, mode, entries: item.entries.map((entry) => ({ ...entry })) },
+        sources: 1,
+      })
+      return
+    }
+    target.sources += 1
+    target.bucket.response_count += item.response_count
+    item.entries.forEach((entry) => {
+      const known = target.bucket.entries.find((e) => keyOf(e) === keyOf(entry))
+      if (known) {
+        known.count += entry.count
+      } else {
+        target.bucket.entries.push({ ...entry })
+      }
+    })
+  })
+
+  return Array.from(merged.values())
+    .map(({ bucket, sources }) => {
+      if (sources === 1) {
+        return bucket
+      }
+      const total = denominatorOf(bucket.response_count, bucket.entries)
+      return {
+        ...bucket,
+        entries: bucket.entries.map((entry) => ({
+          ...entry,
+          percentage: total > 0 ? Math.round((entry.count / total) * 10000) / 100 : 0,
+        })),
+      }
+    })
+    .sort((a, b) => simpleLabelSortOrder(a.mode) - simpleLabelSortOrder(b.mode))
+}
+
+interface ModeBucket<E> {
+  mode: string
+  response_count: number
+  entries: E[]
+}
+
+/**
+ * Lever stats by simple typology label. Lever percentages are shares of all the
+ * lever selections of the group, the denominator the backend uses.
+ */
+export function aggregateLeversBySimpleLabel(
+  byMode: BehaviorChangeByModeLever[],
+): BehaviorChangeByModeLever[] {
+  return aggregateByModeSimpleLabel(
+    byMode.map(({ levers, ...item }) => ({ ...item, entries: levers })),
+    (lever) => lever.category,
+    (_responseCount, entries) => entries.reduce((sum, entry) => sum + entry.count, 0),
+  ).map(({ entries, ...bucket }) => ({ ...bucket, levers: entries }))
+}
+
+/**
+ * Motivation stats by simple typology label. Motivation percentages are shares
+ * of the people who answered the question, the denominator the backend uses.
+ */
+export function aggregateMotivationBySimpleLabel(
+  byMode: BehaviorChangeByModeMotivation[],
+): BehaviorChangeByModeMotivation[] {
+  return aggregateByModeSimpleLabel(
+    byMode.map(({ motivations, ...item }) => ({ ...item, entries: motivations })),
+    (motivation) => motivation.level,
+    (responseCount) => responseCount,
+  ).map(({ entries, ...bucket }) => ({ ...bucket, motivations: entries }))
+}
+
+/**
+ * Equipment matrix rows recategorised from recommendations to simple typology
+ * labels: 'marche', 'velo', 'vae' and 'cargo' all become 'MA', and so on.
+ * Counts are summed field by field, `total` included — a row total counts
+ * recommendation instances, so summing gives the instances of the bucket.
+ *
+ * 'inter' has no simple label of its own (the typology splits intermodality
+ * into 'MA+TP' and 'TIM+TP') and stays a row of its own.
+ */
+export function aggregateEquipmentMatrixBySimpleLabel(
+  matrix: EquipmentRecommendationMatrix,
+): Record<string, EquipmentPerRecommendation> {
+  const merged: Record<string, EquipmentPerRecommendation> = {}
+
+  recommendationLabels.forEach((reco) => {
+    const label = getRecoSimpleLabel(reco) ?? reco
+    const row = matrix[reco]
+    const target = merged[label]
+    if (!target) {
+      merged[label] = { ...row }
+      return
+    }
+    ;(Object.keys(target) as (keyof EquipmentPerRecommendation)[]).forEach((field) => {
+      target[field] += row[field]
+    })
+  })
+
+  return merged
+}
+
+/**
+ * The equipments that match each row of {@link aggregateEquipmentMatrixBySimpleLabel}:
+ * the union of the equipments of the recommendations folded into that label.
+ */
+export function aggregateRecommendationEquipmentsBySimpleLabel(): Record<
+  string,
+  (typeof equipmentLabels)[number][] | null
+> {
+  const merged: Record<string, (typeof equipmentLabels)[number][] | null> = {}
+
+  recommendationLabels.forEach((reco) => {
+    const label = getRecoSimpleLabel(reco) ?? reco
+    const equipments = recommendationToEquipmentMap[reco]
+    if (!equipments) {
+      return
+    }
+    merged[label] = Array.from(new Set([...(merged[label] ?? []), ...equipments]))
+  })
+
+  return merged
+}
+
+/**
+ * Frequencies recategorised from recommendations to simple typology labels,
+ * for the data the backend only ships in detailed form (professional
+ * recommendations). Counts are summed; a value with no simple label — 'avoid'
+ * (do not travel) — stays an entry of its own.
+ */
+export function aggregateFrequenciesBySimpleLabel(frequencies: Frequencies): Frequencies {
+  const merged = new Map<string, Frequency>()
+
+  frequencies.data.forEach((item) => {
+    const value = getRecoSimpleLabel(item.value) ?? item.value
+    const known = merged.get(value)
+    if (!known) {
+      merged.set(value, { ...item, value })
+      return
+    }
+    // `sum`, when the backend sets it, is what the charts plot instead of the
+    // count, so it accumulates the same way — falling back to the count for
+    // the entries that carry none. Computed before `count` moves.
+    if (known.sum !== undefined || item.sum !== undefined) {
+      known.sum = (known.sum ?? known.count) + (item.sum ?? item.count)
+    }
+    known.count += item.count
+  })
+
+  return { ...frequencies, data: Array.from(merged.values()) }
+}
+
+/**
+ * Emission reductions recategorised from recommended modes to simple typology
+ * labels. Reductions are summed; `total` is the number of records the backend
+ * computed them over, identical on every row, so it is carried over as is. A
+ * mode with no simple label — 'avoid' (do not travel) — stays a row of its own.
+ */
+export function aggregateReductionsBySimpleLabel(
+  reductions: EmissionReduction[],
+): EmissionReduction[] {
+  const merged = new Map<string, EmissionReduction>()
+
+  reductions.forEach((item) => {
+    const mode = getRecoSimpleLabel(item.mode) ?? item.mode
+    const known = merged.get(mode)
+    if (!known) {
+      merged.set(mode, { ...item, mode })
+      return
+    }
+    known.reduced += item.reduced
+    known.total = Math.max(known.total, item.total)
+  })
+
+  return Array.from(merged.values())
+}
+
+/**
+ * Emissions recategorised from professional transport modes to simple typology
+ * labels. Journeys, distances and emissions are summed; `total` is the number
+ * of records the backend computed them over, identical on every row, so it is
+ * carried over as is. A mode with no simple label stays a row of its own.
+ */
+export function aggregateEmissionsBySimpleLabel(emissions: Emissions[]): Emissions[] {
+  const merged = new Map<string, Emissions>()
+
+  emissions.forEach((item) => {
+    const mode = getProModalityLabels(item.mode)?.simple ?? item.mode
+    const known = merged.get(mode)
+    if (!known) {
+      merged.set(mode, { ...item, mode })
+      return
+    }
+    known.distances += item.distances
+    known.journeys += item.journeys
+    known.emissions += item.emissions
+    known.total = Math.max(known.total, item.total)
+  })
+
+  return Array.from(merged.values())
 }

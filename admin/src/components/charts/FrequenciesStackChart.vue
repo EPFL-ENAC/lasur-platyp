@@ -5,7 +5,7 @@
     :loading="props.loading"
     :has-data="total > 0"
     :show-table="!exportable"
-    :no-data-title="t(`stats.${props.chartTranslationName}.title`)"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
   />
@@ -24,7 +24,8 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { Frequencies } from '@/models'
-import { MODE_COLORS } from './commons'
+import { MODE_COLORS, SIMPLE_LABELS_COLORS, simpleLabelSortOrder } from './commons'
+import { getProModalityLabels } from '@/utils/modalities'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
@@ -36,17 +37,59 @@ interface Props {
   chartTranslationName: string
   frequencies?: Frequencies[] | Frequencies | null
   groups: string[]
+  // Fold transport modes into simple typology labels before charting, for the
+  // data the backend only ships in detailed form.
+  foldModeToSimple?: boolean
   percent?: boolean
   xaxis?: string
   yaxis?: string
   height?: number
   loading?: boolean
   exportable?: boolean
+  // Overrides the title taken from `chartTranslationName`.
+  title?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
+
+const chartTitle = computed(() => props.title || t(`stats.${props.chartTranslationName}.title`))
+
+const labelColors = computed(() => (props.foldModeToSimple ? SIMPLE_LABELS_COLORS : MODE_COLORS))
+
+// Series keys are '<scale>_<mode>' (e.g. 'local_plane'): only the mode half is
+// recategorised, so the distance scales keep their own bars.
+function foldedKey(key: string) {
+  if (!props.foldModeToSimple) {
+    return key
+  }
+  const group = props.groups.find((grp) => key.startsWith(`${grp}_`))
+  if (!group) {
+    return key
+  }
+  const mode = key.slice(group.length + 1)
+  return `${group}_${getProModalityLabels(mode)?.simple ?? mode}`
+}
+
+// Modes landing in the same bucket add up.
+function foldDataset(dataset: { key: string; value: number }[]) {
+  if (!props.foldModeToSimple) {
+    return dataset
+  }
+  const merged = new Map<string, number>()
+  dataset.forEach((item) => {
+    const key = foldedKey(item.key)
+    merged.set(key, (merged.get(key) ?? 0) + item.value)
+  })
+  return Array.from(merged, ([key, value]) => ({ key, value }))
+}
+
+const MODES_ORDER = ['plane', 'car', 'moto', 'pub', 'train', 'bike', 'walking']
+
+function modeSortOrder(mode: string) {
+  return props.foldModeToSimple ? simpleLabelSortOrder(mode) : MODES_ORDER.indexOf(mode)
+}
 
 type EChartsShellExposed = {
   handleExport: () => Promise<void>
@@ -70,11 +113,20 @@ watch(
   },
 )
 
-watch([() => props.height, locale, () => props.percent], () => {
-  if (!props.loading) {
-    initChartOptions()
-  }
-})
+watch(
+  [
+    () => props.height,
+    locale,
+    () => props.percent,
+    () => props.foldModeToSimple,
+    () => props.title,
+  ],
+  () => {
+    if (!props.loading) {
+      initChartOptions()
+    }
+  },
+)
 
 onMounted(() => {
   initChartOptions()
@@ -110,6 +162,7 @@ function initChartOptions() {
     }))
     total.value = frequencies.total
   }
+  dataset = foldDataset(dataset)
 
   // Extract category names and values for yAxis and series
   const modes = new Set<string>()
@@ -125,10 +178,7 @@ function initChartOptions() {
   if (modes.size === 0) {
     return
   }
-  const modes_order = ['plane', 'car', 'moto', 'pub', 'train', 'bike', 'walking']
-  const sorted_modes = Array.from(modes).sort((a, b) => {
-    return modes_order.indexOf(a) - modes_order.indexOf(b)
-  })
+  const sorted_modes = Array.from(modes).sort((a, b) => modeSortOrder(a) - modeSortOrder(b))
 
   let series: {
     name: string
@@ -157,7 +207,7 @@ function initChartOptions() {
         emphasis: {
           focus: 'series' as const,
         },
-        color: MODE_COLORS[mode] || '#ccc',
+        color: labelColors.value[mode] || '#ccc',
         data: props.groups.map((grp) => {
           const item = dataset.find((d) => d.key === `${grp}_${mode}`)
           return item ? (item.value / (sumByGroup[grp] || 1)) * 100 : 0
@@ -173,7 +223,7 @@ function initChartOptions() {
         emphasis: {
           focus: 'series' as const,
         },
-        color: MODE_COLORS[mode] || '#ccc',
+        color: labelColors.value[mode] || '#ccc',
         data: props.groups.map((grp) => {
           const item = dataset.find((d) => d.key === `${grp}_${mode}`)
           return item ? item.value : 0
@@ -193,7 +243,7 @@ function initChartOptions() {
     animation: false,
     height: props.height - 120,
     title: {
-      text: t(`stats.${props.chartTranslationName}.title`),
+      text: chartTitle.value,
       subtext: t(`stats.total_trips`, { count: total.value }),
       left: 'center',
       top: 0,
@@ -249,10 +299,11 @@ function initComparisonChartOptions() {
     total.value += group.frequencies[0]?.total ?? 0
     const byKey = new Map<string, number>()
     group.frequencies.forEach((item) => {
-      byKey.set(
-        shortKey(item.field),
-        item.data.map((d) => (d.sum === undefined ? 0 : d.sum)).reduce((a, b) => a + b, 0),
-      )
+      const key = foldedKey(shortKey(item.field))
+      const value = item.data
+        .map((d) => (d.sum === undefined ? 0 : d.sum))
+        .reduce((a, b) => a + b, 0)
+      byKey.set(key, (byKey.get(key) ?? 0) + value)
     })
     return { name: group.name, byKey }
   })
@@ -271,10 +322,7 @@ function initComparisonChartOptions() {
     return
   }
 
-  const modesOrder = ['plane', 'car', 'moto', 'pub', 'train', 'bike', 'walking']
-  const sortedModes = Array.from(modes).sort(
-    (a, b) => modesOrder.indexOf(a) - modesOrder.indexOf(b),
-  )
+  const sortedModes = Array.from(modes).sort((a, b) => modeSortOrder(a) - modeSortOrder(b))
 
   const series: SeriesOption[] = []
   datasets.forEach((dataset, groupIndex) => {
@@ -284,7 +332,7 @@ function initComparisonChartOptions() {
         type: 'bar',
         stack: `group_${groupIndex}`,
         emphasis: { focus: 'series' },
-        color: MODE_COLORS[mode] || '#ccc',
+        color: labelColors.value[mode] || '#ccc',
         data: props.groups.map((scale) => dataset.byKey.get(`${scale}_${mode}`) ?? 0),
       })
     })
@@ -301,7 +349,7 @@ function initComparisonChartOptions() {
     animation: false,
     height: props.height - 120,
     title: {
-      text: t(`stats.${props.chartTranslationName}.title`),
+      text: chartTitle.value,
       subtext: t('stats.total', { count: total.value }),
       left: 'center',
       top: 0,
