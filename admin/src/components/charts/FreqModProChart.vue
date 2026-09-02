@@ -1,6 +1,6 @@
 <template>
   <chart-panel
-    :title="t('stats.freq_mod_pro.title')"
+    :title="chartTitle"
     :description="t('stats.freq_mod_pro.description')"
     :inline="inline"
   >
@@ -9,6 +9,18 @@
       <q-btn flat icon="more_vert">
         <q-menu>
           <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleModalType">
+              <q-item-section side>
+                <q-icon :name="stats.freqProModalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.freqProModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onTogglePercent">
               <q-item-section side>
                 <q-icon :name="stats.freqModProPercent ? 'check_box' : 'check_box_outline_blank'" />
@@ -32,6 +44,8 @@
     <frequencies-stack-chart
       ref="chartRef"
       chartTranslationName="freq_mod_pro"
+      :fold-mode-to-simple="modalType === 'simple'"
+      :title="chartTitle"
       :frequencies="frequencies"
       :groups="['local', 'national', 'europe', 'inter']"
       :xaxis="t('stats.freq_mod_pro.xaxis')"
@@ -66,6 +80,19 @@ const chartRef = useTemplateRef<FrequenciesStackChartExposed>('chartRef')
 const { t } = useI18n()
 
 const stats = useStats()
+
+const modalType = computed(() => (stats.freqProModalType === 'simple' ? 'simple' : 'detailed'))
+
+const chartTitle = computed(
+  () =>
+    `${t('stats.freq_mod_pro.title')} (${t(
+      `stats.freq_mod.modal_split.${modalType.value}`,
+    ).toLowerCase()})`,
+)
+
+function onToggleModalType() {
+  stats.freqProModalType = stats.freqProModalType === 'simple' ? 'detailed' : 'simple'
+}
 
 function onTogglePercent() {
   stats.freqModProPercent = !stats.freqModProPercent

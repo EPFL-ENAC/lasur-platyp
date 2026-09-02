@@ -66,6 +66,7 @@ export const useStats = defineStore('stats', () => {
   const motivationModalType = ref('simple')
   const equipmentsModalType = ref('simple')
   const recoProModalType = ref('simple')
+  const freqProModalType = ref('simple')
   const emProModalType = ref('simple')
   const redProModalType = ref('simple')
 
@@ -266,6 +267,7 @@ export const useStats = defineStore('stats', () => {
     motivationModalType,
     equipmentsModalType,
     recoProModalType,
+    freqProModalType,
     emProModalType,
     redProModalType,
     travelTimePercent,

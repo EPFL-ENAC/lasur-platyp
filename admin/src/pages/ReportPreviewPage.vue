@@ -263,11 +263,7 @@ import LeversChangeChart from '@/components/charts/LeversChangeChart.vue'
 import MotivationChangeChart from '@/components/charts/MotivationChangeChart.vue'
 import EquipmentRecommendationMatrixChart from '@/components/charts/EquipmentRecommendationMatrixChart.vue'
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
-import {
-  type StatsState,
-  flushStateFromIndexedDB,
-  getStateFromIndexedDB,
-} from '@/stores/stats'
+import { type StatsState, flushStateFromIndexedDB, getStateFromIndexedDB } from '@/stores/stats'
 import type { Frequencies } from '@/models'
 
 interface Props {
@@ -299,6 +295,7 @@ onMounted(async () => {
   statsStore.motivationModalType = (route.query.motivationModalType as string) || 'simple'
   statsStore.equipmentsModalType = (route.query.equipmentsModalType as string) || 'simple'
   statsStore.recoProModalType = (route.query.recoProModalType as string) || 'simple'
+  statsStore.freqProModalType = (route.query.freqProModalType as string) || 'simple'
   statsStore.emProModalType = (route.query.emProModalType as string) || 'simple'
   statsStore.redProModalType = (route.query.redProModalType as string) || 'simple'
 
