@@ -25,6 +25,8 @@ import {
   modeSortOrder,
   simpleLabelSortOrder,
   computePercentages,
+  MRMT_MODE_MODAL_SPLIT_PERCENT,
+  MRMT_SIMPLE_MODAL_SPLIT_PERCENT,
 } from './commons'
 import {
   buildGroupStackedBarOption,
@@ -62,6 +64,9 @@ interface Props {
   // Fold recommendation values into simple typology labels before charting,
   // for the data the backend only ships in detailed form.
   foldRecoToSimple?: boolean
+  // Add the MRMT modal split of the Geneva canton as a reference bar, next to
+  // the compared groups.
+  referenceModalSplit?: boolean
   frequencies?: Frequencies | Frequencies[] | null
   height?: number
   loading?: boolean
@@ -87,6 +92,10 @@ const frequencies = computed(() => {
 
 const labelColors = computed(() =>
   props.labelType === 'simple' ? SIMPLE_LABELS_COLORS : MODE_COLORS,
+)
+
+const referencePercentages = computed(() =>
+  props.labelType === 'simple' ? MRMT_SIMPLE_MODAL_SPLIT_PERCENT : MRMT_MODE_MODAL_SPLIT_PERCENT,
 )
 
 type EChartsShellExposed = {
@@ -156,6 +165,7 @@ watch(
     locale,
     () => props.labelType,
     () => props.foldRecoToSimple,
+    () => props.referenceModalSplit,
     () => props.title,
   ],
   () => {
@@ -320,12 +330,29 @@ function initComparisonChartOptions() {
 
   comparisonGroupDatasets.value = groupDatasets
 
+  // The MRMT figures are shares of the Geneva canton population: they are read as
+  // one more 100%-stacked bar, next to the compared groups. Kept out of
+  // `comparisonGroupDatasets` so that the commentary only compares actual groups.
+  const chartDatasets: ComparisonGroupDataset[] = props.referenceModalSplit
+    ? [
+        ...groupDatasets,
+        {
+          name: t('stats.reference_data'),
+          items: Object.entries(referencePercentages.value).map(([key, value]) => ({
+            key,
+            name: keyLabel(key),
+            value,
+          })),
+        },
+      ]
+    : groupDatasets
+
   const keyOrder = Array.from(
-    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+    new Set(chartDatasets.flatMap((group) => group.items.map((item) => item.key))),
   ).sort((a, b) => labelSortOrder(a) - labelSortOrder(b))
 
   option.value = buildGroupStackedBarOption({
-    groupDatasets,
+    groupDatasets: chartDatasets,
     colors: labelColors.value,
     percent: true,
     title: chartTitle.value,

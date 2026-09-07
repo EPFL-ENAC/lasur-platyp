@@ -252,6 +252,31 @@ export const MRMT_SIMPLE_MODAL_SPLIT_PERCENT: Record<string, number> = Object.en
   return acc
 }, {})
 
+/** Complex label -> the recommendation value standing for the same mode. */
+const COMPLEX_LABEL_TO_RECO_MODE: Record<string, string> = {
+  walking: 'marche',
+  bike: 'velo',
+  ebike: 'vae',
+  tp: 'tpu',
+  pub: 'tpu',
+  carpool: 'covoit',
+}
+
+/**
+ * The same figures in the mode vocabulary of the recommendation charts, whose
+ * keys are `reco_inter` values: the MRMT modes that a recommendation can be
+ * made of are renamed ('walking' -> 'marche'...), the merged 'tp' bucket maps to
+ * 'tpu', and the modes no recommendation uses (car, motorcycle) keep their own
+ * key, as they still have a label and a color.
+ */
+export const MRMT_MODE_MODAL_SPLIT_PERCENT: Record<string, number> = Object.entries(
+  MRMT_COMPLEX_MODAL_SPLIT_PERCENT,
+).reduce<Record<string, number>>((acc, [label, percent]) => {
+  const mode = COMPLEX_LABEL_TO_RECO_MODE[label] ?? label
+  acc[mode] = Number(((acc[mode] ?? 0) + percent).toFixed(1))
+  return acc
+}, {})
+
 export const COMPLEX_LABELS_IDEAL_ORDER: Record<string, number> = {
   // Fallback order for unknown keys (keep them at the end)
   default: 999,

@@ -39,6 +39,7 @@
       ref="simpleChartRef"
       chartTranslationName="reco_simple"
       label-type="simple"
+      reference-modal-split
       :frequencies="simpleFrequencies"
       :height="height"
       :loading="loading"
@@ -48,6 +49,7 @@
       v-if="stats.recoModalType === 'detailed'"
       ref="detailedChartRef"
       chartTranslationName="reco_inter"
+      reference-modal-split
       :frequencies="detailedFrequencies"
       :height="height"
       :loading="loading"
@@ -83,10 +85,15 @@ const infoText = ref('')
 const stats = useStats()
 
 watch(
-  [() => stats.recoModalType, simpleChartRef, detailedChartRef],
+  [() => stats.recoModalType, () => stats.comparisonMode, simpleChartRef, detailedChartRef],
   () => {
     const active = stats.recoModalType === 'simple' ? simpleChartRef : detailedChartRef
-    infoText.value = active.value?.chartInfoText || ''
+    const childText = active.value?.chartInfoText || ''
+    // The comparison charts carry the MRMT reference bar: cite its source, with
+    // the note the modal split charts already use.
+    infoText.value = stats.comparisonMode
+      ? `${childText}\n\n${t('stats.freq_mod.texts.ref')}`
+      : childText
   },
   { flush: 'post' },
 )
