@@ -56,6 +56,7 @@
           aria-hidden="true"
           class="background-pattern"
         />
+        <div aria-hidden="true" class="background-dots"></div>
       </div>
       <router-view />
     </q-page-container>
@@ -170,5 +171,27 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   rotate: -40deg;
 
   opacity: 0.05;
+}
+
+// Dot grid (Figma "Dot grid"): 3px dots on a 30px pitch, running the full page
+// height and dissolving towards the left and right sides. The grid is one
+// repeating gradient and the fade is a mask -- no image asset needed.
+.background-dots {
+  --dot-color: #{$brand-purple-200};
+  --dot-fade: linear-gradient(90deg, transparent 0%, #000 45%, #000 55%, transparent 100%);
+
+  position: absolute;
+  inset: 0;
+
+  background-image: radial-gradient(circle, var(--dot-color) 1.5px, transparent 1.5px);
+  background-size: 30px 30px;
+  opacity: 0.25;
+
+  mask-image: var(--dot-fade);
+  -webkit-mask-image: var(--dot-fade);
+}
+
+.body--dark .background-dots {
+  --dot-color: #{$brand-purple-100};
 }
 </style>

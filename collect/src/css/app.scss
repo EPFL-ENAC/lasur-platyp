@@ -146,6 +146,11 @@ li + li {
   text-transform: none;
 }
 
+// Icons sit at a fixed 20x20 regardless of the button size.
+.q-btn .q-icon {
+  font-size: 20px;
+}
+
 // 2px inner border, lit at the top and fading out towards the bottom.
 .q-btn:not(.q-btn--flat):not(.q-btn--outline)::after {
   content: '';

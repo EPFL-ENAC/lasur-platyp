@@ -352,7 +352,7 @@ export default {
   },
   resume: 'Continuer le questionnaire',
   start_new: 'Ou recommencer du début',
-  start: 'Démarrer',
+  start: 'Commencer',
   token: 'Identifiant',
   lookup_address_or_select_on_map: 'Rechercher une adresse ou sélectionner sur la carte',
   type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",

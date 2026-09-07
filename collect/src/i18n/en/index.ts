@@ -336,7 +336,7 @@ export default {
   },
   resume: 'Resume',
   start_new: 'Or start a new survey',
-  start: 'Start',
+  start: 'Get started',
   token: 'Token',
   lookup_address_or_select_on_map: 'Lookup address or select on map',
   type_enter_to_lookup_address: 'Type address, then press Enter to lookup',
