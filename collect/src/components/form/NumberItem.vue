@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div :class="labelClass">{{ label }}</div>
-    <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
+    <div v-if="label" :class="labelClass">{{ label }}</div>
+    <div v-if="hint" class="question-hint q-mb-md">{{ hint }}</div>
 
     <div class="row items-center">
       <q-btn
@@ -50,8 +50,8 @@
       />
     </div>
 
-    <div v-if="unitHint" class="q-mt-md">
-      <span class="text-h5">{{ props.unitHint }}</span>
+    <div v-if="unitHint" class="q-mt-sm">
+      <span class="text-caption">{{ props.unitHint }}</span>
     </div>
   </div>
 </template>
@@ -127,7 +127,6 @@ const labelClass = computed(() => props.labelClass || 'question-label')
 .number-input :deep(.q-field__control) {
   height: 40px;
   min-height: 40px;
-  border-radius: $button-border-radius;
 
   &::before {
     border: 1px solid var(--secondary-border-color);
@@ -146,5 +145,24 @@ const labelClass = computed(() => props.labelClass || 'question-label')
 
 .number-input :deep(input[type='number']) {
   -moz-appearance: textfield;
+}
+
+// 40px is comfortable with a pointer but tight under a thumb, so the stepper
+// and the field it frames grow on a phone.
+@media (max-width: 599px) {
+  .number-item__step {
+    width: 56px;
+    min-width: 56px;
+    height: 56px;
+  }
+
+  .number-item__step :deep(.q-icon) {
+    font-size: 24px;
+  }
+
+  .number-input :deep(.q-field__control) {
+    height: 56px;
+    min-height: 56px;
+  }
 }
 </style>

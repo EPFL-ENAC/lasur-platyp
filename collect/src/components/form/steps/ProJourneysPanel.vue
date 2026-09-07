@@ -3,12 +3,12 @@
     <div class="text-bold q-mb-md question-label">
       {{ t('form.intermodality_pro') }}
     </div>
-    <div class="text-h6 q-mb-md">{{ t('form.intermodality_pro_hint') }}</div>
+    <div class="question-hint q-mb-md">{{ t('form.intermodality_pro_hint') }}</div>
     <template v-for="(journey, idx) in journeys" :key="idx">
       <q-card flat class="q-mb-md">
         <q-card-section>
           <q-toolbar>
-            <div class="on-left text-h6 q-pt-xs">{{ t('form.journey_pro.hint') }}</div>
+            <div class="on-left question-hint q-pt-xs">{{ t('form.journey_pro.hint') }}</div>
             <q-space />
             <q-btn
               round

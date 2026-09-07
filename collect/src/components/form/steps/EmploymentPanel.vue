@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content-stack step-content">
     <ContentCard>
       <NumberItem
         :label="t('form.employment_rate')"

@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="text-bold q-mb-md" :class="labelClass || 'question-label'">{{ label }}</div>
-    <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
-    <div class="q-mt-lg">
+    <div v-if="hint" class="question-hint q-mb-md">{{ hint }}</div>
+    <div>
       <div
         v-if="selectedOption && options.length === 1 && selectModel === options[0]?.value"
-        class="q-mb-md bg-primary text-white rounded-borders q-px-md q-py-sm"
+        class="select-item__single"
       >
         <div :class="optionLabelClass">{{ selectedOption.label }}</div>
-        <div class="text-subtitle1">{{ selectedOption.hint }}</div>
+        <div v-if="selectedOption.hint" class="question-hint">{{ selectedOption.hint }}</div>
       </div>
       <q-select
         v-else
@@ -22,7 +22,7 @@
         outlined
         color="field"
         bg-color="field"
-        input-class="text-h6"
+        input-class="question-label"
         :placeholder="!selectModel ? t('form.search_or_select_option') : ''"
         @filter="filterFn"
         @blur="onBlur"
@@ -32,7 +32,7 @@
           <template v-for="option in options" :key="option.value">
             <div v-if="isSelected(option) && !filtering">
               <div :class="optionLabelClass">{{ option.label }}</div>
-              <div v-if="option.hint" class="text-subtitle1">{{ option.hint }}</div>
+              <div v-if="option.hint" class="question-hint">{{ option.hint }}</div>
             </div>
           </template>
         </template>
@@ -43,7 +43,7 @@
             </q-item-section>
             <q-item-section>
               <q-item-label :class="optionLabelClass">{{ scope.opt.label }}</q-item-label>
-              <q-item-label class="text-subtitle1">{{ scope.opt.hint }}</q-item-label>
+              <q-item-label class="question-hint">{{ scope.opt.hint }}</q-item-label>
             </q-item-section>
           </q-item>
         </template>
@@ -119,3 +119,15 @@ function onBlur() {
   filter.value = ''
 }
 </script>
+
+<style scoped lang="scss">
+// With a single option there is nothing to choose, so it reads as a filled
+// field rather than a highlighted selection: same border, radius and surface as
+// the select it replaces.
+.select-item__single {
+  padding: 12px 16px;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: $button-border-radius;
+  background: var(--card-bg);
+}
+</style>

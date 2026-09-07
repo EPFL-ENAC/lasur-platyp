@@ -68,6 +68,10 @@ body {
   --super-muted-color: #{$brand-purple-100};
   --hint-color: #{$brand-purple-400};
   --primary-muted-color: #{$brand-yellow-200};
+  --card-bg: #{'white'};
+  --success-color: #168654;
+  --success-bg: #f5fbf9;
+  --success-border: #cedfd7;
 }
 
 body.body--dark {
@@ -77,13 +81,14 @@ body.body--dark {
   --title-color: #{$brand-yellow-500};
   --field-color: #{$brand-yellow-50};
   --field-label-color: #{$brand-yellow-50};
-  --field-bg: #{$brand-purple-600};
+  --field-bg: #{$brand-purple-700};
   --secondary-border-color: #{$brand-purple-300};
   --muted-color: #{$brand-purple-300};
   --half-muted-color: #{$brand-purple-200};
   --super-muted-color: #{$brand-purple-400};
   --hint-color: #{$brand-purple-200};
   --primary-muted-color: #{$brand-yellow-300};
+  --card-bg: #{$brand-purple-800};
 }
 
 // Global Class Definitions
@@ -153,6 +158,7 @@ body.body--dark {
 .q-card {
   border-radius: 1rem !important;
   border: 1px solid var(--secondary-border-color) !important;
+  background: var(--card-bg) !important;
   transition: border-color 0.2s ease;
 }
 
@@ -171,6 +177,11 @@ body.body--dark {
 // anyway, so only the unchecked state needs thinning down from Quasar's 2px.
 .q-checkbox__inner--falsy .q-checkbox__bg {
   border-width: 1px;
+}
+
+// Fields share the design system corner rather than Quasar's pill.
+.q-field--outlined .q-field__control {
+  border-radius: $button-border-radius;
 }
 
 .q-field--outlined:has(.text-field) .q-field__control::before {
@@ -203,10 +214,33 @@ body.body--dark {
   border-radius: 1rem !important;
 }
 
+// Tabs are selectable cards, like the choice options: each is its own bordered
+// surface and the active one takes the brand border. No strip wrapping them,
+// and no underline -- the border carries the state.
 .q-tabs {
-  border-radius: 0.5rem !important;
-  border: 1px solid var(--secondary-border-color) !important;
-  color: $brand-purple-300 !important;
+  margin: 0 0 32px;
+  color: var(--muted-color) !important;
+}
+
+.q-tabs .q-tabs__content {
+  gap: 12px;
+}
+
+.q-tabs .q-tab {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: $button-border-radius;
+  background: var(--card-bg);
+  transition: border-color 0.2s ease;
+}
+
+.q-tabs .q-tab--active {
+  border-color: $primary;
+}
+
+.q-tabs .q-tab__indicator {
+  display: none;
 }
 
 .text-hint {

@@ -13,7 +13,6 @@
           class="q-mb-lg text-h6"
           color="field"
           outlined
-          rounded
         />
       </q-card-section>
     </q-card>

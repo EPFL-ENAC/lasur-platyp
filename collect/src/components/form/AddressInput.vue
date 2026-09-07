@@ -1,6 +1,6 @@
 <template>
-  <div class="q-mt-lg">
-    <div class="text-subtitle1">
+  <div>
+    <div class="question-label text-bold q-mb-md">
       {{ t('lookup_address_or_select_on_map') }}
     </div>
 
@@ -12,7 +12,6 @@
         color="field"
         bg-color="field"
         outlined
-        rounded
         dense
         :placeholder="t('type_enter_to_lookup_address')"
         :loading="loading"

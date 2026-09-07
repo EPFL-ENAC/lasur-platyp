@@ -1,84 +1,95 @@
 <template>
-  <div>
-    <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'question-label'">{{ label }}</div>
-    <div v-if="hint" class="text-h6 q-mb-sm">{{ hint }}</div>
-    <div class="q-mt-md">
-      <PlaceItem
-        :map-id="mapId"
-        label-class="text-h6"
-        v-model="location"
-        :zoom="8"
-        class="q-mb-xl"
-      />
+  <!-- One rhythm for the whole card: the sections are laid out with a single
+  gap rather than each carrying its own margin, so a section that is not shown
+  -- the company vehicle question, until a vehicle mode is picked -- leaves no
+  gap of its own behind. -->
+  <div class="journey-item">
+    <div v-if="label || hint">
+      <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'question-label'">
+        {{ label }}
+      </div>
+      <div v-if="hint" class="question-hint">{{ hint }}</div>
     </div>
-    <div class="row justify-center q-mt-lg" style="max-width: 500px; margin: auto">
-      <template v-for="option in modeOptions" :key="option.value">
-        <q-btn
-          :title="option.label"
-          :color="journey.mode === option.value ? 'accent' : 'secondary'"
-          size="xl"
-          class="on-right on-left q-mb-md"
-          @click="onSelect(option)"
-        >
-          <q-img
-            v-if="option.icon?.endsWith('.svg')"
-            :src="option.icon"
-            style="width: 45px; height: 45px"
-            no-spinner
-            no-transition
-            class="icon-white"
-          />
-          <q-icon v-else :name="option.icon" color="white" size="lg" />
-        </q-btn>
-      </template>
-    </div>
-    <div v-if="canBeCompanyVehicle">
-      <ToggleItem
-        :label="t('form.journey_pro.is_company_vehicle.label')"
-        label-class="text-h5"
-        :true-label="t('form.journey_pro.is_company_vehicle.option.company_vehicle')"
-        :false-label="t('form.journey_pro.is_company_vehicle.option.private_vehicle')"
-        v-model="journey.is_company_vehicle"
-        class="q-mt-xl q-mb-xl"
-        color="accent"
-      />
-    </div>
-    <div v-if="journey.mode">
-      <ToggleItem
-        :label="t('form.journey_pro.has_to_carry_heavy_equipment')"
-        label-class="text-h5"
-        :true-label="t('form.yes')"
-        :false-label="t('form.no')"
-        v-model="hasHeavyEquipment"
-        class="q-mb-lg"
-        color="accent"
-      />
-    </div>
-    <div class="row justify-center q-mt-lg">
-      <NumberItem
-        v-model="journey.days"
-        :min="1"
-        :max="daysPerMax"
-        :step="1"
-        :step2="10"
-        label-class="text-subtitle1 text-center"
-        class="q-pa-md"
-      />
+    <PlaceItem :map-id="mapId" label-class="text-h6" v-model="location" :zoom="8" />
+    <div class="mode-picker">
       <q-btn
-        :label="daysPerLabel"
-        :icon="daysPerIcon"
-        @click="onToggleDaysPer"
-        :color="$q.dark.isActive ? 'primary' : 'secondary'"
+        v-for="option in modeOptions"
+        :key="option.value"
         flat
-        no-caps
-        size="lg"
-      />
+        :title="option.label"
+        :aria-label="option.label"
+        :aria-pressed="journey.mode === option.value"
+        class="picker-option mode-picker__option"
+        :class="{ 'picker-option--selected': journey.mode === option.value }"
+        @click="onSelect(option)"
+      >
+        <q-img
+          v-if="option.icon?.endsWith('.svg')"
+          :src="option.icon"
+          class="picker-option__svg"
+          no-spinner
+          no-transition
+        />
+        <q-icon v-else :name="option.icon" />
+      </q-btn>
+    </div>
+    <ToggleItem
+      v-if="canBeCompanyVehicle"
+      :label="t('form.journey_pro.is_company_vehicle.label')"
+      label-class="question-label text-bold"
+      :true-label="t('form.journey_pro.is_company_vehicle.option.company_vehicle')"
+      :false-label="t('form.journey_pro.is_company_vehicle.option.private_vehicle')"
+      v-model="journey.is_company_vehicle"
+      color="accent"
+    />
+    <ToggleItem
+      v-if="journey.mode"
+      :label="t('form.journey_pro.has_to_carry_heavy_equipment')"
+      label-class="question-label text-bold"
+      :true-label="t('form.yes')"
+      :false-label="t('form.no')"
+      v-model="hasHeavyEquipment"
+      color="accent"
+    />
+    <div class="journey-frequency">
+      <div class="text-bold q-mb-md question-label">
+        {{ t('form.journey_pro.frequency.label') }}
+      </div>
+      <div class="journey-frequency__controls">
+        <NumberItem
+          class="journey-frequency__count"
+          v-model="journey.days"
+          :min="1"
+          :max="daysPerMax"
+          :step="1"
+          :unit="t('form.journey_pro.frequency.days')"
+        />
+        <div class="journey-frequency__per text-hint">
+          {{ t('form.journey_pro.frequency.per') }}
+        </div>
+        <div
+          class="journey-frequency__periods"
+          role="group"
+          :aria-label="t('form.journey_pro.frequency.label')"
+        >
+          <q-btn
+            v-for="option in daysPerOptions"
+            :key="option.value"
+            flat
+            no-caps
+            :label="option.label"
+            :aria-pressed="journey.days_per === option.value"
+            class="picker-option journey-frequency__period"
+            :class="{ 'picker-option--selected': journey.days_per === option.value }"
+            @click="onSelectDaysPer(option.value)"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar'
 import PlaceItem from '@/components/form/PlaceItem.vue'
 import NumberItem from '@/components/form/NumberItem.vue'
 import ToggleItem from '@/components/form/ToggleItem.vue'
@@ -100,7 +111,6 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 const { t } = useI18n()
-const $q = useQuasar()
 
 const journey = computed({
   get: () => props.modelValue,
@@ -130,31 +140,14 @@ const modeOptions = computed<Option[]>(() =>
   ].filter((opt) => props.modes.includes(opt.value)),
 )
 
-const daysPerLabel = computed(() => {
-  switch (journey.value.days_per) {
-    case 'week':
-      return t('form.journey_pro.days_per_week')
-    case 'month':
-      return t('form.journey_pro.days_per_month')
-    case 'year':
-      return t('form.journey_pro.days_per_year')
-    default:
-      return ''
-  }
-})
-
-const daysPerIcon = computed(() => {
-  switch (journey.value.days_per) {
-    case 'week':
-      return 'calendar_view_week'
-    case 'month':
-      return 'calendar_view_month'
-    case 'year':
-      return 'calendar_month'
-    default:
-      return ''
-  }
-})
+// The three periods are laid out as a segmented control rather than cycled
+// through by a single button: all the options stay visible, and the current one
+// is readable without clicking.
+const daysPerOptions = computed<{ value: ProJourney['days_per']; label: string }[]>(() => [
+  { value: 'week', label: t('form.journey_pro.frequency.week') },
+  { value: 'month', label: t('form.journey_pro.frequency.month') },
+  { value: 'year', label: t('form.journey_pro.frequency.year') },
+])
 
 const daysPerMax = computed(() => {
   switch (journey.value.days_per) {
@@ -194,21 +187,144 @@ function onSelect(option: Option | undefined) {
   }
 }
 
-function onToggleDaysPer() {
-  journey.value.days_per =
-    journey.value.days_per === 'week'
-      ? 'month'
-      : journey.value.days_per === 'month'
-        ? 'year'
-        : 'week'
+function onSelectDaysPer(value: ProJourney['days_per']) {
+  journey.value.days_per = value
+  // A count entered against a longer period can overflow a shorter one.
   if (journey.value.days > daysPerMax.value) {
     journey.value.days = daysPerMax.value
   }
 }
 </script>
 
-<style lang="scss">
-.icon-white {
+<style scoped lang="scss">
+.journey-item {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+// Both pickers in this card -- the mode and the period -- wear the header
+// control skin: hairline border, radius-default corner and the small
+// skeuomorphic shadow. `flat` keeps them clear of the global button skin, so
+// everything they need is declared here.
+.q-btn.picker-option {
+  height: 48px;
+  min-height: 48px;
+  padding: 10px 14px !important;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: 8px;
+  background-color: var(--card-bg) !important;
+  color: $brand-purple-800;
+  box-shadow:
+    0 1px 2px 0 rgba(10, 13, 18, 0.05),
+    inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
+}
+
+.body--dark .q-btn.picker-option {
+  color: $brand-purple-50;
+}
+
+.q-btn.picker-option :deep(.q-icon) {
+  font-size: 20px;
+  color: var(--half-muted-color);
+}
+
+// The picked option takes the brand surface, the way a selected option does
+// everywhere else in the form.
+.q-btn.picker-option--selected,
+.body--dark .q-btn.picker-option--selected {
+  border-color: $primary;
+  background-color: $brand-yellow-400 !important;
+  color: $brand-yellow-800;
+}
+
+.q-btn.picker-option--selected :deep(.q-icon) {
+  color: $brand-yellow-800;
+}
+
+.picker-option__svg {
+  width: 20px;
+  height: 20px;
+}
+
+// The source file is a dark grey glyph, which needs flipping only where it sits
+// on a dark surface -- so not on the yellow of the selected mode.
+.body--dark .picker-option:not(.picker-option--selected) .picker-option__svg {
   filter: invert(100%);
+}
+
+// A square cell for the icon-only mode options, wrapping left to right so a
+// long list reads as one block instead of a centred row that re-centres on
+// every wrap.
+.mode-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+// Squarer and larger than the header controls they borrow their skin from:
+// these are the choice being made on this card, not a utility in a toolbar.
+.q-btn.mode-picker__option {
+  width: 64px;
+  min-width: 64px;
+  height: 64px;
+  min-height: 64px;
+  padding: 10px !important;
+}
+
+.q-btn.mode-picker__option :deep(.q-icon) {
+  font-size: 28px;
+}
+
+.mode-picker__option .picker-option__svg {
+  width: 28px;
+  height: 28px;
+}
+
+// Count and period read as one sentence -- "12 days per year" -- so they sit on
+// a single line when there is room for it.
+.journey-frequency__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.journey-frequency__periods {
+  display: flex;
+  gap: 8px;
+}
+
+// The period sits beside the count, so it takes the height of the number field
+// rather than the 48px of the mode cells.
+.q-btn.journey-frequency__period {
+  height: 40px;
+  min-height: 40px;
+}
+
+// Below `sm` the sentence breaks into stacked lines and the periods spread over
+// the full width, which keeps each of them a comfortable tap target.
+@media (max-width: 599px) {
+  .journey-frequency__controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .journey-frequency__count :deep(.row) {
+    justify-content: center;
+  }
+
+  .journey-frequency__per {
+    text-align: center;
+  }
+
+  .journey-frequency__periods .q-btn.journey-frequency__period {
+    flex: 1 1 0;
+    height: 56px;
+    min-height: 56px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 }
 </style>

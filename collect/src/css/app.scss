@@ -142,6 +142,46 @@ li + li {
   line-height: 1.5rem;
 }
 
+// A grid of rating boxes. Cells stretch to the tallest label in their row, and
+// carrying that height down through the card lets RatingItem push its stars to
+// the bottom edge, so they stay level however the labels wrap.
+.rating-grid .content-card,
+.rating-grid .q-card__section,
+.rating-grid .rating-item {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.rating-grid .content-card {
+  height: 100%;
+}
+
+// Vertical stack of content cards. Quasar's `q-gutter-y-*` would do this with a
+// negative top margin on the container, which eats whatever sits above it.
+.content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// A step reads as a header block -- title plus its supporting line -- and then
+// the content, which starts here.
+.step-content {
+  margin-top: 40px;
+}
+
+// Supporting copy under a label or a step title.
+.question-hint {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+// Flips a dark glyph SVG to white, for icons placed on a coloured surface.
+.icon-white {
+  filter: invert(100%);
+}
+
 // Design system buttons
 // Geometry and elevation come from the Quasar button variables; what is left
 // here is the brand surface (#F3C65F), its 2px border fading from white 12% to

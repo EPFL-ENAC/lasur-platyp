@@ -7,16 +7,7 @@
 </template>
 
 <script setup lang="ts">
-// Surface for one block of survey content. It owns the gap to the next block so
-// panels only have to list what they contain, not space it.
+// Surface for one block of survey content. Spacing between cards belongs to
+// whatever lays them out -- a stack gutter or a grid gutter -- so the same card
+// works in both.
 </script>
-
-<style scoped lang="scss">
-.content-card {
-  margin-bottom: 24px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-</style>

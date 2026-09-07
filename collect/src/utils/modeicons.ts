@@ -25,3 +25,35 @@ export const modeIcons: Record<string, ModeIcon> = {
 export function getModeIcon(mode: string): ModeIcon | undefined {
   return modeIcons[mode]
 }
+
+/**
+ * Recommendation codes are their own vocabulary, separate from the mode codes
+ * above, so they need their own lookup rather than reusing `modeIcons`.
+ */
+export const recoIcons: Record<string, string> = {
+  covoit: 'groups',
+  elec: 'electric_car',
+  elec_moto: 'electric_moped',
+  elec_truck: 'local_shipping',
+  inter: 'alt_route',
+  inter_ma_tp: 'alt_route',
+  inter_tim_tp: 'alt_route',
+  marche: 'directions_walk',
+  walking: 'directions_walk',
+  tpu: 'directions_bus',
+  pub: 'directions_bus',
+  train: 'directions_railway',
+  vae: 'electric_bike',
+  velo: 'pedal_bike',
+  bike: 'pedal_bike',
+  cargo: 'directions_bike',
+  boat: 'directions_boat',
+  avoid: 'videocam',
+}
+
+/**
+ * Get the icon for a given recommendation code, falling back to a generic one.
+ */
+export function getRecoIcon(reco: string): string {
+  return recoIcons[reco] ?? 'commute'
+}

@@ -2,11 +2,11 @@
   <div>
     <q-card flat>
       <q-card-section>
-        <SectionItem />
         <q-tabs
+          v-if="journeys.length > 1"
           v-model="activeTab"
           dense
-          class="text-grey q-mt-md"
+          no-caps
           active-color="primary"
           indicator-color="primary"
           align="left"
@@ -31,12 +31,21 @@
             </div>
           </q-tab>
         </q-tabs>
+
+        <!-- Sits with the journey it describes: under the tabs, above the mode. -->
+        <BravoBanner
+          v-if="activeBravo > 0 && activeReco"
+          :bravo="activeBravo"
+          :reco="activeReco"
+          :benefits-expanded="!!benefitsExpanded"
+          class="q-mb-lg"
+        />
         <q-tab-panels v-model="activeTab" animated class="bg-transparent">
           <q-tab-panel
             v-for="(_, idx) in journeys"
             :key="idx"
             :name="String(idx)"
-            class="full-height q-px-none"
+            class="full-height q-pa-none"
           >
             <template v-if="recoInter[idx] !== undefined">
               <RecommendationItem
@@ -58,33 +67,37 @@
           </q-tab-panel>
         </q-tab-panels>
       </q-card-section>
-
-      <q-card-section v-if="hasActions" class="q-pt-none employer-measures-section">
-        <h6 class="employer-measures-header">{{ t('form.employer_measures_header') }}</h6>
-        <p class="employer-measures-description">
-          {{ t('form.employer_measures_description', { organisation: companyName }) }}
-        </p>
-
-        <div v-if="currentModeActions.length" class="actions-row">
-          <div v-for="action in currentModeActions" :key="action" class="action-chip">
-            {{ getActionLabel(action) }}
-          </div>
-        </div>
-
-        <div v-if="globalActions.length" class="actions-row">
-          <div v-for="action in globalActions" :key="action" class="action-chip">
-            {{ getActionLabel(action) }}
-          </div>
-        </div>
-      </q-card-section>
     </q-card>
+
+    <!-- Its own block on the page rather than a footer inside the journey card. -->
+    <section v-if="measureActions.length" class="employer-measures">
+      <div class="employer-measures__eyebrow question-hint">
+        {{ t('form.employer_measures_eyebrow') }}
+      </div>
+      <h3 class="employer-measures__header">{{ t('form.employer_measures_header') }}</h3>
+      <p class="employer-measures__description question-hint">
+        {{ t('form.employer_measures_description', { organisation: companyName }) }}
+      </p>
+
+      <div class="row q-col-gutter-md">
+        <div v-for="action in measureActions" :key="action" class="col-12 col-md-6">
+          <ContentCard>
+            <div class="row items-start no-wrap">
+              <q-icon name="redeem" size="sm" class="employer-measures__icon q-mr-md" />
+              <div class="question-label text-bold">{{ getActionLabel(action) }}</div>
+            </div>
+          </ContentCard>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import SectionItem from '@/components/form/SectionItem.vue'
+import ContentCard from '@/components/form/ContentCard.vue'
 import IsochronesMap from '@/components/form/IsochronesMap.vue'
 import RecommendationItem from './RecommendationItem.vue'
+import BravoBanner from './BravoBanner.vue'
 import type { Journey } from '@/models'
 import { getModeIcon } from '@/utils/modeicons'
 
@@ -109,6 +122,11 @@ const props = defineProps<{
 
 const activeTab = ref(String(props.journeys.length > 0 ? 0 : -1))
 
+// The banner sits above the card, so it follows whichever journey is on show.
+const activeIndex = computed(() => parseInt(activeTab.value))
+const activeBravo = computed(() => props.bravo[activeIndex.value] ?? 0)
+const activeReco = computed(() => props.recoInter[activeIndex.value] ?? '')
+
 const currentModeActions = computed(() => {
   const idx = parseInt(activeTab.value)
   if (isNaN(idx)) return []
@@ -117,7 +135,9 @@ const currentModeActions = computed(() => {
   return []
 })
 
-const hasActions = computed(() => currentModeActions.value.length || props.globalActions.length)
+// One list for the grid: the measures tied to the selected journey, then the
+// ones the employer offers regardless of mode.
+const measureActions = computed(() => [...currentModeActions.value, ...props.globalActions])
 
 function showIsochrones(reco: string) {
   return ['marche', 'velo', 'vae', 'cargo', 'train', 'tpu'].includes(reco)
@@ -132,29 +152,31 @@ function zoomIsochrones(reco: string) {
 .icon-primary {
   filter: invert(52%) sepia(88%) saturate(138%) hue-rotate(3deg) brightness(95%) contrast(246%);
 }
-.employer-measures-header {
-  color: $brand-yellow-600;
-  font-size: 18px;
-  font-weight: 400;
-  margin: 8px 0 8px;
+.employer-measures {
+  margin-top: 48px;
 }
-.employer-measures-description {
-  margin: 0 0 12px;
-  font-size: 0.95rem;
-  color: #4a4a4a;
+
+.employer-measures__eyebrow {
+  margin-bottom: 4px;
+  color: var(--hint-color);
 }
-.actions-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
+
+.employer-measures__header {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
 }
-.action-chip {
-  background-color: $brand-yellow-50;
-  border: 1px solid #ccc;
-  border-radius: 9999px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  white-space: nowrap;
+
+.employer-measures__description {
+  margin: 0 0 24px;
+}
+
+// Icon sits in the same bordered square as the rest of the design system.
+.employer-measures__icon {
+  flex-shrink: 0;
+  padding: 8px;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: $button-border-radius;
 }
 </style>

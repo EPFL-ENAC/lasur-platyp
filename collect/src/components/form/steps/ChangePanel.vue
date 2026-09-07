@@ -1,33 +1,28 @@
 <template>
   <div>
-    <SectionItem :label="t('form.change')" label-class="question-label" class="q-mb-md" />
-
-    <q-card class="bg-primary-muted q-mb-xl">
-      <q-card-section class="q-pa-sm">
-        <div class="text-h5 text-secondary text-center">
-          {{ t(`reco.${recoInter}`) }}
-        </div>
-      </q-card-section>
-    </q-card>
+    <!-- The mode this step is about, called out above the questions. -->
+    <div class="change-mode q-mb-xl">
+      <q-icon :name="getRecoIcon(recoInter)" size="sm" class="change-mode__icon q-mr-sm" />
+      <span class="question-label">{{ t(`reco.${recoInter}`) }}</span>
+    </div>
 
     <div v-if="change">
-      <RatingItem
-        v-if="isRecoChange"
-        :label="t('form.change_motivation')"
-        :hint="t('form.change_motivation_hint')"
-        v-model="change.motivation"
-        :max="5"
-        label-class="question-label text-bold q-mb-md"
-        class="q-mb-lg"
-        @update:model-value="onSave"
-      />
+      <ContentCard v-if="isRecoChange" class="q-mb-xl">
+        <RatingItem
+          :label="t('form.change_motivation')"
+          :hint="t('form.change_motivation_hint')"
+          v-model="change.motivation"
+          :max="5"
+          label-class="question-label text-bold q-mb-md"
+          @update:model-value="onSave"
+        />
+      </ContentCard>
       <ChoiceItem
         :label="t('form.change_levers')"
         :options="changeOptions"
         v-model="change.levers"
         multiple
         label-class="question-label text-bold q-mb-md"
-        option-label-class="text-h5"
         @update:model-value="onSave"
       />
       <q-input
@@ -35,11 +30,10 @@
         v-model="change.other_levers"
         :label="t('form.change_other_levers_specify')"
         type="textarea"
-        class="q-mb-lg text-h6"
+        class="q-mb-lg"
         color="filled"
         bg-color="filled"
         outlined
-        rounded
         debounce="500"
         @update:model-value="onSave"
       />
@@ -48,9 +42,10 @@
 </template>
 
 <script setup lang="ts">
-import SectionItem from '@/components/form/SectionItem.vue'
 import RatingItem from '@/components/form/RatingItem.vue'
 import ChoiceItem from '@/components/form/ChoiceItem.vue'
+import ContentCard from '@/components/form/ContentCard.vue'
+import { getRecoIcon } from '@/utils/modeicons'
 
 const { t } = useI18n()
 const survey = useSurvey()
@@ -146,3 +141,19 @@ function onSave() {
   emit('update:modelValue')
 }
 </script>
+
+<style scoped lang="scss">
+// A compact bar rather than a card: it labels the step, it is not content.
+.change-mode {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: $button-border-radius;
+  background: var(--card-bg);
+}
+
+.change-mode__icon {
+  color: $primary;
+}
+</style>

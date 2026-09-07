@@ -1,17 +1,16 @@
 <template>
-  <div>
+  <ContentCard class="step-content">
     <LocationItem
       map-id="origin-map"
-      :label="t('form.origin')"
       :hint="t('form.origin_hint')"
       v-model="survey.record.data.origin"
-      class="q-mt-xl"
     />
-  </div>
+  </ContentCard>
 </template>
 
 <script setup lang="ts">
 import LocationItem from '@/components/form/LocationItem.vue'
+import ContentCard from '@/components/form/ContentCard.vue'
 
 const { t } = useI18n()
 const survey = useSurvey()

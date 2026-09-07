@@ -1,12 +1,13 @@
 <template>
   <div>
     <QuestionText
-      :label="label ?? ''"
+      v-if="label"
+      :label="label"
       :containerClass="`text-bold q-mb-md ${labelClass || 'question-label'}`"
     />
-    <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
-    <div v-if="multiple" class="text-h6 text-italic">{{ t('form.multiple_options') }}</div>
-    <div class="q-mt-lg">
+    <div v-if="hint" class="question-hint q-mb-md">{{ hint }}</div>
+    <div v-if="multiple" class="question-hint">{{ t('form.multiple_options') }}</div>
+    <div class="step-content">
       <div :class="col ? 'row q-col-gutter-md' : ''">
         <template v-for="(group, idx) in optionGroups" :key="idx">
           <div :class="col ? `col-${12 / col}` : ''">
@@ -14,23 +15,34 @@
               <template v-for="option in group" :key="option.value">
                 <q-item
                   :active="isSelected(option)"
-                  active-class="bg-primary text-secondary"
+                  active-class="choice-option--selected"
                   v-ripple
                   clickable
-                  class="rounded-borders q-mb-md"
+                  class="choice-option q-mb-md"
                   @click="onOption(option)"
                 >
                   <q-item-section avatar>
-                    <q-icon
-                      :name="iconSet[isSelected(option) ? 1 : 0]"
-                      :color="isSelected(option) ? 'secondary' : 'primary'"
+                    <q-checkbox
+                      v-if="multiple"
+                      :model-value="isSelected(option)"
+                      size="md"
+                      color="primary"
+                      class="choice-option__control"
+                    />
+                    <q-radio
+                      v-else
+                      :model-value="isSelected(option)"
+                      :val="true"
+                      size="md"
+                      color="primary"
+                      class="choice-option__control"
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label class="text-h4" :class="optionLabelClass">{{
+                    <q-item-label class="question-label" :class="optionLabelClass">{{
                       option.label
                     }}</q-item-label>
-                    <q-item-label v-if="option.hint" class="">
+                    <q-item-label v-if="option.hint" class="text-caption">
                       {{ option.hint }}
                     </q-item-label>
                   </q-item-section>
@@ -64,13 +76,6 @@ const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 
 const { t } = useI18n()
-
-const iconSet = computed(() => {
-  if (props.multiple) {
-    return ['check_box_outline_blank', 'check_box']
-  }
-  return ['radio_button_unchecked', 'radio_button_checked']
-})
 
 const selected = computed(() => {
   if (props.multiple) {
@@ -135,10 +140,27 @@ function onOption(option: Option) {
 }
 </script>
 
-<style scoped>
-.q-item {
-  background: var(--field-bg);
-  color: var(--foreground-color);
+<style scoped lang="scss">
+// Options wear the same skin as the agreement cards: a bordered surface that
+// turns yellow once picked, with a real checkbox or radio rather than an icon.
+.choice-option {
+  padding: 16px 24px;
+  border-radius: $button-border-radius;
   border: 1px solid var(--secondary-border-color);
+  background: var(--card-bg);
+  transition: border-color 0.2s ease;
+}
+
+// Quasar tints any active item with the primary colour; only the border should
+// change on selection, so the label keeps the same colour as every other row.
+.choice-option--selected {
+  border-color: $primary;
+  color: inherit;
+}
+
+// The row itself handles the click, so the control is display only and must not
+// swallow the event and toggle the option a second time.
+.choice-option__control {
+  pointer-events: none;
 }
 </style>
