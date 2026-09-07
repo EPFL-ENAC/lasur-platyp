@@ -2,26 +2,23 @@
   <div>
     <QuestionText v-if="label" :label="label" :class="`${labelClass}`" />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
-    <div class="row justify-center q-mt-lg">
-      <span
-        class="text-h5 q-mr-lg cursor-pointer"
-        :class="selected ? 'text-muted' : 'text-foreground'"
-        @click="selected = false"
-        >{{ leftLabel }}</span
-      >
-      <q-toggle
+    <div class="row items-center q-gutter-lg q-mt-lg">
+      <q-radio
         v-model="selected"
+        :val="true"
+        :label="trueLabel"
         :color="props.color ?? 'primary'"
-        :toggle-indeterminate="required !== true"
-        dense
-        size="80px"
+        size="sm"
+        class="text-subtitle1"
       />
-      <span
-        class="text-h5 q-ml-lg cursor-pointer"
-        :class="selected ? 'text-foreground' : 'text-muted'"
-        @click="selected = true"
-        >{{ rightLabel }}</span
-      >
+      <q-radio
+        v-model="selected"
+        :val="false"
+        :label="falseLabel"
+        :color="props.color ?? 'primary'"
+        size="sm"
+        class="text-subtitle1"
+      />
     </div>
   </div>
 </template>
@@ -33,10 +30,9 @@ interface Props {
   modelValue: boolean | undefined
   label?: string
   labelClass?: string
-  leftLabel?: string
-  rightLabel?: string
+  trueLabel?: string
+  falseLabel?: string
   hint?: string
-  required?: boolean
   color?: string
 }
 
@@ -48,5 +44,5 @@ const selected = computed({
   set: (val: boolean) => emit('update:modelValue', val),
 })
 
-const labelClass = computed(() => props.labelClass || 'text-h4')
+const labelClass = computed(() => props.labelClass || 'question-label')
 </script>

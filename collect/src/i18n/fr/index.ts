@@ -3,6 +3,28 @@ export default {
     brand: 'Mobilyse',
   },
   form: {
+    // Title shown at the top of each survey step, keyed by step name.
+    step_title: {
+      agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
+      employment: "Vos habitudes de travail",
+      workplace: "Votre lieu de travail",
+      origin_places: "Votre point de départ",
+      travel_time: "Votre trajet",
+      constraints: "Vos contraintes",
+      equipments: "Vos équipements",
+      intermodality: "Votre trajet domicile-travail",
+      travel_pro: "Déplacements professionnels",
+      freq_mod_pro: "Vos déplacements professionnels",
+      importance: "Ce qui compte pour vous",
+      needs: "Vos besoins de mobilité",
+      age_class: "À propos de vous",
+      recommendations: "Vos recommandations",
+      recommendations_pro: "Recommandations professionnelles",
+      change: "Changer vos habitudes",
+      email: "Rester en contact",
+      comments: "Vos remarques",
+      final: "Merci",
+    },
     error: {
       terms_conditions: 'Veuillez accepter les conditions générales pour continuer',
       confidentiality: 'Veuillez accepter la politique de confidentialité pour continuer',

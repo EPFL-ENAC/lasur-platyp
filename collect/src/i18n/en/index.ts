@@ -3,6 +3,28 @@ export default {
     brand: 'Mobilyse',
   },
   form: {
+    // Title shown at the top of each survey step, keyed by step name.
+    step_title: {
+      agreement: "General terms and conditions of use (GTC) and confidentiality policy",
+      employment: "Your working habits",
+      workplace: "Your workplace",
+      origin_places: "Your starting point",
+      travel_time: "Your commute",
+      constraints: "Your constraints",
+      equipments: "Your equipment",
+      intermodality: "Your journey to work",
+      travel_pro: "Professional travel",
+      freq_mod_pro: "Your professional journeys",
+      importance: "What matters to you",
+      needs: "Your mobility needs",
+      age_class: "About you",
+      recommendations: "Your recommendations",
+      recommendations_pro: "Professional recommendations",
+      change: "Changing your habits",
+      email: "Stay in touch",
+      comments: "Your feedback",
+      final: "Thank you",
+    },
     error: {
       terms_conditions: 'Please accept the terms and conditions to continue',
       confidentiality: 'Please accept the privacy policy to continue',

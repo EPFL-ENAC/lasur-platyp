@@ -137,6 +137,11 @@ li + li {
   border-radius: 1rem !important;
 }
 
+.question-label {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
 // Design system buttons
 // Geometry and elevation come from the Quasar button variables; what is left
 // here is the brand surface (#F3C65F), its 2px border fading from white 12% to
@@ -151,8 +156,9 @@ li + li {
   font-size: 20px;
 }
 
-// 2px inner border, lit at the top and fading out towards the bottom.
-.q-btn:not(.q-btn--flat):not(.q-btn--outline)::after {
+// 2px inner border, lit at the top and fading out towards the bottom. Only the
+// coloured buttons carry it; the neutral ones are a flat bordered surface.
+.q-btn:not(.q-btn--flat):not(.q-btn--outline)[class*='bg-']::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -177,15 +183,16 @@ li + li {
   color: $brand-yellow-800 !important;
 }
 
-// Neutral variant: buttons that carry no color of their own
+// Neutral variant: buttons that carry no color of their own. A plain 1px border
+// stands in for the skeuomorphic shadow, so they read as outlined, not raised.
 .q-btn:not(.q-btn--flat):not(.q-btn--outline):not([class*='bg-']) {
   background: white;
   color: $brand-purple-800;
+  border: 1px solid var(--secondary-border-color);
+  box-shadow: none;
 }
 
 .body--dark .q-btn:not(.q-btn--flat):not(.q-btn--outline):not([class*='bg-']) {
-  --btn-ring: rgba(255, 255, 255, 0.12);
-
   background: $brand-purple-800;
   color: $brand-purple-50;
 }

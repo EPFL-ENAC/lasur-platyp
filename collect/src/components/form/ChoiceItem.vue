@@ -2,7 +2,7 @@
   <div>
     <QuestionText
       :label="label ?? ''"
-      :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`"
+      :containerClass="`text-bold q-mb-md ${labelClass || 'question-label'}`"
     />
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div v-if="multiple" class="text-h6 text-italic">{{ t('form.multiple_options') }}</div>

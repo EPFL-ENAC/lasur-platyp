@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SectionItem :label="t('form.change')" label-class="text-h4" class="q-mb-md" />
+    <SectionItem :label="t('form.change')" label-class="question-label" class="q-mb-md" />
 
     <q-card class="bg-primary-muted q-mb-xl">
       <q-card-section class="q-pa-sm">
@@ -17,7 +17,7 @@
         :hint="t('form.change_motivation_hint')"
         v-model="change.motivation"
         :max="5"
-        label-class="text-h4 text-bold q-mb-md"
+        label-class="question-label text-bold q-mb-md"
         class="q-mb-lg"
         @update:model-value="onSave"
       />
@@ -26,7 +26,7 @@
         :options="changeOptions"
         v-model="change.levers"
         multiple
-        label-class="text-h4 text-bold q-mb-md"
+        label-class="question-label text-bold q-mb-md"
         option-label-class="text-h5"
         @update:model-value="onSave"
       />

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'question-label'">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-sm">{{ hint }}</div>
     <div class="q-mt-md">
       <PlaceItem
@@ -36,10 +36,9 @@
       <ToggleItem
         :label="t('form.journey_pro.is_company_vehicle.label')"
         label-class="text-h5"
-        :left-label="t('form.journey_pro.is_company_vehicle.option.private_vehicle')"
-        :right-label="t('form.journey_pro.is_company_vehicle.option.company_vehicle')"
+        :true-label="t('form.journey_pro.is_company_vehicle.option.company_vehicle')"
+        :false-label="t('form.journey_pro.is_company_vehicle.option.private_vehicle')"
         v-model="journey.is_company_vehicle"
-        required
         class="q-mt-xl q-mb-xl"
         color="accent"
       />
@@ -48,10 +47,9 @@
       <ToggleItem
         :label="t('form.journey_pro.has_to_carry_heavy_equipment')"
         label-class="text-h5"
-        :left-label="t('form.no')"
-        :right-label="t('form.yes')"
+        :true-label="t('form.yes')"
+        :false-label="t('form.no')"
         v-model="hasHeavyEquipment"
-        required
         class="q-mb-lg"
         color="accent"
       />

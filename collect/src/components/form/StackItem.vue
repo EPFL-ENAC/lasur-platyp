@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <div class="text-bold q-mb-md" :class="labelClass || 'question-label'">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="q-mt-lg">
       <q-list>

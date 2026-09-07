@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-bold q-mb-md text-h4">
+    <div class="text-bold q-mb-md question-label">
       {{ t('form.intermodality_pro') }}
     </div>
     <div class="text-h6 q-mb-md">{{ t('form.intermodality_pro_hint') }}</div>

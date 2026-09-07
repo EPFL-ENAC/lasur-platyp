@@ -153,6 +153,24 @@ body.body--dark {
 .q-card {
   border-radius: 1rem !important;
   border: 1px solid var(--secondary-border-color) !important;
+  transition: border-color 0.2s ease;
+}
+
+.q-card__section--vert {
+  padding: 24px;
+}
+
+// A card holding a ticked checkbox reads as selected, so its outline picks up
+// the same yellow as the tick itself.
+.q-card:has(.q-checkbox[aria-checked='true']) {
+  border-color: $primary !important;
+}
+
+
+// Empty box is drawn as a hairline; once ticked the fill hides the border
+// anyway, so only the unchecked state needs thinning down from Quasar's 2px.
+.q-checkbox__inner--falsy .q-checkbox__bg {
+  border-width: 1px;
 }
 
 .q-field--outlined:has(.text-field) .q-field__control::before {

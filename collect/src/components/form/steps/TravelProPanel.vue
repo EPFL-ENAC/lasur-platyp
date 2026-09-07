@@ -2,11 +2,10 @@
   <div>
     <ToggleItem
       v-model="survey.record.data.travel_pro"
-      required
       :label="t('form.travel_pro')"
-      label-class="text-h4 text-bold q-mb-lg"
-      :left-label="t('form.no')"
-      :right-label="t('form.yes')"
+      label-class="question-label text-bold q-mb-lg"
+      :true-label="t('form.yes')"
+      :false-label="t('form.no')"
     />
   </div>
 </template>

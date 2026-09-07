@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
+    <div class="question-label text-bold q-mb-md">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
 
     <AddressInput v-model="addressLocation" :readonly="props.readonly" />

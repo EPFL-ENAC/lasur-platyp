@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'text-h4'">{{ label }}</div>
+    <div v-if="label" class="text-bold q-mb-md" :class="labelClass || 'question-label'">{{ label }}</div>
     <div v-if="hint" class="text-h6">{{ hint }}</div>
     <div class="bg-white">
       <div :id="mapId" :style="`--t-height: ${height || '400px'}`" class="mapinput" />

@@ -1,14 +1,12 @@
 <template>
   <div v-if="survey.record" v-touch-swipe.mouse.left.right="handleSwipe">
+    <h2 v-if="stepTitle" class="survey-step-title text-h4 text-bold text-title">
+      {{ stepTitle }}
+    </h2>
     <!--pre>{{ survey.step }} - {{ survey.stepName }}</pre-->
     <div v-if="survey.stepName === 'agreement'">
       <div>
-        <SectionItem
-          :label="t('form.agreement')"
-          label-class="text-h4 text-bold"
-          :hint="t('form.agreement_hint')"
-          class="q-mb-lg"
-        />
+        <div class="agreement-intro text-h6">{{ t('form.agreement_hint') }}</div>
         <AgreementPanel />
       </div>
     </div>
@@ -19,7 +17,7 @@
       <EmploymentPanel />
     </div>
     <div v-if="survey.stepName === 'workplace'">
-      <div class="text-h4 text-bold">{{ t('form.workplace') }}</div>
+      <div class="question-label text-bold">{{ t('form.workplace') }}</div>
       <WorkplacePanel />
     </div>
     <div v-if="survey.stepName === 'origin_places'">
@@ -61,7 +59,7 @@
       <div>
         <SectionItem
           :label="t('form.importance')"
-          label-class="text-bold text-h4"
+          label-class="text-bold question-label"
           :hint="t('form.importance_hint')"
           class="q-mb-lg"
         />
@@ -72,7 +70,7 @@
       <div>
         <SectionItem
           :label="t('form.needs')"
-          label-class="text-bold text-h4"
+          label-class="text-bold question-label"
           :hint="t('form.needs_hint')"
           class="q-mb-lg"
         />
@@ -125,7 +123,7 @@
     <div v-if="survey.stepName === 'comments'">
       <SectionItem
         :label="t('form.comments')"
-        label-class="text-h4 text-bold q-mb-md"
+        label-class="question-label text-bold q-mb-md"
         class="q-mb-lg"
       />
       <q-input
@@ -141,24 +139,22 @@
     <div v-if="survey.stepName === 'final'">
       <FinalPanel />
     </div>
-    <div class="row justify-center q-mt-xl">
+    <div class="row items-center survey-nav">
       <q-btn
         v-if="survey.isAfterStep('agreement') && survey.stepName !== 'final'"
-        color="accent"
-        icon="keyboard_arrow_left"
+        icon="arrow_back"
+        :label="t('previous')"
         size="lg"
-        :title="t('previous')"
         @click="prevStep"
-        class="q-mr-md"
       />
       <q-btn
         v-if="survey.isBeforeStep('comments')"
         color="accent"
-        icon="keyboard_arrow_right"
+        icon-right="arrow_forward"
+        :label="t('next')"
         size="lg"
-        :title="t('next')"
         @click="nextStep"
-        class="q-ml-md"
+        class="q-ml-auto"
       />
       <q-btn
         v-if="survey.stepName === 'comments'"
@@ -167,7 +163,7 @@
         icon-right="send"
         size="lg"
         @click="onSendComments"
-        class="q-ml-md"
+        class="q-ml-auto"
       />
     </div>
   </div>
@@ -204,6 +200,8 @@ const collector = useCollector()
 const router = useRouter()
 
 const plainEmail = ref('')
+
+const stepTitle = computed(() => (survey.stepName ? t(`form.step_title.${survey.stepName}`) : ''))
 
 const mainFm = computed(() => survey.getMainFreqMod())
 const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
@@ -501,3 +499,17 @@ function onSendComments() {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.survey-step-title {
+  margin: 0 0 40px;
+}
+
+.agreement-intro {
+  margin-bottom: 64px;
+}
+
+.survey-nav {
+  margin-top: 96px;
+}
+</style>
