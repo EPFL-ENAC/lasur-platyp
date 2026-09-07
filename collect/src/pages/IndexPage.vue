@@ -1,13 +1,15 @@
 <template>
-  <q-page class="index-page">
-    <q-linear-progress
-      v-if="survey.started"
-      size="10px"
-      :value="progress"
-      color="accent"
-      :animation-speed="200"
-      class="q-mb-md"
-    />
+  <q-page class="index-page" :class="{ 'index-page--survey': survey.started }">
+    <div v-if="survey.started" class="survey-progress">
+      <q-linear-progress
+        size="8px"
+        :value="progress"
+        color="accent"
+        :animation-speed="200"
+        class="survey-progress__bar"
+        :style="{ '--progress-value': progress }"
+      />
+    </div>
     <div class="container">
       <div class="content q-pa-lg">
         <div v-if="collector.loading">
@@ -186,6 +188,41 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 .index-page .container {
   flex: 1;
   min-height: 0;
+}
+
+// Aligned with the survey content: same max width and same lateral padding as
+// `.content`, so the bar starts and ends on the text edges.
+.survey-progress {
+  width: 100%;
+  max-width: 850px;
+  margin: 96px auto 0;
+  padding: 0 24px;
+}
+
+// While the survey runs the content sits right under the progress bar rather
+// than being centred in the viewport, on a 96px gap.
+.index-page--survey .container {
+  align-items: start;
+}
+
+.index-page--survey .survey-progress {
+  margin-bottom: 96px;
+}
+
+.index-page--survey .content {
+  padding-top: 0;
+}
+
+.survey-progress__bar {
+  border-radius: 999px; // pill, clips the track and both fill ends
+  overflow: hidden;
+}
+
+// The fill is laid out full width and scaled down on X, which would squash a
+// plain radius flat. Dividing the horizontal radius by the same factor lands it
+// back at a true 4px round on screen.
+.survey-progress__bar :deep(.q-linear-progress__model) {
+  border-radius: calc(4px / max(var(--progress-value), 0.02)) / 4px;
 }
 
 .welcome {
