@@ -108,7 +108,8 @@ export default {
       remove: 'Supprimer le trajet',
       days_per_week: 'Jours par semaine',
       saved: 'Trajet sauvegardé !',
-      saved_detail: 'Vous pouvez ajouter un autre trajet pour d\'autres jours de la semaine, ou continuer à l\'étape suivante.',
+      saved_detail:
+        "Vous pouvez ajouter un autre trajet pour d'autres jours de la semaine, ou continuer à l'étape suivante.",
       step: {
         first_mode: 'Quel est le premier mode de transport en quittant votre domicile ?',
         next_mode: 'Quel est le mode de transport suivant ?',
@@ -117,7 +118,7 @@ export default {
         days_question: 'Combien de jours par semaine prenez-vous cette route ?',
         review_title: 'Votre trajet :',
         save: 'Enregistrer',
-        add_another: 'Avez-vous un autre trajet pour d\'autres jours de la semaine ?',
+        add_another: "Avez-vous un autre trajet pour d'autres jours de la semaine ?",
         add_yes: 'Oui, ajouter un trajet',
         add_no: "Non, j'ai terminé",
         segment: 'Étape {n}',
@@ -167,18 +168,18 @@ export default {
       'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité ?',
     recommendations:
       'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
-    recommendations_header:
-      'Recommandations de Mobilyse pour les déplacements domicile-travail',
+    recommendations_header: 'Recommandations de Mobilyse pour les déplacements domicile-travail',
     recommendations_preamble:
-      "En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.",
+      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
     recommendations_pro_header: 'Recommandations de Mobilyse pour les déplacements professionnels',
     recommendations_pro_preamble:
-      "Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.",
+      'Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.',
     recommendations_print: {
       title: 'Recommandations de mobilité',
-      header: 'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
+      header:
+        'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
     },
     actions:
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
@@ -314,10 +315,8 @@ export default {
     hide: 'Masquer les avantages',
   },
   contact: {
-    header:
-      "Pour plus d'informations sur la mobilité à {company_name}",
-    contact_line:
-      "Veuillez contacter : {contact_name}",
+    header: "Pour plus d'informations sur la mobilité à {company_name}",
+    contact_line: 'Veuillez contacter : {contact_name}',
     copy_email: 'Copier l’adresse e-mail',
     more_info: "Plus d'informations",
     copied: 'E-mail copié dans le presse-papiers',
@@ -325,7 +324,8 @@ export default {
   isochrones: {
     accessible_areas:
       "Saviez-vous que vous avez accès aux zones et points d'intérêts ci-dessous {mode} ?",
-    map_description: 'La carte ci-dessous représente la zone accessible avec {mode} depuis votre lieu de travail.',
+    map_description:
+      'La carte ci-dessous représente la zone accessible avec {mode} depuis votre lieu de travail.',
     pois: "Points d'intérêt",
     modes: {
       walk: 'à pied',
@@ -356,6 +356,7 @@ export default {
   token: 'Identifiant',
   lookup_address_or_select_on_map: 'Rechercher une adresse ou sélectionner sur la carte',
   type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",
+  welcome_eyebrow: 'Enquête mobilité',
   welcome: 'Bienvenue sur le {brand}',
   welcome_intro:
     'Veuillez remplir ce questionnaire afin que nous puissions vous proposer les mesures de mobilité les plus pertinentes.',

@@ -17,13 +17,16 @@
           <div v-if="survey.started">
             <SurveyPanel v-if="survey.record" />
           </div>
-          <div v-else>
-            <div class="text-h4 q-mb-md">
+          <div v-else class="welcome">
+            <div class="welcome__eyebrow text-h5 text-weight-medium q-mb-md">
+              {{ t('welcome_eyebrow') }}
+            </div>
+            <h1 class="welcome__title text-h2 text-weight-semibold">
               {{ t('welcome', { brand: t('main.brand') }) }}
-            </div>
-            <div class="text-h6 q-mb-md">
+            </h1>
+            <p class="welcome__intro text-h6">
               {{ t('welcome_intro') }}
-            </div>
+            </p>
             <div v-if="survey.step > 1">
               <q-btn
                 rounded
@@ -46,7 +49,7 @@
               />
             </div>
             <div v-else>
-              <div v-if="route.params.token === undefined">
+              <div v-if="route.params.token === undefined" class="welcome__token">
                 <q-input
                   v-model="tkSlug"
                   :label="t('token')"
@@ -67,7 +70,7 @@
                 class="q-px-md q-mt-md"
               />
             </div>
-            <div class="q-mt-lg">
+            <div class="welcome__language q-mt-lg">
               <span>
                 {{ t('select_preferred_language') }}
               </span>
@@ -175,3 +178,52 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   Cookies.set('locale', localeOpt.value)
 }
 </script>
+
+<style scoped lang="scss">
+.welcome {
+  text-align: center;
+}
+
+.welcome__eyebrow {
+  margin-bottom: 12px;
+  color: $brand-yellow-700;
+}
+
+.welcome__title {
+  margin: 0 0 48px;
+  letter-spacing: -0.01em;
+  color: $brand-purple-900;
+}
+
+.welcome__intro {
+  max-width: 42rem;
+  margin: 0 auto 48px;
+  color: $brand-purple-400;
+}
+
+.welcome__token {
+  max-width: 26rem;
+  margin: 0 auto;
+  text-align: left;
+
+}
+
+.welcome__language {
+  color: $brand-purple-400;
+}
+
+.body--dark {
+  .welcome__eyebrow {
+    color: $brand-yellow-300;
+  }
+
+  .welcome__title {
+    color: #fff;
+  }
+
+  .welcome__intro,
+  .welcome__language {
+    color: $brand-purple-100;
+  }
+}
+</style>

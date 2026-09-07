@@ -97,8 +97,7 @@ export default {
       combined: 'How do you usually get to your workplace?',
     },
     intermodality: 'How do you usually get to work?',
-    intermodality_hint:
-      'Describe your usual journey from home to work, one step at a time.',
+    intermodality_hint: 'Describe your usual journey from home to work, one step at a time.',
     journey: {
       label_idx: 'Recommendation #{index}',
       label_option_idx: 'Option #{index}',
@@ -107,7 +106,8 @@ export default {
       remove: 'Remove journey',
       days_per_week: 'Days per week',
       saved: 'Journey saved!',
-      saved_detail: 'You can add another journey for other days of the week, or continue to the next step.',
+      saved_detail:
+        'You can add another journey for other days of the week, or continue to the next step.',
       step: {
         first_mode: 'What is the first mode of transport when leaving home?',
         next_mode: 'What is the next mode of transport?',
@@ -300,10 +300,8 @@ export default {
     hide: 'Hide benefits',
   },
   contact: {
-    header:
-      'For more information about mobility at {company_name}',
-    contact_line:
-      'Please contact: {contact_name}',
+    header: 'For more information about mobility at {company_name}',
+    contact_line: 'Please contact: {contact_name}',
     copy_email: 'Copy email address',
     more_info: 'More information',
     copied: 'Email copied to clipboard',
@@ -342,6 +340,7 @@ export default {
   token: 'Token',
   lookup_address_or_select_on_map: 'Lookup address or select on map',
   type_enter_to_lookup_address: 'Type address, then press Enter to lookup',
+  welcome_eyebrow: 'Mobility Survey',
   welcome: 'Welcome to the {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
   no_results: 'No results',
