@@ -324,27 +324,39 @@ function initComparisonChartOptions() {
 
   const sortedModes = Array.from(modes).sort((a, b) => modeSortOrder(a) - modeSortOrder(b))
 
-  const series: SeriesOption[] = []
-  datasets.forEach((dataset, groupIndex) => {
-    sortedModes.forEach((mode) => {
-      series.push({
-        name: `${dataset.name} — ${t(`stats.${props.chartTranslationName}.labels.${mode}`)}`,
-        type: 'bar',
-        stack: `group_${groupIndex}`,
-        emphasis: { focus: 'series' },
-        color: labelColors.value[mode] || '#ccc',
-        data: props.groups.map((scale) => dataset.byKey.get(`${scale}_${mode}`) ?? 0),
-      })
-    })
-  })
+  // One bar per (distance scale, comparison group) pair: the group name is the
+  // inner y-axis level, the distance scale the outer one, drawn by a second
+  // category axis holding one band per block of group rows.
+  const rows = props.groups.flatMap((scale) =>
+    datasets.map((dataset) => ({ scale, dataset })),
+  )
+  const scaleLabels = props.groups.map((scale) =>
+    t(`stats.${props.chartTranslationName}.labels.${scale}`),
+  )
+  const groupLabels = datasets.map((dataset) => truncateLabel(dataset.name))
+
+  const series: SeriesOption[] = sortedModes.map((mode) => ({
+    name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
+    type: 'bar',
+    stack: 'total',
+    emphasis: { focus: 'series' },
+    color: labelColors.value[mode] || '#ccc',
+    data: rows.map((row) => row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0),
+  }))
+
+  // The axis labels sit outside the grid (no containLabel), so the room they
+  // need is reserved here: the group names, then the scale names on their left.
+  const groupLabelsWidth = labelsWidth(groupLabels)
+  const scaleLabelsWidth = labelsWidth(scaleLabels)
+  const scaleAxisOffset = groupLabelsWidth + AXIS_LABEL_GAP
 
   option.value = {
     grid: {
-      left: '20',
-      right: '20',
-      top: '60',
-      bottom: '60',
-      containLabel: true,
+      left: scaleAxisOffset + scaleLabelsWidth + AXIS_LABEL_GAP,
+      right: 20,
+      top: 60,
+      bottom: 60,
+      containLabel: false,
     },
     animation: false,
     height: props.height - 120,
@@ -358,15 +370,48 @@ function initComparisonChartOptions() {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: (params: any) => {
+        const items = Array.isArray(params) ? params : [params]
+        const row = rows[items[0]?.dataIndex ?? 0]
+        if (!row) {
+          return ''
+        }
+        const scaleLabel = t(`stats.${props.chartTranslationName}.labels.${row.scale}`)
+        const header = `${scaleLabel} — <b>${row.dataset.name}</b>`
+        const lines = items
+          .filter((item: { value: number }) => item.value)
+          .map(
+            (item: { marker: string; seriesName: string; value: number }) =>
+              `${item.marker} ${item.seriesName}: <b>${item.value}</b>`,
+          )
+        return [header, ...lines].join('<br/>')
+      },
     },
     legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
-    yAxis: {
-      name: props.yaxis || '',
-      nameLocation: 'end',
-      nameGap: 30,
-      type: 'category',
-      data: props.groups.map((g) => t(`stats.${props.chartTranslationName}.labels.${g}`)),
-    },
+    yAxis: [
+      {
+        name: props.yaxis || '',
+        nameLocation: 'end',
+        nameGap: 30,
+        type: 'category',
+        data: rows.map((row) => truncateLabel(row.dataset.name)),
+        axisLabel: { interval: 0 },
+        axisTick: { show: false },
+      },
+      {
+        // Outer level: one band per distance scale, aligned with its block of
+        // group rows because both axes split the grid height evenly.
+        type: 'category',
+        position: 'left',
+        offset: scaleAxisOffset,
+        data: scaleLabels,
+        axisLabel: { interval: 0, fontWeight: 'bold' },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { color: '#e0e0e0' } },
+      },
+    ],
     xAxis: {
       name: props.xaxis || t('stats.nb_employees'),
       nameLocation: 'middle',
@@ -375,6 +420,23 @@ function initComparisonChartOptions() {
     },
     series,
   }
+}
+
+// Rough width of an axis label, in pixels: the axis labels are laid out outside
+// the grid, whose left margin has to be reserved before the chart is rendered.
+const AXIS_LABEL_CHAR_WIDTH = 7
+const AXIS_LABEL_GAP = 16
+const AXIS_LABEL_MAX_CHARS = 24
+
+function truncateLabel(label: string) {
+  return label.length > AXIS_LABEL_MAX_CHARS
+    ? `${label.slice(0, AXIS_LABEL_MAX_CHARS - 1)}\u2026`
+    : label
+}
+
+function labelsWidth(labels: string[]) {
+  const chars = labels.reduce((max, label) => Math.max(max, truncateLabel(label).length), 0)
+  return chars * AXIS_LABEL_CHAR_WIDTH
 }
 
 function shortKey(key: string) {
