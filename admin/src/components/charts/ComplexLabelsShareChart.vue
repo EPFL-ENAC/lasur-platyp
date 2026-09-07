@@ -18,7 +18,12 @@ import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { COMPLEX_LABELS_COLORS, complexLabelSortOrder, computePercentages } from './commons'
+import {
+  COMPLEX_LABELS_COLORS,
+  complexLabelSortOrder,
+  computePercentages,
+  MRMT_COMPLEX_MODAL_SPLIT_PERCENT,
+} from './commons'
 import {
   buildGroupStackedBarOption,
   findBiggestGroupDifference,
@@ -282,12 +287,27 @@ function initComparisonChartOptions() {
 
   comparisonGroupDatasets.value = groupDatasets
 
+  // The MRMT figures are shares of the Geneva canton population: they are read as
+  // one more 100%-stacked bar, next to the compared groups. Kept out of
+  // `comparisonGroupDatasets` so that the commentary only compares actual groups.
+  const chartDatasets: ComparisonGroupDataset[] = [
+    ...groupDatasets,
+    {
+      name: t('stats.reference_data'),
+      items: Object.entries(MRMT_COMPLEX_MODAL_SPLIT_PERCENT).map(([key, value]) => ({
+        key,
+        name: keyLabel(key),
+        value,
+      })),
+    },
+  ]
+
   const keyOrder = Array.from(
-    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+    new Set(chartDatasets.flatMap((group) => group.items.map((item) => item.key))),
   ).sort((a, b) => complexLabelSortOrder(a) - complexLabelSortOrder(b))
 
   option.value = buildGroupStackedBarOption({
-    groupDatasets,
+    groupDatasets: chartDatasets,
     colors: COMPLEX_LABELS_COLORS,
     percent: true,
     title: t('stats.freq_mod.title_detailed'),

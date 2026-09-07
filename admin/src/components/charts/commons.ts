@@ -14,7 +14,11 @@ import {
   type Frequencies,
   type Frequency,
 } from '@/models'
-import { getProModalityLabels, getRecoSimpleLabel } from '@/utils/modalities'
+import {
+  getProModalityLabels,
+  getRecoSimpleLabel,
+  MODE_TO_SIMPLE_LABEL,
+} from '@/utils/modalities'
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
 
@@ -221,6 +225,32 @@ export const SIMPLE_LABELS_COLORS: { [key: string]: string } = {
   TIM: '#860706',
   default: '#ccc',
 }
+
+/**
+ * Modal split of the Geneva canton population, in % of the main mode used
+ * (Microrecensement Mobilité et Transports, 2023). Keys are complex labels: the
+ * MRMT reports public transport as a whole, which is the merged 'tp' bucket, and
+ * has no intermodal category, so the intermodal labels have no reference value.
+ */
+export const MRMT_COMPLEX_MODAL_SPLIT_PERCENT: Record<string, number> = {
+  walking: 9.5,
+  bike: 23.8,
+  tp: 26.6,
+  moto: 9.9,
+  car: 30.3,
+}
+
+/** The same figures folded into the simple typology buckets. */
+export const MRMT_SIMPLE_MODAL_SPLIT_PERCENT: Record<string, number> = Object.entries(
+  MRMT_COMPLEX_MODAL_SPLIT_PERCENT,
+).reduce<Record<string, number>>((acc, [label, percent]) => {
+  // 'tp' is a complex label only: it is absent from the raw mode table.
+  const simple = label === 'tp' ? 'TP' : MODE_TO_SIMPLE_LABEL[label]
+  if (simple) {
+    acc[simple] = Number(((acc[simple] ?? 0) + percent).toFixed(1))
+  }
+  return acc
+}, {})
 
 export const COMPLEX_LABELS_IDEAL_ORDER: Record<string, number> = {
   // Fallback order for unknown keys (keep them at the end)

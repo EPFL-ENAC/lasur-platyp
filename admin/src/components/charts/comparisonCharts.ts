@@ -28,6 +28,52 @@ function groupNameWithParticipants(group: ComparisonGroupDataset): string {
   return `${group.name} (${t('stats.total', { count: group.participants })})`
 }
 
+/**
+ * Splits a group name into lines short enough to sit under a bar.
+ *
+ * Done here rather than with ECharts' own `overflow: 'break'`: its wrapping runs
+ * on rich text through `wrapText`, which does not honour the newlines separating
+ * the fragments, so the name and the participants count end up on the same line.
+ */
+function wrapLabel(text: string, maxChars = 20, maxLines = 3): string[] {
+  const lines: string[] = []
+  let current = ''
+  text
+    .split(/\s+/)
+    .filter(Boolean)
+    .forEach((word) => {
+      let rest = word
+      // A word wider than a line has to be cut: it would overflow on its own.
+      while (rest.length > maxChars) {
+        if (current) {
+          lines.push(current)
+          current = ''
+        }
+        lines.push(rest.slice(0, maxChars))
+        rest = rest.slice(maxChars)
+      }
+      if (!current) {
+        current = rest
+      } else if (current.length + 1 + rest.length <= maxChars) {
+        current += ` ${rest}`
+      } else {
+        lines.push(current)
+        current = rest
+      }
+    })
+  if (current) {
+    lines.push(current)
+  }
+  if (lines.length === 0) {
+    return [text]
+  }
+  if (lines.length > maxLines) {
+    const last = lines[maxLines - 1]!
+    return [...lines.slice(0, maxLines - 1), `${last.slice(0, maxChars - 1)}\u2026`]
+  }
+  return lines
+}
+
 function groupTotal(group: ComparisonGroupDataset): number {
   return group.items.reduce((sum, item) => sum + item.value, 0)
 }
@@ -129,7 +175,8 @@ export function buildGroupStackedBarOption(params: {
   }))
 
   return {
-    grid: { left: '20', right: '20', top: '60', bottom: '75', containLabel: true },
+    // Bottom fits the legend plus a group name wrapped over a couple of lines.
+    grid: { left: '20', right: '20', top: '60', bottom: '90', containLabel: true },
     animation: false,
     height,
     title: {
@@ -157,11 +204,19 @@ export function buildGroupStackedBarOption(params: {
       type: 'category',
       data: groupDatasets.map((group) => group.name),
       axisLabel: {
-        // Group name on a first line, its participants count on a second one.
+        // Every group must be named: long names wrap instead of being dropped,
+        // which is what ECharts does by default when labels collide.
+        interval: 0,
+        hideOverlap: false,
+        // Group name over as many lines as it needs, its participants count on a
+        // last, smaller one.
         formatter: (value: string, index: number) => {
           const participants = groupDatasets[index]?.participants
-          if (participants === undefined) return value
-          return `{name|${value}}\n{count|${t('stats.total', { count: participants })}}`
+          const lines = wrapLabel(value).map((line) => `{name|${line}}`)
+          if (participants !== undefined) {
+            lines.push(`{count|${t('stats.total', { count: participants })}}`)
+          }
+          return lines.join('\n')
         },
         rich: {
           name: { lineHeight: 18 },
