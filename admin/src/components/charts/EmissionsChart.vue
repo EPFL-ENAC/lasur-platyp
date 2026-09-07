@@ -352,9 +352,9 @@ function initChartOptions() {
           ubound + item.journeys, // 1: end x
           item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0, // 2: height
           keyLabel(item.mode), // 3: label
-          item.emissions.toFixed(0), // 4
+          Math.round(item.emissions), // 4
           item.journeys, // 5
-          `${item.distances.toFixed(0)} km`, // 6
+          Math.round(item.distances), // 6
         ],
       }
       ubound += item.journeys
@@ -390,16 +390,21 @@ function initChartOptions() {
         let html = `<div style="font-weight: bold; margin-bottom: 4px;">${params.marker} ${params.name}</div>`
 
         const indicesToShow = [4, 5, 6]
+        // The tooltip values are raw numbers: localize them here, and carry the
+        // unit only where the dimension name does not already say it.
+        const unitsByIndex: Record<number, string> = { 4: 'kgCO₂eq', 5: '', 6: 'km' }
 
         indicesToShow.forEach((idx) => {
           const label = params.dimensionNames[idx]
           const value = params.value[idx]
 
           if (value !== undefined) {
+            const unit = unitsByIndex[idx]
+            const display = formatNumber(Number(value))
             html += `
               <div style="display: flex; justify-content: space-between; gap: 20px;">
                 <span>${label}</span>
-                <span style="font-weight: bold;">${value}</span>
+                <span style="font-weight: bold;">${display}${unit ? ` ${unit}` : ''}</span>
               </div>`
           }
         })

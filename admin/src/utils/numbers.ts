@@ -1,3 +1,5 @@
+import { i18n } from '@/boot/i18n'
+
 // Function to convert decimal degrees to DMS (Degrees, Minutes, Seconds)
 export function toDMS(deg: number) {
   const d = Math.floor(deg)
@@ -20,13 +22,26 @@ export function formatCoordinates(lat: number, lon: number) {
   return `${latDMS} ${latDirection}, ${lonDMS} ${lonDirection}`
 }
 
-const numberFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 })
+// Follow the app locale, not the browser's: the user switches language in the
+// UI, and the separators must switch with it. One formatter is kept per locale
+// because building an Intl.NumberFormat is costly and the locale rarely changes.
+const numberFormatters = new Map<string, Intl.NumberFormat>()
+
+function numberFormatter(): Intl.NumberFormat {
+  const locale = i18n.global.locale.value
+  let formatter = numberFormatters.get(locale)
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 })
+    numberFormatters.set(locale, formatter)
+  }
+  return formatter
+}
 
 export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) {
     return 'N/A'
   }
-  return numberFormatter.format(value)
+  return numberFormatter().format(value)
 }
 
 export function formatSignedPercent(value: number): string {

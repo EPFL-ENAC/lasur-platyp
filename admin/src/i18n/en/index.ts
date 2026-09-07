@@ -83,7 +83,7 @@ const complexLabels = {
 
 const emissionsLabels = {
   emissions: 'Total CO₂ emissions',
-  journeys: 'Number of journeys',
+  journeys: 'Number of trips',
   distances: 'Total distance',
   current: 'Current',
   postSaving: 'Total after recommendations',

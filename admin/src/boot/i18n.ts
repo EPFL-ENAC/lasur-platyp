@@ -41,7 +41,9 @@ function getCurrentLocale(): string {
   return detectedLocale || locales[0] || 'en'
 }
 
-const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
+// The `false` type argument matches the `legacy: false` option below, so that
+// `i18n.global` is typed as a Composer (locale is a ref) rather than a VueI18n.
+const i18n = createI18n<{ message: MessageSchema }, MessageLanguages, false>({
   locale: getCurrentLocale(),
   fallbackLocale: locales[0] || 'en',
   globalInjection: true,
