@@ -71,6 +71,11 @@
             :height="height"
             :loading="stats.loading"
           />
+          <modal-evolution-sankey
+            v-if="stats.comparisonMode === 'longitudinal'"
+            :height="height"
+            :loading="stats.loading"
+          />
         </div>
         <div class="text-h6 q-my-md">
           {{ t('stats.sections.mobility_analysis.title') }} -
@@ -157,13 +162,6 @@
             :loading="stats.loading"
           />
         </div>
-
-        <modal-evolution-sankey
-          v-if="stats.comparisonMode === 'longitudinal'"
-          :height="height"
-          :loading="stats.loading"
-          class="q-mt-md"
-        />
       </q-tab-panel>
       <q-tab-panel name="behavioural" class="q-px-none">
         <div class="text-h5" data-section-name="behavioural_changes" expand-icon-toggle>

@@ -141,8 +141,14 @@ function initChartOptions() {
   }))
 
   option.value = {
+    grid: {
+      left: '0',
+      right: '0',
+      top: '40',
+      bottom: '0',
+    },
     animation: false,
-    height: props.height,
+    height: props.height - 80,
     title: {
       text: t('stats.modal_evolution.title'),
       left: 'center',
@@ -164,6 +170,7 @@ function initChartOptions() {
     series: [
       {
         type: 'sankey',
+        top: 60,
         emphasis: { focus: 'adjacency' },
         data: Array.from(nodes.values()),
         links,
