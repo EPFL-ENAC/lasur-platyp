@@ -353,6 +353,7 @@ function initComparisonChartOptions() {
   const groups = stats.comparisonResults?.groups ?? []
   const groupFrequencies = groups.map((group) => ({
     name: group.name,
+    participants: group.total,
     frequencies: group.frequencies?.find((freq) => freq.field === 'constraints') ?? null,
   }))
   if (groupFrequencies.every((group) => !group.frequencies?.data.length)) {
@@ -363,6 +364,7 @@ function initComparisonChartOptions() {
     total.value += group.frequencies?.total ?? 0
     return {
       name: group.name,
+      participants: group.participants,
       items: (group.frequencies?.data ?? []).map((item) => ({
         key: item.value || 'null',
         name: keyLabel(item.value || 'null'),

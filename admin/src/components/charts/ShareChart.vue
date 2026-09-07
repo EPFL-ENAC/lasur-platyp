@@ -309,6 +309,7 @@ function initComparisonChartOptions() {
     total.value += frequencies?.total ?? 0
     return {
       name: group.name,
+      participants: group.total,
       items: (frequencies?.data ?? []).map((item) => ({
         key: shortKey(item.value),
         name: keyLabel(item.value),
@@ -329,7 +330,7 @@ function initComparisonChartOptions() {
     percent: true,
     title: chartTitle.value,
     totalLabel: t('stats.total', { count: total.value }),
-    height: props.height,
+    height: props.height - 120,
     yAxisName: '%',
     keyOrder,
   })

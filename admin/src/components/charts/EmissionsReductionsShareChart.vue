@@ -255,6 +255,7 @@ function initComparisonChartOptions() {
   const groups = stats.comparisonResults?.groups ?? []
   const groupReductions = groups.map((group) => ({
     name: group.name,
+    participants: group.total,
     reductions: findGroupReductions(group) ?? [],
   }))
   if (groupReductions.every((group) => group.reductions.length === 0)) {
@@ -276,6 +277,7 @@ function initComparisonChartOptions() {
     total.value += group.reductions[0]?.total ?? 0
     return {
       name: group.name,
+      participants: group.participants,
       items: group.reductions.map((item) => ({
         key: shortKey(item.mode),
         name: keyLabel(item.mode),

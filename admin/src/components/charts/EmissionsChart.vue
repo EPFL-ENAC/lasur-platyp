@@ -493,6 +493,7 @@ function initComparisonChartOptions() {
   const groups = stats.comparisonResults?.groups ?? []
   const groupEmissions = groups.map((group) => ({
     name: group.name,
+    participants: group.total,
     emissions: findGroupEmissions(group) ?? [],
   }))
   if (groupEmissions.every((group) => group.emissions.length === 0)) {
@@ -505,6 +506,7 @@ function initComparisonChartOptions() {
     total.value += group.emissions[0]?.total ?? 0
     return {
       name: group.name,
+      participants: group.participants,
       items: group.emissions.map((item) => ({
         key: shortKey(item.mode),
         name: keyLabel(item.mode),

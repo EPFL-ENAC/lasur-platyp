@@ -1,5 +1,6 @@
 import type { EChartsOption } from 'echarts'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
+import { t } from '@/boot/i18n'
 import { GROUP_COLORS } from './commons'
 
 export interface ComparisonSeriesItem {
@@ -17,6 +18,14 @@ export interface ComparisonGroupDataset {
   color?: string
   /** Render the categories missing from `items` as gaps instead of zeros. */
   gapOnMissing?: boolean
+  /** Number of participants in the group, displayed along with the group name. */
+  participants?: number
+}
+
+/** Group name followed by its participants count, e.g. "Group A (N: 123)". */
+function groupNameWithParticipants(group: ComparisonGroupDataset): string {
+  if (group.participants === undefined) return group.name
+  return `${group.name} (${t('stats.total', { count: group.participants })})`
 }
 
 function groupTotal(group: ComparisonGroupDataset): number {
@@ -147,6 +156,18 @@ export function buildGroupStackedBarOption(params: {
     xAxis: {
       type: 'category',
       data: groupDatasets.map((group) => group.name),
+      axisLabel: {
+        // Group name on a first line, its participants count on a second one.
+        formatter: (value: string, index: number) => {
+          const participants = groupDatasets[index]?.participants
+          if (participants === undefined) return value
+          return `{name|${value}}\n{count|${t('stats.total', { count: participants })}}`
+        },
+        rich: {
+          name: { lineHeight: 18 },
+          count: { fontSize: 10, opacity: 0.7, lineHeight: 14 },
+        },
+      },
     },
     yAxis: {
       type: 'value',
@@ -189,7 +210,7 @@ export function buildGroupedHorizontalBarOption(params: {
   const groupTotals = groupDatasets.map((group) => group.total ?? groupTotal(group))
 
   const series = groupDatasets.map((group, i) => ({
-    name: group.name,
+    name: groupNameWithParticipants(group),
     type: 'bar' as const,
     color: group.color ?? GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc',
     data: orderedCategories.map((key) => {

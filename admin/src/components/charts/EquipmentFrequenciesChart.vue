@@ -310,6 +310,7 @@ function initComparisonChartOptions() {
   const groups = stats.comparisonResults?.groups ?? []
   const groupFrequencies = groups.map((group) => ({
     name: group.name,
+    participants: group.total,
     frequencies: group.frequencies?.find((freq) => freq.field === 'equipments') ?? null,
   }))
   if (groupFrequencies.every((group) => !group.frequencies?.data.length)) {
@@ -321,6 +322,7 @@ function initComparisonChartOptions() {
     total.value += groupTotal
     return {
       name: group.name,
+      participants: group.participants,
       // Equipments are multi-choice: percentages are shares of the participants,
       // not shares of the answers, so that they can be read against the MRMT ones.
       total: groupTotal,

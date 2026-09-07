@@ -462,6 +462,7 @@ function initComparisonChartOptions() {
   const groups = stats.comparisonResults?.groups ?? []
   const groupStats = groups.map((group) => ({
     name: group.name,
+    participants: group.total,
     stats: group.journey_energy_stats,
   }))
   if (groupStats.every((group) => !group.stats)) return
@@ -540,6 +541,15 @@ function initComparisonChartOptions() {
       name: props.xaxis || '',
       nameLocation: 'middle',
       nameGap: 30,
+      axisLabel: {
+        // Group name on a first line, its participants count on a second one.
+        formatter: (value: string, index: number) =>
+          `{name|${value}}\n{count|${t('stats.total', { count: groupStats[index]?.participants ?? 0 })}}`,
+        rich: {
+          name: { lineHeight: 18 },
+          count: { fontSize: 10, opacity: 0.7, lineHeight: 14 },
+        },
+      },
     },
     yAxis: [
       {
