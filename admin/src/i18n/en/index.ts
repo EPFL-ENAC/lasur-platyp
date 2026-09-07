@@ -569,6 +569,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
           'The mode {top_1} is the most used by participants, followed by {top_2} and {top_3}.',
         comparison:
           'This graph shows the modal distribution of participants. The most striking difference among the campaigns {lastGroup} and {prevGroup} is in the mode: {mode} ({diff}).',
+        ref: 'Reference data, Geneva canton [Microcensus of Mobility and Transportation, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
       },
     },
     freq_mod_pro: {

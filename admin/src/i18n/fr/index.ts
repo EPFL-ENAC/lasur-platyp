@@ -582,6 +582,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Le mode {top_1} est le plus utilisé par les participant·e·s, suivi de {top_2} et {top_3}.',
         comparison:
           'Ce graphique montre la répartition modale des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
+        ref: 'Données de référence, canton de Genève [Microrecensement Mobilité et Transports, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
       },
     },
     freq_mod_pro: {

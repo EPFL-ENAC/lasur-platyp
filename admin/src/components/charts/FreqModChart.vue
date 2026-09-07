@@ -102,7 +102,7 @@ const chartInfoText = computed(() => {
     childText = complexChartRef.value.chartInfoText
   }
   if (stats.comparisonMode) {
-    return childText
+    return `${childText}\n\n${t('stats.freq_mod.texts.ref')}`
   }
   const text = t('stats.freq_mod.texts.default')
   if (childText) {
