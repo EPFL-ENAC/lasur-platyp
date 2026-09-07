@@ -26,6 +26,16 @@ const defaultLocales = ['en', 'fr']
 
 const locales = defaultLocales
 
+// Language names, written in their own language
+const localeLabels: Record<string, string> = {
+  en: 'English',
+  fr: 'Français',
+}
+
+function localeLabel(key: string): string {
+  return localeLabels[key] ?? key.toUpperCase()
+}
+
 function getCurrentLocale(): string {
   let detectedLocale = Cookies.get('locale')
     ? Cookies.get('locale') // previously selected
@@ -56,4 +66,4 @@ export default defineBoot(({ app }) => {
 
 const t = i18n.global.t
 
-export { i18n, t, locales, getCurrentLocale }
+export { i18n, t, locales, localeLabel, getCurrentLocale }

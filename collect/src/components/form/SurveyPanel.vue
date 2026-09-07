@@ -143,7 +143,6 @@
     </div>
     <div class="row justify-center q-mt-xl">
       <q-btn
-        rounded
         v-if="survey.isAfterStep('agreement') && survey.stepName !== 'final'"
         color="accent"
         icon="keyboard_arrow_left"
@@ -153,7 +152,6 @@
         class="q-mr-md"
       />
       <q-btn
-        rounded
         v-if="survey.isBeforeStep('comments')"
         color="accent"
         icon="keyboard_arrow_right"
@@ -163,7 +161,6 @@
         class="q-ml-md"
       />
       <q-btn
-        rounded
         v-if="survey.stepName === 'comments'"
         color="accent"
         :label="t('finish')"
@@ -211,11 +208,9 @@ const plainEmail = ref('')
 const mainFm = computed(() => survey.getMainFreqMod())
 const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
 const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
-const freqModJourneys = computed<Journey[]>(() =>
-  survey.record.data?.freq_mod_journeys || [],
-)
-const freqModProJourneys = computed<ProJourney[]>(() =>
-  survey.record.data?.freq_mod_pro_journeys || [],
+const freqModJourneys = computed<Journey[]>(() => survey.record.data?.freq_mod_journeys || [])
+const freqModProJourneys = computed<ProJourney[]>(
+  () => survey.record.data?.freq_mod_pro_journeys || [],
 )
 
 const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
@@ -354,21 +349,18 @@ function nextStep() {
       return
     }
   }
-if (survey.stepName === 'origin_places') {
+  if (survey.stepName === 'origin_places') {
     if (survey.record.data.origin?.lat === undefined || survey.record.data.origin?.lat === 0) {
-        notifyError(t('form.error.origin'))
-        return
-      }
+      notifyError(t('form.error.origin'))
+      return
     }
-    if (survey.stepName === 'travel_time') {
-      if (
-        survey.record.data.travel_time === undefined ||
-        survey.record.data.travel_time <= 0
-      ) {
-        notifyError(t('form.error.travel_time'))
-        return
-      }
+  }
+  if (survey.stepName === 'travel_time') {
+    if (survey.record.data.travel_time === undefined || survey.record.data.travel_time <= 0) {
+      notifyError(t('form.error.travel_time'))
+      return
     }
+  }
   if (survey.stepName === 'intermodality') {
     const journeys = survey.record.data.freq_mod_journeys || []
     if (journeys.length === 0) {
@@ -446,7 +438,10 @@ if (survey.stepName === 'origin_places') {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.stepName === 'change') {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
-    } else if (survey.previousStepName === 'email' || survey.previousStepName === 'recommendations_pro') {
+    } else if (
+      survey.previousStepName === 'email' ||
+      survey.previousStepName === 'recommendations_pro'
+    ) {
       // step was just incremented, so we check previous step
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     }
@@ -463,9 +458,14 @@ function prevStep() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
   if (
-    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations', 'recommendations_pro'].includes(
-      survey.stepName || '',
-    )
+    [
+      'workplace',
+      'origin_places',
+      'intermodality',
+      'freq_mod_pro',
+      'recommendations',
+      'recommendations_pro',
+    ].includes(survey.stepName || '')
   ) {
     // ignore because of map dragging conflict
     return

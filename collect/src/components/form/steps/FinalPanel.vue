@@ -7,11 +7,7 @@
       <div class="text-center">
         {{ t('form.final_subtitle') }}
       </div>
-      <q-markdown
-        v-if="hasCar"
-        :src="t('form.final_car')"
-        class="text-center q-mt-md"
-      />
+      <q-markdown v-if="hasCar" :src="t('form.final_car')" class="text-center q-mt-md" />
     </div>
     <div v-if="collector.info.rewards_message" class="q-mb-xl">
       <q-separator />
@@ -23,7 +19,6 @@
       <div class="row justify-center q-mt-lg">
         <q-btn
           v-if="rewardUrl"
-          rounded
           color="accent"
           :label="t('form.final_rewards.download')"
           icon-right="download"
@@ -59,5 +54,4 @@ const hasCar = computed(() => {
 onMounted(() => {
   survey.finish()
 })
-
 </script>

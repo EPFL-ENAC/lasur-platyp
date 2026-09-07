@@ -136,3 +136,51 @@ li + li {
 .rounded-borders {
   border-radius: 1rem !important;
 }
+
+// Design system buttons
+// Geometry and elevation come from the Quasar button variables; what is left
+// here is the brand surface (#F3C65F), its 2px border fading from white 12% to
+// white 0%, and the sentence case labels.
+.q-btn {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+// 2px inner border, lit at the top and fading out towards the bottom.
+.q-btn:not(.q-btn--flat):not(.q-btn--outline)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+// Brand variant
+.q-btn.bg-primary,
+.q-btn.bg-accent {
+  background: $brand-yellow-400 !important;
+  color: $brand-yellow-800 !important;
+}
+
+// Neutral variant: buttons that carry no color of their own
+.q-btn:not(.q-btn--flat):not(.q-btn--outline):not([class*='bg-']) {
+  background: white;
+  color: $brand-purple-800;
+}
+
+.body--dark .q-btn:not(.q-btn--flat):not(.q-btn--outline):not([class*='bg-']) {
+  --btn-ring: rgba(255, 255, 255, 0.12);
+
+  background: $brand-purple-800;
+  color: $brand-purple-50;
+}

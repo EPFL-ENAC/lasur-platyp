@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page class="index-page">
     <q-linear-progress
       v-if="survey.started"
       size="10px"
@@ -18,19 +18,18 @@
             <SurveyPanel v-if="survey.record" />
           </div>
           <div v-else class="welcome">
-            <div class="welcome__eyebrow text-h5 text-weight-medium q-mb-md">
+            <div class="welcome__eyebrow text-h6 text-weight-medium">
               {{ t('welcome_eyebrow') }}
             </div>
             <h1 class="welcome__title text-h2 text-weight-semibold">
               {{ t('welcome', { brand: t('main.brand') }) }}
             </h1>
-            <p class="welcome__intro text-h6">
+            <p class="welcome__intro text-h5">
               {{ t('welcome_intro') }}
             </p>
             <div v-if="survey.step > 1">
               <q-btn
-                rounded
-                icon-right="play_arrow"
+                icon-right="arrow_forward"
                 color="accent"
                 :label="t('resume')"
                 size="lg"
@@ -60,49 +59,46 @@
                 />
               </div>
               <q-btn
-                rounded
-                icon-right="play_arrow"
+                icon-right="arrow_forward"
                 color="accent"
                 :label="t('start')"
                 size="lg"
                 @click="onStart"
                 :disable="survey.tokenOrSlug === null"
-                class="q-px-md q-mt-md"
+                class="q-mt-md"
               />
-            </div>
-            <div class="welcome__language q-mt-lg">
-              <span>
-                {{ t('select_preferred_language') }}
-              </span>
-              <q-btn-dropdown flat :label="locale" icon="language" class="on-right">
-                <q-list>
-                  <q-item
-                    clickable
-                    v-close-popup
-                    @click="onLocaleSelection(localeOpt)"
-                    v-for="localeOpt in localeOptions"
-                    :key="localeOpt.value"
-                  >
-                    <q-item-section>
-                      <q-item-label>{{ localeOpt.label }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section avatar v-if="locale === localeOpt.value">
-                      <q-icon color="primary" name="check" />
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div v-if="!survey.started" class="welcome__language">
+      <span>{{ t('select_preferred_language') }}</span>
+      <q-btn-dropdown flat :label="currentLocaleLabel" icon="language">
+        <q-list>
+          <q-item
+            clickable
+            v-close-popup
+            @click="onLocaleSelection(localeOpt)"
+            v-for="localeOpt in localeOptions"
+            :key="localeOpt.value"
+          >
+            <q-item-section>
+              <q-item-label>{{ localeOpt.label }}</q-item-label>
+            </q-item-section>
+            <q-item-section avatar v-if="locale === localeOpt.value">
+              <q-icon color="primary" name="check" />
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { Cookies } from 'quasar'
-import { locales } from '@/boot/i18n'
+import { locales, localeLabel } from '@/boot/i18n'
 import SurveyPanel from '@/components/form/SurveyPanel.vue'
 import { notifyError } from '@/utils/notify'
 import type { Record } from '@/models'
@@ -119,10 +115,11 @@ const progress = computed(() => {
 })
 const localeOptions = computed(() => {
   return locales.map((key) => ({
-    label: key.toUpperCase(),
+    label: localeLabel(key),
     value: key,
   }))
 })
+const currentLocaleLabel = computed(() => localeLabel(locale.value))
 
 onMounted(onInit)
 
@@ -180,6 +177,17 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 </script>
 
 <style scoped lang="scss">
+// Page fills the viewport so the language selector can sit at its foot
+.index-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.index-page .container {
+  flex: 1;
+  min-height: 0;
+}
+
 .welcome {
   text-align: center;
 }
@@ -190,7 +198,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 .welcome__title {
-  margin: 0 0 48px;
+  margin: 0 0 36px;
   letter-spacing: -0.01em;
   color: $brand-purple-900;
 }
@@ -205,10 +213,14 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   max-width: 26rem;
   margin: 0 auto;
   text-align: left;
-
 }
 
 .welcome__language {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
   color: $brand-purple-400;
 }
 

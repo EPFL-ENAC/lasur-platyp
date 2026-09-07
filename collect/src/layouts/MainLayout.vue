@@ -64,24 +64,19 @@
 
 <script setup lang="ts">
 import { Cookies, useQuasar } from 'quasar'
-import { locales, t } from '@/boot/i18n'
+import { locales, localeLabel, t } from '@/boot/i18n'
 
 const { locale } = useI18n()
 const $q = useQuasar()
 
-const localeLabels: Record<string, string> = {
-  en: 'English',
-  fr: 'Français',
-}
-
 const localeOptions = computed(() => {
   return locales.map((key) => ({
-    label: localeLabels[key] ?? key.toUpperCase(),
+    label: localeLabel(key),
     value: key,
   }))
 })
 
-const currentLocaleLabel = computed(() => localeLabels[locale.value] ?? locale.value.toUpperCase())
+const currentLocaleLabel = computed(() => localeLabel(locale.value))
 
 function onLocaleSelection(localeOpt: { label: string; value: string }) {
   locale.value = localeOpt.value
@@ -107,6 +102,8 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   padding: 0 12px; // q-toolbar default gutter
 }
 
+// Header controls are their own thing: `flat` keeps them out of the global
+// survey button skin, so everything they need is declared here.
 .q-btn.header-btn {
   --header-btn-bg: #{'white'};
   --header-btn-border: #{$brand-purple-100};
