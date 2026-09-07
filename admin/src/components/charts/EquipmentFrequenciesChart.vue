@@ -50,7 +50,11 @@ import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart, PictorialBarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { buildGroupedHorizontalBarOption, type ComparisonGroupDataset } from './comparisonCharts'
+import {
+  buildGroupedHorizontalBarOption,
+  type ComparisonGroupDataset,
+  type ComparisonSeriesItem,
+} from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -176,6 +180,8 @@ function initChartOptions() {
   initLabelsChartOptions(props.frequencies)
 }
 
+const MRMT_COLOR = '#FF5722'
+
 const MRMT_VALUES_PERCENT = {
   upt_subs: 26,
   car: 71,
@@ -237,7 +243,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       symbolOffset: [0, 0],
       symbolPosition: 'end',
       itemStyle: {
-        color: '#FF5722', // Distinct color for the marker
+        color: MRMT_COLOR, // Distinct color for the marker
       },
       data: mrmtValues,
       z: 3, // Ensure it's on top of the bars
@@ -311,9 +317,13 @@ function initComparisonChartOptions() {
   }
 
   const groupDatasets: ComparisonGroupDataset[] = groupFrequencies.map((group) => {
-    total.value += group.frequencies?.total ?? 0
+    const groupTotal = group.frequencies?.total ?? 0
+    total.value += groupTotal
     return {
       name: group.name,
+      // Equipments are multi-choice: percentages are shares of the participants,
+      // not shares of the answers, so that they can be read against the MRMT ones.
+      total: groupTotal,
       items: (group.frequencies?.data ?? []).map((item) => ({
         key: item.value || 'null',
         name: keyLabel(item.value || 'null'),
@@ -337,6 +347,28 @@ function initComparisonChartOptions() {
   )
   if (categories.length === 0) {
     return
+  }
+
+  // The MRMT reference figures are percentages only: they can be compared with the
+  // groups when the chart shows shares of participants.
+  if (stats.equipmentsPercent) {
+    const mrmtItems = categories
+      .map((key) => ({
+        key,
+        name: categoryNames.get(key) || key,
+        value: MRMT_VALUES_PERCENT[key as keyof typeof MRMT_VALUES_PERCENT],
+      }))
+      .filter((item): item is ComparisonSeriesItem => item.value !== undefined)
+    if (mrmtItems.length > 0) {
+      groupDatasets.push({
+        name: t('stats.reference_data'),
+        // Values are already percentages of the Geneva canton population.
+        total: 100,
+        items: mrmtItems,
+        color: MRMT_COLOR,
+        gapOnMissing: true,
+      })
+    }
   }
 
   option.value = buildGroupedHorizontalBarOption({

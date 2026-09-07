@@ -11,6 +11,12 @@ export interface ComparisonSeriesItem {
 export interface ComparisonGroupDataset {
   name: string
   items: ComparisonSeriesItem[]
+  /** Denominator used for percentages, defaults to the sum of the item values. */
+  total?: number
+  /** Series color, defaults to the group color picked from GROUP_COLORS. */
+  color?: string
+  /** Render the categories missing from `items` as gaps instead of zeros. */
+  gapOnMissing?: boolean
 }
 
 function groupTotal(group: ComparisonGroupDataset): number {
@@ -180,14 +186,16 @@ export function buildGroupedHorizontalBarOption(params: {
 
   // Reversed so the first category ends up at the top of the (bottom-up) category axis.
   const orderedCategories = [...categories].reverse()
-  const groupTotals = groupDatasets.map(groupTotal)
+  const groupTotals = groupDatasets.map((group) => group.total ?? groupTotal(group))
 
   const series = groupDatasets.map((group, i) => ({
     name: group.name,
     type: 'bar' as const,
-    color: GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc',
+    color: group.color ?? GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc',
     data: orderedCategories.map((key) => {
-      const value = group.items.find((item) => item.key === key)?.value ?? 0
+      const item = group.items.find((entry) => entry.key === key)
+      if (!item && group.gapOnMissing) return null
+      const value = item?.value ?? 0
       if (!percent) return value
       const total = groupTotals[i] || 0
       return total > 0 ? Number(((value / total) * 100).toFixed(2)) : 0
