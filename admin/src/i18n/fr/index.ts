@@ -410,7 +410,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     modal_evolution: {
       title: 'Évolution des pratiques modales',
       description:
-        "Ce graphe montre l'évolution des pratiques modales des participant·e·s présent·e·s dans chacun des groupes.",
+        "Ce graphique montre l'évolution des pratiques modales des participant·e·s présent·e·s dans chacun des groupes.",
     },
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
@@ -492,7 +492,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       description:
         'Ce graphique montre les contraintes de mobilité avec lesquelles les participant·e·s doivent composer plusieurs fois dans la semaine, pour se rendre au travail. Le détail des contraintes "Autre" est disponible en téléchargeant les données désagrégées.',
       description_comparison:
-        'Ce graphe montre les contraintes impactant la mobilité pendulaire des participant·e·s, par groupe de campagne(s).',
+        'Ce graphique montre les contraintes impactant la mobilité pendulaire des participant·e·s, par groupe de campagne(s).',
       labels: {
         dependent: 'Emmener des enfants\nou des personnes dépendantes',
         heavy: 'Transport de matériel\nlourd ou encombrant',
@@ -625,7 +625,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         comparison:
-          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_freq_mod_complex: {
@@ -638,7 +638,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         comparison:
-          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod: {
@@ -736,7 +736,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         specific:
           '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
         comparison:
-          "Ce graphe compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂eq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂eq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod_pro: {
@@ -798,7 +798,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         specific_share:
           "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
         comparison:
-          "Ce graphe montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150 kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s ({lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s ({prevPercent}%) pour le groupe {prevGroup}).",
+          "Ce graphique montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150 kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s ({lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s ({prevPercent}%) pour le groupe {prevGroup}).",
       },
     },
     behavior_change_levers: {
