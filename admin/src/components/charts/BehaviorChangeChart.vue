@@ -23,6 +23,7 @@ import {
   CATEGORY_COLORS,
   MOTIVATION_COLORS,
 } from './commons'
+import { AXIS_LABEL_GAP, axisLabelsWidth, truncateAxisLabel } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -134,13 +135,12 @@ function initChartOptions() {
   option.value = {}
   total.value = 0
 
-  const opt = isComparison.value
-    ? props.type === 'levers'
-      ? comparisonLeversOptions()
-      : comparisonMotivationOptions()
-    : props.type === 'levers'
-      ? leversOptions()
-      : motivationOptions()
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
+  const opt = props.type === 'levers' ? leversOptions() : motivationOptions()
   if (!opt) {
     return
   }
@@ -330,7 +330,32 @@ function orderModes(modes: string[]): string[] {
   return copy
 }
 
-function comparisonLeversOptions() {
+/**
+ * A row of a comparison chart: one bar per (mode, comparison group) pair, so
+ * that a row is a single stack of categories and the legend is back to plain
+ * category names — one entry per lever or motivation level, instead of one per
+ * (group, category) pair, which no longer fits under the chart past a couple of
+ * groups.
+ */
+interface ComparisonRow {
+  mode: string
+  groupName: string
+}
+
+interface ComparisonChartData {
+  rows: ComparisonRow[]
+  /** Modes, in charted order: the outer level of the y axis. */
+  modes: string[]
+  series: SeriesOption[]
+  total: number
+}
+
+/** Rows in y axis order: the groups of a mode, then the next mode. */
+function comparisonRows<G extends { name: string }>(modes: string[], groups: G[]) {
+  return modes.flatMap((mode) => groups.map((group) => ({ mode, group })))
+}
+
+function comparisonLeversOptions(): ComparisonChartData | null {
   const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
     name: group.name,
     byMode: leversByMode(group.behavior_change?.levers?.by_mode_levers ?? []),
@@ -354,33 +379,30 @@ function comparisonLeversOptions() {
     return null
   }
 
-  const series: SeriesOption[] = []
-  groups.forEach((group, groupIndex) => {
-    categories.forEach((category) => {
-      series.push({
-        name: `${group.name} — ${keyLabel(category)}`,
-        type: 'bar',
-        stack: `group_${groupIndex}`,
-        emphasis: { focus: 'series' },
-        itemStyle: { color: CATEGORY_COLORS[category] || '#ccc' },
-        data: modes.map((mode) => {
-          const modeItem = group.byMode.find((item) => item.mode === mode)
-          const lever = modeItem?.levers.find((l) => l.category === category)
-          if (!lever) return 0
-          return props.percent ? lever.percentage : lever.count
-        }),
-      })
-    })
-  })
+  const rows = comparisonRows(modes, groups)
 
   return {
-    series,
-    categories: modes.map((mode) => keyLabel(mode)),
+    rows: rows.map(({ mode, group }) => ({ mode, groupName: group.name })),
+    modes,
+    series: categories.map((category) => ({
+      name: keyLabel(category),
+      type: 'bar',
+      stack: 'total',
+      emphasis: { focus: 'series' },
+      itemStyle: { color: CATEGORY_COLORS[category] || '#ccc' },
+      data: rows.map((row) => {
+        const lever = row.group.byMode
+          .find((item) => item.mode === row.mode)
+          ?.levers.find((l) => l.category === category)
+        if (!lever) return 0
+        return props.percent ? lever.percentage : lever.count
+      }),
+    })) as SeriesOption[],
     total: groups.reduce((sum, group) => sum + group.total, 0),
   }
 }
 
-function comparisonMotivationOptions() {
+function comparisonMotivationOptions(): ComparisonChartData | null {
   const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
     name: group.name,
     byMode: motivationByMode(group.behavior_change?.motivation?.by_mode_motivation ?? []),
@@ -398,29 +420,110 @@ function comparisonMotivationOptions() {
   }
   const levels = [1, 2, 3, 4, 5]
 
-  const series: SeriesOption[] = []
-  groups.forEach((group, groupIndex) => {
-    levels.forEach((level) => {
-      series.push({
-        name: `${group.name} — ${keyLabel(`l${level.toString()}`)}`,
-        type: 'bar',
-        stack: `group_${groupIndex}`,
-        emphasis: { focus: 'series' },
-        itemStyle: { color: MOTIVATION_COLORS[level] || '#ccc' },
-        data: modes.map((mode) => {
-          const modeItem = group.byMode.find((item) => item.mode === mode)
-          const motivation = modeItem?.motivations.find((m) => m.level === level)
-          if (!motivation) return 0
-          return props.percent ? motivation.percentage : motivation.count
-        }),
-      })
-    })
-  })
+  const rows = comparisonRows(modes, groups)
 
   return {
-    series,
-    categories: modes.map((mode) => keyLabel(mode)),
+    rows: rows.map(({ mode, group }) => ({ mode, groupName: group.name })),
+    modes,
+    series: levels.map((level) => ({
+      name: keyLabel(`l${level.toString()}`),
+      type: 'bar',
+      stack: 'total',
+      emphasis: { focus: 'series' },
+      itemStyle: { color: MOTIVATION_COLORS[level] || '#ccc' },
+      data: rows.map((row) => {
+        const motivation = row.group.byMode
+          .find((item) => item.mode === row.mode)
+          ?.motivations.find((m) => m.level === level)
+        if (!motivation) return 0
+        return props.percent ? motivation.percentage : motivation.count
+      }),
+    })) as SeriesOption[],
     total: groups.reduce((sum, group) => sum + group.total, 0),
+  }
+}
+
+function initComparisonChartOptions() {
+  const data = props.type === 'levers' ? comparisonLeversOptions() : comparisonMotivationOptions()
+  if (!data) {
+    return
+  }
+  total.value = data.total
+
+  const groupLabels = data.rows.map((row) => truncateAxisLabel(row.groupName))
+  const modeLabels = data.modes.map((mode) => keyLabel(mode))
+
+  // The axis labels sit outside the grid (no containLabel), so the room they
+  // need is reserved here: the group names, then the modes on their left.
+  const modeAxisOffset = axisLabelsWidth(groupLabels) + AXIS_LABEL_GAP
+
+  option.value = {
+    grid: {
+      left: modeAxisOffset + axisLabelsWidth(modeLabels) + AXIS_LABEL_GAP,
+      right: 20,
+      top: 60,
+      // Room for the x axis labels, and for the legend below them.
+      bottom: 60,
+      containLabel: false,
+    },
+    animation: false,
+    // Same as the single-campaign chart, so that two charts sitting side by
+    // side keep the same height whether or not campaigns are compared.
+    height: props.height - 140,
+    title: {
+      text: chartTitle.value,
+      subtext: t(`stats.total`, { count: total.value }),
+      left: 'center',
+      top: 0,
+      itemGap: 10,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) => {
+        const items = Array.isArray(paramsList) ? paramsList : [paramsList]
+        const row = data.rows[items[0]?.dataIndex ?? 0]
+        if (!row) {
+          return ''
+        }
+        const lines = items
+          .filter((item) => Number(item.value) > 0)
+          .map((item) => {
+            const value = formatNumber(Number(item.value))
+            return `${item.marker} ${item.seriesName}: <b>${value}${props.percent ? '%' : ''}</b>`
+          })
+        return [`${keyLabel(row.mode)} — <b>${row.groupName}</b>`, ...lines].join('<br/>')
+      },
+    },
+    legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
+    yAxis: [
+      {
+        type: 'category',
+        data: groupLabels,
+        axisLabel: { interval: 0 },
+        axisTick: { show: false },
+      },
+      {
+        // Outer level: one band per mode, aligned with its block of group rows
+        // because both axes split the grid height evenly.
+        type: 'category',
+        position: 'left',
+        offset: modeAxisOffset,
+        data: modeLabels,
+        axisLabel: { interval: 0, fontWeight: 'bold' },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { color: '#e0e0e0' } },
+      },
+    ],
+    xAxis: {
+      type: 'value',
+      ...(props.percent ? { max: 100 } : {}),
+    },
+    series: data.series,
   }
 }
 </script>

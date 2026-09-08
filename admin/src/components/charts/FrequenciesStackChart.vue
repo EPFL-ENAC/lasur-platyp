@@ -25,6 +25,7 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from '@/models'
 import { MODE_COLORS, SIMPLE_LABELS_COLORS, simpleLabelSortOrder } from './commons'
+import { AXIS_LABEL_GAP, axisLabelsWidth, truncateAxisLabel } from './comparisonCharts'
 import { getProModalityLabels } from '@/utils/modalities'
 
 const { t, locale } = useI18n()
@@ -327,13 +328,11 @@ function initComparisonChartOptions() {
   // One bar per (distance scale, comparison group) pair: the group name is the
   // inner y-axis level, the distance scale the outer one, drawn by a second
   // category axis holding one band per block of group rows.
-  const rows = props.groups.flatMap((scale) =>
-    datasets.map((dataset) => ({ scale, dataset })),
-  )
+  const rows = props.groups.flatMap((scale) => datasets.map((dataset) => ({ scale, dataset })))
   const scaleLabels = props.groups.map((scale) =>
     t(`stats.${props.chartTranslationName}.labels.${scale}`),
   )
-  const groupLabels = datasets.map((dataset) => truncateLabel(dataset.name))
+  const groupLabels = datasets.map((dataset) => truncateAxisLabel(dataset.name))
 
   const series: SeriesOption[] = sortedModes.map((mode) => ({
     name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
@@ -346,8 +345,8 @@ function initComparisonChartOptions() {
 
   // The axis labels sit outside the grid (no containLabel), so the room they
   // need is reserved here: the group names, then the scale names on their left.
-  const groupLabelsWidth = labelsWidth(groupLabels)
-  const scaleLabelsWidth = labelsWidth(scaleLabels)
+  const groupLabelsWidth = axisLabelsWidth(groupLabels)
+  const scaleLabelsWidth = axisLabelsWidth(scaleLabels)
   const scaleAxisOffset = groupLabelsWidth + AXIS_LABEL_GAP
 
   option.value = {
@@ -395,7 +394,7 @@ function initComparisonChartOptions() {
         nameLocation: 'end',
         nameGap: 30,
         type: 'category',
-        data: rows.map((row) => truncateLabel(row.dataset.name)),
+        data: rows.map((row) => truncateAxisLabel(row.dataset.name)),
         axisLabel: { interval: 0 },
         axisTick: { show: false },
       },
@@ -420,23 +419,6 @@ function initComparisonChartOptions() {
     },
     series,
   }
-}
-
-// Rough width of an axis label, in pixels: the axis labels are laid out outside
-// the grid, whose left margin has to be reserved before the chart is rendered.
-const AXIS_LABEL_CHAR_WIDTH = 7
-const AXIS_LABEL_GAP = 16
-const AXIS_LABEL_MAX_CHARS = 24
-
-function truncateLabel(label: string) {
-  return label.length > AXIS_LABEL_MAX_CHARS
-    ? `${label.slice(0, AXIS_LABEL_MAX_CHARS - 1)}\u2026`
-    : label
-}
-
-function labelsWidth(labels: string[]) {
-  const chars = labels.reduce((max, label) => Math.max(max, truncateLabel(label).length), 0)
-  return chars * AXIS_LABEL_CHAR_WIDTH
 }
 
 function shortKey(key: string) {

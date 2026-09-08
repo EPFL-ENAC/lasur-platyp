@@ -23,6 +23,22 @@ export interface ComparisonGroupDataset {
   participants?: number
 }
 
+
+const AXIS_LABEL_CHAR_WIDTH = 7
+const AXIS_LABEL_MAX_CHARS = 24
+export const AXIS_LABEL_GAP = 16
+
+export function truncateAxisLabel(label: string) {
+  return label.length > AXIS_LABEL_MAX_CHARS
+    ? `${label.slice(0, AXIS_LABEL_MAX_CHARS - 1)}…`
+    : label
+}
+
+export function axisLabelsWidth(labels: string[]) {
+  const chars = labels.reduce((max, label) => Math.max(max, truncateAxisLabel(label).length), 0)
+  return chars * AXIS_LABEL_CHAR_WIDTH
+}
+
 /** Group name followed by its participants count, e.g. "Group A (N: 123)". */
 function groupNameWithParticipants(group: ComparisonGroupDataset): string {
   if (group.participants === undefined) return group.name
