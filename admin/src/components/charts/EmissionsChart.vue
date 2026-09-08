@@ -488,6 +488,8 @@ function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
 }
 
+const KG_TO_TONS = 1 / 1000
+
 function initComparisonChartOptions() {
   option.value = {}
   total.value = 0
@@ -512,7 +514,8 @@ function initComparisonChartOptions() {
       items: group.emissions.map((item) => ({
         key: shortKey(item.mode),
         name: keyLabel(item.mode),
-        value: item.emissions,
+        // Comparison stacks annual totals, which read better in tons than in kg.
+        value: item.emissions * KG_TO_TONS,
       })),
     }
   })
@@ -528,9 +531,9 @@ function initComparisonChartOptions() {
     title: chartTitle.value,
     totalLabel: t('stats.total', { count: total.value }),
     height: props.height - 120,
-    yAxisName: props.yaxis || 'kgCO₂eq',
+    yAxisName: t('stats.units.tco2eq_per_year'),
     keyOrder,
-    valueUnit: 'kgCO₂eq',
+    valueUnit: t('stats.units.tco2eq_per_year'),
   })
 }
 </script>

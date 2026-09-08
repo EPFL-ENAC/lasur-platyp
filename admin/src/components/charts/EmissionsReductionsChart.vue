@@ -383,7 +383,8 @@ function initComparisonChartOptions() {
       items: group.reductions.map((item) => ({
         key: shortKey(item.mode),
         name: keyLabel(item.mode),
-        value: item.reduced,
+        // Comparison stacks annual totals, which read better in tons than in kg.
+        value: item.reduced * SCALE_FACTOR,
       })),
     }
   })
@@ -399,9 +400,9 @@ function initComparisonChartOptions() {
     title: chartTitle.value,
     totalLabel: t('stats.total', { count: total.value }),
     height: props.height - 100,
-    yAxisName: props.yaxis || UNIT_LABEL,
+    yAxisName: t('stats.units.tco2eq_per_year'),
     keyOrder,
-    valueUnit: props.yaxis || UNIT_LABEL,
+    valueUnit: t('stats.units.tco2eq_per_year'),
   })
 }
 </script>
