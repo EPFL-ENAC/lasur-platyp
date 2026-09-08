@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="text-h6 text-primary q-mb-md">{{ title }}</div>
+  <div class="chart-panel">
+    <div class="text-h6 text-primary q-mb-md chart-panel__title">{{ title }}</div>
     <div v-if="combinedDescription" class="q-mt-sm q-mb-md">
       <div class="q-chart-description">
         <q-markdown compact :src="panelDescription" />
@@ -89,6 +89,16 @@ provide(chartPanelDialogOpenKey, showDialog)
 </script>
 
 <style scoped>
+.chart-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chart-panel__title {
+  flex: 1 0 auto;
+}
+
 .chart-panel-dialog-content {
   width: 100%;
   max-width: 1024px;
