@@ -428,6 +428,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       category: 'Catégorie',
       value: 'Valeur',
       link: 'Liaison',
+      total: 'Total',
     },
     units: {
       tco2eq_per_year: 'tCO₂eq/an',
