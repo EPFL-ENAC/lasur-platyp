@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh lpR fff">
     <q-header bordered class="bg-nav">
       <q-toolbar class="header-toolbar">
         <div class="header-toolbar__content">
@@ -60,12 +60,15 @@
       </div>
       <router-view />
     </q-page-container>
+
+    <app-footer />
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import { Cookies, useQuasar } from 'quasar'
 import { locales, localeLabel, t } from '@/boot/i18n'
+import AppFooter from './AppFooter.vue'
 
 const { locale } = useI18n()
 const $q = useQuasar()

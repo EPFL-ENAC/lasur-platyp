@@ -7,17 +7,20 @@
     <template v-for="(journey, idx) in journeys" :key="idx">
       <q-card flat class="q-mb-md">
         <q-card-section>
-          <q-toolbar>
-            <div class="on-left question-hint q-pt-xs">{{ t('form.journey_pro.hint') }}</div>
-            <q-space />
+          <!-- A plain flex row rather than a toolbar: the toolbar brought its own
+          horizontal padding and fixed height, which indented the hint away from
+          the card content it introduces. -->
+          <div class="journey-card__header">
+            <div class="question-hint">{{ t('form.journey_pro.hint') }}</div>
             <q-btn
               round
               :title="t('form.journey_pro.remove')"
+              :aria-label="t('form.journey_pro.remove')"
               icon="close"
               color="accent"
               @click="onRemoveJourney(idx)"
             />
-          </q-toolbar>
+          </div>
           <ProJourneyItem
             v-if="journeys[idx]"
             v-model="journeys[idx]"
@@ -73,3 +76,15 @@ function onRemoveJourney(idx: number) {
   }
 }
 </script>
+
+<style scoped lang="scss">
+// The hint starts on the card's own content edge, with the remove button
+// pinned to the opposite one and both aligned to the first line of text.
+.journey-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+</style>

@@ -23,12 +23,10 @@
         :class="{ 'picker-option--selected': journey.mode === option.value }"
         @click="onSelect(option)"
       >
-        <q-img
+        <span
           v-if="option.icon?.endsWith('.svg')"
-          :src="option.icon"
           class="picker-option__svg"
-          no-spinner
-          no-transition
+          :style="{ '--picker-option-icon': `url('${option.icon}')` }"
         />
         <q-icon v-else :name="option.icon" />
       </q-btn>
@@ -242,15 +240,22 @@ function onSelectDaysPer(value: ProJourney['days_per']) {
   color: $brand-yellow-800;
 }
 
+// The modes that ship as SVG are single-colour artwork, so they are painted
+// through a mask rather than loaded as images: the glyph then takes the exact
+// colour of the font icons beside it, in both themes and on the selected
+// surface, instead of being inverted to a brighter grey of its own.
 .picker-option__svg {
+  display: block;
   width: 20px;
   height: 20px;
+  background-color: var(--half-muted-color);
+
+  -webkit-mask: var(--picker-option-icon) no-repeat center / contain;
+  mask: var(--picker-option-icon) no-repeat center / contain;
 }
 
-// The source file is a dark grey glyph, which needs flipping only where it sits
-// on a dark surface -- so not on the yellow of the selected mode.
-.body--dark .picker-option:not(.picker-option--selected) .picker-option__svg {
-  filter: invert(100%);
+.q-btn.picker-option--selected .picker-option__svg {
+  background-color: $brand-yellow-800;
 }
 
 // A square cell for the icon-only mode options, wrapping left to right so a
