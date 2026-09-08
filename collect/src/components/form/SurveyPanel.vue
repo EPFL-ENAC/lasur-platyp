@@ -362,6 +362,10 @@ function nextStep() {
         notifyError(t('form.error.journey_mode'))
         return
       }
+      if (!Number.isInteger(journey.days) || journey.days < 1 || journey.days > 5) {
+        notifyError(t('form.error.journey_days'))
+        return
+      }
     }
   }
   if (survey.stepName === 'freq_mod_pro') {

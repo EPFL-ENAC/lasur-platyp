@@ -236,3 +236,81 @@ li + li {
   background: $brand-purple-800;
   color: $brand-purple-50;
 }
+
+// Picker tiles
+// Selectable tiles (mode pickers, period segments, journey mode chips) wear
+// the header control skin: hairline border, radius-default corner and the
+// small skeuomorphic shadow. `flat` keeps them clear of the button skin above,
+// so everything they need is declared here.
+.q-btn.picker-option {
+  height: 48px;
+  min-height: 48px;
+  padding: 10px 14px !important;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: 8px;
+  background-color: var(--card-bg) !important;
+  color: $brand-purple-800;
+  box-shadow:
+    0 1px 2px 0 rgba(10, 13, 18, 0.05),
+    inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
+}
+
+.body--dark .q-btn.picker-option {
+  color: $brand-purple-50;
+}
+
+.q-btn.picker-option .q-icon {
+  font-size: 20px;
+  color: var(--half-muted-color);
+}
+
+// The picked option takes the brand surface, the way a selected option does
+// everywhere else in the form.
+.q-btn.picker-option--selected,
+.body--dark .q-btn.picker-option--selected {
+  border-color: $primary;
+  background-color: $brand-yellow-400 !important;
+  color: $brand-yellow-800;
+}
+
+.q-btn.picker-option--selected .q-icon {
+  color: $brand-yellow-800;
+}
+
+.picker-option__svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: var(--half-muted-color);
+
+  -webkit-mask: var(--picker-option-icon) no-repeat center / contain;
+  mask: var(--picker-option-icon) no-repeat center / contain;
+}
+
+.q-btn.picker-option--selected .picker-option__svg {
+  background-color: $brand-yellow-800;
+}
+
+.q-btn.picker-option.picker-option--outlined,
+.body--dark .q-btn.picker-option.picker-option--outlined {
+  border-color: $primary !important;
+}
+
+.q-btn.picker-option.picker-option--outlined .q-icon {
+  color: $primary !important;
+}
+
+.q-btn.picker-option--dashed,
+.body--dark .q-btn.picker-option--dashed {
+  border-style: dashed;
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+// The add slot stretched across the stack it appends to, so it lines up with
+// the cards above it.
+.q-btn.picker-option--block {
+  width: 100%;
+  height: 56px;
+  min-height: 56px;
+}

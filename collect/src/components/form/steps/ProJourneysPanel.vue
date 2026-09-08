@@ -31,7 +31,14 @@
         </q-card-section>
       </q-card>
     </template>
-    <q-btn icon="add" :label="t('form.journey_pro.add')" color="primary" @click="onAddJourney" />
+    <q-btn
+      flat
+      no-caps
+      icon="add"
+      :label="t('form.journey_pro.add')"
+      class="picker-option picker-option--dashed picker-option--block"
+      @click="onAddJourney"
+    />
   </div>
 </template>
 
