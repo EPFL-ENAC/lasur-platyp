@@ -1,6 +1,7 @@
 import type { EChartsOption } from 'echarts'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { t } from '@/boot/i18n'
+import { formatNumber } from '@/utils/numbers'
 import { GROUP_COLORS } from './commons'
 
 export interface ComparisonSeriesItem {
@@ -146,8 +147,20 @@ export function buildGroupStackedBarOption(params: {
   height: number
   yAxisName?: string
   keyOrder?: string[]
+  /** Unit appended to the tooltip values of an absolute-value chart (percent: false). */
+  valueUnit?: string
 }): EChartsOption {
-  const { groupDatasets, colors, percent, title, totalLabel, height, yAxisName, keyOrder } = params
+  const {
+    groupDatasets,
+    colors,
+    percent,
+    title,
+    totalLabel,
+    height,
+    yAxisName,
+    keyOrder,
+    valueUnit,
+  } = params
 
   const keyNames = new Map<string, string>()
   groupDatasets.forEach((group) => {
@@ -175,8 +188,9 @@ export function buildGroupStackedBarOption(params: {
   }))
 
   return {
-    // Bottom fits the legend plus a group name wrapped over a couple of lines.
-    grid: { left: '20', right: '20', top: '60', bottom: '90', containLabel: true },
+    // Bottom fits the legend plus a group name wrapped over a couple of lines;
+    // left fits the y axis name, which `containLabel` does not account for.
+    grid: { left: '70', right: '20', top: '60', bottom: '90', containLabel: true },
     animation: false,
     height,
     title: {
@@ -193,8 +207,9 @@ export function buildGroupStackedBarOption(params: {
         const list = Array.isArray(paramsList) ? paramsList : [paramsList]
         let res = `${list[0]?.name}<br/>`
         list.forEach((item) => {
-          const val = percent ? `${item.value}%` : item.value
-          res += `${item.marker} ${item.seriesName}: <b>${val}</b><br/>`
+          const display = formatNumber(Number(item.value))
+          const unit = percent ? '%' : valueUnit ? ` ${valueUnit}` : ''
+          res += `${item.marker} ${item.seriesName}: <b>${display}${unit}</b><br/>`
         })
         return res
       },
@@ -228,7 +243,8 @@ export function buildGroupStackedBarOption(params: {
       type: 'value',
       name: yAxisName ?? '',
       nameLocation: 'middle',
-      nameGap: 40,
+      // Clears the widest tick labels, which sit between the axis line and the name.
+      nameGap: 55,
       ...(percent ? { max: 100 } : {}),
     },
     series,

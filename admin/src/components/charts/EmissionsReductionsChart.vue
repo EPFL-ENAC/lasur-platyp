@@ -401,6 +401,7 @@ function initComparisonChartOptions() {
     height: props.height - 100,
     yAxisName: props.yaxis || UNIT_LABEL,
     keyOrder,
+    valueUnit: props.yaxis || UNIT_LABEL,
   })
 }
 </script>

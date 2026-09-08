@@ -365,7 +365,8 @@ function initChartOptions() {
 
   const newOption: EChartsOption = {
     grid: {
-      left: '40',
+      // Fits the y axis name, which `containLabel` does not account for.
+      left: '70',
       right: '20',
       top: '60',
       bottom: '60',
@@ -427,7 +428,8 @@ function initChartOptions() {
     yAxis: {
       name: props.yaxis || '',
       nameLocation: 'middle',
-      nameGap: 40,
+      // Clears the widest tick labels, which sit between the axis line and the name.
+      nameGap: 55,
       type: 'value',
     },
     series: preparedData.map((item) => ({
@@ -528,6 +530,7 @@ function initComparisonChartOptions() {
     height: props.height - 120,
     yAxisName: props.yaxis || 'kgCO₂eq',
     keyOrder,
+    valueUnit: 'kgCO₂eq',
   })
 }
 </script>
