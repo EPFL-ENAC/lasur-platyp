@@ -13,7 +13,7 @@
         flat
         no-caps
         color="primary"
-        class="q-mb-md text-secondary row items-center inline-flex no-wrap"
+        class="modus q-mb-md text-secondary row items-center inline-flex no-wrap"
         @click.prevent="showDialog = true"
         >{{ t('more_details') }}</a
       >
