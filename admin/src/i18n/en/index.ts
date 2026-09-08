@@ -575,7 +575,11 @@ Thank you for your valuable contribution! If you have any questions, please cont
     freq_mod_pro: {
       title: 'Modal split (professional travel)',
       description:
-        'This chart shows the modal split for professional trips, broken down by distance, from local to international journeys. Unlike the modal split for commuting, these modal shares are not calculated on a per-person basis (one person = one mode) but on a per-journey basis (one reported journey = one mode).',
+        'This graph illustrates the modal split of work-related trips at different geographic scales.',
+      texts: {
+        comparison:
+          'For instance, at the local level, active modes of transport (cycling and walking) account for around {percent}% of work-related trips in group {lastGroup}.',
+      },
       xaxis: 'Journeys per year',
       labels: {
         ...transportationModes,

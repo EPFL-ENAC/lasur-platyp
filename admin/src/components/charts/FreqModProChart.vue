@@ -1,9 +1,5 @@
 <template>
-  <chart-panel
-    :title="chartTitle"
-    :description="t('stats.freq_mod_pro.description')"
-    :inline="inline"
-  >
+  <chart-panel :title="chartTitle" :description="descriptionText" :inline="inline">
     <q-toolbar v-if="!inline" class="chart-toolbar">
       <q-space />
       <q-btn flat icon="more_vert">
@@ -60,6 +56,7 @@
 <script setup lang="ts">
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import FrequenciesStackChart from '@/components/charts/FrequenciesStackChart.vue'
+import { getProModalityLabels } from '@/utils/modalities'
 import type { Frequencies } from '@/models'
 
 interface Props {
@@ -89,6 +86,46 @@ const chartTitle = computed(
       `stats.freq_mod.modal_split.${modalType.value}`,
     ).toLowerCase()})`,
 )
+
+// Share of the local professional trips made with active modes (walking, cycling)
+// by the last comparison group: the example the comparison description builds on.
+const localActiveModesExample = computed(() => {
+  const groups = stats.comparisonResults?.groups ?? []
+  const lastGroup = groups[groups.length - 1]
+  if (!lastGroup) {
+    return null
+  }
+  let active = 0
+  let total = 0
+  ;(lastGroup.pro_mode_frequencies ?? []).forEach((item) => {
+    const key = item.field.replace('freq_mod_pro_', '')
+    if (!key.startsWith('local_')) {
+      return
+    }
+    const value = item.data.map((d) => d.sum ?? 0).reduce((a, b) => a + b, 0)
+    total += value
+    if (getProModalityLabels(key.slice('local_'.length))?.simple === 'MA') {
+      active += value
+    }
+  })
+  if (total === 0) {
+    return null
+  }
+  return { lastGroup: lastGroup.name, percent: Math.round((active / total) * 100) }
+})
+
+const descriptionText = computed(() => {
+  if (!stats.comparisonMode) {
+    return t('stats.freq_mod_pro.description')
+  }
+  const example = localActiveModesExample.value
+  return [
+    t('stats.freq_mod_pro.description'),
+    example ? t('stats.freq_mod_pro.texts.comparison', example) : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+})
 
 function onToggleModalType() {
   stats.freqProModalType = stats.freqProModalType === 'simple' ? 'detailed' : 'simple'

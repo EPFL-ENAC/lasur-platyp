@@ -588,7 +588,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     freq_mod_pro: {
       title: 'Répartition modale (déplacements professionnels)',
       description:
-        "Ce graphique montre la répartition modale des déplacements professionnels, pour les différentes échelles de déplacement, des déplacements locaux aux déplacements internationaux. Contrairement à la répartition modale des déplacements domicile-travail, ces parts modales ne sont pas calculées à l'échelle de la personne (une personne = un mode) mais à l'échelle du déplacement (un déplacement déclaré = un mode).",
+        'Ce graphique montre la répartition modale des déplacements professionnels, par échelle géographique.',
+      texts: {
+        comparison:
+          "Par exemple, à l'échelle locale, les modes actifs (vélos et marche) sont utilisés pour environ {percent}% des déplacements professionnels pour le groupe {lastGroup}.",
+      },
       xaxis: 'Trajets par année',
       labels: {
         ...transportationModes,
