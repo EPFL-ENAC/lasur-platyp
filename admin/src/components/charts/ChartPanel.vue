@@ -89,7 +89,6 @@ provide(chartPanelDialogOpenKey, showDialog)
 </script>
 
 <style scoped>
-
 .chart-panel {
   display: flex;
   flex-direction: column;

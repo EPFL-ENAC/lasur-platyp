@@ -23,7 +23,6 @@ export interface ComparisonGroupDataset {
   participants?: number
 }
 
-
 const AXIS_LABEL_CHAR_WIDTH = 7
 const AXIS_LABEL_MAX_CHARS = 24
 export const AXIS_LABEL_GAP = 16

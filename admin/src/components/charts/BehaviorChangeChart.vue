@@ -337,10 +337,10 @@ function orderModes(modes: string[]): string[] {
  * (group, category) pair, which no longer fits under the chart past a couple of
  * groups.
  */
-interface ComparisonRow {
+type ComparisonRow = {
   mode: string
   groupName: string
-}
+} | null
 
 interface ComparisonChartData {
   rows: ComparisonRow[]
@@ -350,9 +350,11 @@ interface ComparisonChartData {
   total: number
 }
 
-/** Rows in y axis order: the groups of a mode, then the next mode. */
+/** Bars are this share of their row, the rest being the gap between two bars. */
+const COMPARISON_BAR_CATEGORY_GAP = '10%'
+
 function comparisonRows<G extends { name: string }>(modes: string[], groups: G[]) {
-  return modes.flatMap((mode) => groups.map((group) => ({ mode, group })))
+  return modes.flatMap((mode) => [null, ...groups.map((group) => ({ mode, group })), null])
 }
 
 function comparisonLeversOptions(): ComparisonChartData | null {
@@ -382,15 +384,17 @@ function comparisonLeversOptions(): ComparisonChartData | null {
   const rows = comparisonRows(modes, groups)
 
   return {
-    rows: rows.map(({ mode, group }) => ({ mode, groupName: group.name })),
+    rows: rows.map((row) => (row ? { mode: row.mode, groupName: row.group.name } : null)),
     modes,
     series: categories.map((category) => ({
       name: keyLabel(category),
       type: 'bar',
       stack: 'total',
+      barCategoryGap: COMPARISON_BAR_CATEGORY_GAP,
       emphasis: { focus: 'series' },
       itemStyle: { color: CATEGORY_COLORS[category] || '#ccc' },
       data: rows.map((row) => {
+        if (!row) return null
         const lever = row.group.byMode
           .find((item) => item.mode === row.mode)
           ?.levers.find((l) => l.category === category)
@@ -423,15 +427,17 @@ function comparisonMotivationOptions(): ComparisonChartData | null {
   const rows = comparisonRows(modes, groups)
 
   return {
-    rows: rows.map(({ mode, group }) => ({ mode, groupName: group.name })),
+    rows: rows.map((row) => (row ? { mode: row.mode, groupName: row.group.name } : null)),
     modes,
     series: levels.map((level) => ({
       name: keyLabel(`l${level.toString()}`),
       type: 'bar',
       stack: 'total',
+      barCategoryGap: COMPARISON_BAR_CATEGORY_GAP,
       emphasis: { focus: 'series' },
       itemStyle: { color: MOTIVATION_COLORS[level] || '#ccc' },
       data: rows.map((row) => {
+        if (!row) return null
         const motivation = row.group.byMode
           .find((item) => item.mode === row.mode)
           ?.motivations.find((m) => m.level === level)
@@ -450,7 +456,7 @@ function initComparisonChartOptions() {
   }
   total.value = data.total
 
-  const groupLabels = data.rows.map((row) => truncateAxisLabel(row.groupName))
+  const groupLabels = data.rows.map((row) => (row ? truncateAxisLabel(row.groupName) : ''))
   const modeLabels = data.modes.map((mode) => keyLabel(mode))
 
   // The axis labels sit outside the grid (no containLabel), so the room they
@@ -508,7 +514,6 @@ function initComparisonChartOptions() {
       },
       {
         // Outer level: one band per mode, aligned with its block of group rows
-        // because both axes split the grid height evenly.
         type: 'category',
         position: 'left',
         offset: modeAxisOffset,
@@ -516,7 +521,11 @@ function initComparisonChartOptions() {
         axisLabel: { interval: 0, fontWeight: 'bold' },
         axisLine: { show: false },
         axisTick: { show: false },
-        splitLine: { show: true, lineStyle: { color: '#e0e0e0' } },
+        splitLine: { show: true, lineStyle: { color: '#bdbdbd' } },
+        splitArea: {
+          show: true,
+          areaStyle: { color: ['rgba(128, 128, 128, 0.09)', 'transparent'] },
+        },
       },
     ],
     xAxis: {
