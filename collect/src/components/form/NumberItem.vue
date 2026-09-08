@@ -8,6 +8,7 @@
         v-if="props.step2"
         class="number-item__step"
         icon="keyboard_double_arrow_left"
+        aria-label="Decrease value by larger step"
         :disable="modelValue === props.min"
         @click="decrement2"
       />
@@ -15,6 +16,7 @@
       <q-btn
         class="number-item__step"
         :icon="props.step2 ? 'keyboard_arrow_left' : 'remove'"
+        aria-label="Decrease value"
         :disable="modelValue === props.min"
         @click="decrement"
       />
@@ -37,6 +39,7 @@
       <q-btn
         class="number-item__step"
         :icon="props.step2 ? 'keyboard_arrow_right' : 'add'"
+        aria-label="Increase value"
         :disable="modelValue === props.max"
         @click="increment"
       />
@@ -45,6 +48,7 @@
         v-if="props.step2"
         class="number-item__step"
         icon="keyboard_double_arrow_right"
+        aria-label="Increase value by larger step"
         :disable="modelValue === props.max"
         @click="increment2"
       />

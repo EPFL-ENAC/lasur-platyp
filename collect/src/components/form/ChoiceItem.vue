@@ -27,6 +27,7 @@
                       :model-value="isSelected(option)"
                       size="md"
                       color="primary"
+                      tabindex="-1"
                       class="choice-option__control"
                     />
                     <q-radio
@@ -35,6 +36,7 @@
                       :val="true"
                       size="md"
                       color="primary"
+                      tabindex="-1"
                       class="choice-option__control"
                     />
                   </q-item-section>

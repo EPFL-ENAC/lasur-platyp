@@ -3,7 +3,7 @@
     <q-header bordered class="bg-nav">
       <q-toolbar class="header-toolbar">
         <div class="header-toolbar__content">
-          <a href="https://modus-ge.ch/" target="_blank">
+          <a href="https://modus-ge.ch/" target="_blank" rel="noopener noreferrer">
             <img
               :src="$q.dark.isActive ? '/LOGO-JAUNE.svg' : '/LOGO-VIOLET.svg'"
               alt="Logo"
