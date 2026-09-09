@@ -286,10 +286,19 @@ const onTabChanged = (newTab: string) => {
   color: var(--foreground-color);
 }
 
+/* Two chart columns; one below tablet width. A fixed count (rather than
+   auto-fit) keeps a two-chart row from sharing the width with a third,
+   unused track opened by a full-row chart further down. */
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 48px 32px;
+}
+
+@media (max-width: 1279px) {
+  .grid-container {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .grid-item-full-row {

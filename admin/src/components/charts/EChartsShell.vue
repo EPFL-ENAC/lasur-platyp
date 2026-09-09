@@ -19,7 +19,7 @@
       ref="chart"
       autoresize
       :init-options="initOptions"
-      :option="option"
+      :option="resolvedOption"
       :update-options="updateOptions"
       :loading="!!loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
@@ -84,6 +84,32 @@ const { t } = useI18n()
 const chart = shallowRef<InstanceType<typeof ECharts> | null>(null)
 const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
 const dialogOpen = inject(chartPanelDialogOpenKey, ref(false))
+
+// Full-screen details: the panel already shows the title, so the in-chart
+// title is dropped (its "N: ..." subtext stays) and paged legends wrap instead.
+// The height stays as given: charts derive their grid from it, so a taller
+// container would only open a gap above the legend.
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRecord = Record<string, any>
+
+function dialogTitle(title: AnyRecord): AnyRecord {
+  return { ...title, text: '' }
+}
+
+function dialogLegend(legend: AnyRecord): AnyRecord {
+  return legend.type === 'scroll' ? { ...legend, type: 'plain' } : legend
+}
+
+const resolvedOption = computed<ECBasicOption>(() => {
+  if (!dialogOpen.value) return props.option
+  const opt: AnyRecord = { ...props.option }
+  if (Array.isArray(opt.title)) opt.title = opt.title.map(dialogTitle)
+  else if (opt.title) opt.title = dialogTitle(opt.title)
+  if (Array.isArray(opt.legend)) opt.legend = opt.legend.map(dialogLegend)
+  else if (opt.legend) opt.legend = dialogLegend(opt.legend)
+  return opt as ECBasicOption
+})
 
 const resolvedExportBackgroundColor = computed(() => {
   if (props.exportBackgroundColor) {

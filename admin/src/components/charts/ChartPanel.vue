@@ -27,21 +27,27 @@
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <q-card flat>
-        <q-card-section>
+      <q-card flat class="chart-panel-dialog">
+        <q-btn
+          round
+          unelevated
+          color="primary"
+          icon="close"
+          :aria-label="t('close')"
+          class="chart-panel-dialog__close"
+          v-close-popup
+        />
+        <q-card-section class="chart-panel-dialog__body">
           <div class="chart-panel-dialog-content">
             <div class="text-h6 q-mb-md">{{ title }}</div>
             <q-markdown
               v-if="combinedDescription"
-              class="compact q-mt-sm q-mb-md"
+              class="compact chart-panel-dialog__description q-mt-sm q-mb-lg"
               :src="combinedDescription"
             />
             <slot></slot>
           </div>
         </q-card-section>
-        <q-card-actions align="right">
-          <q-btn no-caps :label="t('close')" color="primary" v-close-popup />
-        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
@@ -118,10 +124,85 @@ provide(chartPanelDialogOpenKey, showDialog)
   line-height: 20px;
 }
 
+/* Full-screen details: generous top / bottom margins, content centred, and a
+   close cross pinned to the top right corner. */
+.chart-panel-dialog {
+  position: relative;
+}
+
+.chart-panel-dialog__body {
+  padding: 96px 48px;
+}
+
+.chart-panel-dialog__description :deep(p) {
+  font-size: 16px;
+  line-height: 26px;
+}
+
+/* Top-right corner: the chart's own "..." menu (a round neutral button) sits
+   beside the yellow round close button. */
+.chart-panel-dialog__close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 101;
+  width: 44px;
+  height: 44px;
+}
+
+/* Only the chart sits in a bordered container (the data table below stays
+   outside it), so the "..." menu keeps anchoring to the dialog corner. */
+.chart-panel-dialog :deep(.chart-shell__frame) {
+  padding: 24px;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: 12px; /* radius-lg */
+  background-color: white;
+}
+
+.body--dark .chart-panel-dialog :deep(.chart-shell__frame) {
+  background-color: var(--nav-bg);
+}
+
+.chart-panel-dialog :deep(.chart-toolbar) {
+  top: 24px;
+  right: 80px;
+  min-height: 0;
+  padding: 0;
+}
+
+.chart-panel-dialog :deep(.chart-toolbar .q-btn) {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--secondary-border-color);
+  background-color: white;
+  color: var(--foreground-color);
+}
+
+.body--dark .chart-panel-dialog :deep(.chart-toolbar .q-btn) {
+  background-color: var(--nav-bg);
+}
+
 .chart-panel-dialog-content {
   width: 100%;
   max-width: 1024px;
   margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+  .chart-panel-dialog__body {
+    padding: 72px 16px 48px;
+  }
+
+  .chart-panel-dialog__close {
+    top: 12px;
+    right: 12px;
+  }
+
+  .chart-panel-dialog :deep(.chart-toolbar) {
+    top: 12px;
+    right: 68px;
+  }
 }
 
 .q-chart-description {
