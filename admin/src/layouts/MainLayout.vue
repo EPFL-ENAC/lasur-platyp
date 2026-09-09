@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh LpR fff">
+  <q-layout view="hHh LpR lfr">
     <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav">
       <q-toolbar class="header-toolbar">
         <q-toolbar-title class="logos">
@@ -369,7 +369,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   align-items: center;
   gap: 24px; // spacing-xl
   padding: 20px 16px;
-  background-color: $brand-purple-800;
+  background-color: $brand-purple-700;
   color: $brand-yellow-100;
 }
 

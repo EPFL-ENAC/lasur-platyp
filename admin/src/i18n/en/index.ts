@@ -969,12 +969,10 @@ Furthermore, we recommend that you adapt your processing register accordingly.
     no_charts_to_export: 'No charts to export as PDF.',
   },
   footer: {
-    modus: `[Fondation Modus
-Promoting sustainable mobility in the Greater Geneva](https://www.modus-ge.ch)`,
-    epfl: `
-[Laboratory Of Urban Sociology (LASUR)](https://www.epfl.ch/labs/lasur/)
-
-[ENAC-IT4R](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+    modus_name: 'Fondation Modus',
+    modus_tagline: 'Promoting sustainable mobility in the Greater Geneva',
+    lasur: 'Laboratory Of Urban Sociology (LASUR)',
+    it4r: 'ENAC-IT4R',
   },
   generated_report: {
     title: 'Generated mobility report',
