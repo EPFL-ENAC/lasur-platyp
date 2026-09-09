@@ -4,7 +4,7 @@
 
     <ContentCard v-for="(journey, idx) in journeys" :key="idx">
       <JourneyItem
-        :model-value="journey"
+        v-model="journeys[idx]"
         :index="idx + 1"
         :count="journeys.length"
         @remove="onRemoveJourney(idx)"

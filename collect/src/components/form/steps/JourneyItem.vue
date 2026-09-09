@@ -100,7 +100,13 @@
     <div>
       <div class="question-label text-bold q-mb-sm">{{ t('form.journey.frequency_label') }}</div>
       <div class="journey-frequency">
-        <NumberItem v-model="journey.days" :min="MIN_DAYS" :max="MAX_DAYS" :unit="t('form.journey.days')" />
+        <NumberItem
+          :model-value="journey.days"
+          :min="MIN_DAYS"
+          :max="MAX_DAYS"
+          :unit="t('form.journey.days')"
+          @update:model-value="(val) => (journey = { ...journey, days: val })"
+        />
         <span class="text-hint">{{ t('form.journey.per_week') }}</span>
       </div>
       <div class="question-hint q-mt-xs">{{ t('form.journey.frequency_hint') }}</div>
@@ -163,11 +169,19 @@ const showAddMode = computed(() => canAddMode.value && !pickerOpen.value)
 // e-bike journey shows the switch where the traveller left it.
 const electric = reactive<Record<string, boolean>>(
   Object.fromEntries(
-    Object.entries(ELECTRIC_VARIANTS).map(([base, variant]) => [
-      base,
-      modes.value.includes(variant),
-    ]),
+    Object.entries(ELECTRIC_VARIANTS).map(([base, variant]) => [base, modes.value.includes(variant)]),
   ),
+)
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    for (const [base, variant] of Object.entries(ELECTRIC_VARIANTS)) {
+      electric[base] = (val.modes ?? []).includes(variant)
+    }
+    pickerOpen.value = (val.modes?.length ?? 0) === 0
+  },
+  { deep: false },
 )
 
 function setElectric(base: string, on: boolean) {
