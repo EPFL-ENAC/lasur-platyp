@@ -164,6 +164,15 @@
             </div>
           </div>
         </div>
+
+        <div class="nav-logos">
+          <a href="https://modus-ge.ch/" target="_blank" rel="noopener" class="nav-logos__link">
+            <span class="nav-logos__logo nav-logos__logo--modus" role="img" aria-label="Modus" />
+          </a>
+          <a href="https://www.epfl.ch" target="_blank" rel="noopener" class="nav-logos__link">
+            <span class="nav-logos__logo nav-logos__logo--epfl" role="img" aria-label="EPFL" />
+          </a>
+        </div>
       </div>
     </q-drawer>
 
@@ -350,5 +359,53 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   align-items: center;
   gap: 0.5rem;
   justify-content: space-between;
+}
+
+// Partner logos strip at the bottom of the menu: violet band, light yellow
+// artwork. The logos ship as single-colour artwork and are painted through a
+// mask so one asset takes any fill colour.
+.nav-logos {
+  display: flex;
+  align-items: center;
+  gap: 24px; // spacing-xl
+  padding: 20px 16px;
+  background-color: $brand-purple-800;
+  color: $brand-yellow-100;
+}
+
+.nav-logos__link {
+  display: block;
+  color: inherit;
+  opacity: 0.9;
+}
+
+.nav-logos__link:hover {
+  opacity: 1;
+}
+
+.nav-logos__logo {
+  display: block;
+  background-color: currentColor;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: left center;
+  mask-position: left center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.nav-logos__logo--modus {
+  width: 72px;
+  height: 22px;
+  -webkit-mask-image: url('/admin/modus.svg');
+  mask-image: url('/admin/modus.svg');
+}
+
+.nav-logos__logo--epfl {
+  width: 76px;
+  height: 22px;
+  -webkit-mask-image: url('/admin/epfl_logo.svg');
+  mask-image: url('/admin/epfl_logo.svg');
 }
 </style>
