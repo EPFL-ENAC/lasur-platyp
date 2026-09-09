@@ -1,17 +1,7 @@
 <template>
-  <q-layout view="hHh LpR lff">
+  <q-layout view="hHh LpR fff">
     <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav">
       <q-toolbar class="header-toolbar">
-        <q-btn
-          flat
-          dense
-          round
-          color="foreground"
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
         <q-toolbar-title class="logos">
           <a href="https://modus-ge.ch/" target="_blank" class="logo" rel="noopener noreferrer">
             <img
@@ -26,7 +16,7 @@
           no-caps
           dropdown-icon="expand_more"
           :label="currentLocaleLabel"
-          class="header-btn"
+          class="header-btn on-left"
         >
           <q-list>
             <q-item
@@ -45,13 +35,29 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
+
+        <q-btn flat round class="menu-btn" aria-label="Menu" @click="toggleDrawer">
+          <svg
+            class="menu-btn__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <line x1="2" y1="5" x2="22" y2="5" />
+            <line x1="2" y1="12" x2="15" y2="12" />
+            <line x1="2" y1="19" x2="22" y2="19" />
+          </svg>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-if="authStore.isAuthenticated"
-      v-model="leftDrawerOpen"
-      show-if-above
+      v-model="drawerOpen"
+      side="left"
       bordered
       class="bg-nav text-foreground"
     >
@@ -186,7 +192,7 @@ const { locale, t } = useI18n()
 const router = useRouter()
 const $q = useQuasar()
 
-const leftDrawerOpen = ref(false)
+const drawerOpen = ref(false)
 
 const username = computed(() => authStore.profile?.email)
 const localeOptions = computed(() => {
@@ -215,8 +221,8 @@ watch(
   },
 )
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+function toggleDrawer() {
+  drawerOpen.value = !drawerOpen.value
 }
 
 function onLogout() {
@@ -262,6 +268,22 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 .q-btn.header-btn :deep(.q-btn-dropdown__arrow) {
   margin-left: 4px; // spacing-xs
   font-size: 20px;
+}
+
+// Burger: plain icon, no button skin
+.q-btn.menu-btn {
+  width: 48px;
+  height: 48px;
+  color: $brand-purple-800;
+}
+
+.body--dark .q-btn.menu-btn {
+  color: $brand-purple-50;
+}
+
+.menu-btn__icon {
+  width: 24px;
+  height: 24px;
 }
 
 .logos {
