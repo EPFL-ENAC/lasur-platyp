@@ -201,63 +201,6 @@ function onSelectDaysPer(value: ProJourney['days_per']) {
   gap: 32px;
 }
 
-// Both pickers in this card -- the mode and the period -- wear the header
-// control skin: hairline border, radius-default corner and the small
-// skeuomorphic shadow. `flat` keeps them clear of the global button skin, so
-// everything they need is declared here.
-.q-btn.picker-option {
-  height: 48px;
-  min-height: 48px;
-  padding: 10px 14px !important;
-  border: 1px solid var(--secondary-border-color);
-  border-radius: 8px;
-  background-color: var(--card-bg) !important;
-  color: $brand-purple-800;
-  box-shadow:
-    0 1px 2px 0 rgba(10, 13, 18, 0.05),
-    inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
-}
-
-.body--dark .q-btn.picker-option {
-  color: $brand-purple-50;
-}
-
-.q-btn.picker-option :deep(.q-icon) {
-  font-size: 20px;
-  color: var(--half-muted-color);
-}
-
-// The picked option takes the brand surface, the way a selected option does
-// everywhere else in the form.
-.q-btn.picker-option--selected,
-.body--dark .q-btn.picker-option--selected {
-  border-color: $primary;
-  background-color: $brand-yellow-400 !important;
-  color: $brand-yellow-800;
-}
-
-.q-btn.picker-option--selected :deep(.q-icon) {
-  color: $brand-yellow-800;
-}
-
-// The modes that ship as SVG are single-colour artwork, so they are painted
-// through a mask rather than loaded as images: the glyph then takes the exact
-// colour of the font icons beside it, in both themes and on the selected
-// surface, instead of being inverted to a brighter grey of its own.
-.picker-option__svg {
-  display: block;
-  width: 20px;
-  height: 20px;
-  background-color: var(--half-muted-color);
-
-  -webkit-mask: var(--picker-option-icon) no-repeat center / contain;
-  mask: var(--picker-option-icon) no-repeat center / contain;
-}
-
-.q-btn.picker-option--selected .picker-option__svg {
-  background-color: $brand-yellow-800;
-}
-
 // A square cell for the icon-only mode options, wrapping left to right so a
 // long list reads as one block instead of a centred row that re-centres on
 // every wrap.
