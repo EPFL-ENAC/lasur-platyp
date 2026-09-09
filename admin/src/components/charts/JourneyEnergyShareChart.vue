@@ -233,7 +233,7 @@ function initChartOptions() {
         color: filtered.map(
           (item) =>
             (modalType.value === 'simple' ? SIMPLE_LABELS_COLORS : MODE_COLORS)[item.label] ||
-            '#FCC447',
+            '#e3cd72',
         ),
       },
     ],

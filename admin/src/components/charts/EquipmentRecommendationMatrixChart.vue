@@ -373,7 +373,7 @@ function initChartOptions() {
       left: 'center',
       bottom: '0%',
       inRange: {
-        color: ['#FFCC33', '#FFFFE0', '#74C365'],
+        color: ['#e3cd72', '#fbf6e6', '#78c1a3'],
       },
     },
     tooltip: {

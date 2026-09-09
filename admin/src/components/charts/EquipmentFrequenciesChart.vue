@@ -180,7 +180,7 @@ function initChartOptions() {
   initLabelsChartOptions(props.frequencies)
 }
 
-const MRMT_COLOR = '#FF5722'
+const MRMT_COLOR = '#d98a7a'
 
 const MRMT_VALUES_PERCENT = {
   upt_subs: 26,

@@ -132,7 +132,7 @@ function initChartOptions() {
           focus: 'series',
         },
         data: completedDataCumulated,
-        color: '#4caf50',
+        color: '#78c1a3',
       },
       {
         name: t('stats.in_progress'),
@@ -143,7 +143,7 @@ function initChartOptions() {
           focus: 'series',
         },
         data: inProgressDataCumulated,
-        color: '#ff9800',
+        color: '#e8b27a',
       },
     ],
   }

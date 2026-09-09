@@ -237,7 +237,7 @@ function initChartOptions() {
           name: keyLabel(item.mode),
           value: item.reduced,
         })),
-        color: recoEmissions.map((item) => colors[shortKey(item.mode)] || '#FCC447'),
+        color: recoEmissions.map((item) => colors[shortKey(item.mode)] || '#e3cd72'),
       },
     ],
   }
