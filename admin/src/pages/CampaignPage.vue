@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-lg">
     <div class="title-bar">
-      <div class="text-h6 row">
+      <div class="text-subtitle2 row">
         <q-breadcrumbs gutter="sm" active-color="title">
           <q-breadcrumbs-el :label="t('companies')" to="/companies" />
           <q-breadcrumbs-el :label="company?.name" :to="`/company/${company?.id}`" />

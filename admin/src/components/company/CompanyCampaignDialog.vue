@@ -10,17 +10,7 @@
 
       <q-card-section>
         <q-form ref="form">
-          <q-tabs
-            v-model="tab"
-            dense
-            no-caps
-            active-color="secondary"
-            active-bg-color="white"
-            active-class="tab-active"
-            indicator-color="transparent"
-            class="bg-secondary-ultra-light"
-            align="left"
-          >
+          <q-tabs v-model="tab" no-caps align="left">
             <q-tab name="general" :label="t('general')" />
             <q-tab
               name="workplaces"

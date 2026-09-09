@@ -1,8 +1,8 @@
 <template>
   <q-btn-dropdown
     color="primary"
-    size="md"
-    icon="download"
+    icon="fa-regular fa-circle-down"
+    dropdown-icon="expand_more"
     no-caps
     :label="t('download')"
     :disable="stats.loading"

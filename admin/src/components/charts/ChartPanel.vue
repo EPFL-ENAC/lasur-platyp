@@ -1,24 +1,21 @@
 <template>
   <div class="chart-panel">
-    <div class="text-h6 text-primary q-mb-md chart-panel__title">{{ title }}</div>
-    <div v-if="combinedDescription" class="q-mt-sm q-mb-md">
+    <div class="text-h6 chart-panel__title">{{ title }}</div>
+    <div v-if="combinedDescription" class="chart-panel__description">
       <div class="q-chart-description">
         <q-markdown compact :src="panelDescription" />
       </div>
     </div>
-    <div v-if="!noDetails" class="q-mb-md">
+    <div v-if="!noDetails" class="chart-panel__details">
       <a
         href="#"
         v-if="!inline"
-        flat
-        no-caps
-        color="primary"
-        class="modus q-mb-md text-secondary row items-center inline-flex no-wrap"
+        class="modus chart-panel__link"
         @click.prevent="showDialog = true"
         >{{ t('more_details') }}</a
       >
     </div>
-    <q-card flat>
+    <q-card flat class="chart-panel__card">
       <q-card-section>
         <slot></slot>
       </q-card-section>
@@ -33,7 +30,7 @@
       <q-card flat>
         <q-card-section>
           <div class="chart-panel-dialog-content">
-            <div class="text-h6 text-primary q-mb-md">{{ title }}</div>
+            <div class="text-h6 q-mb-md">{{ title }}</div>
             <q-markdown
               v-if="combinedDescription"
               class="compact q-mt-sm q-mb-md"
@@ -95,8 +92,30 @@ provide(chartPanelDialogOpenKey, showDialog)
   height: 100%;
 }
 
+/* Title and description sit tight; any leftover height a row needs to keep
+   its cards level goes between the description and the link. */
 .chart-panel__title {
+  flex: none;
+  margin-bottom: 8px;
+}
+
+.chart-panel__description {
   flex: 1 0 auto;
+  margin-bottom: 4px;
+}
+
+.chart-panel__details {
+  margin-bottom: 16px;
+}
+
+.q-chart-description :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.chart-panel__link {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
 }
 
 .chart-panel-dialog-content {

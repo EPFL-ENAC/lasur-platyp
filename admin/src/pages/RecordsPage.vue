@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="text-h6 text-title">{{ t('records') }}</div>
+    <div class="text-subtitle2">{{ t('records') }}</div>
     <div class="q-my-md">
       <q-table
         flat

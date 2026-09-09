@@ -393,6 +393,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
     compare_with: 'Compare with',
     also_compare_with: 'Also compare with',
     add_more_comparisons: 'Add more comparisons',
+    companies_selected: 'No company selected | 1 company selected | {n} companies selected',
+    campaigns_selected: 'No campaign selected | 1 campaign selected | {n} campaigns selected',
     cross_sectional_longitudinal: 'Cross-sectional or Longitudinal analysis',
     longitudinal: 'Only show data from people who participated in at least two groups',
     group_info: '{count} participants',

@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-lg">
     <div class="title-bar">
-      <div class="text-h6 text-title">{{ t('companies') }}</div>
+      <div class="text-subtitle2">{{ t('companies') }}</div>
       <div class="title-toolbar">
         <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
           <template v-slot:append>

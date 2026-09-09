@@ -402,6 +402,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       M5: 'Comparer également avec 3',
     },
     add_more_comparisons: 'Ajouter des comparaisons',
+    companies_selected: 'Aucune entreprise sélectionnée | 1 entreprise sélectionnée | {n} entreprises sélectionnées',
+    campaigns_selected: 'Aucune campagne sélectionnée | 1 campagne sélectionnée | {n} campagnes sélectionnées',
     cross_sectional_longitudinal: 'Transversal ou Longitudinal',
     longitudinal:
       'Montrer uniquement les données des participant·e·s ayant participé à au moins deux groupes',

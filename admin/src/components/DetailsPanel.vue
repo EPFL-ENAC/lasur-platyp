@@ -3,7 +3,7 @@
     <a
       v-if="!inline"
       href="#"
-      class="q-mb-md text-secondary row items-center inline-flex no-wrap"
+      class="read-more q-mb-md row items-center inline-flex no-wrap"
       @click.prevent="onToggleDetails"
     >
       {{ showDetails ? t('read_less') : t('read_more') }}

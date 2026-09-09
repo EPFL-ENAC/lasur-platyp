@@ -303,6 +303,17 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   align-items: center;
 }
 
+// Page content: 96px margins on desktop, back to the page default below
+.q-page-container :deep(.q-page) {
+  padding: 96px;
+}
+
+@media (max-width: 1023px) {
+  .q-page-container :deep(.q-page) {
+    padding: 24px;
+  }
+}
+
 .background-container {
   position: absolute;
   top: 0;

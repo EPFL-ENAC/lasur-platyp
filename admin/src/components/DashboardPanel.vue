@@ -1,89 +1,99 @@
 <template>
   <div>
-    <q-card flat class="q-mb-xl">
-      <q-card-section class="q-pb-none">
+    <q-card flat class="filters-card q-mb-xl">
+      <q-card-section class="q-pa-none">
         <div class="filters-grid">
-          <q-select
-            dense
-            multiple
-            emit-value
-            map-options
-            use-chips
-            rounded
-            outlined
-            color="field"
-            bg-color="field"
-            v-model="companyFilter"
-            :label="t('companies')"
-            :options="companyOptions"
-            style="min-width: 200px"
-            @update:model-value="onFilter"
-            :disable="stats.loading"
-          >
-            <template v-slot:option="{ itemProps, opt, selected }">
-              <q-item v-bind="itemProps">
-                <q-item-section>
-                  <q-item-label>{{ opt.label }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-icon v-if="selected" name="check" />
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-          <q-select
-            dense
-            multiple
-            emit-value
-            map-options
-            use-chips
-            rounded
-            outlined
-            color="field"
-            bg-color="field"
-            v-model="mainGroupFilter"
-            :label="t('stats.main_group')"
-            :options="campaignOptions"
-            style="min-width: 200px"
-            @update:model-value="onFilter"
-            :disable="stats.loading"
-          />
-          <div class="compare-group">
+          <div class="filter-field">
+            <label class="filter-label">{{ t('companies') }}</label>
             <q-select
-              dense
               multiple
               emit-value
               map-options
-              use-chips
               rounded
               outlined
               color="field"
-              bg-color="field"
-              v-model="compareWithFilter"
-              :label="t('stats.compare_with')"
-              :options="compareWithOptions"
-              style="min-width: 200px"
+              dropdown-icon="expand_more"
+              class="filter-select"
+              v-model="companyFilter"
+              :options="companyOptions"
+              :display-value="selectionLabel(companyFilter, companyOptions, 'companies')"
+              @update:model-value="onFilter"
+              :disable="stats.loading"
+            >
+              <template v-slot:option="{ itemProps, opt, selected }">
+                <q-item v-bind="itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ opt.label }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-icon v-if="selected" name="check" />
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div class="filter-field">
+            <label class="filter-label">{{ t('stats.main_group') }}</label>
+            <q-select
+              multiple
+              emit-value
+              map-options
+              rounded
+              outlined
+              color="field"
+              dropdown-icon="expand_more"
+              class="filter-select"
+              v-model="mainGroupFilter"
+              :options="campaignOptions"
+              :display-value="selectionLabel(mainGroupFilter, campaignOptions, 'campaigns')"
               @update:model-value="onFilter"
               :disable="stats.loading"
             />
-            <div v-for="(group, index) in additionalCompareGroups" :key="index" class="compare-row">
+          </div>
+          <div class="compare-group">
+            <div class="filter-field">
+              <label class="filter-label">{{ t('stats.compare_with') }}</label>
               <q-select
-                dense
                 multiple
                 emit-value
                 map-options
-                use-chips
                 rounded
                 outlined
                 color="field"
-                bg-color="field"
-                v-model="additionalCompareGroups[index]"
-                :label="`${t('stats.also_compare_with')} ${index + 1}`"
-                :options="additionalGroupOptions(index)"
-                style="min-width: 200px"
+                dropdown-icon="expand_more"
+                class="filter-select"
+                v-model="compareWithFilter"
+                :options="compareWithOptions"
+                :display-value="selectionLabel(compareWithFilter, compareWithOptions, 'campaigns')"
                 @update:model-value="onFilter"
                 :disable="stats.loading"
               />
+            </div>
+            <div v-for="(group, index) in additionalCompareGroups" :key="index" class="compare-row">
+              <div class="filter-field">
+                <label class="filter-label">{{ t('stats.also_compare_with') }} {{ index + 1 }}</label>
+                <q-select
+                  multiple
+                  emit-value
+                  map-options
+                  rounded
+                  outlined
+                  color="field"
+                  dropdown-icon="expand_more"
+                  class="filter-select"
+                  v-model="additionalCompareGroups[index]"
+                  :options="additionalGroupOptions(index)"
+                  :display-value="
+                    selectionLabel(
+                      additionalCompareGroups[index] ?? [],
+                      additionalGroupOptions(index),
+                      'campaigns',
+                    )
+                  "
+                  @update:model-value="onFilter"
+                  :disable="stats.loading"
+                />
+              </div>
               <q-btn
                 flat
                 round
@@ -93,23 +103,22 @@
                 :aria-label="t('remove')"
                 @click="removeAdditionalGroup(index)"
                 :disable="stats.loading"
+                class="compare-remove"
               />
             </div>
             <q-btn
               flat
               dense
               no-caps
-              color="field"
-              icon="add"
+              icon="add_circle_outline"
               :label="t('stats.add_more_comparisons')"
               :disable="!canAddMoreComparisons || stats.loading"
               @click="addComparisonGroup"
-              class="justify-self-start"
+              class="add-more-btn justify-self-start"
             />
           </div>
           <div class="actions-group">
-            <q-btn size="md" color="field" outline no-caps :disable="stats.loading">
-              {{ t('stats.options') }} <q-icon name="arrow_drop_down" />
+            <q-btn no-caps icon-right="expand_more" :label="t('stats.options')" :disable="stats.loading">
               <q-menu>
                 <q-list style="min-width: 150px">
                   <q-item clickable v-close-popup @click="onMapFilter">
@@ -345,6 +354,19 @@ const isLongitudinal = computed({
   },
 })
 
+// One name when a single entry is selected, a count otherwise
+function selectionLabel(
+  values: (string | number)[],
+  options: { label: string; value: string | number | undefined }[],
+  kind: 'companies' | 'campaigns',
+): string {
+  if (values.length === 1) {
+    const match = options.find((opt) => `${opt.value}` === `${values[0]}`)
+    if (match) return match.label
+  }
+  return t(`stats.${kind}_selected`, { n: values.length }, values.length)
+}
+
 function addComparisonGroup() {
   additionalCompareGroups.value.push([])
 }
@@ -528,7 +550,103 @@ async function openReport() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+// Filters card: bordered white panel with generous padding
+.filters-card {
+  padding: 32px 40px;
+  border: 1px solid $brand-purple-100;
+  border-radius: 12px; // radius-lg
+  background-color: white;
+}
+
+.body--dark .filters-card {
+  border-color: $brand-purple-600;
+  background-color: $brand-purple-800;
+}
+
+.filter-field {
+  display: grid;
+  gap: 4px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: $brand-purple-800;
+}
+
+.body--dark .filter-label {
+  color: $brand-purple-50;
+}
+
+// Pill selects: same 44px as the buttons, white, hairline border, chevron on
+// the right, value centered vertically
+.filter-select :deep(.q-field__control) {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 16px 0 20px;
+  background-color: white;
+}
+
+.filter-select :deep(.q-field__control-container) {
+  padding: 0;
+}
+
+.filter-select :deep(.q-field__append) {
+  height: 44px;
+}
+
+.filter-select :deep(.q-field__control::before) {
+  border-color: $brand-purple-100;
+}
+
+.filter-select :deep(.q-field__native) {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: $brand-purple-800;
+}
+
+.filter-select :deep(.q-field__append .q-icon) {
+  font-size: 22px;
+  color: $brand-purple-400;
+}
+
+.body--dark .filter-select :deep(.q-field__control) {
+  background-color: $brand-purple-700;
+}
+
+.body--dark .filter-select :deep(.q-field__native) {
+  color: $brand-purple-50;
+}
+
+// "Add more comparisons": a text link with a circled plus
+.q-btn.add-more-btn {
+  margin-top: -4px;
+  padding: 0;
+  min-height: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: $brand-purple-800;
+}
+
+.q-btn.add-more-btn :deep(.q-btn__content) {
+  gap: 8px;
+}
+
+.body--dark .q-btn.add-more-btn {
+  color: $brand-purple-50;
+}
+
+.compare-remove {
+  margin-top: 24px; // label height + gap, keeps the cross level with the field
+}
+
 .spinner-container {
   display: flex;
   justify-content: center;
@@ -538,10 +656,10 @@ async function openReport() {
 
 .filters-grid {
   display: grid;
-  grid-template-columns: minmax(200px, auto) minmax(200px, auto) 1fr auto;
+  // Three fixed-width selects, then the actions pushed to the far right
+  grid-template-columns: 280px 280px 280px 1fr;
   align-items: start;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 32px;
 }
 
 .compare-group {
@@ -560,17 +678,21 @@ async function openReport() {
   display: grid;
   grid-auto-flow: column;
   align-items: start;
-  gap: 8px;
+  justify-self: end; // flush right
+  gap: 16px;
+  margin-top: 24px; // level with the selects, below their labels
+}
+
+.actions-group :deep(.q-btn) {
+  box-sizing: border-box;
+  height: 44px;
+  min-height: 44px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .justify-self-start {
   justify-self: start;
-}
-
-@media (min-width: 1024px) {
-  .filters-grid {
-    width: fit-content;
-  }
 }
 
 @media (min-width: 600px) and (max-width: 1023px) {

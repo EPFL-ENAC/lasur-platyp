@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="text-h6 row">
+    <div class="text-subtitle2 row">
       <q-breadcrumbs gutter="sm" active-color="title">
         <q-breadcrumbs-el :label="t('records')" to="/records" />
         <q-breadcrumbs-el :label="record?.token" />

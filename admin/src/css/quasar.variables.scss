@@ -39,7 +39,16 @@ $negative: #c10015;
 $info: #80a795;
 $warning: #e6a21a;
 
+// Design system buttons (Figma): spacing-2xl sides, radius-default corners and
+// the shadow-xs-skeuomorphic elevation -- a soft drop shadow and an inner
+// bottom bevel. Pressing the button removes the bevel.
 $button-border-radius: 8px;
+$button-padding: 0.75em 1.25em;
+$button-font-weight: 600;
+$button-shadow:
+  0 1px 2px 0 rgba(10, 13, 18, 0.05),
+  inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
+$button-shadow-active: 0 1px 2px 0 rgba(10, 13, 18, 0.05);
 
 // Theme Tokens
 body {
@@ -182,10 +191,60 @@ body.body--dark {
   border-radius: 1rem !important;
 }
 
+// Tabs: a tinted tray with a white raised pill for the active tab
 .q-tabs {
-  border-radius: 0.5rem !important;
-  border: 1px solid var(--secondary-border-color) !important;
-  color: $brand-purple-300 !important;
+  border-radius: 12px !important; // radius-lg
+  border: 1px solid var(--secondary-border-color) !important; // same as cards
+  background-color: $brand-purple-25;
+  color: $brand-purple-400 !important;
+}
+
+// The strip clips its overflow, so the tray padding lives inside it: the
+// active pill's shadow then has room instead of being cut off.
+.q-tabs .q-tabs__content {
+  padding: 6px;
+}
+
+.q-tabs .q-tab {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 8px; // radius-default
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: $brand-purple-400;
+}
+
+.q-tabs .q-tab + .q-tab {
+  margin-left: 4px;
+}
+
+.q-tabs .q-tab--active {
+  background-color: white;
+  color: $brand-purple-800;
+  box-shadow:
+    0 1px 3px 0 rgba(10, 13, 18, 0.1),
+    0 1px 2px 0 rgba(10, 13, 18, 0.06);
+}
+
+.q-tabs .q-tab__indicator {
+  display: none;
+}
+
+.body--dark .q-tabs {
+  background-color: $brand-purple-800;
+  color: $brand-purple-200 !important;
+}
+
+.body--dark .q-tabs .q-tab {
+  color: $brand-purple-200;
+}
+
+.body--dark .q-tabs .q-tab--active {
+  background-color: $brand-purple-600;
+  color: $brand-purple-50;
 }
 
 .text-hint {
