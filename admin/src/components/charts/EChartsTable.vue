@@ -9,6 +9,7 @@
     :row-key="table.rowKey"
     hide-bottom
     :pagination="{ rowsPerPage: 0 }"
+    :table-row-class-fn="rowClass"
     class="e-charts-table q-my-lg"
   />
 </template>
@@ -81,9 +82,29 @@ function normalizeSeriesValue(value: unknown): unknown {
   return value
 }
 
-function findCategoryAxis(option: AnyRecord, key: 'xAxis' | 'yAxis') {
-  return toArray<AnyRecord>(option[key]).find(
+function findCategoryAxes(option: AnyRecord, key: 'xAxis' | 'yAxis'): AnyRecord[] {
+  return toArray<AnyRecord>(option[key]).filter(
     (axis) => axis?.type === 'category' && Array.isArray(axis.data) && axis.data.length > 0,
+  )
+}
+
+/**
+ * A chart can stack a coarser category axis over the one holding the rows: one
+ * band per mode (or per distance scale), each covering the same number of rows.
+ * The band a row belongs to is part of its name in the table, which has no
+ * second axis to show it: "IMT M1", "IMT M2", ...
+ */
+function bandLabels(axes: AnyRecord[], rowCount: number): string[] | null {
+  const outer = axes.find((axis) => (axis.data as unknown[]).length < rowCount)
+  if (!outer) {
+    return null
+  }
+  const bandSize = rowCount / (outer.data as unknown[]).length
+  if (!Number.isInteger(bandSize)) {
+    return null
+  }
+  return Array.from({ length: rowCount }, (_, i) =>
+    labelOf((outer.data as unknown[])[Math.floor(i / bandSize)]),
   )
 }
 
@@ -172,7 +193,12 @@ function buildDimensionsTable(seriesArr: AnyRecord[]): Table | null {
   return { columns, rows, rowKey: 'category' }
 }
 
-function buildCategoryTable(axis: AnyRecord, seriesArr: AnyRecord[]): Table | null {
+function buildCategoryTable(
+  axis: AnyRecord,
+  seriesArr: AnyRecord[],
+  bands: string[] | null,
+  reverse: boolean,
+): Table | null {
   const categories = axis.data as unknown[]
 
   const columns: Column[] = [
@@ -190,16 +216,46 @@ function buildCategoryTable(axis: AnyRecord, seriesArr: AnyRecord[]): Table | nu
     })),
   ]
 
-  const rows: AnyRecord[] = categories.map((label, idx) => {
-    const row: AnyRecord = { category: labelOf(label) }
-    seriesArr.forEach((s, i) => {
-      const raw = Array.isArray(s.data) ? s.data[idx] : undefined
-      row[`s${i}`] = formatValue(normalizeSeriesValue(raw))
+  // A category y axis is drawn bottom-up: read it backwards so the table lists
+  // the categories in the order the chart shows them, top to bottom.
+  const indexes = categories.map((_label, idx) => idx)
+  if (reverse) {
+    indexes.reverse()
+  }
+
+  const totalLabel = t('stats.table.total').toLowerCase()
+  const rows: AnyRecord[] = []
+  indexes.forEach((idx) => {
+    const name = labelOf(categories[idx])
+    const values = seriesArr.map((s) =>
+      normalizeSeriesValue(Array.isArray(s.data) ? s.data[idx] : undefined),
+    )
+    // Nameless and valueless: a spacer the chart uses to separate two bands of
+    // bars, which the table separates with a rule instead.
+    const isSpacer = name === '' && values.every((value) => value === null || value === undefined)
+    if (isSpacer) {
+      return
+    }
+    const band = bands?.[idx] ?? ''
+    const row: AnyRecord = {
+      key: `r${idx}`,
+      band,
+      category: [band, name].filter((part) => part !== '').join(' '),
+      isTotal: (band || name).toLowerCase() === totalLabel,
+    }
+    values.forEach((value, i) => {
+      row[`s${i}`] = formatValue(value)
     })
-    return row
+    rows.push(row)
   })
 
-  return { columns, rows, rowKey: 'category' }
+  // A rule under the last row of each band but the last one, so that bands read
+  // as blocks — and no rule above the first one.
+  rows.forEach((row, i) => {
+    row.bandEnd = !!row.band && i < rows.length - 1 && rows[i + 1]?.band !== row.band
+  })
+
+  return { columns, rows, rowKey: 'key' }
 }
 
 function buildNameValueTable(seriesArr: AnyRecord[]): Table | null {
@@ -275,8 +331,10 @@ const table = computed<Table | null>(() => {
     return null
   }
 
-  const xAxis = findCategoryAxis(option, 'xAxis')
-  const yAxis = findCategoryAxis(option, 'yAxis')
+  const xAxes = findCategoryAxes(option, 'xAxis')
+  const yAxes = findCategoryAxes(option, 'yAxis')
+  const xAxis = xAxes[0]
+  const yAxis = yAxes[0]
 
   if (xAxis && yAxis) {
     const matrix = buildMatrixTable(xAxis, yAxis, seriesArr)
@@ -285,13 +343,30 @@ const table = computed<Table | null>(() => {
     }
   }
 
-  const categoryAxis = xAxis || yAxis
+  const axes = xAxis ? xAxes : yAxes
+  const categoryAxis = axes[0]
   if (categoryAxis) {
-    return buildCategoryTable(categoryAxis, seriesArr)
+    const rowCount = (categoryAxis.data as unknown[]).length
+    return buildCategoryTable(categoryAxis, seriesArr, bandLabels(axes, rowCount), !xAxis)
   }
 
   return (
     buildDimensionsTable(seriesArr) || buildNameValueTable(seriesArr) || buildSankeyTable(seriesArr)
   )
 })
+
+function rowClass(row: AnyRecord) {
+  return [row.bandEnd ? 'band-end' : '', row.isTotal ? 'total-row' : ''].filter(Boolean).join(' ')
+}
 </script>
+
+<style scoped>
+.e-charts-table :deep(tbody tr.band-end > td) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+}
+
+.e-charts-table :deep(tbody tr.total-row > td) {
+  background-color: rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+}
+</style>

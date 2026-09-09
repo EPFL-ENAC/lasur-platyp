@@ -449,6 +449,67 @@ function comparisonMotivationOptions(): ComparisonChartData | null {
   }
 }
 
+/**
+ * All the groups of the hovered mode, one column each, so that the tooltip
+ * compares them instead of describing the single hovered bar.
+ */
+function comparisonTooltip(data: ComparisonChartData, items: CallbackDataParams[]): string {
+  const hoveredIndex = items[0]?.dataIndex ?? 0
+  const hovered = data.rows[hoveredIndex]
+  if (!hovered) {
+    return ''
+  }
+
+  const columns: { groupName: string; index: number }[] = []
+  data.rows.forEach((row, index) => {
+    if (row && row.mode === hovered.mode) {
+      columns.push({ groupName: row.groupName, index })
+    }
+  })
+
+  const seriesValues = (seriesIndex: number): unknown[] => {
+    const series = data.series[seriesIndex] as { data?: unknown[] } | undefined
+    return Array.isArray(series?.data) ? series.data : []
+  }
+
+  const formatCell = (value: unknown): string => {
+    const num = Number(value)
+    if (value === null || value === undefined || Number.isNaN(num)) {
+      return '—'
+    }
+    return `${formatNumber(num)}${props.percent ? '%' : ''}`
+  }
+
+  const lines = items
+    .map((item) => ({
+      marker: item.marker ?? '',
+      name: item.seriesName ?? '',
+      values: columns.map(({ index }) => seriesValues(item.seriesIndex ?? 0)[index]),
+    }))
+    // A category nobody asked for in any of the compared groups is noise here.
+    .filter((line) => line.values.some((value) => Number(value) > 0))
+
+  // Wide enough that one column of numbers never reads as the next one's.
+  const cell = 'padding:2px 0 2px 26px;text-align:right;white-space:nowrap;'
+  const header = columns
+    .map(({ groupName }) => `<th style="${cell}font-weight:600;">${groupName}</th>`)
+    .join('')
+  const body = lines
+    .map(
+      (line) =>
+        `<tr><td style="padding:2px 0;text-align:left;">${line.marker} ${line.name}</td>` +
+        line.values.map((value) => `<td style="${cell}">${formatCell(value)}</td>`).join('') +
+        '</tr>',
+    )
+    .join('')
+
+  return (
+    `<div style="font-weight:600;margin-bottom:2px;">${keyLabel(hovered.mode)}</div>` +
+    `<table style="border-collapse:collapse;line-height:1.4;">` +
+    `<thead><tr><th></th>${header}</tr></thead><tbody>${body}</tbody></table>`
+  )
+}
+
 function initComparisonChartOptions() {
   const data = props.type === 'levers' ? comparisonLeversOptions() : comparisonMotivationOptions()
   if (!data) {
@@ -489,20 +550,9 @@ function initComparisonChartOptions() {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) => {
-        const items = Array.isArray(paramsList) ? paramsList : [paramsList]
-        const row = data.rows[items[0]?.dataIndex ?? 0]
-        if (!row) {
-          return ''
-        }
-        const lines = items
-          .filter((item) => Number(item.value) > 0)
-          .map((item) => {
-            const value = formatNumber(Number(item.value))
-            return `${item.marker} ${item.seriesName}: <b>${value}${props.percent ? '%' : ''}</b>`
-          })
-        return [`${keyLabel(row.mode)} — <b>${row.groupName}</b>`, ...lines].join('<br/>')
-      },
+      confine: true,
+      formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) =>
+        comparisonTooltip(data, Array.isArray(paramsList) ? paramsList : [paramsList]),
     },
     legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
     yAxis: [

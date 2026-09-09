@@ -417,6 +417,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       category: 'Category',
       value: 'Value',
       link: 'Link',
+      total: 'Total',
     },
     units: {
       tco2eq_per_year: 'tCO₂eq/year',
