@@ -4,9 +4,10 @@
 
     <ContentCard v-for="(journey, idx) in journeys" :key="idx">
       <JourneyItem
-        v-model="journeys[idx]"
+        :model-value="journey"
         :index="idx + 1"
         :count="journeys.length"
+        @update:model-value="(val) => onUpdateJourney(idx, val)"
         @remove="onRemoveJourney(idx)"
       />
     </ContentCard>
@@ -49,6 +50,10 @@ const canAddJourney = computed(() => journeys.value.every((j) => j.modes && j.mo
 function onAddJourney() {
   if (!canAddJourney.value) return
   journeys.value.push(makeJourney())
+}
+
+function onUpdateJourney(idx: number, journey: Journey) {
+  journeys.value[idx] = journey
 }
 
 function onRemoveJourney(idx: number) {

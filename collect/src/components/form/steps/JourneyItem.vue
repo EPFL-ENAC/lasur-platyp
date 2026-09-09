@@ -105,7 +105,7 @@
           :min="MIN_DAYS"
           :max="MAX_DAYS"
           :unit="t('form.journey.days')"
-          @update:model-value="(val) => (journey = { ...journey, days: val })"
+          @update:model-value="(val) => (journey = { ...journey, days: val ?? MIN_DAYS })"
         />
         <span class="text-hint">{{ t('form.journey.per_week') }}</span>
       </div>
