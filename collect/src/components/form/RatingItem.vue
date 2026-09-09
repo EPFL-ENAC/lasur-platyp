@@ -1,15 +1,16 @@
 <template>
-  <div>
+  <div class="rating-item">
     <QuestionText
       :label="label ?? ''"
-      :containerClass="`text-bold q-mb-md ${labelClass || 'text-h4'}`"
+      :containerClass="`text-bold q-mb-md ${labelClass || 'question-label'}`"
     />
-    <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
+    <div v-if="hint" class="question-hint q-mb-md">{{ hint }}</div>
     <q-rating
       v-model="selected"
-      size="3.5em"
-      color="accent"
+      size="2em"
+      no-dimming
       icon="star_border"
+      icon-selected="star"
       :max="max || 5"
       @update:model-value="onUpdate"
     />
@@ -50,3 +51,29 @@ function onUpdate() {
   emit('update:modelValue', selected.value)
 }
 </script>
+
+<style scoped lang="scss">
+// Laid out in a grid, cells stretch to the tallest label in their row. Pushing
+// the stars to the bottom keeps them on one line however the labels wrap.
+.rating-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.rating-item :deep(.q-rating) {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+// Unpicked stars are outlines in the border colour, picked ones fill with the
+// brand yellow. Quasar's default is to dim the accent colour instead, so
+// `no-dimming` on the component hands the colours over to these rules.
+.rating-item :deep(.q-rating__icon) {
+  color: var(--secondary-border-color);
+  text-shadow: none;
+}
+
+.rating-item :deep(.q-rating__icon--active) {
+  color: $primary;
+}
+</style>

@@ -110,8 +110,6 @@
 
         <div class="row justify-center q-gutter-md q-mt-lg">
           <q-btn
-            unelevated
-            rounded
             size="lg"
             color="primary"
             no-caps
@@ -120,8 +118,6 @@
             @click="onSwitchAnswer(true)"
           />
           <q-btn
-            unelevated
-            rounded
             size="lg"
             color="accent"
             no-caps
@@ -165,8 +161,6 @@
 
         <div class="row justify-center q-mt-lg">
           <q-btn
-            unelevated
-            rounded
             size="lg"
             color="primary"
             no-caps
@@ -207,8 +201,6 @@
 
         <div class="row justify-center q-gutter-md">
           <q-btn
-            unelevated
-            rounded
             size="lg"
             color="primary"
             no-caps
@@ -228,8 +220,6 @@
 
         <div class="row justify-center q-gutter-md q-mt-lg">
           <q-btn
-            unelevated
-            rounded
             size="lg"
             color="primary"
             no-caps
@@ -238,8 +228,6 @@
             @click="onStartNewJourney"
           />
           <q-btn
-            unelevated
-            rounded
             size="lg"
             color="accent"
             no-caps

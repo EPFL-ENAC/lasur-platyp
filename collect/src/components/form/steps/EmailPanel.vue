@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SectionItem :label="t('form.email.title')" label-class="text-h4" class="q-mb-md" />
+    <SectionItem :label="t('form.email.title')" label-class="question-label" class="q-mb-md" />
 
     <q-card flat class="q-mb-xl">
       <q-card-section>
@@ -13,7 +13,6 @@
           class="q-mb-lg text-h6"
           color="field"
           outlined
-          rounded
         />
       </q-card-section>
     </q-card>

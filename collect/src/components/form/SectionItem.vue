@@ -1,7 +1,7 @@
 <template>
   <div>
     <QuestionText :label="label ?? ''" :containerClass="`text-bold q-mb-md ${labelClass}`" />
-    <div v-if="hint" class="text-h6">{{ hint }}</div>
+    <div v-if="hint" class="question-hint">{{ hint }}</div>
   </div>
 </template>
 

@@ -1,6 +1,5 @@
 <template>
   <ChoiceItem
-    :label="t('form.constraints')"
     :options="constraintsOptions"
     v-model="survey.record.data.constraints"
     multiple
@@ -15,7 +14,6 @@
     color="field"
     bg-color="field"
     outlined
-    rounded
     dense
   />
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-bold q-mb-md text-h4">
+    <div class="text-bold q-mb-md question-label">
       {{ t('form.intermodality') }}
     </div>
     <div class="text-h6 q-mb-md">{{ t('form.intermodality_hint') }}</div>
@@ -14,7 +14,12 @@
                 <div class="row items-center journey-chip">
                   <span class="text-h6">{{ getOptionLabel(mode) }}</span>
                 </div>
-                <q-icon v-if="mIdx < journey.modes.length - 1" name="arrow_forward" color="primary" size="sm" />
+                <q-icon
+                  v-if="mIdx < journey.modes.length - 1"
+                  name="arrow_forward"
+                  color="primary"
+                  size="sm"
+                />
               </template>
             </div>
             <q-btn
@@ -33,17 +38,11 @@
       </q-card>
     </template>
 
-    <JourneyStepWizard
-      v-if="showWizard"
-      @save="onSaveJourney"
-      @done="onWizardDone"
-    />
+    <JourneyStepWizard v-if="showWizard" @save="onSaveJourney" @done="onWizardDone" />
 
     <q-btn
       v-if="!showWizard"
       icon="add"
-      unelevated
-      rounded
       no-caps
       :label="t('form.journey.add')"
       color="primary"

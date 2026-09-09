@@ -1,6 +1,5 @@
 <template>
   <ChoiceItem
-    :label="t('form.equipments')"
     :options="equipmentsOptions"
     v-model="survey.record.data.equipments"
     multiple
@@ -15,7 +14,6 @@
     color="field"
     bg-color="field"
     outlined
-    rounded
     dense
   />
 </template>

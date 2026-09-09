@@ -1,27 +1,28 @@
 <template>
   <div>
     <QuestionText v-if="label" :label="label" :class="`${labelClass}`" />
-    <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
-    <div class="row justify-center q-mt-lg">
-      <span
-        class="text-h5 q-mr-lg cursor-pointer"
-        :class="selected ? 'text-muted' : 'text-foreground'"
-        @click="selected = false"
-        >{{ leftLabel }}</span
-      >
-      <q-toggle
+    <div v-if="hint" class="question-hint q-mb-md">{{ hint }}</div>
+    <!-- Nothing above to clear when the step title carries the question. -->
+    <div
+      class="toggle-item__options row items-center"
+      :class="{ 'toggle-item__options--spaced': label || hint }"
+    >
+      <q-radio
         v-model="selected"
+        :val="true"
+        :label="trueLabel"
         :color="props.color ?? 'primary'"
-        :toggle-indeterminate="required !== true"
-        dense
-        size="80px"
+        size="sm"
+        class="text-subtitle1"
       />
-      <span
-        class="text-h5 q-ml-lg cursor-pointer"
-        :class="selected ? 'text-foreground' : 'text-muted'"
-        @click="selected = true"
-        >{{ rightLabel }}</span
-      >
+      <q-radio
+        v-model="selected"
+        :val="false"
+        :label="falseLabel"
+        :color="props.color ?? 'primary'"
+        size="sm"
+        class="text-subtitle1"
+      />
     </div>
   </div>
 </template>
@@ -33,10 +34,9 @@ interface Props {
   modelValue: boolean | undefined
   label?: string
   labelClass?: string
-  leftLabel?: string
-  rightLabel?: string
+  trueLabel?: string
+  falseLabel?: string
   hint?: string
-  required?: boolean
   color?: string
 }
 
@@ -48,5 +48,23 @@ const selected = computed({
   set: (val: boolean) => emit('update:modelValue', val),
 })
 
-const labelClass = computed(() => props.labelClass || 'text-h4')
+const labelClass = computed(() => props.labelClass || 'question-label')
 </script>
+
+<style scoped lang="scss">
+.toggle-item__options {
+  display: flex;
+  gap: 24px;
+}
+
+// At `sm` Quasar rings the 17px circle with a ~9px touch target. Pulling that
+// off the first one lines the control up with the label above it, and keeps the
+// gap below the label the one set here rather than the ring plus a margin.
+.toggle-item__options :deep(.q-radio:first-child) {
+  margin-left: -9px;
+}
+
+.toggle-item__options--spaced {
+  margin-top: 8px;
+}
+</style>

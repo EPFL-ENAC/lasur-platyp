@@ -3,6 +3,28 @@ export default {
     brand: 'Mobilyse',
   },
   form: {
+    // Title shown at the top of each survey step, keyed by step name.
+    step_title: {
+      agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
+      employment: 'Your working habits',
+      workplace: '@:form.workplace',
+      origin_places: '@:form.origin',
+      travel_time: 'Your commute',
+      constraints: '@:form.constraints',
+      equipments: '@:form.equipments',
+      intermodality: 'Your journey to work',
+      travel_pro: '@:form.travel_pro',
+      freq_mod_pro: 'Your professional journeys',
+      importance: '@:form.importance',
+      needs: '@:form.needs',
+      age_class: 'About you',
+      recommendations: '@:form.recommendations_header',
+      recommendations_pro: '@:form.recommendations_pro_header',
+      change: '@:form.change',
+      email: 'Stay in touch',
+      comments: 'Your feedback',
+      final: 'Thank you',
+    },
     error: {
       terms_conditions: 'Please accept the terms and conditions to continue',
       confidentiality: 'Please accept the privacy policy to continue',
@@ -43,6 +65,7 @@ export default {
     no: 'No',
     multiple_options: 'Multiple options possible',
     workplace: 'Your usual place of work',
+    workplace_select_label: 'Select an office in the list',
     workplace_option: {
       other: 'Other workplace (specify)',
     },
@@ -97,8 +120,7 @@ export default {
       combined: 'How do you usually get to your workplace?',
     },
     intermodality: 'How do you usually get to work?',
-    intermodality_hint:
-      'Describe your usual journey from home to work, one step at a time.',
+    intermodality_hint: 'Describe your usual journey from home to work, one step at a time.',
     journey: {
       label_idx: 'Recommendation #{index}',
       label_option_idx: 'Option #{index}',
@@ -107,7 +129,8 @@ export default {
       remove: 'Remove journey',
       days_per_week: 'Days per week',
       saved: 'Journey saved!',
-      saved_detail: 'You can add another journey for other days of the week, or continue to the next step.',
+      saved_detail:
+        'You can add another journey for other days of the week, or continue to the next step.',
       step: {
         first_mode: 'What is the first mode of transport when leaving home?',
         next_mode: 'What is the next mode of transport?',
@@ -132,9 +155,14 @@ export default {
       hint: 'Select the area of destination and the main mode of transport of a typical professional journey.',
       add: 'Add journey',
       remove: 'Remove journey',
-      days_per_week: 'Days per week',
-      days_per_month: 'Days per month',
-      days_per_year: 'Days per year',
+      frequency: {
+        label: 'How often do you make this journey?',
+        days: 'days',
+        per: 'per',
+        week: 'Week',
+        month: 'Month',
+        year: 'Year',
+      },
       is_company_vehicle: {
         label: 'The vehicle used in general is...',
         option: {
@@ -175,10 +203,11 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
+    employer_measures_eyebrow: 'Additional advantages',
     employer_measures_header: 'Your employer also offers the following measures',
     employer_measures_description:
       'As an employee of {organisation}, you may also benefit from the following support measures',
-    change: 'About the mode of transport:',
+    change: 'About the mode of transport',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
       'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-to-work commute?',
@@ -300,10 +329,8 @@ export default {
     hide: 'Hide benefits',
   },
   contact: {
-    header:
-      'For more information about mobility at {company_name}',
-    contact_line:
-      'Please contact: {contact_name}',
+    header: 'For more information about mobility at {company_name}',
+    contact_line: 'Please contact: {contact_name}',
     copy_email: 'Copy email address',
     more_info: 'More information',
     copied: 'Email copied to clipboard',
@@ -338,12 +365,14 @@ export default {
   },
   resume: 'Resume',
   start_new: 'Or start a new survey',
-  start: 'Start',
+  start: 'Get started',
   token: 'Token',
   lookup_address_or_select_on_map: 'Lookup address or select on map',
   type_enter_to_lookup_address: 'Type address, then press Enter to lookup',
+  welcome_eyebrow: 'Mobility Survey',
   welcome: 'Welcome to the {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
+  or: 'Or',
   no_results: 'No results',
   local: 'Local',
   regional: 'Regional',
@@ -354,6 +383,12 @@ export default {
   select_preferred_language: 'Select your preferred language',
   select_or_drag_item: 'Select or drag one of the options',
   dark_mode: 'Dark mode',
+  footer: {
+    modus_name: 'Fondation Modus',
+    modus_tagline: 'For sustainable mobility in Geneva.',
+    lasur: 'Urban Sociology Lab',
+    it4r: 'ENAC-IT4R',
+  },
   transit_lines: 'Public transport network',
   print: 'Print',
   eurogeographics_attributions: 'EuroGeographics for the administrative boundaries',

@@ -1,26 +1,29 @@
 <template>
-  <div>
+  <ContentCard class="step-content">
     <SelectItem
       v-if="workplaceOptions.length > 0"
+      :label="t('form.workplace_select_label')"
       :options="workplaceOptions"
       v-model="selectedWorkplace"
-      :option-label-class="'text-h6 text-bold'"
+      :option-label-class="'question-label text-bold'"
       :col="workplaceOptions.length > 1 ? 2 : 1"
       @update:modelValue="onWorkplaceSelected"
       class="q-mb-lg"
     />
+    <OrSeparator v-if="workplaceOptions.length > 0" class="q-mb-lg" />
     <LocationItem
       :readonly="selectedWorkplace !== OTHER_WORKPLACE_OPTION"
       map-id="workplace-map"
       v-model="survey.record.data.workplace"
-      class="q-mb-xl"
     />
-  </div>
+  </ContentCard>
 </template>
 
 <script setup lang="ts">
 import LocationItem from '@/components/form/LocationItem.vue'
 import SelectItem from '@/components/form/SelectItem.vue'
+import ContentCard from '@/components/form/ContentCard.vue'
+import OrSeparator from '@/components/form/OrSeparator.vue'
 import type { Option } from '@/components/form/models'
 
 const { t } = useI18n()

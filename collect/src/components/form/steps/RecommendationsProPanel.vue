@@ -2,11 +2,11 @@
   <div v-if="recoPros.length">
     <q-card flat>
       <q-card-section>
-        <SectionItem />
         <q-tabs
+          v-if="proJourneys.length > 1"
           v-model="activeTab"
           dense
-          class="text-grey q-mt-md"
+          no-caps
           active-color="primary"
           indicator-color="primary"
           align="left"
@@ -39,7 +39,7 @@
             v-for="(journey, idx) in proJourneys"
             :key="idx"
             :name="String(idx)"
-            class="full-height q-px-none"
+            class="full-height q-pa-none"
           >
             <template v-if="recoPros[idx] !== undefined">
               <RecommendationItem
@@ -84,7 +84,6 @@
 </template>
 
 <script setup lang="ts">
-import SectionItem from '@/components/form/SectionItem.vue'
 import RecommendationItem from './RecommendationItem.vue'
 import PlaceItem from '@/components/form/PlaceItem.vue'
 import type { PlaceLocation, ProJourney } from '@/models'

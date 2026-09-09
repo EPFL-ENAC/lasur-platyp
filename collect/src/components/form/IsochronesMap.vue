@@ -190,7 +190,7 @@ function loadIsochrones() {
   })
 }
 
-async function loadIsochronesData() {
+function loadIsochronesData() {
   loadingIsochrones.value = true
   const lon = props.center[0]
   const lat = props.center[1]

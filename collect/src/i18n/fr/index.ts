@@ -3,6 +3,28 @@ export default {
     brand: 'Mobilyse',
   },
   form: {
+    // Title shown at the top of each survey step, keyed by step name.
+    step_title: {
+      agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
+      employment: 'Vos habitudes de travail',
+      workplace: '@:form.workplace',
+      origin_places: '@:form.origin',
+      travel_time: 'Votre trajet',
+      constraints: '@:form.constraints',
+      equipments: '@:form.equipments',
+      intermodality: 'Votre trajet domicile-travail',
+      travel_pro: '@:form.travel_pro',
+      freq_mod_pro: 'Vos déplacements professionnels',
+      importance: '@:form.importance',
+      needs: '@:form.needs',
+      age_class: 'À propos de vous',
+      recommendations: '@:form.recommendations_header',
+      recommendations_pro: '@:form.recommendations_pro_header',
+      change: '@:form.change',
+      email: 'Rester en contact',
+      comments: 'Vos remarques',
+      final: 'Merci',
+    },
     error: {
       terms_conditions: 'Veuillez accepter les conditions générales pour continuer',
       confidentiality: 'Veuillez accepter la politique de confidentialité pour continuer',
@@ -42,6 +64,7 @@ export default {
     no: 'Non',
     multiple_options: 'Plusieurs réponses possibles',
     workplace: 'Votre lieu de travail habituel',
+    workplace_select_label: 'Sélectionnez un site dans la liste',
     workplace_option: {
       other: 'Autre lieu de travail (à préciser)',
     },
@@ -108,7 +131,8 @@ export default {
       remove: 'Supprimer le trajet',
       days_per_week: 'Jours par semaine',
       saved: 'Trajet sauvegardé !',
-      saved_detail: 'Vous pouvez ajouter un autre trajet pour d\'autres jours de la semaine, ou continuer à l\'étape suivante.',
+      saved_detail:
+        "Vous pouvez ajouter un autre trajet pour d'autres jours de la semaine, ou continuer à l'étape suivante.",
       step: {
         first_mode: 'Quel est le premier mode de transport en quittant votre domicile ?',
         next_mode: 'Quel est le mode de transport suivant ?',
@@ -117,7 +141,7 @@ export default {
         days_question: 'Combien de jours par semaine prenez-vous cette route ?',
         review_title: 'Votre trajet :',
         save: 'Enregistrer',
-        add_another: 'Avez-vous un autre trajet pour d\'autres jours de la semaine ?',
+        add_another: "Avez-vous un autre trajet pour d'autres jours de la semaine ?",
         add_yes: 'Oui, ajouter un trajet',
         add_no: "Non, j'ai terminé",
         segment: 'Étape {n}',
@@ -133,9 +157,14 @@ export default {
       hint: "Sélectionnez l'aire de destination et le principal mode de transport d'un déplacement professionnel typique.",
       add: 'Ajouter un déplacement',
       remove: 'Supprimer le déplacement',
-      days_per_week: 'Jours par semaine',
-      days_per_month: 'Jours par mois',
-      days_per_year: 'Jours par année',
+      frequency: {
+        label: 'À quelle fréquence effectuez-vous ce déplacement ?',
+        days: 'jours',
+        per: 'par',
+        week: 'Semaine',
+        month: 'Mois',
+        year: 'Année',
+      },
       is_company_vehicle: {
         label: 'Le véhicule utilisé en général est...',
         option: {
@@ -167,27 +196,28 @@ export default {
       'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité ?',
     recommendations:
       'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
-    recommendations_header:
-      'Recommandations de Mobilyse pour les déplacements domicile-travail',
+    recommendations_header: 'Recommandations de Mobilyse pour les déplacements domicile-travail',
     recommendations_preamble:
-      "En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.",
+      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
     recommendations_pro_header: 'Recommandations de Mobilyse pour les déplacements professionnels',
     recommendations_pro_preamble:
-      "Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.",
+      'Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.',
     recommendations_print: {
       title: 'Recommandations de mobilité',
-      header: 'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
+      header:
+        'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
     },
     actions:
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
+    employer_measures_eyebrow: 'Avantages supplémentaires',
     employer_measures_header: 'Votre employeur propose également les mesures suivantes',
     employer_measures_description:
       'En tant que collaborateur·trice de {organisation}, vous pourriez bénéficier aussi des mesures d’accompagnement suivantes:',
-    change: 'À propos du mode de transport:',
+    change: 'À propos du mode de transport',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
       'Sur une échelle de 1 (pas intéressé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous prêt·e à adopter ce mode de transport pour vos déplacements domicile-travail ?',
@@ -314,10 +344,8 @@ export default {
     hide: 'Masquer les avantages',
   },
   contact: {
-    header:
-      "Pour plus d'informations sur la mobilité à {company_name}",
-    contact_line:
-      "Veuillez contacter : {contact_name}",
+    header: "Pour plus d'informations sur la mobilité à {company_name}",
+    contact_line: 'Veuillez contacter : {contact_name}',
     copy_email: 'Copier l’adresse e-mail',
     more_info: "Plus d'informations",
     copied: 'E-mail copié dans le presse-papiers',
@@ -325,7 +353,8 @@ export default {
   isochrones: {
     accessible_areas:
       "Saviez-vous que vous avez accès aux zones et points d'intérêts ci-dessous {mode} ?",
-    map_description: 'La carte ci-dessous représente la zone accessible avec {mode} depuis votre lieu de travail.',
+    map_description:
+      'La carte ci-dessous représente la zone accessible avec {mode} depuis votre lieu de travail.',
     pois: "Points d'intérêt",
     modes: {
       walk: 'à pied',
@@ -352,13 +381,15 @@ export default {
   },
   resume: 'Continuer le questionnaire',
   start_new: 'Ou recommencer du début',
-  start: 'Démarrer',
+  start: 'Commencer',
   token: 'Identifiant',
   lookup_address_or_select_on_map: 'Rechercher une adresse ou sélectionner sur la carte',
   type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",
+  welcome_eyebrow: 'Enquête mobilité',
   welcome: 'Bienvenue sur le {brand}',
   welcome_intro:
     'Veuillez remplir ce questionnaire afin que nous puissions vous proposer les mesures de mobilité les plus pertinentes.',
+  or: 'Ou',
   no_results: 'Pas de résultat',
   local: 'Local',
   regional: 'National',
@@ -369,6 +400,12 @@ export default {
   select_preferred_language: 'Sélectionner votre langue préférée',
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
   dark_mode: 'Mode sombre',
+  footer: {
+    modus_name: 'Fondation Modus',
+    modus_tagline: 'Pour une mobilité durable à Genève.',
+    lasur: 'Laboratoire de sociologie urbaine',
+    it4r: 'ENAC-IT4R',
+  },
   transit_lines: 'Réseau transports publics',
   print: 'Imprimer',
   eurogeographics_attributions: 'EuroGeographics pour les limites administratives',
