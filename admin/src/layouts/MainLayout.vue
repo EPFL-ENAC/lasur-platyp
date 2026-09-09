@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh LpR lff">
     <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav">
-      <q-toolbar>
+      <q-toolbar class="header-toolbar">
         <q-btn
           flat
           dense
@@ -21,7 +21,13 @@
           </a>
         </q-toolbar-title>
 
-        <q-btn-dropdown flat dense color="foreground" :label="locale" class="on-left">
+        <q-btn-dropdown
+          flat
+          no-caps
+          dropdown-icon="expand_more"
+          :label="currentLocaleLabel"
+          class="header-btn"
+        >
           <q-list>
             <q-item
               clickable
@@ -39,9 +45,6 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-        <a href="https://www.epfl.ch" target="_blank">
-          <img src="/admin/EPFL.svg" height="20px" class="on-left" />
-        </a>
       </q-toolbar>
     </q-header>
 
@@ -176,7 +179,7 @@
 <script setup lang="ts">
 import AppFooter from '@/components/AppFooter.vue'
 import { Cookies, useQuasar } from 'quasar'
-import { locales } from '@/boot/i18n'
+import { locales, localeLabel } from '@/boot/i18n'
 
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
@@ -188,10 +191,12 @@ const leftDrawerOpen = ref(false)
 const username = computed(() => authStore.profile?.email)
 const localeOptions = computed(() => {
   return locales.map((key) => ({
-    label: key.toUpperCase(),
+    label: localeLabel(key),
     value: key,
   }))
 })
+
+const currentLocaleLabel = computed(() => localeLabel(locale.value))
 
 onMounted(() => {
   authStore.init().then(() => {
@@ -224,7 +229,41 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+// Fixed header height, same as collect
+.header-toolbar {
+  height: 64px;
+  min-height: 64px;
+}
+
+// Header controls, same skin as the collect app header
+.q-btn.header-btn {
+  --header-btn-bg: #{'white'};
+  --header-btn-border: #{$brand-purple-100};
+  --header-btn-text: #{$brand-purple-800};
+  --header-btn-shadow: 0 1px 2px 0 rgba(10, 13, 18, 0.05), inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
+
+  height: 48px;
+  min-height: 48px;
+  padding: 10px 14px !important;
+  border: 1px solid var(--header-btn-border);
+  border-radius: 8px; // radius-default
+  background-color: var(--header-btn-bg) !important;
+  color: var(--header-btn-text) !important;
+  box-shadow: var(--header-btn-shadow);
+}
+
+.body--dark .q-btn.header-btn {
+  --header-btn-bg: #{$brand-purple-800};
+  --header-btn-border: #{$brand-purple-200};
+  --header-btn-text: #{$brand-purple-50};
+}
+
+.q-btn.header-btn :deep(.q-btn-dropdown__arrow) {
+  margin-left: 4px; // spacing-xs
+  font-size: 20px;
+}
+
 .logos {
   display: flex;
   align-items: center;
