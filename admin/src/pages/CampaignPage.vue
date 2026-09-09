@@ -20,13 +20,12 @@
         />
         <q-btn
           v-if="isCompanyAdmin"
+          flat
           round
-          size="sm"
-          color="negative"
-          icon="delete"
+          icon="fa-regular fa-trash-can"
           :aria-label="t('remove')"
+          class="btn-danger-icon"
           @click="onShowRemove"
-          style="width: 32px"
         />
       </div>
     </div>

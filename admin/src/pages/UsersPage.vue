@@ -1,31 +1,32 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="text-subtitle2">{{ t('users') }}</div>
+    <div class="title-bar">
+      <div class="text-subtitle2">{{ t('users') }}</div>
+      <div class="title-toolbar">
+        <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <q-btn
+          size="md"
+          color="primary"
+          :disable="usersStore.loading"
+          :label="t('add')"
+          icon="add"
+          @click="onAdd"
+        />
+      </div>
+    </div>
     <div class="q-my-md">
       <q-table
         flat
-        table-header-class="bg-secondary-ultra-light text-secondary"
         :rows="usersStore.users"
         :columns="columns"
         row-key="id"
+        :filter="filter"
         :loading="usersStore.loading"
       >
-        <template v-slot:top>
-          <q-btn
-            size="sm"
-            color="primary"
-            :disable="usersStore.loading"
-            :label="t('add')"
-            icon="add"
-            @click="onAdd"
-          />
-          <q-space />
-          <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
         <template v-slot:body-cell-id="props">
           <q-td :props="props"
             ><span :title="props.value">{{ `${props.value.substring(0, 8)}...` }}</span></q-td
@@ -60,7 +61,6 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              color="foreground"
               size="12px"
               flat
               dense
@@ -71,7 +71,6 @@
             >
             </q-btn>
             <q-btn
-              color="foreground"
               size="12px"
               flat
               dense
@@ -82,7 +81,6 @@
             >
             </q-btn>
             <q-btn
-              color="foreground"
               size="12px"
               flat
               dense

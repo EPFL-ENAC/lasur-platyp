@@ -28,7 +28,6 @@
         v-model:pagination="pagination"
         :loading="loading"
         :filter="filter"
-        table-header-class="bg-secondary-ultra-light text-secondary"
         binary-state-sort
         @request="onRequest"
         :rows-per-page-options="[10, 25, 50]"
@@ -49,7 +48,7 @@
         </template>
         <template v-slot:body-cell-administrators="props">
           <q-td :props="props">
-            <q-badge color="primary" :label="props.row.administrators.length || 0" />
+            <q-badge :label="props.row.administrators.length || 0" />
           </q-td>
         </template>
         <template v-slot:body-cell-can_be_cited="props">
@@ -65,7 +64,6 @@
           <q-td :props="props">
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="foreground"
               size="12px"
               flat
               dense
@@ -76,7 +74,6 @@
             </q-btn>
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="foreground"
               size="12px"
               flat
               dense
@@ -87,7 +84,6 @@
             </q-btn>
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="foreground"
               size="12px"
               flat
               dense

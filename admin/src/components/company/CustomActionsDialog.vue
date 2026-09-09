@@ -53,12 +53,12 @@
               </q-item-section>
               <q-item-section avatar>
                 <q-btn
-                  icon="delete"
-                  rounded
-                  dense
                   flat
-                  color="negative"
-                  size="12px"
+                  round
+                  dense
+                  icon="fa-regular fa-trash-can"
+                  :aria-label="t('remove')"
+                  class="btn-danger-icon"
                   @click="onDeleteAction(idx)"
                 />
               </q-item-section>

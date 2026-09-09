@@ -261,6 +261,24 @@ li + li {
   color: $brand-purple-50;
 }
 
+// Destructive icon button: quiet by default, red on hover
+.q-btn.btn-danger-icon {
+  color: $brand-purple-400;
+}
+
+.q-btn.btn-danger-icon .q-icon {
+  font-size: 18px;
+}
+
+.q-btn.btn-danger-icon:hover {
+  color: $negative;
+  background-color: rgba($negative, 0.08);
+}
+
+.body--dark .q-btn.btn-danger-icon {
+  color: $brand-purple-200;
+}
+
 // Typography, applied to Quasar's own text classes so every page reads the
 // same scale:
 // - text-subtitle2: eyebrow above a page title (page name, breadcrumbs)
@@ -351,6 +369,7 @@ a.read-more .q-icon {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   flex: 1;
 }
 
@@ -358,6 +377,28 @@ a.read-more .q-icon {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+// Narrow screens: the page name sits on its own line and the controls stack
+// under it, each taking the full width.
+@media (max-width: 767px) {
+  .title-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .title-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .title-toolbar > * {
+    width: 100%;
+    min-width: 0 !important;
+  }
 }
 
 .tab-active {
