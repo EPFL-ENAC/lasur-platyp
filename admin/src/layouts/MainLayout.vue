@@ -303,8 +303,12 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   align-items: center;
 }
 
-// Page content: 96px margins on desktop, back to the page default below
+// Page content: 96px margins on desktop, back to the page default below.
+// With the drawer closed the page would otherwise span the whole viewport and
+// text lines run far too long, so the content is capped at 1200px and centred.
 .q-page-container :deep(.q-page) {
+  max-width: 1600px;
+  margin: 0 auto;
   padding: 96px;
 }
 
