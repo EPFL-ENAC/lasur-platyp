@@ -96,6 +96,8 @@ export interface Recommendation {
   reco?: {
     reco_inter: string[]
     bravo?: number[]
+    /** Public transport pass suited to the home-to-work origin/destination */
+    pt_pass?: string
     scores: {
       covoit: number
       elec: number
@@ -183,6 +185,7 @@ export interface RecommendationsPreviewData {
     journeys: Journey[]
     recoInter: string[]
     bravo: number[]
+    ptPass?: string | undefined
     center: [number, number] | null
     mesureDt1: string[]
     mesureDt2: string[]

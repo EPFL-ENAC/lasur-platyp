@@ -283,6 +283,13 @@ export default {
     recommends: 'Mobilyse recommends the following mode:',
     recommends_also: 'Mobilyse also recommends the following mode:',
   },
+  pt_pass: {
+    unireso: 'To use public transports, a Unireso pass might be a good option!',
+    leman: 'To use public transports, a Léman Pass might be a good option!',
+    cff: 'To use public transports, an SBB pass might be a good option!',
+    sncf: 'To use public transports, an SNCF pass might be a good option!',
+    other: 'To use public transports, a public transportation pass might be a good option!',
+  },
   actions: {
     budget: 'Sustainable mobility budget',
     wfh: 'Ability to work from home',

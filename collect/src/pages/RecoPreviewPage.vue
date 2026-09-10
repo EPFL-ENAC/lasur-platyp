@@ -19,6 +19,7 @@
           :journeys="data.perso.journeys"
           :reco-inter="data.perso.recoInter"
           :bravo="data.perso.bravo"
+          :pt-pass="data.perso.ptPass"
           :center="data.perso.center"
           :mesure-dt1="data.perso.mesureDt1"
           :mesure-dt2="data.perso.mesureDt2"

@@ -85,6 +85,7 @@
         :journeys="freqModJourneys"
         :reco-inter="recoInter"
         :bravo="bravo"
+        :pt-pass="ptPass"
         :center="center"
         :mesure-dt1="mesureDt1"
         :mesure-dt2="mesureDt2"
@@ -206,6 +207,7 @@ const freqModProJourneys = computed<ProJourney[]>(
 const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
 const recoPros = computed(() => survey.recommendation.reco_pro?.reco_pros || [])
 const bravo = computed(() => survey.recommendation.reco?.bravo || [])
+const ptPass = computed(() => survey.recommendation.reco?.pt_pass)
 const center = computed(() => {
   const loc = survey.record.data.origin
   if (!loc?.lon || !loc?.lat) return null
@@ -277,6 +279,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     journeys: freqModJourneys.value,
     recoInter: recoInter.value,
     bravo: bravo.value,
+    ptPass: ptPass.value,
     center: center.value,
     mesureDt1: mesureDt1.value,
     mesureDt2: mesureDt2.value,

@@ -20,14 +20,18 @@
             {{ recoLabel }}
           </q-item-label>
         </div>
-
-        <BenefitsPanel
-          v-if="!hasBenefits(reco) || benefitsExpanded"
-          :reco="reco"
-          class="q-mt-sm"
-          :expanded="!!benefitsExpanded"
-        />
       </template>
+
+      <!-- Shown for a strict recommendation as much as for a habit already on
+           public transport, so it survives the bravo === 2 branch above. -->
+      <p v-if="ptPassMessage" class="reco-pt-pass">{{ ptPassMessage }}</p>
+
+      <BenefitsPanel
+        v-if="bravo !== 2 && (!hasBenefits(reco) || benefitsExpanded)"
+        :reco="reco"
+        class="q-mt-sm"
+        :expanded="!!benefitsExpanded"
+      />
 
       <slot />
 
@@ -47,10 +51,11 @@
 import BenefitsPanel from '@/components/form/steps/BenefitsPanel.vue'
 import { hasBenefits } from '@/utils/benefits'
 import { getRecoIcon } from '@/utils/modeicons'
+import { getPtPassKey, isPtReco } from '@/utils/ptpass'
 
 const { t } = useI18n()
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     reco: string
     recoLabel: string
@@ -60,6 +65,8 @@ withDefaults(
     wrapperClass?: string
     actions?: string[]
     benefitsExpanded?: boolean
+    /** Pass suited to the journey, from the toolkit; unknown values read generically. */
+    ptPass?: string | undefined
   }>(),
   {
     recoClass: 'text-h5',
@@ -67,6 +74,12 @@ withDefaults(
     benefitsExpanded: false,
     actions: () => [],
   },
+)
+
+// Only the home-to-work recommendation carries a pass: the toolkit derives it
+// from that origin/destination, so professional journeys leave it unset.
+const ptPassMessage = computed(() =>
+  props.ptPass && isPtReco(props.reco) ? t(`pt_pass.${getPtPassKey(props.ptPass)}`) : '',
 )
 </script>
 
@@ -97,5 +110,10 @@ withDefaults(
 }
 .reco-label-item {
   flex: 1;
+}
+
+.reco-pt-pass {
+  margin: 0 0 16px;
+  font-size: 1rem;
 }
 </style>
