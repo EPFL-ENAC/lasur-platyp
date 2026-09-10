@@ -566,6 +566,7 @@ function initComparisonChartOptions() {
     yAxisName: t('stats.units.tco2eq_per_year'),
     keyOrder,
     valueUnit: t('stats.units.tco2eq_per_year'),
+    valueShareLabel: (percent: string) => t('stats.group_emissions_share', { percent }),
   })
 }
 </script>

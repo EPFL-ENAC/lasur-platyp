@@ -422,6 +422,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     units: {
       tco2eq_per_year: 'tCO₂eq/year',
     },
+    group_emissions_share: '({percent}%)',
     sections: {
       mobility_analysis: {
         title: 'Mobility analysis',

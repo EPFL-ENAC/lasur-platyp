@@ -433,6 +433,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     units: {
       tco2eq_per_year: 'tCO₂éq/an',
     },
+    group_emissions_share: '({percent}%)',
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
