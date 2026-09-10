@@ -6,7 +6,7 @@ export default {
     // Title shown at the top of each survey step, keyed by step name.
     step_title: {
       agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
-      employment: 'Your working habits',
+      employment: 'Your working situation',
       workplace: '@:form.workplace',
       origin_places: '@:form.origin',
       travel_time: 'Your commute',
@@ -43,7 +43,7 @@ export default {
     },
     agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
     agreement_hint:
-      'The GTC formalizes the agreement to which you consent, between you and the Modus Foundation, by using Mobilyse. The confidentiality policy explains what the data collected is used for and how it is processed.',
+      'The GTC formalizes the agreement between you and the Modus Foundation to which you consent, by using Mobilyse. The confidentiality policy explains what the data collected is used for and how it is processed.',
     terms_conditions: 'I have read and accept the GTC',
     terms_conditions_link: 'See the terms and conditions',
     confidentiality: 'I have read and accept the privacy policy',
@@ -65,14 +65,14 @@ export default {
     no: 'No',
     multiple_options: 'Multiple options possible',
     workplace: 'Your usual place of work',
-    workplace_select_label: 'Select an office in the list',
+    workplace_select_label: 'Select a location in the list',
     workplace_option: {
       other: 'Other workplace (specify)',
     },
     origin: 'Where do you usually leave from to reach your workplace?',
     origin_hint:
       'This confidential information will only be used to calculate your mobility options for your home-work commute.',
-    travel_time: 'What is your average travel time from your home to your workplace?',
+    travel_time: 'What is your average travel time from your home to your workplace? (one way)',
     travel_time_minutes: 'minutes (one way)',
     constraints:
       'Do you experience any potential constraints related to your daily mobility, several times per week?',
@@ -84,7 +84,7 @@ export default {
       other: 'Other (specify)',
       none: 'No particular constraints',
     },
-    equipments: 'Which of the following equipments do you have access to for your daily commute?',
+    equipments: 'Which of the following equipment do you have access to for your daily commute?',
     equipments_option: {
       bike: 'Bicycle',
       tpu_unireso: 'Unireso',
@@ -182,7 +182,7 @@ export default {
     needs_hint: 'On a scale of 1 (not at all suitable) to 5 (completely suitable)',
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations: 'Recommended modes of transport for your home-to-work journeys:',
-    recommendations_header: 'Mobilyse’s recommendations for commuting',
+    recommendations_header: 'Mobilyse’s recommendations for your commute',
     recommendations_preamble:
       'Based on your situation, we propose below one or more modes of transport that seem suitable for your home-to-work journey.',
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
@@ -196,11 +196,11 @@ export default {
     actions: 'No measures | Your employer measure: {actions} | Your employer measures: {actions}',
     actions_global:
       'No global measures | Your employer also offers the following measure: {actions} | Your employer also offers the following measures: {actions}',
-    employer_measures_eyebrow: 'Additional advantages',
+    employer_measures_eyebrow: 'Additional support',
     employer_measures_header: 'Your employer also offers the following measures',
     employer_measures_description:
       'As an employee of {organisation}, you may also benefit from the following support measures',
-    change: 'About the mode of transport',
+    change: 'About the mode of transport:',
     change_motivation: 'Your willingness to change',
     change_motivation_hint:
       'On a scale of 1 (not interested) to 5 (very motivated), how willing are you to adopt this mode of transport for your home-to-work commute?',
@@ -230,7 +230,7 @@ export default {
       title: 'Follow-up of participants over time (optional)',
       text: `By providing your email address, you enable your organisation to monitor how mobility practices and preferences evolve over time. When Mobilyse is used again in the future, this helps identify which mobility measures are effective and which could be improved, allowing your employer to better support your mobility needs.
 
-**Important:** your email address is instantly encrypted and never stored by Mobilyse. Your employer cannot, under any circumstances, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
+**Important:** your email address is instantly encrypted and never stored by Mobilyse. Your employer cannot, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
       label: 'Your email address (optional)',
     },
     final: 'Thank you for being part of the mobilyse adventure!',
@@ -370,7 +370,7 @@ export default {
   lookup_address_or_select_on_map: 'Lookup address or select on map',
   type_enter_to_lookup_address: 'Type address, then press Enter to lookup',
   welcome_eyebrow: 'Mobility Survey',
-  welcome: 'Welcome to the {brand}',
+  welcome: 'Welcome to {brand}',
   welcome_intro: 'Please fill out the survey to help us improve your daily commute.',
   or: 'Or',
   no_results: 'No results',
