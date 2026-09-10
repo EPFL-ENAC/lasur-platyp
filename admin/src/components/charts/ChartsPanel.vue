@@ -1,32 +1,22 @@
 <template>
   <div>
-    <q-tabs
-      v-model="tab"
-      dense
-      no-caps
-      class="text-grey"
-      active-color="secondary"
-      active-bg-color="grey-4"
-      indicator-color="primary"
-      align="left"
-      @update:model-value="onTabChanged"
-    >
+    <q-tabs v-model="tab" no-caps align="left" @update:model-value="onTabChanged">
       <q-tab name="analysis" :label="t('stats.sections.mobility_analysis.title')" />
       <q-tab name="potentials" :label="t('stats.sections.mobility_potentials.title')" />
       <q-tab name="behavioural" :label="t('stats.sections.behavioural_changes.title')" />
     </q-tabs>
     <q-tab-panels v-model="tab">
       <q-tab-panel name="analysis" class="q-px-none">
-        <div class="text-h5 q-mb-md">{{ t('stats.sections.mobility_analysis.title') }}</div>
+        <div class="text-h5 section-title">{{ t('stats.sections.mobility_analysis.title') }}</div>
         <q-markdown
-          class="compact q-mt-sm"
+          class="compact text-subtitle1 section-lead"
           :src="t('stats.sections.mobility_analysis.description')"
         />
-        <details-panel class="q-mb-md">
+        <details-panel class="section-details">
           <q-markdown class="compact" :src="t('stats.sections.mobility_analysis.details')" />
         </details-panel>
 
-        <div class="text-h6 q-my-md">
+        <div class="subsection-title">
           {{ t('stats.sections.mobility_analysis.title') }} -
           {{ t('stats.sections.home_to_work') }}
         </div>
@@ -77,7 +67,7 @@
             :loading="stats.loading"
           />
         </div>
-        <div class="text-h6 q-my-md">
+        <div class="subsection-title">
           {{ t('stats.sections.mobility_analysis.title') }} -
           {{ t('stats.sections.professional_travel') }}
         </div>
@@ -95,14 +85,14 @@
         </div>
       </q-tab-panel>
       <q-tab-panel name="potentials" class="q-px-none">
-        <div class="text-h5" data-section-name="mobility_potentials" expand-icon-toggle>
+        <div class="text-h5 section-title" data-section-name="mobility_potentials" expand-icon-toggle>
           {{ t('stats.sections.mobility_potentials.title') }}
         </div>
         <q-markdown
-          class="compact q-mt-sm"
+          class="compact text-subtitle1 section-lead"
           :src="t('stats.sections.mobility_potentials.description')"
         />
-        <details-panel class="q-mb-md">
+        <details-panel class="section-details">
           <mobility-potential-insights
             frequency-key="reco_inter"
             :reduction-key="
@@ -113,7 +103,7 @@
           />
         </details-panel>
 
-        <div class="text-h6 q-my-md">
+        <div class="subsection-title">
           {{ t('stats.sections.mobility_potentials.title') }} -
           {{ t('stats.sections.home_to_work') }}
         </div>
@@ -145,7 +135,7 @@
           />
         </div>
 
-        <div class="text-h6 q-my-md">
+        <div class="subsection-title">
           {{ t('stats.sections.mobility_potentials.title') }} -
           {{ t('stats.sections.professional_travel') }}
         </div>
@@ -164,11 +154,11 @@
         </div>
       </q-tab-panel>
       <q-tab-panel name="behavioural" class="q-px-none">
-        <div class="text-h5" data-section-name="behavioural_changes" expand-icon-toggle>
+        <div class="text-h5 section-title" data-section-name="behavioural_changes" expand-icon-toggle>
           {{ t('stats.sections.behavioural_changes.title') }}
         </div>
         <q-markdown
-          class="compact q-pb-md q-mt-sm"
+          class="compact text-subtitle1 section-lead section-lead--last"
           :src="t('stats.sections.behavioural_changes.description')"
         />
         <div class="grid-container">
@@ -258,10 +248,57 @@ const onTabChanged = (newTab: string) => {
 </script>
 
 <style lang="css" scoped>
+/* Section rhythm: 64px above a section title, 8px between title, lead and
+   read-more, 48px before the charts. Chart columns sit 32px apart. */
+.q-tab-panel {
+  padding-top: 64px;
+  padding-bottom: 0;
+}
+
+.section-title {
+  margin-bottom: 8px;
+}
+
+.section-lead {
+  margin-bottom: 8px;
+}
+
+/* Whatever closes the intro (read-more, or the lead when there is none)
+   carries the 48px gap to the charts */
+.section-details,
+.section-lead--last {
+  margin-bottom: 48px;
+}
+
+.section-details :deep(a.read-more) {
+  margin-bottom: 0;
+}
+
+/* Sub-section title: between the section (28px purple) and the chart titles
+   (20px yellow): dark purple, semibold, with a hairline rule above. */
+.subsection-title {
+  margin: 48px 0 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--secondary-border-color);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 30px;
+  color: var(--foreground-color);
+}
+
+/* Two chart columns; one below tablet width. A fixed count (rather than
+   auto-fit) keeps a two-chart row from sharing the width with a third,
+   unused track opened by a full-row chart further down. */
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px 32px;
+}
+
+@media (max-width: 1279px) {
+  .grid-container {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .grid-item-full-row {

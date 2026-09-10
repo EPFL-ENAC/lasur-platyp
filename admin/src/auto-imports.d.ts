@@ -90,6 +90,7 @@ declare global {
   const useAuthStore: typeof import('./stores/auth').useAuthStore
   const useCampaigns: typeof import('./stores/campaigns').useCampaigns
   const useCounterStore: (typeof import('./stores/example-store'))['useCounterStore']
+  const useCountsStore: typeof import('./stores/counts').useCountsStore
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
   const useI18n: typeof import('vue-i18n').useI18n
@@ -205,6 +206,7 @@ declare module 'vue' {
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('./stores/auth')['useAuthStore']>
     readonly useCampaigns: UnwrapRef<typeof import('./stores/campaigns')['useCampaigns']>
+    readonly useCountsStore: UnwrapRef<typeof import('./stores/counts')['useCountsStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>

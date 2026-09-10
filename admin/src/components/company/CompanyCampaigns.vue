@@ -14,16 +14,7 @@
       <q-spinner-dots color="primary" size="md" />
     </div>
     <div v-if="!campaignsStore.loading && campaigns.length > 0">
-      <q-tabs
-        v-model="tab"
-        dense
-        no-caps
-        class="text-grey"
-        active-color="secondary"
-        active-bg-color="grey-4"
-        indicator-color="primary"
-        align="left"
-      >
+      <q-tabs v-model="tab" no-caps align="left">
         <q-tab
           v-for="campaign in campaigns"
           :key="`${campaign.id}`"

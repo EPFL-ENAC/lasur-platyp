@@ -90,6 +90,7 @@
     "useAttrs": true,
     "useAuthStore": true,
     "useCampaigns": true,
+    "useCountsStore": true,
     "useCssModule": true,
     "useCssVars": true,
     "useI18n": true,

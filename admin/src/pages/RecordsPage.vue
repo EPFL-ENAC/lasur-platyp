@@ -1,11 +1,54 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="text-h6 text-title">{{ t('records') }}</div>
+    <div class="title-bar">
+      <div class="text-subtitle2">{{ t('records') }}</div>
+      <div class="title-toolbar">
+        <q-select
+          outlined
+          rounded
+          color="field"
+          dense
+          multiple
+          emit-value
+          map-options
+          use-chips
+          v-model="companyFilter"
+          :label="t('companies')"
+          :options="companyOptions"
+          style="min-width: 200px"
+          @update:model-value="onFilter"
+        />
+        <q-select
+          outlined
+          rounded
+          color="field"
+          dense
+          multiple
+          emit-value
+          map-options
+          use-chips
+          v-model="campaignFilter"
+          :label="t('campaigns')"
+          :options="campaignOptions"
+          style="min-width: 200px"
+          @update:model-value="onFilter"
+        />
+        <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <download-data-button
+          :filter="filter"
+          :company-filter="companyFilter"
+          :campaign-filter="campaignFilter"
+        />
+      </div>
+    </div>
     <div class="q-my-md">
       <q-table
         flat
         ref="tableRef"
-        table-header-class="bg-secondary-ultra-light text-secondary"
         :rows="rows"
         :columns="columns"
         row-key="id"
@@ -17,51 +60,6 @@
         :rows-per-page-options="[10, 25, 50]"
         :no-data-label="authStore.isAdmin ? t('no_records') : t('records_not_super_admin')"
       >
-        <template v-slot:top>
-          <download-data-button
-            :filter="filter"
-            :company-filter="companyFilter"
-            :campaign-filter="campaignFilter"
-          />
-          <q-space />
-          <q-select
-            outlined
-            rounded
-            color="field"
-            dense
-            multiple
-            emit-value
-            map-options
-            use-chips
-            v-model="companyFilter"
-            :label="t('companies')"
-            :options="companyOptions"
-            class="q-mr-md"
-            style="min-width: 200px"
-            @update:model-value="onFilter"
-          />
-          <q-select
-            outlined
-            rounded
-            color="field"
-            dense
-            multiple
-            emit-value
-            map-options
-            use-chips
-            v-model="campaignFilter"
-            :label="t('campaigns')"
-            :options="campaignOptions"
-            class="q-mr-md"
-            style="min-width: 200px"
-            @update:model-value="onFilter"
-          />
-          <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
         <template v-slot:body-cell-token="props">
           <q-td :props="props">
             <router-link :to="`/record/${props.row.id}`" class="modus">{{
@@ -84,7 +82,7 @@
         <template v-slot:body-cell-recommendations="props">
           <q-td :props="props">
             <template v-for="reco in getRecoDt2(props.row)" :key="reco">
-              <q-chip :label="reco" color="primary" class="text-white" />
+              <q-chip dense :label="reco" />
             </template>
           </q-td>
         </template>
@@ -96,7 +94,6 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              color="foreground"
               size="12px"
               flat
               dense
@@ -106,7 +103,6 @@
             >
             </q-btn>
             <q-btn
-              color="foreground"
               size="12px"
               flat
               dense

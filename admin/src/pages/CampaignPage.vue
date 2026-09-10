@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-lg">
     <div class="title-bar">
-      <div class="text-h6 row">
+      <div class="text-subtitle2 row">
         <q-breadcrumbs gutter="sm" active-color="title">
           <q-breadcrumbs-el :label="t('companies')" to="/companies" />
           <q-breadcrumbs-el :label="company?.name" :to="`/company/${company?.id}`" />
@@ -20,13 +20,12 @@
         />
         <q-btn
           v-if="isCompanyAdmin"
+          flat
           round
-          size="sm"
-          color="negative"
-          icon="delete"
+          icon="fa-regular fa-trash-can"
           :aria-label="t('remove')"
+          class="btn-danger-icon"
           @click="onShowRemove"
-          style="width: 32px"
         />
       </div>
     </div>

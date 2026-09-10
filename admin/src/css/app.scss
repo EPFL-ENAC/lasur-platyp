@@ -83,6 +83,26 @@ a:hover.modus {
   margin-top: 0 !important;
 }
 
+// Markdown headings follow the page titles: bold, brand yellow
+.q-markdown--heading-h1,
+.q-markdown--heading-h2,
+.q-markdown--heading-h3,
+.q-markdown--heading-h4,
+.q-markdown--heading-h5,
+.q-markdown--heading-h6 {
+  font-weight: 700;
+  color: $brand-yellow-600;
+}
+
+.body--dark .q-markdown--heading-h1,
+.body--dark .q-markdown--heading-h2,
+.body--dark .q-markdown--heading-h3,
+.body--dark .q-markdown--heading-h4,
+.body--dark .q-markdown--heading-h5,
+.body--dark .q-markdown--heading-h6 {
+  color: $brand-yellow-300;
+}
+
 .text-help {
   color: $grey-6;
 }
@@ -175,10 +195,181 @@ li + li {
   padding: 0.5em;
 }
 
+// Design system buttons
+// Geometry and elevation come from the Quasar button variables; what is left
+// here is the brand surface, its 2px border fading from white 12% to white 0%,
+// and the sentence case labels.
+.q-btn {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+// Icons sit at a fixed 16x16 regardless of the button size (round icon
+// buttons keep their own scale).
+.q-btn:not(.q-btn--round) .q-icon {
+  font-size: 16px;
+}
+
+// 2px inner border, lit at the top and fading out towards the bottom. Only the
+// coloured buttons carry it; the neutral ones are a flat bordered surface.
+.q-btn:not(.q-btn--flat):not(.q-btn--outline)[class*='bg-']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+// Brand variant: same drop shadow and bevel as the neutral buttons, on the
+// yellow surface with a 1px border one step darker.
+.q-btn.bg-primary,
+.q-btn.bg-accent {
+  background: $brand-yellow-400 !important;
+  color: $brand-yellow-800 !important;
+  border: 1px solid $brand-yellow-500;
+}
+
+// Neutral variant: buttons that carry no color of their own. White surface,
+// 1px hairline border, soft drop shadow and inner bottom bevel (same skin as
+// the header controls). Quasar paints its own shadow on ::before, so clear it.
+.q-btn:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--round):not([class*='bg-']) {
+  background: white;
+  color: $brand-purple-800;
+  border: 1px solid $brand-purple-100;
+  box-shadow:
+    0 1px 2px 0 rgba(10, 13, 18, 0.05),
+    inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
+}
+
+.q-btn:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--round):not([class*='bg-'])::before {
+  box-shadow: none;
+}
+
+.body--dark .q-btn:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--round):not([class*='bg-']) {
+  background: $brand-purple-800;
+  border-color: $brand-purple-200;
+  color: $brand-purple-50;
+}
+
+// Destructive icon button: quiet by default, red on hover
+.q-btn.btn-danger-icon {
+  color: $brand-purple-400;
+}
+
+.q-btn.btn-danger-icon .q-icon {
+  font-size: 18px;
+}
+
+.q-btn.btn-danger-icon:hover {
+  color: $negative;
+  background-color: rgba($negative, 0.08);
+}
+
+.body--dark .q-btn.btn-danger-icon {
+  color: $brand-purple-200;
+}
+
+// Typography, applied to Quasar's own text classes so every page reads the
+// same scale:
+// - text-subtitle2: eyebrow above a page title (page name, breadcrumbs)
+// - text-h4: page title, bold in brand yellow
+// - text-h5: section title, regular in dark purple
+// - text-h6: chart / sub-section title, bold in brand yellow
+// - text-subtitle1: lead paragraph under a page or section title
+.text-subtitle2 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0;
+  color: $brand-purple-400;
+}
+
+.text-subtitle2 .q-breadcrumbs__el {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.text-h4 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: -0.01em;
+  color: $brand-yellow-600;
+}
+
+.text-h5 {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+  color: $brand-purple-800;
+}
+
+.text-h6 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0;
+  color: $brand-yellow-600;
+}
+
+.text-subtitle1,
+.q-markdown.text-subtitle1,
+.q-markdown.text-subtitle1 p {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0;
+  color: $brand-purple-800;
+}
+
+.body--dark .text-subtitle2 {
+  color: $brand-purple-200;
+}
+
+.body--dark .text-h4,
+.body--dark .text-h6 {
+  color: $brand-yellow-300;
+}
+
+.body--dark .text-h5,
+.body--dark .text-subtitle1,
+.body--dark .q-markdown.text-subtitle1 p {
+  color: $brand-purple-50;
+}
+
+// "Read more" toggle: yellow text link with a chevron
+a.read-more {
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: $brand-yellow-700;
+}
+
+a.read-more .q-icon {
+  font-size: 20px;
+}
+
+.body--dark a.read-more {
+  color: $brand-yellow-300;
+}
+
 .title-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   flex: 1;
 }
 
@@ -186,6 +377,28 @@ li + li {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+// Narrow screens: the page name sits on its own line and the controls stack
+// under it, each taking the full width.
+@media (max-width: 767px) {
+  .title-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .title-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .title-toolbar > * {
+    width: 100%;
+    min-width: 0 !important;
+  }
 }
 
 .tab-active {
@@ -195,7 +408,7 @@ li + li {
 }
 
 .q-markdown.compact {
-  line-height: 1.15;
+  line-height: 1.5;
 }
 
 .q-markdown.compact p {

@@ -90,7 +90,7 @@ function initChartOptions() {
         //startAngle: 180,
         //endAngle: 360,
         avoidLabelOverlap: true,
-        color: ['#4caf50', '#ff9800', '#2196f3'],
+        color: ['#78c1a3', '#e8b27a', '#99c7df'],
         label: {
           margin: 0,
           fontWeight: 'bold',

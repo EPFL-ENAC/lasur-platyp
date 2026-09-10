@@ -45,17 +45,7 @@
         </div>
       </q-card-section>
 
-      <q-tabs
-        v-model="tab"
-        dense
-        active-color="secondary"
-        active-bg-color="background"
-        active-class="tab-active"
-        indicator-color="transparent"
-        class="bg-secondary-ultra-light q-mx-md"
-        align="justify"
-        narrow-indicator
-      >
+      <q-tabs v-model="tab" no-caps class="q-mx-md" align="justify">
         <q-tab name="fr" label="Français" />
         <q-tab name="en" label="English" />
       </q-tabs>

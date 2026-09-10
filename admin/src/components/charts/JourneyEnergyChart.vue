@@ -364,7 +364,7 @@ function initChartOptions() {
         {
           name: t(`stats.energy_journey.participantsAverage`),
           icon: 'rect',
-          itemStyle: { color: '#d32f2f' },
+          itemStyle: { color: '#c96f6b' },
         },
       ],
     },
@@ -422,7 +422,7 @@ function initChartOptions() {
         silent: true,
         data: sortedTokens.map(() => averageEnergyExpenditurePerToken),
         itemStyle: {
-          color: '#d32f2f',
+          color: '#c96f6b',
         },
         lineStyle: {
           opacity: 0,
@@ -435,10 +435,10 @@ function initChartOptions() {
             formatter: `${formatNumber(averageEnergyExpenditurePerToken)} kcal`,
             distance: 10,
             fontWeight: 'bold',
-            color: '#d32f2f',
+            color: '#c96f6b',
           },
           lineStyle: {
-            color: '#d32f2f', // Red line
+            color: '#c96f6b', // Red line
             type: 'dashed',
             width: 2,
             opacity: 0.8,

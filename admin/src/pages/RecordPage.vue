@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="text-h6 row">
+    <div class="text-subtitle2 row">
       <q-breadcrumbs gutter="sm" active-color="title">
         <q-breadcrumbs-el :label="t('records')" to="/records" />
         <q-breadcrumbs-el :label="record?.token" />
@@ -8,7 +8,7 @@
     </div>
     <q-card flat class="q-my-lg">
       <q-card-section>
-        <div class="text-h5 q-my-none">{{ t('record.raw_data') }}</div>
+        <div class="text-h6 text-secondary q-my-none">{{ t('record.raw_data') }}</div>
       </q-card-section>
 
       <q-separator />
@@ -72,7 +72,7 @@
     </q-card>
     <q-card flat class="q-my-xl">
       <q-card-section>
-        <div class="text-h5">{{ t('record.isochrones') }}</div>
+        <div class="text-h6 text-secondary">{{ t('record.isochrones') }}</div>
       </q-card-section>
 
       <q-separator />

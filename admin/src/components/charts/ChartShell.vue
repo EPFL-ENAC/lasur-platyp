@@ -1,14 +1,16 @@
 <template>
   <div class="chart-shell">
-    <div :style="containerStyle" class="chart-shell__visual">
-      <div v-if="hasData" class="chart-shell__content">
-        <slot />
-      </div>
+    <div class="chart-shell__frame">
+      <div :style="containerStyle" class="chart-shell__visual">
+        <div v-if="hasData" class="chart-shell__content">
+          <slot />
+        </div>
 
-      <div v-else class="chart-shell__empty column items-center justify-center q-px-md">
-        <div v-if="noDataTitle" class="text-h6 text-center">{{ noDataTitle }}</div>
-        <div class="text-subtitle1 text-foreground text-center">
-          {{ noDataText }}
+        <div v-else class="chart-shell__empty column items-center justify-center q-px-md">
+          <div v-if="noDataTitle" class="text-h6 text-center">{{ noDataTitle }}</div>
+          <div class="text-subtitle1 text-foreground text-center">
+            {{ noDataText }}
+          </div>
         </div>
       </div>
     </div>
@@ -88,6 +90,13 @@ async function handleExport() {
 </script>
 
 <style scoped>
+/* Plain block around the sized chart area: the details dialog frames it, and
+   a block with no explicit width always fits its parent, padding included. */
+.chart-shell__frame {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .chart-shell__visual {
   position: relative;
   width: 100%;

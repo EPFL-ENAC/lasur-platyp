@@ -10,17 +10,7 @@
 
       <q-card-section>
         <q-form ref="form">
-          <q-tabs
-            v-model="tab"
-            dense
-            no-caps
-            active-color="secondary"
-            active-bg-color="white"
-            active-class="tab-active"
-            indicator-color="transparent"
-            class="bg-secondary-ultra-light"
-            align="left"
-          >
+          <q-tabs v-model="tab" no-caps align="left">
             <q-tab name="general" :label="t('general')" />
             <q-tab
               name="workplaces"
@@ -231,10 +221,10 @@
                     <q-item-section side>
                       <q-btn
                         flat
-                        size="sm"
-                        color="negative"
-                        icon="delete"
-                        class="q-mt-sm"
+                        round
+                        icon="fa-regular fa-trash-can"
+                        :aria-label="t('remove')"
+                        class="btn-danger-icon q-mt-sm"
                         @click="selected.workplaces.splice(index, 1)"
                       />
                     </q-item-section>

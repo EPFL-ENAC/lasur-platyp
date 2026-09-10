@@ -402,6 +402,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       M5: 'Comparer également avec 3',
     },
     add_more_comparisons: 'Ajouter des comparaisons',
+    companies_selected: 'Aucune entreprise sélectionnée | 1 entreprise sélectionnée | {n} entreprises sélectionnées',
+    campaigns_selected: 'Aucune campagne sélectionnée | 1 campagne sélectionnée | {n} campagnes sélectionnées',
     cross_sectional_longitudinal: 'Transversal ou Longitudinal',
     longitudinal:
       'Montrer uniquement les données des participant·e·s ayant participé à au moins deux groupes',
@@ -987,12 +989,10 @@ Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en c
     no_charts_to_export: 'Aucun graphique à exporter en PDF.',
   },
   footer: {
-    modus: `[Fondation Modus
-Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
-    epfl: `
-[Laboratoire de sociologie urbaine (LASUR)](https://www.epfl.ch/labs/lasur/)
-
-[ENAC-IT4R](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+    modus_name: 'Fondation Modus',
+    modus_tagline: 'Pour une mobilité durable à Genève',
+    lasur: 'Laboratoire de sociologie urbaine (LASUR)',
+    it4r: 'ENAC-IT4R',
   },
   generated_report: {
     title: 'Rapport de mobilité',

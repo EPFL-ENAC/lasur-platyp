@@ -39,7 +39,16 @@ $negative: #c10015;
 $info: #80a795;
 $warning: #e6a21a;
 
+// Design system buttons (Figma): spacing-2xl sides, radius-default corners and
+// the shadow-xs-skeuomorphic elevation -- a soft drop shadow and an inner
+// bottom bevel. Pressing the button removes the bevel.
 $button-border-radius: 8px;
+$button-padding: 0.75em 1.25em;
+$button-font-weight: 600;
+$button-shadow:
+  0 1px 2px 0 rgba(10, 13, 18, 0.05),
+  inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
+$button-shadow-active: 0 1px 2px 0 rgba(10, 13, 18, 0.05);
 
 // Theme Tokens
 body {
@@ -177,15 +186,155 @@ body.body--dark {
   background-color: var(--secondary-border-color) !important;
 }
 
+// Tables: bordered white card, tinted header, tall rows with hairline
+// separators, quiet icon actions and pill chips.
 .q-table__container {
   border: 1px solid var(--secondary-border-color) !important;
-  border-radius: 1rem !important;
+  border-radius: 12px !important; // radius-lg
+  background-color: white;
 }
 
+.q-table__top {
+  padding: 16px 24px;
+}
+
+.q-table thead tr {
+  height: 52px;
+  background-color: $brand-purple-25;
+}
+
+.q-table th {
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $brand-purple-400;
+  border-color: var(--secondary-border-color);
+}
+
+.q-table th.sortable:hover,
+.q-table th.sorted {
+  color: $brand-purple-800;
+}
+
+.q-table tbody td {
+  height: 64px;
+  padding: 0 24px;
+  font-size: 15px;
+  color: $brand-purple-800;
+  border-color: $brand-purple-100;
+}
+
+.q-table tbody tr:hover td {
+  background-color: $brand-yellow-25;
+}
+
+.q-table__bottom {
+  padding: 12px 24px;
+  min-height: 56px;
+  font-size: 14px;
+  color: $brand-purple-400;
+  border-color: var(--secondary-border-color);
+}
+
+// Row actions: quiet icons that darken on hover
+.q-table tbody .q-btn.q-btn--flat.q-btn--round {
+  color: $brand-purple-400;
+}
+
+.q-table tbody .q-btn.q-btn--flat.q-btn--round:hover {
+  color: $brand-purple-800;
+}
+
+// Chips and badges inside tables read as soft pills
+.q-table tbody .q-chip,
+.q-table tbody .q-badge {
+  margin: 2px 4px 2px 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid $brand-yellow-200;
+  background-color: $brand-yellow-50 !important;
+  color: $brand-yellow-800 !important;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.body--dark .q-table__container {
+  background-color: $brand-purple-800;
+}
+
+.body--dark .q-table thead tr {
+  background-color: $brand-purple-700;
+}
+
+.body--dark .q-table th,
+.body--dark .q-table__bottom {
+  color: $brand-purple-200;
+}
+
+.body--dark .q-table tbody td {
+  color: $brand-purple-50;
+  border-color: $brand-purple-600;
+}
+
+.body--dark .q-table tbody tr:hover td {
+  background-color: $brand-purple-700;
+}
+
+// Tabs: a tinted tray with a white raised pill for the active tab
 .q-tabs {
-  border-radius: 0.5rem !important;
-  border: 1px solid var(--secondary-border-color) !important;
-  color: $brand-purple-300 !important;
+  border-radius: 12px !important; // radius-lg
+  border: 1px solid var(--secondary-border-color) !important; // same as cards
+  background-color: $brand-purple-25;
+  color: $brand-purple-400 !important;
+}
+
+// The strip clips its overflow, so the tray padding lives inside it: the
+// active pill's shadow then has room instead of being cut off.
+.q-tabs .q-tabs__content {
+  padding: 6px;
+}
+
+.q-tabs .q-tab {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 8px; // radius-default
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: $brand-purple-400;
+}
+
+.q-tabs .q-tab + .q-tab {
+  margin-left: 4px;
+}
+
+.q-tabs .q-tab--active {
+  background-color: white;
+  color: $brand-purple-800;
+  box-shadow:
+    0 1px 3px 0 rgba(10, 13, 18, 0.1),
+    0 1px 2px 0 rgba(10, 13, 18, 0.06);
+}
+
+.q-tabs .q-tab__indicator {
+  display: none;
+}
+
+.body--dark .q-tabs {
+  background-color: $brand-purple-800;
+  color: $brand-purple-200 !important;
+}
+
+.body--dark .q-tabs .q-tab {
+  color: $brand-purple-200;
+}
+
+.body--dark .q-tabs .q-tab--active {
+  background-color: $brand-purple-600;
+  color: $brand-purple-50;
 }
 
 .text-hint {
