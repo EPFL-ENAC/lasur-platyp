@@ -520,7 +520,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       unnamed_workplace: 'Lieu de travail sans nom',
       reset_selection: 'Réinitialiser la sélection',
       description:
-        'Ce graphique montre la répartition géographique des lieux de résidence des participant·e·s, ainsi que leur lieux de travail. Ces lieux de résidence sont groupés par zone afin de ne pas afficher de données personnelles. Cliquez sur un lieu de travail (ou de domicile) pour afficher les flux qui y sont rattachés ; cliquez à nouveau, ou appuyez sur Échap, pour réinitialiser.',
+        'Ce graphique montre la répartition géographique des lieux de résidence des participant·e·s, ainsi que leurs lieux de travail. Ces lieux de résidence sont groupés par zone afin de ne pas afficher de données personnelles. Cliquez sur un lieu de travail (ou de domicile) pour afficher les flux qui y sont rattachés ; cliquez à nouveau, ou appuyez sur Échap, pour réinitialiser.',
     },
     travel_time: {
       title: 'Temps de trajet',

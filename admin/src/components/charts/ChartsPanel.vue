@@ -22,7 +22,8 @@
         </div>
         <div class="grid-container">
           <location-chart
-            :height="height"
+            class="grid-item-full-row"
+            :height="Math.round(height * 1.5)"
             :home-locations-heatmap="stats.homeLocationsHeatmap"
             :workplace-locations="stats.workplaceLocations"
             :home-workplace-flows="stats.homeWorkplaceFlows"
@@ -249,6 +250,11 @@ const onTabChanged = (newTab: string) => {
 </script>
 
 <style lang="css" scoped>
+/* Quasar paints tab panels white by default; let the page background show through. */
+.q-tab-panels {
+  background: transparent;
+}
+
 /* Section rhythm: 64px above a section title, 8px between title, lead and
    read-more, 48px before the charts. Chart columns sit 32px apart. */
 .q-tab-panel {
