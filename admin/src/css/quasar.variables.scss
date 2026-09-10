@@ -165,7 +165,8 @@ body.body--dark {
   border-color: var(--secondary-border-color) !important;
 }
 
-.q-field--outlined:has(.text-field) .q-icon,
+// The filter selects' clear cross keeps its own (yellow) colour
+.q-field--outlined:has(.text-field) .q-icon:not(.clear-icon),
 .q-field--outlined:has(.text-field) .q-field__label {
   color: var(--field-label-color) !important;
 }

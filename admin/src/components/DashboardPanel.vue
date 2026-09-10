@@ -5,43 +5,18 @@
         <div class="filters-grid">
           <div class="filter-field">
             <label class="filter-label">{{ t('companies') }}</label>
-            <q-select
-              multiple
-              emit-value
-              map-options
-              rounded
-              outlined
-              color="field"
-              dropdown-icon="expand_more"
+            <filter-select
               class="filter-select"
               v-model="companyFilter"
               :options="companyOptions"
               :display-value="selectionLabel(companyFilter, companyOptions, 'companies')"
               @update:model-value="onFilter"
               :disable="stats.loading"
-            >
-              <template v-slot:option="{ itemProps, opt, selected }">
-                <q-item v-bind="itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ opt.label }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-icon v-if="selected" name="check" />
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            />
           </div>
           <div class="filter-field">
             <label class="filter-label">{{ t('stats.main_group') }}</label>
-            <q-select
-              multiple
-              emit-value
-              map-options
-              rounded
-              outlined
-              color="field"
-              dropdown-icon="expand_more"
+            <filter-select
               class="filter-select"
               v-model="mainGroupFilter"
               :options="campaignOptions"
@@ -53,14 +28,7 @@
           <div class="compare-group">
             <div class="filter-field">
               <label class="filter-label">{{ t('stats.compare_with') }}</label>
-              <q-select
-                multiple
-                emit-value
-                map-options
-                rounded
-                outlined
-                color="field"
-                dropdown-icon="expand_more"
+              <filter-select
                 class="filter-select"
                 v-model="compareWithFilter"
                 :options="compareWithOptions"
@@ -71,26 +39,15 @@
             </div>
             <div v-for="(group, index) in additionalCompareGroups" :key="index" class="compare-row">
               <div class="filter-field">
-                <label class="filter-label">{{ t('stats.also_compare_with') }} {{ index + 1 }}</label>
-                <q-select
-                  multiple
-                  emit-value
-                  map-options
-                  rounded
-                  outlined
-                  color="field"
-                  dropdown-icon="expand_more"
+                <label class="filter-label"
+                  >{{ t('stats.also_compare_with') }} {{ index + 1 }}</label
+                >
+                <filter-select
                   class="filter-select"
-                  v-model="additionalCompareGroups[index]"
+                  :model-value="group"
                   :options="additionalGroupOptions(index)"
-                  :display-value="
-                    selectionLabel(
-                      additionalCompareGroups[index] ?? [],
-                      additionalGroupOptions(index),
-                      'campaigns',
-                    )
-                  "
-                  @update:model-value="onFilter"
+                  :display-value="selectionLabel(group, additionalGroupOptions(index), 'campaigns')"
+                  @update:model-value="setAdditionalGroup(index, $event)"
                   :disable="stats.loading"
                 />
               </div>
@@ -118,7 +75,12 @@
             />
           </div>
           <div class="actions-group">
-            <q-btn no-caps icon-right="expand_more" :label="t('stats.options')" :disable="stats.loading">
+            <q-btn
+              no-caps
+              icon-right="expand_more"
+              :label="t('stats.options')"
+              :disable="stats.loading"
+            >
               <q-menu>
                 <q-list style="min-width: 150px">
                   <q-item clickable v-close-popup @click="onMapFilter">
@@ -230,6 +192,7 @@
 </template>
 
 <script setup lang="ts">
+import FilterSelect from '@/components/FilterSelect.vue'
 import ChartsPanel from '@/components/charts/ChartsPanel.vue'
 import AreaDialog from '@/components/AreaDialog.vue'
 import DownloadDataButton from '@/components/DownloadDataButton.vue'
@@ -369,6 +332,11 @@ function selectionLabel(
 
 function addComparisonGroup() {
   additionalCompareGroups.value.push([])
+}
+
+function setAdditionalGroup(index: number, values: (string | number)[]) {
+  additionalCompareGroups.value[index] = values.map((v) => `${v}`)
+  onFilter()
 }
 
 function removeAdditionalGroup(index: number) {
@@ -593,8 +561,13 @@ async function openReport() {
   padding: 0;
 }
 
-.filter-select :deep(.q-field__append) {
+.filter-select :deep(.q-field__append),
+.filter-select :deep(.q-field__prepend) {
   height: 44px;
+}
+
+.filter-select :deep(.q-field__prepend) {
+  padding-right: 0;
 }
 
 .filter-select :deep(.q-field__control::before) {
