@@ -730,6 +730,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       title: 'Émissions de CO₂ par mode de transport (déplacements professionnels)',
       description:
         "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse se lit le nombre de trajets effectués par mode de transport, par année. En ordonnée se trouvent les émissions carbone par trajet effectué. L'aire de chaque rectangle correspond ainsi aux émissions de chaque mode de transport par année, en tCO2éq, qui sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
+      description_example:
+        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse sont affichés les nombres de déplacements professionnels par année, pour chaque mode de transport (par exemple, {journeys} déplacements par an sont faits avec le mode {mode} chez les participant·e·s). En ordonnée se lisent les émissions de CO₂ par déplacement, pour chaque mode de transport (par exemple, un trajet avec le mode {mode} émet en moyenne {emissionsPerJourney} kgCO₂éq). Enfin, l'aire de chaque rectangle donne les émissions totales annuelles pour chaque mode de transport (par exemple, le mode {mode} est responsable de {emissions} kgCO₂éq/an pour les déplacements professionnels). Ces émissions sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -739,7 +741,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
+          'Environ {firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
         comparison:
           "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an ({prevPercent}%) pour le groupe {prevGroup}.",
       },

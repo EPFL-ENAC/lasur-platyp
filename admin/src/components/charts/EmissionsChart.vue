@@ -35,7 +35,7 @@ import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './compa
 import { formatNumber } from '@/utils/numbers'
 import type { ComparisonStats, Emissions } from '@/models'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 use([
   SVGRenderer,
   CustomChart,
@@ -225,6 +225,35 @@ const emissionItemsProLabels = computed(() => {
   }
 })
 
+// The worked example in the description names the mode with the largest
+// rectangle area, i.e. the one responsible for the most emissions overall.
+const topEmissionItem = computed(() => {
+  if (isComparison.value) return null
+  if (!props.emissions || props.emissions.length === 0) return null
+  if (total.value < globalAnswersThreshold) return null
+
+  const top = props.emissions.reduce((max, item) => (item.emissions > max.emissions ? item : max))
+  if (top.total < perModeAnswersThreshold || top.journeys === 0 || top.emissions === 0) {
+    return null
+  }
+  return top
+})
+
+// Only the charts translating a `description_example` opt in: the others keep
+// their plain description.
+const descriptionExample = computed(() => {
+  const top = topEmissionItem.value
+  const key = `stats.emissions_${props.chartTranslationName}.description_example`
+  if (!top || !te(key)) return ''
+
+  return t(key, {
+    mode: keyLabel(top.mode),
+    journeys: formatNumber(Math.round(top.journeys)),
+    emissionsPerJourney: formatNumber(Math.round(top.emissions / top.journeys)),
+    emissions: formatNumber(Math.round(top.emissions)),
+  })
+})
+
 const comparisonEmissionItems = computed(() => {
   if (!isComparison.value) return null
 
@@ -299,6 +328,9 @@ defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
   get chartInfoText() {
     return chartDescription.value
+  },
+  get chartDescriptionText() {
+    return descriptionExample.value
   },
 })
 
