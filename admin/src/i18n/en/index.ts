@@ -873,10 +873,13 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Recommended public transport passes',
       recommended: 'Passes recommended',
       equipped: 'Participants already equipped',
+      not_equipped_series: '{group}, not equipped yet',
       xaxis: 'Pass type',
       tooltip: {
         recommended: 'Recommended to {count} participants',
         equipped: '{count} of them already equipped ({percentage}%)',
+        group_recommended: 'recommended to {count} participants ({percentage}%)',
+        group_equipped: '{count} already equipped ({percentage}%)',
       },
       labels: {
         unireso: 'Unireso',
@@ -888,6 +891,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       texts: {
         default:
           'This chart shows the number of public transport passes recommended to participants, based on their commuting needs. Employees who do not already have passes may require assistance to use this service.',
+        comparison:
+          'This chart compares, between the campaign groups, the share of participants a public transport pass is recommended to. The solid part of a bar is the participants already holding a matching pass, the faded part those who may require assistance to use this service.',
         equipped_unknown_note:
           'The equipment question only lists Swiss passes: for {passes}, whether participants are already equipped is not collected, so no inner bar is shown.',
       },
