@@ -136,14 +136,21 @@ function labelTypeColor(key: string, labelType: 'simple' | 'complex') {
 
 /**
  * Typology labels come from the data as-is: match them leniently so an
- * unexpected case ('ma+tp') or component order ('TP+MA') still gets the color
- * of the label it denotes, instead of falling back to the neutral default.
+ * unexpected case ('ma+tp') still gets the color of the label it denotes.
+ * Component order matters — 'tp+bike' and 'bike+tp' are two different colors —
+ * so an order-insensitive match ('TP+MA' -> 'MA+TP') is only the last resort
+ * for a pair known in neither order, before the neutral default.
  */
 function labelColor(colors: { [key: string]: string }, key: string) {
   if (colors[key]) {
     return colors[key]
   }
-  const parts = key.toLowerCase().split('+')
+  const lowerKey = key.toLowerCase()
+  const exact = Object.keys(colors).find((candidate) => candidate.toLowerCase() === lowerKey)
+  if (exact) {
+    return colors[exact]
+  }
+  const parts = lowerKey.split('+')
   const match = Object.keys(colors).find((candidate) => {
     const candidateParts = candidate.toLowerCase().split('+')
     return (
