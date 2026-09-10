@@ -5,12 +5,26 @@ from api.models.query import Stats, CampaignStats, LocationFilter, ComparisonReq
 from api.services.records import RecordService
 from api.services.campaigns import CampaignService
 from api.services.stats.stats import StatsService
+from api.services.stats.locations import LocationsService
 from api.services.stats.longitudinal import LongitudinalService
 from enacit4r_sql.utils.query import validate_params, ValidationError, paramAsDict
 
 router = APIRouter()
 
 PRIVACY_LIMIT = 5  # Minimum number of records required to compute statistics
+
+
+async def enrich_workplaces(stats_list: list[Stats], session: AsyncSession, user: User) -> None:
+    """Resolve workplace campaign ids into campaign/company names with a single query."""
+    ids = sorted({
+        cid
+        for stats in stats_list
+        for workplace in (stats.workplace_locations or [])
+        for cid in workplace.campaign_ids
+    })
+    campaigns = await CampaignService(session).list_with_company(ids, user, "read-aggregated")
+    for stats in stats_list:
+        LocationsService.attach_campaigns(stats.workplace_locations or [], campaigns)
 
 
 @router.get("/all", response_model_exclude_none=True)
@@ -37,7 +51,9 @@ async def compute_all_statistics(
             raise HTTPException(
                 status_code=400, detail="Not enough records to compute statistics")
 
-        return StatsService().compute_stats(df)
+        stats = StatsService().compute_stats(df)
+        await enrich_workplaces([stats], session, user)
+        return stats
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
@@ -84,14 +100,17 @@ async def compare_statistics(
             survived_groups.append((group, group_df))
 
         stats_service = StatsService()
-        comparison_stats = []
-        for group, group_df in survived_groups:
-            stats = stats_service.compute_stats(group_df)
-            comparison_stats.append(ComparisonStats(
+        group_stats = [(group, stats_service.compute_stats(group_df))
+                       for group, group_df in survived_groups]
+        await enrich_workplaces([stats for _, stats in group_stats], session, user)
+        comparison_stats = [
+            ComparisonStats(
                 **stats.model_dump(),
                 name=group.name,
                 campaign_ids=group.campaign_ids
-            ))
+            )
+            for group, stats in group_stats
+        ]
 
         mode_transitions = None
         if request.mode == "longitudinal":

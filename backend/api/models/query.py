@@ -331,6 +331,29 @@ class EquipmentsStats(BaseModel):
     equipment_recommendation_matrix: EquipmentRecommendationMatrix
 
 
+class WorkplaceCampaign(BaseModel):
+    id: int
+    name: str
+    company_name: str
+
+
+class WorkplaceLocation(BaseModel):
+    id: int  # stable index in the list, sorted by (lat, lon)
+    lat: float
+    lon: float
+    name: Optional[str] = None
+    address: Optional[str] = None
+    count: int  # completed records at this workplace
+    campaign_ids: List[int]
+    campaigns: List[WorkplaceCampaign] = []  # filled by route-level enrichment
+
+
+class HomeWorkplaceFlow(BaseModel):
+    hex_id: str  # same H3 ids as home_location_heatmap keys
+    workplace_id: int
+    count: int
+
+
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
@@ -351,8 +374,8 @@ class Stats(BaseModel):
     pro_mode_emission_reductions: Optional[List[EmissionReductions]] = None
     pro_mode_links: Optional[StatLinks] = None
     home_location_heatmap: Optional[Dict[str, int]] = None
-    workplace_locations: Optional[List[dict]] = None
-    workplace_location_heatmap: Optional[Dict[str, int]] = None
+    workplace_locations: Optional[List[WorkplaceLocation]] = None
+    home_workplace_flows: Optional[List[HomeWorkplaceFlow]] = None
     mode_energy: Optional[List[EnergyExpenditure]] = None
     reco_mode_energy: Optional[List[EnergyExpenditure]] = None
     journey_energy_stats: Optional[JourneyEnergyStats] = None

@@ -1,6 +1,6 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlmodel import select
+from sqlmodel import select, col
 from sqlalchemy.orm import selectinload
 from fastapi import HTTPException
 from api.models.domain import Campaign, Workplace
@@ -56,6 +56,21 @@ class CampaignService(EntityService):
         )
         ids = res.all()
         return ids
+
+    async def list_with_company(self, ids: list[int], user: User, special_permissions: str = "read") -> list[Campaign]:
+        """Campaigns by id with their company loaded, restricted to the user's permitted companies."""
+        if not ids:
+            return []
+        query = (
+            select(Campaign)
+            .options(selectinload(Campaign.company))
+            .where(col(Campaign.id).in_(ids))
+        )
+        if user is not None and not is_admin(user):
+            permitted = await CompanyService(self.session).list_permitted_ids(user, special_permissions)
+            query = query.where(col(Campaign.company_id).in_(permitted))
+        res = await self.session.exec(query)
+        return list(res.all())
 
     async def count(self) -> int:
         """Count all campaigns"""

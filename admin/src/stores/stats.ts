@@ -9,6 +9,8 @@ import {
   type Emissions,
   type Frequencies,
   type H3Heatmap,
+  type HomeWorkplaceFlow,
+  type WorkplaceLocation,
   type JourneyEnergyStats,
   type StatLinks,
   type Stats,
@@ -28,7 +30,8 @@ export interface StatsState {
   emissionsReductions: { [key: string]: EmissionReduction[] }
   links: { [key: string]: StatLinks }
   homeLocationsHeatmap: H3Heatmap
-  workplaceLocations: { lat: number; lon: number }[]
+  workplaceLocations: WorkplaceLocation[]
+  homeWorkplaceFlows: HomeWorkplaceFlow[]
   journeyEnergyStats: JourneyEnergyStats
   behaviorChange: BehaviorChangeStats
   equipmentsStats: EquipmentsStats | null
@@ -47,7 +50,8 @@ export const useStats = defineStore('stats', () => {
   )
   const links = ref<{ [key: string]: StatLinks }>({} as { [key: string]: StatLinks })
   const homeLocationsHeatmap = ref<H3Heatmap>({})
-  const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
+  const workplaceLocations = ref<WorkplaceLocation[]>([])
+  const homeWorkplaceFlows = ref<HomeWorkplaceFlow[]>([])
   const journeyEnergyStats = ref<JourneyEnergyStats>({} as JourneyEnergyStats)
   const behaviorChange = ref<BehaviorChangeStats>({} as BehaviorChangeStats)
   const equipmentsStats = ref<EquipmentsStats | null>(null)
@@ -87,6 +91,7 @@ export const useStats = defineStore('stats', () => {
     links.value = {}
     homeLocationsHeatmap.value = {}
     workplaceLocations.value = []
+    homeWorkplaceFlows.value = []
     journeyEnergyStats.value = makeDefaultJourneyEnergyStats()
     behaviorChange.value = makeDefaultBehaviorChangeStats()
     equipmentsStats.value = null
@@ -148,6 +153,7 @@ export const useStats = defineStore('stats', () => {
           }
           homeLocationsHeatmap.value = stats.home_location_heatmap || {}
           workplaceLocations.value = stats.workplace_locations || []
+          homeWorkplaceFlows.value = stats.home_workplace_flows || []
           journeyEnergyStats.value = stats.journey_energy_stats || makeDefaultJourneyEnergyStats()
           behaviorChange.value = stats.behavior_change || makeDefaultBehaviorChangeStats()
           equipmentsStats.value = stats.equipments_stats || null
@@ -235,6 +241,7 @@ export const useStats = defineStore('stats', () => {
       links: links.value,
       homeLocationsHeatmap: homeLocationsHeatmap.value,
       workplaceLocations: workplaceLocations.value,
+      homeWorkplaceFlows: homeWorkplaceFlows.value,
       journeyEnergyStats: journeyEnergyStats.value,
       behaviorChange: behaviorChange.value,
       equipmentsStats: equipmentsStats.value,
@@ -252,6 +259,7 @@ export const useStats = defineStore('stats', () => {
     links,
     homeLocationsHeatmap,
     workplaceLocations,
+    homeWorkplaceFlows,
     journeyEnergyStats,
     equipmentsStats,
     comparisonResults,

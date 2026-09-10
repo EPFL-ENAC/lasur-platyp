@@ -338,9 +338,27 @@ export interface EquipmentsStats {
 
 export type H3Heatmap = { [hexId: string]: number }
 
-export interface LatLon {
+export interface WorkplaceCampaign {
+  id: number
+  name: string
+  company_name: string
+}
+
+export interface WorkplaceLocation {
+  id: number
   lat: number
   lon: number
+  name: string | null
+  address: string | null
+  count: number
+  campaign_ids: number[]
+  campaigns: WorkplaceCampaign[]
+}
+
+export interface HomeWorkplaceFlow {
+  hex_id: string
+  workplace_id: number
+  count: number
 }
 
 export interface Stats {
@@ -363,7 +381,8 @@ export interface Stats {
   pro_mode_emission_reductions: EmissionReduction[] | null
   pro_mode_links: StatLinks | null
   home_location_heatmap: H3Heatmap | null
-  workplace_locations: LatLon[] | null
+  workplace_locations: WorkplaceLocation[] | null
+  home_workplace_flows: HomeWorkplaceFlow[] | null
   journey_energy_stats: JourneyEnergyStats | null
   behavior_change: BehaviorChangeStats | null
   equipments_stats: EquipmentsStats | null

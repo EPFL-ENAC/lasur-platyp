@@ -37,7 +37,9 @@
         <location-heatmap
           ref="heatmap"
           :h3Heatmap="props.homeLocationsHeatmap"
-          :dots="props.workplaceLocations"
+          :workplaces="props.workplaceLocations"
+          :flows="props.homeWorkplaceFlows"
+          :interactive="!props.inline"
           :heatmap-gradient="gradient"
           :center="[7.4474, 46.9481]"
           :zoom="5"
@@ -68,6 +70,13 @@
             </span>
             <span class="legend-label">{{ t('stats.locations_heatmap.households') }}</span>
           </div>
+          <div class="legend-item">
+            <span
+              class="legend-swatch line"
+              :style="{ background: `linear-gradient(to right, ${gradient.colorAt(0)}, #ef4444)` }"
+            ></span>
+            <span class="legend-label">{{ t('stats.locations_heatmap.flows') }}</span>
+          </div>
           <div>
             <div class="text-hint">
               <span class="legend-label">{{ t('stats.locations_heatmap.households_number') }}</span>
@@ -95,13 +104,14 @@ import type { Ref } from 'vue'
 import { GradientScale } from '@/utils/colors'
 import ChartShell from './ChartShell.vue'
 import LocationHeatmap from '../LocationHeatmap.vue'
-import type { H3Heatmap, LatLon } from '@/models'
+import type { H3Heatmap, HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
 
 const { t } = useI18n()
 
 interface Props {
   homeLocationsHeatmap: H3Heatmap
-  workplaceLocations: LatLon[]
+  workplaceLocations: WorkplaceLocation[]
+  homeWorkplaceFlows: HomeWorkplaceFlow[]
   height?: number
   noControls?: boolean
   inline?: boolean
@@ -187,7 +197,7 @@ async function captureRawImage(): Promise<string | null> {
 
         // Hide MapLibre-rendered parts only, keep legend visible.
         const mapCanvasContainers = clonedMapRoot.querySelectorAll(
-          '.maplibregl-canvas-container, .maplibregl-control-container',
+          '.maplibregl-canvas-container, .maplibregl-control-container, .map-reset',
         )
 
         mapCanvasContainers.forEach((el) => {
@@ -311,6 +321,12 @@ const max = computed(() => {
   width: 12px;
   height: 12px;
   margin-left: 2px;
+}
+
+.legend-swatch.line {
+  height: 3px;
+  border-radius: 2px;
+  align-self: center;
 }
 
 .gradient-container {
