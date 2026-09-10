@@ -66,6 +66,7 @@ defineProps<Props>()
 type EmissionsChartExposed = {
   handleExport: () => Promise<void>
   chartInfoText: string
+  chartDescriptionText: string
 }
 
 const chartRef = ref<EmissionsChartExposed | null>(null)
@@ -83,9 +84,12 @@ const stats = useStats()
 
 const { t } = useI18n()
 
-const descriptionText = computed(() =>
-  stats.comparisonMode ? '' : t('stats.emissions_freq_mod_pro.description'),
-)
+// The example-based description needs the data: it falls back to the plain one
+// while the emissions are loading, or when too few answers back the example.
+const descriptionText = computed(() => {
+  if (stats.comparisonMode) return ''
+  return chartRef.value?.chartDescriptionText || t('stats.emissions_freq_mod_pro.description')
+})
 
 const modalType = computed(() => (stats.emProModalType === 'simple' ? 'simple' : 'detailed'))
 
