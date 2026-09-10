@@ -223,6 +223,14 @@
       </report-page>
 
       <report-page :org-names="orgs">
+        <pt-pass-recommendation-chart
+          :height="height"
+          :equipments-stats="stats.equipmentsStats"
+          inline
+        />
+      </report-page>
+
+      <report-page :org-names="orgs">
         <h1 class="text-h4">
           {{ t('generated_report.final_page_title') }}
         </h1>
@@ -262,6 +270,7 @@ import JourneyEnergyShareChart from '@/components/charts/JourneyEnergyShareChart
 import LeversChangeChart from '@/components/charts/LeversChangeChart.vue'
 import MotivationChangeChart from '@/components/charts/MotivationChangeChart.vue'
 import EquipmentRecommendationMatrixChart from '@/components/charts/EquipmentRecommendationMatrixChart.vue'
+import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationChart.vue'
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import { type StatsState, flushStateFromIndexedDB, getStateFromIndexedDB } from '@/stores/stats'
 import type { Frequencies } from '@/models'

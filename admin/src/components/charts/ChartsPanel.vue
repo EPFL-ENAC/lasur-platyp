@@ -179,6 +179,11 @@
             :loading="stats.loading"
             has-options
           />
+          <pt-pass-recommendation-chart
+            :equipments-stats="stats.equipmentsStats"
+            :height="height"
+            :loading="stats.loading"
+          />
         </div>
       </q-tab-panel>
     </q-tab-panels>
@@ -205,6 +210,7 @@ import JourneyEnergyShareChart from '@/components/charts/JourneyEnergyShareChart
 import LeversChangeChart from '@/components/charts/LeversChangeChart.vue'
 import MotivationChangeChart from '@/components/charts/MotivationChangeChart.vue'
 import EquipmentRecommendationMatrixChart from '@/components/charts/EquipmentRecommendationMatrixChart.vue'
+import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationChart.vue'
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import MobilityPotentialInsights from '../MobilityPotentialInsights.vue'
 import type { Frequencies } from '@/models'

@@ -331,9 +331,24 @@ export const recommendationToEquipmentMap: {
   inter: ['inter'],
 }
 
+/**
+ * Public transport pass recommended to participants, with the number of them
+ * already holding a matching subscription. `already_equipped` is null when the
+ * information is not collected: the equipment question only lists Swiss
+ * products, so nothing tells us who already holds an SNCF pass.
+ */
+export interface PtPassRecommendation {
+  pass_type: string
+  recommended: number
+  already_equipped: number | null
+}
+
+export const ptPassLabels = ['unireso', 'leman', 'cff', 'sncf', 'other'] as const
+
 export interface EquipmentsStats {
   total: number
   equipment_recommendation_matrix: EquipmentRecommendationMatrix
+  pt_pass_recommendations: PtPassRecommendation[]
 }
 
 export type H3Heatmap = { [hexId: string]: number }
