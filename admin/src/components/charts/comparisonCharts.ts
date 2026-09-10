@@ -164,6 +164,11 @@ export function buildGroupStackedBarOption(params: {
   keyOrder?: string[]
   /** Unit appended to the tooltip values of an absolute-value chart (percent: false). */
   valueUnit?: string
+  /**
+   * Renders the share a tooltip value represents of its group total, appended to
+   * the line of an absolute-value chart (percent: false), e.g. "(45% of ...)".
+   */
+  valueShareLabel?: (percent: string) => string
 }): EChartsOption {
   const {
     groupDatasets,
@@ -175,6 +180,7 @@ export function buildGroupStackedBarOption(params: {
     yAxisName,
     keyOrder,
     valueUnit,
+    valueShareLabel,
   } = params
 
   const keyNames = new Map<string, string>()
@@ -220,11 +226,19 @@ export function buildGroupStackedBarOption(params: {
       axisPointer: { type: 'shadow' },
       formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) => {
         const list = Array.isArray(paramsList) ? paramsList : [paramsList]
+        // Every line of an axis tooltip belongs to the same hovered group, whose
+        // total is the denominator of the shares.
+        const hoveredTotal = groupTotals[list[0]?.dataIndex ?? -1] ?? 0
         let res = `${list[0]?.name}<br/>`
         list.forEach((item) => {
-          const display = formatNumber(Number(item.value))
+          const value = Number(item.value)
+          const display = formatNumber(value)
           const unit = percent ? '%' : valueUnit ? ` ${valueUnit}` : ''
-          res += `${item.marker} ${item.seriesName}: <b>${display}${unit}</b><br/>`
+          const share =
+            !percent && valueShareLabel && hoveredTotal > 0
+              ? ` ${valueShareLabel(formatNumber(Math.round((value / hoveredTotal) * 100)))}`
+              : ''
+          res += `${item.marker} ${item.seriesName}: <b>${display}${unit}</b>${share}<br/>`
         })
         return res
       },
