@@ -90,3 +90,62 @@ def test_modal_split_totals_are_the_number_of_records():
     assert all(f.total == len(df) for f in result)
     # one count per person having a journey, whatever their number of journeys
     assert sum(sum(d.count for d in f.data) for f in result) == 3
+
+
+def test_modal_split_ignores_labels_of_secondary_journeys():
+    """The main journey is picked on the frequencies alone: a person whose main
+    journey carries no label is not counted for a less frequent journey."""
+    df = pd.DataFrame([
+        {
+            'token': 'E',
+            'data.version': '3.0',
+            'data.freq_mod_journeys.0.days': 5,
+            'data.freq_mod_journeys.1.days': 1,
+            'typo.reco.simple_labels.1': 'TIM',
+        },
+    ])
+    result = FrequenciesService(df).compute_modes_frequencies_simple_labels()
+
+    assert result == []
+
+
+def test_potential_modal_split_follows_the_main_journey_recommendation():
+    """Same rule for the recommendations: the one of the main journey counts,
+    and a person whose main journey has none is not counted through another."""
+    df = pd.DataFrame([
+        {
+            'token': 'F',
+            'data.version': '3.0',
+            'data.freq_mod_journeys.0.days': 1,
+            'typo.reco.reco_inter.0': 'velo',
+            'data.freq_mod_journeys.1.days': 4,
+            'typo.reco.reco_inter.1': 'train',
+        },
+        {
+            'token': 'G',
+            'data.version': '3.0',
+            'data.freq_mod_journeys.0.days': 5,
+            'data.freq_mod_journeys.1.days': 1,
+            'typo.reco.reco_inter.1': 'covoit',
+        },
+    ])
+    result = FrequenciesService(df).compute_recommendation_frequencies()
+
+    # F counts for its main journey (journey 1, 4 days), G counts nowhere
+    assert {f.value: f.count for f in result.data} == {'train': 1}
+
+
+def test_potential_modal_split_keeps_persons_without_journey_frequency():
+    """Nothing to rank the journeys of a record that declared no frequency at
+    all: it counts once, for the first journey entered."""
+    df = pd.DataFrame([
+        {
+            'token': 'H',
+            'data.version': '3.0',
+            'typo.reco.reco_inter.0': 'tpu',
+            'typo.reco.reco_inter.1': 'velo',
+        },
+    ])
+    result = FrequenciesService(df).compute_recommendation_frequencies()
+
+    assert {f.value: f.count for f in result.data} == {'tpu': 1}
