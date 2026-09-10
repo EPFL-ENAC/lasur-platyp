@@ -2,7 +2,7 @@
   <q-footer class="app-footer">
     <div class="app-footer__content">
       <div class="app-footer__col">
-        <a href="https://modus-ge.ch/" target="_blank" rel="noopener">
+        <a href="https://modus-ge.ch/" target="_blank" rel="noopener noreferrer">
           <img src="/admin/LOGO-JAUNE.svg" alt="Mobilyse" class="app-footer__brand" />
         </a>
       </div>
