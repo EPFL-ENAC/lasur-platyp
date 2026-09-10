@@ -41,7 +41,7 @@
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
-import { use } from 'echarts/core'
+import { format, use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import {
@@ -308,7 +308,9 @@ function comparisonTooltipFormatter(params: CallbackDataParams | CallbackDataPar
         }),
       )
     }
-    lines.push(`${marker}${group.name}: ${parts.join(', ')}`)
+    // Group names are typed in by the user building the comparison, and the
+    // tooltip is rendered as HTML.
+    lines.push(`${marker}${format.encodeHTML(group.name)}: ${parts.join(', ')}`)
   })
   return lines.join('<br />')
 }
