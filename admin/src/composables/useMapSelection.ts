@@ -5,6 +5,7 @@ import {
   Popup,
   type Map as MaplibreMap,
   type MapGeoJSONFeature,
+  type MapLayerMouseEvent,
   type MapMouseEvent,
 } from 'maplibre-gl'
 import type { H3Heatmap, HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
@@ -34,6 +35,7 @@ interface Options {
 /**
  * Clicking a workplace or home hexagon selects it: its flows are drawn and unrelated
  * features hidden until the selection is cleared (same feature, empty map, Escape or reset).
+ * Hovering a workplace only shows its tooltip; the selected workplace keeps its tooltip.
  * Layers `heatmap-layer` and `workplace-dots` must exist on the map. Arcs live on deck.gl's
  * own canvas, which follows every map render (fullscreen included).
  */
@@ -51,11 +53,11 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
 
   function addInteractions(m: MaplibreMap) {
     m.addControl(overlay)
-    // Hover only changes the cursor: the selection itself is driven by clicks
-    for (const layer of ['workplace-dots', 'heatmap-layer']) {
-      m.on('mouseenter', layer, () => setCursor('pointer'))
-      m.on('mouseleave', layer, () => setCursor(''))
-    }
+    // Hover changes the cursor and shows the workplace tooltip; selection is driven by clicks
+    m.on('mouseenter', 'heatmap-layer', () => setCursor('pointer'))
+    m.on('mouseleave', 'heatmap-layer', () => setCursor(''))
+    m.on('mousemove', 'workplace-dots', onWorkplaceMove)
+    m.on('mouseleave', 'workplace-dots', onWorkplaceLeave)
     m.on('click', onClick)
   }
 
@@ -90,17 +92,22 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
     overlay.setProps({
       layers: [makeArcLayer(makeFlowArcs(selectedFlows, workplacesById.value, hexColor))],
     })
-    showTooltip(m, current)
+    showTooltip(selectedWorkplaceId())
   }
 
-  /** The tooltip follows the selection: shown for a selected workplace, hidden otherwise. */
-  function showTooltip(m: MaplibreMap, current: MapSelection) {
-    if (current?.kind !== 'workplace') {
+  function selectedWorkplaceId(): number | null {
+    return selected.value?.kind === 'workplace' ? selected.value.id : null
+  }
+
+  /** Shows the tooltip of one workplace, or hides it when there is none to show. */
+  function showTooltip(workplaceId: number | null) {
+    const m = map.value
+    if (!m || workplaceId === null) {
       popup.remove()
       return
     }
-    const workplace = workplacesById.value.get(current.id)
-    if (!workplace) throw new Error(`Unknown workplace ${current.id} on the map`)
+    const workplace = workplacesById.value.get(workplaceId)
+    if (!workplace) throw new Error(`Unknown workplace ${workplaceId} on the map`)
     popup.setLngLat([workplace.lon, workplace.lat]).setDOMContent(buildTooltip(workplace)).addTo(m)
   }
 
@@ -135,6 +142,19 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
 
   function setCursor(cursor: string) {
     if (map.value) map.value.getCanvas().style.cursor = cursor
+  }
+
+  function onWorkplaceMove(e: MapLayerMouseEvent) {
+    const next = toSelection(e.features?.[0])
+    if (next?.kind !== 'workplace') return
+    setCursor('pointer')
+    showTooltip(next.id)
+  }
+
+  /** Back to the selected workplace's tooltip, if any, once the mouse leaves a dot. */
+  function onWorkplaceLeave() {
+    setCursor('')
+    showTooltip(selectedWorkplaceId())
   }
 
   function onClick(e: MapMouseEvent) {

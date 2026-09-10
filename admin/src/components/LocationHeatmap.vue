@@ -306,6 +306,11 @@ function compositeArcs(mapCanvas: HTMLCanvasElement): HTMLCanvasElement {
   min-width: 150px;
 }
 
+/* The deck.gl arc canvas is mounted as a map control (z-index 2): keep the tooltip above it */
+.map-container :deep(.maplibregl-popup) {
+  z-index: 3;
+}
+
 .map-container :deep(.map-tooltip) {
   font-family: sans-serif;
   font-size: 12px;

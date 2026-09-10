@@ -24,8 +24,9 @@ The backend shipped workplaces as deduplicated `{lat, lon}` and no origin→dest
   a tooltip (name, campaigns with company names, participant count) and draws arcs to every
   home hexagon whose participants work there, hiding unrelated hexagons and workplaces.
   Clicking a hexagon does the symmetric thing. Clicking the same feature, empty map, Escape,
-  or the reset button clears the selection. Hover only turns the cursor into a pointer over
-  workplaces and hexagons. (A hover-to-preview / click-to-pin variant shipped first on
+  or the reset button clears the selection. Hovering a workplace shows its tooltip (kept
+  above the deck.gl canvas with `z-index: 3`) without changing the selection; hover otherwise
+  only turns the cursor into a pointer over workplaces and hexagons. (A hover-to-preview / click-to-pin variant shipped first on
   2026-09-10 and was replaced by click-only the same day.)
 - **Flows are 3D deck.gl arcs** (`@deck.gl/layers` `ArcLayer` through `@deck.gl/mapbox`
   `MapboxOverlay` in overlaid mode, i.e. on deck.gl's own canvas above the map) on a MapLibre
