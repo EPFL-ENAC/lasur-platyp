@@ -54,7 +54,7 @@ class StatsService:
 
         locations_stats = LocationsService(df)
         home_location_heatmap = locations_stats.compute_home_location_heatmap()
-        workplace_locations = locations_stats.get_workplaces()
+        workplace_locations, home_workplace_flows = locations_stats.compute_workplaces()
 
         behavior_change_stats = BehaviorChangeService(df)
         behavior_change = behavior_change_stats.compute_behavior_change_stats()
@@ -100,6 +100,7 @@ class StatsService:
 
             home_location_heatmap=home_location_heatmap,
             workplace_locations=workplace_locations,
+            home_workplace_flows=home_workplace_flows,
 
             behavior_change=behavior_change,
 

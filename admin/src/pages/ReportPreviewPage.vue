@@ -35,6 +35,7 @@
           :height="height"
           :home-locations-heatmap="stats.homeLocationsHeatmap"
           :workplace-locations="stats.workplaceLocations"
+          :home-workplace-flows="stats.homeWorkplaceFlows"
           no-controls
           inline
         />

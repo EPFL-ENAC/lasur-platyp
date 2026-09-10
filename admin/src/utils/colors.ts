@@ -56,14 +56,20 @@ export class GradientScale {
   }
 
   colorAt(value: number): string {
-    if (this.stops.length < 1) return '#000000' // Default to black if no stops
+    const [r, g, b] = this.rgbAt(value)
+    return `rgb(${r}, ${g}, ${b})`
+  }
+
+  /** Interpolated colour as an RGB tuple (e.g. for deck.gl accessors). */
+  rgbAt(value: number): RGB {
+    if (this.stops.length < 1) return [0, 0, 0] // Default to black if no stops
 
     // If value is below the first stop, return the first color
-    if (value <= this.stops[0]!.value) return this.stops[0]!.color
+    if (value <= this.stops[0]!.value) return parseHex(this.stops[0]!.color)
 
     // If value is above the last stop, return the last color
     if (value >= this.stops[this.stops.length - 1]!.value)
-      return this.stops[this.stops.length - 1]!.color
+      return parseHex(this.stops[this.stops.length - 1]!.color)
 
     // Find the two stops between which the value falls
     for (let i = 0; i < this.stops.length - 1; i++) {
@@ -73,26 +79,25 @@ export class GradientScale {
       if (value >= stopA.value && value <= stopB.value) {
         // Calculate the ratio of how far value is between stopA and stopB
         const ratio = (value - stopA.value) / (stopB.value - stopA.value)
-        return this.interpolateColor(stopA.color, stopB.color, ratio)
+        return interpolateRgb(parseHex(stopA.color), parseHex(stopB.color), ratio)
       }
     }
 
-    return '#000000' // Fallback color
+    return [0, 0, 0] // Fallback color
   }
+}
 
-  private interpolateColor(colorA: string, colorB: string, ratio: number): string {
-    const parseHex = (hex: string) => {
-      const bigint = parseInt(hex.replace('#', ''), 16)
-      return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255]
-    }
+export type RGB = [number, number, number]
 
-    const [rA, gA, bA] = parseHex(colorA)
-    const [rB, gB, bB] = parseHex(colorB)
+function parseHex(hex: string): RGB {
+  const bigint = parseInt(hex.replace('#', ''), 16)
+  return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255]
+}
 
-    const r = Math.round(rA! + (rB! - rA!) * ratio)
-    const g = Math.round(gA! + (gB! - gA!) * ratio)
-    const b = Math.round(bA! + (bB! - bA!) * ratio)
-
-    return `rgb(${r}, ${g}, ${b})`
-  }
+function interpolateRgb(a: RGB, b: RGB, ratio: number): RGB {
+  return [
+    Math.round(a[0] + (b[0] - a[0]) * ratio),
+    Math.round(a[1] + (b[1] - a[1]) * ratio),
+    Math.round(a[2] + (b[2] - a[2]) * ratio),
+  ]
 }
