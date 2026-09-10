@@ -244,7 +244,7 @@ export default {
 **Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par Mobilyse. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
       label: 'Votre adresse email (optionnelle)',
     },
-    final: 'Merci d’avoir participé à mobilyse !',
+    final: 'Merci d’avoir participé à Mobilyse !',
     final_subtitle:
       'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
     final_car:
@@ -389,7 +389,7 @@ export default {
   lookup_address_or_select_on_map: 'Rechercher une adresse ou sélectionner sur la carte',
   type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",
   welcome_eyebrow: 'Enquête mobilité',
-  welcome: 'Bienvenue sur le {brand}',
+  welcome: 'Bienvenue sur {brand}',
   welcome_intro:
     'Veuillez remplir ce questionnaire afin que nous puissions vous proposer les mesures de mobilité les plus pertinentes.',
   or: 'Ou',
