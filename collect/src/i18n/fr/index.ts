@@ -297,6 +297,16 @@ export default {
     recommends: 'Mobilyse recommande le mode de transport suivant :',
     recommends_also: 'Mobilyse recommande également le mode de transport suivant :',
   },
+  pt_pass: {
+    unireso:
+      'Pour utiliser cette recommandation, un abonnement Unireso pourrait être intéressant !',
+    leman:
+      'Pour utiliser cette recommandation, un abonnement Léman Pass pourrait être intéressant !',
+    cff: 'Pour utiliser cette recommandation, un abonnement CFF pourrait être intéressant !',
+    sncf: 'Pour utiliser cette recommandation, un abonnement SNCF pourrait être intéressant !',
+    other:
+      'Pour utiliser cette recommandation, un abonnement de transports publics pourrait être intéressant !',
+  },
   actions: {
     budget: 'Budget mobilité',
     wfh: 'Possibilité de télétravailler au domicile',

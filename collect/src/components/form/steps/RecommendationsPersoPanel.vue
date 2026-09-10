@@ -52,6 +52,7 @@
                 :reco="recoInter[idx]"
                 :reco-label="t(`reco.${recoInter[idx]}`)"
                 :bravo="bravo[idx]"
+                :pt-pass="ptPass"
                 :benefits-expanded="!!benefitsExpanded"
               >
                 <IsochronesMap
@@ -112,6 +113,7 @@ const props = defineProps<{
   journeys: Journey[]
   recoInter: string[]
   bravo: number[]
+  ptPass?: string | undefined
   center: [number, number] | null
   mesureDt1: string[]
   mesureDt2: string[]
