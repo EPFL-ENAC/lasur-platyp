@@ -249,12 +249,13 @@ async function captureRawImage(): Promise<string | null> {
 
 const gradient = computed(() => {
   const maxValue = max.value
+  // Single-hue pastel blues, near white (sparse) → darker blue (dense)
   return new GradientScale([
-    { value: 0, color: '#440154' },
-    { value: maxValue * 0.25, color: '#3b528b' },
-    { value: maxValue * 0.5, color: '#21918c' },
-    { value: maxValue * 0.75, color: '#5ec962' },
-    { value: maxValue, color: '#fde725' },
+    { value: 0, color: '#eef3fb' },
+    { value: maxValue * 0.25, color: '#c5d6ef' },
+    { value: maxValue * 0.5, color: '#92b2df' },
+    { value: maxValue * 0.75, color: '#5d88c6' },
+    { value: maxValue, color: '#2f5c9d' },
   ])
 })
 
