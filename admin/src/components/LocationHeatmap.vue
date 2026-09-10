@@ -3,7 +3,7 @@
     <div ref="mapEl" class="mapview"></div>
 
     <q-btn
-      v-if="pinned"
+      v-if="selected"
       class="map-reset"
       dense
       unelevated
@@ -71,8 +71,8 @@ const MAP_PITCH = 30
 
 const map = ref<MaplibreMap>()
 
-// Hover previews a selection, click pins it; the pinned one shows again once the mouse leaves.
-const { pinned, addInteractions, onKeydown, reset, getArcsCanvas, closePopup } = useMapSelection({
+// Clicking a workplace or home hexagon selects it and filters the map to its flows
+const { selected, addInteractions, onKeydown, reset, getArcsCanvas, closePopup } = useMapSelection({
   map,
   workplaces: () => props.workplaces,
   flows: () => props.flows,

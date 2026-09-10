@@ -503,12 +503,12 @@ Thank you for your valuable contribution! If you have any questions, please cont
       households: 'Households',
       households_number: 'Number of households',
       workplaces: 'Workplaces',
-      flows: 'Home → workplace flows (hover to preview, click to pin)',
+      flows: 'Home → workplace flows (click a location to show them)',
       participants: '{n} participant | {n} participants',
       unnamed_workplace: 'Unnamed workplace',
       reset_selection: 'Reset selection',
       description:
-        'This chart shows the geographical distribution of participants’ households, as well as their workplaces. The households are grouped by area so as not to disclose any personal data. Hover over a workplace (or home area) to preview the flows associated with that location; click to keep them displayed, and press Escape to reset.',
+        'This chart shows the geographical distribution of participants’ households, as well as their workplaces. The households are grouped by area so as not to disclose any personal data. Click a workplace (or home area) to display the flows associated with that location; click it again, or press Escape, to reset.',
     },
     travel_time: {
       title: 'Your commute',

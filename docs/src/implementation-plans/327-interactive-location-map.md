@@ -2,7 +2,7 @@
 status: accepted
 issue: 327
 last_updated: 2026-09-10
-summary: Backend aggregates workplaces + home→workplace H3 flows; admin map gets workplace tooltips, hover-to-preview / click-to-pin filtering and 3D deck.gl arcs on a pitched MapLibre map.
+summary: Backend aggregates workplaces + home→workplace H3 flows; admin map gets workplace tooltips, click-to-select filtering and 3D deck.gl arcs on a pitched MapLibre map.
 ---
 
 # #327 — Interactive location map
@@ -20,13 +20,13 @@ The backend shipped workplaces as deduplicated `{lat, lon}` and no origin→dest
 - **Backend is the source of truth for the aggregate.** `/stats/all` and `/stats/compare`
   now return workplace identity and the hex↔workplace flow counts; the frontend only
   filters and renders that aggregate.
-- **Interaction model: hover previews, click pins.** Hovering a workplace shows a tooltip
-  (name, campaigns with company names, participant count) and draws arcs to every home
-  hexagon whose participants work there, hiding unrelated hexagons and workplaces. Hovering a
-  hexagon does the symmetric thing. Clicking pins the preview so it survives mouse movement;
-  clicking the same feature, empty map, Escape, or the reset button unpins. The cursor is a
-  pointer over both workplaces and hexagons. (A click-only variant was tried on 2026-09-10
-  and the hover preview was reinstated the same day.)
+- **Interaction model: click selects, nothing happens on hover.** Clicking a workplace shows
+  a tooltip (name, campaigns with company names, participant count) and draws arcs to every
+  home hexagon whose participants work there, hiding unrelated hexagons and workplaces.
+  Clicking a hexagon does the symmetric thing. Clicking the same feature, empty map, Escape,
+  or the reset button clears the selection. Hover only turns the cursor into a pointer over
+  workplaces and hexagons. (A hover-to-preview / click-to-pin variant shipped first on
+  2026-09-10 and was replaced by click-only the same day.)
 - **Flows are 3D deck.gl arcs** (`@deck.gl/layers` `ArcLayer` through `@deck.gl/mapbox`
   `MapboxOverlay` in overlaid mode, i.e. on deck.gl's own canvas above the map) on a MapLibre
   map pitched at 30°, width scaled by `sqrt(count)`, coloured from the home hexagon's own
@@ -74,7 +74,7 @@ Frontend (admin)
 - `src/models.ts`, `src/stores/stats.ts`: new types, `homeWorkplaceFlows` state (also in the
   IndexedDB report snapshot).
 - `src/utils/flows.ts`: pure helpers — `selectFlows`, `visibleIds`, `idFilter`, `makeFlowArcs`.
-- `src/composables/useMapSelection.ts`: hover/click/Escape wiring, `pinned`/`hovered` state,
+- `src/composables/useMapSelection.ts`: click/Escape wiring, `selected` state,
   MapLibre `setFilter` / `setPaintProperty` for the base layers, and a deck.gl `MapboxOverlay`
   whose `ArcLayer` is rebuilt from the selected flows; tooltip built with `textContent`.
 - `src/components/LocationHeatmap.vue`: `hexId` / workplace `id` in feature properties, map
@@ -95,5 +95,5 @@ Frontend (admin)
 ## Verification
 
 - Backend: `make test`, `make lint` in `backend/`.
-- Frontend: `npx vue-tsc --noEmit`, `npm run lint` in `admin/`; manual check of hover /
+- Frontend: `npx vue-tsc --noEmit`, `npm run lint` in `admin/`; manual check of
   click / Escape / reset / filter change / PNG export / report preview.

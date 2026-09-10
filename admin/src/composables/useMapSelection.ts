@@ -5,7 +5,6 @@ import {
   Popup,
   type Map as MaplibreMap,
   type MapGeoJSONFeature,
-  type MapLayerMouseEvent,
   type MapMouseEvent,
 } from 'maplibre-gl'
 import type { H3Heatmap, HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
@@ -33,32 +32,30 @@ interface Options {
 }
 
 /**
- * Hovering a workplace or home hexagon previews its flows and hides unrelated features;
- * clicking pins that preview so it survives mouse movement. Layers `heatmap-layer` and
- * `workplace-dots` must exist on the map. Arcs live on deck.gl's own canvas, which
- * follows every map render (fullscreen included).
+ * Clicking a workplace or home hexagon selects it: its flows are drawn and unrelated
+ * features hidden until the selection is cleared (same feature, empty map, Escape or reset).
+ * Layers `heatmap-layer` and `workplace-dots` must exist on the map. Arcs live on deck.gl's
+ * own canvas, which follows every map render (fullscreen included).
  */
 export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }: Options) {
   const popup = new Popup({ closeButton: false, closeOnClick: false, offset: 10 })
   const overlay = new MapboxOverlay({ interleaved: false, layers: [] })
-  const pinned = ref<MapSelection>(null)
-  const hovered = ref<MapSelection>(null)
-  const active = computed<MapSelection>(() => hovered.value ?? pinned.value)
+  const selected = ref<MapSelection>(null)
   const workplacesById = computed(() => new Map(workplaces().map((wp) => [wp.id, wp])))
 
-  watch(active, applySelection)
+  watch(selected, applySelection)
 
   function reset() {
-    hovered.value = null
-    pinned.value = null
+    selected.value = null
   }
 
   function addInteractions(m: MaplibreMap) {
     m.addControl(overlay)
-    m.on('mousemove', 'workplace-dots', onWorkplaceMove)
-    m.on('mouseleave', 'workplace-dots', onLeave)
-    m.on('mousemove', 'heatmap-layer', onHexMove)
-    m.on('mouseleave', 'heatmap-layer', onLeave)
+    // Hover only changes the cursor: the selection itself is driven by clicks
+    for (const layer of ['workplace-dots', 'heatmap-layer']) {
+      m.on('mouseenter', layer, () => setCursor('pointer'))
+      m.on('mouseleave', layer, () => setCursor(''))
+    }
     m.on('click', onClick)
   }
 
@@ -70,9 +67,9 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
   function applySelection() {
     const m = map.value
     if (!m || !m.getLayer('workplace-dots')) return
-    const current = active.value
-    const selected = selectFlows(flows(), current)
-    const { hexIds, workplaceIds } = visibleIds(selected, current)
+    const current = selected.value
+    const selectedFlows = selectFlows(flows(), current)
+    const { hexIds, workplaceIds } = visibleIds(selectedFlows, current)
     const selectedHex = current?.kind === 'hex' ? current.id : ''
     const selectedWorkplace = current?.kind === 'workplace' ? current.id : -1
 
@@ -91,8 +88,20 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
       5,
     ])
     overlay.setProps({
-      layers: [makeArcLayer(makeFlowArcs(selected, workplacesById.value, hexColor))],
+      layers: [makeArcLayer(makeFlowArcs(selectedFlows, workplacesById.value, hexColor))],
     })
+    showTooltip(m, current)
+  }
+
+  /** The tooltip follows the selection: shown for a selected workplace, hidden otherwise. */
+  function showTooltip(m: MaplibreMap, current: MapSelection) {
+    if (current?.kind !== 'workplace') {
+      popup.remove()
+      return
+    }
+    const workplace = workplacesById.value.get(current.id)
+    if (!workplace) throw new Error(`Unknown workplace ${current.id} on the map`)
+    popup.setLngLat([workplace.lon, workplace.lat]).setDOMContent(buildTooltip(workplace)).addTo(m)
   }
 
   /** Heatmap colour of a hexagon; every flow hexagon is a heatmap key by construction. */
@@ -128,46 +137,19 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
     if (map.value) map.value.getCanvas().style.cursor = cursor
   }
 
-  function onWorkplaceMove(e: MapLayerMouseEvent) {
-    const m = map.value
-    const next = toSelection(e.features?.[0])
-    if (!m || next?.kind !== 'workplace') return
-    setCursor('pointer')
-    if (!sameSelection(next, hovered.value)) hovered.value = next
-    const workplace = workplacesById.value.get(next.id)
-    if (!workplace) throw new Error(`Unknown workplace ${next.id} on the map`)
-    popup.setLngLat([workplace.lon, workplace.lat]).setDOMContent(buildTooltip(workplace)).addTo(m)
-  }
-
-  function onHexMove(e: MapLayerMouseEvent) {
-    const m = map.value
-    if (!m) return
-    // Dots are drawn above hexagons: let the dot win when both are under the cursor
-    if (m.queryRenderedFeatures(e.point, { layers: ['workplace-dots'] }).length > 0) return
-    const next = toSelection(e.features?.[0])
-    if (next?.kind !== 'hex') return
-    setCursor('pointer')
-    if (!sameSelection(next, hovered.value)) hovered.value = next
-  }
-
-  function onLeave() {
-    setCursor('')
-    popup.remove()
-    hovered.value = null
-  }
-
   function onClick(e: MapMouseEvent) {
     const m = map.value
     if (!m) return
+    // Layers are listed top-most first: a dot wins over the hexagon beneath it
     const feature = m.queryRenderedFeatures(e.point, {
       layers: ['workplace-dots', 'heatmap-layer'],
     })[0]
     const next = toSelection(feature)
-    pinned.value = sameSelection(next, pinned.value) ? null : next
+    selected.value = sameSelection(next, selected.value) ? null : next
   }
 
   function onKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') pinned.value = null
+    if (e.key === 'Escape') selected.value = null
   }
 
   function buildTooltip(workplace: WorkplaceLocation): HTMLElement {
@@ -192,7 +174,7 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
   }
 
   return {
-    pinned,
+    selected,
     addInteractions,
     onKeydown,
     reset,

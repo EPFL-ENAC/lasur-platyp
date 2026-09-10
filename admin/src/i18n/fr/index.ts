@@ -515,12 +515,12 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       households: 'Lieux de domicile',
       households_number: 'Nombre de domiciles',
       workplaces: 'Lieux de travail enregistrés',
-      flows: 'Flux domicile → travail (survoler pour prévisualiser, cliquer pour figer)',
+      flows: 'Flux domicile → travail (cliquer sur un lieu pour les afficher)',
       participants: '{n} participant·e | {n} participant·e·s',
       unnamed_workplace: 'Lieu de travail sans nom',
       reset_selection: 'Réinitialiser la sélection',
       description:
-        'Ce graphique montre la répartition géographique des lieux de résidence des participant·e·s, ainsi que leur lieux de travail. Ces lieux de résidence sont groupés par zone afin de ne pas afficher de données personnelles. Survolez un lieu de travail (ou de domicile) pour prévisualiser les flux qui y sont rattachés ; cliquez pour les conserver à l’écran, et appuyez sur Échap pour réinitialiser.',
+        'Ce graphique montre la répartition géographique des lieux de résidence des participant·e·s, ainsi que leur lieux de travail. Ces lieux de résidence sont groupés par zone afin de ne pas afficher de données personnelles. Cliquez sur un lieu de travail (ou de domicile) pour afficher les flux qui y sont rattachés ; cliquez à nouveau, ou appuyez sur Échap, pour réinitialiser.',
     },
     travel_time: {
       title: 'Temps de trajet',
