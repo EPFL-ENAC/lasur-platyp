@@ -62,89 +62,54 @@ class LinksService(BaseStatsService):
     ) -> Links:
         """Compute all mode recommendation links from a DataFrame of records.
 
+        The home-to-work modal shift chart is person-centric: each person
+        contributes exactly one link, from the typology label of their main
+        journey (the most frequent one, ties broken by the first entered) to the
+        recommendation made for that same journey
+        (`{reco_col_prefix}.<journey index>`), whatever the number of journeys
+        they declared and how often they make them.
+
         Journeys are sourced by their aggregated typology label
         (typo.reco.{simple,complex}_labels.{i}) instead of their raw modes.*
-        list, so each journey's days are credited to exactly one source label.
+        list, so a person is credited to exactly one source label.
 
-        Each journey's label is linked to that same journey's own recommendation
-        (`{reco_col_prefix}.<journey index>`), weighted by that journey's `days`.
-        When `legacy_recos` is set, journeys of records collected before the
+        When `legacy_recos` is set, persons of records collected before the
         per-journey recommendations (typo.reco.reco_dt2.0 / .1, not tied to a
-        specific journey) are instead linked to each legacy recommendation,
-        weighted by the sum of the person's journey days (as originally computed).
+        specific journey) are linked to the first legacy recommendation entered,
+        so that they too count exactly once.
         """
-        col_days = df.columns[df.columns.str.contains(
-            r'^data\.freq_mod_journeys\..*\.days$', regex=True)]
-        # Coerce before summing/comparing: some records have this field
-        # stored as a non-numeric string, which would otherwise raise on
-        # `> 0` (or silently string-concatenate in the .sum() below).
-        col_days_numeric = df[col_days].apply(pd.to_numeric, errors='coerce')
-        legacy_cols = self._reco_legacy_columns(df) if legacy_recos else []
-        total_days_by_token = col_days_numeric.sum(
-            axis=1) if len(col_days) and legacy_cols else None
-
-        # (label, reco, weight) triples, accumulated via groupby-sum at the end
-        # instead of a Python-level dict built row by row.
-        frames = []
-
-        for i in range(len(col_days)):
-            col_label_i = f'{label_col_prefix}.{str(i)}'
-            if col_label_i not in df.columns:
-                continue
-            col_days_i = col_days[i]
-            reco_col_i = f'{reco_col_prefix}.{str(i)}'
-
-            # int(days) <= 0 truncates toward zero, same as np.trunc for floats
-            days_trunc = np.trunc(col_days_numeric[col_days_i])
-            label_s = df[col_label_i]
-            valid = (col_days_numeric[col_days_i].notna()
-                     & (days_trunc > 0) & label_s.notna())
-            if not valid.any():
-                continue
-
-            labels = label_s[valid].astype(str)
-            if merge_map:
-                labels = labels.map(
-                    lambda label: merge_label_components(label, merge_map))
-            weight_days = days_trunc[valid]
-
-            own_reco = df[reco_col_i][valid] if reco_col_i in df.columns else pd.Series(
-                np.nan, index=labels.index)
-            has_own_reco = own_reco.notna()
-
-            # New-style: this journey's own recommendation, weighted by this
-            # journey's own days
-            if has_own_reco.any():
-                frames.append(pd.DataFrame({
-                    'mode': labels[has_own_reco].to_numpy(),
-                    'reco': own_reco[has_own_reco].to_numpy(),
-                    'weight': weight_days[has_own_reco].to_numpy(),
-                }))
-
-            # Legacy: general recommendation(s), weighted by the person's
-            # total journey days, one entry per legacy column
-            legacy_mask = ~has_own_reco
-            if legacy_mask.any() and legacy_cols and total_days_by_token is not None:
-                legacy_idx = labels.index[legacy_mask]
-                token_days = total_days_by_token.loc[legacy_idx].to_numpy()
-                legacy_labels = labels.loc[legacy_idx].to_numpy()
-                for legacy_col in legacy_cols:
-                    frames.append(pd.DataFrame({
-                        'mode': legacy_labels,
-                        'reco': df[legacy_col].loc[legacy_idx].to_numpy(),
-                        'weight': token_days,
-                    }))
-
-        if not frames:
+        main = self._main_journey_labels(df, label_col_prefix)
+        if main.empty:
             return Links(total=len(df), data=[])
 
-        combined = pd.concat(frames, ignore_index=True)
-        combined = combined[combined['reco'].notna() & combined['weight'].notna()]
+        labels = main['value'].astype(str)
+        if merge_map:
+            labels = labels.map(
+                lambda label: merge_label_components(label, merge_map))
+
+        # recommendation of each person's main journey, resolved per journey
+        # index rather than row by row
+        recos = pd.Series(np.nan, index=main.index, dtype=object)
+        for journey_id, group in main.groupby('journey'):
+            reco_col = f'{reco_col_prefix}.{journey_id}'
+            if reco_col not in df.columns:
+                continue
+            recos.loc[group.index] = df[reco_col].loc[group['row']].to_numpy()
+
+        legacy_cols = self._reco_legacy_columns(df) if legacy_recos else []
+        if legacy_cols:
+            missing = recos.isna()
+            if missing.any():
+                rows = main['row'][missing]
+                legacy = df[legacy_cols].loc[rows].bfill(axis=1).iloc[:, 0]
+                recos.loc[missing] = legacy.to_numpy()
+
+        combined = pd.DataFrame({'mode': labels.to_numpy(), 'reco': recos.to_numpy()})
+        combined = combined[combined['reco'].notna()]
         if combined.empty:
             return Links(total=len(df), data=[])
-        combined['weight'] = combined['weight'].astype(int)
 
-        grouped = combined.groupby(['mode', 'reco'])['weight'].sum()
+        grouped = combined.groupby(['mode', 'reco']).size()
         data = [Link(source=mode, target=reco, value=int(value))
                 for (mode, reco), value in grouped.items()]
         return Links(total=len(df), data=data)

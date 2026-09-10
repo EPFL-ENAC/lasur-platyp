@@ -754,7 +754,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     mod_reco: {
       title: 'Modal shift recommendations',
       description:
-        'This chart shows which modes of transport have been recommended (on the right) based on the mode currently in use (on the left).',
+        'This chart shows which modes of transport have been recommended (on the right) based on the mode currently in use (on the left). Each participant is counted once, for their main (most frequent) home-to-work commute.',
       texts: {
         specific:
           'The mode "{mode}" appears to be the mode of transport with the highest potential for modal shift.',

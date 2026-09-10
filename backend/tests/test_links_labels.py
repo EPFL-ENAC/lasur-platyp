@@ -1,8 +1,9 @@
 """
 Tests for the mode recommendation links grouped by v3 typology labels, which
 source each link from one label bucket instead of each of the journey's raw
-modes -- mirroring how frequencies and emissions already group journeys by
-label. The two variants stay within their own vocabulary: simple labels
+modes -- mirroring how frequencies already group journeys by label. The chart
+is person-centric: each person contributes exactly one link, from their main
+journey. The two variants stay within their own vocabulary: simple labels
 (typo.reco.simple_labels.N) link to the simple recommendation of the same
 journey (typo.reco.reco_simple.N), complex labels
 (typo.reco.complex_labels.N) link to its recommended mode
@@ -14,12 +15,15 @@ from api.services.stats.links import LinksService
 
 def v3_df() -> pd.DataFrame:
     """
-    Two v3 respondents with a per-journey recommendation:
+    Three v3 respondents with a per-journey recommendation:
     - A: journey 0 is single-mode 'car' (label 'TIM' / 'car'), 3 days,
       recommended 'TP' / 'train'; journey 1 is intermodal 'train'+'car'
-      (label 'TIM+TP' / 'car+pub'), 2 days, recommended 'MA+TP' / 'inter'
+      (label 'TIM+TP' / 'car+pub'), 2 days, recommended 'MA+TP' / 'inter'.
+      Journey 0 is the main one (the most frequent).
     - B: journey 0 is single-mode 'pub' (label 'TP' / 'pub'), 5 days,
       recommended 'MA' / 'vae'
+    - F: the same two journeys as A, but the intermodal one is the main one
+      (4 days against 1) and is recommended 'TP' / 'train'
     Plus one v3 journey with no label at all (must be excluded) and one v2
     record (must be excluded entirely).
     """
@@ -50,6 +54,23 @@ def v3_df() -> pd.DataFrame:
             'typo.reco.complex_labels.0': 'pub',
             'typo.reco.reco_simple.0': 'MA',
             'typo.reco.reco_inter.0': 'vae',
+        },
+        {
+            'token': 'F',
+            'data.version': '3.0',
+            'data.freq_mod_journeys.0.days': 1,
+            'data.freq_mod_journeys.0.modes.0': 'car',
+            'typo.reco.simple_labels.0': 'TIM',
+            'typo.reco.complex_labels.0': 'car',
+            'typo.reco.reco_simple.0': 'TP',
+            'typo.reco.reco_inter.0': 'train',
+            'data.freq_mod_journeys.1.days': 4,
+            'data.freq_mod_journeys.1.modes.0': 'train',
+            'data.freq_mod_journeys.1.modes.1': 'car',
+            'typo.reco.simple_labels.1': 'TIM+TP',
+            'typo.reco.complex_labels.1': 'car+pub',
+            'typo.reco.reco_simple.1': 'TP',
+            'typo.reco.reco_inter.1': 'train',
         },
         {
             'token': 'C',
@@ -100,21 +121,22 @@ def test_compute_mode_reco_links_simple_labels():
 
     links = as_dict(result)
     # simple labels link to the simple recommendation, not to the recommended
-    # mode of typo.reco.reco_inter
+    # mode of typo.reco.reco_inter; each person counts once, from the label of
+    # their main journey ('TIM' for A, 'TP' for B, 'TIM+TP' for F)
     assert links == {
-        ('TIM', 'TP'): 3,
-        ('TIM+TP', 'MA+TP'): 2,
-        ('TP', 'MA'): 5,
+        ('TIM', 'TP'): 1,
+        ('TP', 'MA'): 1,
+        ('TIM+TP', 'TP'): 1,
     }
     # the intermodal journey is credited to its single label, not to each of
     # its raw modes
     assert ('car', 'inter') not in links
     assert ('train', 'inter') not in links
     # total counts all v3 records, including the unlabelled one
-    assert result.total == 3
+    assert result.total == 4
     assert result.most_recommended_target is not None
-    assert result.most_recommended_target.target == 'MA'
-    assert result.most_recommended_target.value == 5
+    assert result.most_recommended_target.target == 'TP'
+    assert result.most_recommended_target.value == 2
 
 
 def test_compute_mode_reco_links_complex_labels_merges_tp_bucket():
@@ -123,23 +145,21 @@ def test_compute_mode_reco_links_complex_labels_merges_tp_bucket():
     links = as_dict(result)
     # 'pub' -> 'tp' and 'car+pub' -> 'car+tp', component-wise
     assert links == {
-        ('car', 'train'): 3,
-        ('car+tp', 'inter'): 2,
-        ('tp', 'vae'): 5,
+        ('car', 'train'): 1,
+        ('tp', 'vae'): 1,
+        ('car+tp', 'train'): 1,
     }
 
 
 def test_compute_mode_reco_links_labels_legacy_recommendations():
-    """Legacy typo.reco.reco_dt2.N are not tied to a journey: every labelled
-    journey links to each of them, weighted by the person's total days. They
-    are recommended modes, so only the complex labels fall back to them."""
+    """Legacy typo.reco.reco_dt2.N are not tied to a journey: the person counts
+    once, from the label of their main journey (the 4-day 'car' one) to the
+    first legacy recommendation entered. They are recommended modes, so only
+    the complex labels fall back to them."""
     service = LinksService(legacy_df())
 
     assert as_dict(service.compute_mode_reco_links_complex_labels()) == {
-        ('car', 'train'): 5,
-        ('car', 'velo'): 5,
-        ('tp', 'train'): 5,
-        ('tp', 'velo'): 5,
+        ('car', 'train'): 1,
     }
     assert service.compute_mode_reco_links_simple_labels().data == []
 
@@ -180,5 +200,6 @@ def test_compute_mode_reco_links_labels_ignores_zero_and_invalid_days():
     ])
     result = LinksService(df).compute_mode_reco_links_simple_labels()
 
-    # zero-day and non-numeric journeys are dropped, fractional days truncate
-    assert as_dict(result) == {('MA+TIM', 'MA+TP'): 2}
+    # zero-day and non-numeric journeys are dropped: the remaining one is the
+    # main journey of that person, who counts once
+    assert as_dict(result) == {('MA+TIM', 'MA+TP'): 1}

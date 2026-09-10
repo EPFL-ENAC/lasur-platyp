@@ -130,8 +130,8 @@ def test_compute_travel_time_frequencies():
 
 def test_compute_recommendation_frequencies():
     # Load the test CSV into a DataFrame. It only has legacy typo.reco.reco_dt2.0/.1
-    # data (no typo.reco.reco_inter.N), so every recommendation at both legacy
-    # indices is taken into account.
+    # data (no typo.reco.reco_inter.N), so each person counts once, for the first
+    # legacy recommendation entered: the counts add up to the 30 records.
     df = load_test_dataframe()
     service = FrequenciesService(df)
     result = service.compute_recommendation_frequencies()
@@ -141,17 +141,18 @@ def test_compute_recommendation_frequencies():
         field='reco_inter',
         total=30,
         data=[
-            Frequency(value='covoit', count=18, sum=None),
-            Frequency(value='elec', count=13, sum=None),
-            Frequency(value='inter', count=7, sum=None),
-            Frequency(value='train', count=6, sum=None),
-            Frequency(value='vae', count=6, sum=None),
-            Frequency(value='tpu', count=6, sum=None),
-            Frequency(value='velo', count=2, sum=None),
-            Frequency(value='marche', count=2, sum=None)
+            Frequency(value='covoit', count=11, sum=None),
+            Frequency(value='inter', count=5, sum=None),
+            Frequency(value='tpu', count=4, sum=None),
+            Frequency(value='vae', count=3, sum=None),
+            Frequency(value='train', count=3, sum=None),
+            Frequency(value='elec', count=2, sum=None),
+            Frequency(value='velo', count=1, sum=None),
+            Frequency(value='marche', count=1, sum=None)
         ]
     )
     assert_frequencies_equal(result, expected)
+    assert sum(f.count for f in result.data) == 30
 
 
 def test_compute_recommendation_pro_frequencies():
