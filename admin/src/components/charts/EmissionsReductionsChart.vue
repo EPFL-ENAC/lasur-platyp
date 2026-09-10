@@ -25,6 +25,7 @@ import {
   modeSortOrder,
   simpleLabelSortOrder,
   complexLabelSortOrder,
+  readableTextColor,
 } from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
@@ -336,12 +337,14 @@ function initChartOptions() {
               color: '#000',
             },
           },
-          ...categories.map((cat) => ({
-            value: (categoryEmissions[cat] || 0) * SCALE_FACTOR,
-            itemStyle: {
-              color: colors[shortKey(cat)] || colors.default || '#ccc',
-            },
-          })),
+          ...categories.map((cat) => {
+            const color = colors[shortKey(cat)] || colors.default || '#ccc'
+            return {
+              value: (categoryEmissions[cat] || 0) * SCALE_FACTOR,
+              itemStyle: { color },
+              label: { color: readableTextColor(color) },
+            }
+          }),
           {
             value: newEmissions.value * SCALE_FACTOR,
             itemStyle: {

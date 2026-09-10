@@ -29,7 +29,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import { formatNumber } from '@/utils/numbers'
-import { MODE_COLORS } from './commons'
+import { MODE_COLORS, readableTextColor } from './commons'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -230,12 +230,14 @@ function initChartOptions() {
               color: '#000',
             },
           },
-          ...categories.map((cat) => ({
-            value: categoryEmissions[cat] || 0,
-            itemStyle: {
-              color: MODE_COLORS[cat] || MODE_COLORS.default || '#ccc',
-            },
-          })),
+          ...categories.map((cat) => {
+            const color = MODE_COLORS[cat] || MODE_COLORS.default || '#ccc'
+            return {
+              value: categoryEmissions[cat] || 0,
+              itemStyle: { color },
+              label: { color: readableTextColor(color) },
+            }
+          }),
           {
             value: newEmissions.value,
             itemStyle: {

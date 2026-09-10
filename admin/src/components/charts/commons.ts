@@ -148,8 +148,25 @@ export function modeSortOrder(key: string): number {
   return MODE_IDEAL_ORDER[key] || MODE_IDEAL_ORDER.default!
 }
 
-// All chart palettes share one muted, warm feel (see MOTIVATION_COLORS):
-// lifted, desaturated tones that keep dark labels readable on top of them.
+// Family ramps, light -> dark, in the same pastel register as MOTIVATION_COLORS.
+// A single mode sits on its family ramp according to its impact; an intermodal
+// trip takes the hue of the family of its LAST leg and its intensity from the
+// impact of its FIRST leg (issue #413, option B). Intermodal shades nudge the
+// hue a little (sage greens, steel blues, rosy reds) so they stay apart from the
+// single modes at the same lightness. The darkest shades need a light label on
+// top, see readableTextColor().
+export const ACTIVE_RAMP = ['#dfeacc', '#a9cf8f', '#8fb87d', '#7fa66b']
+export const TRANSIT_RAMP = ['#c5d8ea', '#99c7df', '#7a9cc4', '#6a88b0']
+export const MOTORIZED_RAMP = [
+  '#f1c4c4',
+  '#f2b4a3',
+  '#e39590',
+  '#d98a7a',
+  '#c96f6b',
+  '#b86466',
+  '#9a5a56',
+]
+
 export const MODE_COLORS: { [key: string]: string } = {
   car: '#c96f6b',
   car_driver: '#c96f6b',
@@ -173,13 +190,15 @@ export const MODE_COLORS: { [key: string]: string } = {
   velo: '#a9cf8f',
   walking: '#dfeacc',
   marche: '#dfeacc',
-  plane: '#bfaad9',
+  plane: '#9a5a56',
   boat: '#8aa3bf',
   truck: '#cf8fb0',
   elec_truck: '#d9a3c2',
-  visio: '#d6d6d6',
-  inter_ma_tp: '#cfe3a1',
-  inter_tim_tp: '#d17a76',
+  visio: '#b5b3ad',
+  // Intermodal recommendations: same rule as the typology labels below
+  // (active -> transit, motorized -> transit).
+  inter_ma_tp: '#8fabd0',
+  inter_tim_tp: '#6a88b0',
   default: '#d6d6d6',
 }
 
@@ -220,12 +239,13 @@ export function simpleLabelSortOrder(key: string): number {
   return SIMPLE_LABELS_IDEAL_ORDER[key] || SIMPLE_LABELS_IDEAL_ORDER.default!
 }
 
+// The intermodal buckets are undirected: 'MA+TP' is read as MA first, TP last.
 export const SIMPLE_LABELS_COLORS: { [key: string]: string } = {
   MA: '#a9cf8f',
   TP: '#99c7df',
-  'MA+TP': '#8fb87d',
-  'MA+TIM': '#f2b4a3',
-  'TIM+TP': '#e39590',
+  'MA+TP': '#8fabd0',
+  'MA+TIM': '#f1c4c4',
+  'TIM+TP': '#6a88b0',
   TIM: '#c96f6b',
   default: '#d6d6d6',
 }
@@ -319,6 +339,9 @@ export function complexLabelSortOrder(key: string): number {
 // groups, rather than modes, are the dimension being colored.
 export const GROUP_COLORS = ['#8fb87d', '#c96f6b', '#99c7df', '#e3cd72', '#bfaad9']
 
+// Intermodal keys are 'first+last' (see getModalityLabels): hue of the last
+// leg's family, intensity from the first leg. The legacy 'pub' keys mirror
+// their merged 'tp' twin.
 export const COMPLEX_LABELS_COLORS: { [key: string]: string } = {
   walking: '#dfeacc',
   bike: '#a9cf8f',
@@ -330,22 +353,43 @@ export const COMPLEX_LABELS_COLORS: { [key: string]: string } = {
   car: '#c96f6b',
   carpool: '#f2b4a3',
   other: '#c9b39c',
-  'pub+bike': '#8fb87d',
-  'tp+bike': '#8fb87d',
-  'bike+pub': '#8fb87d',
-  'bike+tp': '#8fb87d',
-  'pub+car': '#e39590',
-  'tp+car': '#e39590',
-  'car+pub': '#e39590',
-  'car+tp': '#e39590',
-  'car+bike': '#f2b4a3',
-  'bike+car': '#f2b4a3',
-  'pub+walk': '#dfeacc',
-  'tp+walk': '#dfeacc',
-  'walk+pub': '#dfeacc',
-  'walk+tp': '#dfeacc',
+  // transit -> bike: green, transit intensity
+  'pub+bike': '#9ccaa8',
+  'tp+bike': '#9ccaa8',
+  // bike -> transit: blue, active intensity
+  'bike+pub': '#8fabd0',
+  'bike+tp': '#8fabd0',
+  // transit -> car: red, transit intensity
+  'pub+car': '#b86466',
+  'tp+car': '#b86466',
+  // car -> transit: blue, motorized intensity
+  'car+pub': '#6a88b0',
+  'car+tp': '#6a88b0',
+  // car -> bike: green, motorized intensity
+  'car+bike': '#78a98a',
+  // bike -> car: red, active intensity
+  'bike+car': '#f1c4c4',
+  // transit -> walking: green, lighter than transit -> bike
+  'pub+walk': '#c9e2cf',
+  'tp+walk': '#c9e2cf',
+  // walking -> transit: blue, lightest intensity
+  'walk+pub': '#c5d8ea',
+  'walk+tp': '#c5d8ea',
   other_inter: '#c9b39c',
   default: '#d6d6d6',
+}
+
+/**
+ * Black or white, whichever reads better on the given hex background: the
+ * darker ramp shades need a light label on top.
+ */
+export function readableTextColor(hex: string): '#000' | '#fff' {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex.trim())
+  if (!match) return '#000'
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(match[1]!.slice(i, i + 2), 16) / 255)
+  const channel = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
+  const luminance = 0.2126 * channel(r!) + 0.7152 * channel(g!) + 0.0722 * channel(b!)
+  return luminance > 0.179 ? '#000' : '#fff'
 }
 
 /**
