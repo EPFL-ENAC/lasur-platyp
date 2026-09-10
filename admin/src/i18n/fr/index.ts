@@ -767,7 +767,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     mod_reco: {
       title: 'Recommandations de report modal',
       description:
-        'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+        'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche). Chaque participant·e est compté·e une seule fois, sur son déplacement domicile-travail principal (le plus fréquent).',
       texts: {
         specific:
           'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les participant·e·s.',

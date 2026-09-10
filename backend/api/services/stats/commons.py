@@ -85,6 +85,7 @@ class BaseStatsService:
         self.df = df
         self._v3_cache = None
         self._journey_attributes_cache = {}
+        self._main_journey_cache = {}
 
     def _reco_journey_columns(self, df: pd.DataFrame, prefix: str = RECO_INTER_PREFIX) -> list[str]:
         """{prefix}.N columns present in df, sorted by journey index N."""
@@ -201,6 +202,201 @@ class BaseStatsService:
                 'reco_mode': reco_s.to_numpy(),
                 'days': days.to_numpy(),
             }))
+
+        if not frames:
+            return None
+        return pd.concat(frames, ignore_index=True)
+
+    JOURNEY_DAYS_PATTERN = re.compile(
+        r'^data\.freq_mod_journeys\.(\d+)\.days$')
+
+    def _main_journey(self, df: pd.DataFrame) -> pd.DataFrame:
+        """One row per record that declared a home-to-work journey, describing
+        its main one: ['row', 'journey', 'days'].
+
+        Home-to-work modal split charts are person-centric: whatever the number
+        of journeys (sequences) someone declared, they count exactly once, for
+        the journey they make the most often (data.freq_mod_journeys.N.days),
+        ties being broken by the first one entered (lowest journey index).
+
+        Journey days are coerced to numeric -- some records store this field as
+        a non-numeric string -- and journeys without a positive frequency are
+        not eligible.
+
+        Cached per df identity: every modal split chart selects the same main
+        journeys. Callers must not mutate the result.
+        """
+        cache_key = ('main_journey', id(df))
+        if cache_key in self._main_journey_cache:
+            return self._main_journey_cache[cache_key]
+
+        frames = []
+        for col in df.columns:
+            matched = self.JOURNEY_DAYS_PATTERN.match(col)
+            if not matched:
+                continue
+            journey_id = matched.group(1)
+            days = pd.to_numeric(df[col], errors='coerce')
+            mask = days > 0
+            if not mask.any():
+                continue
+            idx = df.index[mask]
+            frames.append(pd.DataFrame({
+                'row': idx,
+                'journey': journey_id,
+                'order': int(journey_id),
+                'days': days.loc[idx].to_numpy(),
+            }))
+
+        if not frames:
+            main = pd.DataFrame(columns=['row', 'journey', 'days'])
+        else:
+            combined = pd.concat(frames, ignore_index=True)
+            combined = combined.sort_values(
+                ['row', 'days', 'order'], ascending=[True, False, True])
+            combined = combined.drop_duplicates(subset='row', keep='first')
+            main = combined[['row', 'journey', 'days']].reset_index(drop=True)
+
+        self._main_journey_cache[cache_key] = main
+        return main
+
+    def _journey_values(
+        self, df: pd.DataFrame, journeys: pd.DataFrame,
+        values_by_journey: dict[str, pd.Series],
+    ) -> pd.Series:
+        """Value declared on the journey each row of `journeys` points at,
+        resolved per journey index rather than record by record."""
+        values = pd.Series(np.nan, index=journeys.index, dtype=object)
+        for journey_id, group in journeys.groupby('journey'):
+            journey_values = values_by_journey.get(journey_id)
+            if journey_values is None:
+                continue
+            values.loc[group.index] = journey_values.loc[group['row']].to_numpy()
+        return values
+
+    def _main_journey_values(
+        self, df: pd.DataFrame, values_by_journey: dict[str, pd.Series],
+        first_entered_fallback: bool = False,
+    ) -> pd.DataFrame:
+        """One row per record, with the value its main journey carries:
+        ['row', 'journey', 'days', 'value'].
+
+        The main journey is selected on the journey frequencies alone
+        (_main_journey), so a record whose main journey carries no value is
+        left out rather than counted for a less frequent journey.
+
+        Args:
+            df: DataFrame of records
+            values_by_journey: journey index -> value attached to that journey
+                (a typology label, a recommendation, ...), aligned on df.index
+            first_entered_fallback: also keep the records that declared no
+                journey frequency at all (nothing to rank them by), through the
+                first journey entered that carries a value
+        """
+        columns = ['row', 'journey', 'days', 'value']
+        main = self._main_journey(df).copy()
+        if not main.empty:
+            main['value'] = self._journey_values(df, main, values_by_journey)
+            main = main[main['value'].notna()]
+        else:
+            main = pd.DataFrame(columns=columns)
+
+        if not first_entered_fallback:
+            return main[columns].reset_index(drop=True)
+
+        # No journey frequency to rank: keep the first journey entered that
+        # carries a value, so that these persons count once too.
+        unranked = df.index[~df.index.isin(self._main_journey(df)['row'])]
+        frames = [main[columns]]
+        for journey_id in sorted(values_by_journey, key=int):
+            values = values_by_journey[journey_id].loc[unranked].dropna()
+            if values.empty:
+                continue
+            frames.append(pd.DataFrame({
+                'row': values.index,
+                'journey': journey_id,
+                'days': 0,
+                'value': values.to_numpy(),
+            }))
+
+        combined = pd.concat(frames, ignore_index=True)
+        # journeys were appended in ascending index order, first one wins
+        combined = combined.drop_duplicates(subset='row', keep='first')
+        return combined[columns].reset_index(drop=True)
+
+    def _main_journey_labels(self, df: pd.DataFrame, label_prefix: str) -> pd.DataFrame:
+        """Main home-to-work journey of each record, with its typology label
+        (typo.reco.{simple,complex}_labels.N), see _main_journey_values.
+
+        Cached per (df identity, label prefix): computed once and then reused by
+        each label of the modal split. Callers must not mutate the result.
+        """
+        cache_key = ('labels', id(df), label_prefix)
+        if cache_key not in self._main_journey_cache:
+            pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+            labels_by_journey = {
+                pattern.match(col).group(1): df[col]
+                for col in df.columns if pattern.match(col)
+            }
+            self._main_journey_cache[cache_key] = self._main_journey_values(
+                df, labels_by_journey)
+        return self._main_journey_cache[cache_key]
+
+    def _build_reco_per_person(
+        self, df: pd.DataFrame, reco_prefix: str = RECO_INTER_PREFIX,
+        include_legacy: bool = True,
+    ) -> pd.DataFrame | None:
+        """One row per person, with the recommendation their potential modal
+        split share counts for: ['token', 'journey', 'reco_mode'].
+
+        - New-style {reco_prefix}.N is the recommendation made for the journey
+          of the same index in data.freq_mod_journeys: the one kept is the
+          recommendation of the person's main journey (_main_journey).
+        - Legacy typo.reco.reco_dt2.{0,1} are general recommendations that
+          predate per-journey recommendations: for records that have no
+          per-journey recommendation at all, the first one entered is kept, so
+          that these persons also count exactly once.
+
+        Returns:
+            DataFrame with columns ['token', 'journey', 'reco_mode'] or None
+            when no recommendation data is found.
+        """
+        if df.empty:
+            return None
+
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+
+        recos_by_journey = {
+            col.rsplit('.', 1)[1]: df[col]
+            for col in self._reco_journey_columns(df, reco_prefix)
+        }
+        # Recommendations do not all come with a journey frequency (legacy
+        # records have none), hence the fallback on the first journey entered.
+        main = self._main_journey_values(
+            df, recos_by_journey, first_entered_fallback=True)
+
+        frames = []
+        if not main.empty:
+            frames.append(pd.DataFrame({
+                'token': token_series.loc[main['row']].to_numpy(),
+                'journey': main['journey'].to_numpy(),
+                'reco_mode': main['value'].to_numpy(),
+            }))
+
+        legacy_cols = self._reco_legacy_columns(df) if include_legacy else []
+        if legacy_cols:
+            covered = df.index.isin(main['row']) if not main.empty else np.zeros(
+                len(df), dtype=bool)
+            # first legacy recommendation entered, for records not covered above
+            legacy_s = df[legacy_cols].bfill(axis=1).iloc[:, 0]
+            legacy_s = legacy_s[~covered].dropna()
+            if not legacy_s.empty:
+                frames.append(pd.DataFrame({
+                    'token': token_series.loc[legacy_s.index].to_numpy(),
+                    'journey': 'legacy',
+                    'reco_mode': legacy_s.to_numpy(),
+                }))
 
         if not frames:
             return None

@@ -10,7 +10,6 @@ from api.services.stats.commons import (
 class FrequenciesService(BaseStatsService):
     # Pre-compiled regex patterns for performance
     RECO_PROS_PATTERN = re.compile(r"^typo\.reco_pro\.reco_pros\..*$")
-    JOURNEY_DAYS_PATTERN = re.compile(r"^data\.freq_mod_journeys\..*\.days$")
     PRO_JOURNEY_DAYS_PATTERN = re.compile(
         r"^data\.freq_mod_pro_journeys\..*\.days$")
     JOURNEY_MODES_PATTERN = re.compile(
@@ -83,9 +82,10 @@ class FrequenciesService(BaseStatsService):
     def compute_recommendation_frequencies(self) -> Frequencies:
         """Compute recommendation frequencies from a DataFrame of records.
 
-        Each recommendation is taken into account (one per journey for new-style
-        typo.reco.reco_inter.N records, one per legacy typo.reco.reco_dt2.{0,1} for
-        older records), weighted by the days of the journey(s) it applies to.
+        The potential modal split is person-centric: each person counts once,
+        for the recommendation made on their main journey (new-style
+        typo.reco.reco_inter.N), or for the first legacy recommendation
+        (typo.reco.reco_dt2.{0,1}) when they have no per-journey one.
         """
         return self._compute_recommendation_frequencies(
             "reco_inter", RECO_INTER_PREFIX, include_legacy=True)
@@ -94,9 +94,9 @@ class FrequenciesService(BaseStatsService):
         """Compute simple recommendation frequencies from a DataFrame of records.
 
         Same as compute_recommendation_frequencies, but over the simple typology
-        recommendation of each journey (typo.reco.reco_simple.N). There is no legacy
-        equivalent for it, so records collected before per-journey recommendations
-        contribute nothing here.
+        recommendation of the main journey (typo.reco.reco_simple.N). There is no
+        legacy equivalent for it, so records collected before per-journey
+        recommendations contribute nothing here.
         """
         return self._compute_recommendation_frequencies(
             "reco_simple", RECO_SIMPLE_PREFIX, include_legacy=False)
@@ -174,7 +174,9 @@ class FrequenciesService(BaseStatsService):
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
 
-        return results
+        # a label observed only on secondary journeys is nobody's main mode:
+        # drop it rather than showing an empty share
+        return [f for f in results if f.data]
 
     def compute_modes_frequencies_complex_labels(self) -> list[Frequencies]:
         """Compute mode frequencies from typo.reco.complex_labels, one Frequencies
@@ -216,7 +218,9 @@ class FrequenciesService(BaseStatsService):
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
 
-        return results
+        # a label observed only on secondary journeys is nobody's main mode:
+        # drop it rather than showing an empty share
+        return [f for f in results if f.data]
 
     #
     # Internal functions
@@ -225,20 +229,19 @@ class FrequenciesService(BaseStatsService):
     def _compute_recommendation_frequencies(
         self, field: str, reco_prefix: str, include_legacy: bool
     ) -> Frequencies:
-        reco_df = self._build_reco_weighted(
+        reco_df = self._build_reco_per_person(
             self.df, reco_prefix=reco_prefix, include_legacy=include_legacy)
-        if reco_df is None:
+        if reco_df is None or reco_df.empty:
             return Frequencies(field=field, total=len(self.df), data=[])
 
-        grouped = reco_df.groupby("reco_mode")["days"]
+        counts = reco_df["reco_mode"].value_counts()
 
         return Frequencies(
             field=field,
             total=len(self.df),
             data=[
-                Frequency(value=reco, count=int(
-                    counts.count()), sum=int(counts.sum()))
-                for reco, counts in grouped
+                Frequency(value=reco, count=int(count))
+                for reco, count in counts.items()
             ],
         )
 
@@ -330,36 +333,30 @@ class FrequenciesService(BaseStatsService):
     ) -> Frequencies:
         """Compute a mode frequency from data.freq_mod_journeys, using the
         aggregated typo.reco.{simple,complex}_labels.{i} instead of the raw
-        modes.* list, so each journey's days are credited to exactly one
-        label. Builds a days -> (count, sum) histogram vectorized per journey
-        index instead of a linear-search-per-row Python loop.
+        modes.* list, so each journey is credited to exactly one label.
+
+        The home-to-work modal split is person-centric: only the label of the
+        person's main journey is counted, once, whatever the number of journeys
+        they declared and how often they make them (see _select_main_journey).
+        The resulting histogram is therefore keyed by the days frequency of that
+        main journey, and carries no `sum` of days: consumers weight these
+        frequencies by their `count` of persons.
 
         `source_values` lets several raw label values be folded into a single
         result `mode` (e.g. merging "train" into "pub"); defaults to [mode]."""
         source_values = source_values or [mode]
-        col_days = [
-            col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
-        totals: dict[str, list[int]] = {}
-        for i in range(len(col_days)):
-            col_label_i = f"{label_col_prefix}.{str(i)}"
-            if col_label_i not in df.columns:
-                continue
-            col_days_i = col_days[i]
-            days_s = pd.to_numeric(df[col_days_i], errors='coerce')
-            label_s = df[col_label_i]
-            mask = label_s.notna() & label_s.isin(source_values) & (days_s > 0)
-            if not mask.any():
-                continue
-            days_int = days_s[mask].astype(int)
-            for days_val, count in days_int.value_counts().items():
-                key = str(days_val)
-                bucket = totals.setdefault(key, [0, 0])
-                bucket[0] += int(count)
-                bucket[1] += int(days_val) * int(count)
+        main = self._main_journey_labels(df, label_col_prefix)
+        if main.empty:
+            return Frequencies(field=mode, total=len(df), data=[])
 
+        selected = main[main['value'].isin(source_values)]
+        if selected.empty:
+            return Frequencies(field=mode, total=len(df), data=[])
+
+        counts = selected['days'].astype(int).value_counts()
         frequencies = [
-            Frequency(value=key, count=count, sum=total_days)
-            for key, (count, total_days) in totals.items()
+            Frequency(value=str(days), count=int(count))
+            for days, count in counts.items()
         ]
         return Frequencies(field=mode, total=len(df), data=frequencies)
 
