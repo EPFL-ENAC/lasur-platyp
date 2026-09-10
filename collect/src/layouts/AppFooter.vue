@@ -116,11 +116,12 @@ const $q = useQuasar()
   mask-size: contain;
 }
 
+// The modus artwork is 970x300, so the box is wider than the EPFL one.
 .app-footer__logo--modus {
-  width: 88px;
+  width: 104px;
   height: 32px;
-  -webkit-mask-image: url('/modus_logo.svg');
-  mask-image: url('/modus_logo.svg');
+  -webkit-mask-image: url('/modus.svg');
+  mask-image: url('/modus.svg');
 }
 
 .app-footer__logo--epfl {

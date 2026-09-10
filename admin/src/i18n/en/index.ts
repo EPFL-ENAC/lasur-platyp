@@ -507,7 +507,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         'This chart shows the geographical distribution of participants’ households, as well as their workplaces. The households are grouped by area so as not to disclose any personal data. When you click on a workplace (or home), only the feeds associated with that location are shown.',
     },
     travel_time: {
-      title: 'Travel time',
+      title: 'Your commute',
       description:
         'This graph shows the travel time from home to work place declared by participants (one-way).',
       xaxis: 'Time (min)',
