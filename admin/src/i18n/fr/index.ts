@@ -884,6 +884,34 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         hover_hint: 'Passez la souris sur les cellules pour plus de détails',
       },
     },
+    pt_pass_reco: {
+      title: 'Abonnements de transports publics recommandés',
+      recommended: 'Abonnements recommandés',
+      equipped: 'Participant·e·s déjà équipé·e·s',
+      not_equipped_series: '{group}, pas encore équipé·e·s',
+      xaxis: "Type d'abonnement",
+      tooltip: {
+        recommended: 'Recommandé à {count} participant·e·s',
+        equipped: '{count} sont déjà équipé·e·s ({percentage}%)',
+        group_recommended: 'recommandé à {count} participant·e·s ({percentage}%)',
+        group_equipped: '{count} déjà équipé·e·s ({percentage}%)',
+      },
+      labels: {
+        unireso: 'Unireso',
+        leman: 'Léman Pass',
+        cff: 'CFF',
+        sncf: 'SNCF',
+        other: 'Autre abonnement',
+      },
+      texts: {
+        default:
+          "Ce graphique montre le nombre d'abonnements de transports publics recommandés aux participant·e·s. Les personnes n'étant pas déjà équipées d'abonnements pourraient nécessiter un accompagnement pour utiliser ce service.",
+        comparison:
+          "Ce graphique compare, entre les groupes de campagnes, la part de participant·e·s à qui un abonnement de transports publics est recommandé. La partie pleine d'une barre correspond aux personnes déjà équipées, la partie estompée à celles qui pourraient nécessiter un accompagnement pour utiliser ce service.",
+        equipped_unknown_note:
+          "La question sur les équipements ne liste que des abonnements suisses : pour {passes}, l'équipement déjà détenu n'est pas collecté, aucune barre intérieure n'est donc affichée.",
+      },
+    },
   },
   transportation_modes: {
     ...transportationModes,

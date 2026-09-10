@@ -326,9 +326,23 @@ class EquipmentRecommendationMatrix(BaseModel):
     inter: EquipmentPerRecommendation = EquipmentPerRecommendation()
 
 
+class PtPassRecommendation(BaseModel):
+    """Public transport pass recommended to participants, and how many of them
+    already hold a matching subscription.
+
+    already_equipped is None when the information is not collected: the
+    equipment question only lists Swiss products, so nothing tells us whether a
+    participant already holds an SNCF (French railways) pass.
+    """
+    pass_type: str
+    recommended: int = 0
+    already_equipped: Optional[int] = None
+
+
 class EquipmentsStats(BaseModel):
     total: int
     equipment_recommendation_matrix: EquipmentRecommendationMatrix
+    pt_pass_recommendations: List[PtPassRecommendation] = []
 
 
 class Stats(BaseModel):

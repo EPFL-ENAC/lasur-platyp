@@ -51,7 +51,7 @@ LEVERS = ["environment", "flexibility", "collective",
 RECO_OPTIONS = ["tpu", "vae", "elec", "velo",
                 "cargo", "inter", "train", "covoit", "marche"]
 RECO_OPTIONS_WEIGHTS = [40, 10, 20, 10, 5, 10, 30, 10, 10]
-PT_PASSES = ["unireso", "cff", "leman_pass"]
+PT_PASSES = ["unireso", "leman", "cff", "sncf"]
 ACTIONS = ["budget", "wfh", "bike_parking", "shuttle", "carpool_matching"]
 ACTIONS_WEIGHTS = [40, 30, 20, 10, 10]
 PRO_FEATURE_IDS = ["FR_74218", "FRK11", "CH066", "CH024"]
