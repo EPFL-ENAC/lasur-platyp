@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
-from api.models.query import Stats, CampaignStats, LocationFilter, ComparisonRequest, ComparisonResult, ComparisonStats
+from api.models.query import Stats, CampaignStats, LocationFilter, ComparisonRequest, ComparisonResult, ComparisonStats, WorkplaceLocation
 from api.services.records import RecordService
 from api.services.campaigns import CampaignService
 from api.services.stats.stats import StatsService
@@ -14,17 +14,11 @@ router = APIRouter()
 PRIVACY_LIMIT = 5  # Minimum number of records required to compute statistics
 
 
-async def enrich_workplaces(stats_list: list[Stats], session: AsyncSession, user: User) -> None:
+async def enrich_workplaces(workplaces: list[WorkplaceLocation], session: AsyncSession, user: User) -> None:
     """Resolve workplace campaign ids into campaign/company names with a single query."""
-    ids = sorted({
-        cid
-        for stats in stats_list
-        for workplace in (stats.workplace_locations or [])
-        for cid in workplace.campaign_ids
-    })
+    ids = sorted({workplace.campaign_id for workplace in workplaces})
     campaigns = await CampaignService(session).list_with_company(ids, user, "read-aggregated")
-    for stats in stats_list:
-        LocationsService.attach_campaigns(stats.workplace_locations or [], campaigns)
+    LocationsService.attach_campaigns(workplaces, campaigns)
 
 
 @router.get("/all", response_model_exclude_none=True)
@@ -52,7 +46,7 @@ async def compute_all_statistics(
                 status_code=400, detail="Not enough records to compute statistics")
 
         stats = StatsService().compute_stats(df)
-        await enrich_workplaces([stats], session, user)
+        await enrich_workplaces(stats.workplace_locations or [], session, user)
         return stats
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
@@ -102,7 +96,18 @@ async def compare_statistics(
         stats_service = StatsService()
         group_stats = [(group, stats_service.compute_stats(group_df))
                        for group, group_df in survived_groups]
-        await enrich_workplaces([stats for _, stats in group_stats], session, user)
+        survived_campaign_ids = [
+            campaign_id
+            for group, _ in survived_groups
+            for campaign_id in group.campaign_ids
+        ]
+        # The map shows every surviving group at once, so its data spans all of them
+        locations = LocationsService(
+            df[df['campaign_id'].isin(survived_campaign_ids)]).compute_location_stats()
+        await enrich_workplaces(
+            [wp for _, stats in group_stats for wp in (stats.workplace_locations or [])]
+            + locations.workplace_locations,
+            session, user)
         comparison_stats = [
             ComparisonStats(
                 **stats.model_dump(),
@@ -114,11 +119,6 @@ async def compare_statistics(
 
         mode_transitions = None
         if request.mode == "longitudinal":
-            survived_campaign_ids = [
-                campaign_id
-                for group, _ in survived_groups
-                for campaign_id in group.campaign_ids
-            ]
             transitions_df = df[df['campaign_id'].isin(
                 survived_campaign_ids)]
             mode_transitions = LongitudinalService.compute_mode_transitions(
@@ -127,7 +127,8 @@ async def compare_statistics(
         return ComparisonResult(
             groups=comparison_stats,
             mode_transitions=mode_transitions,
-            warnings=warnings or None
+            warnings=warnings or None,
+            locations=locations,
         )
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")

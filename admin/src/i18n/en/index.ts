@@ -503,6 +503,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       households: 'Households',
       households_number: 'Number of households',
       workplaces: 'Workplaces',
+      group_workplaces: 'Workplaces — {group}',
       flows: 'Home → workplace flows (click a location to show them)',
       participants: '{n} participant | {n} participants',
       unnamed_workplace: 'Unnamed workplace',

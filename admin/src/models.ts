@@ -366,14 +366,20 @@ export interface WorkplaceLocation {
   name: string | null
   address: string | null
   count: number
-  campaign_ids: number[]
-  campaigns: WorkplaceCampaign[]
+  campaign_id: number
+  campaign: WorkplaceCampaign
 }
 
 export interface HomeWorkplaceFlow {
   hex_id: string
   workplace_id: number
   count: number
+}
+
+export interface LocationStats {
+  home_location_heatmap: H3Heatmap
+  workplace_locations: WorkplaceLocation[]
+  home_workplace_flows: HomeWorkplaceFlow[]
 }
 
 export interface Stats {
@@ -428,6 +434,8 @@ export interface ComparisonResult {
   groups: ComparisonStats[]
   mode_transitions?: ModeTransition[]
   warnings?: string[]
+  /** Map data over every surviving group; absent when no group survived. */
+  locations?: LocationStats
 }
 
 export interface IsochronesParams {

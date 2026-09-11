@@ -39,6 +39,7 @@
           :h3Heatmap="props.homeLocationsHeatmap"
           :workplaces="props.workplaceLocations"
           :flows="props.homeWorkplaceFlows"
+          :campaign-colors="campaignColors"
           :interactive="!props.inline"
           :heatmap-gradient="gradient"
           :center="[7.4474, 46.9481]"
@@ -47,9 +48,19 @@
           :height="mapHeight"
           :no-controls="props.noControls"
         >
-          <div class="legend-item">
+          <div v-if="groups.length === 0" class="legend-item">
             <span class="legend-swatch dot"></span>
             <span class="legend-label">{{ t('stats.locations_heatmap.workplaces') }}</span>
+          </div>
+          <div v-for="(group, i) in groups" :key="group.name" class="legend-item">
+            <span class="legend-swatch dot" :style="{ backgroundColor: groupColor(i) }"></span>
+            <span class="legend-label">
+              {{
+                t('stats.locations_heatmap.group_workplaces', {
+                  group: t(`stats.group.${group.name}`),
+                })
+              }}
+            </span>
           </div>
           <div class="legend-item">
             <span class="legend-swatch">
@@ -104,9 +115,24 @@ import type { Ref } from 'vue'
 import { GradientScale } from '@/utils/colors'
 import ChartShell from './ChartShell.vue'
 import LocationHeatmap from '../LocationHeatmap.vue'
+import { GROUP_COLORS } from './commons'
 import type { H3Heatmap, HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
 
 const { t } = useI18n()
+const stats = useStats()
+
+// In a comparison, dots take the colour of the group their campaign belongs to
+const groups = computed(() => stats.comparisonResults?.groups ?? [])
+
+function groupColor(index: number): string {
+  return GROUP_COLORS[index % GROUP_COLORS.length] ?? '#ccc'
+}
+
+const campaignColors = computed<Record<number, string>>(() =>
+  Object.fromEntries(
+    groups.value.flatMap((group, i) => group.campaign_ids.map((id) => [id, groupColor(i)])),
+  ),
+)
 
 interface Props {
   homeLocationsHeatmap: H3Heatmap

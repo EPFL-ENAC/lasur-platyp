@@ -352,20 +352,28 @@ class WorkplaceCampaign(BaseModel):
 
 
 class WorkplaceLocation(BaseModel):
-    id: int  # stable index in the list, sorted by (lat, lon)
+    """One campaign at one place: campaigns sharing coordinates are separate workplaces."""
+    id: int  # stable index in the list, sorted by (lat, lon, campaign_id)
     lat: float
     lon: float
     name: Optional[str] = None
     address: Optional[str] = None
     count: int  # completed records at this workplace
-    campaign_ids: List[int]
-    campaigns: List[WorkplaceCampaign] = []  # filled by route-level enrichment
+    campaign_id: int
+    campaign: Optional[WorkplaceCampaign] = None  # filled by route-level enrichment
 
 
 class HomeWorkplaceFlow(BaseModel):
     hex_id: str  # same H3 ids as home_location_heatmap keys
     workplace_id: int
     count: int
+
+
+class LocationStats(BaseModel):
+    """Map data: home hexagons, workplaces (one per place and campaign) and their flows."""
+    home_location_heatmap: dict[str, int]
+    workplace_locations: List[WorkplaceLocation]
+    home_workplace_flows: List[HomeWorkplaceFlow]
 
 
 class Stats(BaseModel):
@@ -425,6 +433,7 @@ class ComparisonResult(BaseModel):
     groups: List[ComparisonStats] = []
     mode_transitions: Optional[List[ModeTransition]] = None
     warnings: Optional[List[str]] = None
+    locations: Optional[LocationStats] = None  # map data over every surviving group
 
 
 class GeoWithin(BaseModel):

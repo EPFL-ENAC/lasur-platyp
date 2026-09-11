@@ -211,6 +211,10 @@ export const useStats = defineStore('stats', () => {
             comparisonResults.value = result
             privacyWarnings.value = result.warnings || []
             comparisonMode.value = mode
+            // The map covers every surviving group, not only the main one
+            homeLocationsHeatmap.value = result.locations?.home_location_heatmap ?? {}
+            workplaceLocations.value = result.locations?.workplace_locations ?? []
+            homeWorkplaceFlows.value = result.locations?.home_workplace_flows ?? []
           })
           .catch((err) => {
             console.error(err)
