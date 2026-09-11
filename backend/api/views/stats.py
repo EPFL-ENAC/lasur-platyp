@@ -17,10 +17,9 @@ PRIVACY_LIMIT = 5  # Minimum number of records required to compute statistics
 async def enrich_workplaces(stats_list: list[Stats], session: AsyncSession, user: User) -> None:
     """Resolve workplace campaign ids into campaign/company names with a single query."""
     ids = sorted({
-        cid
+        workplace.campaign_id
         for stats in stats_list
         for workplace in (stats.workplace_locations or [])
-        for cid in workplace.campaign_ids
     })
     campaigns = await CampaignService(session).list_with_company(ids, user, "read-aggregated")
     for stats in stats_list:

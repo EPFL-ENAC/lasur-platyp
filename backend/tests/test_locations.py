@@ -26,15 +26,26 @@ def workplace_df() -> pd.DataFrame:
     })
 
 
-def test_compute_workplaces_groups_by_coordinates():
+def test_compute_workplaces_groups_by_coordinates_and_campaign():
     workplaces, _ = LocationsService(workplace_df()).compute_workplaces()
 
+    # UNIL hosts two campaigns: they stay separate workplaces so the map can draw one dot each
     assert workplaces == [
         WorkplaceLocation(id=0, lat=EPFL[0], lon=EPFL[1], name="EPFL",
-                          address="Route Cantonale", count=2, campaign_ids=[1]),
-        WorkplaceLocation(id=1, lat=UNIL[0], lon=UNIL[1], name="UNIL",
-                          address="Unicentre", count=2, campaign_ids=[2, 3]),
+                          address="Route Cantonale", count=2, campaign_id=1),
+        WorkplaceLocation(id=1, lat=UNIL[0], lon=UNIL[1], name=None,
+                          address="Unicentre", count=1, campaign_id=2),
+        WorkplaceLocation(id=2, lat=UNIL[0], lon=UNIL[1], name="UNIL",
+                          address="Unicentre", count=1, campaign_id=3),
     ]
+
+
+def test_compute_workplaces_without_campaign_id_raises():
+    df = workplace_df()
+    df.loc[0, "campaign_id"] = np.nan
+
+    with pytest.raises(ValueError, match="no campaign id"):
+        LocationsService(df).compute_workplaces()
 
 
 def test_compute_workplaces_without_name_column():
@@ -42,8 +53,8 @@ def test_compute_workplaces_without_name_column():
 
     workplaces, _ = LocationsService(df).compute_workplaces()
 
-    assert [wp.name for wp in workplaces] == [None, None]
-    assert [wp.address for wp in workplaces] == ["Route Cantonale", "Unicentre"]
+    assert [wp.name for wp in workplaces] == [None, None, None]
+    assert [wp.address for wp in workplaces] == ["Route Cantonale", "Unicentre", "Unicentre"]
 
 
 def test_compute_workplaces_flows_match_heatmap_hexes():
@@ -56,7 +67,8 @@ def test_compute_workplaces_flows_match_heatmap_hexes():
     hex_b = h3.latlng_to_cell(*HOME_B, 8)
     assert sorted(flows, key=lambda f: (f.hex_id, f.workplace_id)) == sorted([
         HomeWorkplaceFlow(hex_id=hex_a, workplace_id=0, count=1),
-        HomeWorkplaceFlow(hex_id=hex_a, workplace_id=1, count=2),
+        HomeWorkplaceFlow(hex_id=hex_a, workplace_id=1, count=1),
+        HomeWorkplaceFlow(hex_id=hex_a, workplace_id=2, count=1),
         HomeWorkplaceFlow(hex_id=hex_b, workplace_id=0, count=1),
     ], key=lambda f: (f.hex_id, f.workplace_id))
     assert {f.hex_id for f in flows} <= set(heatmap)
@@ -69,8 +81,8 @@ def test_compute_workplaces_record_without_origin():
 
     workplaces, flows = LocationsService(df).compute_workplaces()
 
-    assert workplaces[1].count == 2
-    assert sum(f.count for f in flows if f.workplace_id == 1) == 1
+    assert workplaces[2].count == 1
+    assert sum(f.count for f in flows if f.workplace_id == 2) == 0
 
 
 def test_compute_workplaces_empty_or_missing_columns():
@@ -90,9 +102,8 @@ def test_attach_campaigns():
 
     LocationsService.attach_campaigns(workplaces, campaigns)
 
-    assert [(c.id, c.name, c.company_name) for c in workplaces[0].campaigns] == [(1, "Spring", "EPFL")]
-    assert [(c.id, c.name, c.company_name) for c in workplaces[1].campaigns] == [
-        (2, "Autumn", "EPFL"), (3, "Winter", "UNIL")]
+    assert [(wp.campaign.id, wp.campaign.name, wp.campaign.company_name) for wp in workplaces] == [
+        (1, "Spring", "EPFL"), (2, "Autumn", "EPFL"), (3, "Winter", "UNIL")]
 
 
 def test_attach_campaigns_missing_raises():

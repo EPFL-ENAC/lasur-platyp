@@ -366,8 +366,8 @@ export interface WorkplaceLocation {
   name: string | null
   address: string | null
   count: number
-  campaign_ids: number[]
-  campaigns: WorkplaceCampaign[]
+  campaign_id: number
+  campaign: WorkplaceCampaign
 }
 
 export interface HomeWorkplaceFlow {

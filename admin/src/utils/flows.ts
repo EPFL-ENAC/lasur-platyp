@@ -1,5 +1,5 @@
 import { cellToLatLng } from 'h3-js'
-import type { FilterSpecification } from 'maplibre-gl'
+import type { FilterSpecification, Map as MaplibreMap } from 'maplibre-gl'
 import type { HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
 import type { RGB } from '@/utils/colors'
 
@@ -37,6 +37,30 @@ export function idFilter(key: string, ids: (string | number)[] | null): FilterSp
   return ['in', ['get', key], ['literal', ids]]
 }
 
+/** Distance in pixels between the centres of dots sharing the same coordinates. */
+export const DOT_SPACING = 18
+
+/** A workplace with the horizontal pixel shift its dot is drawn with. */
+export type PlacedWorkplace = WorkplaceLocation & { dx: number }
+
+/**
+ * Campaigns at the same coordinates get their dots laid out side by side, centred on the
+ * true location, instead of drawn over each other. Order is preserved.
+ */
+export function placeWorkplaces(workplaces: WorkplaceLocation[]): PlacedWorkplace[] {
+  return workplaces.map((wp) => {
+    const group = workplaces.filter((other) => other.lat === wp.lat && other.lon === wp.lon)
+    return { ...wp, dx: (group.indexOf(wp) - (group.length - 1) / 2) * DOT_SPACING }
+  })
+}
+
+/** Where the dot of a workplace is drawn ([lng, lat]) at the map's current view. */
+export function dotPosition(m: MaplibreMap, workplace: PlacedWorkplace): [number, number] {
+  const point = m.project([workplace.lon, workplace.lat])
+  const { lng, lat } = m.unproject([point.x + workplace.dx, point.y])
+  return [lng, lat]
+}
+
 export interface FlowArc {
   source: [number, number]
   target: [number, number]
@@ -45,19 +69,17 @@ export interface FlowArc {
   sourceColor: RGB
 }
 
-/** One arc per selected flow, from the home hexagon centroid to the workplace ([lng, lat]). */
+/** One arc per selected flow, from the home hexagon centroid to the workplace dot ([lng, lat]). */
 export function makeFlowArcs(
   selected: HomeWorkplaceFlow[],
-  workplacesById: Map<number, WorkplaceLocation>,
+  target: (workplaceId: number) => [number, number],
   hexColor: (hexId: string) => RGB,
 ): FlowArc[] {
   return selected.map((flow) => {
-    const workplace = workplacesById.get(flow.workplace_id)
-    if (!workplace) throw new Error(`Unknown workplace ${flow.workplace_id} in flows`)
     const [lat, lng] = cellToLatLng(flow.hex_id)
     return {
       source: [lng, lat],
-      target: [workplace.lon, workplace.lat],
+      target: target(flow.workplace_id),
       count: flow.count,
       sourceColor: hexColor(flow.hex_id),
     }

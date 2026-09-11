@@ -352,14 +352,15 @@ class WorkplaceCampaign(BaseModel):
 
 
 class WorkplaceLocation(BaseModel):
-    id: int  # stable index in the list, sorted by (lat, lon)
+    """One campaign at one place: campaigns sharing coordinates are separate workplaces."""
+    id: int  # stable index in the list, sorted by (lat, lon, campaign_id)
     lat: float
     lon: float
     name: Optional[str] = None
     address: Optional[str] = None
     count: int  # completed records at this workplace
-    campaign_ids: List[int]
-    campaigns: List[WorkplaceCampaign] = []  # filled by route-level enrichment
+    campaign_id: int
+    campaign: Optional[WorkplaceCampaign] = None  # filled by route-level enrichment
 
 
 class HomeWorkplaceFlow(BaseModel):

@@ -11,8 +11,10 @@ import {
 import type { H3Heatmap, HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
 import type { GradientScale, RGB } from '@/utils/colors'
 import {
+  dotPosition,
   idFilter,
   makeFlowArcs,
+  placeWorkplaces,
   sameSelection,
   selectFlows,
   visibleIds,
@@ -36,14 +38,19 @@ interface Options {
  * Clicking a workplace or home hexagon selects it: its flows are drawn and unrelated
  * features hidden until the selection is cleared (same feature, empty map, Escape or reset).
  * Hovering a workplace only shows its tooltip; the selected workplace keeps its tooltip.
- * Layers `heatmap-layer` and `workplace-dots` must exist on the map. Arcs live on deck.gl's
- * own canvas, which follows every map render (fullscreen included).
+ * Layers `heatmap-layer` and `workplace-dots` (symbols using the `workplace-dot` and
+ * `workplace-dot-selected` images) must exist on the map. Arcs live on deck.gl's own canvas,
+ * which follows every map render (fullscreen included).
  */
 export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }: Options) {
   const popup = new Popup({ closeButton: false, closeOnClick: false, offset: 10 })
   const overlay = new MapboxOverlay({ interleaved: false, layers: [] })
   const selected = ref<MapSelection>(null)
-  const workplacesById = computed(() => new Map(workplaces().map((wp) => [wp.id, wp])))
+  const workplacesById = computed(
+    () => new Map(placeWorkplaces(workplaces()).map((wp) => [wp.id, wp])),
+  )
+  // Workplace whose tooltip is currently shown, to keep it anchored to the dot
+  let tooltipId: number | null = null
 
   watch(selected, applySelection)
 
@@ -59,6 +66,7 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
     m.on('mousemove', 'workplace-dots', onWorkplaceMove)
     m.on('mouseleave', 'workplace-dots', onWorkplaceLeave)
     m.on('click', onClick)
+    m.on('move', followDots)
   }
 
   /** deck.gl's canvas, to composite the arcs into the exported image. */
@@ -83,16 +91,33 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
       0.9,
       0.6,
     ])
-    m.setPaintProperty('workplace-dots', 'circle-radius', [
+    m.setLayoutProperty('workplace-dots', 'icon-image', [
       'case',
       ['==', ['get', 'id'], selectedWorkplace],
-      8,
-      5,
+      'workplace-dot-selected',
+      'workplace-dot',
     ])
-    overlay.setProps({
-      layers: [makeArcLayer(makeFlowArcs(selectedFlows, workplacesById.value, hexColor))],
-    })
+    drawArcs()
     showTooltip(selectedWorkplaceId())
+  }
+
+  function drawArcs() {
+    const arcs = makeFlowArcs(selectFlows(flows(), selected.value), position, hexColor)
+    overlay.setProps({ layers: [makeArcLayer(arcs)] })
+  }
+
+  /** Dots keep a fixed pixel shift, so their map position changes with the view. */
+  function followDots() {
+    if (tooltipId !== null) popup.setLngLat(position(tooltipId))
+    if (selected.value !== null) drawArcs()
+  }
+
+  /** Map position of a workplace dot, shifted sideways when campaigns share coordinates. */
+  function position(workplaceId: number): [number, number] {
+    const m = map.value
+    const workplace = workplacesById.value.get(workplaceId)
+    if (!m || !workplace) throw new Error(`Unknown workplace ${workplaceId} on the map`)
+    return dotPosition(m, workplace)
   }
 
   function selectedWorkplaceId(): number | null {
@@ -104,11 +129,13 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
     const m = map.value
     if (!m || workplaceId === null) {
       popup.remove()
+      tooltipId = null
       return
     }
     const workplace = workplacesById.value.get(workplaceId)
     if (!workplace) throw new Error(`Unknown workplace ${workplaceId} on the map`)
-    popup.setLngLat([workplace.lon, workplace.lat]).setDOMContent(buildTooltip(workplace)).addTo(m)
+    popup.setLngLat(position(workplaceId)).setDOMContent(buildTooltip(workplace)).addTo(m)
+    tooltipId = workplaceId
   }
 
   /** Heatmap colour of a hexagon; every flow hexagon is a heatmap key by construction. */
@@ -181,11 +208,9 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
     title.textContent =
       workplace.name ?? workplace.address ?? t('stats.locations_heatmap.unnamed_workplace')
     root.appendChild(title)
-    workplace.campaigns.forEach((campaign) => {
-      const line = document.createElement('div')
-      line.textContent = `${campaign.name} — ${campaign.company_name}`
-      root.appendChild(line)
-    })
+    const campaign = document.createElement('div')
+    campaign.textContent = `${workplace.campaign.name} — ${workplace.campaign.company_name}`
+    root.appendChild(campaign)
     const count = document.createElement('div')
     count.className = 'map-tooltip-count'
     count.textContent = t('stats.locations_heatmap.participants', workplace.count)
