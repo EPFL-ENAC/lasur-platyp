@@ -20,14 +20,14 @@ import {
   visibleIds,
   type FlowArc,
   type MapSelection,
+  type PlacedWorkplace,
 } from '@/utils/flows'
-
-// Same red as the workplace dots
-const WORKPLACE_COLOR: RGB = [239, 68, 68]
 
 interface Options {
   map: Ref<MaplibreMap | undefined>
   workplaces: () => WorkplaceLocation[]
+  /** Hex colour of a workplace dot, matching the map's own dot images. */
+  dotColor: (workplace: WorkplaceLocation) => string
   flows: () => HomeWorkplaceFlow[]
   heatmap: () => H3Heatmap
   gradient: () => GradientScale
@@ -38,16 +38,24 @@ interface Options {
  * Clicking a workplace or home hexagon selects it: its flows are drawn and unrelated
  * features hidden until the selection is cleared (same feature, empty map, Escape or reset).
  * Hovering a workplace only shows its tooltip; the selected workplace keeps its tooltip.
- * Layers `heatmap-layer` and `workplace-dots` (symbols using the `workplace-dot` and
- * `workplace-dot-selected` images) must exist on the map. Arcs live on deck.gl's own canvas,
- * which follows every map render (fullscreen included).
+ * Layers `heatmap-layer` and `workplace-dots` (symbols using the `workplace-dot-<colour>` and
+ * `workplace-dot-<colour>-selected` images) must exist on the map. Arcs live on deck.gl's own
+ * canvas, which follows every map render (fullscreen included).
  */
-export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }: Options) {
+export function useMapSelection({
+  map,
+  workplaces,
+  dotColor,
+  flows,
+  heatmap,
+  gradient,
+  t,
+}: Options) {
   const popup = new Popup({ closeButton: false, closeOnClick: false, offset: 10 })
   const overlay = new MapboxOverlay({ interleaved: false, layers: [] })
   const selected = ref<MapSelection>(null)
   const workplacesById = computed(
-    () => new Map(placeWorkplaces(workplaces()).map((wp) => [wp.id, wp])),
+    () => new Map(placeWorkplaces(workplaces(), dotColor).map((wp) => [wp.id, wp])),
   )
   // Workplace whose tooltip is currently shown, to keep it anchored to the dot
   let tooltipId: number | null = null
@@ -92,31 +100,37 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
       0.6,
     ])
     m.setLayoutProperty('workplace-dots', 'icon-image', [
-      'case',
-      ['==', ['get', 'id'], selectedWorkplace],
-      'workplace-dot-selected',
-      'workplace-dot',
+      'concat',
+      'workplace-dot-',
+      ['get', 'color'],
+      ['case', ['==', ['get', 'id'], selectedWorkplace], '-selected', ''],
     ])
     drawArcs()
     showTooltip(selectedWorkplaceId())
   }
 
   function drawArcs() {
-    const arcs = makeFlowArcs(selectFlows(flows(), selected.value), position, hexColor)
+    const selectedFlows = selectFlows(flows(), selected.value)
+    const arcs = makeFlowArcs(selectedFlows, workplacesById.value, position, hexColor)
     overlay.setProps({ layers: [makeArcLayer(arcs)] })
   }
 
   /** Dots keep a fixed pixel shift, so their map position changes with the view. */
   function followDots() {
-    if (tooltipId !== null) popup.setLngLat(position(tooltipId))
+    if (tooltipId !== null) popup.setLngLat(position(placed(tooltipId)))
     if (selected.value !== null) drawArcs()
   }
 
-  /** Map position of a workplace dot, shifted sideways when campaigns share coordinates. */
-  function position(workplaceId: number): [number, number] {
-    const m = map.value
+  function placed(workplaceId: number): PlacedWorkplace {
     const workplace = workplacesById.value.get(workplaceId)
-    if (!m || !workplace) throw new Error(`Unknown workplace ${workplaceId} on the map`)
+    if (!workplace) throw new Error(`Unknown workplace ${workplaceId} on the map`)
+    return workplace
+  }
+
+  /** Map position of a workplace dot, shifted sideways when campaigns share coordinates. */
+  function position(workplace: PlacedWorkplace): [number, number] {
+    const m = map.value
+    if (!m) throw new Error('Map not initialised')
     return dotPosition(m, workplace)
   }
 
@@ -132,9 +146,8 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
       tooltipId = null
       return
     }
-    const workplace = workplacesById.value.get(workplaceId)
-    if (!workplace) throw new Error(`Unknown workplace ${workplaceId} on the map`)
-    popup.setLngLat(position(workplaceId)).setDOMContent(buildTooltip(workplace)).addTo(m)
+    const workplace = placed(workplaceId)
+    popup.setLngLat(position(workplace)).setDOMContent(buildTooltip(workplace)).addTo(m)
     tooltipId = workplaceId
   }
 
@@ -152,7 +165,7 @@ export function useMapSelection({ map, workplaces, flows, heatmap, gradient, t }
       getSourcePosition: (d) => d.source,
       getTargetPosition: (d) => d.target,
       getSourceColor: (d) => d.sourceColor,
-      getTargetColor: WORKPLACE_COLOR,
+      getTargetColor: (d) => d.targetColor,
       getWidth: (d) => Math.min(10, 1.5 * Math.sqrt(d.count)),
       getHeight: 0.6,
       widthUnits: 'pixels',

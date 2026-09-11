@@ -1,7 +1,7 @@
 import pandas as pd
 import h3
 from api.models.domain import Campaign
-from api.models.query import HomeWorkplaceFlow, WorkplaceCampaign, WorkplaceLocation
+from api.models.query import HomeWorkplaceFlow, LocationStats, WorkplaceCampaign, WorkplaceLocation
 from api.services.stats.commons import BaseStatsService
 
 WORKPLACE_COLS = {
@@ -29,6 +29,15 @@ class LocationsService(BaseStatsService):
             return {}
         hex_ids = self._to_hex_ids(origins[ORIGIN_COLS[0]], origins[ORIGIN_COLS[1]], resolution)
         return hex_ids.value_counts().to_dict()
+
+    def compute_location_stats(self, resolution: int = 8) -> LocationStats:
+        """Heatmap, workplaces and flows of the dataframe, sharing one hexagon resolution."""
+        workplaces, flows = self.compute_workplaces(resolution)
+        return LocationStats(
+            home_location_heatmap=self.compute_home_location_heatmap(resolution),
+            workplace_locations=workplaces,
+            home_workplace_flows=flows,
+        )
 
     def compute_workplaces(self, resolution: int = 8) -> tuple[list[WorkplaceLocation], list[HomeWorkplaceFlow]]:
         """Workplaces (one per coordinates and campaign) and the home hexagon -> workplace flows.

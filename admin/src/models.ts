@@ -376,6 +376,12 @@ export interface HomeWorkplaceFlow {
   count: number
 }
 
+export interface LocationStats {
+  home_location_heatmap: H3Heatmap
+  workplace_locations: WorkplaceLocation[]
+  home_workplace_flows: HomeWorkplaceFlow[]
+}
+
 export interface Stats {
   total: number
   frequencies: Frequencies[] | null
@@ -428,6 +434,8 @@ export interface ComparisonResult {
   groups: ComparisonStats[]
   mode_transitions?: ModeTransition[]
   warnings?: string[]
+  /** Map data over every surviving group; absent when no group survived. */
+  locations?: LocationStats
 }
 
 export interface IsochronesParams {

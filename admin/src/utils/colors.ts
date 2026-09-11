@@ -89,7 +89,7 @@ export class GradientScale {
 
 export type RGB = [number, number, number]
 
-function parseHex(hex: string): RGB {
+export function parseHex(hex: string): RGB {
   const bigint = parseInt(hex.replace('#', ''), 16)
   return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255]
 }

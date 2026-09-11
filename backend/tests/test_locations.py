@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from api.models.domain import Campaign, Company
-from api.models.query import HomeWorkplaceFlow, WorkplaceLocation
+from api.models.query import HomeWorkplaceFlow, LocationStats, WorkplaceLocation
 from api.services.stats.locations import LocationsService
 from api.services.stats.stats import StatsService
 
@@ -38,6 +38,19 @@ def test_compute_workplaces_groups_by_coordinates_and_campaign():
         WorkplaceLocation(id=2, lat=UNIL[0], lon=UNIL[1], name="UNIL",
                           address="Unicentre", count=1, campaign_id=3),
     ]
+
+
+def test_compute_location_stats_bundles_heatmap_workplaces_and_flows():
+    service = LocationsService(workplace_df())
+
+    stats = service.compute_location_stats()
+
+    assert stats.home_location_heatmap == service.compute_home_location_heatmap()
+    workplaces, flows = service.compute_workplaces()
+    assert stats.workplace_locations == workplaces
+    assert stats.home_workplace_flows == flows
+    assert LocationsService(pd.DataFrame()).compute_location_stats() == LocationStats(
+        home_location_heatmap={}, workplace_locations=[], home_workplace_flows=[])
 
 
 def test_compute_workplaces_without_campaign_id_raises():

@@ -28,6 +28,7 @@ import {
   LngLatBounds,
   Map as MaplibreMap,
   NavigationControl,
+  type ExpressionSpecification,
   type GeoJSONSource,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -36,17 +37,20 @@ import { cellToBoundary } from 'h3-js'
 import type { GradientScale } from '@/utils/colors'
 import type { H3Heatmap, HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
 import { useMapSelection } from '@/composables/useMapSelection'
-import { placeWorkplaces } from '@/utils/flows'
+import { iconOffsetExpression, placeWorkplaces } from '@/utils/flows'
 
-/** `offset` is the dot's pixel shift, so campaigns at the same address sit side by side */
+/** `dx` is the dot's pixel shift (campaigns at one address sit side by side), `color` its hex */
 interface WorkplaceProps {
   id: number
-  offset: [number, number]
+  dx: number
+  color: string
 }
 
 interface HeatmapGeoJSON {
   shape: GeoJSON.FeatureCollection<GeoJSON.Polygon, { value: number; hexId: string }>
   workplaces: GeoJSON.FeatureCollection<GeoJSON.Point, WorkplaceProps>
+  iconOffset: ExpressionSpecification
+  dotColors: string[]
   boundingBox: LngLatBounds
 }
 
@@ -54,6 +58,8 @@ interface Props {
   h3Heatmap: H3Heatmap
   workplaces: WorkplaceLocation[]
   flows: HomeWorkplaceFlow[]
+  /** Dot colour per campaign id; campaigns left out get the default red. */
+  campaignColors: Record<number, string>
   heatmapGradient: GradientScale
   center: [number, number]
   height?: string
@@ -85,6 +91,7 @@ const map = ref<MaplibreMap>()
 const { selected, addInteractions, onKeydown, reset, getArcsCanvas, closePopup } = useMapSelection({
   map,
   workplaces: () => props.workplaces,
+  dotColor,
   flows: () => props.flows,
   heatmap: () => props.h3Heatmap,
   gradient: () => props.heatmapGradient,
@@ -113,6 +120,8 @@ watch([() => props.h3Heatmap, () => props.workplaces, () => props.flows], () => 
       source.setData(geoJson.shape)
       if (workplaceSource) {
         workplaceSource.setData(geoJson.workplaces)
+        ensureDotImages(map.value, geoJson.dotColors)
+        map.value.setLayoutProperty('workplace-dots', 'icon-offset', geoJson.iconOffset)
       }
       map.value.fitBounds(geoJson.boundingBox, {
         padding: props.fitBoundsMargins,
@@ -145,9 +154,8 @@ function makeGeoJSON(): HeatmapGeoJSON {
     }),
   }
 
-  const workplaceFeatures: GeoJSON.Feature<GeoJSON.Point, WorkplaceProps>[] = placeWorkplaces(
-    props.workplaces,
-  ).map((wp) => {
+  const placed = placeWorkplaces(props.workplaces, dotColor)
+  const workplaceFeatures: GeoJSON.Feature<GeoJSON.Point, WorkplaceProps>[] = placed.map((wp) => {
     boundingBox.extend([wp.lon, wp.lat])
     return {
       type: 'Feature',
@@ -155,7 +163,7 @@ function makeGeoJSON(): HeatmapGeoJSON {
         type: 'Point',
         coordinates: [wp.lon, wp.lat],
       },
-      properties: { id: wp.id, offset: [wp.dx, 0] },
+      properties: { id: wp.id, dx: wp.dx, color: wp.color },
     }
   })
 
@@ -165,8 +173,14 @@ function makeGeoJSON(): HeatmapGeoJSON {
       type: 'FeatureCollection',
       features: workplaceFeatures,
     },
+    iconOffset: iconOffsetExpression(placed),
+    dotColors: [...new Set(placed.map((wp) => wp.color))],
     boundingBox,
   }
+}
+
+function dotColor(workplace: WorkplaceLocation): string {
+  return props.campaignColors[workplace.campaign_id] ?? DOT_COLOR
 }
 
 function onInit() {
@@ -232,24 +246,33 @@ function addLayers(m: MaplibreMap) {
     type: 'geojson',
     data: geoJson.workplaces,
   })
-  m.addImage('workplace-dot', dotImage(5), { pixelRatio: DOT_PIXEL_RATIO })
-  m.addImage('workplace-dot-selected', dotImage(8), { pixelRatio: DOT_PIXEL_RATIO })
+  ensureDotImages(m, geoJson.dotColors)
   // Symbols rather than circles: only symbols take a per-feature pixel offset
   m.addLayer({
     id: 'workplace-dots',
     type: 'symbol',
     source: 'workplace-data',
     layout: {
-      'icon-image': 'workplace-dot',
-      'icon-offset': ['get', 'offset'],
+      'icon-image': ['concat', 'workplace-dot-', ['get', 'color']],
+      'icon-offset': geoJson.iconOffset,
       'icon-allow-overlap': true,
       'icon-ignore-placement': true,
     },
   })
 }
 
-/** Red dot with a white stroke, drawn at DOT_PIXEL_RATIO so it stays crisp on dense screens. */
-function dotImage(radius: number): ImageData {
+/** One image pair (normal, selected) per dot colour; pairs already registered are kept. */
+function ensureDotImages(m: MaplibreMap, colors: string[]) {
+  colors.forEach((color) => {
+    const name = `workplace-dot-${color}`
+    if (m.hasImage(name)) return
+    m.addImage(name, dotImage(5, color), { pixelRatio: DOT_PIXEL_RATIO })
+    m.addImage(`${name}-selected`, dotImage(8, color), { pixelRatio: DOT_PIXEL_RATIO })
+  })
+}
+
+/** Coloured dot with a white stroke, drawn at DOT_PIXEL_RATIO so it stays crisp on dense screens. */
+function dotImage(radius: number, color: string): ImageData {
   const size = (radius + DOT_STROKE) * 2 * DOT_PIXEL_RATIO
   const canvas = document.createElement('canvas')
   canvas.width = size
@@ -260,7 +283,7 @@ function dotImage(radius: number): ImageData {
   const center = radius + DOT_STROKE
   ctx.beginPath()
   ctx.arc(center, center, radius + DOT_STROKE / 2, 0, Math.PI * 2)
-  ctx.fillStyle = DOT_COLOR
+  ctx.fillStyle = color
   ctx.fill()
   ctx.lineWidth = DOT_STROKE
   ctx.strokeStyle = '#FFFFFF'

@@ -515,6 +515,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       households: 'Lieux de domicile',
       households_number: 'Nombre de domiciles',
       workplaces: 'Lieux de travail enregistrés',
+      group_workplaces: 'Lieux de travail — {group}',
       flows: 'Flux domicile → travail (cliquer sur un lieu pour les afficher)',
       participants: '{n} participant·e | {n} participant·e·s',
       unnamed_workplace: 'Lieu de travail sans nom',

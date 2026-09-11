@@ -369,6 +369,13 @@ class HomeWorkplaceFlow(BaseModel):
     count: int
 
 
+class LocationStats(BaseModel):
+    """Map data: home hexagons, workplaces (one per place and campaign) and their flows."""
+    home_location_heatmap: dict[str, int]
+    workplace_locations: List[WorkplaceLocation]
+    home_workplace_flows: List[HomeWorkplaceFlow]
+
+
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
@@ -426,6 +433,7 @@ class ComparisonResult(BaseModel):
     groups: List[ComparisonStats] = []
     mode_transitions: Optional[List[ModeTransition]] = None
     warnings: Optional[List[str]] = None
+    locations: Optional[LocationStats] = None  # map data over every surviving group
 
 
 class GeoWithin(BaseModel):
