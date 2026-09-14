@@ -41,6 +41,9 @@ export interface Campaign extends Entity {
   contact_name?: string
   info_url?: string
   nb_employees?: number
+  parking_provided?: boolean
+  parking_paid?: boolean
+  parking_details?: string
   company_id?: number
   actions?: EmployerActions
   rewards_message?: { [locale: string]: string } | undefined

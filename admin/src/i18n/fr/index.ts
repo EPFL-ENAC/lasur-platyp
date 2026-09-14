@@ -158,6 +158,11 @@ export default {
     nb_employees: 'Nombre de collaborateur·trice·s',
     nb_employees_hint:
       'Fournissez le nombre de collaborateur·trice·s travaillant dans cette organisation ou sur le(s) lieu(x) de travail associé(s) à cette campagne. Cette information est utilisée pour contextualiser les statistiques de mobilité.',
+    parking_provided:
+      "Il y a du stationnement mis à disposition par l'employeur pour les collaborateur·trice·s",
+    parking_paid: 'Ce stationnement est payant pour les collaborateur·trice·s concerné·e·s',
+    parking_details:
+      'Souhaitez-vous ajouter des précisions sur les modalités de gestion de ce stationnement ?',
     csv_missing_columns:
       'Le fichier CSV téléversé est manquant les colonnes requises suivantes : {columns}.',
     import_workplaces_hint:

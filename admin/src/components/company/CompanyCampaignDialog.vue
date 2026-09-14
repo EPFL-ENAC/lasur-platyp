@@ -64,17 +64,6 @@
                 class="q-mb-md"
               />
               <q-input
-                outlined
-                rounded
-                color="field"
-                v-model.number="selected.nb_employees"
-                type="number"
-                :min="0"
-                :label="t('campaign.nb_employees')"
-                :hint="t('campaign.nb_employees_hint')"
-                class="q-mb-md"
-              />
-              <q-input
                 v-if="editMode"
                 outlined
                 rounded
@@ -134,6 +123,40 @@
                   </q-icon>
                 </template>
               </q-input>
+              <q-input
+                outlined
+                rounded
+                color="field"
+                v-model.number="selected.nb_employees"
+                type="number"
+                :min="0"
+                :label="t('campaign.nb_employees')"
+                :hint="t('campaign.nb_employees_hint')"
+                class="q-mb-md"
+              />
+              <div>
+                <q-toggle
+                  v-model="selected.parking_provided"
+                  :label="t('campaign.parking_provided')"
+                  @update:model-value="onParkingProvidedChanged"
+                />
+                <div v-if="selected.parking_provided" class="q-ml-md q-mt-sm">
+                  <q-checkbox
+                    v-model="selected.parking_paid"
+                    :label="t('campaign.parking_paid')"
+                    class="q-mb-md"
+                  />
+                  <q-input
+                    outlined
+                    rounded
+                    color="field"
+                    type="textarea"
+                    v-model="selected.parking_details"
+                    :label="t('campaign.parking_details')"
+                    class="q-mb-md"
+                  />
+                </div>
+              </div>
               <div>
                 <q-toggle
                   v-model="selected.with_professional_questions"
@@ -339,6 +362,8 @@ function onInit() {
   if (!selected.value.workplaces) {
     selected.value.workplaces = []
   }
+  selected.value.parking_provided = !!selected.value.parking_provided
+  selected.value.parking_paid = !!selected.value.parking_paid
   // check if there are some actions selected
   withActions.value =
     Object.keys(selected.value.actions || {}).filter((key) =>
@@ -400,6 +425,13 @@ async function onSave() {
         onHide()
       })
       .catch(notifyError)
+  }
+}
+
+function onParkingProvidedChanged(value: boolean) {
+  if (!value) {
+    selected.value.parking_paid = false
+    delete selected.value.parking_details
   }
 }
 
