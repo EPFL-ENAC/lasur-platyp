@@ -295,6 +295,20 @@ const items1: FieldItem[] = [
     field: 'nb_employees',
     label: 'campaign.nb_employees',
   },
+  {
+    field: 'parking_provided',
+    label: 'campaign.parking_provided',
+  },
+  {
+    field: 'parking_paid',
+    label: 'campaign.parking_paid',
+    visible: (val: Campaign) => !!val.parking_provided,
+  },
+  {
+    field: 'parking_details',
+    label: 'campaign.parking_details',
+    visible: (val: Campaign) => !!val.parking_provided && !!val.parking_details,
+  },
 ]
 
 const items2: FieldItem[] = [

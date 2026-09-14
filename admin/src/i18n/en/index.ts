@@ -157,6 +157,10 @@ export default {
     nb_employees: 'Number of employees',
     nb_employees_hint:
       'Provide the number of employees working in this organisation or at the workplace(s) associated with this campaign. This information is used to contextualize the mobility statistics.',
+    parking_provided: 'Car parking for employees is provided by the employer',
+    parking_paid: 'The employees in question pay for the parking lots',
+    parking_details:
+      'Would you like to provide more details about how this parking lot is managed?',
     csv_missing_columns:
       'The uploaded CSV file is missing the following required columns: {columns}.',
     import_workplaces_hint:
