@@ -63,7 +63,7 @@ const complexLabels = {
   walking: 'Walking',
   bike: 'Bicycle',
   ebike: 'Electric bike',
-  pub: 'Urban public transport',
+  pub: 'Urban PT',
   train: 'Train',
   tp: 'PT',
   moto: 'Motorcycle / scooter',
