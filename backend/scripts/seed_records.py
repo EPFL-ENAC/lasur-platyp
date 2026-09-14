@@ -27,6 +27,8 @@ import random
 import secrets
 import sys
 
+import h3
+
 from sqlmodel import select
 
 from api.db import get_session
@@ -73,10 +75,33 @@ def fake_location(center_lat: float = 46.2, center_lon: float = 6.14, spread: fl
     }
 
 
+# Destinations for professional journeys, spread over the distance types
+# used by the stats (local < 20 km, national < 500 km, europe < 1500 km, inter).
+PRO_DESTINATIONS = [
+    (46.20, 6.15),    # Geneva
+    (46.52, 6.63),    # Lausanne
+    (46.95, 7.45),    # Bern
+    (47.38, 8.54),    # Zurich
+    (45.76, 4.84),    # Lyon
+    (48.86, 2.35),    # Paris
+    (52.52, 13.41),   # Berlin
+    (41.39, 2.17),    # Barcelona
+    (51.51, -0.13),   # London
+    (40.71, -74.01),  # New York
+    (35.68, 139.69),  # Tokyo
+]
+
+
 def fake_hex_id() -> str:
-    """A plausible-looking H3-style hex index, e.g. '821f97fffffffff'."""
-    resolution = random.choice(["82", "85"])
-    return resolution + "".join(random.choices("0123456789abcdef", k=6)) + "fffffff"
+    """A valid H3 cell (resolution 2 or 5) around one of PRO_DESTINATIONS.
+
+    The cell must be a real H3 index: the stats compute the journey distance
+    from it, and an invalid one silently yields a 0 km / 0 emissions journey.
+    """
+    lat, lon = random.choice(PRO_DESTINATIONS)
+    lat += random.uniform(-0.3, 0.3)
+    lon += random.uniform(-0.3, 0.3)
+    return h3.latlng_to_cell(lat, lon, random.choice([2, 5]))
 
 
 def fake_journey() -> dict:

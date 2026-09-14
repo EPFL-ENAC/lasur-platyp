@@ -226,6 +226,50 @@ def test_compute_modes_pro_emissions():
         assert_emissions_equal(res_emission, exp_emission)
 
 
+def test_compute_modes_pro_emissions_modes_match_pro_frequencies():
+    # Every mode reported by compute_modes_pro_frequencies must also be
+    # reported by compute_modes_pro_emissions, including zero-emission modes
+    # (walking) and journeys with no hex_id / workplace (distance 0).
+    hex_paris = h3.latlng_to_cell(48.85, 2.35, 5)
+    base = {'data.version': '3.0', 'data.workplace.lat': 46.2,
+            'data.workplace.lon': 6.15}
+    df = pd.DataFrame([
+        {**base, 'token': 'a',
+         'data.freq_mod_pro_journeys.0.mode': 'walking',
+         'data.freq_mod_pro_journeys.0.days': 2,
+         'data.freq_mod_pro_journeys.0.hex_id': hex_paris},
+        {**base, 'token': 'b',
+         'data.freq_mod_pro_journeys.0.mode': 'car',
+         'data.freq_mod_pro_journeys.0.days': 3,
+         'data.freq_mod_pro_journeys.0.hex_id': None},
+        {**base, 'token': 'c', 'data.workplace.lat': None,
+         'data.freq_mod_pro_journeys.0.mode': 'moto',
+         'data.freq_mod_pro_journeys.0.days': 1,
+         'data.freq_mod_pro_journeys.0.hex_id': hex_paris},
+        {**base, 'token': 'd',
+         'data.freq_mod_pro_journeys.0.mode': 'train',
+         'data.freq_mod_pro_journeys.0.days': 1,
+         'data.freq_mod_pro_journeys.0.hex_id': hex_paris},
+    ])
+
+    freq_modes = {f.field.split('_', 1)[1]
+                  for f in FrequenciesService(df).compute_modes_pro_frequencies()}
+    emissions = EmissionsService(df).compute_modes_pro_emissions()
+    by_mode = {e.mode: e for e in emissions}
+
+    assert freq_modes == {'walking', 'car', 'moto', 'train'}
+    assert set(by_mode) == freq_modes
+    # journeys = days * 2 (round trips), regardless of computable distance
+    assert by_mode['walking'].journeys == 4
+    assert by_mode['walking'].emissions == 0
+    assert by_mode['walking'].distances > 0
+    assert by_mode['car'].journeys == 6
+    assert by_mode['car'].distances == 0
+    assert by_mode['moto'].journeys == 2
+    assert by_mode['moto'].distances == 0
+    assert by_mode['train'].emissions > 0
+
+
 def test_compute_mode_reco_pro_links():
     # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
     # completed records) contribute.
