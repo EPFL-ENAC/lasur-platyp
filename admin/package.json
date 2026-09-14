@@ -1,8 +1,8 @@
 {
   "name": "admin",
   "version": "1.0.1",
-  "description": "Modus Mobility Toolkit administration",
-  "productName": "Modus MT Admin",
+  "description": "Mobilyse administration",
+  "productName": "Mobilyse Admin",
   "author": "ymarcon <yannick.marcon@epfl.ch>",
   "type": "module",
   "private": true,
