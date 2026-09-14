@@ -36,7 +36,7 @@ const emit = defineEmits(['update:modelValue'])
 const { t } = useI18n()
 
 const mapContainer = ref<HTMLDivElement>()
-const map = ref<maplibregl.Map>()
+const map = ref<Map>()
 
 /**
  * The selected boundary's level/feature_id/lat/lon are carried in the emitted
@@ -100,7 +100,7 @@ onMounted(() => {
     props.points.forEach((point) => {
       new Marker()
         .setLngLat([point[0] as number, point[1] as number])
-        .addTo(map.value as maplibregl.Map)
+        .addTo(map.value as Map)
     })
   }
 })

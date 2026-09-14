@@ -276,7 +276,7 @@ async function loadPois(categories: string[]) {
 function showIsochrones(geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
   if (map.value.getSource('isochrones')) {
-    ;(map.value.getSource('isochrones') as GeoJSONSource).setData(geojson)
+    void (map.value.getSource('isochrones') as GeoJSONSource).setData(geojson)
   } else {
     map.value.addSource('isochrones', {
       type: 'geojson',
@@ -325,7 +325,7 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
 function addTransitLinesToMap(geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
   if (map.value.getSource('transit-lines')) {
-    ;(map.value.getSource('transit-lines') as GeoJSONSource).setData(geojson)
+    void (map.value.getSource('transit-lines') as GeoJSONSource).setData(geojson)
     return
   }
 
@@ -377,7 +377,7 @@ function showPois(categories: string[], geojson: GeoJSON.FeatureCollection) {
     if (!categories.includes(cat)) return
     const layerId = `pois-layer-${cat}`
     if (map.value?.getSource(layerId)) {
-      ;(map.value?.getSource(layerId) as GeoJSONSource).setData(data)
+      void (map.value?.getSource(layerId) as GeoJSONSource).setData(data)
     } else {
       map.value?.addSource(layerId, {
         type: 'geojson',
