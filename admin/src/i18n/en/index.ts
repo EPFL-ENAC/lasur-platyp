@@ -75,7 +75,7 @@ const complexLabels = {
   'tp+car': 'PT + IMT',
   'car+tp': 'IMT + PT',
   'car+bike': 'IMT + Bicycle',
-  'bike+car': 'Bicycle + Car',
+  'bike+car': 'Bicycle + IMT',
   'tp+walk': 'PT + Walking',
   'walk+tp': 'Walking + PT',
   other_inter: 'Other (Intermodal)',
