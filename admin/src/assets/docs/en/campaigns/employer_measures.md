@@ -79,8 +79,9 @@ These measures support sustainable mobility for business trips and professional 
 
 ### How to Configure Measures
 
-1. When creating or editing an organisation, scroll to the "Employer measures" section
+1. When creating or editing a campaign, open the "Employer measures" tab
 2. Use the tabs to switch between "Personal" and "Professional" measures
 3. For each transport mode category, select the applicable measures from the dropdown
 4. Multiple measures can be selected within each category
-5. Clear selections using the X button if measures are no longer applicable
+5. If a measure in place in your organisation is missing from the list, pick "Add a new measure…" at the end of the list (see "Custom measures" in the Organisations section)
+6. Clear selections using the X button if measures are no longer applicable

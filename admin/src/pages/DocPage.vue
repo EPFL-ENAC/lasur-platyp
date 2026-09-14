@@ -50,18 +50,18 @@ import CreateEn from '@/assets/docs/en/organisations/create.md'
 import CreateFr from '@/assets/docs/fr/organisations/create.md'
 import OrgSettingsEn from '@/assets/docs/en/organisations/settings.md'
 import OrgSettingsFr from '@/assets/docs/fr/organisations/settings.md'
-import EmployerMeasuresEn from '@/assets/docs/en/organisations/employer_measures.md'
-import EmployerMeasuresFr from '@/assets/docs/fr/organisations/employer_measures.md'
 import CustomMeasuresEn from '@/assets/docs/en/organisations/custom_measures.md'
 import CustomMeasuresFr from '@/assets/docs/fr/organisations/custom_measures.md'
 import BestPracticesEn from '@/assets/docs/en/organisations/best_practices.md'
 import BestPracticesFr from '@/assets/docs/fr/organisations/best_practices.md'
-import CommonIssuesEn from '@/assets/docs/en/organisations/common_issues.md'
-import CommonIssuesFr from '@/assets/docs/fr/organisations/common_issues.md'
 import MobilityAdvisorEn from '@/assets/docs/en/organisations/mobility_advisor.md'
 import MobilityAdvisorFr from '@/assets/docs/fr/organisations/mobility_advisor.md'
+import CommonIssuesEn from '@/assets/docs/en/organisations/common_issues.md'
+import CommonIssuesFr from '@/assets/docs/fr/organisations/common_issues.md'
 import CampaignSettingsEn from '@/assets/docs/en/campaigns/settings.md'
 import CampaignSettingsFr from '@/assets/docs/fr/campaigns/settings.md'
+import CampaignEmployerMeasuresEn from '@/assets/docs/en/campaigns/employer_measures.md'
+import CampaignEmployerMeasuresFr from '@/assets/docs/fr/campaigns/employer_measures.md'
 import CampaignCommonIssuesEn from '@/assets/docs/en/campaigns/common_issues.md'
 import CampaignCommonIssuesFr from '@/assets/docs/fr/campaigns/common_issues.md'
 import CampaignBestPracticesEn from '@/assets/docs/en/campaigns/best_practices.md'
@@ -108,11 +108,6 @@ const sections = computed<DocSection[]>(() => [
         markdown: locale.value === 'fr' ? OrgSettingsFr : OrgSettingsEn,
       },
       {
-        title: t('docs.organisations.employer_measures.title'),
-        caption: t('docs.organisations.employer_measures.caption'),
-        markdown: locale.value === 'fr' ? EmployerMeasuresFr : EmployerMeasuresEn,
-      },
-      {
         title: t('docs.organisations.custom_measures.title'),
         caption: t('docs.organisations.custom_measures.caption'),
         markdown: locale.value === 'fr' ? CustomMeasuresFr : CustomMeasuresEn,
@@ -142,6 +137,11 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.campaigns.settings.title'),
         caption: t('docs.campaigns.settings.caption'),
         markdown: locale.value === 'fr' ? CampaignSettingsFr : CampaignSettingsEn,
+      },
+      {
+        title: t('docs.campaigns.employer_measures.title'),
+        caption: t('docs.campaigns.employer_measures.caption'),
+        markdown: locale.value === 'fr' ? CampaignEmployerMeasuresFr : CampaignEmployerMeasuresEn,
       },
       {
         title: t('docs.campaigns.share_link.title'),
