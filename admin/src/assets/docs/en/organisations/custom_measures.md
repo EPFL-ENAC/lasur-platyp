@@ -19,9 +19,13 @@ Companies may have unique mobility initiatives that aren't covered by the standa
 3. Provide labels in both English and French
 4. Click "Add" to create the custom measure
 
+### Adding from a Campaign
+
+A custom measure can also be created directly when creating or editing a campaign, in the "Employer measures" tab: in the dropdown of the relevant category (e.g. "Public transports"), the last option in italics "Add a new measure…" opens a form to enter the labels. The measure is then added to the organisation's custom measures (even if the campaign is eventually not saved) and selected for the campaign. It can still be managed from the "Employer measures" section of the organisation.
+
 ### Using Custom Measures
 
-Once created, custom measures appear alongside standard measures in the employer measures selection dropdowns. They can be selected for the organisation or for specific campaigns.
+Once created, custom measures appear alongside standard measures in the employer measures selection dropdowns of all campaigns of the organisation.
 
 **Use cases for custom measures:**
 

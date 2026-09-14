@@ -12,6 +12,7 @@
         <q-form ref="form">
           <q-tabs v-model="tab" no-caps align="left">
             <q-tab name="general" :label="t('general')" />
+            <q-tab name="measures" :label="t('company.actions')" />
             <q-tab
               name="workplaces"
               :label="t('campaign.workplaces.title')"
@@ -168,21 +169,6 @@
               </div>
               <div>
                 <q-toggle
-                  v-model="withActions"
-                  :label="t('campaign.with_actions')"
-                  @update:model-value="onWithActionsChanged"
-                />
-                <p class="text-hint q-mb-md">{{ t('campaign.employer_measures_hint') }}</p>
-                <employer-actions-input
-                  v-if="withActions"
-                  v-model="selected.actions"
-                  :company="props.company"
-                  :label="t('company.actions')"
-                  class="q-mt-lg"
-                />
-              </div>
-              <div>
-                <q-toggle
                   v-model="withRewards"
                   :label="t('campaign.rewards.toggle')"
                   @update:model-value="onWithRewardsChanged"
@@ -207,6 +193,12 @@
                   </template>
                 </div>
               </div>
+            </q-tab-panel>
+            <q-tab-panel name="measures">
+              <div class="text-hint q-mb-md">
+                {{ t('campaign.employer_measures_hint') }}
+              </div>
+              <employer-actions-input v-model="selected.actions" :company="props.company" />
             </q-tab-panel>
             <q-tab-panel name="workplaces">
               <div class="text-hint q-mb-md">
@@ -326,7 +318,6 @@ const selected = ref<Campaign>({
   name: '',
   with_professional_questions: true,
 } as Campaign)
-const withActions = ref(false)
 const withRewards = ref(false)
 const editMode = ref(false)
 const tab = ref('general')
@@ -364,14 +355,6 @@ function onInit() {
   }
   selected.value.parking_provided = !!selected.value.parking_provided
   selected.value.parking_paid = !!selected.value.parking_paid
-  // check if there are some actions selected
-  withActions.value =
-    Object.keys(selected.value.actions || {}).filter((key) =>
-      selected.value.actions && selected.value.actions[key]
-        ? selected.value.actions[key].length > 0
-        : false,
-    ).length > 0
-
   withRewards.value = !!selected.value.rewards_message
 
   editMode.value = selected.value.id !== undefined
@@ -432,12 +415,6 @@ function onParkingProvidedChanged(value: boolean) {
   if (!value) {
     selected.value.parking_paid = false
     delete selected.value.parking_details
-  }
-}
-
-function onWithActionsChanged(value: boolean) {
-  if (!value) {
-    selected.value.actions = {}
   }
 }
 

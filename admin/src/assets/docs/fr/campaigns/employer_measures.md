@@ -79,8 +79,9 @@ Ces mesures soutiennent la mobilité durable lors des déplacements professionne
 
 ### Comment configurer les mesures
 
-1. Lors de la création ou de la modification d'une organisation, faites défiler jusqu'à la section "Mesures employeur"
+1. Lors de la création ou de la modification d'une campagne, ouvrez l'onglet "Mesures employeur"
 2. Utilisez les onglets pour basculer entre les mesures "Personnelles" et "Professionnelles"
 3. Pour chaque catégorie de mode de transport, sélectionnez les mesures applicables dans la liste déroulante
 4. Plusieurs mesures peuvent être sélectionnées dans chaque catégorie
-5. Effacez les sélections à l'aide du bouton X si les mesures ne sont plus applicables
+5. Si une mesure en place dans votre organisation ne figure pas dans la liste, choisissez "Ajouter une nouvelle mesure…" en fin de liste (voir "Mesures personnalisées" dans la section Organisations)
+6. Effacez les sélections à l'aide du bouton X si les mesures ne sont plus applicables

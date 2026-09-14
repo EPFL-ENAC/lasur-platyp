@@ -22,6 +22,6 @@
 **Problème :** Une mesure personnalisée a été créée mais n'apparaît pas dans les listes déroulantes
 **Solution :**
 
-- Rafraîchissez l'éditeur d'organisation
+- Fermez et rouvrez l'éditeur de campagne
 - Vérifiez que la mesure possède des libellés dans les deux langues
 - Vérifiez que le bon groupe a été sélectionné

@@ -97,7 +97,7 @@ export default {
     label: 'Organisation',
     actions: 'Employer measures',
     employer_measures_description:
-      'This section allows you to add, if necessary, any custom metrics set up by your organisation. When creating or editing a campaign, these will be added to the default metrics that are suggested to you.',
+      'This section allows you to manage the custom measures set up by your organisation. When creating or editing a campaign, these will be added to the default measures that are suggested to you, and new custom measures can be added from there.',
     custom_actions: 'Custom measures',
     custom_actions_hint:
       'Add or remove custom employer measures that will facilitate employees mobility. These measures are grouped per transport mode or are global.',
@@ -134,9 +134,8 @@ export default {
     with_professional_questions: 'Include questions about professional travel',
     with_professional_questions_hint:
       'By default, we give you the option to analyse employees’ commutes and business travel. If you are not interested in the latter option (business travel), you can remove this section from the questionnaire with this button.',
-    with_actions: 'With employer measures specific to this campaign',
     employer_measures_hint:
-      'Here you can specify the measures already in place to support your employees’ mobility. The measures listed here are a selection of "default" measures, as well as the "specific measures" entered in the previous section, "Employer Measures".',
+      'Here you can specify the measures already in place to support your employees’ mobility. The measures listed are a selection of "default" measures, as well as the "custom measures" of your organisation. If a measure is missing, pick "Add a new measure…" at the end of the list to create it: it will be added to the custom measures of the organisation.',
     rewards: {
       toggle: 'I want to reward participants.',
       hint: 'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
@@ -245,21 +244,17 @@ Thank you for your valuable contribution! If you have any questions, please cont
         title: 'How to manage organisation settings?',
         caption: 'Learn how to update your organisation settings and preferences',
       },
-      employer_measures: {
-        title: 'How to manage employer measures?',
-        caption: 'Learn how to manage employer measures for your organisation',
-      },
       custom_measures: {
         title: 'How to manage custom measures?',
         caption: 'Learn how to manage custom measures for your organisation',
       },
-      best_practices: {
-        title: 'Best practices for using Mobilyse',
-        caption: 'Tips and recommendations to make the most of Mobilyse for your organisation',
-      },
       common_issues: {
         title: 'Common issues and troubleshooting',
         caption: 'Solutions to frequently encountered problems',
+      },
+      best_practices: {
+        title: 'Best practices for using Mobilyse',
+        caption: 'Tips and recommendations to make the most of Mobilyse for your organisation',
       },
       mobility_advisor: {
         title: 'How to use the mobility advisor?',
@@ -273,6 +268,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       settings: {
         title: 'How to manage campaign settings?',
         caption: 'Learn how to create and update your campaign settings and preferences',
+      },
+      employer_measures: {
+        title: 'How to manage employer measures?',
+        caption: 'Learn how to specify the employer measures in place for your campaign',
       },
       share_link: {
         title: 'How to share the link to the survey?',
@@ -319,6 +318,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
   actions: {
     personnal: 'Personal',
     professional: 'Professional',
+    add_custom: 'Add a new measure…',
+    add_custom_title: 'New custom measure',
     mesures_globa_label: 'Global',
     mesures_globa_hint: '',
     mesures_tpu_label: 'Public transports',

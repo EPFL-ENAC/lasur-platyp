@@ -97,7 +97,7 @@ export default {
     label: 'Organisation',
     actions: 'Mesures employeur',
     employer_measures_description:
-      'Cette section permet d’ajouter, si besoin, des mesures personnalisées mises en place par l’organisation. Lors de la création ou l’édition d’une campagne, celles-ci s’ajouteront aux mesures par défaut qui vous seront proposées.',
+      'Cette section permet de gérer les mesures personnalisées mises en place par l’organisation. Lors de la création ou l’édition d’une campagne, celles-ci s’ajouteront aux mesures par défaut qui vous seront proposées, et de nouvelles mesures personnalisées pourront y être ajoutées.',
     custom_actions: 'Mesures spécifiques',
     custom_actions_hint:
       'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des collaborateur·trice·s. Ces mesures sont regroupées par mode de transport ou sont globales.',
@@ -135,9 +135,8 @@ export default {
     with_professional_questions: 'Inclure des questions sur les déplacements professionnels',
     with_professional_questions_hint:
       "Par défaut, nous vous donnons la possibilité d'étudier les déplacements domicile-travail et les déplacements professionnels des collaborateur·trice·s. Si cette dernière option (déplacements professionnels) ne vous intéresse pas, vous pouvez retirer cette partie du questionnaire avec ce bouton.",
-    with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
     employer_measures_hint:
-      'Vous pouvez préciser ici les mesures déjà en place en soutien à la mobilité de vos collaborateur·rice·s. Les mesures qui apparaissent ici sont une sélection de mesures "par défaut" ainsi que les "mesures spécifiques" entrées dans la section précédente "Mesures employeur".',
+      'Vous pouvez préciser ici les mesures déjà en place en soutien à la mobilité de vos collaborateur·rice·s. Les mesures proposées sont une sélection de mesures "par défaut" ainsi que les "mesures spécifiques" de votre organisation. Si une mesure manque, choisissez "Ajouter une nouvelle mesure…" en fin de liste pour la créer : elle sera ajoutée aux mesures spécifiques de l’organisation.',
     rewards: {
       toggle: 'Je souhaite récompenser les participant·e·s.',
       hint: 'Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d\'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une "attestation" (document PDF) à la fin du remplissage du questionnaire à chaque participant·e, qui prouvera sa participation. Le ou la participant·e pourra alors transférer cette attestation auprès de la personne en charge d\'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).',
@@ -250,10 +249,6 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         caption:
           "Un guide pour mettre à jour les informations et les paramètres d'une organisation",
       },
-      employer_measures: {
-        title: 'Comment gérer les aides à la mobilité par défaut ?',
-        caption: 'Un guide pour gérer les aides employeur pour votre organisation',
-      },
       custom_measures: {
         title: 'Comment ajouter des aides à la mobilité personnalisées ?',
         caption: 'Un guide pour gérer les aides personnalisées pour votre organisation',
@@ -280,6 +275,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       settings: {
         title: "Comment gérer les paramètres d'une campagne ?",
         caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
+      },
+      employer_measures: {
+        title: 'Comment gérer les aides à la mobilité par défaut ?',
+        caption: 'Un guide pour renseigner les aides employeur en place lors de votre campagne',
       },
       share_link: {
         title: 'Comment partager le lien vers le questionnaire ?',
@@ -328,6 +327,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
   actions: {
     personnal: 'Personnel',
     professional: 'Professionnel',
+    add_custom: 'Ajouter une nouvelle mesure…',
+    add_custom_title: 'Nouvelle mesure spécifique',
     mesures_globa_label: 'Global',
     mesures_globa_hint: '',
     mesures_tpu_label: 'Transports publics',
@@ -407,8 +408,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       M5: 'Comparer également avec 3',
     },
     add_more_comparisons: 'Ajouter des comparaisons',
-    companies_selected: 'Aucune entreprise sélectionnée | 1 entreprise sélectionnée | {n} entreprises sélectionnées',
-    campaigns_selected: 'Aucune campagne sélectionnée | 1 campagne sélectionnée | {n} campagnes sélectionnées',
+    companies_selected:
+      'Aucune entreprise sélectionnée | 1 entreprise sélectionnée | {n} entreprises sélectionnées',
+    campaigns_selected:
+      'Aucune campagne sélectionnée | 1 campagne sélectionnée | {n} campagnes sélectionnées',
     cross_sectional_longitudinal: 'Transversal ou Longitudinal',
     longitudinal:
       'Montrer uniquement les données des participant·e·s ayant participé à au moins deux groupes',

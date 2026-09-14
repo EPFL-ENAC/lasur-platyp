@@ -19,9 +19,13 @@ Certaines organisations peuvent avoir des initiatives de mobilité spécifiques 
 3. Fournissez des libellés en français et en anglais
 4. Cliquez sur "Ajouter" pour créer la mesure personnalisée
 
+### Ajout depuis une campagne
+
+Une mesure personnalisée peut aussi être créée directement lors de la création ou de la modification d'une campagne, dans l'onglet "Mesures employeur" : dans la liste déroulante de la catégorie concernée (ex. : "Transports publics"), la dernière option en italique "Ajouter une nouvelle mesure…" ouvre un formulaire de saisie des libellés. La mesure est alors ajoutée aux mesures spécifiques de l'organisation (même si la campagne n'est finalement pas enregistrée) et sélectionnée pour la campagne. Elle reste ensuite gérable depuis la section "Mesures employeur" de l'organisation.
+
 ### Utilisation des mesures personnalisées
 
-Une fois créées, les mesures personnalisées apparaissent avec les mesures standards dans les listes déroulantes de sélection des mesures employeur. Elles peuvent être sélectionnées pour l'organisation ou pour des campagnes spécifiques.
+Une fois créées, les mesures personnalisées apparaissent avec les mesures standards dans les listes déroulantes de sélection des mesures employeur de toutes les campagnes de l'organisation.
 
 **Cas d'usage des mesures personnalisées :**
 
