@@ -97,8 +97,10 @@ class EmissionsService(BaseStatsService):
             # round distances, emissions
             emission.distances = round(emission.distances, 3)
             emission.emissions = round(emission.emissions, 3)
-        # filter out emissions with zero emissions
-        results = [e for e in results if e.emissions > 0]
+        # filter out modes with no journeys (not zero emissions: walking has
+        # a 0 factor but must still be reported, consistently with
+        # compute_modes_pro_frequencies)
+        results = [e for e in results if e.journeys > 0]
 
         return results
 
@@ -442,14 +444,16 @@ class EmissionsService(BaseStatsService):
 
         if len(col_days) == 0:
             return None
-        if 'data.workplace.lat' not in df.columns or 'data.workplace.lon' not in df.columns:
-            return None
 
         token_series = df['token'] if 'token' in df.columns else pd.Series(
             df.index, index=df.index)
-        workplace_lat_series = df['data.workplace.lat']
-        workplace_lon_series = df['data.workplace.lon']
-        has_workplace = workplace_lat_series.notna() & workplace_lon_series.notna()
+        # Missing workplace / hex_id does not exclude a journey (same
+        # selection as FrequenciesService._compute_mode_pro_frequencies_v3):
+        # its distance is then 0, so it counts in journeys but not emissions.
+        workplace_lat_series = df['data.workplace.lat'] if 'data.workplace.lat' in df.columns else pd.Series(
+            None, index=df.index, dtype=float)
+        workplace_lon_series = df['data.workplace.lon'] if 'data.workplace.lon' in df.columns else pd.Series(
+            None, index=df.index, dtype=float)
 
         frames = []
         for i in range(len(col_days)):
@@ -471,8 +475,7 @@ class EmissionsService(BaseStatsService):
             days_per_s = df[col_days_per_i] if col_days_per_i in df.columns else pd.Series(
                 None, index=df.index)
 
-            mask = mode_s.notna() & days_s.notna() & (
-                days_s > 0) & hexid_s.notna() & has_workplace
+            mask = mode_s.notna() & (days_s > 0)
             if not mask.any():
                 continue
 

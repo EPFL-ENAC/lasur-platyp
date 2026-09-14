@@ -470,7 +470,7 @@ class BaseStatsService:
                 'train': 1.22,
                 'car': 1.22,
                 'bike': 1.22,
-                'walk': 1.22,
+                'walking': 1.22,
                 'moto': 1.22,
                 'pub': 1.22,
                 'boat': 1.22,
@@ -485,7 +485,7 @@ class BaseStatsService:
             else:
                 # Si pas meme hexagone, on convertit le centre du h3 sélectionné en h3 plus petit pour calculer des distances plus précises
                 return h3.great_circle_distance(h3.cell_to_latlng(h3.cell_to_center_child(h3_index, 9)),
-                                                (lat, lon)) * avg_dist_coeff[mode]
+                                                (lat, lon)) * avg_dist_coeff.get(mode, 1.22)
         except Exception:
             return 0
 
