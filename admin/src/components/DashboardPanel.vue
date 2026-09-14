@@ -628,11 +628,16 @@ async function openReport() {
 }
 
 .filters-grid {
-  display: grid;
-  // Three fixed-width selects, then the actions pushed to the far right
-  grid-template-columns: 280px 280px 280px 1fr;
-  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 32px;
+}
+
+.filters-grid > .filter-field,
+.filters-grid > .compare-group {
+  flex: 1 1 280px;
+  min-width: 280px;
 }
 
 .compare-group {
@@ -648,16 +653,18 @@ async function openReport() {
 }
 
 .actions-group {
-  display: grid;
-  grid-auto-flow: column;
-  align-items: start;
-  justify-self: end; // flush right
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  margin-left: auto; // flush right
   gap: 16px;
   margin-top: 24px; // level with the selects, below their labels
 }
 
 .actions-group :deep(.q-btn) {
   box-sizing: border-box;
+  flex-shrink: 0;
+  white-space: nowrap;
   height: 44px;
   min-height: 44px;
   padding-top: 0;
@@ -669,27 +676,21 @@ async function openReport() {
 }
 
 @media (min-width: 600px) and (max-width: 1023px) {
-  .filters-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .compare-group,
+  .filters-grid > .compare-group,
   .actions-group {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
   }
 
   .actions-group {
-    grid-auto-flow: column;
-    justify-content: start;
+    margin-left: 0;
+    margin-top: 0;
   }
 }
 
 @media (max-width: 599px) {
-  .filters-grid {
-    grid-template-columns: 1fr;
-  }
-
   .filters-grid > * {
+    flex-basis: 100%;
+    min-width: 0;
     width: 100%;
   }
 
@@ -698,8 +699,10 @@ async function openReport() {
   }
 
   .actions-group {
-    grid-auto-flow: row;
-    justify-items: stretch;
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 0;
+    margin-top: 0;
   }
 }
 </style>
