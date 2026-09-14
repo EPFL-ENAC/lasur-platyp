@@ -191,7 +191,11 @@ export const useSurvey = defineStore(
         step.value += 1
         return true
       }
-      if (recommendationLoaded.value && stepName.value === 'recommendations_pro' && !recommendation.value.reco_pro?.reco_pros?.length) {
+      if (
+        recommendationLoaded.value &&
+        stepName.value === 'recommendations_pro' &&
+        !recommendation.value.reco_pro?.reco_pros?.length
+      ) {
         step.value += 1
         return true
       }
@@ -208,12 +212,20 @@ export const useSurvey = defineStore(
         step.value -= 1
         return true
       }
-      if (recommendationLoaded.value && stepName.value === 'recommendations_pro' && !recommendation.value.reco_pro?.reco_pros?.length) {
+      if (
+        recommendationLoaded.value &&
+        stepName.value === 'recommendations_pro' &&
+        !recommendation.value.reco_pro?.reco_pros?.length
+      ) {
         step.value -= 1
         return true
       }
 
       return false
+    }
+
+    function hasEquipment(equipment: string) {
+      return record.value.data?.equipments?.includes(equipment)
     }
 
     function getFreqMod(mode: string) {
@@ -346,6 +358,7 @@ export const useSurvey = defineStore(
       getMainFreqMod,
       isModeSustainable,
       isModeInRecommendation,
+      hasEquipment,
       isRecommendationAtIndexInUse,
     }
   },

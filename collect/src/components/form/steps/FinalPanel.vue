@@ -46,12 +46,10 @@ const rewardUrl = computed(() => {
   return `/certificate/${collector.token}`
 })
 
-const hasCar = computed(() => {
-  const freqMod = survey.getFreqMod('car')
-  return !!freqMod && freqMod > 0
-})
+const hasCar = ref(false)
 
 onMounted(() => {
+  hasCar.value = survey.hasEquipment('car')
   survey.finish()
 })
 </script>
