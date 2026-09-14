@@ -51,6 +51,14 @@ const introductionText = computed(() => (locale.value === 'fr' ? IntroductionFr 
   min-width: 0;
 }
 
+@media (max-width: 767px) {
+  .page-title-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 // Same skin as the header controls
 .q-btn.doc-btn {
   flex: none;
