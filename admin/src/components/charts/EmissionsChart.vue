@@ -28,6 +28,7 @@ import {
   SIMPLE_LABELS_COLORS,
   COMPLEX_LABELS_COLORS,
   aggregateEmissionsBySimpleLabel,
+  complexLabelSortOrder,
   modeSortOrder,
   simpleLabelSortOrder,
 } from './commons'
@@ -335,7 +336,8 @@ defineExpose({
 })
 
 function labelSortOrder(key: string) {
-  return labelType.value === 'simple' ? simpleLabelSortOrder(key) : modeSortOrder(key)
+  if (labelType.value === 'simple') return simpleLabelSortOrder(key)
+  return labelType.value === 'complex' ? complexLabelSortOrder(key) : modeSortOrder(key)
 }
 
 function keyLabel(key: string) {
@@ -367,6 +369,12 @@ function initChartOptions() {
   }
 
   const colors = labelColors.value
+
+  // The legend lists the modes in reporting order (issue #472), while the
+  // bars stay sorted by emissions per journey.
+  const legendData = [...modeEmissions]
+    .sort((a, b) => labelSortOrder(shortKey(a.mode)) - labelSortOrder(shortKey(b.mode)))
+    .map((item) => keyLabel(item.mode))
 
   let ubound = 0
   const preparedData = [...modeEmissions]
@@ -450,6 +458,7 @@ function initChartOptions() {
       bottom: 0,
       left: 'center',
       itemGap: 10,
+      data: legendData,
     },
     xAxis: {
       name: props.xaxis || '',

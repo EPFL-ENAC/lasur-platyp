@@ -21,7 +21,9 @@ import {
   aggregateLeversBySimpleLabel,
   aggregateMotivationBySimpleLabel,
   CATEGORY_COLORS,
+  modeSortOrder,
   MOTIVATION_COLORS,
+  simpleLabelSortOrder,
 } from './commons'
 import { AXIS_LABEL_GAP, axisLabelsWidth, truncateAxisLabel } from './comparisonCharts'
 import {
@@ -287,7 +289,7 @@ function getSortedModes<
     | BehaviorChangeStats['levers']['by_mode_levers']
     | BehaviorChangeStats['motivation']['by_mode_motivation'],
 >(data: T): T {
-  const copy = [...data] as T
+  const copy = [...data].sort((a, b) => modeOrder(a.mode) - modeOrder(b.mode)) as T
 
   moveToStart(
     copy,
@@ -309,8 +311,14 @@ function getSortedModes<
   return copy
 }
 
+// Reporting order of a row: the simple typology when the modes are folded,
+// the transport mode order otherwise.
+function modeOrder(mode: string): number {
+  return isSimpleLabel(mode) ? simpleLabelSortOrder(mode) : modeSortOrder(mode)
+}
+
 function orderModes(modes: string[]): string[] {
-  const copy = [...modes]
+  const copy = [...modes].sort((a, b) => modeOrder(a) - modeOrder(b))
   moveToStart(
     copy,
     copy.find((mode) => mode === 'other'),

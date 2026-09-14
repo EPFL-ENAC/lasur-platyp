@@ -24,7 +24,12 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { Frequencies } from '@/models'
-import { MODE_COLORS, SIMPLE_LABELS_COLORS, simpleLabelSortOrder } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  modeSortOrder as sharedModeSortOrder,
+  simpleLabelSortOrder,
+} from './commons'
 import { AXIS_LABEL_GAP, axisLabelsWidth, truncateAxisLabel } from './comparisonCharts'
 import { getProModalityLabels } from '@/utils/modalities'
 
@@ -86,10 +91,8 @@ function foldDataset(dataset: { key: string; value: number }[]) {
   return Array.from(merged, ([key, value]) => ({ key, value }))
 }
 
-const MODES_ORDER = ['plane', 'car', 'moto', 'pub', 'train', 'bike', 'walking']
-
 function modeSortOrder(mode: string) {
-  return props.foldModeToSimple ? simpleLabelSortOrder(mode) : MODES_ORDER.indexOf(mode)
+  return props.foldModeToSimple ? simpleLabelSortOrder(mode) : sharedModeSortOrder(mode)
 }
 
 type EChartsShellExposed = {
