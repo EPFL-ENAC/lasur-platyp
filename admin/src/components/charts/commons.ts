@@ -14,11 +14,7 @@ import {
   type Frequencies,
   type Frequency,
 } from '@/models'
-import {
-  getProModalityLabels,
-  getRecoSimpleLabel,
-  MODE_TO_SIMPLE_LABEL,
-} from '@/utils/modalities'
+import { getProModalityLabels, getRecoSimpleLabel, MODE_TO_SIMPLE_LABEL } from '@/utils/modalities'
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
 
@@ -95,6 +91,15 @@ interface InitOptions {
   renderer: 'canvas' | 'svg'
 }
 
+/**
+ * Reporting order of the transport modes, from the most to the least virtuous
+ * (issue #472): walking, bike, e-bike, cargo bike, train, urban public
+ * transport, boat, the intermodal combinations (walking + PT, bike + PT,
+ * active + motorized, PT + motorized), carpooling, electric car, motorbike /
+ * car, electric truck, truck, plane. Every legend and category axis
+ * keyed by mode follows it; COMPLEX_LABELS_IDEAL_ORDER is its counterpart for
+ * the detailed typology labels.
+ */
 export const MODE_IDEAL_ORDER: Record<string, number> = {
   // Fallback order for unknown keys (keep them at the end)
   default: 999,
@@ -108,37 +113,40 @@ export const MODE_IDEAL_ORDER: Record<string, number> = {
   vae: 30,
   cargo: 40,
   // --- Public transport ---
-  pub: 50,
-  tpu: 50,
-  transit: 50,
-  tpu_unireso: 50,
-  tpu_leman_pass: 50,
-  bus: 55,
-  train: 60,
-  rail: 60,
-  train_demi_tarif: 60,
-  train_abo_gen: 60,
-  pub_train: 65,
+  train: 50,
+  rail: 50,
+  train_demi_tarif: 50,
+  train_abo_gen: 50,
+  pub: 60,
+  tpu: 60,
+  transit: 60,
+  tpu_unireso: 60,
+  tpu_leman_pass: 60,
+  bus: 61,
+  pub_train: 62,
+  boat: 70,
+  // --- Intermodal ---
+  inter_ma_tp: 72,
+  inter_tim_tp: 74,
+  inter: 76,
   // --- Private motorized ---
-  carpool: 70,
-  covoit: 70,
-  car: 80,
-  car_driver: 80,
-  car_passenger: 81,
-  car_moto: 85,
+  carpool: 80,
+  covoit: 80,
   elec: 90,
   ev: 90,
-  moto: 95,
-  elec_moto: 96,
-  // --- Long distance / other ---
-  truck: 110,
-  elec_truck: 111,
-  boat: 120,
+  elec_moto: 91,
+  moto: 100,
+  car_moto: 101,
+  car: 102,
+  car_driver: 102,
+  car_passenger: 103,
+  // --- Freight / long distance ---
+  elec_truck: 110,
+  truck: 120,
   plane: 130,
   // --- Alternative / abstract ---
   avoid: 200,
   combined: 210,
-  inter: 220,
   visio: 230,
   other: 900,
   unknown: 950,
@@ -301,34 +309,42 @@ export const MRMT_MODE_MODAL_SPLIT_PERCENT: Record<string, number> = Object.entr
   return acc
 }, {})
 
+// Same reporting order as MODE_IDEAL_ORDER, with the intermodal pairs between
+// public transport and the private motorized modes: walking + PT, bike + PT,
+// active + motorized, PT + motorized. A pair keeps its rank whichever leg
+// comes last.
 export const COMPLEX_LABELS_IDEAL_ORDER: Record<string, number> = {
   // Fallback order for unknown keys (keep them at the end)
   default: 999,
   walking: 10,
   bike: 20,
   ebike: 30,
-  pub: 40,
-  tp: 40,
-  train: 50,
-  moto: 60,
-  car: 70,
-  carpool: 80,
-  other: 90,
-  'pub+bike': 100,
-  'bike+pub': 100,
-  'tp+bike': 100,
-  'bike+tp': 100,
-  'pub+car': 110,
-  'car+pub': 110,
-  'tp+car': 110,
-  'car+tp': 110,
-  'car+bike': 120,
-  'bike+car': 120,
-  'pub+walk': 130,
-  'walk+pub': 130,
-  'tp+walk': 130,
-  'walk+tp': 130,
-  other_inter: 140,
+  train: 40,
+  pub: 50,
+  tp: 50,
+  // walking + public transport
+  'pub+walk': 60,
+  'walk+pub': 60,
+  'tp+walk': 60,
+  'walk+tp': 60,
+  // bike + public transport
+  'pub+bike': 70,
+  'bike+pub': 70,
+  'tp+bike': 70,
+  'bike+tp': 70,
+  // active + motorized
+  'car+bike': 80,
+  'bike+car': 80,
+  other_inter: 85,
+  // public transport + motorized
+  'pub+car': 90,
+  'car+pub': 90,
+  'tp+car': 90,
+  'car+tp': 90,
+  carpool: 100,
+  moto: 110,
+  car: 120,
+  other: 900,
 }
 
 export function complexLabelSortOrder(key: string): number {

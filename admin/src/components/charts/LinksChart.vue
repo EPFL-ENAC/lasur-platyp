@@ -24,7 +24,14 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { StatLinks } from '@/models'
-import { COMPLEX_LABELS_COLORS, MODE_COLORS, SIMPLE_LABELS_COLORS } from './commons'
+import {
+  COMPLEX_LABELS_COLORS,
+  complexLabelSortOrder,
+  MODE_COLORS,
+  modeSortOrder,
+  SIMPLE_LABELS_COLORS,
+  simpleLabelSortOrder,
+} from './commons'
 
 const { t, te, locale } = useI18n()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
@@ -185,6 +192,18 @@ function targetColor(key: string) {
   return props.labelType === 'simple' ? labelTypeColor(key, 'simple') : modeColor(key)
 }
 
+function sourceOrder(key: string) {
+  if (props.labelType === 'simple') return simpleLabelSortOrder(shortKey(key))
+  if (props.labelType === 'complex') return complexLabelSortOrder(shortKey(key))
+  return modeSortOrder(shortKey(key))
+}
+
+function targetOrder(key: string) {
+  return props.labelType === 'simple'
+    ? simpleLabelSortOrder(shortKey(key))
+    : modeSortOrder(shortKey(key))
+}
+
 function initChartOptions() {
   const recoSuffix = ' '
   option.value = {}
@@ -211,14 +230,18 @@ function initChartOptions() {
     targetNodes.add(item.target)
   })
   const nodes = [
-    ...Array.from(sourceNodes).map((key) => ({
-      name: sourceLabel(key),
-      itemStyle: { color: sourceColor(key) },
-    })),
-    ...Array.from(targetNodes).map((key) => ({
-      name: targetLabel(key) + recoSuffix,
-      itemStyle: { color: targetColor(key) },
-    })),
+    ...Array.from(sourceNodes)
+      .sort((a, b) => sourceOrder(a) - sourceOrder(b))
+      .map((key) => ({
+        name: sourceLabel(key),
+        itemStyle: { color: sourceColor(key) },
+      })),
+    ...Array.from(targetNodes)
+      .sort((a, b) => targetOrder(a) - targetOrder(b))
+      .map((key) => ({
+        name: targetLabel(key) + recoSuffix,
+        itemStyle: { color: targetColor(key) },
+      })),
   ]
 
   const newOption: EChartsOption = {
@@ -250,6 +273,7 @@ function initChartOptions() {
       {
         type: 'sankey',
         top: 60,
+        layoutIterations: 0,
         emphasis: {
           focus: 'adjacency',
         },
