@@ -25,7 +25,7 @@ import { use } from 'echarts/core'
 import { SankeyChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { TitleComponent, TooltipComponent } from 'echarts/components'
-import { GROUP_COLORS, MODE_COLORS } from './commons'
+import { GROUP_COLORS, labelColor, SIMPLE_LABELS_COLORS } from './commons'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent])
@@ -120,7 +120,10 @@ function initChartOptions() {
       nodes.set(id, {
         name: id,
         depth: groupOrder.indexOf(group),
-        itemStyle: { color: MODE_COLORS[mode] || MODE_COLORS.default || '#ccc' },
+        // modes are simple typology labels (TP, MA, MA+TP, ...)
+        itemStyle: {
+          color: labelColor(SIMPLE_LABELS_COLORS, mode) || SIMPLE_LABELS_COLORS.default!,
+        },
       })
     }
   }
@@ -164,7 +167,8 @@ function initChartOptions() {
           const targetMode = modeLabel(modeFromNodeId(params.data.target))
           return `${sourceMode} → ${targetMode}<br/><b>${params.value}</b>`
         }
-        return modeLabel(modeFromNodeId(params.name || ''))
+        // node value is the number of participants flowing through it
+        return `${modeLabel(modeFromNodeId(params.name || ''))}<br/><b>${params.value}</b>`
       },
     },
     series: [
