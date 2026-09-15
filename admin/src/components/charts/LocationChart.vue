@@ -55,11 +55,7 @@
           <div v-for="(group, i) in groups" :key="group.name" class="legend-item">
             <span class="legend-swatch dot" :style="{ backgroundColor: groupColor(i) }"></span>
             <span class="legend-label">
-              {{
-                t('stats.locations_heatmap.group_workplaces', {
-                  group: t(`stats.group.${group.name}`),
-                })
-              }}
+              {{ t('stats.locations_heatmap.group_workplaces', { group: group.name }) }}
             </span>
           </div>
           <div class="legend-item">
