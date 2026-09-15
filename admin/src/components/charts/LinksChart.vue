@@ -27,6 +27,7 @@ import type { StatLinks } from '@/models'
 import {
   COMPLEX_LABELS_COLORS,
   complexLabelSortOrder,
+  labelColor,
   MODE_COLORS,
   modeSortOrder,
   SIMPLE_LABELS_COLORS,
@@ -145,34 +146,6 @@ function labelTypeLabel(key: string, labelType: 'simple' | 'complex') {
 function labelTypeColor(key: string, labelType: 'simple' | 'complex') {
   const colors = labelType === 'simple' ? SIMPLE_LABELS_COLORS : COMPLEX_LABELS_COLORS
   return labelColor(colors, shortKey(key)) || modeColor(key)
-}
-
-/**
- * Typology labels come from the data as-is: match them leniently so an
- * unexpected case ('ma+tp') still gets the color of the label it denotes.
- * Component order matters — 'tp+bike' and 'bike+tp' are two different colors —
- * so an order-insensitive match ('TP+MA' -> 'MA+TP') is only the last resort
- * for a pair known in neither order, before the neutral default.
- */
-function labelColor(colors: { [key: string]: string }, key: string) {
-  if (colors[key]) {
-    return colors[key]
-  }
-  const lowerKey = key.toLowerCase()
-  const exact = Object.keys(colors).find((candidate) => candidate.toLowerCase() === lowerKey)
-  if (exact) {
-    return colors[exact]
-  }
-  const parts = lowerKey.split('+')
-  const match = Object.keys(colors).find((candidate) => {
-    const candidateParts = candidate.toLowerCase().split('+')
-    return (
-      candidateParts.length === parts.length &&
-      candidateParts.every((part) => parts.includes(part)) &&
-      parts.every((part) => candidateParts.includes(part))
-    )
-  })
-  return match ? colors[match] : undefined
 }
 
 function modeColor(key: string) {

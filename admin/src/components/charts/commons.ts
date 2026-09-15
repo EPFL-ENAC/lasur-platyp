@@ -259,6 +259,34 @@ export const SIMPLE_LABELS_COLORS: { [key: string]: string } = {
 }
 
 /**
+ * Typology labels come from the data as-is: match them leniently so an
+ * unexpected case ('ma+tp') still gets the color of the label it denotes.
+ * Component order matters — 'tp+bike' and 'bike+tp' are two different colors —
+ * so an order-insensitive match ('TP+MA' -> 'MA+TP') is only the last resort
+ * for a pair known in neither order, before the neutral default.
+ */
+export function labelColor(colors: { [key: string]: string }, key: string) {
+  if (colors[key]) {
+    return colors[key]
+  }
+  const lowerKey = key.toLowerCase()
+  const exact = Object.keys(colors).find((candidate) => candidate.toLowerCase() === lowerKey)
+  if (exact) {
+    return colors[exact]
+  }
+  const parts = lowerKey.split('+')
+  const match = Object.keys(colors).find((candidate) => {
+    const candidateParts = candidate.toLowerCase().split('+')
+    return (
+      candidateParts.length === parts.length &&
+      candidateParts.every((part) => parts.includes(part)) &&
+      parts.every((part) => candidateParts.includes(part))
+    )
+  })
+  return match ? colors[match] : undefined
+}
+
+/**
  * Modal split of the Geneva canton population, in % of the main mode used
  * (Microrecensement Mobilité et Transports, 2023). Keys are complex labels: the
  * MRMT reports public transport as a whole, which is the merged 'tp' bucket, and
