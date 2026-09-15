@@ -43,6 +43,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
     <links-chart
       v-if="stats.linksModalType === 'detailed'"
@@ -53,6 +54,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
   </chart-panel>
 </template>
@@ -74,23 +76,14 @@ defineProps<Props>()
 
 type LinksChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
 }
 
 const simpleChartRef = ref<LinksChartExposed | null>(null)
 const detailedChartRef = ref<LinksChartExposed | null>(null)
+// Only one of the two charts is rendered at a time, so it is the one emitting.
 const infoText = ref('')
 
 const stats = useStats()
-
-watch(
-  [() => stats.linksModalType, simpleChartRef, detailedChartRef],
-  () => {
-    const active = stats.linksModalType === 'simple' ? simpleChartRef : detailedChartRef
-    infoText.value = active.value?.chartInfoText || ''
-  },
-  { flush: 'post' },
-)
 
 const { t } = useI18n()
 

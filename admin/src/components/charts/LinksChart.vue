@@ -102,17 +102,23 @@ const mostRecommendedTarget = computed(() => {
   return links.most_recommended_target
 })
 
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
-  get chartInfoText() {
-    if (mostRecommendedTarget.value) {
-      return t(`stats.${props.type}.texts.specific`, {
-        mode: targetLabel(mostRecommendedTarget.value.target),
-      })
-    }
-    return ''
-  },
 })
+
+const chartInfoText = computed(() => {
+  if (mostRecommendedTarget.value) {
+    return t(`stats.${props.type}.texts.specific`, {
+      mode: targetLabel(mostRecommendedTarget.value.target),
+    })
+  }
+  return ''
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartInfoText, (text) => emit('update:chartInfoText', text), { immediate: true })
 
 function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {

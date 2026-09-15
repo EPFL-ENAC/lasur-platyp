@@ -67,27 +67,10 @@ type EChartsShellExposed = {
   handleExport: () => Promise<void>
 }
 
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
-  get chartInfoText() {
-    const diff = comparisonDifference.value
-    if (diff) {
-      return t('stats.freq_mod.texts.comparison', {
-        lastGroup: diff.lastGroupName,
-        prevGroup: diff.prevGroupName,
-        mode: diff.name,
-        diff: formatSignedPercent(diff.diffPercent),
-      })
-    }
-    if (topModes.value.length === 3) {
-      return t('stats.freq_mod.texts.specific', {
-        top_1: topModes.value[0],
-        top_2: topModes.value[1],
-        top_3: topModes.value[2],
-      })
-    }
-    return ''
-  },
 })
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
@@ -100,6 +83,31 @@ const comparisonGroupDatasets = ref<ComparisonGroupDataset[]>([])
 const comparisonDifference = computed(() =>
   findBiggestGroupDifference(comparisonGroupDatasets.value, 'last_minus_prev'),
 )
+
+const chartInfoText = computed(() => {
+  const diff = comparisonDifference.value
+  if (diff) {
+    return t('stats.freq_mod.texts.comparison', {
+      lastGroup: diff.lastGroupName,
+      prevGroup: diff.prevGroupName,
+      mode: diff.name,
+      diff: formatSignedPercent(diff.diffPercent),
+    })
+  }
+  if (topModes.value.length === 3) {
+    return t('stats.freq_mod.texts.specific', {
+      top_1: topModes.value[0],
+      top_2: topModes.value[1],
+      top_3: topModes.value[2],
+    })
+  }
+  return ''
+})
+
+// Emitted rather than exposed: the chart panel renders its slot twice (inline
+// and in the details dialog), so a template ref on this chart is cleared when
+// the dialog closes while the inline instance is still there.
+watch(chartInfoText, (text) => emit('update:chartInfoText', text), { immediate: true })
 
 const hasData = computed(() => {
   if (isComparison.value) {

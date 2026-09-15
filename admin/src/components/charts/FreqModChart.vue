@@ -41,6 +41,7 @@
       :frequencies="simpleFrequencies"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="childText = $event"
     />
     <complex-labels-share-chart
       v-if="stats.freqModalType === 'detailed'"
@@ -49,6 +50,7 @@
       :frequencies="detailedFrequencies"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="childText = $event"
     />
   </chart-panel>
 </template>
@@ -71,7 +73,6 @@ defineProps<Props>()
 
 type ShareChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
 }
 
 const simpleChartRef = useTemplateRef<ShareChartExposed>('simpleChartRef')
@@ -94,19 +95,16 @@ function onChartDownload() {
   chartRef.value?.handleExport()
 }
 
+// Only one of the two charts is rendered at a time, so it is the one emitting.
+const childText = ref('')
+
 const chartInfoText = computed(() => {
-  let childText = ''
-  if (stats.freqModalType === 'simple' && simpleChartRef.value) {
-    childText = simpleChartRef.value.chartInfoText
-  } else if (stats.freqModalType === 'detailed' && complexChartRef.value) {
-    childText = complexChartRef.value.chartInfoText
-  }
   if (stats.comparisonMode) {
-    return `${childText}\n\n${t('stats.freq_mod.texts.ref')}`
+    return `${childText.value}\n\n${t('stats.freq_mod.texts.ref')}`
   }
   const text = t('stats.freq_mod.texts.default')
-  if (childText) {
-    return `${text}\n\n${childText}`
+  if (childText.value) {
+    return `${text}\n\n${childText.value}`
   }
   return text
 })

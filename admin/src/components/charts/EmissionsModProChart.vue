@@ -45,6 +45,8 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
+      @update:chart-description-text="descriptionExample = $event"
     />
   </chart-panel>
 </template>
@@ -65,20 +67,11 @@ defineProps<Props>()
 
 type EmissionsChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
-  chartDescriptionText: string
 }
 
 const chartRef = ref<EmissionsChartExposed | null>(null)
 const infoText = ref('')
-
-watch(
-  chartRef,
-  (newVal) => {
-    infoText.value = newVal?.chartInfoText || ''
-  },
-  { flush: 'post' },
-)
+const descriptionExample = ref('')
 
 const stats = useStats()
 
@@ -88,7 +81,7 @@ const { t } = useI18n()
 // while the emissions are loading, or when too few answers back the example.
 const descriptionText = computed(() => {
   if (stats.comparisonMode) return ''
-  return chartRef.value?.chartDescriptionText || t('stats.emissions_freq_mod_pro.description')
+  return descriptionExample.value || t('stats.emissions_freq_mod_pro.description')
 })
 
 const modalType = computed(() => (stats.emProModalType === 'simple' ? 'simple' : 'detailed'))

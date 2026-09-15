@@ -141,15 +141,21 @@ const textLabels = computed(() => {
   }
 })
 
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
-  get chartInfoText() {
-    if (textLabels.value) {
-      return t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels.value)
-    }
-    return ''
-  },
 })
+
+const chartInfoText = computed(() => {
+  if (textLabels.value) {
+    return t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels.value)
+  }
+  return ''
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartInfoText, (text) => emit('update:chartInfoText', text), { immediate: true })
 
 watch([() => props.loading], () => {
   if (props.loading) {

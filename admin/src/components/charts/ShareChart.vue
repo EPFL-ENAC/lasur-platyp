@@ -102,18 +102,10 @@ type EChartsShellExposed = {
   handleExport: () => Promise<void>
 }
 
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
-  get chartInfoText() {
-    const diff = comparisonDifference.value
-    if (!diff) return ''
-    return t(`stats.${props.chartTranslationName}.texts.comparison`, {
-      lastGroup: diff.lastGroupName,
-      prevGroup: diff.prevGroupName,
-      mode: diff.name,
-      diff: formatSignedPercent(diff.diffPercent),
-    })
-  },
 })
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
@@ -125,6 +117,20 @@ const comparisonGroupDatasets = ref<ComparisonGroupDataset[]>([])
 const comparisonDifference = computed(() =>
   findBiggestGroupDifference(comparisonGroupDatasets.value, 'prev_minus_last'),
 )
+
+const chartInfoText = computed(() => {
+  const diff = comparisonDifference.value
+  if (!diff) return ''
+  return t(`stats.${props.chartTranslationName}.texts.comparison`, {
+    lastGroup: diff.lastGroupName,
+    prevGroup: diff.prevGroupName,
+    mode: diff.name,
+    diff: formatSignedPercent(diff.diffPercent),
+  })
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartInfoText, (text) => emit('update:chartInfoText', text), { immediate: true })
 
 function findGroupFrequencies(groupStats: ComparisonStats): Frequencies | undefined {
   const found =

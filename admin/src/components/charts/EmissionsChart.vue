@@ -325,14 +325,19 @@ const chartDescription = computed(() => {
   return ''
 })
 
+const emit = defineEmits<{
+  'update:chartInfoText': [text: string]
+  'update:chartDescriptionText': [text: string]
+}>()
+
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
-  get chartInfoText() {
-    return chartDescription.value
-  },
-  get chartDescriptionText() {
-    return descriptionExample.value
-  },
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartDescription, (text) => emit('update:chartInfoText', text), { immediate: true })
+watch(descriptionExample, (text) => emit('update:chartDescriptionText', text), {
+  immediate: true,
 })
 
 function labelSortOrder(key: string) {

@@ -44,6 +44,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="childText = $event"
     />
     <share-chart
       v-if="stats.recoModalType === 'detailed'"
@@ -54,6 +55,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="childText = $event"
     />
   </chart-panel>
 </template>
@@ -75,30 +77,22 @@ defineProps<Props>()
 
 type ShareChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
 }
 
 const simpleChartRef = ref<ShareChartExposed | null>(null)
 const detailedChartRef = ref<ShareChartExposed | null>(null)
-const infoText = ref('')
+// Only one of the two charts is rendered at a time, so it is the one emitting.
+const childText = ref('')
 
 const stats = useStats()
 
-watch(
-  [() => stats.recoModalType, () => stats.comparisonMode, simpleChartRef, detailedChartRef],
-  () => {
-    const active = stats.recoModalType === 'simple' ? simpleChartRef : detailedChartRef
-    const childText = active.value?.chartInfoText || ''
-    // The comparison charts carry the MRMT reference bar: cite its source, with
-    // the note the modal split charts already use.
-    infoText.value = stats.comparisonMode
-      ? `${childText}\n\n${t('stats.freq_mod.texts.ref')}`
-      : childText
-  },
-  { flush: 'post' },
-)
-
 const { t } = useI18n()
+
+// The comparison charts carry the MRMT reference bar: cite its source, with
+// the note the modal split charts already use.
+const infoText = computed(() =>
+  stats.comparisonMode ? `${childText.value}\n\n${t('stats.freq_mod.texts.ref')}` : childText.value,
+)
 
 const translationName = computed(() =>
   stats.recoModalType === 'simple' ? 'reco_simple' : 'reco_inter',

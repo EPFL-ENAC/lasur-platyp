@@ -45,6 +45,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
   </chart-panel>
 </template>
@@ -66,19 +67,10 @@ defineProps<Props>()
 
 type EmissionsReductionsChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
 }
 
 const chartRef = ref<EmissionsReductionsChartExposed | null>(null)
 const infoText = ref('')
-
-watch(
-  chartRef,
-  (newVal) => {
-    infoText.value = newVal?.chartInfoText || ''
-  },
-  { flush: 'post' },
-)
 
 const { t } = useI18n()
 
