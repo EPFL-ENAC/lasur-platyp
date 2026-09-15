@@ -429,9 +429,18 @@ class ModeTransition(BaseModel):
     count: int
 
 
+class ModeTransitions(BaseModel):
+    # participants contributing to at least one transition
+    total: int = 0
+    data: List[ModeTransition] = []
+
+
 class ComparisonResult(BaseModel):
     groups: List[ComparisonStats] = []
-    mode_transitions: Optional[List[ModeTransition]] = None
+    # simple typology labels
+    mode_transitions: Optional[ModeTransitions] = None
+    # detailed (complex) typology labels
+    mode_transitions_complex_labels: Optional[ModeTransitions] = None
     warnings: Optional[List[str]] = None
     locations: Optional[LocationStats] = None  # map data over every surviving group
 

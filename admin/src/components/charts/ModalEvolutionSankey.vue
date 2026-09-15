@@ -4,13 +4,42 @@
     :description="t('stats.modal_evolution.description')"
     :inline="inline"
   >
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleModalType">
+              <q-item-section side>
+                <q-icon :name="stats.modalEvolutionModalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.modalEvolutionModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
     <e-charts-shell
       ref="shellRef"
       :height="height"
       :loading="props.loading"
       :has-data="hasData"
       :show-table="false"
-      :no-data-title="t('stats.modal_evolution.title')"
+      :no-data-title="chartTitle"
       :option="option"
       :exportable="!!exportable"
     />
@@ -25,9 +54,9 @@ import { use } from 'echarts/core'
 import { SankeyChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { TitleComponent, TooltipComponent } from 'echarts/components'
-import { GROUP_COLORS, labelColor, SIMPLE_LABELS_COLORS } from './commons'
+import { COMPLEX_LABELS_COLORS, GROUP_COLORS, labelColor, SIMPLE_LABELS_COLORS } from './commons'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent])
 
 interface Props {
@@ -54,7 +83,26 @@ const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 const stats = useStats()
 const option = ref<EChartsOption>({})
 
-const hasData = computed(() => (stats.comparisonResults?.mode_transitions?.length ?? 0) > 0)
+const isDetailed = computed(() => stats.modalEvolutionModalType === 'detailed')
+
+// Modes are simple typology labels (TP, MA, MA+TP, ...) or, in detailed mode,
+// complex typology labels (car, tp, car+tp, ...)
+const modeTransitions = computed(() => {
+  const results = stats.comparisonResults
+  return isDetailed.value ? results?.mode_transitions_complex_labels : results?.mode_transitions
+})
+
+const transitions = computed(() => modeTransitions.value?.data ?? [])
+
+const hasData = computed(() => transitions.value.length > 0)
+
+// same title in both modes: qualify it with the typology the chart is rendering
+const chartTitle = computed(() => {
+  const modalSplit = isDetailed.value
+    ? t('stats.freq_mod.modal_split.detailed')
+    : t('stats.freq_mod.modal_split.simple')
+  return `${t('stats.modal_evolution.title')} (${modalSplit.toLowerCase()})`
+})
 
 watch(
   () => props.loading,
@@ -65,7 +113,7 @@ watch(
   },
 )
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, isDetailed], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -75,8 +123,26 @@ onMounted(() => {
   initChartOptions()
 })
 
+function onToggleModalType() {
+  stats.modalEvolutionModalType = isDetailed.value ? 'simple' : 'detailed'
+}
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
+
 function modeLabel(mode: string) {
+  if (isDetailed.value) {
+    // fall back to the mode vocabulary rather than showing the raw i18n key
+    const messageKey = `complex_labels.${mode}`
+    return te(messageKey) ? t(messageKey) : t(`transportation_modes.${mode}`)
+  }
   return t(`transportation_modes.${mode}`)
+}
+
+function modeColor(mode: string) {
+  const colors = isDetailed.value ? COMPLEX_LABELS_COLORS : SIMPLE_LABELS_COLORS
+  return labelColor(colors, mode) || colors.default || '#ccc'
 }
 
 function nodeId(group: string, mode: string) {
@@ -96,15 +162,14 @@ interface SankeyNode {
 function initChartOptions() {
   option.value = {}
 
-  const transitions = stats.comparisonResults?.mode_transitions ?? []
-  if (transitions.length === 0) {
+  if (!hasData.value) {
     return
   }
 
   // Stage (group) order, inferred from the order transitions were emitted in
   // (source_group of the first transition is stage 0, and so on).
   const groupOrder: string[] = []
-  transitions.forEach((transition) => {
+  transitions.value.forEach((transition) => {
     if (!groupOrder.includes(transition.source_group)) {
       groupOrder.push(transition.source_group)
     }
@@ -120,19 +185,16 @@ function initChartOptions() {
       nodes.set(id, {
         name: id,
         depth: groupOrder.indexOf(group),
-        // modes are simple typology labels (TP, MA, MA+TP, ...)
-        itemStyle: {
-          color: labelColor(SIMPLE_LABELS_COLORS, mode) || SIMPLE_LABELS_COLORS.default!,
-        },
+        itemStyle: { color: modeColor(mode) },
       })
     }
   }
-  transitions.forEach((transition) => {
+  transitions.value.forEach((transition) => {
     addNode(transition.source_group, transition.source_mode)
     addNode(transition.target_group, transition.target_mode)
   })
 
-  const links = transitions.map((transition) => ({
+  const links = transitions.value.map((transition) => ({
     source: nodeId(transition.source_group, transition.source_mode),
     target: nodeId(transition.target_group, transition.target_mode),
     value: transition.count,
@@ -153,7 +215,8 @@ function initChartOptions() {
     animation: false,
     height: props.height - 80,
     title: {
-      text: t('stats.modal_evolution.title'),
+      text: chartTitle.value,
+      subtext: t('stats.total', { count: modeTransitions.value?.total ?? 0 }),
       left: 'center',
       top: 0,
       textStyle: { fontSize: 16 },

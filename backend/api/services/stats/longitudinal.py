@@ -1,13 +1,15 @@
 import re
-from typing import List
+from typing import List, Optional, Pattern
 
 import pandas as pd
 
-from api.models.query import CampaignGroup, ModeTransition
+from api.models.query import CampaignGroup, ModeTransition, ModeTransitions
+from api.services.stats.commons import COMPLEX_LABEL_MERGE, merge_label_components
 
 
 class LongitudinalService:
     SIMPLE_LABEL_PATTERN = re.compile(r"^typo\.reco\.simple_labels\.\d+$")
+    COMPLEX_LABEL_PATTERN = re.compile(r"^typo\.reco\.complex_labels\.\d+$")
 
     @staticmethod
     def _campaign_to_group_index(groups: List[CampaignGroup]) -> dict:
@@ -44,8 +46,15 @@ class LongitudinalService:
         return df[df['email_hash'].isin(eligible_hashes)].drop(columns=['_group_idx'])
 
     @staticmethod
-    def _primary_mode_by_participant(df: pd.DataFrame) -> pd.Series:
-        """Most-frequent typo.reco.simple_labels.N value per participant (email_hash).
+    def _primary_mode_by_participant(
+        df: pd.DataFrame, label_pattern: Pattern = SIMPLE_LABEL_PATTERN,
+        merge_map: Optional[dict] = None,
+    ) -> pd.Series:
+        """Most-frequent typology label (columns matching `label_pattern`, by
+        default typo.reco.simple_labels.N) value per participant (email_hash).
+
+        `merge_map` folds label components before counting (see
+        merge_label_components), so that merged buckets are counted as one.
 
         Tie-break: first encountered, in row-major then column order (i.e. all
         of a row's label columns before moving to the next row).
@@ -61,7 +70,7 @@ class LongitudinalService:
             return pd.Series(dtype=object)
 
         label_cols = sorted(
-            (c for c in df.columns if LongitudinalService.SIMPLE_LABEL_PATTERN.match(c)),
+            (c for c in df.columns if label_pattern.match(c)),
             key=lambda c: int(c.rsplit('.', 1)[1])
         )
         if not label_cols:
@@ -70,6 +79,9 @@ class LongitudinalService:
         stacked = df[label_cols].stack()  # (row_idx, col) -> value, drops NaN by default
         if stacked.empty:
             return pd.Series(dtype=object)
+        if merge_map:
+            stacked = stacked.astype(str).map(
+                lambda label: merge_label_components(label, merge_map))
 
         row_idx = stacked.index.get_level_values(0)
         long_df = pd.DataFrame({
@@ -88,15 +100,23 @@ class LongitudinalService:
         return agg.groupby('email_hash').first()['value']
 
     @staticmethod
-    def compute_mode_transitions(df: pd.DataFrame, groups: List[CampaignGroup]) -> List[ModeTransition]:
-        """Per-participant mode transitions between consecutive groups (A->B, B->C, ...).
+    def compute_mode_transitions(
+        df: pd.DataFrame, groups: List[CampaignGroup],
+        label_pattern: Pattern = SIMPLE_LABEL_PATTERN, merge_map: Optional[dict] = None,
+    ) -> ModeTransitions:
+        """Per-participant mode transitions between consecutive groups (A->B, B->C, ...),
+        with the number of distinct participants contributing to at least one of them.
+
+        Modes are the participant's primary typology label in each group, from
+        the columns matching `label_pattern` (simple labels by default; see
+        compute_mode_transitions_complex_labels for the detailed variant).
 
         `groups` must be the full, originally-ordered group list so that positions
         stay stable: if a group has no data in `df` (e.g. it was dropped for privacy),
         its adjacent transitions are simply omitted rather than bridging across it.
         """
         if 'campaign_id' not in df.columns:
-            return []
+            return ModeTransitions()
 
         campaign_to_group = LongitudinalService._campaign_to_group_index(
             groups)
@@ -105,11 +125,12 @@ class LongitudinalService:
 
         primary_by_group = {
             index: LongitudinalService._primary_mode_by_participant(
-                df[df['_group_idx'] == index])
+                df[df['_group_idx'] == index], label_pattern, merge_map)
             for index in range(len(groups))
         }
 
         transitions = []
+        participants = set()
         for index in range(len(groups) - 1):
             source = primary_by_group.get(index)
             target = primary_by_group.get(index + 1)
@@ -119,6 +140,7 @@ class LongitudinalService:
                 {'source': source, 'target': target}).dropna()
             if joined.empty:
                 continue
+            participants.update(joined.index)
             counts = joined.groupby(['source', 'target']).size()
             for (source_mode, target_mode), count in counts.items():
                 transitions.append(ModeTransition(
@@ -129,4 +151,14 @@ class LongitudinalService:
                     count=int(count)
                 ))
 
-        return transitions
+        return ModeTransitions(total=len(participants), data=transitions)
+
+    @staticmethod
+    def compute_mode_transitions_complex_labels(
+        df: pd.DataFrame, groups: List[CampaignGroup]) -> ModeTransitions:
+        """Detailed variant of compute_mode_transitions, over
+        typo.reco.complex_labels.N, with COMPLEX_LABEL_MERGE folded
+        component-wise as in the complex label frequencies and links.
+        """
+        return LongitudinalService.compute_mode_transitions(
+            df, groups, LongitudinalService.COMPLEX_LABEL_PATTERN, COMPLEX_LABEL_MERGE)
