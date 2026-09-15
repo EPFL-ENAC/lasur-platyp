@@ -274,6 +274,13 @@ function initChartOptions() {
     tooltip: {
       trigger: 'item',
       triggerOn: 'mousemove',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: (params: any) => {
+        if (params.dataType === 'edge') {
+          return `${params.data.source} → ${params.data.target}<br/><b>${params.data.value}</b>`
+        }
+        return params.name
+      },
     },
     series: [
       {
