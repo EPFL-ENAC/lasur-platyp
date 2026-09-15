@@ -44,6 +44,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
     <emissions-chart
       v-if="stats.emModalType === 'detailed'"
@@ -55,6 +56,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
   </chart-panel>
 </template>
@@ -76,7 +78,6 @@ defineProps<Props>()
 
 type EmissionsChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
 }
 
 const simpleChartRef = ref<EmissionsChartExposed | null>(null)
@@ -90,14 +91,8 @@ const descriptionText = computed(() =>
   stats.comparisonMode ? '' : t('stats.emissions_freq_mod.description'),
 )
 
+// Only one of the two charts is rendered at a time, so it is the one emitting.
 const infoText = ref('')
-
-watch([() => stats.emModalType, simpleChartRef, detailedChartRef], () => {
-  const active = stats.emModalType === 'simple' ? simpleChartRef : detailedChartRef
-  if (active.value) {
-    infoText.value = active.value.chartInfoText || ''
-  }
-})
 
 function onToggleEmModalType() {
   stats.emModalType = stats.emModalType === 'simple' ? 'detailed' : 'simple'

@@ -120,12 +120,14 @@ const chartDescription = computed(() => {
   return ''
 })
 
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
-  get chartInfoText() {
-    return chartDescription.value
-  },
 })
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartDescription, (text) => emit('update:chartInfoText', text), { immediate: true })
 
 watch([() => props.loading], () => {
   if (props.loading) {

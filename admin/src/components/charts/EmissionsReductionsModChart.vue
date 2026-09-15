@@ -44,6 +44,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
     <emissions-reductions-chart
       v-if="stats.redModalType === 'detailed'"
@@ -55,6 +56,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
   </chart-panel>
 </template>
@@ -73,7 +75,6 @@ defineProps<Props>()
 
 type EmissionsReductionsChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
 }
 
 const simpleChartRef = ref<EmissionsReductionsChartExposed | null>(null)
@@ -83,14 +84,8 @@ const stats = useStats()
 
 const { t } = useI18n()
 
+// Only one of the two charts is rendered at a time, so it is the one emitting.
 const infoText = ref('')
-
-watch([() => stats.redModalType, simpleChartRef, detailedChartRef], () => {
-  const active = stats.redModalType === 'simple' ? simpleChartRef : detailedChartRef
-  if (active.value) {
-    infoText.value = active.value.chartInfoText || ''
-  }
-})
 
 function onToggleRedModalType() {
   stats.redModalType = stats.redModalType === 'simple' ? 'detailed' : 'simple'

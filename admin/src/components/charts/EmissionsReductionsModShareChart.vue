@@ -42,6 +42,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
     <emissions-reductions-share-chart
       v-if="stats.redShareModalType === 'detailed'"
@@ -51,6 +52,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
   </chart-panel>
 </template>
@@ -69,7 +71,6 @@ defineProps<Props>()
 
 type EmissionsReductionsShareChartExposed = {
   handleExport: () => Promise<void>
-  chartInfoText: string
 }
 
 const simpleChartRef = ref<EmissionsReductionsShareChartExposed | null>(null)
@@ -79,14 +80,8 @@ const stats = useStats()
 
 const { t } = useI18n()
 
+// Only one of the two charts is rendered at a time, so it is the one emitting.
 const infoText = ref('')
-
-watch([() => stats.redShareModalType, simpleChartRef, detailedChartRef], () => {
-  const active = stats.redShareModalType === 'simple' ? simpleChartRef : detailedChartRef
-  if (active.value) {
-    infoText.value = active.value.chartInfoText || ''
-  }
-})
 
 function onToggleRedShareModalType() {
   stats.redShareModalType = stats.redShareModalType === 'simple' ? 'detailed' : 'simple'

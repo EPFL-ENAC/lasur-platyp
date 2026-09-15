@@ -56,7 +56,6 @@ interface Props {
   loading?: boolean
   percent?: boolean
   exportable?: boolean
-  description?: string
   // 'detailed' charts the data as it comes, one row per recommended mode;
   // 'simple' folds those modes into the simple typology labels. Left undefined,
   // the chart has no modal split and its title stays plain.
@@ -81,9 +80,6 @@ type EChartsShellExposed = {
 
 defineExpose({
   handleExport: () => shellRef.value?.handleExport(),
-  get chartInfoText() {
-    return props.description || ''
-  },
 })
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
