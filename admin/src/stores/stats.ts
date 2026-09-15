@@ -65,6 +65,7 @@ export const useStats = defineStore('stats', () => {
   const redModalType = ref('simple')
   const redShareModalType = ref('simple')
   const linksModalType = ref('simple')
+  const modalEvolutionModalType = ref('simple')
   const recoModalType = ref('simple')
   const leversModalType = ref('simple')
   const motivationModalType = ref('simple')
@@ -274,6 +275,7 @@ export const useStats = defineStore('stats', () => {
     redModalType,
     redShareModalType,
     linksModalType,
+    modalEvolutionModalType,
     recoModalType,
     leversModalType,
     motivationModalType,

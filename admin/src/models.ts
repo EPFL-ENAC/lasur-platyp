@@ -433,9 +433,18 @@ export interface ModeTransition {
   count: number
 }
 
+export interface ModeTransitions {
+  /** Participants contributing to at least one transition */
+  total: number
+  data: ModeTransition[]
+}
+
 export interface ComparisonResult {
   groups: ComparisonStats[]
-  mode_transitions?: ModeTransition[]
+  /** Modes are simple typology labels */
+  mode_transitions?: ModeTransitions
+  /** Modes are detailed (complex) typology labels */
+  mode_transitions_complex_labels?: ModeTransitions
   warnings?: string[]
   /** Map data over every surviving group; absent when no group survived. */
   locations?: LocationStats

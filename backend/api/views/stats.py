@@ -118,15 +118,19 @@ async def compare_statistics(
         ]
 
         mode_transitions = None
+        mode_transitions_complex_labels = None
         if request.mode == "longitudinal":
             transitions_df = df[df['campaign_id'].isin(
                 survived_campaign_ids)]
             mode_transitions = LongitudinalService.compute_mode_transitions(
                 transitions_df, request.groups)
+            mode_transitions_complex_labels = LongitudinalService.compute_mode_transitions_complex_labels(
+                transitions_df, request.groups)
 
         return ComparisonResult(
             groups=comparison_stats,
             mode_transitions=mode_transitions,
+            mode_transitions_complex_labels=mode_transitions_complex_labels,
             warnings=warnings or None,
             locations=locations,
         )
