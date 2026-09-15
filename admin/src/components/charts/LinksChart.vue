@@ -279,7 +279,8 @@ function initChartOptions() {
         if (params.dataType === 'edge') {
           return `${params.data.source} → ${params.data.target}<br/><b>${params.data.value}</b>`
         }
-        return params.name
+        // node value is the number of participants flowing through it
+        return `${params.name}<br/><b>${params.value}</b>`
       },
     },
     series: [

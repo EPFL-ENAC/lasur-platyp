@@ -164,7 +164,8 @@ function initChartOptions() {
           const targetMode = modeLabel(modeFromNodeId(params.data.target))
           return `${sourceMode} → ${targetMode}<br/><b>${params.value}</b>`
         }
-        return modeLabel(modeFromNodeId(params.name || ''))
+        // node value is the number of participants flowing through it
+        return `${modeLabel(modeFromNodeId(params.name || ''))}<br/><b>${params.value}</b>`
       },
     },
     series: [
