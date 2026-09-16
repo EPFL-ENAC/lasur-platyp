@@ -1160,6 +1160,8 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   users: 'Utilisateurs',
   valid_email_required: 'Une adresse email valide est requise',
   valid_url_required: 'Une URL valide est requise (commençant par http:// ou https://)',
+  yes: 'Oui',
+  no: 'Non',
   your_role: 'Votre rôle est: {role}',
   created_at: 'Ajouté le',
   updated_at: 'Mis à jour le',

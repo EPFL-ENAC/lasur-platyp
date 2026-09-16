@@ -1137,6 +1137,8 @@ Use the menu to navigate through the different sections, manage organisations, c
   users: 'Users',
   valid_email_required: 'A valid email address is required',
   valid_url_required: 'A valid URL is required (starting with http:// or https://)',
+  yes: 'Yes',
+  no: 'No',
   your_role: 'Your role is: {role}',
   created_at: 'Created at',
   updated_at: 'Updated at',

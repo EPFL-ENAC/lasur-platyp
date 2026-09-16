@@ -136,11 +136,28 @@
                 class="q-mb-md"
               />
               <div>
-                <q-toggle
-                  v-model="selected.parking_provided"
-                  :label="t('campaign.parking_provided')"
-                  @update:model-value="onParkingProvidedChanged"
-                />
+                <div class="q-mb-xs">{{ t('campaign.parking_provided') }} *</div>
+                <q-field
+                  :model-value="selected.parking_provided"
+                  borderless
+                  dense
+                  :rules="[(val) => typeof val === 'boolean' || t('field_required')]"
+                  class="q-mb-sm"
+                >
+                  <q-radio
+                    v-model="selected.parking_provided"
+                    :val="true"
+                    :label="t('yes')"
+                    @update:model-value="onParkingProvidedChanged"
+                  />
+                  <q-radio
+                    v-model="selected.parking_provided"
+                    :val="false"
+                    :label="t('no')"
+                    class="q-ml-lg"
+                    @update:model-value="onParkingProvidedChanged"
+                  />
+                </q-field>
                 <div v-if="selected.parking_provided" class="q-ml-md q-mt-sm">
                   <q-checkbox
                     v-model="selected.parking_paid"
@@ -353,11 +370,16 @@ function onInit() {
   if (!selected.value.workplaces) {
     selected.value.workplaces = []
   }
-  selected.value.parking_provided = !!selected.value.parking_provided
-  selected.value.parking_paid = !!selected.value.parking_paid
   withRewards.value = !!selected.value.rewards_message
 
   editMode.value = selected.value.id !== undefined
+  // force an explicit yes/no answer on new campaigns
+  if (!editMode.value) {
+    delete selected.value.parking_provided
+  } else {
+    selected.value.parking_provided = !!selected.value.parking_provided
+  }
+  selected.value.parking_paid = !!selected.value.parking_paid
   if (editMode.value && !selected.value.slug) {
     selected.value.slug = generateSlug()
   }
