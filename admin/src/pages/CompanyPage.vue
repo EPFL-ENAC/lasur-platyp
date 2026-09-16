@@ -357,7 +357,6 @@ function onAddCampaign() {
     name: '',
     company_id: company.value?.id || 0,
     open_workplaces: false,
-    parking_provided: false,
     parking_paid: false,
     with_professional_questions: true,
   } as Campaign
