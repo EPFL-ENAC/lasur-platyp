@@ -22,7 +22,7 @@ class LongitudinalService:
 
     @staticmethod
     def filter_longitudinal(df: pd.DataFrame, groups: List[CampaignGroup]) -> pd.DataFrame:
-        """Filter records to participants (by email_hash) present in 2+ groups.
+        """Filter records to participants (by email_hash) present in every group.
 
         Records with a NULL email_hash are silently excluded, since they cannot be
         tracked across campaigns.
@@ -42,7 +42,7 @@ class LongitudinalService:
             return df.drop(columns=['_group_idx'])
 
         group_counts = df.groupby('email_hash')['_group_idx'].nunique()
-        eligible_hashes = group_counts[group_counts >= 2].index
+        eligible_hashes = group_counts[group_counts == len(groups)].index
         return df[df['email_hash'].isin(eligible_hashes)].drop(columns=['_group_idx'])
 
     @staticmethod

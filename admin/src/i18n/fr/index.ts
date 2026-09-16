@@ -414,7 +414,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       'Aucune campagne sélectionnée | 1 campagne sélectionnée | {n} campagnes sélectionnées',
     cross_sectional_longitudinal: 'Transversal ou Longitudinal',
     longitudinal:
-      'Montrer uniquement les données des participant·e·s ayant participé à au moins deux groupes',
+      'Montrer uniquement les données des participant·e·s ayant participé à tous les groupes',
     group_info: '{count} participants',
     too_few_records: 'Données insuffisantes pour : {groups}',
     modal_evolution: {

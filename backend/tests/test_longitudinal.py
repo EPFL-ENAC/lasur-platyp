@@ -26,7 +26,7 @@ def test_filter_longitudinal_excludes_null_email_hash():
     assert len(result) == 2
 
 
-def test_filter_longitudinal_requires_two_groups():
+def test_filter_longitudinal_requires_all_groups():
     df = pd.DataFrame({
         "email_hash": ["h1", "h2", "h2"],
         "campaign_id": [1, 1, 2],
@@ -35,6 +35,32 @@ def test_filter_longitudinal_requires_two_groups():
     result = LongitudinalService.filter_longitudinal(df, groups)
     # h1 only appears in group A -> excluded; h2 appears in both -> kept
     assert set(result["email_hash"]) == {"h2"}
+    assert len(result) == 2
+
+
+def test_filter_longitudinal_excludes_partial_participation():
+    """With 3 groups, being in 2 of them is not enough: the panel is the
+    strict intersection of all groups."""
+    df = pd.DataFrame({
+        "email_hash": ["h1", "h1", "h2", "h2", "h2"],
+        "campaign_id": [1, 2, 1, 2, 3],
+    })
+    groups = [make_group("A", [1]), make_group("B", [2]), make_group("C", [3])]
+    result = LongitudinalService.filter_longitudinal(df, groups)
+    assert set(result["email_hash"]) == {"h2"}
+    assert len(result) == 3
+
+
+def test_filter_longitudinal_any_campaign_of_a_group_counts():
+    """A group made of several campaigns counts as attended if the participant
+    appears in any one of its campaigns."""
+    df = pd.DataFrame({
+        "email_hash": ["h1", "h1"],
+        "campaign_id": [1, 3],
+    })
+    groups = [make_group("A", [1, 2]), make_group("B", [3, 4])]
+    result = LongitudinalService.filter_longitudinal(df, groups)
+    assert set(result["email_hash"]) == {"h1"}
     assert len(result) == 2
 
 
