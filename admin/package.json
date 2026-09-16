@@ -22,7 +22,7 @@
     "h3-js": "^4.4.0",
     "html2canvas": "^1.4.1",
     "keycloak-js": "^26.1.0",
-    "maplibre-gl": "^5.7.2",
+    "maplibre-gl": "^6.4.1",
     "maplibre-gl-draw": "^1.6.9",
     "papaparse": "^5.5.2",
     "pinia": "^3.0.4",
