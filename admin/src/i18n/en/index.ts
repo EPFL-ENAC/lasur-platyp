@@ -401,7 +401,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     companies_selected: 'No company selected | 1 company selected | {n} companies selected',
     campaigns_selected: 'No campaign selected | 1 campaign selected | {n} campaigns selected',
     cross_sectional_longitudinal: 'Cross-sectional or Longitudinal analysis',
-    longitudinal: 'Only show data from people who participated in at least two groups',
+    longitudinal: 'Only show data from people who participated in all groups',
     group_info: '{count} participants',
     too_few_records: 'Not enough records for: {groups}',
     modal_evolution: {
