@@ -1120,6 +1120,7 @@ Use the menu to navigate through the different sections, manage organisations, c
   report_campaign: 'Campaign report',
   reset_password: 'Reset Password',
   roles: 'Roles',
+  save: 'Save',
   select: 'Select',
   show_less: 'Show less',
   show_more: 'Show more',

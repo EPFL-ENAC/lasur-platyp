@@ -138,27 +138,26 @@
               <div>
                 <div class="q-mb-xs">{{ t('campaign.parking_provided') }} *</div>
                 <q-field
-                  :model-value="selected.parking_provided"
                   borderless
                   dense
-                  :rules="[(val) => typeof val === 'boolean' || t('field_required')]"
-                  class="q-mb-sm"
+                  hide-bottom-space
+                  :model-value="selected.parking_provided"
+                  :rules="[(val) => val !== undefined || t('field_required')]"
                 >
-                  <q-radio
-                    v-model="selected.parking_provided"
-                    :val="true"
-                    :label="t('yes')"
-                    @update:model-value="onParkingProvidedChanged"
-                  />
-                  <q-radio
-                    v-model="selected.parking_provided"
-                    :val="false"
-                    :label="t('no')"
-                    class="q-ml-lg"
-                    @update:model-value="onParkingProvidedChanged"
-                  />
+                  <template #control>
+                    <q-option-group
+                      v-model="selected.parking_provided"
+                      type="radio"
+                      inline
+                      :options="[
+                        { label: t('yes'), value: true },
+                        { label: t('no'), value: false },
+                      ]"
+                      @update:model-value="onParkingProvidedChanged"
+                    />
+                  </template>
                 </q-field>
-                <div v-if="selected.parking_provided" class="q-ml-md q-mt-sm">
+                <div v-if="selected.parking_provided" class="q-ml-md">
                   <q-checkbox
                     v-model="selected.parking_paid"
                     :label="t('campaign.parking_paid')"
@@ -399,6 +398,13 @@ function generateSlug() {
 async function onSave() {
   if (!selected.value.slug) {
     selected.value.slug = generateSlug()
+  }
+  // the validated fields live in the "general" panel: QTabPanels unmounts the
+  // inactive panels, and an unmounted field unregisters itself from the QForm,
+  // so its rules would be skipped silently while another tab is showing
+  if (tab.value !== 'general') {
+    tab.value = 'general'
+    await nextTick()
   }
   const valid = await form.value.validate()
   if (!valid) return

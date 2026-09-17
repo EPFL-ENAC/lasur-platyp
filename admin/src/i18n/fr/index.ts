@@ -1142,6 +1142,7 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   report_campaign: 'Rapport de campagne',
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
+  save: 'Enregistrer',
   select: 'Sélectionner',
   show_less: 'Afficher moins',
   show_more: 'Afficher plus',
