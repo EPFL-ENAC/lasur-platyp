@@ -51,6 +51,7 @@
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
+import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { use } from 'echarts/core'
 import { BarChart, LineChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
@@ -486,39 +487,45 @@ function initComparisonChartOptions() {
 
   if (total.value === 0) return
 
-  const series: SeriesOption[] = [
-    {
-      name: t('stats.energy_journey.yaxis'),
+  const metricLabels = [t('stats.energy_journey.yaxis'), t('stats.energy_journey.who_above_count')]
+
+  const series: SeriesOption[] = []
+  groupStats.forEach((group, i) => {
+    const color = GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc'
+    series.push({
+      name: group.name,
       type: 'bar',
+      xAxisIndex: 0,
       yAxisIndex: 0,
-      color: GROUP_COLORS[0] ?? '#ccc',
-      data: avgKcal,
-      markLine: {
-        symbol: ['none', 'none'],
-        label: {
-          show: true,
-          position: 'insideEndTop',
-          formatter: `${WHO_RECOMMENDATION} kcal`,
-          distance: 10,
-          fontWeight: 'bold',
-        },
-        lineStyle: {
-          type: 'dashed',
-          width: 2,
-          opacity: 0.8,
-        },
-        data: [{ yAxis: WHO_RECOMMENDATION }],
-        z: 1000,
-      },
-    },
-    {
-      name: t('stats.energy_journey.who_above_count'),
+      color,
+      data: [avgKcal[i] ?? 0, null],
+      ...(i === 0
+        ? {
+            markLine: {
+              symbol: ['none', 'none'],
+              label: {
+                show: true,
+                position: 'insideEndTop',
+                formatter: `${WHO_RECOMMENDATION} kcal`,
+                distance: 10,
+                fontWeight: 'bold',
+              },
+              lineStyle: { type: 'dashed', width: 2, opacity: 0.8 },
+              data: [{ yAxis: WHO_RECOMMENDATION }],
+              z: 1000,
+            },
+          }
+        : {}),
+    })
+    series.push({
+      name: group.name,
       type: 'bar',
+      xAxisIndex: 1,
       yAxisIndex: 1,
-      color: GROUP_COLORS[1] ?? '#ccc',
-      data: aboveWhoCount,
-    },
-  ]
+      color,
+      data: [null, aboveWhoCount[i] ?? 0],
+    })
+  })
 
   option.value = {
     grid: {
@@ -538,27 +545,48 @@ function initComparisonChartOptions() {
       itemGap: 10,
       textStyle: { fontSize: 16 },
     },
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: {
-      bottom: 0,
-      data: [t('stats.energy_journey.yaxis'), t('stats.energy_journey.who_above_count')],
-    },
-    xAxis: {
-      type: 'category',
-      data: groupStats.map((group) => group.name),
-      name: props.xaxis || '',
-      nameLocation: 'middle',
-      nameGap: 30,
-      axisLabel: {
-        // Group name on a first line, its participants count on a second one.
-        formatter: (value: string, index: number) =>
-          `{name|${value}}\n{count|${t('stats.total', { count: groupStats[index]?.participants ?? 0 })}}`,
-        rich: {
-          name: { lineHeight: 18 },
-          count: { fontSize: 10, opacity: 0.7, lineHeight: 14 },
-        },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) => {
+        const list = Array.isArray(paramsList) ? paramsList : [paramsList]
+        let res = `${list[0]?.name}<br/>`
+        list.forEach((item) => {
+          if (item.value == null || Number.isNaN(Number(item.value))) return
+          // Kcal series come first, so their indexes span the group range.
+          const unit = (item.seriesIndex ?? Infinity) < groupStats.length ? ' kcal' : ''
+          res += `${item.marker} ${item.seriesName}: <b>${formatNumber(Number(item.value))}${unit}</b><br/>`
+        })
+        return res
       },
     },
+    legend: {
+      bottom: 0,
+      data: groupStats.map((group) => group.name),
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: metricLabels,
+        name: props.xaxis || '',
+        nameLocation: 'middle',
+        nameGap: 30,
+        axisLabel: {
+          interval: 0,
+          width: 150,
+          overflow: 'break',
+        },
+      },
+      // Shown nowhere, but keeps the count bars in their own band layout, not
+      // squeezed by the kcal series' null slots.
+      {
+        type: 'category',
+        data: metricLabels,
+        axisLabel: { show: false },
+        axisTick: { show: false },
+        axisLine: { show: false },
+      },
+    ],
     yAxis: [
       {
         type: 'value',
