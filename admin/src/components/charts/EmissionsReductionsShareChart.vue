@@ -201,7 +201,7 @@ function initChartOptions() {
     height: props.height - 100,
     title: {
       text: t(`stats.emissions_${props.chartTranslationName}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -297,7 +297,7 @@ function initComparisonChartOptions() {
     colors,
     percent: true,
     title: t(`stats.emissions_${props.chartTranslationName}.title`),
-    totalLabel: t('stats.total', { count: total.value }),
+    totalLabel: t('stats.total_participants', { count: total.value }),
     height: props.height - 100,
     yAxisName: '%',
     keyOrder,

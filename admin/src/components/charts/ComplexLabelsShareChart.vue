@@ -219,7 +219,7 @@ function initChartOptions() {
     title: [
       {
         text: t(`stats.freq_mod.title_detailed`),
-        subtext: t(`stats.total`, { count: total.value }),
+        subtext: t(`stats.total_participants`, { count: total.value }),
         left: 'center',
         top: 0,
         textStyle: {
@@ -317,7 +317,7 @@ function initComparisonChartOptions() {
     colors: COMPLEX_LABELS_COLORS,
     percent: true,
     title: t('stats.freq_mod.title_detailed'),
-    totalLabel: t('stats.total', { count: total.value }),
+    totalLabel: t('stats.total_participants', { count: total.value }),
     height: props.height - 120,
     yAxisName: '%',
     keyOrder,

@@ -279,7 +279,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.travel_time.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -381,7 +381,7 @@ function initComparisonChartOptions() {
     height: props.height - 100,
     title: {
       text: t(`stats.travel_time.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
