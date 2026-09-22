@@ -62,6 +62,7 @@ export const useStats = defineStore('stats', () => {
 
   const freqModalType = ref('simple')
   const emModalType = ref('simple')
+  const recoEmModalType = ref('simple')
   const redModalType = ref('simple')
   const redShareModalType = ref('simple')
   const linksModalType = ref('simple')
@@ -272,6 +273,7 @@ export const useStats = defineStore('stats', () => {
     comparisonMode,
     freqModalType,
     emModalType,
+    recoEmModalType,
     redModalType,
     redShareModalType,
     linksModalType,

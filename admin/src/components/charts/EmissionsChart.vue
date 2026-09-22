@@ -58,6 +58,12 @@ interface Props {
   foldModeToSimple?: boolean
   xaxis?: string
   yaxis?: string
+  // Y axis name of the comparison rendering, whose bars stack annual totals in
+  // tons rather than the per-journey emissions of the single-group rendering.
+  comparisonYaxis?: string
+  // Wording of the share appended to each comparison tooltip line, given the
+  // value's percentage of its group total and the group name.
+  shareLabelKey?: string
   rangeStep?: number
   height?: number
   loading?: boolean
@@ -68,6 +74,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
+  shareLabelKey: 'stats.group_emissions_share',
 })
 
 const chartTitle = computed(
@@ -110,6 +117,12 @@ function findRawGroupEmissions(groupStats: ComparisonStats): Emissions[] | undef
       return groupStats.mode_emissions_complex_labels ?? undefined
     case 'freq_mod_pro':
       return groupStats.pro_mode_emissions ?? undefined
+    // Same journeys, bucketed by their current label as above, but carrying
+    // what they would emit by following their recommendation.
+    case 'reco_mod_simple':
+      return groupStats.reco_mode_emissions_simple_labels ?? undefined
+    case 'reco_mod_complex':
+      return groupStats.reco_mode_emissions_complex_labels ?? undefined
     default:
       return undefined
   }
@@ -305,10 +318,10 @@ const comparisonEmissionItemsLabels = computed(() => {
 
 const chartDescription = computed(() => {
   if (comparisonEmissionItemsLabels.value) {
-    return t(
-      `stats.emissions_${props.chartTranslationName}.texts.comparison`,
-      comparisonEmissionItemsLabels.value,
-    )
+    // Only the charts translating a worked example opt in: the others keep
+    // their plain description.
+    const key = `stats.emissions_${props.chartTranslationName}.texts.comparison`
+    return te(key) ? t(key, comparisonEmissionItemsLabels.value) : ''
   }
   if (emissionItemsLabels.value) {
     return t(
@@ -577,10 +590,10 @@ function initComparisonChartOptions() {
     title: chartTitle.value,
     totalLabel: t('stats.total', { count: total.value }),
     height: props.height - 120,
-    yAxisName: t('stats.units.tco2eq_per_year'),
+    yAxisName: props.comparisonYaxis ?? t('stats.units.tco2eq_per_year'),
     keyOrder,
     valueUnit: t('stats.units.tco2eq_per_year'),
-    valueShareLabel: (percent: string) => t('stats.group_emissions_share', { percent }),
+    valueShareLabel: (percent: string, group: string) => t(props.shareLabelKey, { percent, group }),
   })
 }
 </script>

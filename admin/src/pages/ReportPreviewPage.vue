@@ -144,6 +144,10 @@
         />
       </report-page>
 
+      <report-page v-if="stats.comparisonMode" :org-names="orgs">
+        <reco-emissions-mod-chart :height="height" inline />
+      </report-page>
+
       <report-page :org-names="orgs">
         <emissions-reductions-mod-chart :height="height" inline />
       </report-page>
@@ -265,6 +269,7 @@ import EmissionsModProChart from '@/components/charts/EmissionsModProChart.vue'
 import EmissionsReductionsModChart from '@/components/charts/EmissionsReductionsModChart.vue'
 import EmissionsReductionsModProChart from '@/components/charts/EmissionsReductionsModProChart.vue'
 import EmissionsReductionsModShareChart from '@/components/charts/EmissionsReductionsModShareChart.vue'
+import RecoEmissionsModChart from '@/components/charts/RecoEmissionsModChart.vue'
 import LinksRecoChart from '@/components/charts/LinksRecoChart.vue'
 import JourneyEnergyChart from '@/components/charts/JourneyEnergyChart.vue'
 import JourneyEnergyShareChart from '@/components/charts/JourneyEnergyShareChart.vue'
@@ -297,6 +302,7 @@ onMounted(async () => {
   campaigns.value = (route.query.campaigns as string)?.split(';').map(decodeURIComponent) || []
   statsStore.freqModalType = (route.query.freqModalType as string) || 'simple'
   statsStore.emModalType = (route.query.emModalType as string) || 'simple'
+  statsStore.recoEmModalType = (route.query.recoEmModalType as string) || 'simple'
   statsStore.redModalType = (route.query.redModalType as string) || 'simple'
   statsStore.redShareModalType = (route.query.redShareModalType as string) || 'simple'
   statsStore.linksModalType = (route.query.linksModalType as string) || 'simple'
