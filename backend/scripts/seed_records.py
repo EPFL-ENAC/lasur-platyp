@@ -188,16 +188,32 @@ def fake_email_hash(participant_index: int) -> str:
     return hashlib.sha256(email.strip().lower().encode()).hexdigest()
 
 
-def fake_reco() -> dict:
+def fake_reco(data: dict) -> dict:
+    """One reco/label entry per declared journey: typo.reco.{reco_inter,
+    reco_simple,simple_labels,complex_labels}.N is index-matched with
+    data.freq_mod_journeys[.N] by the stats pipeline."""
     primary = random.choices(RECO_OPTIONS, weights=RECO_OPTIONS_WEIGHTS)[0]
-    secondary = primary if random.random() < 0.6 else random.choices(RECO_OPTIONS, weights=RECO_OPTIONS_WEIGHTS)[0]
+    reco_inter = [primary] + [
+        primary if random.random() < 0.6
+        else random.choices(RECO_OPTIONS, weights=RECO_OPTIONS_WEIGHTS)[0]
+        for _ in range(len(data["freq_mod_journeys"]) - 1)
+    ]
     t_tim = random.randint(4, 30)
     return {
         "pt_pass": random.choice(PT_PASSES),
-        "reco_inter": [primary, secondary],
-        "reco_simple": [random.choices(SIMPLE_MODES, weights=SIMPLE_MODES_WEIGHTS)[0] for _ in range(2)],
-        "simple_labels": [random.choices(SIMPLE_MODES, weights=SIMPLE_MODES_WEIGHTS)[0] for _ in range(2)],
-        "complex_labels": [random.choices(MODES, weights=MODES_WEIGHTS)[0], random.choices(MODES, weights=MODES_WEIGHTS)[0]],
+        "reco_inter": reco_inter,
+        "reco_simple": [
+            random.choices(SIMPLE_MODES, weights=SIMPLE_MODES_WEIGHTS)[0]
+            for _ in data["freq_mod_journeys"]
+        ],
+        "simple_labels": [
+            random.choices(SIMPLE_MODES, weights=SIMPLE_MODES_WEIGHTS)[0]
+            for _ in data["freq_mod_journeys"]
+        ],
+        "complex_labels": [
+            random.choices(MODES, weights=MODES_WEIGHTS)[0]
+            for _ in data["freq_mod_journeys"]
+        ],
         "bravo": [0] if random.random() < 0.7 else [0, random.randint(1, 2)],
         "t_traj_mm": {
             "oid": random.randint(1000, 3000),
@@ -222,9 +238,9 @@ def fake_reco_actions() -> dict:
     return actions
 
 
-def fake_typo() -> dict:
+def fake_typo(data: dict) -> dict:
     return {
-        "reco": fake_reco(),
+        "reco": fake_reco(data),
         "reco_pro": fake_reco_pro(),
         "reco_actions": fake_reco_actions(),
     }
@@ -248,10 +264,11 @@ async def seed(campaign_id: int, count: int, participants: int, email_hash_rate:
             email_hash = None
             if random.random() < email_hash_rate:
                 email_hash = fake_email_hash(i % participants)
+            data = fake_data(workplace)
             draft = RecordDraft(
                 token=secrets.token_urlsafe(16),
-                data=fake_data(workplace),
-                typo=fake_typo(),
+                data=data,
+                typo=fake_typo(data),
                 email_hash=email_hash,
             )
             record = await service.create(draft, campaign)
