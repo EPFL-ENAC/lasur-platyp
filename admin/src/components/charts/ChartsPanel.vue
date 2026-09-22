@@ -122,6 +122,11 @@
             :height="height"
             :loading="stats.loading"
           />
+          <reco-emissions-mod-chart
+            v-if="stats.comparisonMode"
+            :height="height"
+            :loading="stats.loading"
+          />
           <emissions-reductions-mod-chart :height="height" :loading="stats.loading" />
           <emissions-reductions-mod-share-chart :height="height" :loading="stats.loading" />
           <journey-energy-chart
@@ -200,6 +205,7 @@ import LocationChart from '@/components/charts/LocationChart.vue'
 import EmissionsModChart from '@/components/charts/EmissionsModChart.vue'
 import EmissionsModProChart from '@/components/charts/EmissionsModProChart.vue'
 import EmissionsReductionsModChart from '@/components/charts/EmissionsReductionsModChart.vue'
+import RecoEmissionsModChart from '@/components/charts/RecoEmissionsModChart.vue'
 import EmissionsReductionsModProChart from '@/components/charts/EmissionsReductionsModProChart.vue'
 import EmissionsReductionsModShareChart from '@/components/charts/EmissionsReductionsModShareChart.vue'
 import LinksRecoChart from '@/components/charts/LinksRecoChart.vue'

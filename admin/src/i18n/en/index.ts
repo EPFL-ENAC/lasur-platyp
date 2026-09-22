@@ -430,6 +430,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       tco2eq_per_year: 'tCO₂eq/year',
     },
     group_emissions_share: '({percent}%)',
+    group_potential_emissions_share: '({percent}% of the potential emissions of {group})',
     sections: {
       mobility_analysis: {
         title: 'Mobility analysis',
@@ -644,6 +645,27 @@ Thank you for your valuable contribution! If you have any questions, please cont
       texts: {
         comparison:
           'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
+      },
+    },
+    emissions_reco_mod: {
+      title: 'Potential commuting emissions',
+      description:
+        'This chart shows the potential CO₂eq emissions corresponding to each recommended mode of travel, assuming that participants follow the recommendations.',
+    },
+    emissions_reco_mod_simple: {
+      title: 'Potential commuting emissions (simple)',
+      comparison_yaxis: 'Potential emissions (tCO₂eq/year)',
+      labels: {
+        ...simpleShortLabels,
+        ...emissionsLabels,
+      },
+    },
+    emissions_reco_mod_complex: {
+      title: 'Potential commuting emissions (detailed)',
+      comparison_yaxis: 'Potential emissions (tCO₂eq/year)',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
       },
     },
     emissions_reductions_mod: {

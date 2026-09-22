@@ -495,6 +495,7 @@ async function openReport() {
 
   url.searchParams.set('freqModalType', stats.freqModalType)
   url.searchParams.set('emModalType', stats.emModalType)
+  url.searchParams.set('recoEmModalType', stats.recoEmModalType)
   url.searchParams.set('redModalType', stats.redModalType)
   url.searchParams.set('redShareModalType', stats.redShareModalType)
   url.searchParams.set('linksModalType', stats.linksModalType)

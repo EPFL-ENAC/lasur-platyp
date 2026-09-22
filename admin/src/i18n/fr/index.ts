@@ -444,6 +444,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       tco2eq_per_year: 'tCO₂éq/an',
     },
     group_emissions_share: '({percent}%)',
+    group_potential_emissions_share: '({percent}% des émissions potentielles de {group})',
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
@@ -660,6 +661,27 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       texts: {
         comparison:
           "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+      },
+    },
+    emissions_reco_mod: {
+      title: 'Émissions potentielles liées aux déplacements pendulaires',
+      description:
+        'Ce graphique affiche le potentiel d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
+    },
+    emissions_reco_mod_simple: {
+      title: 'Émissions potentielles liées aux déplacements pendulaires (simple)',
+      comparison_yaxis: 'Émissions potentielles (tCO₂éq/an)',
+      labels: {
+        ...simpleShortLabels,
+        ...emissionsLabels,
+      },
+    },
+    emissions_reco_mod_complex: {
+      title: 'Émissions potentielles liées aux déplacements pendulaires (détail)',
+      comparison_yaxis: 'Émissions potentielles (tCO₂éq/an)',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
       },
     },
     emissions_reductions_mod: {
