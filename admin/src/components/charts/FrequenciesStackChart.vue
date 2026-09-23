@@ -337,13 +337,26 @@ function initComparisonChartOptions() {
   )
   const groupLabels = datasets.map((dataset) => truncateAxisLabel(dataset.name))
 
+  // In percent mode, each bar is the split of its own (scale, group) row.
+  const rowTotals = rows.map((row) =>
+    sortedModes.reduce(
+      (sum, mode) => sum + (row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0),
+      0,
+    ),
+  )
+
   const series: SeriesOption[] = sortedModes.map((mode) => ({
     name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
     type: 'bar',
     stack: 'total',
     emphasis: { focus: 'series' },
     color: labelColors.value[mode] || '#ccc',
-    data: rows.map((row) => row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0),
+    data: rows.map((row, i) => {
+      const value = row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0
+      if (!props.percent) return value
+      const rowTotal = rowTotals[i] || 0
+      return rowTotal > 0 ? Number(((value / rowTotal) * 100).toFixed(2)) : 0
+    }),
   }))
 
   // The axis labels sit outside the grid (no containLabel), so the room they
@@ -385,7 +398,7 @@ function initComparisonChartOptions() {
           .filter((item: { value: number }) => item.value)
           .map(
             (item: { marker: string; seriesName: string; value: number }) =>
-              `${item.marker} ${item.seriesName}: <b>${item.value}</b>`,
+              `${item.marker} ${item.seriesName}: <b>${props.percent ? `${Math.round(item.value)}%` : item.value}</b>`,
           )
         return [header, ...lines].join('<br/>')
       },
@@ -419,6 +432,7 @@ function initComparisonChartOptions() {
       nameLocation: 'middle',
       nameGap: 20,
       type: 'value',
+      ...(props.percent ? { max: 100 } : {}),
     },
     series,
   }
