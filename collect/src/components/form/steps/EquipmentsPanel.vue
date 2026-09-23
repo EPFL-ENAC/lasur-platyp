@@ -34,6 +34,7 @@ const equipmentsOptions = computed<Option[]>(() => [
   { value: 'tpu_leman_pass', label: t('form.equipments_option.tpu_leman_pass') },
   { value: 'train_demi_tarif', label: t('form.equipments_option.train_demi_tarif') },
   { value: 'train_abo_gen', label: t('form.equipments_option.train_abo_gen') },
+  { value: 'sncf', label: t('form.equipments_option.sncf') },
   { value: 'mob_subs', label: t('form.equipments_option.mob_subs') },
   { value: 'moto', label: t('form.equipments_option.moto') },
   { value: 'car', label: t('form.equipments_option.car') },

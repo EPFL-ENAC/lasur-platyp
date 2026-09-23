@@ -91,6 +91,7 @@ export default {
       tpu_leman_pass: 'Léman Pass',
       train_demi_tarif: 'Demi-tarif',
       train_abo_gen: 'Abonnement général',
+      sncf: 'Abonnement SNCF',
       moto: 'Moto / scooter / cyclomoteur',
       ebike: 'Vélo à assistance électrique',
       mob_subs: 'Abonnement de mobilité partagée (Mobility, Donkey Republic, etc.)',

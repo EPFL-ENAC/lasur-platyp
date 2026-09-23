@@ -91,6 +91,7 @@ export default {
       tpu_leman_pass: 'Léman Pass',
       train_demi_tarif: 'Half-fare Travelcard',
       train_abo_gen: 'GA Travelcard',
+      sncf: 'SNCF Pass',
       moto: 'Motorcycle/scooter/moped',
       ebike: 'Electric bicycle',
       mob_subs: 'Shared mobility subscription (Mobility, Donkey Republic, etc.)',
