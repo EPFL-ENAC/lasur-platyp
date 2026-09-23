@@ -1,9 +1,9 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlmodel import select, col
+from sqlmodel import select, col, delete
 from sqlalchemy.orm import selectinload
 from fastapi import HTTPException
-from api.models.domain import Campaign, Workplace
+from api.models.domain import Campaign, Record, Workplace
 from api.models.query import CampaignResult, CampaignDraft
 from api.services.authz import ACLService
 from api.services.companies import CompanyService
@@ -114,6 +114,8 @@ class CampaignService(EntityService):
                 status_code=404, detail="Campaign not found")
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+        # records are not mapped as a relationship, delete them explicitly
+        await self.session.exec(delete(Record).where(Record.campaign_id == id))
         await self.session.delete(entity)
         await self.session.commit()
         return entity
