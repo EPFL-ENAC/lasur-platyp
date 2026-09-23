@@ -1,5 +1,7 @@
 <template>
   <div :class="{ page: true, 'title-page': props.isTitle }">
+    <div aria-hidden="true" class="background-dots"></div>
+
     <header v-if="!props.isTitle">
       <img src="/admin/LOGO-VIOLET.svg" alt="logo" />
 
@@ -23,7 +25,7 @@ const props = defineProps<Props>()
 const { t } = useI18n()
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .title-page {
   display: flex;
   flex-direction: column;
@@ -85,6 +87,25 @@ footer {
 footer::after {
   counter-increment: page-counter;
   content: counter(page-counter);
+}
+
+// Dot grid, same as the app: 3px dots on a 30px pitch, dissolving towards the
+// left and right edges via a mask -- no image asset needed. Painted above the
+// white page background and below all content.
+.background-dots {
+  --dot-color: #{$brand-purple-200};
+  --dot-fade: linear-gradient(90deg, transparent 0%, #000 45%, #000 55%, transparent 100%);
+
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  background-image: radial-gradient(circle, var(--dot-color) 1.5px, transparent 1.5px);
+  background-size: 30px 30px;
+  opacity: 0.25;
+
+  mask-image: var(--dot-fade);
+  -webkit-mask-image: var(--dot-fade);
 }
 
 @media print {

@@ -234,7 +234,7 @@ function initChartOptions() {
     height: props.height - 80,
     title: {
       text: chartTitle.value,
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       textStyle: {

@@ -262,7 +262,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.equipments.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -379,7 +379,7 @@ function initComparisonChartOptions() {
     categoryNames,
     percent: stats.equipmentsPercent,
     title: t(`stats.equipments.title`),
-    totalLabel: t('stats.total', { count: total.value }),
+    totalLabel: t('stats.total_participants', { count: total.value }),
     height: props.height - 100,
     xAxisName: stats.equipmentsPercent ? t('stats.percent_employees') : t('stats.nb_employees'),
   })

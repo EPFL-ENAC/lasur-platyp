@@ -377,7 +377,7 @@ function initComparisonChartOptions() {
     height: props.height - 120,
     title: {
       text: chartTitle.value,
-      subtext: t('stats.total', { count: total.value }),
+      subtext: t('stats.total_trips', { count: total.value }),
       left: 'center',
       top: 0,
       textStyle: { fontSize: 16 },
