@@ -9,6 +9,7 @@ from api.services.stats.links import LinksService
 from api.services.stats.locations import LocationsService
 from api.services.stats.behavior_change import BehaviorChangeService
 from api.services.stats.equipments import EquipmentsService
+from api.services.stats.commons import filter_completed_records
 
 
 class StatsService:
@@ -156,18 +157,5 @@ class StatsService:
         return df
 
     def _filter_completed_records(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Get a DataFrame representation of the completed records.
-
-        Args:
-            filter (dict): The filter criteria for the records.
-            flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
-        """
-        # A record is completed once it has a recommendation: either the new
-        # typo.reco.reco_inter.N (one per journey) or, for records collected before
-        # that change, the legacy typo.reco.reco_dt2.0
-        reco_cols = [col for col in df.columns if col ==
-                     'typo.reco.reco_dt2.0' or col.startswith('typo.reco.reco_inter.')]
-        if not reco_cols:
-            return pd.DataFrame()
-        df = df[df[reco_cols].notna().any(axis=1)]
-        return df
+        """Get a DataFrame representation of the completed records."""
+        return filter_completed_records(df)
