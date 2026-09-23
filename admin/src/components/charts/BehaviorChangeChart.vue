@@ -222,7 +222,7 @@ function leversOptions() {
         if (!lever) {
           return 0
         }
-        return props.percent ? lever.percentage : lever.count
+        return props.percent ? Math.round(lever.percentage) : lever.count
       }),
       itemStyle: {
         color: CATEGORY_COLORS[category] || '#ccc',
@@ -265,7 +265,7 @@ function motivationOptions() {
         if (!lever) {
           return 0
         }
-        return props.percent ? lever.percentage : lever.count
+        return props.percent ? Math.round(lever.percentage) : lever.count
       }),
       itemStyle: {
         color: MOTIVATION_COLORS[level] || '#ccc',
@@ -403,7 +403,7 @@ function comparisonLeversOptions(): ComparisonChartData | null {
           .find((item) => item.mode === row.mode)
           ?.levers.find((l) => l.category === category)
         if (!lever) return 0
-        return props.percent ? lever.percentage : lever.count
+        return props.percent ? Math.round(lever.percentage) : lever.count
       }),
     })) as SeriesOption[],
     total: groups.reduce((sum, group) => sum + group.total, 0),
@@ -446,7 +446,7 @@ function comparisonMotivationOptions(): ComparisonChartData | null {
           .find((item) => item.mode === row.mode)
           ?.motivations.find((m) => m.level === level)
         if (!motivation) return 0
-        return props.percent ? motivation.percentage : motivation.count
+        return props.percent ? Math.round(motivation.percentage) : motivation.count
       }),
     })) as SeriesOption[],
     total: groups.reduce((sum, group) => sum + group.total, 0),

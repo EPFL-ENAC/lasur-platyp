@@ -212,7 +212,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
       const item = frequencies.data.find((item) => item.value === `${category}`)
       return item
         ? stats.constraintsPercent
-          ? ((item.count / total.value) * 100).toFixed(2)
+          ? Math.round((item.count / total.value) * 100)
           : item.count
         : 0
     }) || []
@@ -275,7 +275,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
   const dataset = frequencies.data.map((item) => ({
     key: item.value || 'null',
     name: keyLabel(item.value || 'null'),
-    value: stats.constraintsPercent ? ((item.count / total.value) * 100).toFixed(2) : item.count,
+    value: stats.constraintsPercent ? Math.round((item.count / total.value) * 100) : item.count,
   }))
 
   // Extract category names and values for yAxis and series

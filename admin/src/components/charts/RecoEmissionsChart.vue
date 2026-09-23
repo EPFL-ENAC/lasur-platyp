@@ -28,7 +28,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from '@/utils/numbers'
+import { formatNumber, formatTons } from '@/utils/numbers'
 import { MODE_COLORS, readableTextColor } from './commons'
 
 const { t, locale } = useI18n()
@@ -57,8 +57,8 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    current_emissions: formatNumber(currentEmissions.value / 1000),
-    new_emissions: formatNumber(newEmissions.value / 1000),
+    current_emissions: formatTons(currentEmissions.value / 1000),
+    new_emissions: formatTons(newEmissions.value / 1000),
     cheeseburgers: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 18.8)),
     vacuum: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 73.43)),
     shirt: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 13.23466)),

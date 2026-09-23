@@ -33,7 +33,7 @@ import {
   simpleLabelSortOrder,
 } from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
-import { formatNumber } from '@/utils/numbers'
+import { formatNumber, formatPercent, formatTons, roundTo } from '@/utils/numbers'
 import type { ComparisonStats, Emissions } from '@/models'
 
 const { t, te, locale } = useI18n()
@@ -186,8 +186,8 @@ const emissionItemsLabels = computed(() => {
   if (!ei) return null
 
   return {
-    carMotoJourneysPercentage: formatNumber(Math.round(ei.carMotoJourneysPercentage)),
-    carMotoEmissionsPercentage: formatNumber(Math.round(ei.carMotoEmissionsPercentage)),
+    carMotoJourneysPercentage: formatPercent(ei.carMotoJourneysPercentage),
+    carMotoEmissionsPercentage: formatPercent(ei.carMotoEmissionsPercentage),
   }
 })
 
@@ -230,10 +230,10 @@ const emissionItemsProLabels = computed(() => {
   const withoutFirstJourneys = eip.withoutFirst.reduce((sum, item) => sum + item.journeys, 0)
 
   return {
-    firstPercent: formatNumber(Math.round((eip.first.emissions / eip.total) * 100)),
+    firstPercent: formatPercent((eip.first.emissions / eip.total) * 100),
     firstMode: keyLabel(eip.first.mode),
     firstEmissions: formatNumber(Math.round((eip.first.emissions || 0) / eip.first.journeys)),
-    secondPercent: formatNumber(Math.round((eip.second.emissions / eip.total) * 100)),
+    secondPercent: formatPercent((eip.second.emissions / eip.total) * 100),
     secondMode: keyLabel(eip.second.mode),
     remainingEmissions: formatNumber(Math.round(withoutFirstEmissions / withoutFirstJourneys)),
   }
@@ -309,10 +309,10 @@ const comparisonEmissionItemsLabels = computed(() => {
     lastGroup: ci.lastGroup,
     prevGroup: ci.prevGroup,
     mode: keyLabel(ci.mode),
-    lastValue: formatNumber(Number(ci.lastValue.toFixed(1))),
-    lastPercent: formatNumber(Math.round(ci.lastPercent)),
-    prevValue: formatNumber(Number(ci.prevValue.toFixed(1))),
-    prevPercent: formatNumber(Math.round(ci.prevPercent)),
+    lastValue: formatTons(ci.lastValue),
+    lastPercent: formatPercent(ci.lastPercent),
+    prevValue: formatTons(ci.prevValue),
+    prevPercent: formatPercent(ci.prevPercent),
   }
 })
 
@@ -574,7 +574,7 @@ function initComparisonChartOptions() {
         key: shortKey(item.mode),
         name: keyLabel(item.mode),
         // Comparison stacks annual totals, which read better in tons than in kg.
-        value: item.emissions * KG_TO_TONS,
+        value: roundTo(item.emissions * KG_TO_TONS, 1),
       })),
     }
   })

@@ -1,8 +1,8 @@
 import type { EChartsOption } from 'echarts'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { t } from '@/boot/i18n'
-import { formatNumber } from '@/utils/numbers'
-import { GROUP_COLORS } from './commons'
+import { formatNumber, formatPercent } from '@/utils/numbers'
+import { computePercentages, GROUP_COLORS } from './commons'
 
 export interface ComparisonSeriesItem {
   key: string
@@ -194,6 +194,12 @@ export function buildGroupStackedBarOption(params: {
   })
   const keys = keyOrder ? keyOrder.filter((key) => keyNames.has(key)) : Array.from(keyNames.keys())
   const groupTotals = groupDatasets.map(groupTotal)
+  // Percentages are rounded to the unit, and still sum to 100 within each group.
+  const groupPercents = percent
+    ? groupDatasets.map(
+        (group) => new Map(computePercentages(group.items).map((item) => [item.key, item.percent])),
+      )
+    : []
 
   const series = keys.map((key) => ({
     name: keyNames.get(key) || key,
@@ -202,10 +208,8 @@ export function buildGroupStackedBarOption(params: {
     emphasis: { focus: 'series' as const },
     color: colors[key] || colors.default || '#ccc',
     data: groupDatasets.map((group, i) => {
-      const value = group.items.find((item) => item.key === key)?.value ?? 0
-      if (!percent) return value
-      const total = groupTotals[i] || 0
-      return total > 0 ? Number(((value / total) * 100).toFixed(2)) : 0
+      if (percent) return groupPercents[i]?.get(key) ?? 0
+      return group.items.find((item) => item.key === key)?.value ?? 0
     }),
   }))
 
@@ -239,10 +243,7 @@ export function buildGroupStackedBarOption(params: {
           const unit = percent ? '%' : valueUnit ? ` ${valueUnit}` : ''
           const share =
             !percent && valueShareLabel && hoveredTotal > 0
-              ? ` ${valueShareLabel(
-                  formatNumber(Math.round((value / hoveredTotal) * 100)),
-                  hoveredGroup,
-                )}`
+              ? ` ${valueShareLabel(formatPercent((value / hoveredTotal) * 100), hoveredGroup)}`
               : ''
           res += `${item.marker} ${item.seriesName}: <b>${display}${unit}</b>${share}<br/>`
         })
@@ -325,7 +326,7 @@ export function buildGroupedHorizontalBarOption(params: {
       const value = item?.value ?? 0
       if (!percent) return value
       const total = groupTotals[i] || 0
-      return total > 0 ? Number(((value / total) * 100).toFixed(2)) : 0
+      return total > 0 ? Math.round((value / total) * 100) : 0
     }),
   }))
 

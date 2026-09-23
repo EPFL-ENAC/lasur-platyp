@@ -44,8 +44,32 @@ export function formatNumber(value: number | null | undefined): string {
   return numberFormatter().format(value)
 }
 
+// Significant digits rules, to be applied in all charts and texts:
+// percentages are rounded to the unit, tCO2 to the tenth, kcal to the unit.
+
+export function roundTo(value: number, decimals: number): number {
+  const factor = 10 ** decimals
+  // Avoid "-0" when a small negative value rounds to zero.
+  return Math.round(value * factor) / factor || 0
+}
+
+/** Percentage value (without the % sign), rounded to the unit. */
+export function formatPercent(value: number | null | undefined): string {
+  return value === null || value === undefined ? 'N/A' : formatNumber(roundTo(value, 0))
+}
+
+/** Tons of CO2, rounded to the tenth. */
+export function formatTons(value: number | null | undefined): string {
+  return value === null || value === undefined ? 'N/A' : formatNumber(roundTo(value, 1))
+}
+
+/** Kilocalories, rounded to the unit. */
+export function formatKcal(value: number | null | undefined): string {
+  return value === null || value === undefined ? 'N/A' : formatNumber(roundTo(value, 0))
+}
+
 export function formatSignedPercent(value: number): string {
-  const rounded = Math.round(value)
+  const rounded = roundTo(value, 0)
   return `${rounded > 0 ? '+' : ''}${formatNumber(rounded)}%`
 }
 

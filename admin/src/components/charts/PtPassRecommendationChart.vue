@@ -51,7 +51,7 @@ import {
   GridComponent,
 } from 'echarts/components'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
-import { formatNumber } from '@/utils/numbers'
+import { formatNumber, formatPercent } from '@/utils/numbers'
 import { GROUP_COLORS } from './commons'
 import { ptPassLabels, type EquipmentsStats, type PtPassRecommendation } from '@/models'
 
@@ -135,7 +135,7 @@ function rowOf(group: ComparisonGroupRows, passType: string): PassRow {
 }
 
 function percentOf(value: number, total: number) {
-  return total > 0 ? Number(((value / total) * 100).toFixed(2)) : 0
+  return total > 0 ? Math.round((value / total) * 100) : 0
 }
 
 // The "other" bucket is a catch-all for pass types the toolkit does not name:
@@ -271,7 +271,7 @@ function tooltipFormatter(params: CallbackDataParams | CallbackDataParams[]) {
     lines.push(
       t('stats.pt_pass_reco.tooltip.equipped', {
         count: formatNumber(equipped),
-        percentage: formatNumber(percentage),
+        percentage: formatPercent(percentage),
       }),
     )
   }
@@ -296,7 +296,7 @@ function comparisonTooltipFormatter(params: CallbackDataParams | CallbackDataPar
     const parts = [
       t('stats.pt_pass_reco.tooltip.group_recommended', {
         count: formatNumber(row.recommended),
-        percentage: formatNumber(percentOf(row.recommended, group.participants)),
+        percentage: formatPercent(percentOf(row.recommended, group.participants)),
       }),
     ]
     const equipped = row.already_equipped
@@ -304,7 +304,7 @@ function comparisonTooltipFormatter(params: CallbackDataParams | CallbackDataPar
       parts.push(
         t('stats.pt_pass_reco.tooltip.group_equipped', {
           count: formatNumber(equipped),
-          percentage: formatNumber(row.recommended > 0 ? (equipped / row.recommended) * 100 : 0),
+          percentage: formatPercent(row.recommended > 0 ? (equipped / row.recommended) * 100 : 0),
         }),
       )
     }

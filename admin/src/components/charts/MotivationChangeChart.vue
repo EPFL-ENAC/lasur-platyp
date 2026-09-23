@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import BehaviorChangeChart from '@/components/charts/BehaviorChangeChart.vue'
-import { formatNumber } from '@/utils/numbers'
+import { formatPercent } from '@/utils/numbers'
 import type { BehaviorChangeStats } from '@/models'
 
 interface Props {
@@ -113,7 +113,7 @@ const descriptionValues = computed(() => {
     return item.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
   })
   return {
-    percentage: formatNumber(
+    percentage: formatPercent(
       motivatedByMode.reduce((sum, p) => sum + p, 0) / motivatedByMode.length,
     ),
   }

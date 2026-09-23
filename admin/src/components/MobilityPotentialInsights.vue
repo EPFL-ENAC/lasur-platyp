@@ -9,7 +9,7 @@
 import { computed } from 'vue'
 import type { EmissionReduction, Frequencies } from '@/models'
 import { useStats } from '@/stores/stats'
-import { formatNumber } from '@/utils/numbers'
+import { formatNumber, formatTons } from '@/utils/numbers'
 
 interface Props {
   frequencyKey: string
@@ -211,7 +211,7 @@ const message = computed(() => {
       'stats.sections.mobility_potentials.insights.biggest_emission_reduction',
       {
         mode: bestReduction.value.mode,
-        reduction: formatNumber(bestReduction.value.reduction),
+        reduction: formatTons(bestReduction.value.reduction),
         unit: unitLabel.value,
         percentage: bestReduction.value.percentage,
       },
@@ -222,7 +222,7 @@ const message = computed(() => {
         ' ' +
         t('stats.sections.mobility_potentials.insights.biggest_emission_reduction_extrapolation', {
           collaborators_count: formatNumber(props.collaboratorsCount),
-          reduction: formatNumber(bestReduction.value.extrapolatedReduction),
+          reduction: formatTons(bestReduction.value.extrapolatedReduction),
           unit: unitLabel.value,
         })
     }

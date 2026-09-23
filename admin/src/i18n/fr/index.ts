@@ -458,9 +458,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphiques illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
           most_potential:
-            "Le mode de transport avec le plus fort potentiel d'utilisateur·trice·s est : **{mode}** (recommandé à **{percentage}%** des participant·e·s)",
+            "Le mode de transport avec le plus fort potentiel d'utilisateur·trice·s est : **{mode}** (recommandé à environ **{percentage}%** des participant·e·s)",
           biggest_emission_reduction:
-            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
+            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit environ **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
           biggest_emission_reduction_extrapolation:
             'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
           biggest_physical_activity_gain:
@@ -635,7 +635,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          "{carMotoJourneysPercentage}% des trajets des participant·e·s sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
+          "Environ {carMotoJourneysPercentage}% des trajets des participant·e·s sont réalisés en voiture/moto/scooter, représentant environ {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
       },
     },
     emissions_freq_mod_simple: {
@@ -648,7 +648,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         comparison:
-          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_freq_mod_complex: {
@@ -661,7 +661,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         comparison:
-          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reco_mod: {
@@ -738,7 +738,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
+          "Environ {percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
       },
     },
     emissions_reductions_share_simple: {
@@ -750,7 +750,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          '{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
+          'Environ {percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
       },
     },
     emissions_reductions_share_complex: {
@@ -762,7 +762,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          '{percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
+          'Environ {percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
       },
     },
     emissions_freq_mod_pro: {
@@ -780,9 +780,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Environ {firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
+          'Environ {firstPercent}% des émissions sont dues à {firstMode}, environ {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
         comparison:
-          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an ({prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod_pro: {
@@ -842,9 +842,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers (l'équivalent de {yoga_min} minutes de yoga par personne et par jour).
           De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d’activité physique journalière de l’OMS. Le taux des participant·e·s dépensant au moins ce que recommande l'OMS grâce aux déplacements domicile-travail passerait d'environ {percent_current}% actuellement à environ {percent_potential}% potentiellement.`,
         specific_share:
-          "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
+          "Environ {percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
         comparison:
-          "Ce graphique montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150 kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s ({lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s ({prevPercent}%) pour le groupe {prevGroup}).",
+          "Ce graphique montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150 kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s (environ {lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s (environ {prevPercent}%) pour le groupe {prevGroup}).",
       },
     },
     behavior_change_levers: {
@@ -890,13 +890,13 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         default:
           'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific:
-          'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
+          'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, environ {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
       },
     },
     equipments_by_recommendations: {
       title: 'Équipements par recommandations',
       tooltip: `{count} des participant·e·s qui ont obtenu la recommandation "{reco}" sont équipés avec "{equipment}".<br />
-      Cela représente {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".
+      Cela représente environ {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".
       `,
       simpleMode: 'Équipements correspondant uniquement aux recommandations',
       labels: {
@@ -917,7 +917,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         default:
           'Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou si il serait pertinent de les aider à y avoir accès.',
         specific:
-          'Par exemple, {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation.',
+          'Par exemple, environ {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation.',
         hover_hint: 'Passez la souris sur les cellules pour plus de détails',
       },
     },

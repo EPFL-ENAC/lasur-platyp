@@ -61,7 +61,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from '@/utils/numbers'
+import { formatKcal, formatPercent } from '@/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import type { JourneyEnergyStats } from '@/models'
 
@@ -125,7 +125,7 @@ const biggestShare = ref<AddedEnergyShare | null>(null)
 const chartDescription = computed(() => {
   if (total.value > 5 && biggestShare.value) {
     return t('stats.energy_journey.texts.specific_share', {
-      percentage: formatNumber(biggestShare.value.percentage),
+      percentage: formatPercent(biggestShare.value.percentage),
       mode: keyLabel(biggestShare.value.label),
     })
   }
@@ -207,7 +207,7 @@ function initChartOptions() {
         const p = Array.isArray(params) ? params[0] : params
         if (!p) return ''
 
-        return `${p.name}<br/><b>${p.percent}%</b> (${formatNumber(p.value as number)} kcal)`
+        return `${p.name}<br/><b>${p.percent}%</b> (${formatKcal(p.value as number)} kcal)`
       },
     },
     legend: {
@@ -220,6 +220,7 @@ function initChartOptions() {
         name: 'Added kcal',
         type: 'pie',
         radius: ['40%', '70%'],
+        percentPrecision: 0,
         top: 'middle',
         avoidLabelOverlap: true,
         label: {

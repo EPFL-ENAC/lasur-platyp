@@ -444,9 +444,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
         description: `This section presents the personalized recommendations suggested to participants. Mobilyse indicates which modes are most likely to suit employees based on their habits, constraints, preferences, residential and work location… Some graphs also illustrate the potential gains in terms of impact on greenhouse gas emissions and health, in the event that all participants adopt the recommendations formulated by mobilyse.`,
         insights: {
           most_potential:
-            'The mode with the highest potential for users is: **{mode}** (recommended to **{percentage}%** of respondents)',
+            'The mode with the highest potential for users is: **{mode}** (recommended to about **{percentage}%** of respondents)',
           biggest_emission_reduction:
-            'The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction} {unit}**, i.e. **{percentage}%** of the total potential gain for responding employees.',
+            'The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction} {unit}**, i.e. about **{percentage}%** of the total potential gain for responding employees.',
           biggest_emission_reduction_extrapolation:
             'Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction} {unit}** per year.',
           biggest_physical_activity_gain:
@@ -619,7 +619,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          "{carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing {carMotoEmissionsPercentage}% of the company's annual CO₂ emissions.",
+          "About {carMotoJourneysPercentage}% of journeys by respondents are made in a car/motorcycle/scooter, representing about {carMotoEmissionsPercentage}% of the company's annual CO₂ emissions.",
       },
     },
     emissions_freq_mod_simple: {
@@ -632,7 +632,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         comparison:
-          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_freq_mod_complex: {
@@ -645,7 +645,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         comparison:
-          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reco_mod: {
@@ -722,7 +722,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          '{percentage}% of potential reduction depend on the main recommendation for mode {mode}.',
+          'About {percentage}% of potential reduction depend on the main recommendation for mode {mode}.',
       },
     },
     emissions_reductions_share_simple: {
@@ -734,7 +734,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          '{percentage}% of potential reduction depend on journeys currently labeled {mode}.',
+          'About {percentage}% of potential reduction depend on journeys currently labeled {mode}.',
       },
     },
     emissions_reductions_share_complex: {
@@ -746,7 +746,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          '{percentage}% of potential reduction depend on journeys currently labeled {mode}.',
+          'About {percentage}% of potential reduction depend on journeys currently labeled {mode}.',
       },
     },
     emissions_freq_mod_pro: {
@@ -764,9 +764,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'Approximately {firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
+          'Approximately {firstPercent}% of emissions are due to {firstMode}, about {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
         comparison:
-          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year ({prevPercent}%) for the {prevGroup} group.',
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reductions_mod_pro: {
@@ -825,9 +825,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
         specific_reco: `If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person (equivalent to {yoga_min} minutes of yoga per person per day).
           In addition, an additional {count} people will exceed the WHO’s daily physical activity recommendations. The proportion of participants who meet at least the WHO’s recommendations through their commute is expected to rise from around {percent_current}% to potentially around {percent_potential}%.`,
         specific_share:
-          '{percentage}% of the improvement in physical activity among participants would come from {mode}.',
+          'About {percentage}% of the improvement in physical activity among participants would come from {mode}.',
         comparison:
-          'This graph shows the average daily energy expended by participants during their commutes, by campaign group (left axis). It also shows the number (or percentage) of people who reach the 150 kcal/day threshold recommended by the World Health Organization (for example, there are {lastCount} participants ({lastPercent}% of participants) in the {lastGroup} group, compared to {prevCount} participants ({prevPercent}%) in the {prevGroup} group).',
+          'This graph shows the average daily energy expended by participants during their commutes, by campaign group (left axis). It also shows the number (or percentage) of people who reach the 150 kcal/day threshold recommended by the World Health Organization (for example, there are {lastCount} participants (about {lastPercent}% of participants) in the {lastGroup} group, compared to {prevCount} participants (about {prevPercent}%) in the {prevGroup} group).',
       },
     },
     behavior_change_levers: {
@@ -873,13 +873,13 @@ Thank you for your valuable contribution! If you have any questions, please cont
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific:
-          'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel, depending on the recommended mode. Overall, {percentage}% (combined rather motivated and very motivated) of participants are motivated to adopt the recommendations made to them.',
+          'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel, depending on the recommended mode. Overall, about {percentage}% (combined rather motivated and very motivated) of participants are motivated to adopt the recommendations made to them.',
       },
     },
     equipments_by_recommendations: {
       title: 'Equipment by recommendation',
       tooltip: `{count} of the participants who got the recommendation "{reco}" are equipped with "{equipment}". <br />
-      This represents {percentage}% of participants who got the recommendation "{reco}".`,
+      This represents about {percentage}% of participants who got the recommendation "{reco}".`,
       simpleMode: 'Equipments matching recommendation only',
       labels: {
         ...transportationModes,
@@ -899,7 +899,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         default:
           'This table shows the equipment of participants based on the recommendations made to them. This allows us to understand whether participants already have access to the mode recommended to them, or if it would be pertinent to help them gain access.',
         specific:
-          'For example, {percentage}% of participants to whom the {mode} mode is recommended are currently equipped to follow this recommendation.',
+          'For example, about {percentage}% of participants to whom the {mode} mode is recommended are currently equipped to follow this recommendation.',
         hover_hint: 'Hover over the cells for more details',
       },
     },

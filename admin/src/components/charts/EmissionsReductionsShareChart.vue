@@ -32,7 +32,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from '@/utils/numbers'
+import { formatNumber, formatPercent } from '@/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import type { ComparisonStats, EmissionReduction } from '@/models'
 
@@ -113,7 +113,7 @@ const biggestEmission = computed<PercentageEmission | null>(() => {
 const chartDescription = computed(() => {
   if (biggestEmission.value) {
     return t(`stats.emissions_${props.chartTranslationName}.texts.specific`, {
-      percentage: formatNumber(biggestEmission.value.percentage || 0),
+      percentage: formatPercent(biggestEmission.value.percentage || 0),
       mode: keyLabel(biggestEmission.value.mode),
     })
   }
@@ -229,6 +229,7 @@ function initChartOptions() {
         name: t(`stats.emissions_${props.chartTranslationName}.series`) || '',
         type: 'pie',
         radius: ['40%', '70%'],
+        percentPrecision: 0,
         top: 'middle',
         avoidLabelOverlap: true,
         label: {

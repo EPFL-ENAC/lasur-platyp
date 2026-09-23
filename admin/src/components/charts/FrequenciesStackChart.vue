@@ -25,6 +25,7 @@ import {
 } from 'echarts/components'
 import type { Frequencies } from '@/models'
 import {
+  computePercentages,
   MODE_COLORS,
   SIMPLE_LABELS_COLORS,
   modeSortOrder as sharedModeSortOrder,
@@ -214,7 +215,7 @@ function initChartOptions() {
         color: labelColors.value[mode] || '#ccc',
         data: props.groups.map((grp) => {
           const item = dataset.find((d) => d.key === `${grp}_${mode}`)
-          return item ? (item.value / (sumByGroup[grp] || 1)) * 100 : 0
+          return item ? Math.round((item.value / (sumByGroup[grp] || 1)) * 100) : 0
         }),
       }
     })
@@ -337,25 +338,23 @@ function initComparisonChartOptions() {
   )
   const groupLabels = datasets.map((dataset) => truncateAxisLabel(dataset.name))
 
-  // In percent mode, each bar is the split of its own (scale, group) row.
-  const rowTotals = rows.map((row) =>
-    sortedModes.reduce(
-      (sum, mode) => sum + (row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0),
-      0,
-    ),
+  // In percent mode, each bar is the split of its own (scale, group) row,
+  // rounded to the unit while still summing to 100.
+  const rowPercents = rows.map((row) =>
+    computePercentages(
+      sortedModes.map((mode) => ({ value: row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0 })),
+    ).map((item) => item.percent),
   )
 
-  const series: SeriesOption[] = sortedModes.map((mode) => ({
+  const series: SeriesOption[] = sortedModes.map((mode, modeIdx) => ({
     name: t(`stats.${props.chartTranslationName}.labels.${mode}`),
     type: 'bar',
     stack: 'total',
     emphasis: { focus: 'series' },
     color: labelColors.value[mode] || '#ccc',
     data: rows.map((row, i) => {
-      const value = row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0
-      if (!props.percent) return value
-      const rowTotal = rowTotals[i] || 0
-      return rowTotal > 0 ? Number(((value / rowTotal) * 100).toFixed(2)) : 0
+      if (props.percent) return rowPercents[i]?.[modeIdx] ?? 0
+      return row.dataset.byKey.get(`${row.scale}_${mode}`) ?? 0
     }),
   }))
 

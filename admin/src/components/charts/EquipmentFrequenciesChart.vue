@@ -202,9 +202,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     .map((item) => ({
       key: item.value || 'null',
       name: keyLabel(item.value || 'null'),
-      value: stats.equipmentsPercent
-        ? Number(((item.count / total.value) * 100).toFixed(2))
-        : item.count,
+      value: stats.equipmentsPercent ? Math.round((item.count / total.value) * 100) : item.count,
     }))
     .reverse()
 

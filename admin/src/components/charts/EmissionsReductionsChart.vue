@@ -34,7 +34,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from '@/utils/numbers'
+import { formatNumber, formatTons, roundTo } from '@/utils/numbers'
 import type { ComparisonStats, EmissionReduction, Emissions } from '@/models'
 
 const { t, te, locale } = useI18n()
@@ -129,8 +129,8 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    current_emissions: formatNumber(currentEmissions.value / 1000), // convert from kg to tons
-    new_emissions: formatNumber(newEmissions.value / 1000),
+    current_emissions: formatTons(currentEmissions.value / 1000), // convert from kg to tons
+    new_emissions: formatTons(newEmissions.value / 1000),
     cheeseburgers: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 18.8)),
     vacuum: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 73.43)),
     shirt: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 13.23466)),
@@ -269,7 +269,7 @@ function initChartOptions() {
         const tar = params[1]
         if (!tar) return ''
         return (
-          tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' ' + UNIT_LABEL
+          tar.name + '<br/>' + tar.seriesName + ' : ' + formatTons(tar.value) + ' ' + UNIT_LABEL
         )
       },
     },
@@ -317,7 +317,10 @@ function initChartOptions() {
               }
               sum += categoryEmissions[c] || 0
             }
-            return (currentEmissions.value - sum - (categoryEmissions[cat] || 0)) * SCALE_FACTOR
+            return roundTo(
+              (currentEmissions.value - sum - (categoryEmissions[cat] || 0)) * SCALE_FACTOR,
+              1,
+            )
           }),
           0,
         ],
@@ -333,12 +336,12 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return formatNumber(params.value as number) + ' ' + UNIT_LABEL
+            return formatTons(params.value as number) + ' ' + UNIT_LABEL
           },
         },
         data: [
           {
-            value: currentEmissions.value * SCALE_FACTOR,
+            value: roundTo(currentEmissions.value * SCALE_FACTOR, 1),
             itemStyle: {
               color: '#000',
             },
@@ -346,13 +349,13 @@ function initChartOptions() {
           ...categories.map((cat) => {
             const color = colors[shortKey(cat)] || colors.default || '#ccc'
             return {
-              value: (categoryEmissions[cat] || 0) * SCALE_FACTOR,
+              value: roundTo((categoryEmissions[cat] || 0) * SCALE_FACTOR, 1),
               itemStyle: { color },
               label: { color: readableTextColor(color) },
             }
           }),
           {
-            value: newEmissions.value * SCALE_FACTOR,
+            value: roundTo(newEmissions.value * SCALE_FACTOR, 1),
             itemStyle: {
               color: '#000',
             },
@@ -393,7 +396,7 @@ function initComparisonChartOptions() {
         key: shortKey(item.mode),
         name: keyLabel(item.mode),
         // Comparison stacks annual totals, which read better in tons than in kg.
-        value: item.reduced * SCALE_FACTOR,
+        value: roundTo(item.reduced * SCALE_FACTOR, 1),
       })),
     }
   })

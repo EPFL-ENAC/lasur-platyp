@@ -262,7 +262,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
       const item = frequencies.data.find((item) => item.value === `${category}`)
       return item
         ? stats.travelTimePercent
-          ? ((item.count / total.value) * 100).toFixed(2)
+          ? Math.round((item.count / total.value) * 100)
           : item.count
         : 0
     }) || []
@@ -364,7 +364,7 @@ function initComparisonChartOptions() {
       color: GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc',
       data: categories.map((category) => {
         const item = group.frequencies?.data.find((item) => item.value === `${category}`)
-        return item && groupTotal > 0 ? Number(((item.count / groupTotal) * 100).toFixed(2)) : 0
+        return item && groupTotal > 0 ? Math.round((item.count / groupTotal) * 100) : 0
       }),
     }
   })

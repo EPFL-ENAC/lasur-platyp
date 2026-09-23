@@ -86,6 +86,7 @@ function initChartOptions() {
         //radius: ['30%', '50%'],
         radius: ['40%', '70%'],
         center: ['50%', '50%'],
+        percentPrecision: 0,
         // adjust the start and end angle
         //startAngle: 180,
         //endAngle: 360,

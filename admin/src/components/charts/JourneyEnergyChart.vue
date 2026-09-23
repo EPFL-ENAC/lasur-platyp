@@ -72,7 +72,7 @@ import {
   complexLabelSortOrder,
 } from './commons'
 import type { EnergyByLabel, JourneyEnergyStats } from '@/models'
-import { formatNumber } from '@/utils/numbers'
+import { formatKcal, formatNumber, formatPercent } from '@/utils/numbers'
 
 const stats = useStats()
 const isComparison = computed(() => !!stats.comparisonMode)
@@ -165,7 +165,7 @@ const textLabelsCurrent = computed(() => {
     props.journeyEnergyStats.current?.average_energy_per_unique_token || 0
 
   return {
-    energy: formatNumber(averageEnergyExpenditurePerToken),
+    energy: formatKcal(averageEnergyExpenditurePerToken),
   }
 })
 
@@ -174,15 +174,15 @@ const textLabelsReco = computed(() => {
   if (props.type !== 'reco' || total.value < 5 || !props.journeyEnergyStats) return null
 
   return {
-    added_energy: formatNumber(addedEnergy.value),
+    added_energy: formatKcal(addedEnergy.value),
     yoga_min: formatNumber(addedEnergy.value / 4.7), // Approximate conversion to minutes of yoga
     count: formatNumber(newHealthyParticipants.value || 0),
-    percent_current: formatNumber(
+    percent_current: formatPercent(
       (props.journeyEnergyStats.gains.current_above_who_count /
         props.journeyEnergyStats.current.total) *
         100,
     ),
-    percent_potential: formatNumber(
+    percent_potential: formatPercent(
       (props.journeyEnergyStats.gains.reco_above_who_count / props.journeyEnergyStats.reco.total) *
         100,
     ),
@@ -228,9 +228,9 @@ const comparisonEnergyItemsLabels = computed(() => {
     lastGroup: ci.lastGroup,
     prevGroup: ci.prevGroup,
     lastCount: formatNumber(ci.lastCount),
-    lastPercent: formatNumber(Math.round(ci.lastPercent)),
+    lastPercent: formatPercent(ci.lastPercent),
     prevCount: formatNumber(ci.prevCount),
-    prevPercent: formatNumber(Math.round(ci.prevPercent)),
+    prevPercent: formatPercent(ci.prevPercent),
   }
 })
 
@@ -323,7 +323,7 @@ function initChartOptions() {
       },
       data: sortedTokens.map((token) => {
         const value = tokenMap[token]![label] || 0
-        return parseFloat(value.toFixed(2))
+        return Math.round(value)
       }),
     }
   })
@@ -351,7 +351,7 @@ function initChartOptions() {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
       valueFormatter(value) {
-        return `${formatNumber(value as number)} kcal`
+        return `${formatKcal(value as number)} kcal`
       },
     },
     legend: {
@@ -438,7 +438,7 @@ function initChartOptions() {
           label: {
             show: true,
             position: 'insideEndTop',
-            formatter: `${formatNumber(averageEnergyExpenditurePerToken)} kcal`,
+            formatter: `${formatKcal(averageEnergyExpenditurePerToken)} kcal`,
             distance: 10,
             fontWeight: 'bold',
             color: '#c96f6b',
@@ -476,7 +476,7 @@ function initComparisonChartOptions() {
   const avgKcal = groupStats.map((group) => {
     const journeyStats = group.stats?.[props.type]
     total.value += journeyStats?.total ?? 0
-    return parseFloat((journeyStats?.average_energy_per_unique_token ?? 0).toFixed(2))
+    return Math.round(journeyStats?.average_energy_per_unique_token ?? 0)
   })
   const aboveWhoCount = groupStats.map((group) => {
     const gains = group.stats?.gains
