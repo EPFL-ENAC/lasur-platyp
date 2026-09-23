@@ -234,11 +234,8 @@ const workplacesCount = computed(() => {
   return props.item.workplaces ? props.item.workplaces.length : 0
 })
 
-const hasActions = computed(
-  () =>
-    Object.keys(props.item.actions || {}).filter((key) =>
-      props.item.actions && props.item.actions[key] ? props.item.actions[key].length > 0 : false,
-    ).length > 0,
+const hasActions = computed(() =>
+  Object.values(formattedActions.value).some((actions) => actions && actions.length > 0),
 )
 
 const formattedActions = computed(() => {
@@ -247,7 +244,9 @@ const formattedActions = computed(() => {
     Object.keys(props.item.actions).forEach((group) => {
       allActions[group] =
         props.item.actions && props.item.actions[group]
-          ? props.item.actions[group].map((action) => {
+          ? props.item.actions[group]
+              .filter((action) => !actionsStore.isDeleted(action, props.company?.id))
+              .map((action) => {
               // check action can be parsed as a number
               const actionId = parseInt(action, 10)
               if (!isNaN(actionId)) {

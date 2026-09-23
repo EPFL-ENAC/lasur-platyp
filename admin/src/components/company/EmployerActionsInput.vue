@@ -126,8 +126,23 @@ function onInit() {
   actions.value = props.modelValue || makeDefaultActions()
   if (props.company.id) {
     actionsStore.company = props.company
-    actionsStore.load().catch(notifyError)
+    actionsStore.load().then(removeDeletedActions).catch(notifyError)
   }
+}
+
+// remove the custom actions that do not exist anymore from the selection
+function removeDeletedActions() {
+  let changed = false
+  Object.keys(actions.value).forEach((group) => {
+    const values = actions.value[group]
+    if (!values) return
+    const filtered = values.filter((val) => !actionsStore.isDeleted(val, props.company.id))
+    if (filtered.length !== values.length) {
+      actions.value[group] = filtered
+      changed = true
+    }
+  })
+  if (changed) emit('update:modelValue', actions.value)
 }
 
 const actionOptions = computed<{ [key: string]: Option[] }>(() => {
