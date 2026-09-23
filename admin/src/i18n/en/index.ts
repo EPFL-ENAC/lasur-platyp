@@ -474,6 +474,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         train_subs: 'Train subscription',
         train_demi_tarif: 'Half-fare card',
         train_abo_gen: 'General subscription',
+        sncf: 'SNCF pass',
         car_driver: 'Car (as driver)',
         moto: 'Motorcycle/scooter/moped',
         ebike: 'Electric bicycle',

@@ -4,7 +4,7 @@ from api.services.stats.commons import BaseStatsService
 
 EXCLUDED_EQUIPMENT = {"train_subs", "upt_subs", "other"}
 INTERMODAL_PT_OR_TRAIN = {"train_demi_tarif",
-                           "train_abo_gen", "tpu_unireso", "tpu_leman_pass"}
+                          "train_abo_gen", "tpu_unireso", "tpu_leman_pass", "sncf"}
 INTERMODAL_BIKE = {"bike", "ebike"}
 
 PT_PASS_COLUMN = "typo.reco.pt_pass"
@@ -23,6 +23,7 @@ PT_PASS_EQUIPMENTS = {
     "unireso": {"tpu_unireso"},
     "leman": {"tpu_leman_pass"},
     "cff": {"train_demi_tarif", "train_abo_gen"},
+    "sncf": {"sncf"}
 }
 
 
@@ -144,7 +145,8 @@ class EquipmentsService(BaseStatsService):
 
                     # cross join: every (record, rec_col) combined with every
                     # equipment item held by that same record
-                    merged = reco_pairs.merge(equip_long, on='row', how='inner')
+                    merged = reco_pairs.merge(
+                        equip_long, on='row', how='inner')
                     equip_counts = merged.groupby(['reco', 'equip']).size()
                     for (reco, equip), count in equip_counts.items():
                         if equip in tracked_equip_fields:
@@ -153,7 +155,8 @@ class EquipmentsService(BaseStatsService):
                 # intermodal equipment: records holding both a PT/train item
                 # and a bike/ebike item
                 equip_df = df[equip_cols]
-                has_pt_or_train = equip_df.isin(INTERMODAL_PT_OR_TRAIN).any(axis=1)
+                has_pt_or_train = equip_df.isin(
+                    INTERMODAL_PT_OR_TRAIN).any(axis=1)
                 has_bike_ebike = equip_df.isin(INTERMODAL_BIKE).any(axis=1)
                 inter_rows = set(df.index[has_pt_or_train & has_bike_ebike])
                 if inter_rows:

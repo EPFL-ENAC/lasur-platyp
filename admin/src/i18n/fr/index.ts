@@ -488,6 +488,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         train_subs: 'Abonnement de train',
         train_demi_tarif: 'Demi-tarif',
         train_abo_gen: 'Abonnement général',
+        sncf: 'Abonnement SNCF',
         car_driver: 'Voiture (en tant que conducteur)',
         moto: 'Moto / scooter / cyclomoteur',
         ebike: 'Vélo à assistance électrique',
