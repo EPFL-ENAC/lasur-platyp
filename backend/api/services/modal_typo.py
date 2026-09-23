@@ -150,30 +150,31 @@ class ModalTypoService:
         url = f"{self.url}/modal-typo/empl"
 
         # get campaign actions
-        actions = campaign.actions if campaign.actions else {}
+        campaign_actions = campaign.actions if campaign.actions else {}
+        custom_actions_by_id = {str(custom_action.id): custom_action for custom_action in (custom_actions or [])}
 
-        # check if custom actions are applied and change id for locale label
-        if custom_actions and len(custom_actions) > 0:
-            for group in actions:
-                if actions[group]:
-                    for i, action in enumerate(actions[group]):
-                        # check if action can be parsed as an int
-                        if self.is_id(action):
-                            # check if action is a custom action
-                            for custom_action in custom_actions:
-                                if str(custom_action.id) == action:
-                                    if custom_action.labels:
-                                        # replace action with its label
-                                        if locale in custom_action.labels:
-                                            actions[group][i] = custom_action.labels[locale]
-                                        elif "en" in custom_action.labels:
-                                            # if no label for the locale, use the english label
-                                            actions[group][i] = custom_action.labels["en"]
-                                        else:
-                                            # if no label for the locale, use the first label
-                                            actions[group][i] = list(
-                                                custom_action.labels.values())[0]
-                                    break
+        # replace custom action ids by their locale label, ignore ids of deleted custom actions
+        actions = {}
+        for group in campaign_actions:
+            actions[group] = []
+            for action in campaign_actions[group] or []:
+                if not self.is_id(action):
+                    actions[group].append(action)
+                    continue
+                custom_action = custom_actions_by_id.get(action)
+                if not custom_action:
+                    continue
+                if custom_action.labels:
+                    if locale in custom_action.labels:
+                        actions[group].append(custom_action.labels[locale])
+                    elif "en" in custom_action.labels:
+                        # if no label for the locale, use the english label
+                        actions[group].append(custom_action.labels["en"])
+                    else:
+                        # if no label for the locale, use the first label
+                        actions[group].append(list(custom_action.labels.values())[0])
+                else:
+                    actions[group].append(action)
 
         data = {
             "empl": {
