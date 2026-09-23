@@ -889,6 +889,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         tpu_leman_pass: 'Léman Pass',
         train_demi_tarif: 'Half-fare Travelcard',
         train_abo_gen: 'GA Travelcard',
+        sncf: 'SNCF pass',
         inter: 'Intermodality',
         tpu: 'Public transport',
 

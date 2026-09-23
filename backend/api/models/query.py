@@ -303,6 +303,7 @@ class EquipmentPerRecommendation(BaseModel):
     tpu_leman_pass: int = 0
     train_demi_tarif: int = 0
     train_abo_gen: int = 0
+    sncf: int = 0
     mob_subs: int = 0
     moto: int = 0
     car: int = 0
@@ -360,7 +361,8 @@ class WorkplaceLocation(BaseModel):
     address: Optional[str] = None
     count: int  # completed records at this workplace
     campaign_id: int
-    campaign: Optional[WorkplaceCampaign] = None  # filled by route-level enrichment
+    # filled by route-level enrichment
+    campaign: Optional[WorkplaceCampaign] = None
 
 
 class HomeWorkplaceFlow(BaseModel):
@@ -442,7 +444,8 @@ class ComparisonResult(BaseModel):
     # detailed (complex) typology labels
     mode_transitions_complex_labels: Optional[ModeTransitions] = None
     warnings: Optional[List[str]] = None
-    locations: Optional[LocationStats] = None  # map data over every surviving group
+    # map data over every surviving group
+    locations: Optional[LocationStats] = None
 
 
 class GeoWithin(BaseModel):

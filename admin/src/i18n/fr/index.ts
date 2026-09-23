@@ -907,6 +907,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         tpu_leman_pass: 'Léman Pass',
         train_demi_tarif: 'Demi-tarif',
         train_abo_gen: 'Abo. général',
+        sncf: 'Abo. SNCF',
         inter: 'Intermodalité',
         tpu: 'Transports publics',
 

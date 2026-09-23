@@ -46,7 +46,7 @@ SIMPLE_MODES_WEIGHTS = [20, 30, 20, 10, 10, 10]
 AGE_CLASSES = ["18-24", "25-44", "45-64", "65+"]
 CONSTRAINTS = ["none", "dependent", "heavy", "night", "disabled", "other"]
 EQUIPMENTS = ["bike", "ebike", "tpu_unireso", "tpu_leman_pass", "train_demi_tarif",
-              "train_abo_gen", "mob_subs", "moto", "car", "ev"]
+              "train_abo_gen", "sncf", "mob_subs", "moto", "car", "ev"]
 EQUIPMENTS_WEIGHTS = [40, 20, 30, 20, 20, 5, 10, 5, 40, 5]
 LEVERS = ["environment", "flexibility", "collective",
           "finance", "company_vehicle", "coaching", "events", "other"]
@@ -108,12 +108,14 @@ def fake_journey() -> dict:
     """A personal commute journey, possibly intermodal (e.g. bike-train-bike)."""
     modes = [random.choices(MODES, weights=MODES_WEIGHTS)[0]]
     if random.random() < 0.3:
-        modes = [modes[0], random.choices(MODES, weights=MODES_WEIGHTS)[0], modes[0]]
+        modes = [modes[0], random.choices(
+            MODES, weights=MODES_WEIGHTS)[0], modes[0]]
     elif random.random() < 0.3:
         modes.append(random.choices(MODES, weights=MODES_WEIGHTS)[0])
     journey = {"days": random.randint(1, 5), "modes": modes}
     if random.random() < 0.3:
-        journey["days_per"] = random.choices(["week", "month", "year"], weights=[50, 30, 20])[0]
+        journey["days_per"] = random.choices(
+            ["week", "month", "year"], weights=[50, 30, 20])[0]
     return journey
 
 
@@ -158,7 +160,8 @@ def fake_data(workplace: dict) -> dict:
     ]
     changes = [fake_change() for _ in range(random.choices(
         [0, 1, 2], weights=[40, 40, 20])[0])]
-    constraint = "none" if random.random() < 0.7 else random.choices(CONSTRAINTS, weights=[10, 40, 30, 20, 10, 10])[0]
+    constraint = "none" if random.random() < 0.7 else random.choices(
+        CONSTRAINTS, weights=[10, 40, 30, 20, 10, 10])[0]
 
     return {
         "version": "3.0.0",
@@ -280,18 +283,18 @@ async def seed(campaign_id: int, count: int, participants: int, email_hash_rate:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--campaign-id", type=int, required=True,
-                         help="Existing campaign id to attach seeded records to")
+                        help="Existing campaign id to attach seeded records to")
     parser.add_argument("--count", type=int, default=10,
-                         help="Number of fake records to create (default: 10)")
+                        help="Number of fake records to create (default: 10)")
     parser.add_argument("--participants", type=int, default=None,
-                         help="Size of the fake participant pool reused for email_hash "
-                         "(default: half of --count, min 1). Use the same value across "
-                         "campaigns to simulate returning participants for longitudinal analysis")
+                        help="Size of the fake participant pool reused for email_hash "
+                        "(default: half of --count, min 1). Use the same value across "
+                        "campaigns to simulate returning participants for longitudinal analysis")
     parser.add_argument("--email-hash-rate", type=float, default=0.8,
-                         help="Fraction of records that get a fake email_hash; "
-                         "the rest are left null, like real incomplete submissions (default: 0.8)")
+                        help="Fraction of records that get a fake email_hash; "
+                        "the rest are left null, like real incomplete submissions (default: 0.8)")
     parser.add_argument("--random-seed", type=int, default=None,
-                         help="Seed the RNG for reproducible output")
+                        help="Seed the RNG for reproducible output")
     args = parser.parse_args()
 
     if args.random_seed is not None:

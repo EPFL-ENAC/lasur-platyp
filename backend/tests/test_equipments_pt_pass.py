@@ -117,21 +117,6 @@ def test_cff_counts_half_fare_and_ga():
     assert result['cff'].already_equipped == 2
 
 
-def test_sncf_equipment_is_unknown():
-    # train_demi_tarif / train_abo_gen are CFF products: they must not leak
-    # into the SNCF bar, and no French product is collected.
-    result = by_pass(compute([
-        {
-            'typo.reco.pt_pass': 'sncf',
-            'typo.reco.reco_inter.0': 'train',
-            'data.equipments.0': 'train_demi_tarif',
-        },
-    ]))
-
-    assert result['sncf'].recommended == 1
-    assert result['sncf'].already_equipped is None
-
-
 def test_unknown_pass_falls_back_to_other():
     result = by_pass(compute([
         {

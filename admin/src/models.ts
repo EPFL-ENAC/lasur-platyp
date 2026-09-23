@@ -271,6 +271,7 @@ export interface EquipmentPerRecommendation {
   tpu_leman_pass: number
   train_demi_tarif: number
   train_abo_gen: number
+  sncf: number
   mob_subs: number
   moto: number
   car: number
@@ -313,6 +314,7 @@ export const equipmentLabels = [
   'tpu_leman_pass',
   'train_demi_tarif',
   'train_abo_gen',
+  'sncf',
   'mob_subs',
   'moto',
   'car',
