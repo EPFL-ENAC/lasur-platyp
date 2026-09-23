@@ -39,3 +39,31 @@ export function getBenefits(reco: string, locale: string) {
   if (!mds) return ''
   return locale === 'fr' ? mds.fr : mds.en
 }
+
+// Journey mode codes → benefits keys. Modes with no entry (car, moto, other,
+// truck, plane, boat) have no benefits of their own: micromobility ("other")
+// in particular can stand for anything, from a scooter to a quad.
+const modeBenefits: Record<string, string> = {
+  walking: 'marche',
+  bike: 'velo',
+  ebike: 'vae',
+  cargo: 'cargo',
+  pub: 'tpu',
+  train: 'train',
+  carpool: 'covoit',
+}
+
+/**
+ * Benefits key for a journey the user is told to keep: the last mode of the
+ * chain that has benefits, falling back on the modes before it. Walking is
+ * left aside in a chain, unless it is the only mode.
+ */
+export function getJourneyBenefitsKey(modes: string[]): string {
+  const chain = modes.length > 1 ? modes.filter((m) => m !== 'walking') : modes
+  return (
+    [...chain]
+      .reverse()
+      .map((m) => modeBenefits[m])
+      .find(Boolean) ?? ''
+  )
+}
