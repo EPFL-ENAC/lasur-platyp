@@ -4,7 +4,7 @@
     <div class="bravo-box__text">
       {{ t(`bravo.${bravo}`) }}
     </div>
-    <div v-if="hasBenefits(reco) && !benefitsExpanded" class="bravo-box__action">
+    <div v-if="hasBenefits(benefitsKey) && !benefitsExpanded" class="bravo-box__action">
       <q-btn class="bravo-box__btn" size="md" no-caps dense>
         <q-icon name="workspace_premium" class="q-mr-xs" />
         {{ t('benefits.show') }}
@@ -14,7 +14,7 @@
           anchor="top end"
           self="top start"
         >
-          <q-markdown :src="getBenefits(reco, locale)" />
+          <q-markdown :src="getBenefits(benefitsKey, locale)" />
         </q-menu>
       </q-btn>
     </div>
@@ -29,7 +29,8 @@ const { locale, t } = useI18n()
 defineProps<{
   /** Sustainability grade of the current habit; only shown when above zero. */
   bravo: number
-  reco: string
+  /** Benefits of the habit to keep; no button when there are none. */
+  benefitsKey: string
   benefitsExpanded?: boolean
 }>()
 </script>

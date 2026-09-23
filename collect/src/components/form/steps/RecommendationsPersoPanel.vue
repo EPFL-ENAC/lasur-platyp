@@ -34,9 +34,9 @@
 
         <!-- Sits with the journey it describes: under the tabs, above the mode. -->
         <BravoBanner
-          v-if="activeBravo > 0 && activeReco"
+          v-if="activeBravo > 0"
           :bravo="activeBravo"
-          :reco="activeReco"
+          :benefits-key="activeBenefitsKey"
           :benefits-expanded="!!benefitsExpanded"
           class="q-mb-lg"
         />
@@ -100,6 +100,7 @@ import IsochronesMap from '@/components/form/IsochronesMap.vue'
 import RecommendationItem from './RecommendationItem.vue'
 import BravoBanner from './BravoBanner.vue'
 import type { Journey } from '@/models'
+import { getJourneyBenefitsKey } from '@/utils/benefits'
 import { getModeIcon } from '@/utils/modeicons'
 
 const { t } = useI18n()
@@ -127,7 +128,11 @@ const activeTab = ref(String(props.journeys.length > 0 ? 0 : -1))
 // The banner sits above the card, so it follows whichever journey is on show.
 const activeIndex = computed(() => parseInt(activeTab.value))
 const activeBravo = computed(() => props.bravo[activeIndex.value] ?? 0)
-const activeReco = computed(() => props.recoInter[activeIndex.value] ?? '')
+// The banner tells to keep the current habit, so its benefits are those of
+// the modes used on that journey, not of the recommendation.
+const activeBenefitsKey = computed(() =>
+  getJourneyBenefitsKey(props.journeys[activeIndex.value]?.modes ?? []),
+)
 
 const currentModeActions = computed(() => {
   const idx = parseInt(activeTab.value)
