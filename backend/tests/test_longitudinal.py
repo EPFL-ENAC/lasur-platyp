@@ -4,8 +4,18 @@ from api.models.query import CampaignGroup
 from api.services.stats.longitudinal import LongitudinalService
 
 
+RECO = "typo.reco.reco_inter.0"
+
+
 def make_group(name, campaign_ids):
     return CampaignGroup(name=name, campaign_ids=campaign_ids)
+
+
+def completed(data):
+    """Records dataframe where every record is completed (has a recommendation)."""
+    df = pd.DataFrame(data)
+    df[RECO] = "velo"
+    return df
 
 
 def test_filter_longitudinal_empty_dataframe():
@@ -16,7 +26,7 @@ def test_filter_longitudinal_empty_dataframe():
 
 
 def test_filter_longitudinal_excludes_null_email_hash():
-    df = pd.DataFrame({
+    df = completed({
         "email_hash": [None, "h1", "h1"],
         "campaign_id": [1, 1, 2],
     })
@@ -27,7 +37,7 @@ def test_filter_longitudinal_excludes_null_email_hash():
 
 
 def test_filter_longitudinal_requires_all_groups():
-    df = pd.DataFrame({
+    df = completed({
         "email_hash": ["h1", "h2", "h2"],
         "campaign_id": [1, 1, 2],
     })
@@ -41,7 +51,7 @@ def test_filter_longitudinal_requires_all_groups():
 def test_filter_longitudinal_excludes_partial_participation():
     """With 3 groups, being in 2 of them is not enough: the panel is the
     strict intersection of all groups."""
-    df = pd.DataFrame({
+    df = completed({
         "email_hash": ["h1", "h1", "h2", "h2", "h2"],
         "campaign_id": [1, 2, 1, 2, 3],
     })
@@ -54,7 +64,7 @@ def test_filter_longitudinal_excludes_partial_participation():
 def test_filter_longitudinal_any_campaign_of_a_group_counts():
     """A group made of several campaigns counts as attended if the participant
     appears in any one of its campaigns."""
-    df = pd.DataFrame({
+    df = completed({
         "email_hash": ["h1", "h1"],
         "campaign_id": [1, 3],
     })
@@ -62,6 +72,60 @@ def test_filter_longitudinal_any_campaign_of_a_group_counts():
     result = LongitudinalService.filter_longitudinal(df, groups)
     assert set(result["email_hash"]) == {"h1"}
     assert len(result) == 2
+
+
+def test_filter_longitudinal_ignores_uncompleted_records():
+    """A participant whose only record in a group is not completed is not
+    part of the panel, since that group's stats would not count them."""
+    df = pd.DataFrame({
+        "email_hash": ["h1", "h1", "h2", "h2"],
+        "campaign_id": [1, 2, 1, 2],
+        RECO: ["velo", None, "velo", "velo"],
+    })
+    groups = [make_group("A", [1]), make_group("B", [2])]
+    result = LongitudinalService.filter_longitudinal(df, groups)
+    assert set(result["email_hash"]) == {"h2"}
+    assert len(result) == 2
+
+
+def test_filter_longitudinal_no_completed_records():
+    df = pd.DataFrame({"email_hash": ["h1", "h1"], "campaign_id": [1, 2]})
+    groups = [make_group("A", [1]), make_group("B", [2])]
+    assert LongitudinalService.filter_longitudinal(df, groups).empty
+
+
+def test_filter_longitudinal_keeps_latest_record_per_group():
+    """Several completed records of a participant in one group (here spanning
+    two campaigns) count once: the latest by updated_at."""
+    df = completed({
+        "id": [1, 2, 3, 4],
+        "email_hash": ["h1", "h1", "h1", "h1"],
+        "campaign_id": [1, 2, 2, 3],
+        "updated_at": pd.to_datetime(
+            ["2026-01-01", "2026-03-01", "2026-02-01", "2026-06-01"]),
+    })
+    groups = [make_group("A", [1]), make_group("B", [2, 3])]
+    result = LongitudinalService.filter_longitudinal(df, groups)
+    assert list(result["id"]) == [1, 4]
+
+
+def test_filter_longitudinal_same_n_in_every_group():
+    """Every group counts N = panel size, matching the mode transitions total."""
+    df = pd.DataFrame({
+        "id": range(1, 9),
+        "email_hash": ["h1", "h1", "h1", "h2", "h2", "h3", "h3", "h3"],
+        "campaign_id": [1, 2, 2, 1, 2, 1, 1, 2],
+        "updated_at": pd.to_datetime(["2026-01-01"] * 8),
+        "typo.reco.simple_labels.0": ["car", "bike", "car", "car", "bike",
+                                      "bike", "car", "walk"],
+        RECO: ["velo", "velo", "velo", "velo", None, "velo", "velo", "velo"],
+    })
+    groups = [make_group("A", [1]), make_group("B", [2])]
+    result = LongitudinalService.filter_longitudinal(df, groups)
+    counts = [len(result[result["campaign_id"].isin(g.campaign_ids)]) for g in groups]
+    transitions = LongitudinalService.compute_mode_transitions(result, groups)
+    assert counts == [2, 2]
+    assert transitions.total == 2
 
 
 def test_compute_mode_transitions_consecutive_pairs_only():

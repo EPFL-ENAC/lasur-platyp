@@ -4,7 +4,8 @@ from typing import List, Optional, Pattern
 import pandas as pd
 
 from api.models.query import CampaignGroup, ModeTransition, ModeTransitions
-from api.services.stats.commons import COMPLEX_LABEL_MERGE, merge_label_components
+from api.services.stats.commons import (
+    COMPLEX_LABEL_MERGE, filter_completed_records, merge_label_components)
 
 
 class LongitudinalService:
@@ -22,13 +23,24 @@ class LongitudinalService:
 
     @staticmethod
     def filter_longitudinal(df: pd.DataFrame, groups: List[CampaignGroup]) -> pd.DataFrame:
-        """Filter records to participants (by email_hash) present in every group.
+        """Filter completed records to participants (by email_hash) present in
+        every group, keeping one record per participant per group.
+
+        Only completed records count towards presence in a group, so that each
+        group's stats (computed on completed records) cover the whole panel.
+        When a participant has several completed records in a group (e.g. the
+        group spans several campaigns), the latest one (by updated_at, then id)
+        is kept, so that every group counts N = panel size.
 
         Records with a NULL email_hash are silently excluded, since they cannot be
         tracked across campaigns.
         """
         if 'email_hash' not in df.columns or 'campaign_id' not in df.columns:
             return df.iloc[0:0]
+
+        df = filter_completed_records(df)
+        if df.empty:
+            return df
 
         df = df[df['email_hash'].notna()].copy()
         if df.empty:
@@ -43,7 +55,15 @@ class LongitudinalService:
 
         group_counts = df.groupby('email_hash')['_group_idx'].nunique()
         eligible_hashes = group_counts[group_counts == len(groups)].index
-        return df[df['email_hash'].isin(eligible_hashes)].drop(columns=['_group_idx'])
+        df = df[df['email_hash'].isin(eligible_hashes)]
+
+        # One record per participant per group: the latest one. The original
+        # row order is restored afterwards, as downstream tie-breaking depends on it.
+        order_cols = [c for c in ('updated_at', 'id') if c in df.columns]
+        if order_cols:
+            df = df.sort_values(order_cols, kind='stable')
+        df = df.drop_duplicates(['email_hash', '_group_idx'], keep='last').sort_index()
+        return df.drop(columns=['_group_idx'])
 
     @staticmethod
     def _primary_mode_by_participant(

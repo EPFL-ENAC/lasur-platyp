@@ -717,3 +717,17 @@ class BaseStatsService:
             'vae': 'ebike'
         })
         return df[column]
+
+
+def filter_completed_records(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep only the completed records.
+
+    A record is completed once it has a recommendation: either the new
+    typo.reco.reco_inter.N (one per journey) or, for records collected before
+    that change, the legacy typo.reco.reco_dt2.0
+    """
+    reco_cols = [col for col in df.columns if col ==
+                 'typo.reco.reco_dt2.0' or col.startswith('typo.reco.reco_inter.')]
+    if not reco_cols:
+        return pd.DataFrame()
+    return df[df[reco_cols].notna().any(axis=1)]
