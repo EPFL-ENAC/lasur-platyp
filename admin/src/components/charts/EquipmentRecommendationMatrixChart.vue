@@ -74,7 +74,7 @@ import {
   GridComponent,
   VisualMapComponent,
 } from 'echarts/components'
-import { formatNumber } from '@/utils/numbers'
+import { formatNumber, formatPercent } from '@/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import {
   equipmentLabels,
@@ -247,7 +247,7 @@ const analysisText = computed(() => {
     smallestRecoContent.total > 0 ? (smallestValue / smallestRecoContent.total) * 100 : 0
 
   return {
-    percentage: formatNumber(percentage),
+    percentage: formatPercent(percentage),
     mode: keyLabel(smallestReco),
   }
 })
@@ -395,7 +395,7 @@ function initChartOptions() {
           reco,
           equipment,
           count: formatNumber(count),
-          percentage: formatNumber(v[2] || 0),
+          percentage: formatPercent(v[2] || 0),
         })
       },
     },
@@ -416,7 +416,7 @@ function initChartOptions() {
             if (!labels) return ''
             const count = recommendationMatrix.value[labels.recommendation]?.[labels.equipment] ?? 0
 
-            return `${formatNumber(count)} (${formatNumber((params.value as [number, number, number])[2] || 0)}%)`
+            return `${formatNumber(count)} (${formatPercent((params.value as [number, number, number])[2] || 0)}%)`
           },
         },
         data,
