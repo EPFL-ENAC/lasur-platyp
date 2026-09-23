@@ -351,7 +351,7 @@ function initChartOptions() {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
       valueFormatter(value) {
-        return `${formatKcal(value as number)} kcal`
+        return `${formatKcal(value as number)}\u00A0kcal`
       },
     },
     legend: {
@@ -404,7 +404,7 @@ function initChartOptions() {
           label: {
             show: true,
             position: 'insideEndTop',
-            formatter: `${WHO_RECOMMENDATION} kcal`,
+            formatter: `${WHO_RECOMMENDATION}\u00A0kcal`,
             distance: 10,
             fontWeight: 'bold',
           },
@@ -438,7 +438,7 @@ function initChartOptions() {
           label: {
             show: true,
             position: 'insideEndTop',
-            formatter: `${formatKcal(averageEnergyExpenditurePerToken)} kcal`,
+            formatter: `${formatKcal(averageEnergyExpenditurePerToken)}\u00A0kcal`,
             distance: 10,
             fontWeight: 'bold',
             color: '#c96f6b',
@@ -506,7 +506,7 @@ function initComparisonChartOptions() {
               label: {
                 show: true,
                 position: 'insideEndTop',
-                formatter: `${WHO_RECOMMENDATION} kcal`,
+                formatter: `${WHO_RECOMMENDATION}\u00A0kcal`,
                 distance: 10,
                 fontWeight: 'bold',
               },
@@ -554,7 +554,7 @@ function initComparisonChartOptions() {
         list.forEach((item) => {
           if (item.value == null || Number.isNaN(Number(item.value))) return
           // Kcal series come first, so their indexes span the group range.
-          const unit = (item.seriesIndex ?? Infinity) < groupStats.length ? ' kcal' : ''
+          const unit = (item.seriesIndex ?? Infinity) < groupStats.length ? '\u00A0kcal' : ''
           res += `${item.marker} ${item.seriesName}: <b>${formatNumber(Number(item.value))}${unit}</b><br/>`
         })
         return res

@@ -216,7 +216,7 @@ function initChartOptions() {
         if (!p) return ''
 
         const val = formatNumber(p.value as number)
-        return `${p.name}<br/><b>${p.percent}%</b> (${val} kgCO₂eq)`
+        return `${p.name}<br/><b>${p.percent}%</b> (${val}\u00A0kgCO₂eq)`
       },
     },
     legend: {

@@ -50,10 +50,10 @@ export default {
 
     age_class: 'Quelle est votre âge ?',
     age_class_option: {
-      '16_24': 'moins de 25 ans',
-      '25_44': '25 - 44 ans',
-      '45_64': '45 - 64 ans',
-      '65': '65 ans et plus',
+      '16_24': 'moins de 25\u00A0ans',
+      '25_44': '25 - 44\u00A0ans',
+      '45_64': '45 - 64\u00A0ans',
+      '65': '65\u00A0ans et plus',
     },
     employment_rate: 'Quel est votre taux de travail ?',
     remote_work_rate:
@@ -103,7 +103,7 @@ export default {
       'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',
     freq_mod_hint: "Nombre de jours d'une semaine type",
     mode: {
-      walking: 'La marche (>10 min.)',
+      walking: 'La marche (>10\u00A0min.)',
       bike: 'Le vélo',
       ebike: 'Le vélo à assistance électrique',
       cargo: 'Le vélo cargo',
@@ -140,7 +140,7 @@ export default {
       remove_mode: 'Retirer {mode}',
       electric: 'Version électrique : {mode}',
       frequency_label: 'À quelle fréquence faites-vous ce trajet ?',
-      frequency_hint: 'Entre 1 et 5 jours par semaine.',
+      frequency_hint: 'Entre 1 et 5\u00A0jours par semaine.',
       days: 'jours',
       per_week: 'par semaine',
     },
@@ -376,7 +376,7 @@ export default {
       transport: 'Transport',
       commerce: 'Commerce',
     },
-    minutes: '{count} min',
+    minutes: '{count}\u00A0min',
   },
   certificate: {
     title: 'Attestation',

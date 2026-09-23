@@ -239,7 +239,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${stats.constraintsPercent ? '%' : ''}`,
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c}\u00A0${stats.constraintsPercent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -308,7 +308,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `<b>{b}</b><br/>{c} ${stats.constraintsPercent ? '%' : ''}`,
+      formatter: `<b>{b}</b><br/>{c}\u00A0${stats.constraintsPercent ? '%' : ''}`,
     },
     legend: {
       show: false,

@@ -193,7 +193,7 @@ export default {
 
 Mobilyse est un outil proposé par la Fondation Modus et l'EPFL pour aider les organisations à adapter les aides à la mobilité proposées aux collaboratrices et collaborateurs. Nous utilisons aujourd'hui cet outil pour comprendre comment vous accompagner au mieux dans votre mobilité quotidienne, que ce soit vos déplacements domicile-travail ou vos déplacements professionnels (dans le cadre de vos fonctions). 🚲🚃🚶🚈
 
-Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10 minutes maximum et l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
+Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10\u00A0minutes maximum et l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
 
 [{surveyLink}]({surveyLink})
 
@@ -451,7 +451,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         description: `Les graphiques ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
         details: `Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
-- sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
+- sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150\u00A0minutes en effort modéré (vélo/marche rapide) par semaine, soit 150\u00A0kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
       },
       mobility_potentials: {
         title: 'Potentiels de mobilité',
@@ -460,11 +460,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           most_potential:
             "Le mode de transport avec le plus fort potentiel d'utilisateur·trice·s est : **{mode}** (recommandé à environ **{percentage}%** des participant·e·s)",
           biggest_emission_reduction:
-            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit environ **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
+            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction}\u00A0{unit}**, soit environ **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
           biggest_emission_reduction_extrapolation:
-            'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
+            'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction}\u00A0{unit}**.',
           biggest_physical_activity_gain:
-            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce mode permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
+            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce mode permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150\u00A0kcal/jour/pers).",
         },
       },
       behavioural_changes: {
@@ -540,12 +540,12 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       xaxis: 'Temps (min)',
       texts: {
         default:
-          'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
+          'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30\u00A0minutes (enquête Modus, 2024)',
         specific:
-          'Le temps de trajet domicile-travail médian des participant·e·s est de {median} minutes.',
-        comparison_item: '{median} minutes ({name})',
+          'Le temps de trajet domicile-travail médian des participant·e·s est de {median}\u00A0minutes.',
+        comparison_item: '{median}\u00A0minutes ({name})',
         comparison:
-          'Ce graphique montre les temps de trajets domicile-travail des participant·e·s, pour chaque groupe. Les temps de trajets médians sont de {list}. Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024).',
+          'Ce graphique montre les temps de trajets domicile-travail des participant·e·s, pour chaque groupe. Les temps de trajets médians sont de {list}. Le temps de trajet domicile-travail médian sur le canton de Genève est de 30\u00A0minutes (enquête Modus, 2024).',
       },
     },
     reco_inter: {
@@ -648,7 +648,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         comparison:
-          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue}\u00A0tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue}\u00A0tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_freq_mod_complex: {
@@ -661,7 +661,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         comparison:
-          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue}\u00A0tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue}\u00A0tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reco_mod: {
@@ -698,7 +698,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_simple: {
@@ -711,7 +711,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_complex: {
@@ -724,7 +724,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_share: {
@@ -770,7 +770,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       description:
         "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse se lit le nombre de trajets effectués par mode de transport, par année. En ordonnée se trouvent les émissions carbone par trajet effectué. L'aire de chaque rectangle correspond ainsi aux émissions de chaque mode de transport par année, en tCO2éq, qui sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       description_example:
-        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse sont affichés les nombres de déplacements professionnels par année, pour chaque mode de transport (par exemple, {journeys} déplacements par an sont faits avec le mode {mode} chez les participant·e·s). En ordonnée se lisent les émissions de CO₂ par déplacement, pour chaque mode de transport (par exemple, un trajet avec le mode {mode} émet en moyenne {emissionsPerJourney} kgCO₂éq). Enfin, l'aire de chaque rectangle donne les émissions totales annuelles pour chaque mode de transport (par exemple, le mode {mode} est responsable de {emissions} kgCO₂éq/an pour les déplacements professionnels). Ces émissions sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
+        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse sont affichés les nombres de déplacements professionnels par année, pour chaque mode de transport (par exemple, {journeys} déplacements par an sont faits avec le mode {mode} chez les participant·e·s). En ordonnée se lisent les émissions de CO₂ par déplacement, pour chaque mode de transport (par exemple, un trajet avec le mode {mode} émet en moyenne {emissionsPerJourney}\u00A0kgCO₂éq). Enfin, l'aire de chaque rectangle donne les émissions totales annuelles pour chaque mode de transport (par exemple, le mode {mode} est responsable de {emissions}\u00A0kgCO₂éq/an pour les déplacements professionnels). Ces émissions sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -780,9 +780,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Environ {firstPercent}% des émissions sont dues à {firstMode}, environ {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
+          'Environ {firstPercent}% des émissions sont dues à {firstMode}, environ {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}\u00A0kgCO₂éq/trajet, contre moins de {remainingEmissions}\u00A0kgCO₂éq/trajet pour les autres.',
         comparison:
-          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue} tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue} tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue}\u00A0tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue}\u00A0tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod_pro: {
@@ -797,7 +797,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour}\u00A0heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
@@ -832,19 +832,19 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       yaxis: 'Énergie dépensée (kcal/jour)',
       xaxis: 'Ensemble des participant·e·s (trié·e·s par énergie dépensée)',
       who_above_count: "Participant·e·s au-dessus de la recommandation de l'OMS",
-      whoMin: 'Dépense énergétique quotidienne recommandée par l’OMS (150 kcal/jour)',
+      whoMin: 'Dépense énergétique quotidienne recommandée par l’OMS (150\u00A0kcal/jour)',
       participantsAverage: 'Dépense énergétique quotidienne moyenne des participant·e·s',
       texts: {
         default:
-          "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers, soit l'équivalent de 37 min de marche, 23min de fitness ou 14min de football par jour.",
+          "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150\u00A0kcal/jour/pers, soit l'équivalent de 37\u00A0min de marche, 23\u00A0min de fitness ou 14\u00A0min de football par jour.",
         specific_current:
-          'Actuellement, les participant·e·s dépensent en moyenne {energy} kcal/jour/pers pour leurs déplacements domicile-travail.',
-        specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers (l'équivalent de {yoga_min} minutes de yoga par personne et par jour).
+          'Actuellement, les participant·e·s dépensent en moyenne {energy}\u00A0kcal/jour/pers pour leurs déplacements domicile-travail.',
+        specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy}\u00A0kcal/jour/pers (l'équivalent de {yoga_min}\u00A0minutes de yoga par personne et par jour).
           De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d’activité physique journalière de l’OMS. Le taux des participant·e·s dépensant au moins ce que recommande l'OMS grâce aux déplacements domicile-travail passerait d'environ {percent_current}% actuellement à environ {percent_potential}% potentiellement.`,
         specific_share:
           "Environ {percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
         comparison:
-          "Ce graphique montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150 kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s (environ {lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s (environ {prevPercent}%) pour le groupe {prevGroup}).",
+          "Ce graphique montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150\u00A0kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s (environ {lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s (environ {prevPercent}%) pour le groupe {prevGroup}).",
       },
     },
     behavior_change_levers: {
@@ -983,7 +983,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       transport: 'Transports',
       commerce: 'Commerce',
     },
-    minutes: '{count} min',
+    minutes: '{count}\u00A0min',
     raw_data: 'Données enregistrées',
     data: 'Données collectées',
     typo: 'Données de typologie modale',

@@ -157,7 +157,7 @@ function initChartOptions() {
       formatter: function (params: any) {
         const tar = params[1]
         if (!tar) return ''
-        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' kgCO₂eq'
+        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + '\u00A0kgCO₂eq'
       },
     },
     legend: {

@@ -102,7 +102,7 @@ export default {
     freq_mod: 'How often do you use the following modes of transportation to get to work?',
     freq_mod_hint: 'Number of days in a usual week',
     mode: {
-      walking: 'Walking (>10 min.)',
+      walking: 'Walking (>10\u00A0min.)',
       bike: 'Bicycle',
       ebike: 'Electric bicycle',
       cargo: 'Cargo bike',
@@ -138,7 +138,7 @@ export default {
       remove_mode: 'Remove {mode}',
       electric: 'Electric version: {mode}',
       frequency_label: 'How often do you make this journey?',
-      frequency_hint: 'Between 1 and 5 days a week.',
+      frequency_hint: 'Between 1 and 5\u00A0days a week.',
       days: 'days',
       per_week: 'per week',
     },
@@ -357,7 +357,7 @@ export default {
       transport: 'Transport',
       commerce: 'Commerce',
     },
-    minutes: '{count} min',
+    minutes: '{count}\u00A0min',
   },
   certificate: {
     title: 'Certificate',

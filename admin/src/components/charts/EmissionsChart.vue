@@ -463,7 +463,7 @@ function initChartOptions() {
             html += `
               <div style="display: flex; justify-content: space-between; gap: 20px;">
                 <span>${label}</span>
-                <span style="font-weight: bold;">${display}${unit ? ` ${unit}` : ''}</span>
+                <span style="font-weight: bold;">${display}${unit ? `\u00A0${unit}` : ''}</span>
               </div>`
           }
         })

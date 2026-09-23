@@ -269,7 +269,7 @@ function initChartOptions() {
         const tar = params[1]
         if (!tar) return ''
         return (
-          tar.name + '<br/>' + tar.seriesName + ' : ' + formatTons(tar.value) + ' ' + UNIT_LABEL
+          tar.name + '<br/>' + tar.seriesName + ' : ' + formatTons(tar.value) + '\u00A0' + UNIT_LABEL
         )
       },
     },
@@ -336,7 +336,7 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return formatTons(params.value as number) + ' ' + UNIT_LABEL
+            return formatTons(params.value as number) + '\u00A0' + UNIT_LABEL
           },
         },
         data: [

@@ -189,7 +189,7 @@ export default {
       defaultContactName: 'CONTACT_NAME',
       template: `Dear colleagues,
 
-Mobilyse is a tool developed by the Modus Foundation and EPFL to help organisations tailor the help they provide to their employees for daily mobility. We wish to use this tool to understand how best to support you in your daily mobility, whether for commuting or for business trips. 🚲🚃🚶🚈 To do so, we need to better understand your travel habits and aspirations and therefore invite you to participate in the following survey. It will take no more than 10 minutes and will provide you with travel suggestions straight away:
+Mobilyse is a tool developed by the Modus Foundation and EPFL to help organisations tailor the help they provide to their employees for daily mobility. We wish to use this tool to understand how best to support you in your daily mobility, whether for commuting or for business trips. 🚲🚃🚶🚈 To do so, we need to better understand your travel habits and aspirations and therefore invite you to participate in the following survey. It will take no more than 10\u00A0minutes and will provide you with travel suggestions straight away:
 
 [{surveyLink}]({surveyLink})
 
@@ -437,7 +437,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         description: `The graphs below provide information on participants’ current mobility habits, including their use of transport modes, the equipment they possess, the constraints they face, and their geographical distribution.`,
         details: `Some environmental impacts have also been calculated:
 - on the environment, via greenhouse gas emissions calculated using mobi-tools factors [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
-- on participants’ health, via average daily energy expenditure (metabolic equivalent task) during their trips. The Swiss Confederation and the WHO recommend 150 minutes of moderate-intensity exercise (cycling/brisk walking) per week, equivalent to 150 kcal per day. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity) A lack of physical activity has a direct impact on physical and mental health (psychological and cognitive), and thus directly affects employees’ well-being, sick leave rates, productivity and the working atmosphere.`,
+- on participants’ health, via average daily energy expenditure (metabolic equivalent task) during their trips. The Swiss Confederation and the WHO recommend 150\u00A0minutes of moderate-intensity exercise (cycling/brisk walking) per week, equivalent to 150\u00A0kcal per day. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity) A lack of physical activity has a direct impact on physical and mental health (psychological and cognitive), and thus directly affects employees’ well-being, sick leave rates, productivity and the working atmosphere.`,
       },
       mobility_potentials: {
         title: 'Mobility potentials',
@@ -446,11 +446,11 @@ Thank you for your valuable contribution! If you have any questions, please cont
           most_potential:
             'The mode with the highest potential for users is: **{mode}** (recommended to about **{percentage}%** of respondents)',
           biggest_emission_reduction:
-            'The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction} {unit}**, i.e. about **{percentage}%** of the total potential gain for responding employees.',
+            'The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction}\u00A0{unit}**, i.e. about **{percentage}%** of the total potential gain for responding employees.',
           biggest_emission_reduction_extrapolation:
-            'Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction} {unit}** per year.',
+            'Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction}\u00A0{unit}** per year.',
           biggest_physical_activity_gain:
-            "The mode of transport that most increases employees' physical activity is: **{mode}**. This scenario enables **{collaborators_count}** additional employees to reach the WHO-recommended daily level of physical expenditure (150 kcal/day/person).",
+            "The mode of transport that most increases employees' physical activity is: **{mode}**. This scenario enables **{collaborators_count}** additional employees to reach the WHO-recommended daily level of physical expenditure (150\u00A0kcal/day/person).",
         },
       },
       behavioural_changes: {
@@ -525,11 +525,11 @@ Thank you for your valuable contribution! If you have any questions, please cont
       xaxis: 'Time (min)',
       texts: {
         default:
-          'The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024)',
-        specific: 'The median travel time from home to work for participants is {median} minutes.',
-        comparison_item: '{median} minutes ({name})',
+          'The median travel time from home to work in the Geneva canton is 30\u00A0minutes (Modus survey, 2024)',
+        specific: 'The median travel time from home to work for participants is {median}\u00A0minutes.',
+        comparison_item: '{median}\u00A0minutes ({name})',
         comparison:
-          "This chart shows the participants' commuting times, broken down by group of campaign(s). The median commute times are {list}. The median travel time from home to work in the Geneva canton is 30 minutes (Modus survey, 2024).",
+          "This chart shows the participants' commuting times, broken down by group of campaign(s). The median commute times are {list}. The median travel time from home to work in the Geneva canton is 30\u00A0minutes (Modus survey, 2024).",
       },
     },
     reco_inter: {
@@ -632,7 +632,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         comparison:
-          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue}\u00A0tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue}\u00A0tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_freq_mod_complex: {
@@ -645,7 +645,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         comparison:
-          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue}\u00A0tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue}\u00A0tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reco_mod: {
@@ -682,7 +682,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}\u00A0{unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_simple: {
@@ -695,7 +695,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}\u00A0{unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_mod_complex: {
@@ -708,7 +708,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}\u00A0{unit} / year for participants who responded. This corresponds to {cheeseburgers} cheeseburgers, or alternatively to the production of {vacuum} vacuum cleaners or {shirt} cotton shirts [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_share: {
@@ -754,7 +754,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       description:
         "This graph shows the emissions generated by each mode of transport used for the participants' professional trips. The x-axis shows the number of trips made using each mode of transport, per year. The y-axis shows the carbon emissions per trip made. The area of each rectangle therefore corresponds to the annual emissions for each mode of transport, in tCO₂eq. These are calculated using Mobi-tools emission factors, which are the benchmark in Switzerland ([link](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       description_example:
-        "This graph shows the emissions generated by each mode of transport used for the participants' professional trips. The x-axis shows the number of professional trips per year for each mode of transport (for example, participants make {journeys} trips per year with the mode {mode}). The y-axis shows CO₂ emissions per journey for each mode of transport (for example, a journey with the mode {mode} emits an average of {emissionsPerJourney} kgCO₂eq). Finally, the area of each rectangle represents the total annual emissions for each mode of transport (for example, the mode {mode} is responsible for {emissions} kgCO₂eq/year for professional trips). These are calculated using Mobi-tools emission factors, which are the benchmark in Switzerland ([link](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
+        "This graph shows the emissions generated by each mode of transport used for the participants' professional trips. The x-axis shows the number of professional trips per year for each mode of transport (for example, participants make {journeys} trips per year with the mode {mode}). The y-axis shows CO₂ emissions per journey for each mode of transport (for example, a journey with the mode {mode} emits an average of {emissionsPerJourney}\u00A0kgCO₂eq). Finally, the area of each rectangle represents the total annual emissions for each mode of transport (for example, the mode {mode} is responsible for {emissions}\u00A0kgCO₂eq/year for professional trips). These are calculated using Mobi-tools emission factors, which are the benchmark in Switzerland ([link](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       yaxis: 'CO₂ emissions per journey (kgCO₂eq)',
       xaxis: 'Journeys per year',
       labels: {
@@ -764,9 +764,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'Approximately {firstPercent}% of emissions are due to {firstMode}, about {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}kgCO₂eq / journey, against less than {remainingEmissions}kgCO₂eq / journey for the others.',
+          'Approximately {firstPercent}% of emissions are due to {firstMode}, about {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}\u00A0kgCO₂eq / journey, against less than {remainingEmissions}\u00A0kgCO₂eq / journey for the others.',
         comparison:
-          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue} tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue} tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
+          'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue}\u00A0tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue}\u00A0tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
       },
     },
     emissions_reductions_mod_pro: {
@@ -781,7 +781,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions} {unit} / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour} hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}\u00A0{unit} / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour}\u00A0hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
@@ -815,19 +815,19 @@ Thank you for your valuable contribution! If you have any questions, please cont
       yaxis: 'Energy expenditure (kcal/day)',
       xaxis: 'Participants (sorted by energy expenditure)',
       who_above_count: 'Participants above WHO recommendation',
-      whoMin: 'Minimum daily energy expenditure recommended by the WHO (150 kcal/day)',
+      whoMin: 'Minimum daily energy expenditure recommended by the WHO (150\u00A0kcal/day)',
       participantsAverage: 'Average daily energy expenditure of participants (kcal/day)',
       texts: {
         default:
-          'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150 kcal/day/person, equivalent to 37 minutes of walking, 23 minutes of fitness, or 14 minutes of football per day.',
+          'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150\u00A0kcal/day/person, equivalent to 37\u00A0minutes of walking, 23\u00A0minutes of fitness, or 14\u00A0minutes of football per day.',
         specific_current:
-          'Currently, participants spend an average of {energy} kcal/day/person on their home-work travel.',
-        specific_reco: `If the recommendations are followed, the average energy expenditure will increase by {added_energy} kcal/day/person (equivalent to {yoga_min} minutes of yoga per person per day).
+          'Currently, participants spend an average of {energy}\u00A0kcal/day/person on their home-work travel.',
+        specific_reco: `If the recommendations are followed, the average energy expenditure will increase by {added_energy}\u00A0kcal/day/person (equivalent to {yoga_min}\u00A0minutes of yoga per person per day).
           In addition, an additional {count} people will exceed the WHO’s daily physical activity recommendations. The proportion of participants who meet at least the WHO’s recommendations through their commute is expected to rise from around {percent_current}% to potentially around {percent_potential}%.`,
         specific_share:
           'About {percentage}% of the improvement in physical activity among participants would come from {mode}.',
         comparison:
-          'This graph shows the average daily energy expended by participants during their commutes, by campaign group (left axis). It also shows the number (or percentage) of people who reach the 150 kcal/day threshold recommended by the World Health Organization (for example, there are {lastCount} participants (about {lastPercent}% of participants) in the {lastGroup} group, compared to {prevCount} participants (about {prevPercent}%) in the {prevGroup} group).',
+          'This graph shows the average daily energy expended by participants during their commutes, by campaign group (left axis). It also shows the number (or percentage) of people who reach the 150\u00A0kcal/day threshold recommended by the World Health Organization (for example, there are {lastCount} participants (about {lastPercent}% of participants) in the {lastGroup} group, compared to {prevCount} participants (about {prevPercent}%) in the {prevGroup} group).',
       },
     },
     behavior_change_levers: {
@@ -965,7 +965,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       transport: 'Transport',
       commerce: 'Commerce',
     },
-    minutes: '{count} min',
+    minutes: '{count}\u00A0min',
     raw_data: 'Recorded data',
     data: 'Collected data',
     typo: 'Modal typology data',

@@ -240,7 +240,7 @@ export function buildGroupStackedBarOption(params: {
         list.forEach((item) => {
           const value = Number(item.value)
           const display = formatNumber(value)
-          const unit = percent ? '%' : valueUnit ? ` ${valueUnit}` : ''
+          const unit = percent ? '%' : valueUnit ? `\u00A0${valueUnit}` : ''
           const share =
             !percent && valueShareLabel && hoveredTotal > 0
               ? ` ${valueShareLabel(formatPercent((value / hoveredTotal) * 100), hoveredGroup)}`
