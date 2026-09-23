@@ -1,8 +1,8 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
-from sqlmodel import select
+from sqlmodel import select, delete
 from fastapi import HTTPException
-from api.models.domain import Company
+from api.models.domain import Company, Record
 from api.models.query import CompanyResult
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
@@ -82,6 +82,8 @@ class CompanyService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Company not found")
+        # records are not mapped as a relationship, delete them explicitly
+        await self.session.exec(delete(Record).where(Record.company_id == id))
         await self.session.delete(entity)
         await self.session.commit()
         await self.delete_permissions(entity)
