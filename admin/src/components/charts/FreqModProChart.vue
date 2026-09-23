@@ -121,7 +121,7 @@ const descriptionText = computed(() => {
   const example = localActiveModesExample.value
   return [
     t('stats.freq_mod_pro.description'),
-    example ? t('stats.freq_mod_pro.texts.comparison', example) : '',
+    example && example.percent > 0 ? t('stats.freq_mod_pro.texts.comparison', example) : '',
   ]
     .filter(Boolean)
     .join(' ')
