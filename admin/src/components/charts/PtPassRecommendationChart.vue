@@ -479,7 +479,6 @@ function initComparisonChartOptions() {
     legend: {
       show: true,
       bottom: 0,
-      type: 'scroll',
       // A colour key, one entry per group: hiding a group would only hide half
       // of its (stacked) bar, which reads as a smaller group rather than none.
       selectedMode: false,

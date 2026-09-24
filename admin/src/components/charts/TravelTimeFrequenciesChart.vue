@@ -395,7 +395,6 @@ function initComparisonChartOptions() {
     legend: {
       show: true,
       bottom: 0,
-      type: 'scroll',
     },
     xAxis: {
       type: 'category',

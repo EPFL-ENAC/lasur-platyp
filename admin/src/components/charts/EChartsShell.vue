@@ -23,6 +23,7 @@
       :update-options="updateOptions"
       :loading="!!loading"
       :theme="$q.dark.isActive ? 'platyp-dark' : 'platyp'"
+      @finished="onFinished"
     />
 
     <template #table>
@@ -86,30 +87,127 @@ const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
 const dialogOpen = inject(chartPanelDialogOpenKey, ref(false))
 
 // Full-screen details: the panel already shows the title, so the in-chart
-// title is dropped (its "N: ..." subtext stays) and paged legends wrap instead.
+// title is dropped (its "N: ..." subtext stays).
 // The height stays as given: charts derive their grid from it, so a taller
 // container would only open a gap above the legend.
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRecord = Record<string, any>
 
-function dialogTitle(title: AnyRecord): AnyRecord {
-  return { ...title, text: '' }
+// Measured after each render (see onFinished), then fed back into the option:
+// the chart width, to clip long titles, the room the x axis lacks above a
+// legend that wrapped over several rows, and the box pies must fit in between
+// the title and the legend (pies ignore the grid).
+const chartWidth = ref(0)
+const legendRoom = ref(0)
+const pieBox = ref<{ top: number; bottom: number } | null>(null)
+// Room left for the toolbar menu on each side of a centered title.
+const TITLE_MARGIN = 60
+// Gap kept between the x axis (labels and name) and the legend.
+const LEGEND_GAP = 8
+
+watch(
+  () => [props.option, dialogOpen.value],
+  () => {
+    legendRoom.value = 0
+    pieBox.value = null
+  },
+)
+
+function fitPie(series: AnyRecord): AnyRecord {
+  return series.type === 'pie' && pieBox.value ? { ...series, ...pieBox.value } : series
 }
 
-function dialogLegend(legend: AnyRecord): AnyRecord {
-  return legend.type === 'scroll' ? { ...legend, type: 'plain' } : legend
+function fitTitle(title: AnyRecord): AnyRecord {
+  if (dialogOpen.value) return { ...title, text: '' }
+  if (!title.text || !chartWidth.value) return title
+  return {
+    ...title,
+    textStyle: {
+      ...title.textStyle,
+      width: chartWidth.value - 2 * TITLE_MARGIN,
+      overflow: 'truncate',
+      ellipsis: '…',
+    },
+  }
+}
+
+function toPx(value: unknown, total: number): number {
+  if (typeof value === 'string' && value.endsWith('%')) return (parseFloat(value) / 100) * total
+  return Number(value) || 0
 }
 
 const resolvedOption = computed<ECBasicOption>(() => {
-  if (!dialogOpen.value) return props.option
   const opt: AnyRecord = { ...props.option }
-  if (Array.isArray(opt.title)) opt.title = opt.title.map(dialogTitle)
-  else if (opt.title) opt.title = dialogTitle(opt.title)
-  if (Array.isArray(opt.legend)) opt.legend = opt.legend.map(dialogLegend)
-  else if (opt.legend) opt.legend = dialogLegend(opt.legend)
+  if (Array.isArray(opt.title)) opt.title = opt.title.map(fitTitle)
+  else if (opt.title) opt.title = fitTitle(opt.title)
+  if (legendRoom.value && opt.grid && !Array.isArray(opt.grid)) {
+    const height = chart.value?.chart?.getHeight() ?? props.height
+    opt.grid = { ...opt.grid, bottom: toPx(opt.grid.bottom, height) + legendRoom.value }
+  }
+  if (pieBox.value && Array.isArray(opt.series)) opt.series = opt.series.map(fitPie)
   return opt as ECBasicOption
 })
+
+// Global bounding rect of a component's rendered view.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function viewRect(instance: any, model: any) {
+  const group = instance.getViewOfComponentModel(model)?.group
+  if (!group) return null
+  const rect = group.getBoundingRect().clone()
+  const transform = group.getComputedTransform()
+  if (transform) rect.applyTransform(transform)
+  return rect.height ? rect : null
+}
+
+// ponytail: relies on ECharts internals (getModel, getViewOfComponentModel) as
+// there is no public API for a component's size; check on ECharts upgrades.
+function onFinished() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const instance = chart.value?.chart as any
+  if (!instance) return
+  if (instance.getWidth() !== chartWidth.value) {
+    chartWidth.value = instance.getWidth()
+    legendRoom.value = 0
+    pieBox.value = null
+    return
+  }
+  const model = instance.getModel()
+  const legendTop = Math.min(
+    ...model
+      .queryComponents({ mainType: 'legend' })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .filter((legend: any) => legend.get('bottom') != null)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((legend: any) => viewRect(instance, legend)?.y ?? Infinity),
+  )
+  const axisBottom = Math.max(
+    ...model
+      .queryComponents({ mainType: 'xAxis' })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((axis: any) => viewRect(instance, axis))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((rect: any) => (rect ? rect.y + rect.height : -Infinity)),
+  )
+  const overlap = Math.ceil(axisBottom + LEGEND_GAP - legendTop)
+  if (overlap > 0) legendRoom.value += overlap
+
+  if (!pieBox.value && legendTop !== Infinity && model.getSeriesByType('pie').length) {
+    const titleBottom = Math.max(
+      0,
+      ...model
+        .queryComponents({ mainType: 'title' })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((title: any) => viewRect(instance, title))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((rect: any) => (rect ? rect.y + rect.height : 0)),
+    )
+    pieBox.value = {
+      top: Math.ceil(titleBottom + LEGEND_GAP),
+      bottom: Math.ceil(instance.getHeight() - legendTop + LEGEND_GAP),
+    }
+  }
+}
 
 const resolvedExportBackgroundColor = computed(() => {
   if (props.exportBackgroundColor) {
