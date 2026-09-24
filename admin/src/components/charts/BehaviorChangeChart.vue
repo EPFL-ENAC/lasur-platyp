@@ -558,7 +558,7 @@ function initComparisonChartOptions() {
       formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) =>
         comparisonTooltip(data, Array.isArray(paramsList) ? paramsList : [paramsList]),
     },
-    legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
+    legend: { show: true, bottom: 0, left: 'center' },
     yAxis: [
       {
         type: 'category',

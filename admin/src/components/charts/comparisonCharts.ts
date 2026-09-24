@@ -250,7 +250,7 @@ export function buildGroupStackedBarOption(params: {
         return res
       },
     },
-    legend: { show: true, bottom: 5, left: 'center', type: 'scroll' },
+    legend: { show: true, bottom: 5, left: 'center' },
     xAxis: {
       type: 'category',
       data: groupDatasets.map((group) => group.name),
@@ -345,7 +345,7 @@ export function buildGroupedHorizontalBarOption(params: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
     },
-    legend: { show: true, bottom: 5, left: 'center', type: 'scroll' },
+    legend: { show: true, bottom: 5, left: 'center' },
     yAxis: {
       type: 'category',
       data: orderedCategories.map((key) => categoryNames.get(key) || key),

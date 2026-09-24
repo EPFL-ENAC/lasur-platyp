@@ -222,7 +222,6 @@ function initChartOptions() {
     legend: {
       show: true,
       bottom: 16,
-      type: 'scroll',
     },
     series: [
       {

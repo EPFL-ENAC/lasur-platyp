@@ -402,7 +402,7 @@ function initComparisonChartOptions() {
         return [header, ...lines].join('<br/>')
       },
     },
-    legend: { show: true, bottom: 0, left: 'center', type: 'scroll' },
+    legend: { show: true, bottom: 0, left: 'center' },
     yAxis: [
       {
         name: props.yaxis || '',

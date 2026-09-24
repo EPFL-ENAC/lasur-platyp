@@ -284,7 +284,6 @@ function initChartOptions() {
     legend: {
       show: true,
       bottom: 16,
-      type: 'scroll',
       selectedMode: false,
     },
     series: [
