@@ -241,8 +241,23 @@ function computeMedian(frequencies: Frequencies) {
   return undefined // In case something goes wrong
 }
 
+function binFrequencies(frequencies: Frequencies, step = 5) {
+  const bins = new Map<number, number>()
+  let answered = 0
+  for (const item of frequencies.data) {
+    const value = Number(item.value)
+    if (isNaN(value)) continue
+    const bin = Math.floor(value / step) * step
+    bins.set(bin, (bins.get(bin) ?? 0) + item.count)
+    answered += item.count
+  }
+  return { bins, answered }
+}
+
 function initValuesChartOptions(frequencies: Frequencies) {
   total.value = frequencies.total || 0
+
+  const { bins, answered } = binFrequencies(frequencies, props.rangeStep)
 
   // find max value
   const max = Math.max(
@@ -259,12 +274,12 @@ function initValuesChartOptions(frequencies: Frequencies) {
   // foreach category find count in frequencies
   const values =
     categories?.map((category) => {
-      const item = frequencies.data.find((item) => item.value === `${category}`)
-      return item
-        ? stats.travelTimePercent
-          ? Math.round((item.count / total.value) * 100)
-          : item.count
-        : 0
+      const count = bins.get(Number(category)) ?? 0
+      return stats.travelTimePercent
+        ? answered > 0
+          ? Math.round((count / answered) * 100)
+          : 0
+        : count
     }) || []
 
   const newOption: EChartsOption = {
@@ -354,6 +369,9 @@ function initComparisonChartOptions() {
   const categories = makeCategories(max, props.rangeStep)
 
   const series: SeriesOption[] = groupFrequencies.map((group, i) => {
+    const groupData = group.frequencies
+      ? binFrequencies(group.frequencies, props.rangeStep)
+      : { bins: new Map<number, number>(), answered: 0 }
     const groupTotal = group.frequencies?.total || 0
     total.value += groupTotal
     return {
@@ -363,8 +381,8 @@ function initComparisonChartOptions() {
       symbol: 'none',
       color: GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc',
       data: categories.map((category) => {
-        const item = group.frequencies?.data.find((item) => item.value === `${category}`)
-        return item && groupTotal > 0 ? Math.round((item.count / groupTotal) * 100) : 0
+        const count = groupData.bins.get(Number(category)) ?? 0
+        return groupData.answered > 0 ? Math.round((count / groupData.answered) * 100) : 0
       }),
     }
   })

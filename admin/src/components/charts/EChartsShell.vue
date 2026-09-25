@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue'
+import { computed, onUnmounted, shallowRef } from 'vue'
 import type { EChartsType } from 'echarts/core'
 import { useQuasar } from 'quasar'
 import ECharts from 'vue-echarts'
@@ -94,25 +94,65 @@ const dialogOpen = inject(chartPanelDialogOpenKey, ref(false))
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRecord = Record<string, any>
 
-// Measured after each render (see onFinished), then fed back into the option:
-// the chart width, to clip long titles, the room the x axis lacks above a
-// legend that wrapped over several rows, and the box pies must fit in between
-// the title and the legend (pies ignore the grid).
+// Chart width, from the host element (see the ResizeObserver below) rather
+// than the echarts instance: the title clip never measures its own output.
 const chartWidth = ref(0)
+// Measured from the option render (see onFinished) and fed back into it: the
+// room the x axis lacks above a legend that wrapped over several rows, and the
+// box pies must fit in between the title and the legend (pies ignore the grid).
 const legendRoom = ref(0)
 const pieBox = ref<{ top: number; bottom: number } | null>(null)
 // Room left for the toolbar menu on each side of a centered title.
 const TITLE_MARGIN = 60
 // Gap kept between the x axis (labels and name) and the legend.
 const LEGEND_GAP = 8
+// Fitting takes at most this many render passes per option change (see
+// onFinished): a measurement that never settles must not loop for ever.
+const ADJUST_PASS_LIMIT = 3
+
+// Whether the rendered chart may still be fitted. Opened by every option or
+// size change, closed once the render settles (see onFinished), so repeated
+// +finished+ events stay passive instead of feeding back into the option.
+let adjustAllowed = true
+let adjustPasses = 0
+
+function resetAdjustments() {
+  legendRoom.value = 0
+  pieBox.value = null
+  adjustPasses = 0
+  adjustAllowed = true
+}
 
 watch(
-  () => [props.option, dialogOpen.value],
+  () => [props.option, dialogOpen.value, props.height, props.loading],
   () => {
-    legendRoom.value = 0
-    pieBox.value = null
+    resetAdjustments()
   },
 )
+
+// The host width is clipped from the title (fitTitle); it is measured from the
+// DOM rather than the echarts instance, so the fits that depend on it never
+// measure their own output.
+let resizeObserver: ResizeObserver | undefined
+
+watch(chart, (instance) => {
+  resizeObserver?.disconnect()
+  if (!instance?.root) {
+    resizeObserver = undefined
+    return
+  }
+  resizeObserver = new ResizeObserver((entries) => {
+    const entry = entries.at(-1)
+    if (!entry) return
+    const width = Math.round(entry.contentRect.width)
+    if (!width || width === chartWidth.value) return
+    chartWidth.value = width
+    resetAdjustments()
+  })
+  resizeObserver.observe(instance.root)
+})
+
+onUnmounted(() => resizeObserver?.disconnect())
 
 function fitPie(series: AnyRecord): AnyRecord {
   return series.type === 'pie' && pieBox.value ? { ...series, ...pieBox.value } : series
@@ -163,15 +203,15 @@ function viewRect(instance: any, model: any) {
 // ponytail: relies on ECharts internals (getModel, getViewOfComponentModel) as
 // there is no public API for a component's size; check on ECharts upgrades.
 function onFinished() {
+  if (!adjustAllowed) return
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instance = chart.value?.chart as any
   if (!instance) return
-  if (instance.getWidth() !== chartWidth.value) {
-    chartWidth.value = instance.getWidth()
-    legendRoom.value = 0
-    pieBox.value = null
-    return
-  }
+  // When the grid cannot take the room (several grids, or none), the resolved
+  // option drops the fit: refining it here would only churn re-renders.
+  const opt = props.option as AnyRecord
+  const canAdjustLegend = !!(opt.grid && !Array.isArray(opt.grid))
+
   const model = instance.getModel()
   const legendTop = Math.min(
     ...model
@@ -189,8 +229,19 @@ function onFinished() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((rect: any) => (rect ? rect.y + rect.height : -Infinity)),
   )
-  const overlap = Math.ceil(axisBottom + LEGEND_GAP - legendTop)
-  if (overlap > 0) legendRoom.value += overlap
+  const overlap =
+    legendTop === Infinity || axisBottom === -Infinity
+      ? 0
+      : Math.ceil(axisBottom + LEGEND_GAP - legendTop)
+
+  let changed = false
+  if (overlap > 0 && canAdjustLegend) {
+    const next = Math.min(legendRoom.value + overlap, instance.getHeight())
+    if (next !== legendRoom.value) {
+      legendRoom.value = next
+      changed = true
+    }
+  }
 
   if (!pieBox.value && legendTop !== Infinity && model.getSeriesByType('pie').length) {
     const titleBottom = Math.max(
@@ -202,10 +253,24 @@ function onFinished() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((rect: any) => (rect ? rect.y + rect.height : 0)),
     )
-    pieBox.value = {
-      top: Math.ceil(titleBottom + LEGEND_GAP),
-      bottom: Math.ceil(instance.getHeight() - legendTop + LEGEND_GAP),
+    // No room between the title and the legend: leave the pie where it is
+    // rather than squeezing it into a non-positive band.
+    if (legendTop - titleBottom > 2 * LEGEND_GAP) {
+      pieBox.value = {
+        top: Math.ceil(titleBottom + LEGEND_GAP),
+        bottom: Math.ceil(instance.getHeight() - legendTop + LEGEND_GAP),
+      }
+      changed = true
     }
+  }
+
+  adjustPasses += 1
+  // Keep fitting only while the axis still collides and a pass actually moved
+  // something: a measurement that never settles must not loop for ever.
+  if (overlap > 0 && changed && adjustPasses < ADJUST_PASS_LIMIT) return
+  adjustAllowed = false
+  if (overlap > 0) {
+    console.warn(`[EChartsShell] chart fitting gave up after ${adjustPasses} pass(es)`)
   }
 }
 
