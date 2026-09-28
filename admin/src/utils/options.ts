@@ -5,8 +5,6 @@ import { t } from '@/boot/i18n'
 export const actionItems: FieldItem[] = [
   'mesures_globa',
   'mesures_tpu',
-  'mesures_train',
-  'mesures_inter',
   'mesures_velo',
   'mesures_covoit',
   'mesures_elec',
@@ -20,7 +18,6 @@ export const actionProItems: FieldItem[] = [
   'mesures_pro_globa',
   'mesures_pro_velo',
   'mesures_pro_tpu',
-  'mesures_pro_train',
   'mesures_pro_elec',
 ].map((field) => ({
   field,
@@ -31,15 +28,12 @@ export const actionProItems: FieldItem[] = [
 export const actionGroupOptions = [
   'mesures_globa',
   'mesures_tpu',
-  'mesures_train',
-  'mesures_inter',
   'mesures_velo',
   'mesures_covoit',
   'mesures_elec',
   'mesures_pro_globa',
   'mesures_pro_velo',
   'mesures_pro_tpu',
-  'mesures_pro_train',
   'mesures_pro_elec',
 ].map((field) => ({
   label: t(`actions.${field}_label`) + (field.includes('_pro_') ? ' (pro)' : ''),

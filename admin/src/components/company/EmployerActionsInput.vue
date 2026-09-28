@@ -98,15 +98,12 @@ function makeDefaultActions(): EmployerActions {
   return {
     mesures_globa: [],
     mesures_tpu: [],
-    mesures_train: [],
-    mesures_inter: [],
     mesures_velo: [],
     mesures_covoit: [],
     mesures_elec: [],
     mesures_pro_globa: [],
     mesures_pro_velo: [],
     mesures_pro_tpu: [],
-    mesures_pro_train: [],
     mesures_pro_elec: [],
   }
 }
@@ -148,9 +145,13 @@ function removeDeletedActions() {
 const actionOptions = computed<{ [key: string]: Option[] }>(() => {
   return {
     mesures_globa: makeOptions('mesures_globa', ['budget', 'wfh', 'wftp', 'wfro']),
-    mesures_tpu: makeOptions('mesures_tpu', ['tpg_pass', 'lex_pass']),
-    mesures_train: makeOptions('mesures_train', ['cff_pass_ag', 'cff_pass_dtp', 'cff_pass_dt']),
-    mesures_inter: makeOptions('mesures_inter', ['pnr_pass', 'shuttle', 'velo_station']),
+    mesures_tpu: makeOptions('mesures_tpu', [
+      'tpg_pass',
+      'lex_pass',
+      'cff_pass_ag',
+      'cff_pass_dtp',
+      'cff_pass_dt',
+    ]),
     mesures_velo: makeOptions('mesures_velo', [
       'bike_subs',
       'shower',
@@ -172,8 +173,13 @@ const actionProOptions = computed<{ [key: string]: Option[] }>(() => {
   return {
     mesures_pro_globa: makeOptions('mesures_pro_globa', ['videoconf']),
     mesures_pro_velo: makeOptions('mesures_pro_velo', ['ebike_fleet']),
-    mesures_pro_tpu: makeOptions('mesures_pro_tpu', ['tpu_pro', 'tpu_rmb']),
-    mesures_pro_train: makeOptions('mesures_pro_train', ['train_pro', 'train_obl', 'train_rmb']),
+    mesures_pro_tpu: makeOptions('mesures_pro_tpu', [
+      'tpu_pro',
+      'tpu_rmb',
+      'train_pro',
+      'train_obl',
+      'train_rmb',
+    ]),
     mesures_pro_elec: makeOptions('mesures_pro_elec', ['ev_fleet']),
   }
 })

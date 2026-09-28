@@ -151,7 +151,8 @@ class ModalTypoService:
 
         # get campaign actions
         campaign_actions = campaign.actions if campaign.actions else {}
-        custom_actions_by_id = {str(custom_action.id): custom_action for custom_action in (custom_actions or [])}
+        custom_actions_by_id = {
+            str(custom_action.id): custom_action for custom_action in (custom_actions or [])}
 
         # replace custom action ids by their locale label, ignore ids of deleted custom actions
         actions = {}
@@ -172,7 +173,8 @@ class ModalTypoService:
                         actions[group].append(custom_action.labels["en"])
                     else:
                         # if no label for the locale, use the first label
-                        actions[group].append(list(custom_action.labels.values())[0])
+                        actions[group].append(
+                            list(custom_action.labels.values())[0])
                 else:
                     actions[group].append(action)
 
@@ -180,15 +182,12 @@ class ModalTypoService:
             "empl": {
                 "mesures_globa": actions["mesures_globa"] if "mesures_globa" in actions else [],
                 "mesures_tpu": actions["mesures_tpu"] if "mesures_tpu" in actions else [],
-                "mesures_train": actions["mesures_train"] if "mesures_train" in actions else [],
-                "mesures_inter": actions["mesures_inter"] if "mesures_inter" in actions else [],
                 "mesures_velo": actions["mesures_velo"] if "mesures_velo" in actions else [],
                 "mesures_covoit": actions["mesures_covoit"] if "mesures_covoit" in actions else [],
                 "mesures_elec": actions["mesures_elec"] if "mesures_elec" in actions else [],
                 "mesures_pro_globa": actions["mesures_pro_globa"] if "mesures_pro_globa" in actions else [],
                 "mesures_pro_velo": actions["mesures_pro_velo"] if "mesures_pro_velo" in actions else [],
                 "mesures_pro_tpu": actions["mesures_pro_tpu"] if "mesures_pro_tpu" in actions else [],
-                "mesures_pro_train": actions["mesures_pro_train"] if "mesures_pro_train" in actions else [],
                 "mesures_pro_elec": actions["mesures_pro_elec"] if "mesures_pro_elec" in actions else [],
             },
             "reco_dt2": reco_inter,
