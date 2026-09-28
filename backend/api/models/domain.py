@@ -25,15 +25,12 @@ class Entity(TimestampMixin):
 class EmployerActions(BaseModel):
     mesures_globa: Optional[List[str]] = Field(default=[])
     mesures_tpu: Optional[List[str]] = Field(default=[])
-    mesures_train: Optional[List[str]] = Field(default=[])
-    mesures_inter: Optional[List[str]] = Field(default=[])
     mesures_velo: Optional[List[str]] = Field(default=[])
     mesures_covoit: Optional[List[str]] = Field(default=[])
     mesures_elec: Optional[List[str]] = Field(default=[])
     mesures_pro_globa: Optional[List[str]] = Field(default=[])
     mesures_pro_velo: Optional[List[str]] = Field(default=[])
     mesures_pro_tpu: Optional[List[str]] = Field(default=[])
-    mesures_pro_train: Optional[List[str]] = Field(default=[])
     mesures_pro_elec: Optional[List[str]] = Field(default=[])
 
 
@@ -89,7 +86,8 @@ class CampaignBase(Entity):
     info_url: Optional[str] = Field(default=None)
     actions: Optional[EmployerActions] = Field(
         default=None, sa_column=Column(JSON))
-    rewards_message: Optional[Dict[str, str]] = Field(default=None, sa_column=Column(JSON))
+    rewards_message: Optional[Dict[str, str]] = Field(
+        default=None, sa_column=Column(JSON))
     open_workplaces: bool = Field(default=False)
     nb_employees: Optional[int] = Field(default=None)
     parking_provided: bool = Field(default=False, nullable=False)

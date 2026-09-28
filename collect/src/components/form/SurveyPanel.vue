@@ -237,6 +237,7 @@ const mesurePro = computed<string[][]>(() => {
   const v2Fallback = (r: string): string[] => {
     const lookup: Record<string, string[] | undefined> = {
       elec: ra.mesures_pro_elec,
+      elec_moto: ra.mesures_pro_elec,
       elec_truck: ra.mesures_pro_elec,
       velo: ra.mesures_pro_velo,
       vae: ra.mesures_pro_velo,

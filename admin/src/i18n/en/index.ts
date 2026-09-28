@@ -324,10 +324,6 @@ Thank you for your valuable contribution! If you have any questions, please cont
     mesures_globa_hint: '',
     mesures_tpu_label: 'Public transports',
     mesures_tpu_hint: '',
-    mesures_train_label: 'Train',
-    mesures_train_hint: '',
-    mesures_inter_label: 'Inter-modality',
-    mesures_inter_hint: '',
     mesures_velo_label: 'Bicycle',
     mesures_velo_hint: '',
     mesures_covoit_label: 'Care pooling',
@@ -340,8 +336,6 @@ Thank you for your valuable contribution! If you have any questions, please cont
     mesures_pro_velo_hint: '',
     mesures_pro_tpu_label: 'Public transports',
     mesures_pro_tpu_hint: '',
-    mesures_pro_train_label: 'Train',
-    mesures_pro_train_hint: '',
     mesures_pro_elec_label: 'Electric',
     mesures_pro_elec_hint: '',
     budget: 'Sustainable mobility budget',
@@ -355,9 +349,6 @@ Thank you for your valuable contribution! If you have any questions, please cont
     cff_pass_ag: 'Train pass (general pass)',
     cff_pass_dtp: 'Train pass (1/2 fare plus)',
     cff_pass_dt: 'Train pass (1/2 fare)',
-    pnr_pass: 'Park and Ride pass',
-    shuttle: 'Shuttle from the enarest train station',
-    velo_station: 'Velo-station pass',
     bike_subs: 'Subsidy for the purchase of a bicycle/e-bike',
     shower: 'Showers, lockers and changing rooms',
     bike_parking: 'Secure bicycle parking',
@@ -526,7 +517,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       texts: {
         default:
           'The median travel time from home to work in the Geneva canton is 30\u00A0minutes (Modus survey, 2024)',
-        specific: 'The median travel time from home to work for participants is {median}\u00A0minutes.',
+        specific:
+          'The median travel time from home to work for participants is {median}\u00A0minutes.',
         comparison_item: '{median}\u00A0minutes ({name})',
         comparison:
           "This chart shows the participants' commuting times, broken down by group of campaign(s). The median commute times are {list}. The median travel time from home to work in the Geneva canton is 30\u00A0minutes (Modus survey, 2024).",

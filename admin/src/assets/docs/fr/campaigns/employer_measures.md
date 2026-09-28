@@ -17,18 +17,9 @@ Ces mesures aident les salariés dans leurs déplacements quotidiens entre leur 
 
 - **Abonnement transports publics (UNIRESO)** : Abonnement local de transports publics
 - **Abonnement Léman express** : Abonnement au train express régional
-
-#### Mesures train
-
 - **Abonnement général** : Accès à l'ensemble du réseau ferroviaire suisse
 - **Abonnement demi-tarif plus** : Carte demi-tarif améliorée avec avantages
 - **Abonnement demi-tarif** : Carte demi-tarif standard
-
-#### Mesures intermodalité
-
-- **Abonnement P+R** : Accès aux parkings relais
-- **Navette depuis la gare la plus proche** : Service de navette fourni par l'organisation
-- **Abonnement vélo-station** : Accès aux parkings vélos en gare
 
 #### Mesures vélo
 
@@ -66,9 +57,6 @@ Ces mesures soutiennent la mobilité durable lors des déplacements professionne
 
 - **Abonnement transports publics (UNIRESO)** : Abonnement local pour les déplacements professionnels
 - **Remboursement des billets de transports publics pour les déplacements professionnels** : Prise en charge des coûts
-
-#### Mesures train professionnelles
-
 - **Abonnement général** : Accès au réseau ferroviaire pour les déplacements professionnels
 - **Obligation d'utiliser le train lorsque possible** : Politique imposant l'usage du train pour les déplacements professionnels
 - **Remboursement des billets de train pour les déplacements professionnels** : Prise en charge des coûts

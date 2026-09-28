@@ -17,18 +17,9 @@ These measures help employees with their daily commute to and from work.
 
 - **Public transport (UNIRESO) pass**: Local public transport subscription
 - **Léman express pass**: Regional express train pass
-
-#### Train Measures
-
 - **Train pass (general pass)**: Full Swiss rail network access
 - **Train pass (1/2 fare plus)**: Enhanced half-fare card with benefits
 - **Train pass (1/2 fare)**: Standard half-fare card
-
-#### Inter-modality Measures
-
-- **Park and Ride pass**: Access to park-and-ride facilities
-- **Shuttle from the nearest train station**: Organisation-provided shuttle service
-- **Velo-station pass**: Access to bicycle parking facilities at stations
 
 #### Bicycle Measures
 
@@ -66,9 +57,6 @@ These measures support sustainable mobility for business trips and professional 
 
 - **Public transport (UNIRESO) pass**: Local public transport for business trips
 - **Reimbursement of public transport tickets for business travel**: Cost coverage
-
-#### Professional Train Measures
-
 - **Train pass (general pass)**: Full rail network access for business travel
 - **Obligation to use train where possible**: Policy requiring train use for business journeys
 - **Reimbursement of train tickets for business travel**: Cost coverage
