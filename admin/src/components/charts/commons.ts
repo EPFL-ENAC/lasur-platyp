@@ -17,6 +17,9 @@ import {
 import { getProModalityLabels, getRecoSimpleLabel, MODE_TO_SIMPLE_LABEL } from '@/utils/modalities'
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
+// Provided by the printable report: legends are laid out in full (plain)
+// instead of scrolling as they do on screen.
+export const chartReportKey: InjectionKey<boolean> = Symbol('chartReport')
 
 export const initOptions: InitOptions = {
   renderer: 'svg',

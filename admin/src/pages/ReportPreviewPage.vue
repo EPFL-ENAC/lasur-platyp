@@ -280,6 +280,7 @@ import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationC
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import { type StatsState, flushStateFromIndexedDB, getStateFromIndexedDB } from '@/stores/stats'
 import type { Frequencies } from '@/models'
+import { chartReportKey } from '@/components/charts/commons'
 
 interface Props {
   height: number
@@ -288,6 +289,8 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   height: 400,
 })
+
+provide(chartReportKey, true)
 
 const { t, locale } = useI18n()
 const route = useRoute()

@@ -39,7 +39,7 @@ import { useQuasar } from 'quasar'
 import ECharts from 'vue-echarts'
 import ChartShell from './ChartShell.vue'
 import EChartsTable from './EChartsTable.vue'
-import { chartPanelDialogOpenKey, initOptions, updateOptions } from './commons'
+import { chartPanelDialogOpenKey, chartReportKey, initOptions, updateOptions } from './commons'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 
 interface Props {
@@ -85,6 +85,8 @@ const { t } = useI18n()
 const chart = shallowRef<InstanceType<typeof ECharts> | null>(null)
 const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
 const dialogOpen = inject(chartPanelDialogOpenKey, ref(false))
+// On screen, long legends scroll on a single row; the report prints them whole.
+const legendType = inject(chartReportKey, false) ? 'plain' : 'scroll'
 
 // Full-screen details: the panel already shows the title, so the in-chart
 // title is dropped (its "N: ..." subtext stays).
@@ -179,6 +181,9 @@ function toPx(value: unknown, total: number): number {
 
 const resolvedOption = computed<ECBasicOption>(() => {
   const opt: AnyRecord = { ...props.option }
+  if (Array.isArray(opt.legend))
+    opt.legend = opt.legend.map((legend: AnyRecord) => ({ ...legend, type: legendType }))
+  else if (opt.legend) opt.legend = { ...opt.legend, type: legendType }
   if (Array.isArray(opt.title)) opt.title = opt.title.map(fitTitle)
   else if (opt.title) opt.title = fitTitle(opt.title)
   if (legendRoom.value && opt.grid && !Array.isArray(opt.grid)) {
