@@ -769,7 +769,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'Approximately {firstPercent}% of emissions are due to {firstMode}, about {secondPercent}% to the {secondMode}. Each journey in {firstMode} emits on average {firstEmissions}\u00A0kgCO₂eq / journey, against less than {remainingEmissions}\u00A0kgCO₂eq / journey for the others.',
+          '{firstPercent}% of emissions are due to {firstMode}, {secondPercent}% to {secondMode}. Each journey in {perJourneyMode} emits on average {perJourneyEmissions}\u00A0kgCO₂eq / journey, against less than {remainingEmissions}\u00A0kgCO₂eq / journey for the others.',
         comparison:
           'This graph compares CO₂ emissions by mode of transportation and by campaign group(s). For example, in the {lastGroup} group, the {mode} mode is responsible for approximately {lastValue}\u00A0tCO₂eq/year (or about {lastPercent}% of emissions for this group); compared to approximately {prevValue}\u00A0tCO₂eq/year (about {prevPercent}%) for the {prevGroup} group.',
       },

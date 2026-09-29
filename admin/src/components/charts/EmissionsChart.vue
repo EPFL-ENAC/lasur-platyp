@@ -199,43 +199,43 @@ const emissionItemsPro = computed(() => {
   if (!props.emissions) return null
   if (total.value < globalAnswersThreshold) return null
 
-  const emissions = props.emissions || []
-
-  const planeEmissions = emissions.find((item) => item.mode === 'plane')
-  const carEmissions = emissions.find((item) => item.mode === 'car')
-  if (!planeEmissions || !carEmissions) return null
-  if (
-    planeEmissions.total < perModeAnswersThreshold ||
-    carEmissions.total < perModeAnswersThreshold
-  ) {
-    return null
-  }
+  // Modes with too few answers are not reliable enough to be named.
+  const emissions = props.emissions.filter(
+    (item) => item.total >= perModeAnswersThreshold && item.journeys > 0,
+  )
+  if (emissions.length < 2) return null
 
   const totalEmissions = emissions.reduce((sum, item) => sum + item.emissions, 0)
   if (totalEmissions === 0) return null
 
-  return {
-    first: planeEmissions,
-    second: carEmissions,
-    total: totalEmissions,
-    withoutFirst: emissions.filter((item) => item.mode !== planeEmissions.mode),
-  }
+  // First and second: largest rectangle areas (total emissions).
+  const [first, second] = [...emissions].sort((a, b) => b.emissions - a.emissions)
+  // Highest emissions per journey, compared with the average of the other modes.
+  const perJourney = emissions.reduce((max, item) =>
+    item.emissions / item.journeys > max.emissions / max.journeys ? item : max,
+  )
+  const others = emissions.filter((item) => item.mode !== perJourney.mode)
+
+  return { first: first!, second: second!, perJourney, total: totalEmissions, others }
 })
 
 const emissionItemsProLabels = computed(() => {
   const eip = emissionItemsPro.value
   if (!eip) return null
 
-  const withoutFirstEmissions = eip.withoutFirst.reduce((sum, item) => sum + item.emissions, 0)
-  const withoutFirstJourneys = eip.withoutFirst.reduce((sum, item) => sum + item.journeys, 0)
+  const othersEmissions = eip.others.reduce((sum, item) => sum + item.emissions, 0)
+  const othersJourneys = eip.others.reduce((sum, item) => sum + item.journeys, 0)
 
   return {
     firstPercent: formatPercent((eip.first.emissions / eip.total) * 100),
     firstMode: keyLabel(eip.first.mode),
-    firstEmissions: formatNumber(Math.round((eip.first.emissions || 0) / eip.first.journeys)),
     secondPercent: formatPercent((eip.second.emissions / eip.total) * 100),
     secondMode: keyLabel(eip.second.mode),
-    remainingEmissions: formatNumber(Math.round(withoutFirstEmissions / withoutFirstJourneys)),
+    perJourneyMode: keyLabel(eip.perJourney.mode),
+    perJourneyEmissions: formatNumber(
+      Math.round(eip.perJourney.emissions / eip.perJourney.journeys),
+    ),
+    remainingEmissions: formatNumber(Math.round(othersEmissions / othersJourneys)),
   }
 })
 
