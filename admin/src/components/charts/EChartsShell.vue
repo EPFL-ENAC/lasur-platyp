@@ -14,6 +14,7 @@
     :logo-width-ratio="logoWidthRatio"
     :export-background-color="resolvedExportBackgroundColor"
     :capture-raw-image="captureRawImage"
+    :rotated="rotated"
   >
     <e-charts
       ref="chart"
@@ -67,6 +68,7 @@ interface Props {
   logoWidthRatio?: number
   exportBackgroundColor?: string
   exportPixelRatio?: number
+  rotated?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -1,6 +1,6 @@
 <template>
   <div class="chart-shell">
-    <div class="chart-shell__frame">
+    <div class="chart-shell__frame" :style="frameStyle">
       <div :style="containerStyle" class="chart-shell__visual">
         <div v-if="hasData" class="chart-shell__content">
           <slot />
@@ -39,6 +39,9 @@ interface Props {
   logoPadding?: number | undefined
   logoWidthRatio?: number | undefined
   captureRawImage?: () => Promise<string | null>
+  // Turn the chart a quarter counter-clockwise (landscape chart on a portrait
+  // page): +height+ is then its length along the page, its width the page's.
+  rotated?: boolean | undefined
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -58,11 +61,31 @@ defineExpose({
 
 const exporting = ref(false)
 
-const containerStyle = computed<CSSProperties>(() => ({
-  height: `${props.height}px`,
-  width: '100%',
-  position: 'relative',
-}))
+const frameStyle = computed<CSSProperties>(() =>
+  props.rotated
+    ? { height: `${props.height}px`, position: 'relative', containerType: 'inline-size' }
+    : {},
+)
+
+const containerStyle = computed<CSSProperties>(() =>
+  props.rotated
+    ? {
+        // Swapped sides, the frame width (cqw) becoming the chart height;
+        // shifted by its own length so the turn lands back in the frame.
+        width: `${props.height}px`,
+        height: '100cqw',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        transformOrigin: 'top left',
+        transform: 'rotate(-90deg) translateX(-100%)',
+      }
+    : {
+        height: `${props.height}px`,
+        width: '100%',
+        position: 'relative',
+      },
+)
 
 async function handleExport() {
   if (exporting.value || props.loading || !props.hasData || !props.captureRawImage) {

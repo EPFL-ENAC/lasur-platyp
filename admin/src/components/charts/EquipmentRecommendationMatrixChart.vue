@@ -47,7 +47,8 @@
       </q-toolbar>
       <e-charts-shell
         ref="shellRef"
-        :height="height"
+        :height="report ? REPORT_LENGTH : height"
+        :rotated="report"
         :loading="props.loading"
         :has-data="total > 0"
         :show-table="inline"
@@ -86,6 +87,7 @@ import {
 import {
   aggregateEquipmentMatrixBySimpleLabel,
   aggregateRecommendationEquipmentsBySimpleLabel,
+  chartReportKey,
   simpleLabelSortOrder,
 } from './commons'
 import { isSimpleLabel } from '@/utils/modalities'
@@ -115,6 +117,12 @@ const props = withDefaults(defineProps<Props>(), {
 type EChartsShellExposed = {
   handleExport: () => Promise<void>
 }
+
+// The report turns the wide matrix sideways, along the page height.
+const report = inject(chartReportKey, false)
+// ponytail: fixed length fitting an A4 page below the title and description,
+// measure the free room if the text above grows much longer.
+const REPORT_LENGTH = 820
 
 const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
