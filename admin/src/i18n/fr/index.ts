@@ -889,6 +889,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     equipments_by_recommendations: {
+      axis: {
+        equipments: 'Équipements possédés par les participant·es',
+        recommendations: 'Recommandations formulées',
+      },
       title: 'Équipements par recommandations',
       tooltip: `{count} des participant·e·s qui ont obtenu la recommandation "{reco}" sont équipés avec "{equipment}".<br />
       Cela représente environ {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".

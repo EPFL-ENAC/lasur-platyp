@@ -230,7 +230,8 @@ const analysisText = computed(() => {
     const eqs = rowEquipments.value[rec]
     const row = recommendationMatrix.value[rec]
 
-    if (eqs && row) {
+    // keep the example simple: a monomodal recommendation
+    if (eqs && row && rec !== 'inter') {
       const value = eqs.reduce((sum, eq) => sum + row[eq as keyof EquipmentPerRecommendation], 0)
       if (value < smallestValue && value > threshold) {
         smallestValue = value
@@ -325,7 +326,7 @@ function initChartOptions() {
       right: '20',
       top: '50',
       bottom: '30',
-      containLabel: true,
+      outerBoundsMode: 'same', // keep labels and axis names inside the grid
     },
     height: props.height - 100,
     title: {
@@ -345,6 +346,10 @@ function initChartOptions() {
         const reco = recommendationMatrix.value[l]
         return `${keyLabel(l)} (${reco?.total ?? 0})`
       }),
+      name: t('stats.equipments_by_recommendations.axis.recommendations'),
+      nameLocation: 'middle',
+      nameGap: 10,
+      nameRotate: 90,
       splitArea: { show: true },
       axisLabel: {
         interval: 0,
@@ -356,6 +361,9 @@ function initChartOptions() {
       type: 'category',
       position: 'top',
       data: equipmentLabels.map((l) => keyLabel(l)),
+      name: t('stats.equipments_by_recommendations.axis.equipments'),
+      nameLocation: 'middle',
+      nameGap: 10,
       splitArea: { show: true },
       axisLabel: {
         interval: 0,

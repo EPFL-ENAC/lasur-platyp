@@ -873,6 +873,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
     },
     equipments_by_recommendations: {
+      axis: {
+        equipments: 'Equipments owned by the participants',
+        recommendations: 'Recommendations',
+      },
       title: 'Equipment by recommendation',
       tooltip: `{count} of the participants who got the recommendation "{reco}" are equipped with "{equipment}". <br />
       This represents about {percentage}% of participants who got the recommendation "{reco}".`,
