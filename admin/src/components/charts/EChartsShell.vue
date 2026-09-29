@@ -1,7 +1,7 @@
 <template>
   <chart-shell
     ref="shellRef"
-    :height="height"
+    :height="height + reportRoom"
     :has-data="hasData"
     :show-info="showInfo"
     :loading="loading"
@@ -95,7 +95,8 @@ const chart = shallowRef<InstanceType<typeof ECharts> | null>(null)
 const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
 const dialogOpen = inject(chartPanelDialogOpenKey, ref(false))
 // On screen, long legends scroll on a single row; the report prints them whole.
-const legendType = inject(chartReportKey, false) ? 'plain' : 'scroll'
+const report = inject(chartReportKey, false)
+const legendType = report ? 'plain' : 'scroll'
 const reportTables = inject(chartReportTablesKey, true)
 
 // Full-screen details: the panel already shows the title, so the in-chart
@@ -114,10 +115,15 @@ const chartWidth = ref(0)
 // box pies must fit in between the title and the legend (pies ignore the grid).
 const legendRoom = ref(0)
 const pieBox = ref<{ top: number; bottom: number } | null>(null)
+// Report only: height added below the chart for a legend wrapped over several
+// rows, so the plot keeps its size instead of shrinking to make room.
+const reportRoom = ref(0)
 // Room left for the toolbar menu on each side of a centered title.
 const TITLE_MARGIN = 60
 // Gap kept between the x axis (labels and name) and the legend.
 const LEGEND_GAP = 8
+// Rough height of a single-row legend, which the given height already allows.
+const LEGEND_ROW = 20
 // Fitting takes at most this many render passes per option change (see
 // onFinished): a measurement that never settles must not loop for ever.
 const ADJUST_PASS_LIMIT = 3
@@ -131,6 +137,7 @@ let adjustPasses = 0
 function resetAdjustments() {
   legendRoom.value = 0
   pieBox.value = null
+  reportRoom.value = 0
   adjustPasses = 0
   adjustAllowed = true
 }
@@ -228,14 +235,15 @@ function onFinished() {
   const canAdjustLegend = !!(opt.grid && !Array.isArray(opt.grid))
 
   const model = instance.getModel()
-  const legendTop = Math.min(
-    ...model
-      .queryComponents({ mainType: 'legend' })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .filter((legend: any) => legend.get('bottom') != null)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((legend: any) => viewRect(instance, legend)?.y ?? Infinity),
-  )
+  const legendRects = model
+    .queryComponents({ mainType: 'legend' })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((legend: any) => legend.get('bottom') != null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((legend: any) => viewRect(instance, legend))
+    .filter(Boolean)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const legendTop = Math.min(...legendRects.map((rect: any) => rect.y))
   const axisBottom = Math.max(
     ...model
       .queryComponents({ mainType: 'xAxis' })
@@ -257,6 +265,10 @@ function onFinished() {
       changed = true
     }
   }
+  // The report grows the chart by the room the legend takes from the grid:
+  // the grid bottom and the legend are anchored to the bottom, so the plot
+  // gets back its original height.
+  if (report && canAdjustLegend) reportRoom.value = legendRoom.value
 
   if (!pieBox.value && legendTop !== Infinity && model.getSeriesByType('pie').length) {
     const titleBottom = Math.max(
@@ -276,6 +288,15 @@ function onFinished() {
         bottom: Math.ceil(instance.getHeight() - legendTop + LEGEND_GAP),
       }
       changed = true
+      // The pie box is anchored to the bottom too: growing the report chart by
+      // the legend's extra rows gives the pie back its band.
+      // ponytail: LEGEND_ROW approximates a single row, measure a row if pies
+      // come out visibly larger or smaller than on screen.
+      if (report) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const legendHeight = Math.max(...legendRects.map((rect: any) => rect.height))
+        reportRoom.value = Math.max(0, Math.ceil(legendHeight - LEGEND_ROW))
+      }
     }
   }
 
