@@ -325,7 +325,7 @@ function selectionLabel(
 ): string {
   if (values.length === 1) {
     const match = options.find((opt) => `${opt.value}` === `${values[0]}`)
-    if (match) return match.label
+    if (match) return match.label.length > 25 ? `${match.label.slice(0, 25)}...` : match.label
   }
   return t(`stats.${kind}_selected`, { n: values.length }, values.length)
 }
