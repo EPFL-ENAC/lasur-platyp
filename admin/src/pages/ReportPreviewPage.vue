@@ -280,7 +280,7 @@ import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationC
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import { type StatsState, flushStateFromIndexedDB, getStateFromIndexedDB } from '@/stores/stats'
 import type { Frequencies } from '@/models'
-import { chartReportKey } from '@/components/charts/commons'
+import { chartReportKey, chartReportTablesKey } from '@/components/charts/commons'
 
 interface Props {
   height: number
@@ -294,6 +294,7 @@ provide(chartReportKey, true)
 
 const { t, locale } = useI18n()
 const route = useRoute()
+provide(chartReportTablesKey, route.query.tables !== 'false')
 const statsStore = useStats()
 const stats = ref<StatsState | null>(null)
 const orgs = ref<string[]>([])

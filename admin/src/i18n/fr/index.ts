@@ -419,6 +419,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     },
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
+    include_value_tables: 'Inclure les tableaux de valeurs',
     nb_employees: 'Nombre de participant·e·s',
     percent_employees: '% de participant·e·s',
     total: 'N : {count}',

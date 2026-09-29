@@ -27,7 +27,10 @@
     />
 
     <template #table>
-      <e-charts-table v-if="(showTable || dialogOpen) && !loading" :option="option" />
+      <e-charts-table
+        v-if="((showTable && reportTables) || dialogOpen) && !loading"
+        :option="option"
+      />
     </template>
   </chart-shell>
 </template>
@@ -39,7 +42,13 @@ import { useQuasar } from 'quasar'
 import ECharts from 'vue-echarts'
 import ChartShell from './ChartShell.vue'
 import EChartsTable from './EChartsTable.vue'
-import { chartPanelDialogOpenKey, chartReportKey, initOptions, updateOptions } from './commons'
+import {
+  chartPanelDialogOpenKey,
+  chartReportKey,
+  chartReportTablesKey,
+  initOptions,
+  updateOptions,
+} from './commons'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 
 interface Props {
@@ -87,6 +96,7 @@ const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
 const dialogOpen = inject(chartPanelDialogOpenKey, ref(false))
 // On screen, long legends scroll on a single row; the report prints them whole.
 const legendType = inject(chartReportKey, false) ? 'plain' : 'scroll'
+const reportTables = inject(chartReportTablesKey, true)
 
 // Full-screen details: the panel already shows the title, so the in-chart
 // title is dropped (its "N: ..." subtext stays).

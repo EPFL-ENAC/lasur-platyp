@@ -405,6 +405,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     },
     switch_to_grid: 'Switch to grid view',
     pdf_report: 'PDF report',
+    include_value_tables: 'Include value tables',
     nb_employees: 'Number of employees',
     percent_employees: '% of employees',
     total: 'N: {count}',

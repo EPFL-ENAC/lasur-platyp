@@ -20,6 +20,8 @@ export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chart
 // Provided by the printable report: legends are laid out in full (plain)
 // instead of scrolling as they do on screen.
 export const chartReportKey: InjectionKey<boolean> = Symbol('chartReport')
+// Provided by the printable report: whether charts print their value tables.
+export const chartReportTablesKey: InjectionKey<boolean> = Symbol('chartReportTables')
 
 export const initOptions: InitOptions = {
   renderer: 'svg',

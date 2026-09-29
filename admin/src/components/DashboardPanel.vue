@@ -439,14 +439,15 @@ async function goToReport() {
       text: t('report_data_protection_notice.content'),
       title: t('report_data_protection_notice.title'),
       canCancel: true,
+      checkboxLabel: t('stats.include_value_tables'),
     },
     persistent: true,
-  }).onOk(() => {
-    openReport()
+  }).onOk((withTables: boolean) => {
+    openReport(withTables)
   })
 }
 
-async function openReport() {
+async function openReport(withTables: boolean) {
   const id = await stats.dumpToIndexedDB()
 
   const url = new URL(window.location.href)
@@ -492,6 +493,7 @@ async function openReport() {
   )
 
   url.searchParams.set('statsStateId', id)
+  url.searchParams.set('tables', String(withTables))
 
   url.searchParams.set('freqModalType', stats.freqModalType)
   url.searchParams.set('emModalType', stats.emModalType)
