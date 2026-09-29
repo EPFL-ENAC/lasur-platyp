@@ -1,7 +1,12 @@
 <template>
   <div class="chart-panel">
     <div class="text-h6 chart-panel__title">{{ title }}</div>
-    <div v-if="combinedDescription" class="chart-panel__description">
+    <q-markdown
+      v-if="combinedDescription && inline"
+      class="compact chart-panel-dialog__description q-mb-md"
+      :src="combinedDescription"
+    />
+    <div v-else-if="combinedDescription" class="chart-panel__description">
       <div class="q-chart-description">
         <q-markdown compact :src="panelDescription" />
       </div>
