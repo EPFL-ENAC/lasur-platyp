@@ -137,6 +137,7 @@ provide(chartPanelDialogOpenKey, showDialog)
 .chart-panel-dialog__description :deep(p) {
   font-size: 16px;
   line-height: 26px;
+  margin-bottom: 0;
 }
 
 /* Top-right corner: the chart's own "..." menu (a round neutral button) sits
