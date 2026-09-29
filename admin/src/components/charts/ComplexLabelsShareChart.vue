@@ -246,7 +246,7 @@ function initChartOptions() {
       {
         type: 'pie',
         radius: ['30%', '50%'],
-        center: ['50%', '50%'],
+        center: ['50%', '35%'],
         avoidLabelOverlap: true,
         color: colors,
         label: {
