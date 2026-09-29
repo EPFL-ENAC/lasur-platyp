@@ -577,7 +577,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Ce graphique indique la répartition de recommandations faites, par déplacement professionnel renseigné. La recommandation pertinente pour le plus grand nombre de déplacements professionnels est : {mode}.',
+          'Ce graphique indique la répartition de recommandations faites, par déplacement professionnel renseigné. La recommandation pertinente pour le plus grand nombre de déplacements professionnels est : {mode}. Par exemple, {mode} a été recommandé pour environ {percent}% des déplacements professionnels.',
       },
     },
     freq_mod: {

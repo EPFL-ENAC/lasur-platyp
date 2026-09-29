@@ -562,7 +562,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'This chart shows the distribution of recommendations made, per reported professional trip. The recommendation relevant to the largest number of professional trips is: {mode}.',
+          'This chart shows the distribution of recommendations made, per reported professional trip. The recommendation relevant to the largest number of professional trips is: {mode}. For example, {mode} was recommended for about {percent}% of professional trips.',
       },
     },
     freq_mod: {
