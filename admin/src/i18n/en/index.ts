@@ -537,6 +537,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         ...transportationModes,
       },
       texts: {
+        specific: 'For example, {mode} was recommended to about {percent}% of participants.',
         comparison:
           'This graph shows the potential modal distribution of participants. The most striking difference among the campaigns {lastGroup} and {prevGroup} is in the mode: {mode} ({diff}).',
       },
@@ -549,6 +550,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         ...simpleShortLabels,
       },
       texts: {
+        specific: 'For example, {mode} was recommended to about {percent}% of participants.',
         comparison:
           'This graph shows the potential modal distribution of participants. The most striking difference among the campaigns {lastGroup} and {prevGroup} is in the mode: {mode} ({diff}).',
       },

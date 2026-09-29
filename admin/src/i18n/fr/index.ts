@@ -552,6 +552,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         ...transportationModes,
       },
       texts: {
+        specific: 'Par exemple, {mode} a été recommandé à environ {percent}% des participant·e·s.',
         comparison:
           'Ce graphique montre la répartition modale potentielle des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
       },
@@ -564,6 +565,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         ...simpleShortLabels,
       },
       texts: {
+        specific: 'Par exemple, {mode} a été recommandé à environ {percent}% des participant·e·s.',
         comparison:
           'Ce graphique montre la répartition modale potentielle des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
       },
