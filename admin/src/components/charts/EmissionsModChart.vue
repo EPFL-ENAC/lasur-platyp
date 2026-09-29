@@ -45,6 +45,7 @@
       :loading="loading"
       :exportable="!inline"
       @update:chart-info-text="infoText = $event"
+      @update:chart-description-text="descriptionExample = $event"
     />
     <emissions-chart
       v-if="stats.emModalType === 'detailed'"
@@ -57,6 +58,7 @@
       :loading="loading"
       :exportable="!inline"
       @update:chart-info-text="infoText = $event"
+      @update:chart-description-text="descriptionExample = $event"
     />
   </chart-panel>
 </template>
@@ -87,12 +89,16 @@ const stats = useStats()
 
 const { t } = useI18n()
 
-const descriptionText = computed(() =>
-  stats.comparisonMode ? '' : t('stats.emissions_freq_mod.description'),
-)
-
 // Only one of the two charts is rendered at a time, so it is the one emitting.
 const infoText = ref('')
+const descriptionExample = ref('')
+
+// The example-based description needs the data: it falls back to the plain one
+// while the emissions are loading, or when too few answers back the example.
+const descriptionText = computed(() => {
+  if (stats.comparisonMode) return ''
+  return descriptionExample.value || t('stats.emissions_freq_mod.description')
+})
 
 function onToggleEmModalType() {
   stats.emModalType = stats.emModalType === 'simple' ? 'detailed' : 'simple'

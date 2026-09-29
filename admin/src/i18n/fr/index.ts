@@ -89,6 +89,10 @@ const emissionsLabels = {
   postSaving: 'Total après recommandations',
 }
 
+// Shared by the simple and detailed commute emissions charts.
+const commuteEmissionsDescriptionExample =
+  "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements domicile-travail des participant·e·s. En abscisse sont affichés les nombres de déplacements par année, pour chaque mode de transport (par exemple, {journeys} déplacements par an sont faits avec le mode {mode} chez les participant·e·s). En ordonnée se lisent les émissions de CO₂ par déplacement, pour chaque mode de transport (par exemple, un trajet avec le mode {mode} émet en moyenne {emissionsPerJourney}\u00A0kgCO₂éq). Enfin, l'aire de chaque rectangle donne les émissions totales annuelles pour chaque mode de transport (par exemple, le mode {mode} est responsable de {emissions}\u00A0kgCO₂éq/an pour les déplacements domicile-travail). Ces émissions sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description))."
+
 export default {
   main: {
     brand: 'Mobilyse',
@@ -635,6 +639,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     },
     emissions_freq_mod_simple: {
       title: 'Émissions de CO₂ (simple)',
+      description_example: commuteEmissionsDescriptionExample,
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -648,6 +653,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     },
     emissions_freq_mod_complex: {
       title: 'Émissions de CO₂ (détail)',
+      description_example: commuteEmissionsDescriptionExample,
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
