@@ -243,7 +243,7 @@ const chartInfoText = computed(() => {
   if (textLabelsCurrent.value) {
     parts.push(t(`stats.energy_journey.texts.specific_current`, textLabelsCurrent.value))
   }
-  if (textLabelsReco.value) {
+  if (textLabelsReco.value && addedEnergy.value > 0) {
     parts.push(t(`stats.energy_journey.texts.specific_reco`, textLabelsReco.value))
   }
   return parts.join('\n\n')
