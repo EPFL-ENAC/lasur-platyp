@@ -100,36 +100,13 @@ const bestMode = computed(() => {
   }
 })
 
-const bestModeCount = computed(() => {
+// Number of respondents, to extrapolate the respondents' reduction to all employees
+const respondentsCount = computed(() => {
   const frequencies = frequencyData.value
-
   if (!frequencies) {
-    return null
+    return 0
   }
-
-  let dataset: { name: string; value: number }[] = []
-
-  if (Array.isArray(frequencies)) {
-    dataset = frequencies.map((item: Frequencies) => ({
-      name: keyLabel(item.field),
-      value: item.data
-        .map((d) => (d.sum === undefined ? d.count : d.sum))
-        .reduce((a, b) => a + b, 0),
-    }))
-  } else {
-    dataset = frequencies.data.map((item) => ({
-      name: keyLabel(item.value),
-      value: item.count,
-    }))
-  }
-
-  if (!dataset.length) {
-    return null
-  }
-
-  const maxItem = dataset.reduce((max, item) => (item.value > max.value ? item : max))
-
-  return maxItem.value || null
+  return Array.isArray(frequencies) ? (frequencies[0]?.total ?? 0) : frequencies.total
 })
 
 const bestReduction = computed(() => {
@@ -149,8 +126,8 @@ const bestReduction = computed(() => {
 
   const collaboratorsCount = props.collaboratorsCount ?? 0
   const extrapolatedReduction =
-    bestModeCount.value && collaboratorsCount > 0
-      ? (maxItem.reduced / bestModeCount.value) * collaboratorsCount
+    respondentsCount.value > 0 && collaboratorsCount > 0
+      ? (maxItem.reduced / respondentsCount.value) * collaboratorsCount
       : null
 
   return {
@@ -231,12 +208,23 @@ const message = computed(() => {
   }
 
   if (bestPhysicalActivity.value) {
-    paragraphs.push(
-      t('stats.sections.mobility_potentials.insights.biggest_physical_activity_gain', {
+    let thirdParagraph = t(
+      'stats.sections.mobility_potentials.insights.biggest_physical_activity_gain',
+      {
         mode: bestPhysicalActivity.value.mode,
-        collaborators_count: formatNumber(bestPhysicalActivity.value.collaboratorsCount),
-      }),
+      },
     )
+
+    // Count is over all recommendations (not the mode above), and only worth stating when positive
+    if (bestPhysicalActivity.value.collaboratorsCount > 0) {
+      thirdParagraph +=
+        ' ' +
+        t('stats.sections.mobility_potentials.insights.who_level_gain', {
+          collaborators_count: formatNumber(bestPhysicalActivity.value.collaboratorsCount),
+        })
+    }
+
+    paragraphs.push(thirdParagraph)
   }
 
   return paragraphs.join('\n\n')

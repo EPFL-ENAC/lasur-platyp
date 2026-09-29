@@ -460,7 +460,9 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           biggest_emission_reduction_extrapolation:
             'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction}\u00A0{unit}**.',
           biggest_physical_activity_gain:
-            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce mode permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150\u00A0kcal/jour/pers).",
+            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**.",
+          who_level_gain:
+            "Suivre l'ensemble des recommandations permettrait à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150\u00A0kcal/jour/pers).",
         },
       },
       behavioural_changes: {

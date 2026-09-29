@@ -444,9 +444,11 @@ Thank you for your valuable contribution! If you have any questions, please cont
           biggest_emission_reduction:
             'The mode of transport that would generate the greatest reduction in CO2 emissions is: **{mode}**, with a reduction of **{reduction}\u00A0{unit}**, i.e. about **{percentage}%** of the total potential gain for responding employees.',
           biggest_emission_reduction_extrapolation:
-            'Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction}\u00A0{unit}** per year.',
+            'Extrapolating to the **{collaborators_count}** employees in your organization, this reduction is estimated at **{reduction}\u00A0{unit}**.',
           biggest_physical_activity_gain:
-            "The mode of transport that most increases employees' physical activity is: **{mode}**. This scenario enables **{collaborators_count}** additional employees to reach the WHO-recommended daily level of physical expenditure (150\u00A0kcal/day/person).",
+            "The mode of transport that most increases employees' physical activity is: **{mode}**.",
+          who_level_gain:
+            'Following all the recommendations would enable **{collaborators_count}** additional employees to reach the WHO-recommended daily level of physical expenditure (150\u00A0kcal/day/person).',
         },
       },
       behavioural_changes: {
