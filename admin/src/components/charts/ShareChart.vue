@@ -118,7 +118,14 @@ const comparisonDifference = computed(() =>
   findBiggestGroupDifference(comparisonGroupDatasets.value, 'prev_minus_last'),
 )
 
+// Name of the item with the largest share, for the non-comparison text.
+const topItemName = ref('')
+
 const chartInfoText = computed(() => {
+  if (!isComparison.value) {
+    const key = `stats.${props.chartTranslationName}.texts.specific`
+    return topItemName.value && te(key) ? t(key, { mode: topItemName.value }) : ''
+  }
   const diff = comparisonDifference.value
   if (!diff) return ''
   return t(`stats.${props.chartTranslationName}.texts.comparison`, {
@@ -215,6 +222,7 @@ function initChartOptions() {
   comparisonGroupDatasets.value = []
   option.value = {}
   total.value = 0
+  topItemName.value = ''
   if (!frequencies.value) {
     return
   }
@@ -241,6 +249,11 @@ function initChartOptions() {
     total.value = single.total
   }
   dataset.sort((a, b) => labelSortOrder(a.key) - labelSortOrder(b.key))
+  topItemName.value =
+    dataset.reduce<(typeof dataset)[number] | undefined>(
+      (top, item) => (!top || item.value > top.value ? item : top),
+      undefined,
+    )?.name ?? ''
 
   // Add rounded percentages that sum to 100
   const datasetWithPercent = computePercentages(dataset)

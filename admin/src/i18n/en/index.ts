@@ -555,6 +555,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
       labels: {
         ...transportationModes,
       },
+      texts: {
+        specific:
+          'This chart shows the distribution of recommendations made, per reported professional trip. The recommendation relevant to the largest number of professional trips is: {mode}.',
+      },
     },
     freq_mod: {
       title: 'Modal split',
@@ -664,7 +668,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     emissions_reductions_mod: {
       title: 'Potential reductions in commuting emissions',
       description:
-        'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
+        'This chart shows the reduction in CO₂ emissions allocated to each recommendation for professional travel, in the case where participants follow these recommendations: this is the total potential gain in terms of emissions.',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
@@ -764,7 +768,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     emissions_reductions_mod_pro: {
       title: 'Potential reductions in professional travel emissions',
       description:
-        'This chart shows the reduction in CO₂ emissions allocated to each recommendation, in the case where employees follow these recommendations: this is the potential gain in terms of emissions.',
+        'This chart shows the reduction in CO₂ emissions allocated to each recommendation for professional travel, in the case where participants follow these recommendations: this is the total potential gain in terms of emissions.',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Recommended mode',
@@ -773,7 +777,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       texts: {
         specific:
-          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}\u00A0{unit} / year for participants who responded. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour}\u00A0hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'The recommendations would allow transitioning from {current_emissions} to {new_emissions}\u00A0{unit} / year for participants who responded, reducing professional travel emissions by {percent}%. This corresponds to building {laptop} laptops, or alternatively to sending {email_sent} emails or {visio_hour}\u00A0hours of video conferencing [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {

@@ -1,5 +1,10 @@
 <template>
-  <chart-panel :title="chartTitle" :description="t('stats.reco_pros.description')" :inline="inline">
+  <chart-panel
+    :title="chartTitle"
+    :description="t('stats.reco_pros.description')"
+    :chart-info-text="infoText"
+    :inline="inline"
+  >
     <q-toolbar v-if="!inline" class="chart-toolbar">
       <q-space />
       <q-btn flat icon="more_vert">
@@ -39,6 +44,7 @@
       :height="height"
       :loading="loading"
       :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
     />
   </chart-panel>
 </template>
@@ -62,6 +68,7 @@ type ShareChartExposed = {
 }
 
 const chartRef = useTemplateRef<ShareChartExposed>('chartRef')
+const infoText = ref('')
 
 const { t } = useI18n()
 

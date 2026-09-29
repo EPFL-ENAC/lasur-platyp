@@ -570,6 +570,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       labels: {
         ...transportationModes,
       },
+      texts: {
+        specific:
+          'Ce graphique indique la répartition de recommandations faites, par déplacement professionnel renseigné. La recommandation pertinente pour le plus grand nombre de déplacements professionnels est : {mode}.',
+      },
     },
     freq_mod: {
       title: 'Répartition modale',
@@ -779,7 +783,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     emissions_reductions_mod_pro: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements professionnels',
       description:
-        "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
+        "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation pour les déplacements professionnels, dans le cas où les participant·e·s suivent celles-ci : c'est le gain potentiel total en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -788,7 +792,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour}\u00A0heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu, diminuant de {percent}% les émissions liées aux déplacements professionnels. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour}\u00A0heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {

@@ -131,6 +131,9 @@ const textLabels = computed(() => {
   return {
     current_emissions: formatTons(currentEmissions.value / 1000), // convert from kg to tons
     new_emissions: formatTons(newEmissions.value / 1000),
+    percent: currentEmissions.value
+      ? Math.round((100 * (currentEmissions.value - newEmissions.value)) / currentEmissions.value)
+      : 0,
     cheeseburgers: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 18.8)),
     vacuum: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 73.43)),
     shirt: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 13.23466)),
