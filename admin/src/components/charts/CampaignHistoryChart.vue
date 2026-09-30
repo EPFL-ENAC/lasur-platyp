@@ -26,6 +26,7 @@ import {
   DataZoomComponent,
 } from 'echarts/components'
 import type { CampaignStats } from '@/models'
+import { formatNumber } from '@/utils/numbers'
 import { useQuasar } from 'quasar'
 
 interface Props {
@@ -103,6 +104,7 @@ function initChartOptions() {
       {
         type: 'value',
         name: t('stats.records_count'),
+        axisLabel: { formatter: formatNumber },
         nameTextStyle: {
           align: 'left',
         },

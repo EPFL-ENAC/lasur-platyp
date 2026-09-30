@@ -51,6 +51,7 @@ import {
   updateOptions,
 } from './commons'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
+import { formatNumber } from '@/utils/numbers'
 
 interface Props {
   height?: number | undefined
@@ -193,6 +194,13 @@ function fitTitle(title: AnyRecord): AnyRecord {
   }
 }
 
+// ECharts groups value axis labels with commas; use the app number format.
+// An axis without a type is a category xAxis or a value yAxis.
+function formatValueAxis(axis: AnyRecord, defaultType: string): AnyRecord {
+  if ((axis.type ?? defaultType) !== 'value' || axis.axisLabel?.formatter) return axis
+  return { ...axis, axisLabel: { ...axis.axisLabel, formatter: formatNumber } }
+}
+
 function toPx(value: unknown, total: number): number {
   if (typeof value === 'string' && value.endsWith('%')) return (parseFloat(value) / 100) * total
   return Number(value) || 0
@@ -208,6 +216,14 @@ const resolvedOption = computed<ECBasicOption>(() => {
   if (legendRoom.value && opt.grid && !Array.isArray(opt.grid)) {
     const height = chart.value?.chart?.getHeight() ?? props.height
     opt.grid = { ...opt.grid, bottom: toPx(opt.grid.bottom, height) + legendRoom.value }
+  }
+  for (const [key, defaultType] of [
+    ['xAxis', 'category'],
+    ['yAxis', 'value'],
+  ] as const) {
+    if (Array.isArray(opt[key]))
+      opt[key] = opt[key].map((axis: AnyRecord) => formatValueAxis(axis, defaultType))
+    else if (opt[key]) opt[key] = formatValueAxis(opt[key], defaultType)
   }
   if (pieBox.value && Array.isArray(opt.series)) opt.series = opt.series.map(fitPie)
   return opt as ECBasicOption

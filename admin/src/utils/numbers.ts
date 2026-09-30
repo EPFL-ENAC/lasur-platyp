@@ -23,7 +23,8 @@ export function formatCoordinates(lat: number, lon: number) {
 }
 
 // Follow the app locale, not the browser's: the user switches language in the
-// UI, and the separators must switch with it. One formatter is kept per locale
+// UI, and the decimal separator must switch with it. The thousands separator is
+// always a single quote, whatever the language. One formatter is kept per locale
 // because building an Intl.NumberFormat is costly and the locale rarely changes.
 const numberFormatters = new Map<string, Intl.NumberFormat>()
 
@@ -41,7 +42,10 @@ export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) {
     return 'N/A'
   }
-  return numberFormatter().format(value)
+  return numberFormatter()
+    .formatToParts(value)
+    .map((part) => (part.type === 'group' ? "'" : part.value))
+    .join('')
 }
 
 // Significant digits rules, to be applied in all charts and texts:
