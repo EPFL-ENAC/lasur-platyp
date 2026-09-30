@@ -441,6 +441,18 @@ export interface ModeTransitions {
   data: ModeTransition[]
 }
 
+/**
+ * Distinct participants across all the groups of a longitudinal comparison,
+ * as the groups' own totals count each of them once per group.
+ */
+export interface UniqueTotals {
+  participants: number
+  /** Answered at least one lever question, in any group */
+  levers: number
+  /** Answered the motivation question, in any group */
+  motivation: number
+}
+
 export interface ComparisonResult {
   groups: ComparisonStats[]
   /** Modes are simple typology labels */
@@ -450,6 +462,8 @@ export interface ComparisonResult {
   warnings?: string[]
   /** Map data over every surviving group; absent when no group survived. */
   locations?: LocationStats
+  /** Longitudinal mode only */
+  unique_totals?: UniqueTotals
 }
 
 export interface IsochronesParams {

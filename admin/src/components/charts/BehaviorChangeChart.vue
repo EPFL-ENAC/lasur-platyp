@@ -24,6 +24,7 @@ import {
   modeSortOrder,
   MOTIVATION_COLORS,
   simpleLabelSortOrder,
+  comparisonTotal,
 } from './commons'
 import { AXIS_LABEL_GAP, axisLabelsWidth, truncateAxisLabel } from './comparisonCharts'
 import {
@@ -406,7 +407,10 @@ function comparisonLeversOptions(): ComparisonChartData | null {
         return props.percent ? Math.round(lever.percentage) : lever.count
       }),
     })) as SeriesOption[],
-    total: groups.reduce((sum, group) => sum + group.total, 0),
+    total: comparisonTotal(
+      groups.reduce((sum, group) => sum + group.total, 0),
+      'levers',
+    ),
   }
 }
 
@@ -449,7 +453,10 @@ function comparisonMotivationOptions(): ComparisonChartData | null {
         return props.percent ? Math.round(motivation.percentage) : motivation.count
       }),
     })) as SeriesOption[],
-    total: groups.reduce((sum, group) => sum + group.total, 0),
+    total: comparisonTotal(
+      groups.reduce((sum, group) => sum + group.total, 0),
+      'motivation',
+    ),
   }
 }
 

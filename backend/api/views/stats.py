@@ -119,6 +119,7 @@ async def compare_statistics(
 
         mode_transitions = None
         mode_transitions_complex_labels = None
+        unique_totals = None
         if request.mode == "longitudinal":
             transitions_df = df[df['campaign_id'].isin(
                 survived_campaign_ids)]
@@ -126,6 +127,7 @@ async def compare_statistics(
                 transitions_df, request.groups)
             mode_transitions_complex_labels = LongitudinalService.compute_mode_transitions_complex_labels(
                 transitions_df, request.groups)
+            unique_totals = LongitudinalService.compute_unique_totals(transitions_df)
 
         return ComparisonResult(
             groups=comparison_stats,
@@ -133,6 +135,7 @@ async def compare_statistics(
             mode_transitions_complex_labels=mode_transitions_complex_labels,
             warnings=warnings or None,
             locations=locations,
+            unique_totals=unique_totals,
         )
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{e}")

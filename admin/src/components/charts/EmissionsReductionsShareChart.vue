@@ -24,6 +24,7 @@ import {
   modeSortOrder,
   simpleLabelSortOrder,
   complexLabelSortOrder,
+  comparisonTotal,
 } from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
@@ -297,7 +298,7 @@ function initComparisonChartOptions() {
     colors,
     percent: true,
     title: t(`stats.emissions_${props.chartTranslationName}.title`),
-    totalLabel: t('stats.total_participants', { count: total.value }),
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
     height: props.height - 100,
     yAxisName: '%',
     keyOrder,

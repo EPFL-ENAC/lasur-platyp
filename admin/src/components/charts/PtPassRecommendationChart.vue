@@ -52,7 +52,7 @@ import {
 } from 'echarts/components'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { formatNumber, formatPercent } from '@/utils/numbers'
-import { GROUP_COLORS } from './commons'
+import { GROUP_COLORS, comparisonTotal } from './commons'
 import { ptPassLabels, type EquipmentsStats, type PtPassRecommendation } from '@/models'
 
 const { t, locale } = useI18n()
@@ -410,7 +410,7 @@ function initComparisonChartOptions() {
     return
   }
 
-  const participants = groups.reduce((sum, group) => sum + group.participants, 0)
+  const participants = comparisonTotal(groups.reduce((sum, group) => sum + group.participants, 0))
 
   // Groups do not have the same size, so the bars carry shares of each group's
   // participants: one bar per group and per pass type, its solid part the

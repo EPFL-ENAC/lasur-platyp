@@ -23,6 +23,7 @@ import {
   simpleLabelSortOrder,
   computePercentages,
   MRMT_SIMPLE_MODAL_SPLIT_PERCENT,
+  comparisonTotal,
 } from './commons'
 import {
   buildGroupStackedBarOption,
@@ -319,7 +320,7 @@ function initComparisonChartOptions() {
     colors: SIMPLE_LABELS_COLORS,
     percent: true,
     title: t('stats.freq_mod.title_simple'),
-    totalLabel: t('stats.total_participants', { count: total.value }),
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
     height: props.height - 120,
     yAxisName: '%',
     keyOrder,

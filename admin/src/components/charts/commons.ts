@@ -13,8 +13,22 @@ import {
   type equipmentLabels,
   type Frequencies,
   type Frequency,
+  type UniqueTotals,
 } from '@/models'
+import { useStats } from '@/stores/stats'
 import { getProModalityLabels, getRecoSimpleLabel, MODE_TO_SIMPLE_LABEL } from '@/utils/modalities'
+
+/**
+ * Participants count shown under a comparison chart title: the sum of the
+ * groups' totals, or in longitudinal mode, where every group is the same panel,
+ * the number of distinct participants.
+ */
+export function comparisonTotal(
+  groupsTotal: number,
+  key: keyof UniqueTotals = 'participants',
+): number {
+  return useStats().comparisonResults?.unique_totals?.[key] ?? groupsTotal
+}
 
 export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chartPanelDialogOpen')
 // Provided by the printable report: legends are laid out in full (plain)

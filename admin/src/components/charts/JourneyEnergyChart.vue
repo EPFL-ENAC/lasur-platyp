@@ -70,6 +70,7 @@ import {
   modeSortOrder,
   simpleLabelSortOrder,
   complexLabelSortOrder,
+  comparisonTotal,
 } from './commons'
 import type { EnergyByLabel, JourneyEnergyStats } from '@/models'
 import { formatKcal, formatNumber, formatPercent } from '@/utils/numbers'
@@ -539,7 +540,7 @@ function initComparisonChartOptions() {
     height: props.height - 100,
     title: {
       text: chartTitle.value,
-      subtext: t('stats.total_participants', { count: total.value }),
+      subtext: t('stats.total_participants', { count: comparisonTotal(total.value) }),
       left: 'center',
       top: 0,
       itemGap: 10,

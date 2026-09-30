@@ -46,6 +46,7 @@
 <script setup lang="ts">
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
+import { comparisonTotal } from './commons'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart, PictorialBarChart } from 'echarts/charts'
@@ -377,7 +378,7 @@ function initComparisonChartOptions() {
     categoryNames,
     percent: stats.equipmentsPercent,
     title: t(`stats.equipments.title`),
-    totalLabel: t('stats.total_participants', { count: total.value }),
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
     height: props.height - 100,
     xAxisName: stats.equipmentsPercent ? t('stats.percent_employees') : t('stats.nb_employees'),
   })
