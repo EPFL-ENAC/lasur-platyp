@@ -50,7 +50,7 @@ import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart, LineChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { GROUP_COLORS } from './commons'
+import { GROUP_COLORS, comparisonTotal } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
@@ -399,7 +399,7 @@ function initComparisonChartOptions() {
     height: props.height - 100,
     title: {
       text: t(`stats.travel_time.title`),
-      subtext: t(`stats.total_participants`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: comparisonTotal(total.value) }),
       left: 'center',
       top: 0,
       itemGap: 10,

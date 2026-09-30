@@ -437,6 +437,17 @@ class ModeTransitions(BaseModel):
     data: List[ModeTransition] = []
 
 
+class UniqueTotals(BaseModel):
+    """Distinct participants (by email_hash) across all the groups of a
+    longitudinal comparison, as the groups' own totals count each of them once
+    per group."""
+    participants: int = 0
+    # answered at least one lever question, in any group
+    levers: int = 0
+    # answered the motivation question, in any group
+    motivation: int = 0
+
+
 class ComparisonResult(BaseModel):
     groups: List[ComparisonStats] = []
     # simple typology labels
@@ -446,6 +457,8 @@ class ComparisonResult(BaseModel):
     warnings: Optional[List[str]] = None
     # map data over every surviving group
     locations: Optional[LocationStats] = None
+    # longitudinal mode only
+    unique_totals: Optional[UniqueTotals] = None
 
 
 class GeoWithin(BaseModel):

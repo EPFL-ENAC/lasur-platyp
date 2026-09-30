@@ -31,6 +31,7 @@ import {
   complexLabelSortOrder,
   modeSortOrder,
   simpleLabelSortOrder,
+  comparisonTotal,
 } from './commons'
 import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import { formatNumber, formatPercent, formatTons, roundTo } from '@/utils/numbers'
@@ -588,7 +589,7 @@ function initComparisonChartOptions() {
     colors,
     percent: false,
     title: chartTitle.value,
-    totalLabel: t('stats.total_participants', { count: total.value }),
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
     height: props.height - 120,
     yAxisName: props.comparisonYaxis ?? t('stats.units.tco2eq_per_year'),
     keyOrder,

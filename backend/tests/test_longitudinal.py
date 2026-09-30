@@ -217,3 +217,20 @@ def test_compute_mode_transitions_total_counts_distinct_participants():
     result = LongitudinalService.compute_mode_transitions(df, groups)
     assert result.total == 2
     assert sum(t.count for t in result.data) == 3
+
+
+def test_compute_unique_totals_counts_each_participant_once():
+    # h1 answers the levers in both groups, h2 only in the second one, h3 never;
+    # only h1 answers the motivation question
+    df = completed({
+        "email_hash": ["h1", "h2", "h3", "h1", "h2", "h3"],
+        "campaign_id": [1, 1, 1, 2, 2, 2],
+        "data.changes.0.levers.0": ["finance", None, None, "test", "coaching", None],
+        "data.changes.0.motivation": [4, None, None, None, None, None],
+    })
+    groups = [make_group("A", [1]), make_group("B", [2])]
+    totals = LongitudinalService.compute_unique_totals(
+        LongitudinalService.filter_longitudinal(df, groups))
+    assert totals.participants == 3
+    assert totals.levers == 2
+    assert totals.motivation == 1

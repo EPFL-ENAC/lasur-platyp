@@ -32,6 +32,17 @@ class BehaviorChangeService(BaseStatsService):
         self.reco_prefix = 'typo.reco.reco_inter.'
         self.change_prefix = 'data.changes.'
 
+    def count_unique_respondents(self) -> Tuple[int, int]:
+        """Distinct participants (by email_hash) who answered at least one lever
+        question, and the motivation question, for any recommendation."""
+        df = self._build_long_dataframe()
+        if 'email_hash' not in df.columns:
+            return 0, 0
+        lever_cols = [col for col in df.columns if col.startswith('levers.')]
+        levers = df[self._has_lever_response_mask(df, lever_cols)]['email_hash'].nunique()
+        motivation = df[df['motivation'].notna() & (df['motivation'] != 0.0)]['email_hash'].nunique()
+        return levers, motivation
+
     def _has_lever_response_mask(self, df: pd.DataFrame, lever_cols: list) -> pd.Series:
         """Boolean mask: whether a row answered at least one lever question."""
         if not lever_cols:
@@ -167,6 +178,8 @@ class BehaviorChangeService(BaseStatsService):
                 continue
             empty_col = pd.Series(pd.NA, index=df.index, dtype=object)
             part = pd.DataFrame({'reco_mode': df[reco_col]})
+            if 'email_hash' in df.columns:
+                part['email_hash'] = df['email_hash']
             motivation_col = f'{self.change_prefix}{i}.motivation'
             part['motivation'] = df[motivation_col] if motivation_col in df.columns else empty_col
             for j in lever_indices:

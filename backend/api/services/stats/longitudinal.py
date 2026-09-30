@@ -3,7 +3,8 @@ from typing import List, Optional, Pattern
 
 import pandas as pd
 
-from api.models.query import CampaignGroup, ModeTransition, ModeTransitions
+from api.models.query import CampaignGroup, ModeTransition, ModeTransitions, UniqueTotals
+from api.services.stats.behavior_change import BehaviorChangeService
 from api.services.stats.commons import (
     COMPLEX_LABEL_MERGE, filter_completed_records, merge_label_components)
 
@@ -64,6 +65,17 @@ class LongitudinalService:
             df = df.sort_values(order_cols, kind='stable')
         df = df.drop_duplicates(['email_hash', '_group_idx'], keep='last').sort_index()
         return df.drop(columns=['_group_idx'])
+
+    @staticmethod
+    def compute_unique_totals(df: pd.DataFrame) -> UniqueTotals:
+        """Distinct participants over a filter_longitudinal() output, to be shown
+        instead of the sum of the groups' totals (which counts each of them once
+        per group)."""
+        if df.empty or 'email_hash' not in df.columns:
+            return UniqueTotals()
+        levers, motivation = BehaviorChangeService(df).count_unique_respondents()
+        return UniqueTotals(
+            participants=df['email_hash'].nunique(), levers=levers, motivation=motivation)
 
     @staticmethod
     def _primary_mode_by_participant(
