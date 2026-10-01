@@ -375,9 +375,7 @@ function initChartOptions() {
       splitArea: { show: true },
       axisLabel: {
         interval: 0,
-        align: 'center',
-        width: 80,
-        overflow: 'break',
+        rotate: -45,
       },
     },
     // 5. ADD: VisualMap provides the color scale
