@@ -677,7 +677,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
     },
     emissions_reductions_mod: {
-      title: 'Potential reductions in commuting emissions',
+      title: 'Potential reduction in commuting emissions',
       description:
         'This chart shows the reduction in CO₂ emissions allocated to each recommendation for professional travel, in the case where participants follow these recommendations: this is the total potential gain in terms of emissions.',
       series: 'Potential reduction',
@@ -693,7 +693,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
     },
     emissions_reductions_mod_simple: {
-      title: 'Potential reductions in commuting emissions (simple)',
+      title: 'Potential reduction in commuting emissions (simple)',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Current simple label',
@@ -706,7 +706,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
     },
     emissions_reductions_mod_complex: {
-      title: 'Potential reductions in commuting emissions (detailed)',
+      title: 'Potential reduction in commuting emissions (detailed)',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
       xaxis: 'Current detailed label',

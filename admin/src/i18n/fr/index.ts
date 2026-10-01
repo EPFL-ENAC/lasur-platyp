@@ -692,7 +692,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     emissions_reductions_mod: {
-      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
+      title: 'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires',
       description:
         "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
@@ -708,7 +708,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     emissions_reductions_mod_simple: {
-      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires (simple)',
+      title: 'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (simple)',
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Étiquette simple actuelle',
       series: 'Réduction potentielle',
@@ -721,7 +721,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     emissions_reductions_mod_complex: {
-      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires (détail)',
+      title: 'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (détail)',
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Étiquette détaillée actuelle',
       series: 'Réduction potentielle',

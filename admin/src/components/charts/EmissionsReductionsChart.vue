@@ -58,6 +58,8 @@ interface Props {
   exportable?: boolean
   // Overrides the title taken from `chartTranslationName`.
   title?: string
+  // Comparison tooltip wording of a value's share of its group total.
+  shareLabelKey?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
@@ -273,7 +275,13 @@ function initChartOptions() {
         const tar = params[1]
         if (!tar) return ''
         return (
-          tar.name + '<br/>' + tar.seriesName + ' : ' + formatTons(tar.value) + '\u00A0' + UNIT_LABEL
+          tar.name +
+          '<br/>' +
+          tar.seriesName +
+          ' : ' +
+          formatTons(tar.value) +
+          '\u00A0' +
+          UNIT_LABEL
         )
       },
     },
@@ -419,6 +427,12 @@ function initComparisonChartOptions() {
     yAxisName: t('stats.units.tco2eq_per_year'),
     keyOrder,
     valueUnit: t('stats.units.tco2eq_per_year'),
+    ...(props.shareLabelKey
+      ? {
+          valueShareLabel: (percent: string, group: string) =>
+            t(props.shareLabelKey!, { percent, group }),
+        }
+      : {}),
   })
 }
 </script>
