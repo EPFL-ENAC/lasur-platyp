@@ -105,6 +105,7 @@ export default {
     custom_actions: 'Mesures spécifiques',
     custom_actions_hint:
       'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des collaborateur·trice·s. Ces mesures sont regroupées par mode de transport ou sont globales.',
+    custom_action_campaigns: 'Nombre de campagnes utilisant cette mesure : {n}',
     administrators: 'Administrateur·trice',
     administrators_hint:
       "L'adresse email des administrateur·trice pour cette organisation (tapez Entrée pour ajouter une entrée).",
@@ -1161,6 +1162,9 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
     "Mot de passe temporaire que l'utilisateur·trice mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
   password: 'Mot de passe',
   recommendations: 'recommandations',
+  remove_custom_action_text:
+    "La mesure '{name}' est utilisée par les campagnes suivantes : {campaigns}. Êtes-vous sûr de vouloir la supprimer?",
+  remove_custom_action: 'Supprimer la mesure',
   remove_campaign_text:
     "Êtes-vous sûr de vouloir supprimer la campagne '{name}' et toutes les données personnelles associées des participants?",
   remove_campaign: 'Supprimer la campagne',

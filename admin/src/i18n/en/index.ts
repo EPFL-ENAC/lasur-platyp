@@ -105,6 +105,7 @@ export default {
     custom_actions: 'Custom measures',
     custom_actions_hint:
       'Add or remove custom employer measures that will facilitate employees mobility. These measures are grouped per transport mode or are global.',
+    custom_action_campaigns: 'Number of campaigns using this measure: {n}',
     administrators: 'Administrators',
     administrators_hint:
       'Provide the email address of the administrators for this organisation (type Enter to add entry).',
@@ -1140,6 +1141,9 @@ Use the menu to navigate through the different sections, manage organisations, c
     'Temporary password that user will update at the next login. It must be at least 8 characters long and contain a mix of letters (uppercase and lowercase), numbers, and special characters.',
   password: 'Password',
   recommendations: 'Recommendations',
+  remove_custom_action_text:
+    "The measure '{name}' is used by the following campaigns: {campaigns}. Are you sure you want to remove it?",
+  remove_custom_action: 'Remove Measure',
   remove_campaign_text:
     "Are you sure you want to remove the campaign '{name}' and all the associated participants personal data?",
   remove_campaign: 'Remove Campaign',
