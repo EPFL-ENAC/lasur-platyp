@@ -59,7 +59,9 @@
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import BehaviorChangeChart from '@/components/charts/BehaviorChangeChart.vue'
 import { formatPercent } from '@/utils/numbers'
-import type { BehaviorChangeStats } from '@/models'
+import { isSimpleLabel } from '@/utils/modalities'
+import { aggregateMotivationBySimpleLabel } from '@/components/charts/commons'
+import type { BehaviorChangeByModeMotivation, BehaviorChangeStats } from '@/models'
 
 interface Props {
   height: number
@@ -109,9 +111,7 @@ const descriptionValues = computed(() => {
     return {}
   }
 
-  const motivatedByMode = motivation.by_mode_motivation.map((item) => {
-    return item.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
-  })
+  const motivatedByMode = motivation.by_mode_motivation.map(motivatedPercent)
   return {
     percentage: formatPercent(
       motivatedByMode.reduce((sum, p) => sum + p, 0) / motivatedByMode.length,
@@ -119,7 +119,55 @@ const descriptionValues = computed(() => {
   }
 })
 
+/** Share of the participants of the row who are rather or very motivated. */
+function motivatedPercent(row: BehaviorChangeByModeMotivation) {
+  return row.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
+}
+
+/** Rows as charted: recommended modes, or the simple labels they fold into. */
+function chartedRows(byMode: BehaviorChangeByModeMotivation[] | undefined) {
+  if (!byMode) return []
+  return modalType.value === 'simple' ? aggregateMotivationBySimpleLabel(byMode) : byMode
+}
+
+function modeLabel(mode: string) {
+  return isSimpleLabel(mode)
+    ? t(`simple_labels.${mode}`)
+    : t(`stats.behavior_change_motivation.labels.${mode}`)
+}
+
+const comparisonValues = computed(() => {
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length < 2) return null
+
+  const lastGroup = groups[groups.length - 1]!
+  const prevGroup = groups[groups.length - 2]!
+  const lastRows = chartedRows(lastGroup.behavior_change?.motivation?.by_mode_motivation)
+  const prevRows = chartedRows(prevGroup.behavior_change?.motivation?.by_mode_motivation)
+
+  // The most recommended actual mode: aggregates do not name a recommendation.
+  const lastRow = lastRows
+    .filter((row) => !['Total', 'allModes', 'Autres', 'other'].includes(row.mode))
+    .sort((a, b) => b.response_count - a.response_count)[0]
+  const prevRow = prevRows.find((row) => row.mode === lastRow?.mode)
+  if (!lastRow?.response_count || !prevRow?.response_count) return null
+
+  return {
+    mode: modeLabel(lastRow.mode),
+    lastGroup: lastGroup.name,
+    prevGroup: prevGroup.name,
+    lastPercent: formatPercent(motivatedPercent(lastRow)),
+    prevPercent: formatPercent(motivatedPercent(prevRow)),
+  }
+})
+
 const chartDescription = computed(() => {
+  if (stats.comparisonMode) {
+    return comparisonValues.value
+      ? t('stats.behavior_change_motivation.texts.comparison', comparisonValues.value)
+      : t('stats.behavior_change_motivation.texts.default')
+  }
+
   if (total.value < 5) {
     return t('stats.behavior_change_motivation.texts.default')
   }

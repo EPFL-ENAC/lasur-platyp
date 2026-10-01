@@ -875,6 +875,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         default:
           'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",
+        comparison:
+          "Ce graphe compare les mesures d'accompagnement souhaitées par les participant·e·s, par mode et par groupe de campagnes. Par exemple, tous modes confondus, la mesure « {lever} » est souhaitée par environ {lastPercent}% des participant·e·s à {lastGroup}, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.",
       },
     },
     behavior_change_motivation: {
@@ -897,6 +899,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
           'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific:
           'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, environ {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
+        comparison:
+          'Ce graphe compare les motivations des participant·e·s pour utiliser les modes recommandés par Mobilyse au cours des différentes campagnes sélectionnées. Par exemple, environ {lastPercent}% des participant·e·s à qui on a recommandé le mode {mode} lors de {lastGroup} sont plutôt motivé·e·s* pour adopter cette recommandation, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.\n\n&ast; plutôt motivé·e·s ou très motivé·e·s',
       },
     },
     equipments_by_recommendations: {

@@ -59,7 +59,8 @@
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import BehaviorChangeChart from '@/components/charts/BehaviorChangeChart.vue'
 import { lowerCaseFirst } from '@/utils/string'
-import type { BehaviorChangeStats } from '@/models'
+import { formatPercent } from '@/utils/numbers'
+import type { BehaviorChangeByModeLever, BehaviorChangeStats } from '@/models'
 
 interface Props {
   height: number
@@ -121,7 +122,45 @@ const descriptionValues = computed(() => {
   }
 })
 
+/** The all modes row: 'Total' when split by mode, 'allModes' otherwise. */
+function allModesRow(byMode: BehaviorChangeByModeLever[] | undefined) {
+  return byMode?.find((item) => item.mode === 'Total' || item.mode === 'allModes')
+}
+
+/** The lever percentage as charted: its share of the lever selections of the row. */
+function leverPercent(row: BehaviorChangeByModeLever, category: string) {
+  return row.levers.find((lever) => lever.category === category)?.percentage ?? 0
+}
+
+const comparisonValues = computed(() => {
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length < 2) return null
+
+  const lastGroup = groups[groups.length - 1]!
+  const prevGroup = groups[groups.length - 2]!
+  const lastRow = allModesRow(lastGroup.behavior_change?.levers?.by_mode_levers)
+  const prevRow = allModesRow(prevGroup.behavior_change?.levers?.by_mode_levers)
+  if (!lastRow?.response_count || !prevRow?.response_count) return null
+
+  const topLever = [...lastRow.levers].sort((a, b) => b.count - a.count)[0]
+  if (!topLever?.count) return null
+
+  return {
+    lever: keyLabel(topLever.category),
+    lastGroup: lastGroup.name,
+    prevGroup: prevGroup.name,
+    lastPercent: formatPercent(leverPercent(lastRow, topLever.category)),
+    prevPercent: formatPercent(leverPercent(prevRow, topLever.category)),
+  }
+})
+
 const chartDescription = computed(() => {
+  if (stats.comparisonMode) {
+    return comparisonValues.value
+      ? t('stats.behavior_change_levers.texts.comparison', comparisonValues.value)
+      : t('stats.behavior_change_levers.texts.default')
+  }
+
   if (total.value < 5) {
     return t('stats.behavior_change_levers.texts.default')
   }

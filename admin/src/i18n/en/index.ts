@@ -859,6 +859,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific: 'The support that participants feel they need most is {lever}.',
+        comparison:
+          'This graph compares the support measures desired by participants, by mode and by campaign group. For example, across all modes, the measure “{lever}” is desired by approximately {lastPercent}% of participants in {lastGroup}, compared to approximately {prevPercent}% of participants in {prevGroup}.',
       },
     },
     behavior_change_motivation: {
@@ -881,6 +883,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific:
           'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel, depending on the recommended mode. Overall, about {percentage}% (combined rather motivated and very motivated) of participants are motivated to adopt the recommendations made to them.',
+        comparison:
+          'This graph compares participants’ motivations for using the modes of transport recommended by Mobilyse during the various selected campaigns. For example, approximately {lastPercent}% of participants who were recommended the {mode} mode during {lastGroup} are somewhat motivated* to adopt this recommendation, compared to approximately {prevPercent}% of participants during {prevGroup}.\n\n&ast; rather motivated or very motivated',
       },
     },
     equipments_by_recommendations: {
