@@ -206,7 +206,8 @@ const emissionItemsPro = computed(() => {
   )
   if (emissions.length < 2) return null
 
-  const totalEmissions = emissions.reduce((sum, item) => sum + item.emissions, 0)
+  // Percentages are shares of all emissions, including the unnamed modes.
+  const totalEmissions = props.emissions.reduce((sum, item) => sum + item.emissions, 0)
   if (totalEmissions === 0) return null
 
   // First and second: largest rectangle areas (total emissions).
