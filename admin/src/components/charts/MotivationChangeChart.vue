@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="chartTitle"
-    :description="t('stats.behavior_change_motivation.texts.info')"
+    :description="panelDescription"
     :chart-info-text="chartDescription"
     :inline="inline"
   >
@@ -105,6 +105,12 @@ function onChartDownload() {
 
 const total = computed(() => props.behaviorChangeStats?.motivation?.total_responses ?? 0)
 
+// info only for the single-campaign view: comparison mode shows the
+// comparison sentence instead.
+const panelDescription = computed(() =>
+  stats.comparisonMode ? '' : t('stats.behavior_change_motivation.texts.info'),
+)
+
 const descriptionValues = computed(() => {
   const motivation = props.behaviorChangeStats?.motivation
   if (!motivation) {
@@ -122,6 +128,11 @@ const descriptionValues = computed(() => {
 /** Share of the participants of the row who are rather or very motivated. */
 function motivatedPercent(row: BehaviorChangeByModeMotivation) {
   return row.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
+}
+
+/** The all modes row: 'Total' when split by mode, 'allModes' otherwise. */
+function allModesRow(rows: BehaviorChangeByModeMotivation[] | undefined) {
+  return rows?.find((row) => row.mode === 'Total' || row.mode === 'allModes')
 }
 
 /** Rows as charted: recommended modes, or the simple labels they fold into. */
@@ -150,21 +161,44 @@ const comparisonValues = computed(() => {
     .filter((row) => !['Total', 'allModes', 'Autres', 'other'].includes(row.mode))
     .sort((a, b) => b.response_count - a.response_count)[0]
   const prevRow = prevRows.find((row) => row.mode === lastRow?.mode)
-  if (!lastRow?.response_count || !prevRow?.response_count) return null
+  if (lastRow?.response_count && prevRow?.response_count) {
+    return {
+      key: 'comparison',
+      values: {
+        mode: modeLabel(lastRow.mode),
+        lastGroup: lastGroup.name,
+        prevGroup: prevGroup.name,
+        lastPercent: formatPercent(motivatedPercent(lastRow)),
+        prevPercent: formatPercent(motivatedPercent(prevRow)),
+      },
+    }
+  }
+
+  // No shared individual mode (e.g. a group whose answers were all aggregated
+  // under 'allModes', or whose top mode has no row in the other group): compare
+  // the all-modes rows, like the levers chart does.
+  const lastAll = allModesRow(lastRows)
+  const prevAll = allModesRow(prevRows)
+  if (!lastAll?.response_count || !prevAll?.response_count) return null
 
   return {
-    mode: modeLabel(lastRow.mode),
-    lastGroup: lastGroup.name,
-    prevGroup: prevGroup.name,
-    lastPercent: formatPercent(motivatedPercent(lastRow)),
-    prevPercent: formatPercent(motivatedPercent(prevRow)),
+    key: 'comparison_all_modes',
+    values: {
+      lastGroup: lastGroup.name,
+      prevGroup: prevGroup.name,
+      lastPercent: formatPercent(motivatedPercent(lastAll)),
+      prevPercent: formatPercent(motivatedPercent(prevAll)),
+    },
   }
 })
 
 const chartDescription = computed(() => {
   if (stats.comparisonMode) {
     return comparisonValues.value
-      ? t('stats.behavior_change_motivation.texts.comparison', comparisonValues.value)
+      ? t(
+          `stats.behavior_change_motivation.texts.${comparisonValues.value.key}`,
+          comparisonValues.value.values,
+        )
       : t('stats.behavior_change_motivation.texts.default')
   }
 
@@ -172,6 +206,9 @@ const chartDescription = computed(() => {
     return t('stats.behavior_change_motivation.texts.default')
   }
 
-  return t('stats.behavior_change_motivation.texts.specific', descriptionValues.value)
+  return `${t('stats.behavior_change_motivation.texts.default')}\n\n${t(
+    'stats.behavior_change_motivation.texts.specific',
+    descriptionValues.value,
+  )}`
 })
 </script>

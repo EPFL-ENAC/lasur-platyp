@@ -336,6 +336,16 @@ function orderModes(modes: string[]): string[] {
 }
 
 /**
+ * 'allModes' and 'Total' are the same all-modes bucket: the backend names it
+ * 'allModes' when it aggregates everything and 'Total' when it splits by mode.
+ * The comparison charts merge them, so a group that aggregates everything
+ * shows on the 'Total' row instead of opening a second, half-empty one.
+ */
+function mergeAggregateRow<E extends { mode: string }>(item: E): E {
+  return item.mode === 'allModes' ? { ...item, mode: 'Total' } : item
+}
+
+/**
  * A row of a comparison chart: one bar per (mode, comparison group) pair, so
  * that a row is a single stack of categories and the legend is back to plain
  * category names — one entry per lever or motivation level, instead of one per
@@ -365,7 +375,9 @@ function comparisonRows<G extends { name: string }>(modes: string[], groups: G[]
 function comparisonLeversOptions(): ComparisonChartData | null {
   const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
     name: group.name,
-    byMode: leversByMode(group.behavior_change?.levers?.by_mode_levers ?? []),
+    byMode: leversByMode(group.behavior_change?.levers?.by_mode_levers ?? []).map(
+      mergeAggregateRow,
+    ),
     total: group.behavior_change?.levers?.total_responses ?? 0,
   }))
   if (groups.every((group) => group.byMode.length === 0)) {
@@ -417,7 +429,9 @@ function comparisonLeversOptions(): ComparisonChartData | null {
 function comparisonMotivationOptions(): ComparisonChartData | null {
   const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
     name: group.name,
-    byMode: motivationByMode(group.behavior_change?.motivation?.by_mode_motivation ?? []),
+    byMode: motivationByMode(group.behavior_change?.motivation?.by_mode_motivation ?? []).map(
+      mergeAggregateRow,
+    ),
     total: group.behavior_change?.motivation?.total_responses ?? 0,
   }))
   if (groups.every((group) => group.byMode.length === 0)) {

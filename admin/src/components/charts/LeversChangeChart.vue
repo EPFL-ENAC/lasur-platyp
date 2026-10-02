@@ -1,7 +1,7 @@
 <template>
   <chart-panel
     :title="chartTitle"
-    :description="t('stats.behavior_change_levers.texts.info')"
+    :description="panelDescription"
     :chart-info-text="chartDescription"
     :inline="inline"
   >
@@ -103,6 +103,12 @@ function onChartDownload() {
 }
 
 const total = computed(() => props.behaviorChangeStats?.levers?.total_responses ?? 0)
+
+// info only for the single-campaign view: comparison mode shows the
+// comparison sentence instead.
+const panelDescription = computed(() =>
+  stats.comparisonMode ? '' : t('stats.behavior_change_levers.texts.info'),
+)
 
 const descriptionValues = computed(() => {
   const levers = props.behaviorChangeStats?.levers
