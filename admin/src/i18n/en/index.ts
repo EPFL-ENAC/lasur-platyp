@@ -697,7 +697,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Potential reduction in commuting emissions (simple)',
       series: 'Potential reduction',
       yaxis: 'Avoided CO₂ emissions (kgCO₂eq)',
-      xaxis: 'Current simple label',
+      xaxis: 'Recommended mode',
       labels: {
         ...emissionsLabels,
       },

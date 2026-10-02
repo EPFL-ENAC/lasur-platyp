@@ -711,7 +711,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     emissions_reductions_mod_simple: {
       title: 'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (simple)',
       yaxis: 'Émissions évitées (kgCO₂éq)',
-      xaxis: 'Étiquette simple actuelle',
+      xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
       labels: {
         ...emissionsLabels,
