@@ -43,7 +43,7 @@ const transportationModes = {
   inter_tim_tp: 'Individual motorized transport + Public transport',
 
   // --- Alternative & Abstract ---
-  avoid: 'Avoid travel',
+  avoid: 'Video conference',
   inter: 'Intermodality',
   combined: 'Combined',
   other: 'Other',
