@@ -35,6 +35,13 @@ export interface StatsState {
   journeyEnergyStats: JourneyEnergyStats
   behaviorChange: BehaviorChangeStats
   equipmentsStats: EquipmentsStats | null
+  total: number
+  // Headcount context of the dashboard at dump time: announced collaborators
+  // summed over the campaigns in scope, and whether every one of those
+  // campaigns has a headcount. Consumed by the participation sentence on the
+  // report's intro page; absent in states saved before it existed.
+  collaboratorsCount?: number | undefined
+  headcountKnown?: boolean | undefined
   comparisonResults: ComparisonResult | null
   privacyWarnings: string[]
   comparisonMode: ComparisonMode | null
@@ -55,6 +62,9 @@ export const useStats = defineStore('stats', () => {
   const journeyEnergyStats = ref<JourneyEnergyStats>({} as JourneyEnergyStats)
   const behaviorChange = ref<BehaviorChangeStats>({} as BehaviorChangeStats)
   const equipmentsStats = ref<EquipmentsStats | null>(null)
+  // Completed-questionnaire count returned by /stats/all (Stats.total): the
+  // basis of the participation-rate line in the mobility-analysis section.
+  const total = ref(0)
 
   const comparisonResults = ref<ComparisonResult | null>(null)
   const privacyWarnings = ref<string[]>([])
@@ -97,6 +107,7 @@ export const useStats = defineStore('stats', () => {
     journeyEnergyStats.value = makeDefaultJourneyEnergyStats()
     behaviorChange.value = makeDefaultBehaviorChangeStats()
     equipmentsStats.value = null
+    total.value = 0
     resetComparison()
 
     return loadAllStats(filter).finally(() => {
@@ -159,6 +170,7 @@ export const useStats = defineStore('stats', () => {
           journeyEnergyStats.value = stats.journey_energy_stats || makeDefaultJourneyEnergyStats()
           behaviorChange.value = stats.behavior_change || makeDefaultBehaviorChangeStats()
           equipmentsStats.value = stats.equipments_stats || null
+          total.value = stats.total ?? 0
         })
         .catch((err) => {
           console.error(err)
@@ -233,13 +245,18 @@ export const useStats = defineStore('stats', () => {
     comparisonMode.value = null
   }
 
-  async function dumpToIndexedDB() {
+  async function dumpToIndexedDB(
+    headcount?: { collaboratorsCount: number; headcountKnown: boolean },
+  ) {
     const id = getRandomId()
-    await setIndexedDB(makeStatsStateId(id), toJSONState())
+    await setIndexedDB(makeStatsStateId(id), toJSONState(headcount))
     return id
   }
 
-  function toJSONState(): StatsState {
+  function toJSONState(headcount?: {
+    collaboratorsCount: number
+    headcountKnown: boolean
+  }): StatsState {
     return {
       frequencies: frequencies.value,
       emissions: emissions.value,
@@ -251,6 +268,9 @@ export const useStats = defineStore('stats', () => {
       journeyEnergyStats: journeyEnergyStats.value,
       behaviorChange: behaviorChange.value,
       equipmentsStats: equipmentsStats.value,
+      total: total.value,
+      collaboratorsCount: headcount?.collaboratorsCount,
+      headcountKnown: headcount?.headcountKnown,
       comparisonResults: comparisonResults.value,
       privacyWarnings: privacyWarnings.value,
       comparisonMode: comparisonMode.value,
@@ -266,6 +286,7 @@ export const useStats = defineStore('stats', () => {
     homeLocationsHeatmap,
     workplaceLocations,
     homeWorkplaceFlows,
+    total,
     journeyEnergyStats,
     equipmentsStats,
     comparisonResults,

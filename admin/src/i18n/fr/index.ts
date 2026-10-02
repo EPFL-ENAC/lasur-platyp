@@ -446,6 +446,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
         description: `Les graphiques ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
+        participation_known:
+          "Le taux de participation au diagnostic est d'environ {percent}%, soit {completed} participations complètes, pour {employees} collaborateur·trice·s annoncé·e·s qui pouvaient répondre à la ou aux campagne·s.",
+        participation_unknown:
+          'Ce diagnostic est réalisé sur la base des {total} réponses enregistrées.',
         details: `Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
 - sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150\u00A0minutes en effort modéré (vélo/marche rapide) par semaine, soit 150\u00A0kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,

@@ -180,7 +180,11 @@
       </div>
     </div>
     <div v-else>
-      <charts-panel :height="height" :collaborators-count="totalCollaboratorsCount" />
+      <charts-panel
+        :height="height"
+        :collaborators-count="totalCollaboratorsCount"
+        :headcount-known="headcountKnown"
+      />
     </div>
     <area-dialog
       v-model="showMapFilter"
@@ -254,6 +258,17 @@ const totalCollaboratorsCount = computed(() => {
   return selectedCampaigns.value.reduce(
     (sum, campaign) => sum + (campaignMap.value[`${campaign.id}`]?.nb_employees || 0),
     0,
+  )
+})
+
+// The announced headcount is "known" only when it is filled in for EVERY
+// campaign in scope: a single campaign without nb_employees (or with 0) makes
+// the total meaningless, and the participation text falls back to the
+// responses-only wording.
+const headcountKnown = computed(() => {
+  return (
+    selectedCampaigns.value.length > 0 &&
+    selectedCampaigns.value.every((campaign) => (campaign.nb_employees ?? 0) > 0)
   )
 })
 
@@ -448,7 +463,10 @@ async function goToReport() {
 }
 
 async function openReport(withTables: boolean) {
-  const id = await stats.dumpToIndexedDB()
+  const id = await stats.dumpToIndexedDB({
+    collaboratorsCount: totalCollaboratorsCount.value,
+    headcountKnown: headcountKnown.value,
+  })
 
   const url = new URL(window.location.href)
   url.pathname = '/admin/report'

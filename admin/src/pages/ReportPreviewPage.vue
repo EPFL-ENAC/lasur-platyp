@@ -25,6 +25,9 @@
           class="compact text-body2 q-mb-lg"
           :src="t('stats.sections.mobility_analysis.description')"
         />
+        <p v-if="participationTextComputed" class="text-body2 q-mb-lg">
+          {{ participationTextComputed }}
+        </p>
       </report-page>
 
       <report-page :org-names="orgs">
@@ -280,7 +283,7 @@ import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationC
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import { type StatsState, flushStateFromIndexedDB, getStateFromIndexedDB } from '@/stores/stats'
 import type { Frequencies } from '@/models'
-import { chartReportKey, chartReportTablesKey } from '@/components/charts/commons'
+import { chartReportKey, chartReportTablesKey, participationText } from '@/components/charts/commons'
 
 interface Props {
   height: number
@@ -299,6 +302,18 @@ const statsStore = useStats()
 const stats = ref<StatsState | null>(null)
 const orgs = ref<string[]>([])
 const campaigns = ref<string[]>([])
+
+// Participation sentence on the intro page, from the context saved at dump
+// time (the live store is empty here). Hidden when not applicable —
+// comparison mode, missing headcount context, or no data.
+const participationTextComputed = computed(() =>
+  participationText({
+    total: stats.value?.total ?? 0,
+    collaboratorsCount: stats.value?.collaboratorsCount ?? 0,
+    headcountKnown: stats.value?.headcountKnown ?? false,
+    isComparison: !!stats.value?.comparisonMode,
+  }),
+)
 
 onMounted(async () => {
   stats.value = await getStateFromIndexedDB(route.query.statsStateId as string)

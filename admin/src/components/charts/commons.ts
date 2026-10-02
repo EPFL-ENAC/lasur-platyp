@@ -17,6 +17,7 @@ import {
 } from '@/models'
 import { useStats } from '@/stores/stats'
 import { getProModalityLabels, getRecoSimpleLabel, MODE_TO_SIMPLE_LABEL } from '@/utils/modalities'
+import { formatNumber, formatPercent } from '@/utils/numbers'
 
 /**
  * Participants count shown under a comparison chart title: the sum of the
@@ -34,6 +35,34 @@ export const chartPanelDialogOpenKey: InjectionKey<Ref<boolean>> = Symbol('chart
 // Provided by the printable report: legends are laid out in full (plain)
 // instead of scrolling as they do on screen.
 export const chartReportKey: InjectionKey<boolean> = Symbol('chartReport')
+
+/**
+ * Participation text: response rate over the announced collaborators when
+ * every in-scope campaign has a headcount, otherwise the recorded-responses-
+ * only wording. Pure (no store read): the dashboard passes its live context,
+ * the printable report the context saved in the stats state — the live store
+ * is empty on the report page. '' when not applicable (comparison mode, where
+ * the per-group chips already carry counts, loading, or no data).
+ */
+export function participationText(opts: {
+  total: number
+  collaboratorsCount: number
+  headcountKnown: boolean
+  isComparison: boolean
+}): string {
+  if (opts.isComparison || opts.total <= 0) return ''
+  const { t } = useI18n()
+  if (opts.headcountKnown && opts.collaboratorsCount > 0) {
+    return t('stats.sections.mobility_analysis.participation_known', {
+      percent: formatPercent((opts.total / opts.collaboratorsCount) * 100),
+      completed: formatNumber(opts.total),
+      employees: formatNumber(opts.collaboratorsCount),
+    })
+  }
+  return t('stats.sections.mobility_analysis.participation_unknown', {
+    total: formatNumber(opts.total),
+  })
+}
 // Provided by the printable report: whether charts print their value tables.
 export const chartReportTablesKey: InjectionKey<boolean> = Symbol('chartReportTables')
 

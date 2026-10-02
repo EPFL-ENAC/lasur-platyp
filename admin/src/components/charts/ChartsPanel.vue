@@ -12,6 +12,9 @@
           class="compact text-subtitle1 section-lead"
           :src="t('stats.sections.mobility_analysis.description')"
         />
+        <p v-if="participationTextComputed" class="compact text-subtitle1 participation-line">
+          {{ participationTextComputed }}
+        </p>
         <details-panel class="section-details">
           <q-markdown class="compact" :src="t('stats.sections.mobility_analysis.details')" />
         </details-panel>
@@ -222,13 +225,17 @@ import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationC
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import MobilityPotentialInsights from '../MobilityPotentialInsights.vue'
 import type { Frequencies } from '@/models'
+import { participationText } from './commons'
 
 interface Props {
   height: number
   collaboratorsCount?: number | undefined
+  headcountKnown?: boolean
 }
 
-defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  headcountKnown: false,
+})
 
 const { t } = useI18n()
 const preferencesStore = usePreferencesStore()
@@ -249,6 +256,25 @@ onMounted(() => {
 const getFreq = (key: string) => {
   return (stats.frequencies?.[key] ?? null) as Frequencies | null
 }
+
+// Participation line under the mobility-analysis intro, main view only
+// (comparison mode has its own per-group chips). Case 1: every in-scope
+// campaign announces a headcount — response rate over the announced
+// collaborators. Case 2: the headcount is missing for at least one campaign —
+// the assessment is stated on the recorded responses alone. The numerator is
+// the completed-questionnaire count (stats.total); nb_employees is missing for
+// a campaign when it is null/undefined, and an announced count of 0 is treated
+// as missing the same way (DashboardPanel sums it as 0).
+const collaboratorsCount = computed(() => props.collaboratorsCount ?? 0)
+const headcountKnown = computed(() => props.headcountKnown && collaboratorsCount.value > 0)
+const participationTextComputed = computed(() =>
+  participationText({
+    total: stats.total,
+    collaboratorsCount: collaboratorsCount.value,
+    headcountKnown: headcountKnown.value,
+    isComparison: !!stats.comparisonMode,
+  }),
+)
 
 const getFreqArray = (key: string) => {
   return (stats.frequencies?.[key] ?? null) as Frequencies[] | null
@@ -280,6 +306,10 @@ const onTabChanged = (newTab: string) => {
 
 .section-lead {
   margin-bottom: 8px;
+}
+
+.participation-line {
+  margin: 0 0 8px;
 }
 
 /* Whatever closes the intro (read-more, or the lead when there is none)
