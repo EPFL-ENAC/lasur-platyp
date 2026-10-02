@@ -554,9 +554,7 @@ function initComparisonChartOptions() {
         let res = `${list[0]?.name}<br/>`
         list.forEach((item) => {
           if (item.value == null || Number.isNaN(Number(item.value))) return
-          // Kcal series come first, so their indexes span the group range.
-          const unit = (item.seriesIndex ?? Infinity) < groupStats.length ? '\u00A0kcal' : ''
-          res += `${item.marker} ${item.seriesName}: <b>${formatNumber(Number(item.value))}${unit}</b><br/>`
+          res += `${item.marker} ${item.seriesName}: <b>${formatNumber(Number(item.value))}</b><br/>`
         })
         return res
       },
