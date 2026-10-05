@@ -228,6 +228,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         title: 'Politique de confidentialité',
         caption: 'En savoir plus sur la politique de confidentialité de mobilyse',
       },
+      vpn: {
+        title: 'Utilisation de mobilyse derrière un VPN',
+        caption:
+          'En savoir plus sur les problèmes potentiels liés à l’utilisation de mobilyse derrière un VPN',
+      },
       terms: {
         title: "Conditions d'utilisation",
         caption: "En savoir plus sur les conditions d'utilisation de mobilyse",
@@ -713,7 +718,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     emissions_reductions_mod_simple: {
-      title: 'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (simple)',
+      title:
+        'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (simple)',
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -726,7 +732,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
     },
     emissions_reductions_mod_complex: {
-      title: 'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (détail)',
+      title:
+        'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (détail)',
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Étiquette détaillée actuelle',
       series: 'Réduction potentielle',

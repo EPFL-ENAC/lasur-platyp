@@ -40,6 +40,8 @@ import WelcomeEn from '@/assets/docs/en/welcome.md'
 import WelcomeFr from '@/assets/docs/fr/welcome.md'
 import PrivacyEn from '@/assets/docs/en/general/privacy.md'
 import PrivacyFr from '@/assets/docs/fr/general/privacy.md'
+import VpnEn from '@/assets/docs/en/general/vpn.md'
+import VpnFr from '@/assets/docs/fr/general/vpn.md'
 import TermsEn from '@/assets/docs/en/general/terms.md'
 import TermsFr from '@/assets/docs/fr/general/terms.md'
 import WhatNextEn from '@/assets/docs/en/general/what_next.md'
@@ -187,6 +189,11 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.general.privacy.title'),
         caption: t('docs.general.privacy.caption'),
         markdown: locale.value === 'fr' ? PrivacyFr : PrivacyEn,
+      },
+      {
+        title: t('docs.general.vpn.title'),
+        caption: t('docs.general.vpn.caption'),
+        markdown: locale.value === 'fr' ? VpnFr : VpnEn,
       },
       {
         title: t('docs.general.what_next.title'),

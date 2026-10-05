@@ -224,6 +224,11 @@ Thank you for your valuable contribution! If you have any questions, please cont
         title: 'Privacy and data protection',
         caption: 'Learn about how Mobilyse handles data and ensures the privacy of participants',
       },
+      vpn: {
+        title: 'VPN and firewall issues',
+        caption:
+          'Learn about potential VPN and firewall issues that may affect the use of Mobilyse',
+      },
       terms: {
         title: 'Terms of use',
         caption:
