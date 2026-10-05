@@ -650,15 +650,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "et-xmlfile"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d3/38/af70d7ab1ae9d4da450eeec1fa3918940a5fafb9055e934af8d6eb0c2313/et_xmlfile-2.0.0.tar.gz", hash = "sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54", size = 17234, upload-time = "2024-10-25T17:25:40.039Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl", hash = "sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa", size = 18059, upload-time = "2024-10-25T17:25:39.051Z" },
-]
-
-[[package]]
 name = "fastapi"
 version = "0.115.14"
 source = { registry = "https://pypi.org/simple" }
@@ -1423,18 +1414,6 @@ wheels = [
 ]
 
 [[package]]
-name = "openpyxl"
-version = "3.1.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "et-xmlfile" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/3d/f9/88d94a75de065ea32619465d2f77b29a0469500e99012523b91cc4141cd1/openpyxl-3.1.5.tar.gz", hash = "sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050", size = 186464, upload-time = "2024-06-28T14:03:44.161Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c0/da/977ded879c29cbd04de313843e76868e6e13408a94ed6b987245dc7c8506/openpyxl-3.1.5-py2.py3-none-any.whl", hash = "sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2", size = 250910, upload-time = "2024-06-28T14:03:41.161Z" },
-]
-
-[[package]]
 name = "packaging"
 version = "26.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1598,12 +1577,10 @@ dependencies = [
     { name = "geopandas" },
     { name = "h3" },
     { name = "matplotlib" },
-    { name = "openpyxl" },
     { name = "pandas" },
     { name = "psycopg2" },
     { name = "pydantic-settings" },
     { name = "python-dotenv", extra = ["cli"] },
-    { name = "python-multipart" },
     { name = "shapely" },
     { name = "slowapi" },
     { name = "uvicorn" },
@@ -1627,12 +1604,10 @@ requires-dist = [
     { name = "geopandas", specifier = ">=1.1.3,<2" },
     { name = "h3", specifier = ">=4.3.1,<5" },
     { name = "matplotlib", specifier = ">=3.10.8,<4" },
-    { name = "openpyxl", specifier = ">=3.1.5,<4" },
     { name = "pandas", specifier = ">=2.2.3,<3" },
     { name = "psycopg2", specifier = ">=2.9.10,<3" },
     { name = "pydantic-settings", specifier = ">=2.6.1,<3" },
     { name = "python-dotenv", extras = ["cli"], specifier = ">=1.0.1,<2" },
-    { name = "python-multipart", specifier = ">=0.0.18,<0.0.19" },
     { name = "shapely", specifier = ">=2.1.2,<3" },
     { name = "slowapi", specifier = ">=0.1.9,<0.2" },
     { name = "uvicorn", specifier = ">=0.32.0,<0.33" },
@@ -2056,15 +2031,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/81/ca/4f4237d0cc30110bee6f75d5c160781485d1d4f0adb5b215f15e4868b420/python_keycloak-4.7.3.tar.gz", hash = "sha256:bb819be1a0c2fca7f41fe045216c1aa03d612c1b62237fd9ccb98688156c4d2b", size = 64035, upload-time = "2024-11-29T07:07:42.752Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ab/a8/3812b0604b0aac1d6c190baa2b7d46ff50ef67d0ac94d64e39bd0e448188/python_keycloak-4.7.3-py3-none-any.whl", hash = "sha256:638a21a450a525989733299b6db1627a0656e770b6cadb2c1d21edb2244df3ce", size = 77856, upload-time = "2024-11-29T07:07:35.456Z" },
-]
-
-[[package]]
-name = "python-multipart"
-version = "0.0.18"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b4/86/b6b38677dec2e2e7898fc5b6f7e42c2d011919a92d25339451892f27b89c/python_multipart-0.0.18.tar.gz", hash = "sha256:7a68db60c8bfb82e460637fa4750727b45af1d5e2ed215593f917f64694d34fe", size = 36622, upload-time = "2024-11-28T19:16:02.383Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/6b/b60f47101ba2cac66b4a83246630e68ae9bbe2e614cbae5f4465f46dee13/python_multipart-0.0.18-py3-none-any.whl", hash = "sha256:efe91480f485f6a361427a541db4796f9e1591afc0fb8e7a4ba06bfbc6708996", size = 24389, upload-time = "2024-11-28T19:16:00.947Z" },
 ]
 
 [[package]]

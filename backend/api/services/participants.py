@@ -1,17 +1,14 @@
 from logging import debug
-from typing import List
 import secrets
 from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlmodel import select
 from fastapi import HTTPException
 from api.models.domain import Participant
-from api.models.query import ParticipantResult, ParticipantData, ParticipantDraft
+from api.models.query import ParticipantResult, ParticipantDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
 from api.auth import User, is_admin, require_admin_or_perm
-import pandas as pd
-import numpy as np
 
 from api.services.campaigns import CampaignService
 from api.services.entities import EntityService
@@ -193,34 +190,3 @@ class ParticipantService(EntityService):
             entity.updated_by = user.username
         await self.session.commit()
         return entity
-
-    async def parse(self, io) -> List[ParticipantData]:
-        df = pd.read_excel(io, sheet_name=0)
-        df = self._clean_header(df)
-        for column in df.columns:
-            df[column] = self._mormalize_column(df, column)
-        # To explicitly convert NaN to None
-        df = df.replace({np.nan: None})
-
-        data = []
-        for i, row in df.iterrows():
-            datum = row.to_dict()
-            if datum["identifier"] is not None:
-                data.append(ParticipantData(data=datum))
-        return data
-
-    def _clean_header(self, df: pd.DataFrame) -> pd.DataFrame:
-        # Remove first row
-        # df = df.iloc[1:]
-        # Remove non-printable/invisible characters from column names
-        df.columns = df.columns.str.replace(
-            r'[^\x20-\x7E]', ' ', regex=True)
-        df.columns = df.columns.str.strip().str.lower()
-        return df
-
-    def _mormalize_column(self, df: pd.DataFrame, column: str) -> pd.DataFrame:
-        # Lower case and replace non-printable/invisible characters with space and do stripping
-        if df[column].dtype == "string":
-            return df[column].str.lower().str.replace(
-                r'[^\x20-\x7E]', ' ', regex=True).str.strip()
-        return df[column]

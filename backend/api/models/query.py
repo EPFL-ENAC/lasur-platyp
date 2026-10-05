@@ -97,10 +97,6 @@ class DataEntryRead(DataEntryBase):
     id: int
 
 
-class ParticipantData(BaseModel):
-    data: Optional[Dict] = None
-
-
 class CampaignInfo(BaseModel):
     name: str
     company_name: str
