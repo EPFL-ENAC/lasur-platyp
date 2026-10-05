@@ -122,16 +122,11 @@ export interface Recommendation {
     }
   }
   reco_actions?: {
-    mesure_dt1: string[]
-    mesure_dt2: string[]
+    // measures by recommendation code, the value is "" when there are none
+    mesure_dt?: { [reco: string]: string[] | string }
+    mesure_pro?: { [reco: string]: string[] | string }
     mesures_globa?: string[]
-    // V1 payloads may carry a plain string per recommendation instead of a list
-    mesure_pro: (string | string[])[]
     mesures_pro_globa?: string[]
-    mesures_pro_velo?: string[]
-    mesures_pro_tpu?: string[]
-    mesures_pro_train?: string[]
-    mesures_pro_elec?: string[]
   }
   reco_pro?: {
     reco_pros: string[]
@@ -187,8 +182,7 @@ export interface RecommendationsPreviewData {
     bravo: number[]
     ptPass?: string | undefined
     center: [number, number] | null
-    mesureDt1: string[]
-    mesureDt2: string[]
+    mesureDt: string[][]
     globalActions: string[]
     companyName: string
   }

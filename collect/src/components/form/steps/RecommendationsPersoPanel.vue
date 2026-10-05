@@ -116,8 +116,7 @@ const props = defineProps<{
   bravo: number[]
   ptPass?: string | undefined
   center: [number, number] | null
-  mesureDt1: string[]
-  mesureDt2: string[]
+  mesureDt: string[][]
   globalActions: string[]
   companyName: string
   benefitsExpanded?: boolean
@@ -137,9 +136,7 @@ const activeBenefitsKey = computed(() =>
 const currentModeActions = computed(() => {
   const idx = parseInt(activeTab.value)
   if (isNaN(idx)) return []
-  if (idx === 0) return props.mesureDt1
-  if (idx === 1) return props.mesureDt2
-  return []
+  return props.mesureDt[idx] || []
 })
 
 // One list for the grid: the measures tied to the selected journey, then the

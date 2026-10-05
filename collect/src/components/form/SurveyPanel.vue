@@ -87,8 +87,7 @@
         :bravo="bravo"
         :pt-pass="ptPass"
         :center="center"
-        :mesure-dt1="mesureDt1"
-        :mesure-dt2="mesureDt2"
+        :mesure-dt="mesureDt"
         :global-actions="globalActionsPerso"
         :company-name="collector.info.company_name"
         :benefits-expanded="false"
@@ -214,56 +213,20 @@ const center = computed(() => {
   return [loc.lon, loc.lat] as [number, number]
 })
 
-const mesureDt1 = computed(() =>
-  (function (v) {
-    if (Array.isArray(v)) return v
-    if (v === undefined || v === null) return []
-    return [v]
-  })(survey.recommendation.reco_actions?.mesure_dt1),
-)
-const mesureDt2 = computed(() =>
-  (function (v) {
-    if (Array.isArray(v)) return v
-    if (v === undefined || v === null) return []
-    return [v]
-  })(survey.recommendation.reco_actions?.mesure_dt2),
+// Measures are keyed by recommendation code; anything but a list means no measures.
+function measuresOf(byReco: { [reco: string]: string[] | string } | undefined, recos: string[]) {
+  return recos.map((r) => {
+    const v = byReco?.[r]
+    return Array.isArray(v) ? v : []
+  })
+}
+const mesureDt = computed(() =>
+  measuresOf(survey.recommendation.reco_actions?.mesure_dt, recoInter.value),
 )
 const globalActionsPerso = computed(() => survey.recommendation.reco_actions?.mesures_globa || [])
-const mesurePro = computed<string[][]>(() => {
-  const ra = survey.recommendation.reco_actions
-  const recos = recoPros.value
-  if (!ra || !recos.length) return []
-
-  const v2Fallback = (r: string): string[] => {
-    const lookup: Record<string, string[] | undefined> = {
-      elec: ra.mesures_pro_elec,
-      elec_moto: ra.mesures_pro_elec,
-      elec_truck: ra.mesures_pro_elec,
-      velo: ra.mesures_pro_velo,
-      vae: ra.mesures_pro_velo,
-      bike: ra.mesures_pro_velo,
-      cargo: ra.mesures_pro_velo,
-      tpu: ra.mesures_pro_tpu,
-      pub: ra.mesures_pro_tpu,
-      train: ra.mesures_pro_train,
-    }
-    return lookup[r] || []
-  }
-
-  // V1: use mesure_pro from API if available, normalize type issues
-  const raw = ra.mesure_pro
-  if (raw && raw.length > 0) {
-    return recos.map((r, i) => {
-      const entry = raw[i]
-      if (Array.isArray(entry) && entry.length > 0) return entry
-      if (typeof entry === 'string' && entry.length > 0) return [entry]
-      return v2Fallback(r)
-    })
-  }
-
-  // V2: derive from mesures_pro_* via mode mapping
-  return recos.map((r) => v2Fallback(r))
-})
+const mesurePro = computed(() =>
+  measuresOf(survey.recommendation.reco_actions?.mesure_pro, recoPros.value),
+)
 const globalActionsPro = computed(() => survey.recommendation.reco_actions?.mesures_pro_globa || [])
 
 const proJourneyLocations = computed(() =>
@@ -282,8 +245,7 @@ const previewData = computed<RecommendationsPreviewData>(() => ({
     bravo: bravo.value,
     ptPass: ptPass.value,
     center: center.value,
-    mesureDt1: mesureDt1.value,
-    mesureDt2: mesureDt2.value,
+    mesureDt: mesureDt.value,
     globalActions: globalActionsPerso.value,
     companyName: collector.info.company_name,
   },

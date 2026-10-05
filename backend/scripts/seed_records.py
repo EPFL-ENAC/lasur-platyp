@@ -236,8 +236,7 @@ def fake_reco_actions() -> dict:
     actions = {"mesures_globa": weighted_sample(ACTIONS, ACTIONS_WEIGHTS, k=2) +
                [random.choices(["global1", "global2"], weights=[50, 20])[0]]}
     if random.random() < 0.5:
-        actions["mesure_dt1"] = "tpg_pass"
-        actions["mesure_dt2"] = "tpg_pass"
+        actions["mesure_dt"] = {"tpu": ["tpg_pass"], "train": ["tpg_pass"]}
     return actions
 
 
