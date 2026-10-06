@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="text-h4 text-bold q-mb-md">{{ label }}</div>
+    <div class="question-label text-bold q-mb-md">{{ label }}</div>
     <div v-if="hint" class="text-h6 q-mb-md">{{ hint }}</div>
     <div class="q-mt-lg">
       <div :class="col ? 'row q-col-gutter-md' : ''">
         <template v-for="(group, idx) in optionGroups" :key="idx">
           <div :class="col ? `col-${12 / col}` : ''">
             <q-list>
-              <template v-for="option in group" :key="option.value">
+              <template v-for="option in group" :key="option.trueValue">
                 <q-item
                   :active="isSelected(option)"
                   active-class="bg-teal-1 text-grey-8"
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ToggleOption } from 'src/components/form/models'
+import type { ToggleOption } from '@/components/form/models'
 interface Props {
   modelValue: string | string[] | undefined
   label?: string

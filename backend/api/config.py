@@ -26,6 +26,7 @@ class Config(BaseSettings):
     LASUR_OSM_SOURCE: str = "geneva"
 
     RATE_LIMIT_USERS_REGISTER: str = "5/minute"
+    RATE_LIMIT_ISOCHRONES: str = "20/minute"
 
     PATH_PREFIX: str = "/api"
 

@@ -14,16 +14,7 @@
       <q-spinner-dots color="primary" size="md" />
     </div>
     <div v-if="!campaignsStore.loading && campaigns.length > 0">
-      <q-tabs
-        v-model="tab"
-        dense
-        no-caps
-        class="text-grey"
-        active-color="secondary"
-        active-bg-color="grey-4"
-        indicator-color="primary"
-        align="left"
-      >
+      <q-tabs v-model="tab" no-caps align="left">
         <q-tab
           v-for="campaign in campaigns"
           :key="`${campaign.id}`"
@@ -54,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign, Company } from 'src/models'
-import { notifyError } from 'src/utils/notify'
-import CompanyCampaign from 'src/components/company/CompanyCampaign.vue'
-import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
+import type { Campaign, Company } from '@/models'
+import { notifyError } from '@/utils/notify'
+import CompanyCampaign from '@/components/company/CompanyCampaign.vue'
+import CompanyCampaignDialog from '@/components/company/CompanyCampaignDialog.vue'
 
 const { t } = useI18n()
 const authStore = useAuthStore()

@@ -62,10 +62,10 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
-    
+
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "read")
-        
+
         return entity
 
     async def get_by_token(self, token: str) -> Record:
@@ -77,7 +77,7 @@ class RecordService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Record not found")
-        
+
         return entity
 
     async def delete(self, id: int, user: User = None) -> Record:
@@ -157,14 +157,14 @@ class RecordService(EntityService):
         entity.company_id = campaign.company_id
 
         entity.response_id_in_campaign = current_count + 1
-        
+
         entity.created_at = datetime.now()
         entity.updated_at = datetime.now()
-        
+
         self.session.add(entity)
         await self.session.commit()
         await self.session.refresh(entity)
-        
+
         return entity
 
     async def update(self, id: int, payload: RecordDraft, campaign: Campaign = None) -> Record:
@@ -200,7 +200,10 @@ class RecordService(EntityService):
         Returns:
             pd.DataFrame: A DataFrame representation of the records.
         """
-        results = await self.find(filter, fields=[], sort=[], range=[], user=user, special_permissions=special_permissions)
+        # Deterministic order: some downstream stats (e.g. longitudinal mode
+        # transitions' tie-breaking) depend on row order, which Postgres does
+        # not guarantee without an ORDER BY.
+        results = await self.find(filter, fields=[], sort=['id'], range=[], user=user, special_permissions=special_permissions)
         # Read results into a pandas DataFrame
         df = pd.DataFrame([result.model_dump() for result in results.data])
         if not flat:
@@ -211,8 +214,12 @@ class RecordService(EntityService):
                 # Replace NaN with empty dict
                 df[col] = df[col].apply(
                     lambda x: x if isinstance(x, dict) else {})
-                # Flatten the JSON column
-                df_data = df[col].apply(self.flatten_json).apply(pd.Series)
+                # Flatten the JSON column. Building the DataFrame directly from
+                # the list of flattened dicts (instead of `.apply(pd.Series)`,
+                # which constructs and aligns a Series per row) avoids O(n) of
+                # that overhead for wide records.
+                flattened = df[col].apply(self.flatten_json)
+                df_data = pd.DataFrame(flattened.tolist(), index=df.index)
                 # Filter out empty columns
                 df_data = df_data.loc[:, df_data.notna().any()]
                 # Filter out columns with empty names
@@ -275,20 +282,27 @@ class RecordService(EntityService):
         return df
 
     def flatten_json(self, obj, parent_key="", sep="."):
-        """Recursively flatten JSON with lists indexed."""
-        items = []
+        """Flatten JSON with lists indexed, iteratively.
 
-        if isinstance(obj, dict):
-            for k, v in obj.items():
-                new_key = f"{parent_key}{sep}{k}" if parent_key else k
-                items.extend(self.flatten_json(v, new_key, sep=sep).items())
-
-        elif isinstance(obj, list):
-            for i, v in enumerate(obj):
-                new_key = f"{parent_key}{sep}{i}"
-                items.extend(self.flatten_json(v, new_key, sep=sep).items())
-
-        else:
-            items.append((parent_key, obj))
-
-        return dict(items)
+        Equivalent to a recursive left-to-right pre-order flatten, but avoids
+        materializing an intermediate dict at every nesting level (the
+        recursive version built a dict just to immediately re-iterate it via
+        .items() into the parent's list) and the per-level Python call
+        overhead. Children are pushed in reverse so the explicit stack (LIFO)
+        pops them in the same left-to-right order as the original recursion.
+        """
+        result = {}
+        stack = [(parent_key, obj)]
+        while stack:
+            key, value = stack.pop()
+            if isinstance(value, dict):
+                for k, v in reversed(list(value.items())):
+                    new_key = f"{key}{sep}{k}" if key else k
+                    stack.append((new_key, v))
+            elif isinstance(value, list):
+                for i in range(len(value) - 1, -1, -1):
+                    new_key = f"{key}{sep}{i}" if key else str(i)
+                    stack.append((new_key, value[i]))
+            else:
+                result[key] = value
+        return result

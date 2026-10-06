@@ -1,16 +1,11 @@
 <template>
   <div class="bg-grey-3">
     <q-toolbar class="bg-white text-primary q-py-sm toolbar print-hide">
-      <q-toolbar-title class="text-weight-bold">
-        {{ t('form.recommendations') }}
-      </q-toolbar-title>
+      <div class="text-weight-bold text-h6">
+        {{ t('form.recommendations_print.header') }}
+      </div>
       <q-space />
-      <q-btn
-        color="primary"
-        icon="print"
-        :label="t('print')"
-        @click="printReport"
-      />
+      <q-btn color="primary" icon="print" :label="t('print')" @click="printReport" />
     </q-toolbar>
 
     <div class="report-container">
@@ -21,28 +16,30 @@
         </h1>
 
         <RecommendationsPersoPanel
-          :main-fm="data.perso.mainFm"
-          :is-mode-sustainable="data.perso.isModeSustainable"
-          :is-mode-options="data.perso.isModeOptions"
-          :reco-dt="data.perso.recoDt"
+          :journeys="data.perso.journeys"
+          :reco-inter="data.perso.recoInter"
+          :bravo="data.perso.bravo"
+          :pt-pass="data.perso.ptPass"
           :center="data.perso.center"
-          :mesure-dt1="data.perso.mesureDt1"
-          :mesure-dt2="data.perso.mesureDt2"
+          :mesure-dt="data.perso.mesureDt"
           :global-actions="data.perso.globalActions"
+          :company-name="data.perso.companyName"
           :benefits-expanded="true"
         />
 
         <RecommendationsProPanel
-          class="q-mt-xl"
+          class="q-mt-xl print-page-break"
+          :pro-journeys="data.pro.proJourneys"
           :reco-pros="data.pro.recoPros"
           :pro-journey-locations="data.pro.proJourneyLocations"
           :mesure-pro="data.pro.mesurePro"
           :global-actions="data.pro.globalActions"
+          :company-name="data.perso.companyName"
           :benefits-expanded="true"
         />
 
         <h3 class="text-h6 text-right q-mt-xl">
-          {{ t('certificate.date', { date: new Date().toLocaleDateString() }) }}
+          {{ t('certificate.date', { date: new Date().toLocaleDateString(locale) }) }}
         </h3>
       </report-page>
     </div>
@@ -50,13 +47,19 @@
 </template>
 
 <script setup lang="ts">
-import ReportPage from 'src/components/ReportPage.vue'
-import RecommendationsPersoPanel from 'src/components/form/steps/RecommendationsPersoPanel.vue'
-import RecommendationsProPanel from 'src/components/form/steps/RecommendationsProPanel.vue'
-import type { RecommendationsPreviewData } from 'src/models'
+import ReportPage from '@/components/ReportPage.vue'
+import RecommendationsPersoPanel from '@/components/form/steps/RecommendationsPersoPanel.vue'
+import RecommendationsProPanel from '@/components/form/steps/RecommendationsProPanel.vue'
+import type { RecommendationsPreviewData } from '@/models'
+import { locales } from '@/boot/i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
+
+const queryLocale = route.query.locale
+if (typeof queryLocale === 'string' && locales.includes(queryLocale)) {
+  locale.value = queryLocale
+}
 
 const data = computed<RecommendationsPreviewData | null>(() => {
   const raw = route.query.data
@@ -96,9 +99,23 @@ const printReport = () => {
 }
 
 @media print {
+  :deep(.q-tabs) {
+    display: none !important;
+  }
+  :deep(.q-tab-panels) {
+    display: block !important;
+  }
+  :deep(.q-tab-panel) {
+    display: block !important;
+    visibility: visible !important;
+  }
   @page {
     size: A4 portrait;
     margin: 0;
+  }
+
+  .print-page-break {
+    page-break-before: always;
   }
 
   .print-hide,

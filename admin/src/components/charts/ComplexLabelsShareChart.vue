@@ -1,43 +1,57 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="hasData"
-    :show-info="total > 0"
+    :show-table="!exportable"
     :no-data-title="t('stats.freq_mod.title_detailed')"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p v-if="topModes.length === 3" class="q-mb-xs">
-      {{
-        t('stats.freq_mod.texts.specific', {
-          top_1: topModes[0],
-          top_2: topModes[1],
-          top_3: topModes[2],
-        })
-      }}
-    </p>
-    <q-markdown :src="t('stats.freq_mod.texts.default')" />
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
+import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { use } from 'echarts/core'
-import { PieChart } from 'echarts/charts'
+import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { COMPLEX_LABELS_COLORS, complexLabelSortOrder } from './commons'
+import {
+  COMPLEX_LABELS_COLORS,
+  complexLabelSortOrder,
+  computePercentages,
+  MRMT_COMPLEX_MODAL_SPLIT_PERCENT,
+  comparisonTotal,
+} from './commons'
+import {
+  buildGroupStackedBarOption,
+  findBiggestGroupDifference,
+  type ComparisonGroupDataset,
+} from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import { formatSignedPercent } from '@/utils/numbers'
+import type { Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
-use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([
+  SVGRenderer,
+  PieChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   frequencies: Frequencies | Frequencies[] | null
@@ -50,11 +64,56 @@ const props = withDefaults(defineProps<Props>(), {
   exportable: true,
 })
 
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const topModes = ref<string[]>([])
+const comparisonGroupDatasets = ref<ComparisonGroupDataset[]>([])
+
+const comparisonDifference = computed(() =>
+  findBiggestGroupDifference(comparisonGroupDatasets.value, 'last_minus_prev'),
+)
+
+const chartInfoText = computed(() => {
+  const diff = comparisonDifference.value
+  if (diff) {
+    return t('stats.freq_mod.texts.comparison', {
+      lastGroup: diff.lastGroupName,
+      prevGroup: diff.prevGroupName,
+      mode: diff.name,
+      diff: formatSignedPercent(diff.diffPercent),
+    })
+  }
+  if (topModes.value.length === 3) {
+    return t('stats.freq_mod.texts.specific', {
+      top_1: topModes.value[0],
+      top_2: topModes.value[1],
+      top_3: topModes.value[2],
+    })
+  }
+  return ''
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartInfoText, (text) => emit('update:chartInfoText', text), { immediate: true })
 
 const hasData = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some(
+      (group) => (group.mode_frequencies_complex_labels?.length ?? 0) > 0,
+    )
+  }
   if (!props.frequencies) {
     return false
   }
@@ -94,6 +153,12 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
+  comparisonGroupDatasets.value = []
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -131,8 +196,11 @@ function initChartOptions() {
     .toSorted((a, b) => b.value - a.value)
   topModes.value = sortedByValue.slice(0, 3).map((item) => item.name)
 
+  // Add rounded percentages that sum to 100
+  const datasetWithPercent = computePercentages(dataset)
+
   // Extract category names and values for series
-  const categories = dataset.map((item) => item.key)
+  const categories = datasetWithPercent.map((item) => item.key)
   const colors = categories.map((category) => COMPLEX_LABELS_COLORS[category] || '#ccc')
 
   if (categories.length === 0) {
@@ -152,7 +220,7 @@ function initChartOptions() {
     title: [
       {
         text: t(`stats.freq_mod.title_detailed`),
-        subtext: t(`stats.total`, { count: total.value }),
+        subtext: t(`stats.total_participants`, { count: total.value }),
         left: 'center',
         top: 0,
         textStyle: {
@@ -162,26 +230,33 @@ function initChartOptions() {
     ],
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b><br/>{c} ({d}%)',
+      formatter: (params: CallbackDataParams | CallbackDataParams[]) => {
+        const p = Array.isArray(params) ? params[0] : params
+        if (!p) return ''
+
+        return `<b>${p.name}</b><br/>${(p.data as { percent: number }).percent}%`
+      },
     },
     legend: {
       show: true,
       bottom: 0,
       left: 'center',
+      selectedMode: false,
     },
     series: [
       {
         type: 'pie',
         radius: ['30%', '50%'],
-        center: ['30%', '50%'],
+        center: ['50%', '35%'],
         avoidLabelOverlap: true,
         color: colors,
         label: {
           margin: 0,
           fontWeight: 'bold',
-          formatter: '{d}% ({c})',
+          formatter: (params: CallbackDataParams) =>
+            `${(params.data as { percent: number }).percent}%`,
         },
-        data: dataset,
+        data: datasetWithPercent,
       },
     ],
   }
@@ -190,5 +265,63 @@ function initChartOptions() {
 
 function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+  topModes.value = []
+
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length === 0) {
+    return
+  }
+
+  const groupDatasets: ComparisonGroupDataset[] = groups.map((group) => {
+    total.value += group.total
+    return {
+      name: group.name,
+      participants: group.total,
+      items: (group.mode_frequencies_complex_labels || []).map((item) => ({
+        key: shortKey(item.field),
+        name: keyLabel(item.field),
+        value: item.data
+          .map((d) => (d.sum === undefined ? d.count : d.sum))
+          .reduce((a, b) => a + b, 0),
+      })),
+    }
+  })
+
+  comparisonGroupDatasets.value = groupDatasets
+
+  // The MRMT figures are shares of the Geneva canton population: they are read as
+  // one more 100%-stacked bar, next to the compared groups. Kept out of
+  // `comparisonGroupDatasets` so that the commentary only compares actual groups.
+  const chartDatasets: ComparisonGroupDataset[] = [
+    ...groupDatasets,
+    {
+      name: t('stats.reference_data'),
+      items: Object.entries(MRMT_COMPLEX_MODAL_SPLIT_PERCENT).map(([key, value]) => ({
+        key,
+        name: keyLabel(key),
+        value,
+      })),
+    },
+  ]
+
+  const keyOrder = Array.from(
+    new Set(chartDatasets.flatMap((group) => group.items.map((item) => item.key))),
+  ).sort((a, b) => complexLabelSortOrder(a) - complexLabelSortOrder(b))
+
+  option.value = buildGroupStackedBarOption({
+    groupDatasets: chartDatasets,
+    colors: COMPLEX_LABELS_COLORS,
+    percent: true,
+    title: t('stats.freq_mod.title_detailed'),
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
+    height: props.height - 120,
+    yAxisName: '%',
+    keyOrder,
+  })
 }
 </script>

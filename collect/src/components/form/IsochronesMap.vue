@@ -1,11 +1,14 @@
 <template>
   <div>
-    <div class="text-subtitle1 q-mb-sm">
+    <div class="isochrones-subtitle">
       {{
         t('isochrones.accessible_areas', {
           mode: t(`isochrones.modes.${selectedMode.toLowerCase()}`),
         })
       }}
+    </div>
+    <div class="text-body2 q-mb-sm">
+      {{ t('isochrones.map_description', { mode: t(`isochrones.modes.${selectedMode.toLowerCase()}`) }) }}
     </div>
     <div v-if="loadingIsochrones">
       <q-spinner-dots color="primary" size="50px" />
@@ -52,7 +55,7 @@
             class="row items-center"
           >
             <div
-              :style="`width: 15px; height: 15px; background-color: ${getCutoffColor(cutoff)}; border: 1px solid #5a3fc0; margin-right: 5px;`"
+              :style="`width: 15px; height: 15px; background-color: rgba(${hexToRgb(getCutoffColor(cutoff))}, 0.3); border: 1px solid #5a3fc0; margin-right: 5px;`"
             ></div>
             <div>{{ t('isochrones.minutes', { count: Math.floor(cutoff / 60) }) }}</div>
           </div>
@@ -77,7 +80,7 @@ import {
   type GeoJSONSource,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { style } from 'src/utils/maps'
+import { style } from '@/utils/maps'
 
 const isoService = useIsochrones()
 
@@ -187,7 +190,7 @@ function loadIsochrones() {
   })
 }
 
-async function loadIsochronesData() {
+function loadIsochronesData() {
   loadingIsochrones.value = true
   const lon = props.center[0]
   const lat = props.center[1]
@@ -242,6 +245,9 @@ async function loadIsochronesData() {
             })
           }
         }
+        if (data.transit) {
+          addTransitLinesToMap(data.transit)
+        }
       }
     })
     .catch((err) => {
@@ -270,7 +276,7 @@ async function loadPois(categories: string[]) {
 function showIsochrones(geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
   if (map.value.getSource('isochrones')) {
-    ;(map.value.getSource('isochrones') as GeoJSONSource).setData(geojson)
+    void (map.value.getSource('isochrones') as GeoJSONSource).setData(geojson)
   } else {
     map.value.addSource('isochrones', {
       type: 'geojson',
@@ -316,6 +322,28 @@ function showIsochrones(geojson: GeoJSON.FeatureCollection) {
   })
 }
 
+function addTransitLinesToMap(geojson: GeoJSON.FeatureCollection) {
+  if (!map.value) return
+  if (map.value.getSource('transit-lines')) {
+    void (map.value.getSource('transit-lines') as GeoJSONSource).setData(geojson)
+    return
+  }
+
+  map.value.addSource('transit-lines', {
+    type: 'geojson',
+    data: geojson,
+  })
+  map.value.addLayer({
+    id: 'transit-lines-layer',
+    type: 'line',
+    source: 'transit-lines',
+    paint: {
+      'line-color': '#5a3fc0',
+      'line-width': 2,
+    },
+  })
+}
+
 function showPois(categories: string[], geojson: GeoJSON.FeatureCollection) {
   if (!map.value) return
   const sources: { [key: string]: GeoJSON.FeatureCollection } = {}
@@ -349,7 +377,7 @@ function showPois(categories: string[], geojson: GeoJSON.FeatureCollection) {
     if (!categories.includes(cat)) return
     const layerId = `pois-layer-${cat}`
     if (map.value?.getSource(layerId)) {
-      ;(map.value?.getSource(layerId) as GeoJSONSource).setData(data)
+      void (map.value?.getSource(layerId) as GeoJSONSource).setData(data)
     } else {
       map.value?.addSource(layerId, {
         type: 'geojson',
@@ -419,9 +447,22 @@ function categoryToColor(str: string): { name: string; hex: string } | undefined
 function getCutoffColor(cutoff: number): string {
   return ISOCHRONE_CUTOFF_COLORS[cutoff] || '#5a3fc0'
 }
+
+function hexToRgb(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `${r}, ${g}, ${b}`
+}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.isochrones-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: $brand-yellow-600;
+  margin-bottom: 8px;
+}
 .map-view {
   position: relative;
   z-index: 1;

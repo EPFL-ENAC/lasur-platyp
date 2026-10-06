@@ -3,14 +3,15 @@ Tests for typo.reco.reco_inter (one recommendation per journey), which replaced
 typo.reco.reco_dt2 (up to two general recommendations). Legacy typo.reco.reco_dt2
 data must keep working (records collected before this change), while new
 typo.reco.reco_inter.N must be matched 1:1 by index with the journey of the same
-index in data.freq_mod_journeys and weighted accordingly.
+index in data.freq_mod_journeys -- energy and emissions weight them by that
+journey's days, while the home-to-work modal split charts count one
+recommendation per person (that of their main journey).
 """
 import pandas as pd
 from api.services.stats.commons import BaseStatsService
 from api.services.stats.frequencies import FrequenciesService
 from api.services.stats.links import LinksService
 from api.services.stats.equipments import EquipmentsService
-from api.services.stats.emissions import EmissionsService
 from api.services.stats.energy import EnergyService
 from api.services.stats.stats import StatsService
 from api.services.stats.behavior_change import BehaviorChangeService
@@ -21,25 +22,31 @@ def new_style_df() -> pd.DataFrame:
     return pd.DataFrame([
         {
             'token': 'A',
-            'data.version': '2.0',
+            'data.version': '3.0',
             'data.travel_time': 30,
             'data.origin.lat': 46.5, 'data.origin.lon': 6.6,
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
             'data.freq_mod_journeys.0.days': 3,
             'data.freq_mod_journeys.0.modes.0': 'car',
+            'typo.reco.simple_labels.0': 'TIM',
+            'typo.reco.complex_labels.0': 'car',
             'data.freq_mod_journeys.1.days': 2,
             'data.freq_mod_journeys.1.modes.0': 'bike',
+            'typo.reco.simple_labels.1': 'MD',
+            'typo.reco.complex_labels.1': 'bike',
             'typo.reco.reco_inter.0': 'inter',
             'typo.reco.reco_inter.1': 'velo',
         },
         {
             'token': 'B',
-            'data.version': '2.0',
+            'data.version': '3.0',
             'data.travel_time': 20,
             'data.origin.lat': 46.5, 'data.origin.lon': 6.6,
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
             'data.freq_mod_journeys.0.days': 5,
             'data.freq_mod_journeys.0.modes.0': 'pub',
+            'typo.reco.simple_labels.0': 'TP',
+            'typo.reco.complex_labels.0': 'pub',
             'typo.reco.reco_inter.0': 'train',
         },
     ])
@@ -50,7 +57,7 @@ def legacy_df() -> pd.DataFrame:
     return pd.DataFrame([
         {
             'token': 'C',
-            'data.version': '2.0',
+            'data.version': '3.0',
             'data.travel_time': 25,
             'data.origin.lat': 46.5, 'data.origin.lon': 6.6,
             'data.workplace.lat': 46.6, 'data.workplace.lon': 6.7,
@@ -88,32 +95,66 @@ def test_build_reco_weighted_legacy_weighted_by_total_days():
     assert rows[('C', 'legacy_1')] == ('velo', 5)
 
 
-def test_frequencies_reco_inter_counts_and_weights_each_recommendation():
+def test_frequencies_reco_inter_counts_one_recommendation_per_person():
     df = new_style_df()
     result = FrequenciesService(df).compute_recommendation_frequencies()
 
     assert result.field == 'reco_inter'
     by_value = {f.value: f for f in result.data}
+    # A counts once, for the recommendation of its main journey (journey 0, 3
+    # days, recommends 'inter'), not for the one of its less frequent journey
     assert by_value['inter'].count == 1
-    assert by_value['inter'].sum == 3
-    assert by_value['velo'].count == 1
-    assert by_value['velo'].sum == 2
+    assert 'velo' not in by_value
     assert by_value['train'].count == 1
-    assert by_value['train'].sum == 5
+    # person shares: no days weighting
+    assert all(f.sum is None for f in result.data)
 
 
-def test_links_reco_inter_matches_journey_not_always_first_index():
+def test_frequencies_reco_simple_counts_one_recommendation_per_person():
     df = new_style_df()
-    result = LinksService(df).compute_mode_reco_links()
+    df['typo.reco.reco_simple.0'] = ['TP', 'TP']
+    df['typo.reco.reco_simple.1'] = ['MD', None]
+    result = FrequenciesService(df).compute_recommendation_simple_frequencies()
+
+    assert result.field == 'reco_simple'
+    by_value = {f.value: f for f in result.data}
+    # the main journey of A (journey 0, 3 days) and the single journey of B both
+    # recommend 'TP': two persons
+    assert by_value['TP'].count == 2
+    # 'MD' only applies to the less frequent journey of A, which does not count
+    assert 'MD' not in by_value
+
+
+def test_frequencies_reco_simple_ignores_legacy_recommendations():
+    df = legacy_df()
+    result = FrequenciesService(df).compute_recommendation_simple_frequencies()
+
+    # typo.reco.reco_dt2 has no simple counterpart: nothing to report
+    assert result.field == 'reco_simple'
+    assert result.data == []
+
+
+def test_stats_frequencies_include_reco_inter_and_reco_simple():
+    df = new_style_df()
+    df['typo.reco.reco_simple.0'] = ['TP', 'TP']
+    df['typo.reco.reco_simple.1'] = ['MD', None]
+    stats = StatsService().compute_stats(df)
+
+    fields = [f.field for f in stats.frequencies]
+    assert 'reco_inter' in fields
+    assert 'reco_simple' in fields
+
+
+def test_links_reco_inter_matches_main_journey_recommendation():
+    df = new_style_df()
+    result = LinksService(df).compute_mode_reco_links_complex_labels()
 
     links = {(l.source, l.target): l.value for l in result.data}
-    # journey 0 (car, 3 days) recommends 'inter': linked to car, weighted by 3 days
-    assert links[('car', 'inter')] == 3
-    # journey 1 (bike, 2 days) recommends 'velo': linked to bike, weighted by 2 days,
-    # NOT to 'inter' (which only applies to journey 0)
-    assert ('bike', 'inter') not in links
-    assert links[('bike', 'velo')] == 2
-    assert links[('pub', 'train')] == 5
+    # A counts once, from the label of its main journey (journey 0, 'car', 3
+    # days) to the recommendation made for that same journey ('inter'), and not
+    # from the label of its less frequent journey 1 ('bike' -> 'velo')
+    # B counts once, its 'pub' label folding into the merged 'tp' bucket
+    assert links == {('car', 'inter'): 1, ('tp', 'train'): 1}
 
 
 def test_equipments_reco_inter_counts_each_journey_recommendation():
@@ -133,20 +174,6 @@ def test_completed_filter_accepts_reco_inter_and_legacy_reco_dt2():
     df = pd.concat([new_style_df(), legacy_df()], ignore_index=True)
     completed = StatsService()._filter_completed_records(df)
     assert set(completed['token']) == {'A', 'B', 'C'}
-
-
-def test_emissions_reco_inter_applies_per_journey_recommendation():
-    df = new_style_df()
-    service = EmissionsService(df)
-    result = service.compute_modes_emissions(apply_reco=True)
-
-    modes = {e.mode for e in result}
-    # journey-specific recommendations should show up distinctly, not collapsed
-    # into a single recommendation for the whole person
-    assert 'velo' in modes or 'inter' in modes
-    assert 'train' in modes
-    for emission in result:
-        assert emission.emissions >= 0
 
 
 def test_energy_reco_inter_applies_per_journey_recommendation():

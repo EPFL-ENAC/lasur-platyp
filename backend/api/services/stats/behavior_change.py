@@ -11,7 +11,8 @@ from api.services.stats.commons import BaseStatsService
 class BehaviorChangeService(BaseStatsService):
     """Service for computing behavior change statistics (motivation and levers)."""
 
-    LEVER_CATEGORIES = ['finance', 'flexibility', 'collective', 'environment', 'other']
+    LEVER_CATEGORIES = ['finance', 'test', 'coaching', 'events', 'company_vehicle', 'flexibility',
+                        'collective', 'environment', 'other']
     MOTIVATION_LEVELS = [5, 4, 3, 2, 1]
 
     # Older records stored a single `change` object, then a `change`/`change2` pair,
@@ -23,12 +24,32 @@ class BehaviorChangeService(BaseStatsService):
     # not tied to a specific journey, instead of one reco_inter.N per journey.
     # Map them onto the equivalent reco_inter indices so they feed into the same
     # aggregation.
-    LEGACY_RECO_COLUMNS = {'typo.reco.reco_dt2.0': 0, 'typo.reco.reco_dt2.1': 1}
+    LEGACY_RECO_COLUMNS = {
+        'typo.reco.reco_dt2.0': 0, 'typo.reco.reco_dt2.1': 1}
 
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
         self.reco_prefix = 'typo.reco.reco_inter.'
         self.change_prefix = 'data.changes.'
+
+    def count_unique_respondents(self) -> Tuple[int, int]:
+        """Distinct participants (by email_hash) who answered at least one lever
+        question, and the motivation question, for any recommendation."""
+        df = self._build_long_dataframe()
+        if 'email_hash' not in df.columns:
+            return 0, 0
+        lever_cols = [col for col in df.columns if col.startswith('levers.')]
+        levers = df[self._has_lever_response_mask(df, lever_cols)]['email_hash'].nunique()
+        motivation = df[df['motivation'].notna() & (df['motivation'] != 0.0)]['email_hash'].nunique()
+        return levers, motivation
+
+    def _has_lever_response_mask(self, df: pd.DataFrame, lever_cols: list) -> pd.Series:
+        """Boolean mask: whether a row answered at least one lever question."""
+        if not lever_cols:
+            return pd.Series(False, index=df.index)
+        sub = df[lever_cols]
+        answered = sub.notna() & (sub != '') & (sub != 0.0) & (sub != '0.0')
+        return answered.any(axis=1)
 
     def compute_behavior_change_stats(self) -> BehaviorChangeStats:
         """Main entry point for computing behavior change statistics."""
@@ -39,14 +60,17 @@ class BehaviorChangeService(BaseStatsService):
 
         if len(df_long) == 0:
             return BehaviorChangeStats(
-                levers=BehaviorChangeStatsLever(by_mode_levers=[], total_responses=0, aggregation_type='all_aggregated'),
-                motivation=BehaviorChangeStatsMotivation(by_mode_motivation=[], total_responses=0, aggregation_type='all_aggregated'),
+                levers=BehaviorChangeStatsLever(
+                    by_mode_levers=[], total_responses=0, aggregation_type='all_aggregated'),
+                motivation=BehaviorChangeStatsMotivation(
+                    by_mode_motivation=[], total_responses=0, aggregation_type='all_aggregated'),
                 other_levers=[]
             )
 
         # Count actual responses per mode (not just recommendations)
         lever_counts_per_mode = self._count_lever_responses_per_mode(df_long)
-        motivation_counts_per_mode = self._count_motivation_responses_per_mode(df_long)
+        motivation_counts_per_mode = self._count_motivation_responses_per_mode(
+            df_long)
 
         total_lever_responses = sum(lever_counts_per_mode.values())
         total_motivation_responses = sum(motivation_counts_per_mode.values())
@@ -117,7 +141,8 @@ class BehaviorChangeService(BaseStatsService):
         reco_dt2 or the changes columns."""
         indices = set()
         reco_pattern = re.compile(rf'^{re.escape(self.reco_prefix)}(\d+)$')
-        change_pattern = re.compile(rf'^{re.escape(self.change_prefix)}(\d+)\.')
+        change_pattern = re.compile(
+            rf'^{re.escape(self.change_prefix)}(\d+)\.')
         for col in df.columns:
             m = reco_pattern.match(col) or change_pattern.match(col)
             if m:
@@ -126,8 +151,10 @@ class BehaviorChangeService(BaseStatsService):
 
     def _lever_indices(self, df: pd.DataFrame) -> List[int]:
         """Indices of the lever choice columns (data.changes.<i>.levers.<j>)."""
-        pattern = re.compile(rf'^{re.escape(self.change_prefix)}\d+\.levers\.(\d+)$')
-        indices = {int(m.group(1)) for col in df.columns for m in [pattern.match(col)] if m}
+        pattern = re.compile(
+            rf'^{re.escape(self.change_prefix)}\d+\.levers\.(\d+)$')
+        indices = {int(m.group(1))
+                   for col in df.columns for m in [pattern.match(col)] if m}
         return sorted(indices)
 
     def _build_long_dataframe(self) -> pd.DataFrame:
@@ -151,6 +178,8 @@ class BehaviorChangeService(BaseStatsService):
                 continue
             empty_col = pd.Series(pd.NA, index=df.index, dtype=object)
             part = pd.DataFrame({'reco_mode': df[reco_col]})
+            if 'email_hash' in df.columns:
+                part['email_hash'] = df['email_hash']
             motivation_col = f'{self.change_prefix}{i}.motivation'
             part['motivation'] = df[motivation_col] if motivation_col in df.columns else empty_col
             for j in lever_indices:
@@ -179,14 +208,7 @@ class BehaviorChangeService(BaseStatsService):
             return {}
 
         # For each row, check if they answered at least one lever question
-        def has_lever_response(row):
-            for col in lever_cols:
-                val = row[col]
-                if pd.notna(val) and val != '' and val != 0.0 and val != '0.0':
-                    return True
-            return False
-
-        df_with_lever = df[df.apply(has_lever_response, axis=1)]
+        df_with_lever = df[self._has_lever_response_mask(df, lever_cols)]
 
         if len(df_with_lever) == 0:
             return {}
@@ -237,7 +259,7 @@ class BehaviorChangeService(BaseStatsService):
         all_modes = set(lever_counts.keys()) | set(motivation_counts.keys())
 
         if not all_modes:
-            return 'all_aggregated', {'Tous modes': df}
+            return 'all_aggregated', {'allModes': df}
 
         # Calculate total responses (use max to avoid double-counting)
         total_lever = sum(lever_counts.values())
@@ -246,7 +268,7 @@ class BehaviorChangeService(BaseStatsService):
 
         # Case 1: Less than 10 total responses in either metric - aggregate everything
         if total_responses < 10:
-            return 'all_aggregated', {'Tous modes': df}
+            return 'all_aggregated', {'allModes': df}
 
         # Case 2: Check which modes meet threshold (>=10 in EITHER metric)
         modes_above_threshold = {}
@@ -255,11 +277,12 @@ class BehaviorChangeService(BaseStatsService):
             motivation_count = motivation_counts.get(mode, 0)
             # Mode qualifies if EITHER metric has >=10 responses
             if lever_count >= 10 or motivation_count >= 10:
-                modes_above_threshold[mode] = max(lever_count, motivation_count)
+                modes_above_threshold[mode] = max(
+                    lever_count, motivation_count)
 
         if len(modes_above_threshold) == 0:
             # No individual mode has 10+ responses in either metric
-            return 'all_aggregated', {'Tous modes': df}
+            return 'all_aggregated', {'allModes': df}
 
         # Case 3: Mixed - some modes above, some below threshold
         mode_groups = {}
@@ -338,14 +361,7 @@ class BehaviorChangeService(BaseStatsService):
         lever_cols = [col for col in df.columns if col.startswith('levers.')]
 
         # Count unique people who answered at least one lever
-        def has_lever_response(row):
-            for col in lever_cols:
-                val = row[col]
-                if pd.notna(val) and val != '' and val != 0.0 and val != '0.0':
-                    return True
-            return False
-
-        people_with_levers = df[df.apply(has_lever_response, axis=1)]
+        people_with_levers = df[self._has_lever_response_mask(df, lever_cols)]
         response_count = len(people_with_levers)
 
         # Collect all lever selections for percentages
@@ -426,7 +442,8 @@ class BehaviorChangeService(BaseStatsService):
         motivation_list = []
         for level in self.MOTIVATION_LEVELS:
             count = motivation_counts.get(level, 0)
-            percentage = round((count / response_count * 100), 2) if response_count > 0 else 0.0
+            percentage = round((count / response_count * 100),
+                               2) if response_count > 0 else 0.0
             motivation_list.append(BehaviorChangeMotivation(
                 level=level,
                 count=int(count),

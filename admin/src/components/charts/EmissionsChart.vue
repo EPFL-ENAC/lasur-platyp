@@ -1,31 +1,21 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="total > 0"
-    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
+    :show-table="!exportable"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
-  >
-    <q-markdown
-      v-if="emissionItemsLabels"
-      :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsLabels)"
-    />
-    <q-markdown
-      v-else-if="emissionItemsProLabels"
-      :src="
-        t(`stats.emissions_${props.chartTranslationName}.texts.specific`, emissionItemsProLabels)
-      "
-    />
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { CustomChart } from 'echarts/charts'
+import { CustomChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import {
   TitleComponent,
@@ -33,27 +23,117 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { MODE_COLORS } from './commons'
-import { formatNumber } from 'src/utils/numbers'
-import type { Emissions } from 'src/models'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  aggregateEmissionsBySimpleLabel,
+  complexLabelSortOrder,
+  modeSortOrder,
+  simpleLabelSortOrder,
+  comparisonTotal,
+} from './commons'
+import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
+import { formatNumber, formatPercent, formatTons, roundTo } from '@/utils/numbers'
+import type { ComparisonStats, Emissions } from '@/models'
 
-const { t, locale } = useI18n()
-use([SVGRenderer, CustomChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+const { t, te, locale } = useI18n()
+use([
+  SVGRenderer,
+  CustomChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   chartTranslationName: string
   emissions?: Emissions[] | null
+  // Fold transport modes into simple typology labels before charting, for the
+  // data the backend only ships in detailed form.
+  foldModeToSimple?: boolean
   xaxis?: string
   yaxis?: string
+  // Y axis name of the comparison rendering, whose bars stack annual totals in
+  // tons rather than the per-journey emissions of the single-group rendering.
+  comparisonYaxis?: string
+  // Wording of the share appended to each comparison tooltip line, given the
+  // value's percentage of its group total and the group name.
+  shareLabelKey?: string
   rangeStep?: number
   height?: number
   loading?: boolean
   exportable?: boolean
+  // Overrides the title taken from `chartTranslationName`.
+  title?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
+  shareLabelKey: 'stats.group_emissions_share',
 })
+
+const chartTitle = computed(
+  () => props.title || t(`stats.emissions_${props.chartTranslationName}.title`),
+)
+
+const labelType = computed<'simple' | 'complex' | 'mode'>(() => {
+  if (props.foldModeToSimple || props.chartTranslationName.includes('simple')) {
+    return 'simple'
+  }
+  return props.chartTranslationName.includes('complex') ? 'complex' : 'mode'
+})
+
+const labelColors = computed(() => {
+  if (labelType.value === 'simple') return SIMPLE_LABELS_COLORS
+  return labelType.value === 'complex' ? COMPLEX_LABELS_COLORS : MODE_COLORS
+})
+
+// The description texts below stay on the raw modes: they name a specific mode
+// ('plane', 'car'), which the fold would have dissolved into a typology bucket.
+const emissions = computed(() =>
+  props.emissions && props.foldModeToSimple
+    ? aggregateEmissionsBySimpleLabel(props.emissions)
+    : props.emissions,
+)
+
+function findGroupEmissions(groupStats: ComparisonStats): Emissions[] | undefined {
+  const found = findRawGroupEmissions(groupStats)
+  if (!found || !props.foldModeToSimple) {
+    return found
+  }
+  return aggregateEmissionsBySimpleLabel(found)
+}
+
+function findRawGroupEmissions(groupStats: ComparisonStats): Emissions[] | undefined {
+  switch (props.chartTranslationName) {
+    case 'freq_mod_simple':
+      return groupStats.mode_emissions_simple_labels ?? undefined
+    case 'freq_mod_complex':
+      return groupStats.mode_emissions_complex_labels ?? undefined
+    case 'freq_mod_pro':
+      return groupStats.pro_mode_emissions ?? undefined
+    // Same journeys, bucketed by their current label as above, but carrying
+    // what they would emit by following their recommendation.
+    case 'reco_mod_simple':
+      return groupStats.reco_mode_emissions_simple_labels ?? undefined
+    case 'reco_mod_complex':
+      return groupStats.reco_mode_emissions_complex_labels ?? undefined
+    default:
+      return undefined
+  }
+}
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
@@ -64,7 +144,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => props.foldModeToSimple, () => props.title], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -78,7 +158,8 @@ const globalAnswersThreshold = 10
 const perModeAnswersThreshold = 3
 
 const emissionItems = computed(() => {
-  if (props.chartTranslationName.includes('pro')) {
+  if (isComparison.value) return null
+  if (props.chartTranslationName !== 'freq_mod') {
     return null
   }
   if (!props.emissions) return null
@@ -106,57 +187,178 @@ const emissionItemsLabels = computed(() => {
   if (!ei) return null
 
   return {
-    carMotoJourneysPercentage: formatNumber(Math.round(ei.carMotoJourneysPercentage)),
-    carMotoEmissionsPercentage: formatNumber(Math.round(ei.carMotoEmissionsPercentage)),
+    carMotoJourneysPercentage: formatPercent(ei.carMotoJourneysPercentage),
+    carMotoEmissionsPercentage: formatPercent(ei.carMotoEmissionsPercentage),
   }
 })
 
 const emissionItemsPro = computed(() => {
+  if (isComparison.value) return null
   if (!props.chartTranslationName.includes('pro')) {
     return null
   }
   if (!props.emissions) return null
   if (total.value < globalAnswersThreshold) return null
 
-  const emissions = props.emissions || []
+  // Modes with too few answers are not reliable enough to be named.
+  const emissions = props.emissions.filter(
+    (item) => item.total >= perModeAnswersThreshold && item.journeys > 0,
+  )
+  if (emissions.length < 2) return null
 
-  const planeEmissions = emissions.find((item) => item.mode === 'plane')
-  const carEmissions = emissions.find((item) => item.mode === 'car')
-  if (!planeEmissions || !carEmissions) return null
-  if (
-    planeEmissions.total < perModeAnswersThreshold ||
-    carEmissions.total < perModeAnswersThreshold
-  ) {
-    return null
-  }
-
-  const totalEmissions = emissions.reduce((sum, item) => sum + item.emissions, 0)
+  // Percentages are shares of all emissions, including the unnamed modes.
+  const totalEmissions = props.emissions.reduce((sum, item) => sum + item.emissions, 0)
   if (totalEmissions === 0) return null
 
-  return {
-    first: planeEmissions,
-    second: carEmissions,
-    total: totalEmissions,
-    withoutFirst: emissions.filter((item) => item.mode !== planeEmissions.mode),
-  }
+  // First and second: largest rectangle areas (total emissions).
+  const [first, second] = [...emissions].sort((a, b) => b.emissions - a.emissions)
+  // Highest emissions per journey, compared with the average of the other modes.
+  const perJourney = emissions.reduce((max, item) =>
+    item.emissions / item.journeys > max.emissions / max.journeys ? item : max,
+  )
+  const others = emissions.filter((item) => item.mode !== perJourney.mode)
+
+  return { first: first!, second: second!, perJourney, total: totalEmissions, others }
 })
 
 const emissionItemsProLabels = computed(() => {
   const eip = emissionItemsPro.value
   if (!eip) return null
 
-  const withoutFirstEmissions = eip.withoutFirst.reduce((sum, item) => sum + item.emissions, 0)
-  const withoutFirstJourneys = eip.withoutFirst.reduce((sum, item) => sum + item.journeys, 0)
+  const othersEmissions = eip.others.reduce((sum, item) => sum + item.emissions, 0)
+  const othersJourneys = eip.others.reduce((sum, item) => sum + item.journeys, 0)
 
   return {
-    firstPercent: formatNumber(Math.round((eip.first.emissions / eip.total) * 100)),
+    firstPercent: formatPercent((eip.first.emissions / eip.total) * 100),
     firstMode: keyLabel(eip.first.mode),
-    firstEmissions: formatNumber(Math.round((eip.first.emissions || 0) / eip.first.journeys)),
-    secondPercent: formatNumber(Math.round((eip.second.emissions / eip.total) * 100)),
+    secondPercent: formatPercent((eip.second.emissions / eip.total) * 100),
     secondMode: keyLabel(eip.second.mode),
-    remainingEmissions: formatNumber(Math.round(withoutFirstEmissions / withoutFirstJourneys)),
+    perJourneyMode: keyLabel(eip.perJourney.mode),
+    perJourneyEmissions: formatNumber(
+      Math.round(eip.perJourney.emissions / eip.perJourney.journeys),
+    ),
+    remainingEmissions: formatNumber(Math.round(othersEmissions / othersJourneys)),
   }
 })
+
+// The worked example in the description names the mode with the largest
+// rectangle area, i.e. the one responsible for the most emissions overall.
+const topEmissionItem = computed(() => {
+  if (isComparison.value) return null
+  if (!props.emissions || props.emissions.length === 0) return null
+  if (total.value < globalAnswersThreshold) return null
+
+  const top = props.emissions.reduce((max, item) => (item.emissions > max.emissions ? item : max))
+  if (top.total < perModeAnswersThreshold || top.journeys === 0 || top.emissions === 0) {
+    return null
+  }
+  return top
+})
+
+// Only the charts translating a `description_example` opt in: the others keep
+// their plain description.
+const descriptionExample = computed(() => {
+  const top = topEmissionItem.value
+  const key = `stats.emissions_${props.chartTranslationName}.description_example`
+  if (!top || !te(key)) return ''
+
+  return t(key, {
+    mode: keyLabel(top.mode),
+    journeys: formatNumber(Math.round(top.journeys)),
+    emissionsPerJourney: formatNumber(Math.round(top.emissions / top.journeys)),
+    emissions: formatNumber(Math.round(top.emissions)),
+  })
+})
+
+const comparisonEmissionItems = computed(() => {
+  if (!isComparison.value) return null
+
+  const groups = stats.comparisonResults?.groups ?? []
+  if (groups.length < 2) return null
+
+  const lastGroup = groups[groups.length - 1]!
+  const prevGroup = groups[groups.length - 2]!
+  if (lastGroup.total < globalAnswersThreshold || prevGroup.total < globalAnswersThreshold) {
+    return null
+  }
+
+  const lastEmissions = findGroupEmissions(lastGroup) ?? []
+  const lastTotalEmissions = lastEmissions.reduce((sum, item) => sum + item.emissions, 0)
+  if (lastTotalEmissions === 0) return null
+
+  const topMode = lastEmissions.reduce((max, item) => (item.emissions > max.emissions ? item : max))
+
+  const prevEmissions = findGroupEmissions(prevGroup) ?? []
+  const prevTotalEmissions = prevEmissions.reduce((sum, item) => sum + item.emissions, 0)
+  const prevModeValue = prevEmissions.find((item) => item.mode === topMode.mode)?.emissions ?? 0
+
+  return {
+    lastGroup: lastGroup.name,
+    prevGroup: prevGroup.name,
+    mode: topMode.mode,
+    lastValue: topMode.emissions / 1000,
+    lastPercent: (topMode.emissions / lastTotalEmissions) * 100,
+    prevValue: prevModeValue / 1000,
+    prevPercent: prevTotalEmissions > 0 ? (prevModeValue / prevTotalEmissions) * 100 : 0,
+  }
+})
+
+const comparisonEmissionItemsLabels = computed(() => {
+  const ci = comparisonEmissionItems.value
+  if (!ci) return null
+
+  return {
+    lastGroup: ci.lastGroup,
+    prevGroup: ci.prevGroup,
+    mode: keyLabel(ci.mode),
+    lastValue: formatTons(ci.lastValue),
+    lastPercent: formatPercent(ci.lastPercent),
+    prevValue: formatTons(ci.prevValue),
+    prevPercent: formatPercent(ci.prevPercent),
+  }
+})
+
+const chartDescription = computed(() => {
+  if (comparisonEmissionItemsLabels.value) {
+    // Only the charts translating a worked example opt in: the others keep
+    // their plain description.
+    const key = `stats.emissions_${props.chartTranslationName}.texts.comparison`
+    return te(key) ? t(key, comparisonEmissionItemsLabels.value) : ''
+  }
+  if (emissionItemsLabels.value) {
+    return t(
+      `stats.emissions_${props.chartTranslationName}.texts.specific`,
+      emissionItemsLabels.value,
+    )
+  }
+  if (emissionItemsProLabels.value) {
+    return t(
+      `stats.emissions_${props.chartTranslationName}.texts.specific`,
+      emissionItemsProLabels.value,
+    )
+  }
+  return ''
+})
+
+const emit = defineEmits<{
+  'update:chartInfoText': [text: string]
+  'update:chartDescriptionText': [text: string]
+}>()
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartDescription, (text) => emit('update:chartInfoText', text), { immediate: true })
+watch(descriptionExample, (text) => emit('update:chartDescriptionText', text), {
+  immediate: true,
+})
+
+function labelSortOrder(key: string) {
+  if (labelType.value === 'simple') return simpleLabelSortOrder(key)
+  return labelType.value === 'complex' ? complexLabelSortOrder(key) : modeSortOrder(key)
+}
 
 function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {
@@ -170,19 +372,32 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
-  if (!props.emissions) {
+  if (!emissions.value) {
     return
   }
 
-  const emissions = props.emissions || []
-  if (emissions.length === 0) {
+  const modeEmissions = emissions.value
+  if (modeEmissions.length === 0) {
     return
   }
+
+  const colors = labelColors.value
+
+  // The legend lists the modes in reporting order (issue #472), while the
+  // bars stay sorted by emissions per journey.
+  const legendData = [...modeEmissions]
+    .sort((a, b) => labelSortOrder(shortKey(a.mode)) - labelSortOrder(shortKey(b.mode)))
+    .map((item) => keyLabel(item.mode))
 
   let ubound = 0
-  const preparedData = emissions
+  const preparedData = [...modeEmissions]
     .sort((a, b) => {
       const emaA = a.journeys ? a.emissions / a.journeys : 0
       const emaB = b.journeys ? b.emissions / b.journeys : 0
@@ -191,26 +406,27 @@ function initChartOptions() {
     .map((item) => {
       const data = {
         name: keyLabel(item.mode),
-        color: MODE_COLORS[shortKey(item.mode)] || MODE_COLORS['default'],
+        color: colors[shortKey(item.mode)] || colors['default'],
         value: [
           ubound, // 0: start x
           ubound + item.journeys, // 1: end x
           item.journeys ? (item.emissions / item.journeys).toFixed(2) : 0, // 2: height
           keyLabel(item.mode), // 3: label
-          item.emissions.toFixed(0), // 4
+          Math.round(item.emissions), // 4
           item.journeys, // 5
-          `${item.distances.toFixed(0)} km`, // 6
+          Math.round(item.distances), // 6
         ],
       }
       ubound += item.journeys
       return data
     })
 
-  total.value = emissions[0]?.total || 0
+  total.value = modeEmissions[0]?.total || 0
 
   const newOption: EChartsOption = {
     grid: {
-      left: '40',
+      // Fits the y axis name, which `containLabel` does not account for.
+      left: '70',
       right: '20',
       top: '60',
       bottom: '60',
@@ -219,8 +435,8 @@ function initChartOptions() {
     animation: false,
     height: props.height - 120,
     title: {
-      text: t(`stats.emissions_${props.chartTranslationName}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      text: chartTitle.value,
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -235,16 +451,21 @@ function initChartOptions() {
         let html = `<div style="font-weight: bold; margin-bottom: 4px;">${params.marker} ${params.name}</div>`
 
         const indicesToShow = [4, 5, 6]
+        // The tooltip values are raw numbers: localize them here, and carry the
+        // unit only where the dimension name does not already say it.
+        const unitsByIndex: Record<number, string> = { 4: 'kgCO₂eq', 5: '', 6: 'km' }
 
         indicesToShow.forEach((idx) => {
           const label = params.dimensionNames[idx]
           const value = params.value[idx]
 
           if (value !== undefined) {
+            const unit = unitsByIndex[idx]
+            const display = formatNumber(Number(value))
             html += `
               <div style="display: flex; justify-content: space-between; gap: 20px;">
                 <span>${label}</span>
-                <span style="font-weight: bold;">${value}</span>
+                <span style="font-weight: bold;">${display}${unit ? `\u00A0${unit}` : ''}</span>
               </div>`
           }
         })
@@ -257,6 +478,7 @@ function initChartOptions() {
       bottom: 0,
       left: 'center',
       itemGap: 10,
+      data: legendData,
     },
     xAxis: {
       name: props.xaxis || '',
@@ -267,7 +489,8 @@ function initChartOptions() {
     yAxis: {
       name: props.yaxis || '',
       nameLocation: 'middle',
-      nameGap: 40,
+      // Clears the widest tick labels, which sit between the axis line and the name.
+      nameGap: 55,
       type: 'value',
     },
     series: preparedData.map((item) => ({
@@ -324,5 +547,55 @@ function initChartOptions() {
 
 function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+}
+
+const KG_TO_TONS = 1 / 1000
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupEmissions = groups.map((group) => ({
+    name: group.name,
+    participants: group.total,
+    emissions: findGroupEmissions(group) ?? [],
+  }))
+  if (groupEmissions.every((group) => group.emissions.length === 0)) {
+    return
+  }
+
+  const colors = labelColors.value
+
+  const groupDatasets: ComparisonGroupDataset[] = groupEmissions.map((group) => {
+    total.value += group.emissions[0]?.total ?? 0
+    return {
+      name: group.name,
+      participants: group.participants,
+      items: group.emissions.map((item) => ({
+        key: shortKey(item.mode),
+        name: keyLabel(item.mode),
+        // Comparison stacks annual totals, which read better in tons than in kg.
+        value: roundTo(item.emissions * KG_TO_TONS, 1),
+      })),
+    }
+  })
+
+  const keyOrder = Array.from(
+    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+  ).sort((a, b) => labelSortOrder(a) - labelSortOrder(b))
+
+  option.value = buildGroupStackedBarOption({
+    groupDatasets,
+    colors,
+    percent: false,
+    title: chartTitle.value,
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
+    height: props.height - 120,
+    yAxisName: props.comparisonYaxis ?? t('stats.units.tco2eq_per_year'),
+    keyOrder,
+    valueUnit: t('stats.units.tco2eq_per_year'),
+    valueShareLabel: (percent: string, group: string) => t(props.shareLabelKey, { percent, group }),
+  })
 }
 </script>

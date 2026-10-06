@@ -25,7 +25,8 @@ import {
   GridComponent,
   DataZoomComponent,
 } from 'echarts/components'
-import type { CampaignStats } from 'src/models'
+import type { CampaignStats } from '@/models'
+import { formatNumber } from '@/utils/numbers'
 import { useQuasar } from 'quasar'
 
 interface Props {
@@ -103,6 +104,7 @@ function initChartOptions() {
       {
         type: 'value',
         name: t('stats.records_count'),
+        axisLabel: { formatter: formatNumber },
         nameTextStyle: {
           align: 'left',
         },
@@ -132,7 +134,7 @@ function initChartOptions() {
           focus: 'series',
         },
         data: completedDataCumulated,
-        color: '#4caf50',
+        color: '#78c1a3',
       },
       {
         name: t('stats.in_progress'),
@@ -143,7 +145,7 @@ function initChartOptions() {
           focus: 'series',
         },
         data: inProgressDataCumulated,
-        color: '#ff9800',
+        color: '#e8b27a',
       },
     ],
   }

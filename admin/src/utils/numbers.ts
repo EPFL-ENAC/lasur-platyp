@@ -1,3 +1,5 @@
+import { i18n } from '@/boot/i18n'
+
 // Function to convert decimal degrees to DMS (Degrees, Minutes, Seconds)
 export function toDMS(deg: number) {
   const d = Math.floor(deg)
@@ -20,13 +22,59 @@ export function formatCoordinates(lat: number, lon: number) {
   return `${latDMS} ${latDirection}, ${lonDMS} ${lonDirection}`
 }
 
-const numberFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 })
+// Follow the app locale, not the browser's: the user switches language in the
+// UI, and the decimal separator must switch with it. The thousands separator is
+// always a single quote, whatever the language. One formatter is kept per locale
+// because building an Intl.NumberFormat is costly and the locale rarely changes.
+const numberFormatters = new Map<string, Intl.NumberFormat>()
+
+function numberFormatter(): Intl.NumberFormat {
+  const locale = i18n.global.locale.value
+  let formatter = numberFormatters.get(locale)
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 })
+    numberFormatters.set(locale, formatter)
+  }
+  return formatter
+}
 
 export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) {
     return 'N/A'
   }
-  return numberFormatter.format(value)
+  return numberFormatter()
+    .formatToParts(value)
+    .map((part) => (part.type === 'group' ? "'" : part.value))
+    .join('')
+}
+
+// Significant digits rules, to be applied in all charts and texts:
+// percentages are rounded to the unit, tCO2 to the tenth, kcal to the unit.
+
+export function roundTo(value: number, decimals: number): number {
+  const factor = 10 ** decimals
+  // Avoid "-0" when a small negative value rounds to zero.
+  return Math.round(value * factor) / factor || 0
+}
+
+/** Percentage value (without the % sign), rounded to the unit. */
+export function formatPercent(value: number | null | undefined): string {
+  return value === null || value === undefined ? 'N/A' : formatNumber(roundTo(value, 0))
+}
+
+/** Tons of CO2, rounded to the tenth. */
+export function formatTons(value: number | null | undefined): string {
+  return value === null || value === undefined ? 'N/A' : formatNumber(roundTo(value, 1))
+}
+
+/** Kilocalories, rounded to the unit. */
+export function formatKcal(value: number | null | undefined): string {
+  return value === null || value === undefined ? 'N/A' : formatNumber(roundTo(value, 0))
+}
+
+export function formatSignedPercent(value: number): string {
+  const rounded = roundTo(value, 0)
+  return `${rounded > 0 ? '+' : ''}${formatNumber(rounded)}%`
 }
 
 export function toMaxDecimals(x: number | null, n: number): number | null {

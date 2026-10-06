@@ -38,41 +38,46 @@ const transportationModes = {
   plane: 'Avion',
   boat: 'Bateau',
 
+  // --- Intermodal ---
+  inter_ma_tp: 'Mobilité active + Transports publics',
+  inter_tim_tp: 'Transports individuels motorisés + Transports publics',
+
   // --- Alternative & Abstract ---
-  avoid: 'Éviter le déplacement',
+  avoid: 'Visioconférence',
   inter: 'Intermodalité',
   combined: 'Combiné',
   other: 'Autre',
   unknown: 'Inconnu',
 }
 
-const simpleLabels = {
-  MA: 'Mobilité active',
-  TP: 'Transports publics',
-  'MA+TP': 'Mobilité active + Transports publics',
-  'MA+TIM': 'Mobilité active + Transports individuels motorisés',
-  'TIM+TP': 'Transports individuels motorisés + Transports publics',
-  TIM: 'Transports individuels motorisés',
+const simpleShortLabels = {
+  MA: 'MA',
+  TP: 'TP',
+  'MA+TP': 'MA+TP',
+  'MA+TIM': 'MA+TIM',
+  'TIM+TP': 'TIM+TP',
+  TIM: 'TIM',
 }
 
 const complexLabels = {
   walking: 'Marche',
   bike: 'Vélo',
   ebike: 'Vélo électrique',
-  pub: 'Transports publics urbains',
+  pub: 'TP Urbains',
   train: 'Train',
+  tp: 'TP',
   moto: 'Moto / scooter',
   car: 'Voiture',
   carpool: 'Covoiturage',
   other: 'Autre',
-  'pub+bike': 'Transports publics + Vélo',
-  'bike+pub': 'Vélo + Transports publics',
-  'pub+car': 'Transports publics + Voiture',
-  'car+pub': 'Voiture + Transports publics',
-  'car+bike': 'Voiture + Vélo',
-  'bike+car': 'Vélo + Voiture',
-  'pub+walk': 'Transports publics + Marche',
-  'walk+pub': 'Marche + Transports publics',
+  'tp+bike': 'TP + Vélo',
+  'bike+tp': 'Vélo + TP',
+  'tp+car': 'TP + TIM',
+  'car+tp': 'TIM + TP',
+  'car+bike': 'TIM + Vélo',
+  'bike+car': 'Vélo + TIM',
+  'tp+walk': 'TP + Marche',
+  'walk+tp': 'Marche + TP',
   other_inter: 'Autre (Intermodal)',
 }
 
@@ -84,6 +89,10 @@ const emissionsLabels = {
   postSaving: 'Total après recommandations',
 }
 
+// Shared by the simple and detailed commute emissions charts.
+const commuteEmissionsDescriptionExample =
+  "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements domicile-travail des participant·e·s. En abscisse sont affichés les nombres de déplacements par année, pour chaque mode de transport (par exemple, {journeys} déplacements par an sont faits avec le mode {mode} chez les participant·e·s). En ordonnée se lisent les émissions de CO₂ par déplacement, pour chaque mode de transport (par exemple, un trajet avec le mode {mode} émet en moyenne {emissionsPerJourney}\u00A0kgCO₂éq). Enfin, l'aire de chaque rectangle donne les émissions totales annuelles pour chaque mode de transport (par exemple, le mode {mode} est responsable de {emissions}\u00A0kgCO₂éq/an pour les déplacements domicile-travail). Ces émissions sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description))."
+
 export default {
   main: {
     brand: 'Mobilyse',
@@ -92,10 +101,11 @@ export default {
     label: 'Organisation',
     actions: 'Mesures employeur',
     employer_measures_description:
-      'Cette section permet d’ajouter, si besoin, des mesures personnalisées mises en place par l’organisation. Lors de la création ou l’édition d’une campagne, celles-ci s’ajouteront aux mesures par défaut qui vous seront proposées.',
+      'Cette section permet de gérer les mesures personnalisées mises en place par l’organisation. Lors de la création ou l’édition d’une campagne, celles-ci s’ajouteront aux mesures par défaut qui vous seront proposées, et de nouvelles mesures personnalisées pourront y être ajoutées.',
     custom_actions: 'Mesures spécifiques',
     custom_actions_hint:
       'Ajouter ou supprimer des mesures employeur personnalisées qui faciliteront la mobilité des collaborateur·trice·s. Ces mesures sont regroupées par mode de transport ou sont globales.',
+    custom_action_campaigns: 'Nombre de campagnes utilisant cette mesure : {n}',
     administrators: 'Administrateur·trice',
     administrators_hint:
       "L'adresse email des administrateur·trice pour cette organisation (tapez Entrée pour ajouter une entrée).",
@@ -128,10 +138,10 @@ export default {
       "Identifiant unique pour l'URL de la campagne (ex. 'printemps-2024-enquete-mobilite'). Seules les lettres, chiffres, tirets et underscores sont autorisés.",
     description: 'Description',
     with_professional_questions: 'Inclure des questions sur les déplacements professionnels',
-    with_professional_questions_hint: "Par défaut, nous vous donnons la possibilité d'étudier les déplacements domicile-travail et les déplacements professionnels des collaborateur·trice·s. Si cette dernière option (déplacements professionnels) ne vous intéresse pas, vous pouvez retirer cette partie du questionnaire avec ce bouton.",
-    with_actions: 'Avec des mesures employeur spécifiques à cette campagne',
+    with_professional_questions_hint:
+      "Par défaut, nous vous donnons la possibilité d'étudier les déplacements domicile-travail et les déplacements professionnels des collaborateur·trice·s. Si cette dernière option (déplacements professionnels) ne vous intéresse pas, vous pouvez retirer cette partie du questionnaire avec ce bouton.",
     employer_measures_hint:
-      'Vous pouvez préciser ici les mesures déjà en place en soutien à la mobilité de vos collaborateur·rice·s. Les mesures qui apparaissent ici sont une sélection de mesures "par défaut" ainsi que les "mesures spécifiques" entrées dans la section précédente "Mesures employeur".',
+      'Vous pouvez préciser ici les mesures déjà en place en soutien à la mobilité de vos collaborateur·rice·s. Les mesures proposées sont une sélection de mesures "par défaut" ainsi que les "mesures spécifiques" de votre organisation. Si une mesure manque, choisissez "Ajouter une nouvelle mesure…" en fin de liste pour la créer : elle sera ajoutée aux mesures spécifiques de l’organisation.',
     rewards: {
       toggle: 'Je souhaite récompenser les participant·e·s.',
       hint: 'Récompenser les collaborateur·trice·s répondant au questionnaire (que ce soit systématiquement ou via un tirage au sort / lotterie) permet d\'obtenir un taux plus élevé de réponses. Si vous souhaitez récompenser les participant·e·s, mobilyse peut fournir une "attestation" (document PDF) à la fin du remplissage du questionnaire à chaque participant·e, qui prouvera sa participation. Le ou la participant·e pourra alors transférer cette attestation auprès de la personne en charge d\'organiser les récompenses. Nous vous proposons de personnaliser le message qui sera affiché sur cette attestation, en expliquant la démarche à suivre (à qui transférer cette preuve, comment récupérer sa récompense, quelles sont les modalités du tirage au sort...).',
@@ -152,6 +162,11 @@ export default {
     nb_employees: 'Nombre de collaborateur·trice·s',
     nb_employees_hint:
       'Fournissez le nombre de collaborateur·trice·s travaillant dans cette organisation ou sur le(s) lieu(x) de travail associé(s) à cette campagne. Cette information est utilisée pour contextualiser les statistiques de mobilité.',
+    parking_provided:
+      "Il y a du stationnement mis à disposition par l'employeur pour les collaborateur·trice·s",
+    parking_paid: 'Ce stationnement est payant pour les collaborateur·trice·s concerné·e·s',
+    parking_details:
+      'Souhaitez-vous ajouter des précisions sur les modalités de gestion de ce stationnement ?',
     csv_missing_columns:
       'Le fichier CSV téléversé est manquant les colonnes requises suivantes : {columns}.',
     import_workplaces_hint:
@@ -183,7 +198,7 @@ export default {
 
 Mobilyse est un outil proposé par la Fondation Modus et l'EPFL pour aider les organisations à adapter les aides à la mobilité proposées aux collaboratrices et collaborateurs. Nous utilisons aujourd'hui cet outil pour comprendre comment vous accompagner au mieux dans votre mobilité quotidienne, que ce soit vos déplacements domicile-travail ou vos déplacements professionnels (dans le cadre de vos fonctions). 🚲🚃🚶🚈
 
-Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10 minutes maximum et l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
+Nous avons pour cela besoin de mieux connaitre vos pratiques et aspirations, et vous invitons à participer en répondant au questionnaire suivant. Cela vous prendra 10\u00A0minutes maximum et l'outil vous donnera directement des suggestions personnalisées pour vos déplacements :
 
 [{surveyLink}]({surveyLink})
 
@@ -213,6 +228,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         title: 'Politique de confidentialité',
         caption: 'En savoir plus sur la politique de confidentialité de mobilyse',
       },
+      vpn: {
+        title: 'Utilisation de mobilyse derrière un VPN',
+        caption:
+          'En savoir plus sur les problèmes potentiels liés à l’utilisation de mobilyse derrière un VPN',
+      },
       terms: {
         title: "Conditions d'utilisation",
         caption: "En savoir plus sur les conditions d'utilisation de mobilyse",
@@ -238,10 +258,6 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         title: "Comment gérer les paramètres d'une organisation ?",
         caption:
           "Un guide pour mettre à jour les informations et les paramètres d'une organisation",
-      },
-      employer_measures: {
-        title: 'Comment gérer les aides à la mobilité par défaut ?',
-        caption: 'Un guide pour gérer les aides employeur pour votre organisation',
       },
       custom_measures: {
         title: 'Comment ajouter des aides à la mobilité personnalisées ?',
@@ -269,6 +285,10 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       settings: {
         title: "Comment gérer les paramètres d'une campagne ?",
         caption: 'Apprenez à créer et à mettre à jour les paramètres de votre campagne',
+      },
+      employer_measures: {
+        title: 'Comment gérer les aides à la mobilité par défaut ?',
+        caption: 'Un guide pour renseigner les aides employeur en place lors de votre campagne',
       },
       share_link: {
         title: 'Comment partager le lien vers le questionnaire ?',
@@ -317,14 +337,12 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
   actions: {
     personnal: 'Personnel',
     professional: 'Professionnel',
+    add_custom: 'Ajouter une nouvelle mesure…',
+    add_custom_title: 'Nouvelle mesure spécifique',
     mesures_globa_label: 'Global',
     mesures_globa_hint: '',
     mesures_tpu_label: 'Transports publics',
     mesures_tpu_hint: '',
-    mesures_train_label: 'Train',
-    mesures_train_hint: '',
-    mesures_inter_label: 'Inter-modalité',
-    mesures_inter_hint: '',
     mesures_velo_label: 'Vélo',
     mesures_velo_hint: '',
     mesures_covoit_label: 'Covoiturage',
@@ -337,8 +355,6 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     mesures_pro_velo_hint: '',
     mesures_pro_tpu_label: 'Transports publics',
     mesures_pro_tpu_hint: '',
-    mesures_pro_train_label: 'Train',
-    mesures_pro_train_hint: '',
     mesures_pro_elec_label: 'Electrique',
     mesures_pro_elec_hint: '',
     budget: 'Budget mobilité',
@@ -352,9 +368,6 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     cff_pass_ag: 'Abonnement train (abonnement général)',
     cff_pass_dtp: 'Abonnement train (demi tarif plus)',
     cff_pass_dt: 'Abonnement train (demi tarif)',
-    pnr_pass: 'Abonnement P+R',
-    shuttle: 'Navette depuis la gare la plus proche',
-    velo_station: 'Abonnement vélo-station',
     bike_subs: "Subvention à l'achat d'un vélo ou vélo électrique",
     shower: 'Douches, casiers et vestiaires',
     bike_parking: 'Stationnement vélo sécurisé',
@@ -383,42 +396,83 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     in_progress: 'En cours',
     completed: 'Terminé',
     pending: 'En attente',
+    options: 'Options',
     filter_by_zone: 'Filtrer par zone',
-    switch_to_carousel: 'Passer en vue carrousel',
+    main_group: 'Groupe principal',
+    compare_with: 'Comparer avec',
+    also_compare_with: 'Comparer également avec',
+    group: {
+      M1: 'Groupe principal',
+      M2: 'Comparer avec',
+      M3: 'Comparer également avec 1',
+      M4: 'Comparer également avec 2',
+      M5: 'Comparer également avec 3',
+    },
+    add_more_comparisons: 'Ajouter des comparaisons',
+    companies_selected:
+      'Aucune entreprise sélectionnée | 1 entreprise sélectionnée | {n} entreprises sélectionnées',
+    campaigns_selected:
+      'Aucune campagne sélectionnée | 1 campagne sélectionnée | {n} campagnes sélectionnées',
+    cross_sectional_longitudinal: 'Transversal ou Longitudinal',
+    longitudinal:
+      'Montrer uniquement les données des participant·e·s ayant participé à tous les groupes',
+    group_info: '{count} participants',
+    too_few_records: 'Données insuffisantes pour : {groups}',
+    modal_evolution: {
+      title: 'Évolution des pratiques modales',
+      description:
+        "Ce graphique montre l'évolution des pratiques modales des participant·e·s présent·e·s dans chacun des groupes.",
+    },
     switch_to_grid: 'Passer en vue grille',
     pdf_report: 'Rapport PDF',
+    include_value_tables: 'Inclure les tableaux de valeurs',
     nb_employees: 'Nombre de participant·e·s',
     percent_employees: '% de participant·e·s',
     total: 'N : {count}',
+    total_participants: 'Nombre de participant·e·s : {count}',
+    total_trips: 'Nombre de trajets : {count}',
     no_data: 'Aucune donnée disponible',
     observed: 'Données des participant·e·s',
     participants_median: 'Médiane des participant·e·s',
     geneva_median: 'Médiane de la région de Genève',
     reference_data: 'Données de référence (canton de Genève)',
-    units: {
-      tco2eq_per_year: 'tCO₂eq/an',
+    table: {
+      category: 'Catégorie',
+      value: 'Valeur',
+      link: 'Liaison',
+      total: 'Total',
     },
+    units: {
+      tco2eq_per_year: 'tCO₂éq/an',
+    },
+    group_emissions_share: '({percent}%)',
+    group_potential_emissions_share: '({percent}% des émissions potentielles de {group})',
     sections: {
       mobility_analysis: {
         title: 'Diagnostic de mobilité',
-        description: `Les graphes ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.
-
-Certains impacts sont aussi calculés :
+        description: `Les graphiques ci-dessous présentent des informations sur les pratiques actuelles de mobilité des participant·e·s: leur répartition géographique, leur usage des modes de transport, leurs équipements et leurs contraintes.`,
+        participation_known:
+          "Le taux de participation au diagnostic est d'environ {percent}%, soit {completed} participations complètes, pour {employees} collaborateur·trice·s annoncé·e·s qui pouvaient répondre à la ou aux campagne·s.",
+        participation_unknown:
+          'Ce diagnostic est réalisé sur la base des {total} réponses enregistrées.',
+        details: `Certains impacts sont aussi calculés :
 - sur l'environnement, via les émissions de gaz à effet de serre calculées avec les facteurs mobi-tools [(source)](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)
-- sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150 minutes en effort modéré (vélo/marche rapide) par semaine, soit 150kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
+- sur la santé des participant·e·s, via les dépenses énergétiques (metabolic equivalent task) quotidiennes moyennes lors des déplacements. Les recommandations de la Confédération et l'OMS préconisent 150\u00A0minutes en effort modéré (vélo/marche rapide) par semaine, soit 150\u00A0kcal/jour. [(source)](https://www.who.int/fr/news-room/fact-sheets/detail/physical-activity). Le manque d'activité physique a des effets directs sur la santé physique et mentale (psychique, cognitive), et impacte ainsi directement le bien-être des collaborateur·trice·s, les taux d'arrêts maladie, la productivité ou encore l'ambiance de travail.`,
       },
       mobility_potentials: {
         title: 'Potentiels de mobilité',
-        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphes illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
+        description: `Cette section expose les recommandations personnalisées suggérées aux participant·e·s. Mobilyse indique ainsi quels modes sont les plus susceptibles de convenir aux participant·e·s en fonction de leurs habitudes, contraintes, désirs, localisation résidentielle et de travail… Certains graphiques illustrent également les gains potentiels en matière d'impact sur les émissions de gaz à effet de serre et de santé, dans le cas où tou·te·s les participant·e·s adopteraient les recommandations formulées par mobilyse.`,
         insights: {
           most_potential:
-            "Le mode de transport avec le plus fort potentiel d'utilisateur·trices est : **{mode}** (recommandé à **{percentage}%** des participant·e·s ayant répondu)",
+            "Le mode de transport avec le plus fort potentiel d'utilisateur·trice·s est : **{mode}** (recommandé à environ **{percentage}%** des participant·e·s)",
           biggest_emission_reduction:
-            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction} {unit}**, soit **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
+            'Le mode de transport permettant de générer la plus forte baisse des émissions de CO2 est : **{mode}** pour une réduction de **{reduction}\u00A0{unit}**, soit environ **{percentage}%** du gain total potentiel pour les participant·e·s ayant répondu.',
           biggest_emission_reduction_extrapolation:
-            'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction} {unit}**.',
+            'En extrapolant aux **{collaborators_count}** collaborateur·trice·s de votre organisation, cette réduction est estimée à **{reduction}\u00A0{unit}**.',
           biggest_physical_activity_gain:
-            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**. Ce scénario permet à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150 kcal/jour/pers).",
+            "Le mode de transport permettant d'augmenter le plus l'activité physique des participant·e·s est : **{mode}**.",
+          who_level_gain:
+            "Suivre l'ensemble des recommandations permettrait à **{collaborators_count}** participant·e·s supplémentaires d'atteindre le niveau de dépenses physiques recommandées par l'OMS par jour (150\u00A0kcal/jour/pers).",
         },
       },
       behavioural_changes: {
@@ -430,10 +484,19 @@ Certains impacts sont aussi calculés :
     },
     equipments: {
       title: 'Équipements de mobilité',
+      description:
+        "Ce graphique montre les équipements de mobilité à disposition des participant·e·s pour leurs déplacements domicile-travail. Ces données sont comparées aux données de référence, issues du Microrecensement Mobilité et Transports de 2021, pour le canton de Genève.\n\nDans un autre graphique ci-après, la possession des équipements est croisée avec les recommandations formulées par Mobilise aux participant·e·s. Cela permet de comprendre si les personnes à qui Mobilyse recommande un mode de transport dispose déjà de l'équipement nécessaire pour adopter cette recommandation.\n\nLe détail des autres équipements est accessible en téléchargeant le détail des données.",
+      description_comparison:
+        'Ce graphique illustre le taux de possession d’équipements de mobilité par groupe de campagne(s).',
       labels: {
         bike: 'Vélo',
         upt_subs: 'Abonnement de transports\npublics urbains',
+        tpu_unireso: 'Unireso',
+        tpu_leman_pass: 'Léman Pass',
         train_subs: 'Abonnement de train',
+        train_demi_tarif: 'Demi-tarif',
+        train_abo_gen: 'Abonnement général',
+        sncf: 'Abonnement SNCF',
         car_driver: 'Voiture (en tant que conducteur)',
         moto: 'Moto / scooter / cyclomoteur',
         ebike: 'Vélo à assistance électrique',
@@ -441,12 +504,17 @@ Certains impacts sont aussi calculés :
         car_passenger: 'Voiture (en tant que passager)',
         car: 'Voiture (conducteur/passager)',
         ev: 'Véhicule électrique',
+        other: 'Autre',
       },
       mrmt_source:
         'Données de référence, canton de Genève [Microrecensement Mobilité et Transports, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
     },
     constraints: {
       title: 'Contraintes de mobilité',
+      description:
+        'Ce graphique montre les contraintes de mobilité avec lesquelles les participant·e·s doivent composer plusieurs fois dans la semaine, pour se rendre au travail. Le détail des contraintes "Autre" est disponible en téléchargeant les données désagrégées.',
+      description_comparison:
+        'Ce graphique montre les contraintes impactant la mobilité pendulaire des participant·e·s, par groupe de campagne(s).',
       labels: {
         dependent: 'Emmener des enfants\nou des personnes dépendantes',
         heavy: 'Transport de matériel\nlourd ou encombrant',
@@ -460,38 +528,78 @@ Certains impacts sont aussi calculés :
           'Le détail des autres contraintes est accessible en téléchargeant le détail des données.',
       },
     },
-    locationsHeatmap: {
+    locations_heatmap: {
       title: 'Répartition géographique des lieux de résidence et de travail',
       households: 'Lieux de domicile',
       households_number: 'Nombre de domiciles',
       workplaces: 'Lieux de travail enregistrés',
+      group_workplaces: 'Lieux de travail — {group}',
+      flows: 'Flux domicile → travail (cliquer sur un lieu pour les afficher)',
+      participants: '{n} participant·e | {n} participant·e·s',
+      unnamed_workplace: 'Lieu de travail sans nom',
+      reset_selection: 'Réinitialiser la sélection',
+      description:
+        'Ce graphique montre la répartition géographique des lieux de résidence des participant·e·s, ainsi que leurs lieux de travail. Ces lieux de résidence sont groupés par zone afin de ne pas afficher de données personnelles. Cliquez sur un lieu de travail (ou de domicile) pour afficher les flux qui y sont rattachés ; cliquez à nouveau, ou appuyez sur Échap, pour réinitialiser.',
     },
     travel_time: {
       title: 'Temps de trajet',
+      description:
+        'Ce graphique montre le temps de trajet domicile-travail déclaré par les participant·e·s pour se rendre au travail depuis leur lieu de domicile (seul le trajet aller est représenté).',
       xaxis: 'Temps (min)',
       texts: {
         default:
-          'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30 minutes (enquête Modus, 2024)',
+          'Le temps de trajet domicile-travail médian sur le canton de Genève est de 30\u00A0minutes (enquête Modus, 2024)',
         specific:
-          'Le temps de trajet domicile-travail médian des participant·e·s est de {median} minutes.',
+          'Le temps de trajet domicile-travail médian des participant·e·s est de {median}\u00A0minutes.',
+        comparison_item: '{median}\u00A0minutes ({name})',
+        comparison:
+          'Ce graphique montre les temps de trajets domicile-travail des participant·e·s, pour chaque groupe. Les temps de trajets médians sont de {list}. Le temps de trajet domicile-travail médian sur le canton de Genève est de 30\u00A0minutes (enquête Modus, 2024).',
       },
     },
     reco_inter: {
-      title: 'Répartition modale potentielle',
+      title: 'Répartition modale potentielle (détaillée)',
+      description:
+        "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le mode qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
       labels: {
         ...transportationModes,
       },
+      texts: {
+        specific: 'Par exemple, {mode} a été recommandé à environ {percent}% des participant·e·s.',
+        comparison:
+          'Ce graphique montre la répartition modale potentielle des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
+      },
+    },
+    reco_simple: {
+      title: 'Répartition modale potentielle (simple)',
+      description:
+        "Ce graphique montre la répartition modale potentielle des participant·e·s, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Le type de mobilité simplifié qui lui a été recommandé pour ses déplacements domicile-travail est affecté à chaque participant·e.",
+      labels: {
+        ...simpleShortLabels,
+      },
+      texts: {
+        specific: 'Par exemple, {mode} a été recommandé à environ {percent}% des participant·e·s.',
+        comparison:
+          'Ce graphique montre la répartition modale potentielle des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
+      },
     },
     reco_pros: {
-      title: 'Recommandations (professionnel)',
+      title: 'Recommandations (déplacements professionnels)',
+      description:
+        "Ce graphique montre les solutions de mobilité proposées pour les déplacements professionnels. Contrairement aux recommandations pour les déplacements domicile-travail pour lesquelles on assigne à chaque personne la recommandation principale qui lui a été faite (une personne = une recommandation), on affiche ici les recommandations à l'échelle du déplacement (un déplacement déclaré = une recommandation).",
       labels: {
         ...transportationModes,
+      },
+      texts: {
+        specific:
+          'Ce graphique indique la répartition de recommandations faites, par déplacement professionnel renseigné. La recommandation pertinente pour le plus grand nombre de déplacements professionnels est : {mode}. Par exemple, {mode} a été recommandé pour environ {percent}% des déplacements professionnels.',
       },
     },
     freq_mod: {
       title: 'Répartition modale',
       title_simple: 'Répartition modale (simple)',
       title_detailed: 'Répartition modale (détaillée)',
+      description:
+        'Ce graphique montre la part des participant·e·s utilisant principalement chaque mode, sur leur déplacement domicile-travail.',
       title_mrmt: 'Données de référence (canton de Genève)',
       labels: {
         ...transportationModes,
@@ -505,13 +613,23 @@ Certains impacts sont aussi calculés :
           'Le mode Voiture est le mode le plus utilisé dans le canton de Genève ([Microrecensement Mobilité et Transports, 2015](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)).',
         specific:
           'Le mode {top_1} est le plus utilisé par les participant·e·s, suivi de {top_2} et {top_3}.',
+        comparison:
+          'Ce graphique montre la répartition modale des participant·e·s. La différence la plus marquée entre les campagnes {lastGroup} et {prevGroup} concerne le mode : {mode} ({diff}).',
+        ref: 'Données de référence, canton de Genève [Microrecensement Mobilité et Transports, 2023](https://statistique.ge.ch/tel/publications/2023/analyses/communications/an-cs-2023-71.pdf)',
       },
     },
     freq_mod_pro: {
       title: 'Répartition modale (déplacements professionnels)',
+      description:
+        'Ce graphique montre la répartition modale des déplacements professionnels, par échelle géographique.',
+      texts: {
+        comparison:
+          "Par exemple, à l'échelle locale, les modes actifs (vélos et marche) sont utilisés pour environ {percent}% des déplacements professionnels pour le groupe {lastGroup}.",
+      },
       xaxis: 'Trajets par année',
       labels: {
         ...transportationModes,
+        ...simpleShortLabels,
         local: 'Local',
         region: 'Régional',
         national: 'National',
@@ -521,6 +639,8 @@ Certains impacts sont aussi calculés :
     },
     emissions_freq_mod: {
       title: 'Émissions de CO₂ par mode de transport',
+      description:
+        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements domicile-travail des participant·e·s. En abscisse se lit le nombre de trajets effectués par mode de transport, par année. En ordonnée se trouvent les émissions carbone par trajet effectué. L'aire de chaque rectangle correspond ainsi aux émissions de chaque mode de transport par année, en tCO2éq, qui sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
       yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
       xaxis: 'Trajets par année',
       labels: {
@@ -529,11 +649,62 @@ Certains impacts sont aussi calculés :
       },
       texts: {
         specific:
-          "{carMotoJourneysPercentage}% des trajets des participant·e·s sont réalisés en voiture/moto/scooter, représentant {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
+          "Environ {carMotoJourneysPercentage}% des trajets des participant·e·s sont réalisés en voiture/moto/scooter, représentant environ {carMotoEmissionsPercentage}% des émissions de CO₂ annuelles pour l'entreprise.",
+      },
+    },
+    emissions_freq_mod_simple: {
+      title: 'Émissions de CO₂ (simple)',
+      description_example: commuteEmissionsDescriptionExample,
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
+      xaxis: 'Trajets par année',
+      labels: {
+        ...simpleShortLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        comparison:
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue}\u00A0tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue}\u00A0tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
+      },
+    },
+    emissions_freq_mod_complex: {
+      title: 'Émissions de CO₂ (détail)',
+      description_example: commuteEmissionsDescriptionExample,
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
+      xaxis: 'Trajets par année',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        comparison:
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue}\u00A0tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue}\u00A0tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
+      },
+    },
+    emissions_reco_mod: {
+      title: 'Émissions potentielles liées aux déplacements pendulaires',
+      description:
+        'Ce graphique affiche le potentiel d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
+    },
+    emissions_reco_mod_simple: {
+      title: 'Émissions potentielles liées aux déplacements pendulaires (simple)',
+      comparison_yaxis: 'Émissions potentielles (tCO₂éq/an)',
+      labels: {
+        ...simpleShortLabels,
+        ...emissionsLabels,
+      },
+    },
+    emissions_reco_mod_complex: {
+      title: 'Émissions potentielles liées aux déplacements pendulaires (détail)',
+      comparison_yaxis: 'Émissions potentielles (tCO₂éq/an)',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
       },
     },
     emissions_reductions_mod: {
-      title: 'Potentiel de réduction sur les émissions liées aux déplacements pendulaires',
+      title: 'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires',
+      description:
+        "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -542,41 +713,100 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod_simple: {
+      title:
+        'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (simple)',
+      yaxis: 'Émissions évitées (kgCO₂éq)',
+      xaxis: 'Mode recommandé',
+      series: 'Réduction potentielle',
+      labels: {
+        ...emissionsLabels,
+      },
+      texts: {
+        specific:
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+      },
+    },
+    emissions_reductions_mod_complex: {
+      title:
+        'Gains potentiels par mode sur les émissions liées aux déplacements pendulaires (détail)',
+      yaxis: 'Émissions évitées (kgCO₂éq)',
+      xaxis: 'Étiquette détaillée actuelle',
+      series: 'Réduction potentielle',
+      labels: {
+        ...emissionsLabels,
+      },
+      texts: {
+        specific:
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu. Cela correspond à {cheeseburgers} cheeseburgers, ou encore à la fabrication de {vacuum} aspirateurs ou {shirt} chemises en coton [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     emissions_reductions_share: {
       title: "Répartition des gains d'émissions par mode de transport",
+      description:
+        'Ce graphique affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
       series: 'Réduction potentielle',
       labels: {
         ...transportationModes,
         ...emissionsLabels,
       },
       texts: {
-        default:
-          'Ce graphe affiche la part de réduction d’émissions de CO₂éq correspondant à chaque mode recommandé, dans le cas où les participant·e·s suivraient les recommandations.',
         specific:
-          "{percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
+          "Environ {percentage}% de réduction potentielle dépendent d'une recommandation principale {mode}.",
       },
     },
-    emissions_freq_mod_pro: {
-      title: 'Émissions de CO₂ par mode de transport (déplacements professionnels)',
-      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
-      xaxis: 'Trajets par année',
+    emissions_reductions_share_simple: {
+      title: "Répartition des gains d'émissions (simple)",
+      series: 'Réduction potentielle',
       labels: {
-        ...transportationModes,
+        ...simpleShortLabels,
         ...emissionsLabels,
       },
       texts: {
         specific:
-          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {firstMode} émet en moyenne {firstEmissions}kgCO₂éq/trajet, contre moins de {remainingEmissions}kgCO₂éq/trajet pour les autres.',
+          'Environ {percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
+      },
+    },
+    emissions_reductions_share_complex: {
+      title: "Répartition des gains d'émissions (détail)",
+      series: 'Réduction potentielle',
+      labels: {
+        ...complexLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        specific:
+          'Environ {percentage}% de réduction potentielle dépendent des trajets actuellement étiquetés {mode}.',
+      },
+    },
+    emissions_freq_mod_pro: {
+      title: 'Émissions de CO₂ par mode de transport (déplacements professionnels)',
+      description:
+        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse se lit le nombre de trajets effectués par mode de transport, par année. En ordonnée se trouvent les émissions carbone par trajet effectué. L'aire de chaque rectangle correspond ainsi aux émissions de chaque mode de transport par année, en tCO2éq, qui sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
+      description_example:
+        "Ce graphique montre les émissions dues à chaque mode de transport pour les déplacements professionnels des participant·e·s. En abscisse sont affichés les nombres de déplacements professionnels par année, pour chaque mode de transport (par exemple, {journeys} déplacements par an sont faits avec le mode {mode} chez les participant·e·s). En ordonnée se lisent les émissions de CO₂ par déplacement, pour chaque mode de transport (par exemple, un trajet avec le mode {mode} émet en moyenne {emissionsPerJourney}\u00A0kgCO₂éq). Enfin, l'aire de chaque rectangle donne les émissions totales annuelles pour chaque mode de transport (par exemple, le mode {mode} est responsable de {emissions}\u00A0kgCO₂éq/an pour les déplacements professionnels). Ces émissions sont calculées grâce aux facteurs d'émissions Mobi-tools, référence en Suisse ([lien](https://www.i14y.admin.ch/fr/catalog/dataservices/171b09a4-5b5f-4577-8921-3af7fc6eee39/description)).",
+      yaxis: 'Émissions CO₂ par trajet (kgCO₂éq)',
+      xaxis: 'Trajets par année',
+      labels: {
+        ...transportationModes,
+        ...simpleShortLabels,
+        ...emissionsLabels,
+      },
+      texts: {
+        specific:
+          '{firstPercent}% des émissions sont dues à {firstMode}, {secondPercent}% à {secondMode}. Chaque trajet en {perJourneyMode} émet en moyenne {perJourneyEmissions}\u00A0kgCO₂éq/trajet, contre moins de {remainingEmissions}\u00A0kgCO₂éq/trajet pour les autres.',
+        comparison:
+          "Ce graphique compare les émissions de CO₂ par mode de transport et par groupe de campagne(s). Par exemple, dans le groupe {lastGroup}, le mode {mode} est responsable d'environ {lastValue}\u00A0tCO₂éq/an (soit environ {lastPercent}% des émissions de ce groupe) ; comparé à environ {prevValue}\u00A0tCO₂éq/an (environ {prevPercent}%) pour le groupe {prevGroup}.",
       },
     },
     emissions_reductions_mod_pro: {
       title: 'Potentiel de réduction sur les émissions liées aux déplacements professionnels',
+      description:
+        "Ce graphique montre la diminution des émissions CO₂ allouée à chaque recommandation pour les déplacements professionnels, dans le cas où les participant·e·s suivent celles-ci : c'est le gain potentiel total en termes d'émissions.",
       yaxis: 'Émissions évitées (kgCO₂éq)',
       xaxis: 'Mode recommandé',
       series: 'Réduction potentielle',
@@ -584,17 +814,15 @@ Certains impacts sont aussi calculés :
         ...emissionsLabels,
       },
       texts: {
-        default:
-          "Ce graphe montre la diminution des émissions CO₂ allouée à chaque recommandation, dans le cas où les participant·e·s suivent celles-ci : c'est le potentiel gain en termes d'émissions.",
         specific:
-          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions} {unit} / an sur les participant·e·s ayant répondu. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour} heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
+          'Les recommandations permettraient de passer de {current_emissions} à {new_emissions}\u00A0{unit} / an sur les participant·e·s ayant répondu, diminuant de {percent}% les émissions liées aux déplacements professionnels. Cela correspond à la fabrication de {laptop} ordinateurs portables, à l’envoi de {email_sent} emails ou à {visio_hour}\u00A0heures de visioconférence [source : [https://impactco2.fr/doc](https://impactco2.fr/doc)].',
       },
     },
     mod_reco: {
       title: 'Recommandations de report modal',
+      description:
+        'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche). Chaque participant·e est compté·e une seule fois, sur son déplacement domicile-travail principal (le plus fréquent).',
       texts: {
-        default:
-          'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
         specific:
           'Le mode "{mode}" semble être le mode de transport le plus pertinent pour les participant·e·s.',
       },
@@ -603,40 +831,51 @@ Certains impacts sont aussi calculés :
       title: 'Recommandations de changement modal (professionnel)',
       texts: {
         default:
-          'Ce graphe montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
+          'Ce graphique montre quels modes de transport ont été recommandés (à droite) en fonction du mode utilisé actuellement (à gauche).',
         specific:
           'Le mode "{mode}" semble être le mode de transport comportant le potentiel de report modal le plus élevé.',
       },
     },
     energy_journey: {
       title_current: 'Dépenses énergétiques quotidiennes moyennes lors des déplacements',
+      description_current:
+        'Ce graphique montre les dépenses énergétiques quotidiennes dues aux déplacements domicile-travail (aller et retour) de chaque participant·e, en kcal/jour, en se basant sur le compendium des activités physiques qui donne les dépenses énergétiques par activité et par durée (lien : https://pacompendium.com/).',
       title_reco: 'Dépenses énergétiques quotidiennes moyennes potentielles lors des déplacements',
+      description_reco:
+        "Ce graphique montre les dépenses énergétiques quotidiennes potentielles qui seraient dues aux déplacements domicile-travail de chaque participant·e, en kcal/jour, dans l'hypothèse où tous·te·s les participant·e·s adoptent les recommandations faites par Mobilyse. Les dépenses sont basées sur le compendium des activités physiques qui donne les dépenses énergétiques par activité et par durée (lien : https://pacompendium.com/). Chaque barre représente un·e participant·e.",
       title_share:
         'Modes de transport avec le potentiel de gain le plus élevé en matière de dépenses énergétiques ',
-      yaxis: 'Énergie dépensée (kcal/jour/pers)',
+      description_share:
+        "Ce graphique montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
+      yaxis: 'Énergie dépensée (kcal/jour)',
       xaxis: 'Ensemble des participant·e·s (trié·e·s par énergie dépensée)',
-      whoMin: 'Activité physique minimum recommandée par l’OMS',
-      participantsAverage: 'Activité physique moyenne des participants',
+      who_above_count: "Participant·e·s au-dessus de la recommandation de l'OMS",
+      whoMin: 'Dépense énergétique quotidienne recommandée par l’OMS (150\u00A0kcal/jour)',
+      participantsAverage: 'Dépense énergétique quotidienne moyenne des participant·e·s',
       texts: {
         default:
-          "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150 kcal/jour/pers, soit l'équivalent de 37 min de marche, 23min de fitness ou 14min de football par jour.",
+          "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150\u00A0kcal/jour/pers, soit l'équivalent de 37\u00A0min de marche, 23\u00A0min de fitness ou 14\u00A0min de football par jour.",
         specific_current:
-          'Actuellement, les participant·e·s dépensent en moyenne {energy} kcal/jour/pers pour leurs déplacements domicile-travail.',
-        specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy} kcal/jour/pers (l'équivalent de {yoga_min} minutes de yoga par personne et par jour).
+          'Actuellement, les participant·e·s dépensent en moyenne {energy}\u00A0kcal/jour/pers pour leurs déplacements domicile-travail.',
+        specific_reco: `Si les recommandations faites par Mobilyse sont suivies, la dépense énergétique moyenne augmentera de {added_energy}\u00A0kcal/jour/pers (l'équivalent de {yoga_min}\u00A0minutes de yoga par personne et par jour).
           De plus, {count} personnes supplémentaires passeront au-dessus des recommandations d’activité physique journalière de l’OMS. Le taux des participant·e·s dépensant au moins ce que recommande l'OMS grâce aux déplacements domicile-travail passerait d'environ {percent_current}% actuellement à environ {percent_potential}% potentiellement.`,
-        default_share:
-          "Ce graphe montre quels sont les modes recommandés qui amélioreraient le plus l'activité physique des participant·e·s.",
         specific_share:
-          "{percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
+          "Environ {percentage}% de l'amélioration de l'activité physique des participant·e·s viendrait de {mode}.",
+        comparison:
+          "Ce graphique montre l'énergie quotidienne dépensée en moyenne par les participant·e·s dans leurs déplacements domicile-travail, par groupe de campagnes (axe de gauche). Il montre aussi le nombre (ou la part) de personnes qui atteignent le seuil de 150\u00A0kcal/jour recommandé par l'Organisation Mondiale de la Santé (par exemple, il s'agit de {lastCount} participant·e·s (environ {lastPercent}% des participant·e·s) pour le groupe {lastGroup} comparé à {prevCount} participant·e·s (environ {prevPercent}%) pour le groupe {prevGroup}).",
       },
     },
     behavior_change_levers: {
       title: 'Mesures souhaitées pour adopter les recommandations de mobilité durable formulées',
       labels: {
         finance: 'Aides financières',
+        test: 'Périodes de test',
+        coaching: 'Accompagnement personnalisé',
+        events: 'Evènements autour de la mobilité',
+        company_vehicle: "Véhicule d'entreprise",
         flexibility: 'Flexibilité',
         collective: 'Changement collectif',
-        environment: 'Aménagement environnement',
+        environment: 'Ajustements et équipements des espaces de travail',
         autres: 'Autres',
         total: 'Total',
 
@@ -644,10 +883,12 @@ Certains impacts sont aussi calculés :
         allModes: 'Tous les modes',
       },
       texts: {
-        info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
+        info: "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
         default:
-          "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
+          'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",
+        comparison:
+          "Ce graphique compare les mesures d'accompagnement souhaitées par les participant·e·s, par mode et par groupe de campagnes. Par exemple, tous modes confondus, la mesure « {lever} » est souhaitée par environ {lastPercent}% des participant·e·s à {lastGroup}, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.",
       },
     },
     behavior_change_motivation: {
@@ -665,25 +906,36 @@ Certains impacts sont aussi calculés :
         total: 'Total',
       },
       texts: {
-        info: 'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
+        info: 'Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
         default:
-          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail.',
+          'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific:
-          'Ce graphe montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par Mobilyse pour leur déplacement domicile-travail, en fonction du mode recommandé. Au total, {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
+          'Au total, environ {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
+        comparison:
+          'Ce graphique compare les motivations des participant·e·s pour utiliser les modes recommandés par Mobilyse au cours des différentes campagnes sélectionnées. Par exemple, environ {lastPercent}% des participant·e·s à qui on a recommandé le mode {mode} lors de {lastGroup} sont plutôt motivé·e·s* pour adopter cette recommandation, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.\n\n&ast; plutôt motivé·e·s ou très motivé·e·s',
+        comparison_all_modes:
+          'Ce graphique compare les motivations des participant·e·s pour utiliser les modes recommandés par Mobilyse au cours des différentes campagnes sélectionnées. Par exemple, tous modes confondus, environ {lastPercent}% des participant·e·s à {lastGroup} sont plutôt motivé·e·s* pour adopter les recommandations qui leur sont faites, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.\n\n&ast; plutôt motivé·e·s ou très motivé·e·s',
       },
     },
     equipments_by_recommendations: {
+      axis: {
+        equipments: 'Équipements possédés par les participant·es',
+        recommendations: 'Recommandations formulées',
+      },
       title: 'Équipements par recommandations',
       tooltip: `{count} des participant·e·s qui ont obtenu la recommandation "{reco}" sont équipés avec "{equipment}".<br />
-      Cela représente {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".
+      Cela représente environ {percentage}% des participant·e·s ayant obtenu la recommandation "{reco}".
       `,
-      simpleMode: 'Mode simple',
+      simpleMode: 'Équipements correspondant uniquement aux recommandations',
       labels: {
         ...transportationModes,
 
         mob_subs: "Abo. d'autopartage",
-        train_subs: 'Abo. de train',
-        upt_subs: 'Abo. de transports publics',
+        tpu_unireso: 'Unireso',
+        tpu_leman_pass: 'Léman Pass',
+        train_demi_tarif: 'Demi-tarif',
+        train_abo_gen: 'Abo. général',
+        sncf: 'Abo. SNCF',
         inter: 'Intermodalité',
         tpu: 'Transports publics',
 
@@ -693,18 +945,47 @@ Certains impacts sont aussi calculés :
         default:
           'Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou si il serait pertinent de les aider à y avoir accès.',
         specific:
-          'Par exemple, {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation.',
+          'Par exemple, environ {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation.',
         hover_hint: 'Passez la souris sur les cellules pour plus de détails',
+      },
+    },
+    pt_pass_reco: {
+      title: 'Abonnements de transports publics recommandés',
+      recommended: 'Abonnements recommandés',
+      equipped: 'Participant·e·s déjà équipé·e·s',
+      not_equipped_series: '{group}, pas encore équipé·e·s',
+      xaxis: "Type d'abonnement",
+      tooltip: {
+        recommended: 'Recommandé à {count} participant·e·s',
+        equipped: '{count} sont déjà équipé·e·s ({percentage}%)',
+        group_recommended: 'recommandé à {count} participant·e·s ({percentage}%)',
+        group_equipped: '{count} déjà équipé·e·s ({percentage}%)',
+      },
+      labels: {
+        unireso: 'Unireso',
+        leman: 'Léman Pass',
+        cff: 'CFF',
+        sncf: 'SNCF',
+        other: 'Autre abonnement',
+      },
+      texts: {
+        default:
+          "Ce graphique montre le nombre d'abonnements de transports publics recommandés aux participant·e·s. Les personnes n'étant pas déjà équipées d'abonnements pourraient nécessiter un accompagnement pour utiliser ce service.",
+        comparison:
+          "Ce graphique compare, entre les groupes de campagnes, la part de participant·e·s à qui un abonnement de transports publics est recommandé. La partie pleine d'une barre correspond aux personnes déjà équipées, la partie estompée à celles qui pourraient nécessiter un accompagnement pour utiliser ce service.",
+        equipped_unknown_note:
+          "La question sur les équipements ne liste que des abonnements suisses : pour {passes}, l'équipement déjà détenu n'est pas collecté, aucune barre intérieure n'est donc affichée.",
       },
     },
   },
   transportation_modes: {
     ...transportationModes,
+    ...simpleShortLabels,
   },
   simple_labels: {
-    ...simpleLabels,
+    ...simpleShortLabels,
   },
-  comlex_labels: {
+  complex_labels: {
     ...complexLabels,
   },
   record: {
@@ -730,7 +1011,7 @@ Certains impacts sont aussi calculés :
       transport: 'Transports',
       commerce: 'Commerce',
     },
-    minutes: '{count} min',
+    minutes: '{count}\u00A0min',
     raw_data: 'Données enregistrées',
     data: 'Données collectées',
     typo: 'Données de typologie modale',
@@ -739,31 +1020,50 @@ Certains impacts sont aussi calculés :
     typo_reco_actions: 'Actions recommandées',
     typo_reco_pro_actions: 'Actions recommandées (professionnel)',
   },
-  draw_mode: {
-    simple_select_hint:
-      'Cliquez sur le bouton polygone en haut à droite de la carte pour commencer à dessiner une zone. Les zones existantes seront supprimées.',
-    direct_select_hint:
-      'Vous êtes en train de modifier le polygone. Faites glisser les points pour ajuster la forme.',
-    draw_polygon_hint:
-      'Cliquez sur la carte pour ajouter des points à votre polygone. Double-cliquez pour terminer le dessin.',
+  boundary_select: {
+    hint: 'Cliquez sur une zone de la carte pour filtrer selon cette zone. Cliquez à nouveau dessus pour retirer le filtre.',
     zoom_hint: 'Pour zoomer, utilisez la molette de la souris',
   },
   map_filter: {
     workplaces: {
       title: 'Filtre des lieux de travail',
-      hint: 'Dessinez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
+      hint: 'Sélectionnez une zone pour ne filtrer que les lieux de travail situés dans cette zone.',
     },
   },
   data_protection_notice: {
+    title: 'Confidentialité des données',
+    content: `Les résultats auxquels vous allez accéder contiennent uniquement des données fournies volontairement, anonymisées et agrégées par campagne et zones géographiques. Aucune donnée personnelle n'est disponible.
+
+Cependant, nous ne pouvons exclure qu'en cas de faible nombre de participant·e·s, il soit possible d'identifier indirectement, en croisant avec des données extérieures propres à votre organisation, un·e participant·e.
+
+En accédant aux résultats, vous acceptez de les traiter sous contrôle des bases légales valables, en particulier en respectant la confidentialité des données et sans chercher l'identification des participant·e·s sans base légale valable.
+
+Dernière modification : Août 2026.`,
+  },
+  database_data_protection_notice: {
     title: 'Notice sur la protection des données',
-    content: `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l’outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
+    content: `La base de données que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil Mobilyse contient des données désagrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
 
-Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n’est pas exclu que certaines données agrégées permettent, directement ou indirectement, d’identifier une ou plusieurs personnes.
-Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l’UE).
+Cependant, il n'est pas exclu que certaines données désagrégées permettent, indirectement, d'identifier une ou plusieurs personnes.
 
-En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l’identification individuelle d’une collaboratrice ou d'un collaborateur sans base légale valable.
+Dans ce cas, la base de données pourrait contenir des données soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE), dans le cas où vous choisiriez de les croiser avec d'autres sources de données en votre possession.
 
-Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en conséquence.
+En acceptant de télécharger cette base de données, vous vous engagez à la traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l'identification individuelle d'une collaboratrice ou d'un collaborateur sans base légale valable.
+
+Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en conséquence.
+
+Dernière mise à jour : mars 2026`,
+  },
+  report_data_protection_notice: {
+    title: 'Notice sur la protection des données',
+    content: `Le rapport que nous allons vous transmettre dans le cadre de la campagne lancée via l'outil mobilyse contient des données agrégées, résultant des réponses fournies de manière volontaire et anonyme par vos collaborateur·trice·s.
+
+Cependant, en fonction de la taille de votre organisation et de la structure des réponses, il n'est pas exclu que certaines données agrégées permettent, directement ou indirectement, d'identifier une ou plusieurs personnes.
+Dans ce cas, le rapport pourrait contenir des données personnelles, soumises à la législation applicable en matière de protection des données (telle que la Loi fédérale sur la protection des données, ou le RGPD si des participant·e·s sont établi·e·s dans l'UE).
+
+En acceptant de recevoir ce rapport, vous vous engagez à le traiter dans le respect de ces dispositions légales, notamment en garantissant la confidentialité des données et en évitant toute utilisation permettant l'identification individuelle d'une collaboratrice ou d'un collaborateur sans base légale valable.
+
+Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en conséquence.
 
 *Dernière mise à jour : mars 2026*`,
   },
@@ -782,12 +1082,10 @@ Par ailleurs, nous vous recommandons d’adapter votre registre du traitement en
     no_charts_to_export: 'Aucun graphique à exporter en PDF.',
   },
   footer: {
-    modus: `[Fondation Modus
-Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
-    epfl: `
-[Laboratoire de sociologie urbaine (LASUR)](https://www.epfl.ch/labs/lasur/)
-
-[ENAC-IT4R](https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/)`,
+    modus_name: 'Fondation Modus',
+    modus_tagline: 'Pour une mobilité durable à Genève',
+    lasur: 'Laboratoire de sociologie urbaine (LASUR)',
+    it4r: 'ENAC-IT4R',
   },
   generated_report: {
     title: 'Rapport de mobilité',
@@ -801,7 +1099,7 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
 
 ---
 
-¹ **Liste de conseillers spécialisés et informations complémentaires :** Mobility Management Suisse
+¹ **Liste de conseillers spécialisés et informations complémentaires :** [Mobility Management Suisse](https://mms-gms.ch/f/conseil-specialise)
 ² **Soutien financier ou ressources :** programmes communaux et cantonaux ([Plan de mobilité - ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite) ; [SIL - rsGE H 1 21.03 : Règlement sur les plans de mobilité d'entreprise (RPMob)](https://silgeneve.ch/legis/index.aspx)), programmes fédéraux ([Promotion d'initiatives de mobilité durable dans les entreprises](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5), etc.`,
   },
   action: 'Mesure',
@@ -827,7 +1125,7 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
   campaign_removed: 'Campagne supprimée',
   content: 'Contenu',
   doc: 'Documentation',
-  dashboard: 'Tableau de bord',
+  dashboard: 'Résultats',
   data: 'Données',
   download_csv: 'Télécharger CSV',
   overview: 'Vue d’ensemble',
@@ -846,7 +1144,9 @@ Pour une mobilité durable à Genève](https://www.modus-ge.ch)`,
   group: 'Groupe',
   help: 'Aide',
   identifier: 'Identifiant',
-  welcome: 'Bienvenue !',
+  welcome: "Bienvenue dans l'interface d'administration de Mobilyse !",
+  welcome_subtitle:
+    'Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateur·trice·s, et consulter les statistiques de mobilité. La section Documentation est notamment à votre disposition pour vous renseigner et vous guider sur les différentes fonctionnalités de Mobilyse.',
   introduction_text: `Bienvenue dans l'interface d'administration de Mobilyse !
 Utilisez le menu pour naviguer à travers les différentes sections et gérer les organisations, les campagnes, les utilisateurs, et consulter les statistiques de mobilité. La section Documentation est notamment à votre disposition pour vous renseigner et vous guider sur les différentes fonctionnalités de Mobilyse.`,
   label_en: 'Libellé (EN)',
@@ -875,6 +1175,9 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
     "Mot de passe temporaire que l'utilisateur·trice mettra à jour lors de la prochaine connexion. Celui-ci doit comporter au moins 8 caractères et contenir un mélange de lettres (majuscules et minuscules), de chiffres et de caractères spéciaux.",
   password: 'Mot de passe',
   recommendations: 'recommandations',
+  remove_custom_action_text:
+    "La mesure '{name}' est utilisée par les campagnes suivantes : {campaigns}. Êtes-vous sûr de vouloir la supprimer?",
+  remove_custom_action: 'Supprimer la mesure',
   remove_campaign_text:
     "Êtes-vous sûr de vouloir supprimer la campagne '{name}' et toutes les données personnelles associées des participants?",
   remove_campaign: 'Supprimer la campagne',
@@ -894,6 +1197,7 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   report_campaign: 'Rapport de campagne',
   reset_password: 'Réinitialiser le mot de passe',
   roles: 'Rôles',
+  save: 'Enregistrer',
   select: 'Sélectionner',
   show_less: 'Afficher moins',
   show_more: 'Afficher plus',
@@ -912,6 +1216,8 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   users: 'Utilisateurs',
   valid_email_required: 'Une adresse email valide est requise',
   valid_url_required: 'Une URL valide est requise (commençant par http:// ou https://)',
+  yes: 'Oui',
+  no: 'Non',
   your_role: 'Votre rôle est: {role}',
   created_at: 'Ajouté le',
   updated_at: 'Mis à jour le',
@@ -923,4 +1229,8 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   mobility_statistics: 'Statistiques de mobilité',
   transit_lines: 'Réseau transports publics',
   documentation: 'Documentation',
+  read_less: 'Afficher moins',
+  read_more: 'Lire la suite',
+  more_details: 'Plus de détails',
+  no_data: 'Aucune donnée disponible',
 }

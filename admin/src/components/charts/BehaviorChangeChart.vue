@@ -1,16 +1,14 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :no-data-title="t(`stats.behavior_change_${props.type}.title`)"
+    :show-table="!exportable"
+    :no-data-title="chartTitle"
     :option="option"
-    :show-info="total > 0"
     :exportable="!!exportable"
-  >
-    <p class="q-mb-xs">{{ t(`stats.behavior_change_${props.type}.texts.info`) }}</p>
-    <q-markdown :src="chartDescription" />
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -19,21 +17,38 @@ import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { CATEGORY_COLORS, MOTIVATION_COLORS } from './commons'
+import {
+  aggregateLeversBySimpleLabel,
+  aggregateMotivationBySimpleLabel,
+  CATEGORY_COLORS,
+  modeSortOrder,
+  MOTIVATION_COLORS,
+  simpleLabelSortOrder,
+  comparisonTotal,
+} from './commons'
+import { AXIS_LABEL_GAP, axisLabelsWidth, truncateAxisLabel } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber } from '@/utils/numbers'
 import type { CallbackDataParams, XAXisOption } from 'echarts/types/dist/shared'
-import { lowerCaseFirst } from 'src/utils/string'
-import { moveToStart } from 'src/utils/arrays'
-import type { BehaviorChangeStats } from 'src/models'
+import { lowerCaseFirst } from '@/utils/string'
+import { moveToStart } from '@/utils/arrays'
+import { isSimpleLabel } from '@/utils/modalities'
+import type {
+  BehaviorChangeByModeLever,
+  BehaviorChangeByModeMotivation,
+  BehaviorChangeStats,
+} from '@/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   type: 'levers' | 'motivation'
@@ -42,63 +57,36 @@ interface Props {
   loading?: boolean
   percent?: boolean
   exportable?: boolean
+  // 'detailed' charts the data as it comes, one row per recommended mode;
+  // 'simple' folds those modes into the simple typology labels. Left undefined,
+  // the chart has no modal split and its title stays plain.
+  modalType?: 'simple' | 'detailed'
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
 
+const chartTitle = computed(() => {
+  const base = t(`stats.behavior_change_${props.type}.title`)
+  if (!props.modalType) {
+    return base
+  }
+  return `${base} (${t(`stats.freq_mod.modal_split.${props.modalType}`).toLowerCase()})`
+})
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
 const option = ref<EChartsOption>({})
 const total = ref(0)
-
-const chartDescription = computed(() => {
-  if (total.value < 5) {
-    return t(`stats.behavior_change_${props.type}.texts.default`)
-  }
-
-  if (props.type === 'motivation') {
-    return t(`stats.behavior_change_${props.type}.texts.specific`, descriptionValues.value)
-  }
-
-  return `${t(`stats.behavior_change_${props.type}.texts.default`)}\n\n${t(
-    `stats.behavior_change_${props.type}.texts.specific`,
-    descriptionValues.value,
-  )}`
-})
-
-const descriptionValues = computed(() => {
-  if (props.type === 'levers') {
-    const levers = props.behaviorChangeStats?.levers
-    if (!levers) {
-      return {}
-    }
-
-    const mostNeededLever = levers.by_mode_levers
-      .flatMap((item) => item.levers.map((lever) => ({ ...lever, mode: item.mode })))
-      .sort((a, b) => b.count - a.count)[0]
-    if (!mostNeededLever) {
-      return {}
-    }
-
-    return {
-      lever: keyLabel(mostNeededLever.category),
-    }
-  }
-
-  const motivation = props.behaviorChangeStats?.motivation
-  if (!motivation) {
-    return {}
-  }
-
-  const motivatedByMode = motivation.by_mode_motivation.map((item) => {
-    return item.motivations.filter((m) => m.level >= 4).reduce((sum, m) => sum + m.percentage, 0)
-  })
-  return {
-    percentage: formatNumber(
-      motivatedByMode.reduce((sum, p) => sum + p, 0) / motivatedByMode.length,
-    ),
-  }
-})
 
 watch([() => props.loading], () => {
   if (props.loading) {
@@ -106,7 +94,7 @@ watch([() => props.loading], () => {
   }
 })
 
-watch([() => props.height, locale, () => props.percent], () => {
+watch([() => props.height, locale, () => props.percent, () => props.modalType], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -124,12 +112,32 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
+  // simple typology labels live in their own namespace, and are case sensitive
+  if (isSimpleLabel(key)) {
+    return t(`simple_labels.${key}`)
+  }
   return t(`stats.behavior_change_${props.type}.labels.${shortKey(key)}`)
+}
+
+/** Rows as charted: recommended modes, or the simple labels they fold into. */
+function leversByMode(byMode: BehaviorChangeByModeLever[]): BehaviorChangeByModeLever[] {
+  return props.modalType === 'simple' ? aggregateLeversBySimpleLabel(byMode) : byMode
+}
+
+function motivationByMode(
+  byMode: BehaviorChangeByModeMotivation[],
+): BehaviorChangeByModeMotivation[] {
+  return props.modalType === 'simple' ? aggregateMotivationBySimpleLabel(byMode) : byMode
 }
 
 function initChartOptions() {
   option.value = {}
   total.value = 0
+
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
 
   const opt = props.type === 'levers' ? leversOptions() : motivationOptions()
   if (!opt) {
@@ -149,8 +157,8 @@ function initChartOptions() {
     animation: false,
     height: props.height - 140,
     title: {
-      text: t(`stats.behavior_change_${props.type}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      text: chartTitle.value,
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -185,11 +193,12 @@ function leversOptions() {
   if (!behaviorChangeData) {
     return null
   }
+  const byMode = leversByMode(behaviorChangeData.by_mode_levers)
   const allCategories = new Set<string>(
-    behaviorChangeData.by_mode_levers.flatMap((item) => item.levers.map((lever) => lever.category)),
+    byMode.flatMap((item) => item.levers.map((lever) => lever.category)),
   )
 
-  const sorted = getSortedModes(behaviorChangeData.by_mode_levers)
+  const sorted = getSortedModes(byMode)
 
   return {
     series: Array.from(allCategories).map((category) => ({
@@ -214,7 +223,7 @@ function leversOptions() {
         if (!lever) {
           return 0
         }
-        return props.percent ? lever.percentage : lever.count
+        return props.percent ? Math.round(lever.percentage) : lever.count
       }),
       itemStyle: {
         color: CATEGORY_COLORS[category] || '#ccc',
@@ -232,7 +241,7 @@ function motivationOptions() {
   }
   const levels = [1, 2, 3, 4, 5]
 
-  const sorted = getSortedModes(behaviorChangeData.by_mode_motivation)
+  const sorted = getSortedModes(motivationByMode(behaviorChangeData.by_mode_motivation))
 
   return {
     series: levels.map((level) => ({
@@ -257,7 +266,7 @@ function motivationOptions() {
         if (!lever) {
           return 0
         }
-        return props.percent ? lever.percentage : lever.count
+        return props.percent ? Math.round(lever.percentage) : lever.count
       }),
       itemStyle: {
         color: MOTIVATION_COLORS[level] || '#ccc',
@@ -277,7 +286,7 @@ function getSortedModes<
     | BehaviorChangeStats['levers']['by_mode_levers']
     | BehaviorChangeStats['motivation']['by_mode_motivation'],
 >(data: T): T {
-  const copy = [...data] as T
+  const copy = [...data].sort((a, b) => modeOrder(a.mode) - modeOrder(b.mode)) as T
 
   moveToStart(
     copy,
@@ -297,5 +306,308 @@ function getSortedModes<
   )
 
   return copy
+}
+
+// Reporting order of a row: the simple typology when the modes are folded,
+// the transport mode order otherwise.
+function modeOrder(mode: string): number {
+  return isSimpleLabel(mode) ? simpleLabelSortOrder(mode) : modeSortOrder(mode)
+}
+
+function orderModes(modes: string[]): string[] {
+  const copy = [...modes].sort((a, b) => modeOrder(a) - modeOrder(b))
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'other'),
+  )
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'Autres'),
+  )
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'allModes'),
+  )
+  moveToStart(
+    copy,
+    copy.find((mode) => mode === 'Total'),
+  )
+  return copy
+}
+
+/**
+ * 'allModes' and 'Total' are the same all-modes bucket: the backend names it
+ * 'allModes' when it aggregates everything and 'Total' when it splits by mode.
+ * The comparison charts merge them, so a group that aggregates everything
+ * shows on the 'Total' row instead of opening a second, half-empty one.
+ */
+function mergeAggregateRow<E extends { mode: string }>(item: E): E {
+  return item.mode === 'allModes' ? { ...item, mode: 'Total' } : item
+}
+
+/**
+ * A row of a comparison chart: one bar per (mode, comparison group) pair, so
+ * that a row is a single stack of categories and the legend is back to plain
+ * category names — one entry per lever or motivation level, instead of one per
+ * (group, category) pair, which no longer fits under the chart past a couple of
+ * groups.
+ */
+type ComparisonRow = {
+  mode: string
+  groupName: string
+} | null
+
+interface ComparisonChartData {
+  rows: ComparisonRow[]
+  /** Modes, in charted order: the outer level of the y axis. */
+  modes: string[]
+  series: SeriesOption[]
+  total: number
+}
+
+/** Bars are this share of their row, the rest being the gap between two bars. */
+const COMPARISON_BAR_CATEGORY_GAP = '10%'
+
+function comparisonRows<G extends { name: string }>(modes: string[], groups: G[]) {
+  return modes.flatMap((mode) => [null, ...groups.map((group) => ({ mode, group })), null])
+}
+
+function comparisonLeversOptions(): ComparisonChartData | null {
+  const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
+    name: group.name,
+    byMode: leversByMode(group.behavior_change?.levers?.by_mode_levers ?? []).map(
+      mergeAggregateRow,
+    ),
+    total: group.behavior_change?.levers?.total_responses ?? 0,
+  }))
+  if (groups.every((group) => group.byMode.length === 0)) {
+    return null
+  }
+
+  const modes = orderModes(
+    Array.from(new Set(groups.flatMap((group) => group.byMode.map((item) => item.mode)))),
+  )
+  const categories = Array.from(
+    new Set(
+      groups.flatMap((group) =>
+        group.byMode.flatMap((item) => item.levers.map((lever) => lever.category)),
+      ),
+    ),
+  )
+  if (modes.length === 0 || categories.length === 0) {
+    return null
+  }
+
+  const rows = comparisonRows(modes, groups)
+
+  return {
+    rows: rows.map((row) => (row ? { mode: row.mode, groupName: row.group.name } : null)),
+    modes,
+    series: categories.map((category) => ({
+      name: keyLabel(category),
+      type: 'bar',
+      stack: 'total',
+      barCategoryGap: COMPARISON_BAR_CATEGORY_GAP,
+      emphasis: { focus: 'series' },
+      itemStyle: { color: CATEGORY_COLORS[category] || '#ccc' },
+      data: rows.map((row) => {
+        if (!row) return null
+        const lever = row.group.byMode
+          .find((item) => item.mode === row.mode)
+          ?.levers.find((l) => l.category === category)
+        if (!lever) return 0
+        return props.percent ? Math.round(lever.percentage) : lever.count
+      }),
+    })) as SeriesOption[],
+    total: comparisonTotal(
+      groups.reduce((sum, group) => sum + group.total, 0),
+      'levers',
+    ),
+  }
+}
+
+function comparisonMotivationOptions(): ComparisonChartData | null {
+  const groups = (stats.comparisonResults?.groups ?? []).map((group) => ({
+    name: group.name,
+    byMode: motivationByMode(group.behavior_change?.motivation?.by_mode_motivation ?? []).map(
+      mergeAggregateRow,
+    ),
+    total: group.behavior_change?.motivation?.total_responses ?? 0,
+  }))
+  if (groups.every((group) => group.byMode.length === 0)) {
+    return null
+  }
+
+  const modes = orderModes(
+    Array.from(new Set(groups.flatMap((group) => group.byMode.map((item) => item.mode)))),
+  )
+  if (modes.length === 0) {
+    return null
+  }
+  const levels = [1, 2, 3, 4, 5]
+
+  const rows = comparisonRows(modes, groups)
+
+  return {
+    rows: rows.map((row) => (row ? { mode: row.mode, groupName: row.group.name } : null)),
+    modes,
+    series: levels.map((level) => ({
+      name: keyLabel(`l${level.toString()}`),
+      type: 'bar',
+      stack: 'total',
+      barCategoryGap: COMPARISON_BAR_CATEGORY_GAP,
+      emphasis: { focus: 'series' },
+      itemStyle: { color: MOTIVATION_COLORS[level] || '#ccc' },
+      data: rows.map((row) => {
+        if (!row) return null
+        const motivation = row.group.byMode
+          .find((item) => item.mode === row.mode)
+          ?.motivations.find((m) => m.level === level)
+        if (!motivation) return 0
+        return props.percent ? Math.round(motivation.percentage) : motivation.count
+      }),
+    })) as SeriesOption[],
+    total: comparisonTotal(
+      groups.reduce((sum, group) => sum + group.total, 0),
+      'motivation',
+    ),
+  }
+}
+
+/**
+ * All the groups of the hovered mode, one column each, so that the tooltip
+ * compares them instead of describing the single hovered bar.
+ */
+function comparisonTooltip(data: ComparisonChartData, items: CallbackDataParams[]): string {
+  const hoveredIndex = items[0]?.dataIndex ?? 0
+  const hovered = data.rows[hoveredIndex]
+  if (!hovered) {
+    return ''
+  }
+
+  const columns: { groupName: string; index: number }[] = []
+  data.rows.forEach((row, index) => {
+    if (row && row.mode === hovered.mode) {
+      columns.push({ groupName: row.groupName, index })
+    }
+  })
+
+  const seriesValues = (seriesIndex: number): unknown[] => {
+    const series = data.series[seriesIndex] as { data?: unknown[] } | undefined
+    return Array.isArray(series?.data) ? series.data : []
+  }
+
+  const formatCell = (value: unknown): string => {
+    const num = Number(value)
+    if (value === null || value === undefined || Number.isNaN(num)) {
+      return '—'
+    }
+    return `${formatNumber(num)}${props.percent ? '%' : ''}`
+  }
+
+  const lines = items
+    .map((item) => ({
+      marker: item.marker ?? '',
+      name: item.seriesName ?? '',
+      values: columns.map(({ index }) => seriesValues(item.seriesIndex ?? 0)[index]),
+    }))
+    // A category nobody asked for in any of the compared groups is noise here.
+    .filter((line) => line.values.some((value) => Number(value) > 0))
+
+  // Wide enough that one column of numbers never reads as the next one's.
+  const cell = 'padding:2px 0 2px 26px;text-align:right;white-space:nowrap;'
+  const header = columns
+    .map(({ groupName }) => `<th style="${cell}font-weight:600;">${groupName}</th>`)
+    .join('')
+  const body = lines
+    .map(
+      (line) =>
+        `<tr><td style="padding:2px 0;text-align:left;">${line.marker} ${line.name}</td>` +
+        line.values.map((value) => `<td style="${cell}">${formatCell(value)}</td>`).join('') +
+        '</tr>',
+    )
+    .join('')
+
+  return (
+    `<div style="font-weight:600;margin-bottom:2px;">${keyLabel(hovered.mode)}</div>` +
+    `<table style="border-collapse:collapse;line-height:1.4;">` +
+    `<thead><tr><th></th>${header}</tr></thead><tbody>${body}</tbody></table>`
+  )
+}
+
+function initComparisonChartOptions() {
+  const data = props.type === 'levers' ? comparisonLeversOptions() : comparisonMotivationOptions()
+  if (!data) {
+    return
+  }
+  total.value = data.total
+
+  const groupLabels = data.rows.map((row) => (row ? truncateAxisLabel(row.groupName) : ''))
+  const modeLabels = data.modes.map((mode) => keyLabel(mode))
+
+  // The axis labels sit outside the grid (no containLabel), so the room they
+  // need is reserved here: the group names, then the modes on their left.
+  const modeAxisOffset = axisLabelsWidth(groupLabels) + AXIS_LABEL_GAP
+
+  option.value = {
+    grid: {
+      left: modeAxisOffset + axisLabelsWidth(modeLabels) + AXIS_LABEL_GAP,
+      right: 20,
+      top: 60,
+      // Room for the x axis labels, and for the legend below them.
+      bottom: 60,
+      containLabel: false,
+    },
+    animation: false,
+    // Same as the single-campaign chart, so that two charts sitting side by
+    // side keep the same height whether or not campaigns are compared.
+    height: props.height - 140,
+    title: {
+      text: chartTitle.value,
+      subtext: t(`stats.total_participants`, { count: total.value }),
+      left: 'center',
+      top: 0,
+      itemGap: 10,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      confine: true,
+      formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) =>
+        comparisonTooltip(data, Array.isArray(paramsList) ? paramsList : [paramsList]),
+    },
+    legend: { show: true, bottom: 0, left: 'center' },
+    yAxis: [
+      {
+        type: 'category',
+        data: groupLabels,
+        axisLabel: { interval: 0 },
+        axisTick: { show: false },
+      },
+      {
+        // Outer level: one band per mode, aligned with its block of group rows
+        type: 'category',
+        position: 'left',
+        offset: modeAxisOffset,
+        data: modeLabels,
+        axisLabel: { interval: 0, fontWeight: 'bold' },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { color: '#bdbdbd' } },
+        splitArea: {
+          show: true,
+          areaStyle: { color: ['rgba(128, 128, 128, 0.09)', 'transparent'] },
+        },
+      },
+    ],
+    xAxis: {
+      type: 'value',
+      ...(props.percent ? { max: 100 } : {}),
+    },
+    series: data.series,
+  }
 }
 </script>

@@ -1,57 +1,65 @@
 <template>
-  <div>
-    <div class="text-bold q-mb-md text-h4">
-      {{ t('form.intermodality') }}
-    </div>
-    <div class="text-h6 q-mb-md">{{ t('form.intermodality_hint') }}</div>
-    <template v-for="(journey, idx) in survey.record.data.freq_mod_journeys" :key="idx">
-      <q-card flat class="q-mb-md">
-        <q-card-section>
-          <q-toolbar>
-            <div class="on-left text-h6 q-pt-xs">{{ t('form.journey.hint') }}</div>
-            <q-space />
-            <q-btn
-              round
-              :title="t('form.journey.remove')"
-              icon="close"
-              color="accent"
-              @click="onRemoveJourney(idx)"
-            />
-          </q-toolbar>
-          <JourneyItem
-            v-if="survey.record.data.freq_mod_journeys[idx]"
-            v-model="survey.record.data.freq_mod_journeys[idx]"
-            :option-label-class="q.screen.lt.sm ? 'text-h5' : 'text-h5'"
-          />
-        </q-card-section>
-      </q-card>
-    </template>
-    <q-btn icon="add" :label="t('form.journey.add')" color="primary" @click="onAddJourney" />
+  <div class="content-stack step-content">
+    <div class="question-hint">{{ t('form.intermodality_hint') }}</div>
+
+    <ContentCard v-for="(journey, idx) in journeys" :key="idx">
+      <JourneyItem
+        :model-value="journey"
+        :index="idx + 1"
+        :count="journeys.length"
+        @update:model-value="(val) => onUpdateJourney(idx, val)"
+        @remove="onRemoveJourney(idx)"
+      />
+    </ContentCard>
+
+    <!-- A second journey covers the other days of the week; it only makes
+         sense once the current ones are set up. -->
+    <q-btn
+      flat
+      no-caps
+      icon="add"
+      :label="t('form.journey.add')"
+      :disable="!canAddJourney"
+      class="picker-option picker-option--dashed picker-option--block"
+      @click="onAddJourney"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar'
-import JourneyItem from 'src/components/form/steps/JourneyItem.vue'
+import ContentCard from '@/components/form/ContentCard.vue'
+import JourneyItem from '@/components/form/steps/JourneyItem.vue'
+import type { Journey } from '@/models'
 
 const { t } = useI18n()
 const survey = useSurvey()
-const q = useQuasar()
+
+function makeJourney(): Journey {
+  return { modes: [], days: 1 }
+}
+
+// The step always shows at least one card to fill in.
+if (!survey.record.data.freq_mod_journeys?.length) {
+  survey.record.data.freq_mod_journeys = [makeJourney()]
+}
+
+const journeys = computed(() => survey.record.data.freq_mod_journeys)
+
+const canAddJourney = computed(() => journeys.value.every((j) => j.modes && j.modes.length > 0))
 
 function onAddJourney() {
-  if (!survey.record.data.freq_mod_journeys) {
-    survey.record.data.freq_mod_journeys = []
-  }
-  survey.record.data.freq_mod_journeys.push({
-    days: 1,
-    days_per: 'year',
-    modes: [],
-  })
+  if (!canAddJourney.value) return
+  journeys.value.push(makeJourney())
+}
+
+function onUpdateJourney(idx: number, journey: Journey) {
+  journeys.value[idx] = journey
 }
 
 function onRemoveJourney(idx: number) {
-  if (survey.record.data.freq_mod_journeys) {
-    survey.record.data.freq_mod_journeys.splice(idx, 1)
+  journeys.value.splice(idx, 1)
+  if (journeys.value.length === 0) {
+    journeys.value.push(makeJourney())
   }
 }
 </script>

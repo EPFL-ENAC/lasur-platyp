@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { api } from 'src/boot/api'
-import type { Record, CampaignInfo, RecordCertificate } from 'src/models'
-import { hashEmail } from 'src/utils/hash'
-import { resolveLocation } from 'src/utils/boundaries'
+import { api } from '@/boot/api'
+import type { Record, CampaignInfo, RecordCertificate } from '@/models'
+import { hashEmail } from '@/utils/hash'
+import { resolveLocation } from '@/utils/boundaries'
 
 // Current version of the form data structure
-export const VERSION = '2.0.0'
+export const VERSION = '3.0.0'
 
 function makeRecord(rec: Partial<Record>): Record {
   const data = {
@@ -18,7 +18,7 @@ function makeRecord(rec: Partial<Record>): Record {
     company_vehicle: null,
     travel_time: 5,
     equipments: [],
-    constraints: [],
+    constraints: ['none'],
     freq_mod_journeys: [{ modes: [], days: 1 }],
     travel_pro: false,
     freq_mod_pro_journeys: [],

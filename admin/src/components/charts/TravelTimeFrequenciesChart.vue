@@ -1,36 +1,77 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="hasData"
-    :show-info="total > 0"
-    :no-data-title="t('stats.travel_time.title')"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t('stats.travel_time.title')"
+    :description="descriptionText"
+    :chart-info-text="chartInfoText"
+    :inline="inline"
   >
-    <p v-if="hasData && medianValue" class="q-mb-xs">
-      {{ t('stats.travel_time.texts.specific', { median: medianValue }) }}
-    </p>
-    <p>{{ t('stats.travel_time.texts.default') }}</p>
-  </e-charts-shell>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onTogglePercent">
+              <q-item-section side>
+                <q-icon :name="stats.travelTimePercent ? 'check_box' : 'check_box_outline_blank'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('stats.percent_employees') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
+    <e-charts-shell
+      ref="shellRef"
+      :height="height"
+      :loading="props.loading"
+      :has-data="hasData"
+      :show-table="!exportable"
+      :no-data-title="t('stats.travel_time.title')"
+      :option="option"
+      :exportable="!!exportable"
+    />
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
-import type { EChartsOption } from 'echarts'
+import type { EChartsOption, SeriesOption } from 'echarts'
 import { use } from 'echarts/core'
-import { BarChart } from 'echarts/charts'
+import { BarChart, LineChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
+import { GROUP_COLORS, comparisonTotal } from './commons'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
-use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([
+  SVGRenderer,
+  BarChart,
+  LineChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   frequencies?: Frequencies | null
@@ -38,20 +79,84 @@ interface Props {
   xaxis?: string
   yaxis?: string
   rangeStep?: number
-  percent?: boolean
   height?: number
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
 
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
+
+const descriptionText = computed(() =>
+  isComparison.value ? '' : t('stats.travel_time.description'),
+)
+
+const comparisonMedians = computed(() => {
+  if (!isComparison.value) return null
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const medians = groups
+    .map((group) => {
+      const freq = group.frequencies?.find((item) => item.field === 'travel_time')
+      const median = freq ? computeMedian(freq) : undefined
+      return median === undefined ? null : { name: group.name, median }
+    })
+    .filter((item): item is { name: string; median: number } => item !== null)
+
+  return medians.length > 0 ? medians : null
+})
+
+const chartInfoText = computed(() => {
+  const medians = comparisonMedians.value
+  if (medians) {
+    const list = medians
+      .map((item) =>
+        t('stats.travel_time.texts.comparison_item', { median: item.median, name: item.name }),
+      )
+      .join(', ')
+    return t('stats.travel_time.texts.comparison', { list })
+  }
+
+  const parts: string[] = []
+  if (hasData.value && medianValue.value != null) {
+    parts.push(t('stats.travel_time.texts.specific', { median: medianValue.value }))
+  }
+  parts.push(t('stats.travel_time.texts.default'))
+  return parts.join('\n\n')
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartInfoText.value
+  },
+})
+
+function onTogglePercent() {
+  stats.travelTimePercent = !stats.travelTimePercent
+}
+
 const option = ref<EChartsOption>({})
 const total = ref(0)
 const medianValue = ref<number | null>(null)
 
 const hasData = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some((group) =>
+      group.frequencies?.some((freq) => freq.field === 'travel_time' && freq.data.length > 0),
+    )
+  }
   if (!props.frequencies) {
     return false
   }
@@ -67,7 +172,7 @@ watch(
   },
 )
 
-watch([() => props.percent, () => props.height, locale], () => {
+watch([() => stats.travelTimePercent, () => props.height, locale], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -78,6 +183,11 @@ onMounted(() => {
 })
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -131,8 +241,23 @@ function computeMedian(frequencies: Frequencies) {
   return undefined // In case something goes wrong
 }
 
+function binFrequencies(frequencies: Frequencies, step = 5) {
+  const bins = new Map<number, number>()
+  let answered = 0
+  for (const item of frequencies.data) {
+    const value = Number(item.value)
+    if (isNaN(value)) continue
+    const bin = Math.floor(value / step) * step
+    bins.set(bin, (bins.get(bin) ?? 0) + item.count)
+    answered += item.count
+  }
+  return { bins, answered }
+}
+
 function initValuesChartOptions(frequencies: Frequencies) {
   total.value = frequencies.total || 0
+
+  const { bins, answered } = binFrequencies(frequencies, props.rangeStep)
 
   // find max value
   const max = Math.max(
@@ -149,8 +274,12 @@ function initValuesChartOptions(frequencies: Frequencies) {
   // foreach category find count in frequencies
   const values =
     categories?.map((category) => {
-      const item = frequencies.data.find((item) => item.value === `${category}`)
-      return item ? (props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count) : 0
+      const count = bins.get(Number(category)) ?? 0
+      return stats.travelTimePercent
+        ? answered > 0
+          ? Math.round((count / answered) * 100)
+          : 0
+        : count
     }) || []
 
   const newOption: EChartsOption = {
@@ -165,7 +294,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.travel_time.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -175,7 +304,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c}\u00A0${stats.travelTimePercent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -188,7 +317,9 @@ function initValuesChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     yAxis: {
-      name: props.yaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      name:
+        props.yaxis ||
+        (stats.travelTimePercent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
@@ -210,5 +341,93 @@ function makeCategories(max: number, step = 5) {
     arr.push(`${i}`)
   }
   return arr
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupFrequencies = groups.map((group) => ({
+    name: group.name,
+    frequencies: group.frequencies?.find((freq) => freq.field === 'travel_time') ?? null,
+  }))
+  if (groupFrequencies.every((group) => !group.frequencies?.data.length)) {
+    return
+  }
+
+  const max = Math.max(
+    ...groupFrequencies.flatMap(
+      (group) =>
+        group.frequencies?.data.map((item) => {
+          const value = Number(item.value)
+          return isNaN(value) ? 0 : value
+        }) ?? [],
+    ),
+    0,
+  )
+  const categories = makeCategories(max, props.rangeStep)
+
+  const series: SeriesOption[] = groupFrequencies.map((group, i) => {
+    const groupData = group.frequencies
+      ? binFrequencies(group.frequencies, props.rangeStep)
+      : { bins: new Map<number, number>(), answered: 0 }
+    const groupTotal = group.frequencies?.total || 0
+    total.value += groupTotal
+    return {
+      name: group.name,
+      type: 'line',
+      smooth: true,
+      symbol: 'none',
+      color: GROUP_COLORS[i % GROUP_COLORS.length] ?? '#ccc',
+      data: categories.map((category) => {
+        const count = groupData.bins.get(Number(category)) ?? 0
+        return groupData.answered > 0 ? Math.round((count / groupData.answered) * 100) : 0
+      }),
+    }
+  })
+
+  option.value = {
+    grid: {
+      left: '40',
+      right: '20',
+      top: '80',
+      bottom: '40',
+      containLabel: true,
+    },
+    animation: false,
+    height: props.height - 100,
+    title: {
+      text: t(`stats.travel_time.title`),
+      subtext: t(`stats.total_participants`, { count: comparisonTotal(total.value) }),
+      left: 'center',
+      top: 0,
+      itemGap: 10,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+    },
+    legend: {
+      show: true,
+      bottom: 0,
+    },
+    xAxis: {
+      type: 'category',
+      name: props.xaxis || '',
+      nameGap: 30,
+      nameLocation: 'middle',
+      data: categories,
+    },
+    yAxis: {
+      name: '%',
+      nameLocation: 'middle',
+      nameGap: 30,
+      type: 'value',
+    },
+    series,
+  }
 }
 </script>

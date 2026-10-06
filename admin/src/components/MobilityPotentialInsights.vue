@@ -1,11 +1,5 @@
 <template>
-  <q-markdown
-    v-if="message"
-    :src="message"
-    no-heading-anchor-links
-    no-linkify
-    class="compact text-caption q-px-md q-pb-md q-mt-sm"
-  />
+  <q-markdown v-if="message" :src="message" no-heading-anchor-links no-linkify class="compact" />
   <div v-else>
     {{ t('stats.no_data') }}
   </div>
@@ -13,9 +7,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { EmissionReduction, Frequencies } from 'src/models'
-import { useStats } from 'src/stores/stats'
-import { formatNumber } from 'src/utils/numbers'
+import type { EmissionReduction, Frequencies } from '@/models'
+import { useStats } from '@/stores/stats'
+import { formatNumber, formatTons } from '@/utils/numbers'
 
 interface Props {
   frequencyKey: string
@@ -106,36 +100,13 @@ const bestMode = computed(() => {
   }
 })
 
-const bestModeCount = computed(() => {
+// Number of respondents, to extrapolate the respondents' reduction to all employees
+const respondentsCount = computed(() => {
   const frequencies = frequencyData.value
-
   if (!frequencies) {
-    return null
+    return 0
   }
-
-  let dataset: { name: string; value: number }[] = []
-
-  if (Array.isArray(frequencies)) {
-    dataset = frequencies.map((item: Frequencies) => ({
-      name: keyLabel(item.field),
-      value: item.data
-        .map((d) => (d.sum === undefined ? d.count : d.sum))
-        .reduce((a, b) => a + b, 0),
-    }))
-  } else {
-    dataset = frequencies.data.map((item) => ({
-      name: keyLabel(item.value),
-      value: item.count,
-    }))
-  }
-
-  if (!dataset.length) {
-    return null
-  }
-
-  const maxItem = dataset.reduce((max, item) => (item.value > max.value ? item : max))
-
-  return maxItem.value || null
+  return Array.isArray(frequencies) ? (frequencies[0]?.total ?? 0) : frequencies.total
 })
 
 const bestReduction = computed(() => {
@@ -155,12 +126,12 @@ const bestReduction = computed(() => {
 
   const collaboratorsCount = props.collaboratorsCount ?? 0
   const extrapolatedReduction =
-    bestModeCount.value && collaboratorsCount > 0
-      ? (maxItem.reduced / bestModeCount.value) * collaboratorsCount
+    respondentsCount.value > 0 && collaboratorsCount > 0
+      ? (maxItem.reduced / respondentsCount.value) * collaboratorsCount
       : null
 
   return {
-    mode: keyLabel(maxItem.mode),
+    mode: reductionModeLabel(maxItem.mode),
     reduction: maxItem.reduced * SCALE_FACTOR,
     percentage: Math.round((maxItem.reduced / totalReduction) * 100),
     extrapolatedReduction:
@@ -168,8 +139,15 @@ const bestReduction = computed(() => {
   }
 })
 
+// Mirrors the same simple/detailed granularity as the emission reductions
+// insight above (props.reductionKey), so both insights stay consistent.
+const energyGainsGranularity = computed(() =>
+  props.reductionKey?.includes('simple') ? 'simple' : 'detailed',
+)
+
 const bestPhysicalActivity = computed(() => {
-  const gainsPerMode = statsStore.journeyEnergyStats?.gains?.gains_per_mode ?? []
+  const gainsPerMode =
+    statsStore.journeyEnergyStats?.gains?.gains_per_mode[energyGainsGranularity.value] ?? []
   if (!gainsPerMode.length) {
     return null
   }
@@ -188,7 +166,7 @@ const bestPhysicalActivity = computed(() => {
     statsStore.journeyEnergyStats!.gains.current_above_who_count
 
   return {
-    mode: keyLabel(maxItem.mode),
+    mode: physicalActivityLabel(maxItem.label),
     collaboratorsCount: Math.max(additionalCollaborators, 0),
   }
 })
@@ -210,7 +188,7 @@ const message = computed(() => {
       'stats.sections.mobility_potentials.insights.biggest_emission_reduction',
       {
         mode: bestReduction.value.mode,
-        reduction: formatNumber(bestReduction.value.reduction),
+        reduction: formatTons(bestReduction.value.reduction),
         unit: unitLabel.value,
         percentage: bestReduction.value.percentage,
       },
@@ -221,7 +199,7 @@ const message = computed(() => {
         ' ' +
         t('stats.sections.mobility_potentials.insights.biggest_emission_reduction_extrapolation', {
           collaborators_count: formatNumber(props.collaboratorsCount),
-          reduction: formatNumber(bestReduction.value.extrapolatedReduction),
+          reduction: formatTons(bestReduction.value.extrapolatedReduction),
           unit: unitLabel.value,
         })
     }
@@ -230,12 +208,23 @@ const message = computed(() => {
   }
 
   if (bestPhysicalActivity.value) {
-    paragraphs.push(
-      t('stats.sections.mobility_potentials.insights.biggest_physical_activity_gain', {
+    let thirdParagraph = t(
+      'stats.sections.mobility_potentials.insights.biggest_physical_activity_gain',
+      {
         mode: bestPhysicalActivity.value.mode,
-        collaborators_count: formatNumber(bestPhysicalActivity.value.collaboratorsCount),
-      }),
+      },
     )
+
+    // Count is over all recommendations (not the mode above), and only worth stating when positive
+    if (bestPhysicalActivity.value.collaboratorsCount > 0) {
+      thirdParagraph +=
+        ' ' +
+        t('stats.sections.mobility_potentials.insights.who_level_gain', {
+          collaborators_count: formatNumber(bestPhysicalActivity.value.collaboratorsCount),
+        })
+    }
+
+    paragraphs.push(thirdParagraph)
   }
 
   return paragraphs.join('\n\n')
@@ -248,6 +237,46 @@ function keyLabel(key: string) {
 
   if (Number.isInteger(Number(key))) {
     return key
+  }
+
+  return t(`transportation_modes.${shortKey(key)}`)
+}
+
+function physicalActivityLabel(key: string) {
+  if (key === 'null' || key === 'None') {
+    return t('stats.na')
+  }
+
+  if (Number.isInteger(Number(key))) {
+    return key
+  }
+
+  // Detailed energy gains are keyed by a real single mode (typo.reco.reco_inter),
+  // not a '+'-joined complex label, unlike the emission reductions above.
+  if (energyGainsGranularity.value === 'simple') {
+    return t(`simple_labels.${shortKey(key)}`)
+  }
+
+  return t(`transportation_modes.${shortKey(key)}`)
+}
+
+function reductionModeLabel(key: string) {
+  if (key === 'null' || key === 'None') {
+    return t('stats.na')
+  }
+
+  if (Number.isInteger(Number(key))) {
+    return key
+  }
+
+  // reductionKey may point to the v3 simple/complex label reductions, whose
+  // values (e.g. 'TIM', 'car+pub') live in a different i18n namespace than
+  // plain transport modes
+  if (props.reductionKey?.includes('simple')) {
+    return t(`simple_labels.${shortKey(key)}`)
+  }
+  if (props.reductionKey?.includes('complex')) {
+    return t(`complex_labels.${shortKey(key)}`)
   }
 
   return t(`transportation_modes.${shortKey(key)}`)

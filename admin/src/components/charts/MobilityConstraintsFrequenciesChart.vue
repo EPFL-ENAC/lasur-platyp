@@ -1,55 +1,117 @@
 <template>
-  <e-charts-shell
-    :height="height"
-    :loading="props.loading"
-    :has-data="hasData"
-    :show-info="!!hasOther"
-    :no-data-title="t('stats.constraints.title')"
-    :option="option"
-    :exportable="!!exportable"
+  <chart-panel
+    :title="t('stats.constraints.title')"
+    :description="descriptionText"
+    :chart-info-text="chartDescription"
+    :inline="inline"
   >
-    <div class="q-mt-md text-italic">
-      {{ t('stats.constraints.texts.other') }}
-    </div>
-  </e-charts-shell>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onTogglePercent">
+              <q-item-section side>
+                <q-icon
+                  :name="stats.constraintsPercent ? 'check_box' : 'check_box_outline_blank'"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('stats.percent_employees') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
+    <e-charts-shell
+      ref="shellRef"
+      :height="height"
+      :loading="props.loading"
+      :has-data="hasData"
+      :show-table="!exportable"
+      :no-data-title="t('stats.constraints.title')"
+      :option="option"
+      :exportable="!!exportable"
+    />
+  </chart-panel>
 </template>
 
 <script setup lang="ts">
+import ChartPanel from '@/components/charts/ChartPanel.vue'
 import EChartsShell from './EChartsShell.vue'
+import { comparisonTotal } from './commons'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
+import { buildGroupedHorizontalBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   frequencies?: Frequencies | null
   xaxis?: string
   yaxis?: string
   rangeStep?: number
-  percent?: boolean
   height?: number
   loading?: boolean
   exportable?: boolean
+  inline?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
 
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
+
+function onTogglePercent() {
+  stats.constraintsPercent = !stats.constraintsPercent
+}
+
 const option = ref<EChartsOption>({})
 const total = ref(0)
 
+const descriptionText = computed(() =>
+  isComparison.value
+    ? t('stats.constraints.description_comparison')
+    : t('stats.constraints.description'),
+)
+
 const hasData = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some((group) =>
+      group.frequencies?.some((freq) => freq.field === 'constraints' && freq.data.length > 0),
+    )
+  }
   if (!props.frequencies) {
     return false
   }
@@ -57,7 +119,28 @@ const hasData = computed(() => {
 })
 
 const hasOther = computed(() => {
+  if (isComparison.value) {
+    return (stats.comparisonResults?.groups ?? []).some((group) =>
+      group.frequencies?.some(
+        (freq) => freq.field === 'constraints' && freq.data.some((item) => item.value === 'other'),
+      ),
+    )
+  }
   return props.frequencies?.data.some((item) => item.value === 'other')
+})
+
+const chartDescription = computed(() => {
+  if (hasOther.value) {
+    return t('stats.constraints.texts.other')
+  }
+  return ''
+})
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+  get chartInfoText() {
+    return chartDescription.value
+  },
 })
 
 watch(
@@ -69,7 +152,7 @@ watch(
   },
 )
 
-watch([() => props.percent, () => props.height, locale], () => {
+watch([() => stats.constraintsPercent, () => props.height, locale], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -91,6 +174,11 @@ function keyLabel(key: string) {
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.frequencies) {
@@ -123,7 +211,11 @@ function initValuesChartOptions(frequencies: Frequencies) {
   const values =
     categories?.map((category) => {
       const item = frequencies.data.find((item) => item.value === `${category}`)
-      return item ? (props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count) : 0
+      return item
+        ? stats.constraintsPercent
+          ? Math.round((item.count / total.value) * 100)
+          : item.count
+        : 0
     }) || []
 
   const newOption: EChartsOption = {
@@ -138,7 +230,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.constraints.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -148,7 +240,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c}\u00A0${stats.constraintsPercent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -161,7 +253,9 @@ function initValuesChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     yAxis: {
-      name: props.yaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      name:
+        props.yaxis ||
+        (stats.constraintsPercent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
@@ -182,7 +276,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
   const dataset = frequencies.data.map((item) => ({
     key: item.value || 'null',
     name: keyLabel(item.value || 'null'),
-    value: props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count,
+    value: stats.constraintsPercent ? Math.round((item.count / total.value) * 100) : item.count,
   }))
 
   // Extract category names and values for yAxis and series
@@ -205,7 +299,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.constraints.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -215,7 +309,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+      formatter: `<b>{b}</b><br/>{c}\u00A0${stats.constraintsPercent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -228,7 +322,9 @@ function initLabelsChartOptions(frequencies: Frequencies) {
       data: categories,
     },
     xAxis: {
-      name: props.xaxis || (props.percent ? t('stats.percent_employees') : t('stats.nb_employees')),
+      name:
+        props.xaxis ||
+        (stats.constraintsPercent ? t('stats.percent_employees') : t('stats.nb_employees')),
       nameLocation: 'middle',
       nameGap: 30,
       type: 'value',
@@ -249,5 +345,61 @@ function makeCategories(max: number, step = 5) {
     arr.push(`${i}`)
   }
   return arr
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupFrequencies = groups.map((group) => ({
+    name: group.name,
+    participants: group.total,
+    frequencies: group.frequencies?.find((freq) => freq.field === 'constraints') ?? null,
+  }))
+  if (groupFrequencies.every((group) => !group.frequencies?.data.length)) {
+    return
+  }
+
+  const groupDatasets: ComparisonGroupDataset[] = groupFrequencies.map((group) => {
+    total.value += group.frequencies?.total ?? 0
+    return {
+      name: group.name,
+      participants: group.participants,
+      items: (group.frequencies?.data ?? []).map((item) => ({
+        key: item.value || 'null',
+        name: keyLabel(item.value || 'null'),
+        value: item.count,
+      })),
+    }
+  })
+
+  const totalByCategory = new Map<string, number>()
+  const categoryNames = new Map<string, string>()
+  groupDatasets.forEach((group) => {
+    group.items.forEach((item) => {
+      totalByCategory.set(item.key, (totalByCategory.get(item.key) ?? 0) + item.value)
+      if (!categoryNames.has(item.key)) {
+        categoryNames.set(item.key, item.name)
+      }
+    })
+  })
+  const categories = Array.from(totalByCategory.keys()).sort(
+    (a, b) => (totalByCategory.get(b) ?? 0) - (totalByCategory.get(a) ?? 0),
+  )
+  if (categories.length === 0) {
+    return
+  }
+
+  option.value = buildGroupedHorizontalBarOption({
+    groupDatasets,
+    categories,
+    categoryNames,
+    percent: stats.constraintsPercent,
+    title: t(`stats.constraints.title`),
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
+    height: props.height - 100,
+    xAxisName: stats.constraintsPercent ? t('stats.percent_employees') : t('stats.nb_employees'),
+  })
 }
 </script>

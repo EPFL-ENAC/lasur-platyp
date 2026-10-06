@@ -1,22 +1,13 @@
 <template>
   <div v-if="hasBenefits(reco)">
-    <div v-if="expanded" class="bg-white text-secondary rounded-borders">
+    <div v-if="expanded" class="benefits-panel">
       <q-markdown :src="getBenefits(reco, locale)" />
     </div>
 
-    <q-btn
-      v-else
-      :label="t('benefits.show')"
-      color="foreground"
-      size="md"
-      icon-right="workspace_premium"
-      no-caps
-      dense
-    >
-      <q-menu
-        class="q-mr-md bg-white text-secondary rounded-borders q-pa-md"
-        :max-width="'400px'"
-      >
+    <q-btn v-else class="benefits-btn" size="md" no-caps dense>
+      <q-icon name="workspace_premium" class="q-mr-xs" />
+      {{ t('benefits.show') }}
+      <q-menu class="q-mr-md bg-white text-secondary rounded-borders q-pa-md" :max-width="'400px'">
         <q-markdown :src="getBenefits(reco, locale)" />
       </q-menu>
     </q-btn>
@@ -24,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { hasBenefits, getBenefits } from 'src/utils/benefits'
+import { hasBenefits, getBenefits } from '@/utils/benefits'
 
 const { locale, t } = useI18n()
 
@@ -38,3 +29,17 @@ withDefaults(
   },
 )
 </script>
+
+<style scoped lang="scss">
+.benefits-panel {
+  padding: 16px;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: $button-border-radius;
+  background: var(--card-bg);
+}
+
+.benefits-btn {
+  background-color: #168654 !important;
+  color: white !important;
+}
+</style>

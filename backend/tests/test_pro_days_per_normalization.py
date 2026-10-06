@@ -24,7 +24,7 @@ from api.services.stats.frequencies import FrequenciesService
 
 def make_pro_journey_df(journeys: list[dict]) -> pd.DataFrame:
     """
-    Build a minimal v2 DataFrame for professional journey tests.
+    Build a minimal v3 DataFrame for professional journey tests.
 
     Each journey dict may contain:
         record_id, journey_idx, current_mode, reco_mode,
@@ -45,7 +45,7 @@ def make_pro_journey_df(journeys: list[dict]) -> pd.DataFrame:
         row: dict = {
             'data.workplace.lat': record_journeys[0]['workplace_lat'],
             'data.workplace.lon': record_journeys[0]['workplace_lon'],
-            'data.version': '2.0',
+            'data.version': '3.0',
         }
         for j in record_journeys:
             idx = j['journey_idx']
@@ -80,8 +80,8 @@ class TestNormalizeProDaysToYearly:
     def test_month_multiplied_by_11(self):
         assert normalize_pro_days_to_yearly(3, 'month') == 33
 
-    def test_week_multiplied_by_45(self):
-        assert normalize_pro_days_to_yearly(2, 'week') == 90
+    def test_week_multiplied_by_47(self):
+        assert normalize_pro_days_to_yearly(2, 'week') == 94
 
     def test_none_treated_as_year(self):
         assert normalize_pro_days_to_yearly(10, None) == 10
@@ -95,7 +95,7 @@ class TestNormalizeProDaysToYearly:
         assert normalize_pro_days_to_yearly(10, 'quarter') == 10
 
     def test_fractional_days(self):
-        assert normalize_pro_days_to_yearly(1.5, 'week') == pytest.approx(67.5)
+        assert normalize_pro_days_to_yearly(1.5, 'week') == pytest.approx(70.5)
 
 
 # ---------------------------------------------------------------------------
@@ -134,10 +134,10 @@ class TestEmissionReductionsDaysPer:
             _plane_to_train_reductions(10), rel=1e-6
         )
 
-    def test_week_gives_45x_year(self):
-        """days=1, days_per='week' should equal days=45, days_per='year'."""
+    def test_week_gives_47x_year(self):
+        """days=1, days_per='week' should equal days=47, days_per='year'."""
         assert _plane_to_train_reductions(1, 'week') == pytest.approx(
-            _plane_to_train_reductions(45, 'year'), rel=1e-4
+            _plane_to_train_reductions(47, 'year'), rel=1e-4
         )
 
     def test_month_gives_11x_year(self):
@@ -191,9 +191,9 @@ class TestProEmissionsDaysPer:
             _plane_emissions(10), rel=1e-6
         )
 
-    def test_week_gives_45x_year(self):
+    def test_week_gives_47x_year(self):
         assert _plane_emissions(1, 'week') == pytest.approx(
-            _plane_emissions(45, 'year'), rel=1e-4
+            _plane_emissions(47, 'year'), rel=1e-4
         )
 
     def test_month_gives_11x_year(self):
@@ -246,9 +246,9 @@ class TestProFrequenciesDaysPer:
         values = _car_frequency_values(5, 'year')
         assert '5' in values
 
-    def test_week_value_multiplied_by_45(self):
+    def test_week_value_multiplied_by_47(self):
         values = _car_frequency_values(1, 'week')
-        assert '45' in values
+        assert '47' in values
 
     def test_month_value_multiplied_by_11(self):
         values = _car_frequency_values(1, 'month')

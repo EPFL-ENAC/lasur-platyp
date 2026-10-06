@@ -1,5 +1,12 @@
 <template>
-  <q-btn-dropdown color="primary" size="sm" icon="download" :label="t('download')">
+  <q-btn-dropdown
+    color="primary"
+    icon="fa-regular fa-circle-down"
+    dropdown-icon="expand_more"
+    no-caps
+    :label="t('download')"
+    :disable="stats.loading"
+  >
     <q-list>
       <q-item clickable v-close-popup @click="onDownload(false)">
         <q-item-section>
@@ -17,29 +24,30 @@
 </template>
 
 <script setup lang="ts">
-import type { Query } from 'src/components/models'
-import type { Record } from 'src/models'
+import type { Query } from '@/components/models'
+import type { Record } from '@/models'
 import Papa from 'papaparse'
 import { useQuasar } from 'quasar'
-import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import MarkdownDialog from '@/components/MarkdownDialog.vue'
 
 const props = defineProps<{
   filter?: string
-  companyFilter?: string[]
-  campaignFilter?: string[]
+  companyFilter?: (string | number)[]
+  campaignFilter?: (string | number)[]
 }>()
 
 const { t } = useI18n({ useScope: 'global' })
 const services = useServices()
 const $q = useQuasar()
 const service = services.make('record')
+const stats = useStats()
 
 function onDownload(completedOnly: boolean) {
   $q.dialog({
     component: MarkdownDialog,
     componentProps: {
-      text: t('data_protection_notice.content'),
-      title: t('data_protection_notice.title'),
+      text: t('database_data_protection_notice.content'),
+      title: t('database_data_protection_notice.title'),
       canCancel: true,
     },
     persistent: true,

@@ -105,8 +105,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Company } from 'src/models'
-import { notifyError } from 'src/utils/notify'
+import type { Company } from '@/models'
+import { notifyError } from '@/utils/notify'
 
 interface DialogProps {
   modelValue: boolean

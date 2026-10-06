@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import AreaInput from 'src/components/AreaInput.vue'
+import AreaInput from '@/components/AreaInput.vue'
 import type { Position } from 'geojson'
 const { t } = useI18n()
 

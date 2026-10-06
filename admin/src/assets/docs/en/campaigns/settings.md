@@ -22,8 +22,8 @@ If these fields are left empty, the campaign will use the organisation's contact
 
 If measures to support staff mobility are already in place at the time of the campaign, you can enter details here so that the staff concerned can access this information:
 
-1. Toggle "With employer measures specific to this campaign"
-2. Select measures specific to this campaign
+1. Open the "Employer measures" tab
+2. Select measures specific to this campaign, or create some via "Add a new measure…" at the end of the list
 3. This is useful for:
    - Pilot programs testing new initiatives
    - Seasonal measures

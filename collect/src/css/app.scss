@@ -136,3 +136,181 @@ li + li {
 .rounded-borders {
   border-radius: 1rem !important;
 }
+
+.question-label {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+// A grid of rating boxes. Cells stretch to the tallest label in their row, and
+// carrying that height down through the card lets RatingItem push its stars to
+// the bottom edge, so they stay level however the labels wrap.
+.rating-grid .content-card,
+.rating-grid .q-card__section,
+.rating-grid .rating-item {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.rating-grid .content-card {
+  height: 100%;
+}
+
+// Vertical stack of content cards. Quasar's `q-gutter-y-*` would do this with a
+// negative top margin on the container, which eats whatever sits above it.
+.content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// A step reads as a header block -- title plus its supporting line -- and then
+// the content, which starts here.
+.step-content {
+  margin-top: 40px;
+}
+
+// Supporting copy under a label or a step title.
+.question-hint {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+// Flips a dark glyph SVG to white, for icons placed on a coloured surface.
+.icon-white {
+  filter: invert(100%);
+}
+
+// Design system buttons
+// Geometry and elevation come from the Quasar button variables; what is left
+// here is the brand surface (#F3C65F), its 2px border fading from white 12% to
+// white 0%, and the sentence case labels.
+.q-btn {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+// Icons sit at a fixed 20x20 regardless of the button size.
+.q-btn .q-icon {
+  font-size: 20px;
+}
+
+// 2px inner border, lit at the top and fading out towards the bottom. Only the
+// coloured buttons carry it; the neutral ones are a flat bordered surface.
+.q-btn:not(.q-btn--flat):not(.q-btn--outline)[class*='bg-']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+// Brand variant
+.q-btn.bg-primary,
+.q-btn.bg-accent {
+  background: $brand-yellow-400 !important;
+  color: $brand-yellow-800 !important;
+}
+
+// Neutral variant: buttons that carry no color of their own. A plain 1px border
+// stands in for the skeuomorphic shadow, so they read as outlined, not raised.
+.q-btn:not(.q-btn--flat):not(.q-btn--outline):not([class*='bg-']) {
+  background: white;
+  color: $brand-purple-800;
+  border: 1px solid var(--secondary-border-color);
+  box-shadow: none;
+}
+
+.body--dark .q-btn:not(.q-btn--flat):not(.q-btn--outline):not([class*='bg-']) {
+  background: $brand-purple-800;
+  color: $brand-purple-50;
+}
+
+// Picker tiles
+// Selectable tiles (mode pickers, period segments, journey mode chips) wear
+// the header control skin: hairline border, radius-default corner and the
+// small skeuomorphic shadow. `flat` keeps them clear of the button skin above,
+// so everything they need is declared here.
+.q-btn.picker-option {
+  height: 48px;
+  min-height: 48px;
+  padding: 10px 14px !important;
+  border: 1px solid var(--secondary-border-color);
+  border-radius: 8px;
+  background-color: var(--card-bg) !important;
+  color: $brand-purple-800;
+  box-shadow:
+    0 1px 2px 0 rgba(10, 13, 18, 0.05),
+    inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
+}
+
+.body--dark .q-btn.picker-option {
+  color: $brand-purple-50;
+}
+
+.q-btn.picker-option .q-icon {
+  font-size: 20px;
+  color: var(--half-muted-color);
+}
+
+// The picked option takes the brand surface, the way a selected option does
+// everywhere else in the form.
+.q-btn.picker-option--selected,
+.body--dark .q-btn.picker-option--selected {
+  border-color: $primary;
+  background-color: $brand-yellow-400 !important;
+  color: $brand-yellow-800;
+}
+
+.q-btn.picker-option--selected .q-icon {
+  color: $brand-yellow-800;
+}
+
+.picker-option__svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: var(--half-muted-color);
+
+  -webkit-mask: var(--picker-option-icon) no-repeat center / contain;
+  mask: var(--picker-option-icon) no-repeat center / contain;
+}
+
+.q-btn.picker-option--selected .picker-option__svg {
+  background-color: $brand-yellow-800;
+}
+
+.q-btn.picker-option.picker-option--outlined,
+.body--dark .q-btn.picker-option.picker-option--outlined {
+  border-color: $primary !important;
+}
+
+.q-btn.picker-option.picker-option--outlined .q-icon {
+  color: $primary !important;
+}
+
+.q-btn.picker-option--dashed,
+.body--dark .q-btn.picker-option--dashed {
+  border-style: dashed;
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+// The add slot stretched across the stack it appends to, so it lines up with
+// the cards above it.
+.q-btn.picker-option--block {
+  width: 100%;
+  height: 56px;
+  min-height: 56px;
+}

@@ -1,13 +1,15 @@
 import re
 import pandas as pd
 from api.models.query import Frequencies, Frequency
-from api.services.stats.commons import BaseStatsService, MODES, MODES_PRO, MODES_PRO_V1, normalize_pro_days_to_yearly
+from api.services.stats.commons import (
+    BaseStatsService, MODES_PRO, DAYS_PER_YEAR_FACTOR, normalize_pro_days_to_yearly,
+    COMPLEX_LABEL_MERGE, merge_label_components, RECO_INTER_PREFIX, RECO_SIMPLE_PREFIX,
+)
 
 
 class FrequenciesService(BaseStatsService):
     # Pre-compiled regex patterns for performance
     RECO_PROS_PATTERN = re.compile(r"^typo\.reco_pro\.reco_pros\..*$")
-    JOURNEY_DAYS_PATTERN = re.compile(r"^data\.freq_mod_journeys\..*\.days$")
     PRO_JOURNEY_DAYS_PATTERN = re.compile(
         r"^data\.freq_mod_pro_journeys\..*\.days$")
     JOURNEY_MODES_PATTERN = re.compile(
@@ -80,25 +82,24 @@ class FrequenciesService(BaseStatsService):
     def compute_recommendation_frequencies(self) -> Frequencies:
         """Compute recommendation frequencies from a DataFrame of records.
 
-        Each recommendation is taken into account (one per journey for new-style
-        typo.reco.reco_inter.N records, one per legacy typo.reco.reco_dt2.{0,1} for
-        older records), weighted by the days of the journey(s) it applies to.
+        The potential modal split is person-centric: each person counts once,
+        for the recommendation made on their main journey (new-style
+        typo.reco.reco_inter.N), or for the first legacy recommendation
+        (typo.reco.reco_dt2.{0,1}) when they have no per-journey one.
         """
-        reco_df = self._build_reco_weighted(self.df)
-        if reco_df is None:
-            return Frequencies(field="reco_inter", total=len(self.df), data=[])
+        return self._compute_recommendation_frequencies(
+            "reco_inter", RECO_INTER_PREFIX, include_legacy=True)
 
-        grouped = reco_df.groupby("reco_mode")["days"]
+    def compute_recommendation_simple_frequencies(self) -> Frequencies:
+        """Compute simple recommendation frequencies from a DataFrame of records.
 
-        return Frequencies(
-            field="reco_inter",
-            total=len(self.df),
-            data=[
-                Frequency(value=reco, count=int(
-                    counts.count()), sum=int(counts.sum()))
-                for reco, counts in grouped
-            ],
-        )
+        Same as compute_recommendation_frequencies, but over the simple typology
+        recommendation of the main journey (typo.reco.reco_simple.N). There is no
+        legacy equivalent for it, so records collected before per-journey
+        recommendations contribute nothing here.
+        """
+        return self._compute_recommendation_frequencies(
+            "reco_simple", RECO_SIMPLE_PREFIX, include_legacy=False)
 
     def compute_recommendation_pro_frequencies(self) -> Frequencies:
         """Compute recommendation professional frequencies from a DataFrame of records."""
@@ -106,16 +107,7 @@ class FrequenciesService(BaseStatsService):
             return Frequencies(field="reco_pros", total=0, data=[])
 
         all_reco_pros = []
-        # v1: recommendations are made per destination area type
-        for col in [
-            "typo.reco_pro.reco_pro_loc",
-            "typo.reco_pro.reco_pro_reg",
-            "typo.reco_pro.reco_pro_inter",
-        ]:
-            if col in self.df.columns:
-                all_reco_pros.extend(self.df[col].dropna().tolist())
-
-        # v2: recommendations are made per journey
+        # recommendations are made per journey
         col_reco_pros = [
             col for col in self.df.columns if self.RECO_PROS_PATTERN.match(col)
         ]
@@ -133,52 +125,19 @@ class FrequenciesService(BaseStatsService):
             ],
         )
 
-    def compute_modes_frequencies(self) -> list[Frequencies]:
-        """Compute all modes frequencies from a DataFrame of records."""
-        # TODO handle intermodality
-
-        # v1: count frequencies from legacy fields
-        df_v1 = self._get_records_v1()
-        results = []
-        for mode in MODES:
-            results.append(self._compute_mode_frequencies_v1(df_v1, mode))
-
-        # v2: count frequencies from data.freq_mod_journeys
-        df_v2 = self._get_records_v2()
-        if not df_v2.empty:
-            results_v2 = []
-            for mode in MODES:
-                results_v2.append(
-                    self._compute_mode_frequencies_v2(df_v2, mode))
-            results = self._merge_frequencies(results, results_v2)
-
-        # finalize totals and sort data
-        for frequencies in results:
-            frequencies.total = len(self.df)
-            # sort frequencies data by value as integer
-            frequencies.data.sort(key=lambda x: int(x.value))
-
-        return results
-
     def compute_modes_pro_frequencies(self) -> list[Frequencies]:
-        """Compute all modes frequencies from a DataFrame of records."""
-        # v1: count frequencies from legacy fields
-        df_v1 = self._get_records_v1()
-        results = []
-        for mode in MODES_PRO_V1:
-            results.append(self._compute_mode_pro_frequencies_v1(df_v1, mode))
+        """Compute all modes frequencies from a DataFrame of records (v3 only)."""
+        df_v3 = self._get_records_v3()
+        if df_v3.empty:
+            return []
 
-        # v2: count frequencies from data.freq_mod_journeys
-        df_v2 = self._get_records_v2()
-        if not df_v2.empty:
-            results_v2 = []
-            for mode in MODES_PRO:
-                results_v2.extend(
-                    self._compute_mode_pro_frequencies_v2(df_v2, mode))
-            results = self._merge_frequencies(results, results_v2)
+        results = []
+        for mode in MODES_PRO:
+            results.extend(self._compute_mode_pro_frequencies_v3(df_v3, mode))
+
         # finalize totals and sort data
         for frequencies in results:
-            frequencies.total = len(self.df)
+            frequencies.total = len(df_v3)
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
         # filter out frequencies with empty data
@@ -189,123 +148,133 @@ class FrequenciesService(BaseStatsService):
     def compute_modes_frequencies_simple_labels(self) -> list[Frequencies]:
         """Compute mode frequencies from typo.reco.simple_labels, one Frequencies
         per label actually observed in the data (rather than a fixed mode list)."""
+        df_v3 = self._get_records_v3()
+        if df_v3.empty:
+            return []
+
         label_cols = [
-            col for col in self.df.columns if self.SIMPLE_LABEL_PATTERN.match(col)
+            col for col in df_v3.columns if self.SIMPLE_LABEL_PATTERN.match(col)
         ]
         if not label_cols:
             return []
 
-        observed_labels = pd.unique(self.df[label_cols].values.ravel())
+        observed_labels = pd.unique(df_v3[label_cols].values.ravel())
         observed_labels = sorted(
             str(label) for label in observed_labels if pd.notna(label)
         )
 
         results = [
-            self._compute_mode_frequencies_simple_labels(self.df, label)
+            self._compute_mode_frequencies_simple_labels(df_v3, label)
             for label in observed_labels
         ]
 
         # finalize totals and sort data
         for frequencies in results:
-            frequencies.total = len(self.df)
+            frequencies.total = len(df_v3)
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
 
-        return results
+        # a label observed only on secondary journeys is nobody's main mode:
+        # drop it rather than showing an empty share
+        return [f for f in results if f.data]
 
     def compute_modes_frequencies_complex_labels(self) -> list[Frequencies]:
         """Compute mode frequencies from typo.reco.complex_labels, one Frequencies
-        per label actually observed in the data (rather than a fixed mode list)."""
+        per label actually observed in the data (rather than a fixed mode list).
+        COMPLEX_LABEL_MERGE values are folded into their target bucket
+        component-wise, so both a plain label (e.g. "pub") and any '+'-joined
+        intermodal combination containing it (e.g. "car+pub", "pub+bike") fold
+        into the matching target (e.g. "tp", "car+tp", "tp+bike")."""
+        df_v3 = self._get_records_v3()
+        if df_v3.empty:
+            return []
+
         label_cols = [
-            col for col in self.df.columns if self.COMPLEX_LABEL_PATTERN.match(col)
+            col for col in df_v3.columns if self.COMPLEX_LABEL_PATTERN.match(col)
         ]
         if not label_cols:
             return []
 
-        observed_labels = pd.unique(self.df[label_cols].values.ravel())
+        observed_labels = pd.unique(df_v3[label_cols].values.ravel())
         observed_labels = sorted(
             str(label) for label in observed_labels if pd.notna(label)
         )
 
+        # merged target label -> raw labels that fold into it
+        merged_groups: dict[str, list[str]] = {}
+        for label in observed_labels:
+            target = merge_label_components(label, COMPLEX_LABEL_MERGE)
+            merged_groups.setdefault(target, []).append(label)
+
         results = [
-            self._compute_mode_frequencies_complex_labels(self.df, label)
-            for label in observed_labels
+            self._compute_mode_frequencies_by_label(
+                df_v3, target, "typo.reco.complex_labels", raw_labels)
+            for target, raw_labels in sorted(merged_groups.items())
         ]
 
         # finalize totals and sort data
         for frequencies in results:
-            frequencies.total = len(self.df)
+            frequencies.total = len(df_v3)
             # sort frequencies data by value as integer
             frequencies.data.sort(key=lambda x: int(x.value))
 
-        return results
+        # a label observed only on secondary journeys is nobody's main mode:
+        # drop it rather than showing an empty share
+        return [f for f in results if f.data]
 
     #
     # Internal functions
     #
 
-    def _compute_mode_pro_frequencies_v1(
-        self, df: pd.DataFrame, mode: str
+    def _compute_recommendation_frequencies(
+        self, field: str, reco_prefix: str, include_legacy: bool
     ) -> Frequencies:
-        """Compute a mode frequency from a DataFrame of records."""
-        # Legacy data version: get the series for the specific mode
+        reco_df = self._build_reco_per_person(
+            self.df, reco_prefix=reco_prefix, include_legacy=include_legacy)
+        if reco_df is None or reco_df.empty:
+            return Frequencies(field=field, total=len(self.df), data=[])
 
-        # Find the column name for the mode
-        col_name = f"data.freq_mod_pro_{mode}"
-        if col_name not in df.columns:
-            return Frequencies(field=mode, total=len(df), data=[])
-        # Get the series for the specific mode
-        mode_series = df[f"data.freq_mod_pro_{mode}"].dropna().astype(int)
-        # days per month to days per year
-        mode_series = mode_series * 12
-        mode_counts = mode_series.value_counts()
-        mode_sums = mode_series.groupby(mode_series).sum()
+        counts = reco_df["reco_mode"].value_counts()
 
         return Frequencies(
-            field=mode.replace("region_", "national_"),
-            total=len(df),
+            field=field,
+            total=len(self.df),
             data=[
-                Frequency(
-                    value=str(mod_value),
-                    count=mode_counts[mod_value],
-                    sum=mode_sums[mod_value],
-                )
-                for mod_value in mode_counts.index
-                if mod_value > 0
+                Frequency(value=reco, count=int(count))
+                for reco, count in counts.items()
             ],
         )
 
-    def _compute_mode_pro_frequencies_v2(
+    def _distance_type(self, lat: float, lon: float, h3_index, mode: str) -> str:
+        dist = self._calculate_distance_to_h3(lat, lon, h3_index, mode)
+        if dist < 20:
+            return "local"
+        elif dist < 500:
+            return "national"
+        elif dist < 1500:
+            return "europe"
+        else:
+            return "inter"
+
+    def _compute_mode_pro_frequencies_v3(
         self, df: pd.DataFrame, mode: str
     ) -> list[Frequencies]:
-        """Compute a mode frequency from a DataFrame of records."""
+        """Compute a mode frequency from a DataFrame of records.
 
-        def calculate_distance_type(row, i):
-            lat = float(row["data.workplace.lat"])
-            lon = float(row["data.workplace.lon"])
-            h3_index = row[f"data.freq_mod_pro_journeys.{str(i)}.hex_id"]
-            mode = row[f"data.freq_mod_pro_journeys.{str(i)}.mode"]
-            dist = self._calculate_distance_to_h3(lat, lon, h3_index, mode)
-            if dist < 20:
-                return "local"
-            elif dist < 500:
-                return "national"
-            elif dist < 1500:
-                return "europe"
-            else:
-                return "inter"
-
-        # New data version: get the series from data.freq_mod_pro_journeys
+        Builds a days -> (count, sum) histogram per field (distance_type_mode)
+        vectorized per journey index -- filtering, day normalization and
+        histogram aggregation are vectorized; only the h3 distance-type
+        lookup stays a per-row call (h3 has no bulk API), and only over the
+        already mode-filtered, positive-days subset rather than the full df.
+        """
         col_days = df.columns[
             df.columns.str.contains(
                 r"^data\.freq_mod_pro_journeys\..*\.days$", regex=True
             )
         ]
-        # print(
-        #     f"Computing mod frequencies for version 2.x using columns: {col_days.tolist()}")
-        field_frequencies = {}
+        # field -> {days_str: [count, sum]}
+        totals: dict[str, dict[str, list[int]]] = {}
         for i in range(len(col_days)):
-            # print("mode:", mode, "journey:", i)
             col_mode_i = f"data.freq_mod_pro_journeys.{str(i)}.mode"
             if col_mode_i not in df.columns:
                 continue
@@ -314,270 +283,85 @@ class FrequenciesService(BaseStatsService):
                 continue
             col_days_i = col_days[i]
             col_days_per_i = f"data.freq_mod_pro_journeys.{str(i)}.days_per"
-            # make a dataframe with only i columns and workplace lat/lon
-            extra_cols = [
-                col_days_per_i] if col_days_per_i in df.columns else []
-            df_i = df[
-                [
-                    "data.workplace.lat",
-                    "data.workplace.lon",
-                    col_days_i,
-                    col_mode_i,
-                    col_hexid_i,
-                ] + extra_cols
-            ].copy()
-            # Filter for the specific mode
-            df_i = df_i[df_i[col_mode_i] == mode]
-            # Skip if no records for this mode
-            if df_i.empty:
+
+            # Coerce before comparing/using: some records have this field
+            # stored as a non-numeric string, which would otherwise raise on
+            # `> 0` (invalid values are treated as missing, same as skipping
+            # them would).
+            days_s = pd.to_numeric(df[col_days_i], errors='coerce')
+            mask = (df[col_mode_i] == mode) & (days_s > 0)
+            if not mask.any():
                 continue
-            # Calculate distance type from workplace to pro travel destination for each record
-            df_i["type"] = df_i.apply(
-                lambda row: calculate_distance_type(row, i), axis=1
+
+            idx = df.index[mask]
+            workplace_lat = df["data.workplace.lat"].loc[idx]
+            workplace_lon = df["data.workplace.lon"].loc[idx]
+            hex_ids = df[col_hexid_i].loc[idx]
+            days_per_s = df[col_days_per_i].loc[idx] if col_days_per_i in df.columns else pd.Series(
+                None, index=idx)
+
+            # h3 distance-type lookup, per-row over the small filtered subset
+            types = pd.Series(
+                [self._distance_type(float(lat), float(lon), hex_id, mode)
+                 for lat, lon, hex_id in zip(workplace_lat, workplace_lon, hex_ids)],
+                index=idx,
             )
-            # print(df_i)
-            # count positive mod_days
-            df_i = df_i[df_i[col_days_i] > 0]
-            for idx, row in df_i.iterrows():
-                days_per = row[col_days_per_i] if col_days_per_i in df_i.columns else None
-                days = int(normalize_pro_days_to_yearly(
-                    row[col_days_i], days_per))
-                type = row["type"]
-                field = f"{type}_{mode}"
-                if field not in field_frequencies:
-                    field_frequencies[field] = Frequencies(
-                        field=field, total=len(df), data=[]
-                    )
-                frequencies = field_frequencies[field].data
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
 
-        return list(field_frequencies.values())
+            factor = days_per_s.map(DAYS_PER_YEAR_FACTOR).fillna(1)
+            days_yearly = (days_s.loc[idx] * factor).astype(int)
 
-    def _compute_mode_frequencies_v1(self, df: pd.DataFrame, mode: str) -> Frequencies:
-        """Compute a mode frequency from a DataFrame of records."""
-        # Legacy data version: get the series for the specific mode
+            hist = pd.DataFrame({"type": types.to_numpy(), "days": days_yearly.to_numpy()})
+            for (type_, days_val), count in hist.groupby(["type", "days"]).size().items():
+                field = f"{type_}_{mode}"
+                bucket = totals.setdefault(field, {})
+                entry = bucket.setdefault(str(days_val), [0, 0])
+                entry[0] += int(count)
+                entry[1] += int(days_val) * int(count)
 
-        # Find the column name for the mode
-        col_name = f"data.freq_mod_{mode}"
-        if col_name not in df.columns:
+        return [
+            Frequencies(
+                field=field, total=len(df),
+                data=[Frequency(value=key, count=count, sum=total_days)
+                      for key, (count, total_days) in days_map.items()],
+            )
+            for field, days_map in totals.items()
+        ]
+
+    def _compute_mode_frequencies_by_label(
+        self, df: pd.DataFrame, mode: str, label_col_prefix: str,
+        source_values: list[str] | None = None,
+    ) -> Frequencies:
+        """Compute a mode frequency from data.freq_mod_journeys, using the
+        aggregated typo.reco.{simple,complex}_labels.{i} instead of the raw
+        modes.* list, so each journey is credited to exactly one label.
+
+        The home-to-work modal split is person-centric: only the label of the
+        person's main journey is counted, once, whatever the number of journeys
+        they declared and how often they make them (see _select_main_journey).
+        The resulting histogram is therefore keyed by the days frequency of that
+        main journey, and carries no `sum` of days: consumers weight these
+        frequencies by their `count` of persons.
+
+        `source_values` lets several raw label values be folded into a single
+        result `mode` (e.g. merging "train" into "pub"); defaults to [mode]."""
+        source_values = source_values or [mode]
+        main = self._main_journey_labels(df, label_col_prefix)
+        if main.empty:
             return Frequencies(field=mode, total=len(df), data=[])
-        # Get the series for the specific mode
-        mode_series = df[f"data.freq_mod_{mode}"].dropna().astype(int)
-        mode_counts = mode_series.value_counts()
-        mode_sums = mode_series.groupby(mode_series).sum()
 
-        return Frequencies(
-            field=mode,
-            total=len(df),
-            data=[
-                Frequency(
-                    value=str(mod_value),
-                    count=mode_counts[mod_value],
-                    sum=mode_sums[mod_value],
-                )
-                for mod_value in mode_counts.index
-                if mod_value > 0
-            ],
-        )
+        selected = main[main['value'].isin(source_values)]
+        if selected.empty:
+            return Frequencies(field=mode, total=len(df), data=[])
 
-    def _compute_mode_frequencies_v2(self, df: pd.DataFrame, mode: str) -> Frequencies:
-        """Compute a mode frequency from a DataFrame of records."""
-
-        def is_intermodal(row, i):
-            modes = []
-            for col in row.index:
-                if col.startswith(f"data.freq_mod_journeys.{i}.modes."):
-                    val = row[col]
-                    # walking is not considered for intermodality
-                    if not pd.isna(val) and val != "walking":
-                        modes.append(val)
-            modes = set(modes)
-            return len(modes) > 1
-
-        def extract_mod_days(row, mode, i):
-            modes = []
-            for col in row.index:
-                if col.startswith(f"data.freq_mod_journeys.{i}.modes."):
-                    val = row[col]
-                    if not pd.isna(val) and val == mode:
-                        modes.append(val)
-            modes = set(modes)
-            if len(modes) == 0:
-                return 0
-            if len(modes) > 1:
-                # intermodality, make sure walking is not counted
-                if "walking" in modes:
-                    modes.remove("walking")
-            # get days value
-            days_col = f"data.freq_mod_journeys.{i}.days"
-            days = row[days_col]
-            if mode in modes:
-                return int(days) if not pd.isna(days) else 0
-            return 0
-
-        # New data version: get the series from data.freq_mod_journeys
-        col_days = [
-            col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
-        # print(
-        #     f"Computing mod frequencies for version 2.x using columns: {col_days.tolist()}")
-        frequencies = []
-        for i in range(len(col_days)):
-            # print("mode:", mode, "journey:", i)
-            col_modes_i = df.columns[
-                df.columns.str.startswith(
-                    f"data.freq_mod_journeys.{str(i)}.modes.")
-            ]
-            if col_modes_i.empty:
-                continue
-            col_days_i = col_days[i]
-            # make a dataframe with only i columns
-            df_i = df[[col_days_i] + col_modes_i.tolist()].copy()
-            # intermodality if more than one mode
-            # TODO not used for now
-            df_i["inter"] = df_i.apply(
-                lambda row: is_intermodal(row, i), axis=1)
-            # extract mod days
-            df_i["mod_days"] = df_i.apply(
-                lambda row: extract_mod_days(row, mode, i), axis=1
-            )
-            # count positive mod_days
-            df_i = df_i[df_i["mod_days"] > 0]
-            for row in df_i.itertuples():
-                days = row.mod_days
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
-            # print(df_i)
-
-        # print("Final frequencies for mode", mode, ":", frequencies)
+        counts = selected['days'].astype(int).value_counts()
+        frequencies = [
+            Frequency(value=str(days), count=int(count))
+            for days, count in counts.items()
+        ]
         return Frequencies(field=mode, total=len(df), data=frequencies)
 
     def _compute_mode_frequencies_simple_labels(
         self, df: pd.DataFrame, mode: str
     ) -> Frequencies:
-        """Compute a mode frequency from data.freq_mod_journeys, using the
-        aggregated typo.reco.simple_labels.{i} instead of the raw modes.* list,
-        so each journey's days are credited to exactly one label."""
-        col_days = [
-            col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
-        frequencies = []
-        for i in range(len(col_days)):
-            col_label_i = f"typo.reco.simple_labels.{str(i)}"
-            if col_label_i not in df.columns:
-                continue
-            col_days_i = col_days[i]
-            df_i = df[[col_days_i, col_label_i]].copy()
-            # skip journeys with no simple label
-            df_i = df_i.dropna(subset=[col_label_i])
-            # keep only journeys whose simple label is the target mode
-            df_i = df_i[df_i[col_label_i] == mode]
-            # count positive mod_days
-            df_i = df_i[df_i[col_days_i] > 0]
-            for _, row in df_i.iterrows():
-                days = int(row[col_days_i])
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
+        return self._compute_mode_frequencies_by_label(df, mode, "typo.reco.simple_labels")
 
-        return Frequencies(field=mode, total=len(df), data=frequencies)
-
-    def _compute_mode_frequencies_complex_labels(
-        self, df: pd.DataFrame, mode: str
-    ) -> Frequencies:
-        """Compute a mode frequency from data.freq_mod_journeys, using the
-        aggregated typo.reco.complex_labels.{i} instead of the raw modes.* list,
-        so each journey's days are credited to exactly one label."""
-        col_days = [
-            col for col in df.columns if self.JOURNEY_DAYS_PATTERN.match(col)]
-        frequencies = []
-        for i in range(len(col_days)):
-            col_label_i = f"typo.reco.complex_labels.{str(i)}"
-            if col_label_i not in df.columns:
-                continue
-            col_days_i = col_days[i]
-            df_i = df[[col_days_i, col_label_i]].copy()
-            # skip journeys with no complex label
-            df_i = df_i.dropna(subset=[col_label_i])
-            # keep only journeys whose complex label is the target mode
-            df_i = df_i[df_i[col_label_i] == mode]
-            # count positive mod_days
-            df_i = df_i[df_i[col_days_i] > 0]
-            for _, row in df_i.iterrows():
-                days = int(row[col_days_i])
-                count = 1
-                # find in frequencies the one with value is str(days)
-                freq = next(
-                    (f for f in frequencies if f.value == str(days)), None)
-                if freq is None:
-                    frequencies.append(
-                        Frequency(value=str(days), count=int(
-                            count), sum=int(days))
-                    )
-                else:
-                    freq.count += int(count)
-                    freq.sum += int(days)
-
-        return Frequencies(field=mode, total=len(df), data=frequencies)
-
-    def _merge_frequencies(
-        self, frequencies: list[Frequencies], frequencies2: list[Frequencies]
-    ) -> Frequencies:
-        """Merge each Frequencies into a list of Frequencies."""
-        for freq2 in frequencies2:
-            freq1 = next(
-                (f for f in frequencies if f.field == freq2.field), None)
-            if not freq1:
-                frequencies.append(freq2)
-                continue
-            merged_data = freq1.data.copy()
-            for freq in freq2.data:
-                existing_freq = next(
-                    (f for f in merged_data if f.value == freq.value), None
-                )
-                if existing_freq:
-                    existing_freq.count += freq.count
-                    if freq.sum is not None:
-                        if existing_freq.sum is None:
-                            existing_freq.sum = 0
-                        existing_freq.sum += freq.sum
-                else:
-                    merged_data.append(freq)
-            freq = Frequencies(
-                field=freq1.field, total=freq1.total + freq2.total, data=merged_data
-            )
-            # replace in frequencies
-            for i in range(len(frequencies)):
-                if frequencies[i].field == freq.field:
-                    frequencies[i] = freq
-                    break
-
-        return frequencies

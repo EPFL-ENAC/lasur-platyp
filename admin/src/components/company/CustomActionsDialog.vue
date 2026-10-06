@@ -50,15 +50,21 @@
                     :rules="[(val) => !!val || t('field_required')]"
                   />
                 </div>
+                <div v-if="action.id" class="text-hint">
+                  {{ t('company.custom_action_campaigns', { n: campaignsUsing(action).length }) }}
+                  <q-tooltip v-if="campaignsUsing(action).length">
+                    <div v-for="c in campaignsUsing(action)" :key="c.id">{{ c.name }}</div>
+                  </q-tooltip>
+                </div>
               </q-item-section>
               <q-item-section avatar>
                 <q-btn
-                  icon="delete"
-                  rounded
-                  dense
                   flat
-                  color="negative"
-                  size="12px"
+                  round
+                  dense
+                  icon="fa-regular fa-trash-can"
+                  :aria-label="t('remove')"
+                  class="btn-danger-icon"
                   @click="onDeleteAction(idx)"
                 />
               </q-item-section>
@@ -97,16 +103,24 @@
         <q-btn :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
+    <confirm-dialog
+      v-model="showConfirmRemove"
+      :title="t('remove_custom_action')"
+      :text="confirmRemoveText"
+      @confirm="doDeleteAction"
+    />
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import type { Company, CompanyAction } from 'src/models'
-import { actionGroupOptions } from 'src/utils/options'
-import { notifyError } from 'src/utils/notify'
+import type { Company, CompanyAction } from '@/models'
+import { actionGroupOptions } from '@/utils/options'
+import { notifyError } from '@/utils/notify'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const actionsStore = useActions()
+const campaignsStore = useCampaigns()
 
 interface DialogProps {
   modelValue: boolean
@@ -224,7 +238,29 @@ async function onSave() {
     .catch(notifyError)
 }
 
+function campaignsUsing(action: CustomCompanyAction) {
+  if (!action.id) return []
+  const val = `${action.id}`
+  return campaignsStore.items.filter((c) => c.actions?.[action.group]?.includes(val))
+}
+
+const showConfirmRemove = ref(false)
+const confirmRemoveText = ref('')
+const removeIdx = ref(-1)
+
 function onDeleteAction(idx: number) {
-  actions.value.splice(idx, 1)
+  removeIdx.value = idx
+  const action = actions.value[idx] as CustomCompanyAction
+  const campaigns = campaignsUsing(action)
+  if (!campaigns.length) return doDeleteAction()
+  confirmRemoveText.value = t('remove_custom_action_text', {
+    name: (locale.value === 'fr' ? action.labelFr : action.labelEn) || action.labelEn,
+    campaigns: campaigns.map((c) => c.name).join(', '),
+  })
+  showConfirmRemove.value = true
+}
+
+function doDeleteAction() {
+  actions.value.splice(removeIdx.value, 1)
 }
 </script>

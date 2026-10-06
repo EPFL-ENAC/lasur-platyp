@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Request, Response
+from api.config import config
+from api.rate_limit import limiter
 from ..models.isochrones import IsochronePoisData, IsochroneResponse, FeatureCollection, PoisData, PoisData
 from api.services.isochrones import IsochronesService
 
@@ -15,7 +17,9 @@ async def get_available_modes() -> Response:
 
 
 @router.post("/_compute", response_model=IsochroneResponse, response_model_exclude_none=True)
+@limiter.limit(config.RATE_LIMIT_ISOCHRONES)
 async def compute_isochrones(
+    request: Request,
     data: IsochronePoisData,
 ) -> IsochroneResponse:
     """
@@ -36,7 +40,9 @@ async def compute_isochrones(
 
 
 @router.post("/_pois", response_model=FeatureCollection, response_model_exclude_none=True)
+@limiter.limit(config.RATE_LIMIT_ISOCHRONES)
 async def get_pois(
+    request: Request,
     data: PoisData,
 ) -> FeatureCollection:
     service = IsochronesService()

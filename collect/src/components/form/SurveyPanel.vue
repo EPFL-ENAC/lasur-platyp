@@ -1,14 +1,25 @@
 <template>
   <div v-if="survey.record" v-touch-swipe.mouse.left.right="handleSwipe">
+    <div
+      class="survey-step-header"
+      :class="{ 'survey-step-header--centered': survey.stepName === 'final' }"
+    >
+      <h2 v-if="stepTitle" class="survey-step-title text-h4 text-bold text-title">
+        {{ stepTitle }}
+      </h2>
+      <!-- A page-level action, so it sits with the title rather than in the flow. -->
+      <q-btn
+        v-if="survey.stepName === 'recommendations'"
+        icon="print"
+        :label="t('print')"
+        class="survey-step-header__action"
+        @click="openPrintPreview"
+      />
+    </div>
     <!--pre>{{ survey.step }} - {{ survey.stepName }}</pre-->
     <div v-if="survey.stepName === 'agreement'">
       <div>
-        <SectionItem
-          :label="t('form.agreement')"
-          label-class="text-h4 text-bold"
-          :hint="t('form.agreement_hint')"
-          class="q-mb-lg"
-        />
+        <div class="agreement-intro question-hint">{{ t('form.agreement_hint') }}</div>
         <AgreementPanel />
       </div>
     </div>
@@ -19,7 +30,6 @@
       <EmploymentPanel />
     </div>
     <div v-if="survey.stepName === 'workplace'">
-      <div class="text-h4 text-bold">{{ t('form.workplace') }}</div>
       <WorkplacePanel />
     </div>
     <div v-if="survey.stepName === 'origin_places'">
@@ -59,28 +69,42 @@
     </div>
     <div v-if="survey.stepName === 'importance'">
       <div>
-        <SectionItem
-          :label="t('form.importance')"
-          label-class="text-bold text-h4"
-          :hint="t('form.importance_hint')"
-          class="q-mb-lg"
-        />
+        <div class="question-hint">{{ t('form.importance_hint') }}</div>
         <ImportancePanel />
       </div>
     </div>
     <div v-if="survey.stepName === 'needs'">
       <div>
-        <SectionItem
-          :label="t('form.needs')"
-          label-class="text-bold text-h4"
-          :hint="t('form.needs_hint')"
-          class="q-mb-lg"
-        />
+        <div class="question-hint">{{ t('form.needs_hint') }}</div>
         <NeedsPanel />
       </div>
     </div>
     <div v-if="survey.stepName === 'recommendations'">
-      <RecommendationsPanel />
+      <div class="question-hint q-mb-lg">{{ t(`form.recommendations_preamble`) }}</div>
+      <RecommendationsPersoPanel
+        :journeys="freqModJourneys"
+        :reco-inter="recoInter"
+        :bravo="bravo"
+        :pt-pass="ptPass"
+        :center="center"
+        :mesure-dt="mesureDt"
+        :global-actions="globalActionsPerso"
+        :company-name="collector.info.company_name"
+        :benefits-expanded="false"
+      />
+      <InfoPanel class="q-mt-lg" />
+    </div>
+    <div v-if="survey.stepName === 'recommendations_pro' && recoPros.length">
+      <div class="question-hint q-mb-lg">{{ t(`form.recommendations_pro_preamble`) }}</div>
+      <RecommendationsProPanel
+        :pro-journeys="freqModProJourneys"
+        :reco-pros="recoPros"
+        :pro-journey-locations="proJourneyLocations"
+        :mesure-pro="mesurePro"
+        :global-actions="globalActionsPro"
+        :company-name="collector.info.company_name"
+        :benefits-expanded="false"
+      />
       <InfoPanel class="q-mt-lg" />
     </div>
     <div v-if="survey.stepName === 'change'">
@@ -92,7 +116,7 @@
     <div v-if="survey.stepName === 'comments'">
       <SectionItem
         :label="t('form.comments')"
-        label-class="text-h4 text-bold q-mb-md"
+        label-class="question-label text-bold q-mb-md"
         class="q-mb-lg"
       />
       <q-input
@@ -101,75 +125,150 @@
         class="q-mb-lg text-h6"
         bg-color="field"
         outlined
-        rounded
       />
       <InfoPanel />
     </div>
     <div v-if="survey.stepName === 'final'">
       <FinalPanel />
     </div>
-    <div class="row justify-center q-mt-xl">
+    <div class="row items-center survey-nav">
       <q-btn
-        rounded
         v-if="survey.isAfterStep('agreement') && survey.stepName !== 'final'"
-        color="accent"
-        icon="keyboard_arrow_left"
+        icon="arrow_back"
+        :label="t('previous')"
         size="lg"
-        :title="t('previous')"
         @click="prevStep"
-        class="q-mr-md"
       />
       <q-btn
-        rounded
         v-if="survey.isBeforeStep('comments')"
         color="accent"
-        icon="keyboard_arrow_right"
+        icon-right="arrow_forward"
+        :label="t('next')"
         size="lg"
-        :title="t('next')"
         @click="nextStep"
-        class="q-ml-md"
+        class="q-ml-auto"
       />
       <q-btn
-        rounded
         v-if="survey.stepName === 'comments'"
         color="accent"
         :label="t('finish')"
         icon-right="send"
         size="lg"
         @click="onSendComments"
-        class="q-ml-md"
+        class="q-ml-auto"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import SectionItem from 'src/components/form/SectionItem.vue'
-import AgreementPanel from 'src/components/form/steps/AgreementPanel.vue'
-import AgePanel from 'src/components/form/steps/AgePanel.vue'
-import EmploymentPanel from 'src/components/form/steps/EmploymentPanel.vue'
-import OriginPlacePanel from 'src/components/form/steps/OriginPlacePanel.vue'
-import WorkplacePanel from 'src/components/form/steps/WorkplacePanel.vue'
-import EquipmentsPanel from 'src/components/form/steps/EquipmentsPanel.vue'
-import ConstraintsPanel from 'src/components/form/steps/ConstraintsPanel.vue'
-import JourneysPanel from 'src/components/form/steps/JourneysPanel.vue'
-import ProJourneysPanel from 'src/components/form/steps/ProJourneysPanel.vue'
-import TravelTimePanel from 'src/components/form/steps/TravelTimePanel.vue'
-import TravelProPanel from 'src/components/form/steps/TravelProPanel.vue'
-import ImportancePanel from 'src/components/form/steps/ImportancePanel.vue'
-import NeedsPanel from 'src/components/form/steps/NeedsPanel.vue'
-import RecommendationsPanel from 'src/components/form/steps/RecommendationsPanel.vue'
-import ChangePanel from 'src/components/form/steps/ChangePanel.vue'
+import SectionItem from '@/components/form/SectionItem.vue'
+import AgreementPanel from '@/components/form/steps/AgreementPanel.vue'
+import AgePanel from '@/components/form/steps/AgePanel.vue'
+import EmploymentPanel from '@/components/form/steps/EmploymentPanel.vue'
+import OriginPlacePanel from '@/components/form/steps/OriginPlacePanel.vue'
+import WorkplacePanel from '@/components/form/steps/WorkplacePanel.vue'
+import EquipmentsPanel from '@/components/form/steps/EquipmentsPanel.vue'
+import ConstraintsPanel from '@/components/form/steps/ConstraintsPanel.vue'
+import JourneysPanel from '@/components/form/steps/JourneysPanel.vue'
+import ProJourneysPanel from '@/components/form/steps/ProJourneysPanel.vue'
+import TravelTimePanel from '@/components/form/steps/TravelTimePanel.vue'
+import TravelProPanel from '@/components/form/steps/TravelProPanel.vue'
+import ImportancePanel from '@/components/form/steps/ImportancePanel.vue'
+import NeedsPanel from '@/components/form/steps/NeedsPanel.vue'
+import RecommendationsPersoPanel from '@/components/form/steps/RecommendationsPersoPanel.vue'
+import RecommendationsProPanel from '@/components/form/steps/RecommendationsProPanel.vue'
+import ChangePanel from '@/components/form/steps/ChangePanel.vue'
 import EmailPanel from './steps/EmailPanel.vue'
-import InfoPanel from 'src/components/form/steps/InfoPanel.vue'
-import FinalPanel from 'src/components/form/steps/FinalPanel.vue'
-import { notifyError } from 'src/utils/notify'
+import InfoPanel from '@/components/form/steps/InfoPanel.vue'
+import FinalPanel from '@/components/form/steps/FinalPanel.vue'
+import type { Journey, ProJourney, RecommendationsPreviewData } from '@/models'
+import { notifyError } from '@/utils/notify'
+import { resolveLocation } from '@/utils/boundaries'
 
 const { t, locale } = useI18n()
 const survey = useSurvey()
 const collector = useCollector()
+const router = useRouter()
 
 const plainEmail = ref('')
+
+const stepTitle = computed(() => (survey.stepName ? t(`form.step_title.${survey.stepName}`) : ''))
+
+const mainFm = computed(() => survey.getMainFreqMod())
+const isModeSustainable = computed(() => survey.isModeSustainable(survey.getMainFreqMod(false)))
+const isModeOptions = computed(() => survey.isModeInRecommendation(mainFm.value))
+const freqModJourneys = computed<Journey[]>(() => survey.record.data?.freq_mod_journeys || [])
+const freqModProJourneys = computed<ProJourney[]>(
+  () => survey.record.data?.freq_mod_pro_journeys || [],
+)
+
+const recoInter = computed(() => survey.recommendation.reco?.reco_inter || [])
+const recoPros = computed(() => survey.recommendation.reco_pro?.reco_pros || [])
+const bravo = computed(() => survey.recommendation.reco?.bravo || [])
+const ptPass = computed(() => survey.recommendation.reco?.pt_pass)
+const center = computed(() => {
+  const loc = survey.record.data.origin
+  if (!loc?.lon || !loc?.lat) return null
+  return [loc.lon, loc.lat] as [number, number]
+})
+
+// Measures are keyed by recommendation code; anything but a list means no measures.
+function measuresOf(byReco: { [reco: string]: string[] | string } | undefined, recos: string[]) {
+  return recos.map((r) => {
+    const v = byReco?.[r]
+    return Array.isArray(v) ? v : []
+  })
+}
+const mesureDt = computed(() =>
+  measuresOf(survey.recommendation.reco_actions?.mesure_dt, recoInter.value),
+)
+const globalActionsPerso = computed(() => survey.recommendation.reco_actions?.mesures_globa || [])
+const mesurePro = computed(() =>
+  measuresOf(survey.recommendation.reco_actions?.mesure_pro, recoPros.value),
+)
+const globalActionsPro = computed(() => survey.recommendation.reco_actions?.mesures_pro_globa || [])
+
+const proJourneyLocations = computed(() =>
+  (survey.record.data.freq_mod_pro_journeys || []).map((j) =>
+    resolveLocation(j.location, j.hex_id),
+  ),
+)
+
+const previewData = computed<RecommendationsPreviewData>(() => ({
+  perso: {
+    mainFm: mainFm.value,
+    isModeSustainable: isModeSustainable.value,
+    isModeOptions: isModeOptions.value,
+    journeys: freqModJourneys.value,
+    recoInter: recoInter.value,
+    bravo: bravo.value,
+    ptPass: ptPass.value,
+    center: center.value,
+    mesureDt: mesureDt.value,
+    globalActions: globalActionsPerso.value,
+    companyName: collector.info.company_name,
+  },
+  pro: {
+    proJourneys: freqModProJourneys.value,
+    recoPros: recoPros.value,
+    proJourneyLocations: proJourneyLocations.value,
+    mesurePro: mesurePro.value,
+    globalActions: globalActionsPro.value,
+  },
+}))
+
+function openPrintPreview() {
+  const payload = JSON.stringify(previewData.value)
+  const routeData = router.resolve({
+    path: '/print-reco',
+    query: {
+      data: encodeURIComponent(payload),
+      locale: locale.value,
+    },
+  })
+  window.open(routeData.href, '_blank')
+}
 
 onMounted(() => {
   if (survey.tokenOrSlug) {
@@ -212,10 +311,25 @@ function nextStep() {
       return
     }
   }
+  if (survey.stepName === 'travel_time') {
+    if (survey.record.data.travel_time === undefined || survey.record.data.travel_time <= 0) {
+      notifyError(t('form.error.travel_time'))
+      return
+    }
+  }
   if (survey.stepName === 'intermodality') {
-    for (const journey of survey.record.data.freq_mod_journeys || []) {
+    const journeys = survey.record.data.freq_mod_journeys || []
+    if (journeys.length === 0) {
+      notifyError(t('form.error.journey_mode'))
+      return
+    }
+    for (const journey of journeys) {
       if (journey.modes === undefined || journey.modes.length === 0) {
         notifyError(t('form.error.journey_mode'))
+        return
+      }
+      if (!Number.isInteger(journey.days) || journey.days < 1 || journey.days > 5) {
+        notifyError(t('form.error.journey_days'))
         return
       }
     }
@@ -228,6 +342,9 @@ function nextStep() {
       }
       if (!journey.location && !journey.hex_id) {
         errors.push(t('form.error.pro_journey_hex_id'))
+      }
+      if (journey.days === undefined || journey.days <= 0) {
+        errors.push(t('form.error.pro_journey_days'))
       }
     }
     if (errors.length) {
@@ -263,6 +380,7 @@ function nextStep() {
     void collector.loadInfo(survey.tokenOrSlug)
     if (survey.stepName === 'recommendations') {
       survey.recommendation = {}
+      survey.recommendationLoaded = false
       survey.record.data.comments = ''
       collector
         .save(survey.tokenOrSlug, survey.record, plainEmail.value)
@@ -273,13 +391,17 @@ function nextStep() {
         .then((resp) => {
           survey.recommendation = resp
           survey.record.typo = resp
+          survey.recommendationLoaded = true
         })
         .catch(notifyError)
     } else if (survey.isBeforeStep('recommendations')) {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     } else if (survey.stepName === 'change') {
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
-    } else if (survey.previousStepName === 'email') {
+    } else if (
+      survey.previousStepName === 'email' ||
+      survey.previousStepName === 'recommendations_pro'
+    ) {
       // step was just incremented, so we check previous step
       void collector.save(survey.tokenOrSlug, survey.record, plainEmail.value).catch(console.error)
     }
@@ -296,9 +418,14 @@ function prevStep() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleSwipe(dir: any) {
   if (
-    ['workplace', 'origin_places', 'intermodality', 'freq_mod_pro', 'recommendations'].includes(
-      survey.stepName || '',
-    )
+    [
+      'workplace',
+      'origin_places',
+      'intermodality',
+      'freq_mod_pro',
+      'recommendations',
+      'recommendations_pro',
+    ].includes(survey.stepName || '')
   ) {
     // ignore because of map dragging conflict
     return
@@ -334,3 +461,35 @@ function onSendComments() {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.survey-step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.survey-step-title {
+  margin: 0;
+}
+
+.survey-step-header__action {
+  flex-shrink: 0;
+}
+
+// The closing step is centred, so its title is too.
+.survey-step-header--centered {
+  justify-content: center;
+  text-align: center;
+}
+
+.agreement-intro {
+  margin-bottom: 64px;
+}
+
+.survey-nav {
+  margin-top: 96px;
+}
+</style>

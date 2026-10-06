@@ -9,6 +9,7 @@ from api.services.stats.links import LinksService
 from api.services.stats.locations import LocationsService
 from api.services.stats.behavior_change import BehaviorChangeService
 from api.services.stats.equipments import EquipmentsService
+from api.services.stats.commons import filter_completed_records
 
 
 class StatsService:
@@ -22,19 +23,24 @@ class StatsService:
         constraints = freq_stats.compute_constraints_frequencies()
         travel_time = freq_stats.compute_travel_time_frequencies()
         recommendations = freq_stats.compute_recommendation_frequencies()
-        mode_frequencies = freq_stats.compute_modes_frequencies()
+        simple_recommendations = freq_stats.compute_recommendation_simple_frequencies()
         mode_frequencies_simple_labels = freq_stats.compute_modes_frequencies_simple_labels()
         mode_frequencies_complex_labels = freq_stats.compute_modes_frequencies_complex_labels()
         pro_mode_frequencies = freq_stats.compute_modes_pro_frequencies()
         pro_recommendations = freq_stats.compute_recommendation_pro_frequencies()
 
         emissions_stats = EmissionsService(df)
-        mode_emissions = emissions_stats.compute_modes_emissions()
-        reco_mode_emissions = emissions_stats.compute_modes_emissions(
+        mode_emissions_simple_labels = emissions_stats.compute_modes_emissions_simple_labels()
+        mode_emissions_complex_labels = emissions_stats.compute_modes_emissions_complex_labels()
+        reco_mode_emissions_simple_labels = emissions_stats.compute_modes_emissions_simple_labels(
+            apply_reco=True)
+        reco_mode_emissions_complex_labels = emissions_stats.compute_modes_emissions_complex_labels(
             apply_reco=True)
         pro_mode_emissions = emissions_stats.compute_modes_pro_emissions()
-        pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(apply_reco=True)
-        mode_emission_reductions = emissions_stats.compute_modes_emission_reductions()
+        pro_reco_mode_emissions = emissions_stats.compute_modes_pro_emissions(
+            apply_reco=True)
+        mode_emission_reductions_simple_labels = emissions_stats.compute_modes_emission_reductions_simple_labels()
+        mode_emission_reductions_complex_labels = emissions_stats.compute_modes_emission_reductions_complex_labels()
         pro_mode_emission_reductions = emissions_stats.compute_modes_pro_emission_reductions()
 
         energy_stats = EnergyService(df)
@@ -43,12 +49,13 @@ class StatsService:
         journey_energy_stats = energy_stats.compute_journey_energy_stats()
 
         links_stats = LinksService(df)
-        mode_links = links_stats.compute_mode_reco_links()
+        mode_links_simple_labels = links_stats.compute_mode_reco_links_simple_labels()
+        mode_links_complex_labels = links_stats.compute_mode_reco_links_complex_labels()
         pro_mode_links = links_stats.compute_mode_reco_pro_links()
 
         locations_stats = LocationsService(df)
         home_location_heatmap = locations_stats.compute_home_location_heatmap()
-        workplace_locations = locations_stats.get_workplaces()
+        workplace_locations, home_workplace_flows = locations_stats.compute_workplaces()
 
         behavior_change_stats = BehaviorChangeService(df)
         behavior_change = behavior_change_stats.compute_behavior_change_stats()
@@ -63,20 +70,24 @@ class StatsService:
                 equipments,
                 constraints,
                 travel_time,
-                recommendations
+                recommendations,
+                simple_recommendations
             ],
-            mode_frequencies=mode_frequencies,
             mode_frequencies_simple_labels=mode_frequencies_simple_labels,
             mode_frequencies_complex_labels=mode_frequencies_complex_labels,
-            mode_emissions=mode_emissions,
-            reco_mode_emissions=reco_mode_emissions,
-            mode_emission_reductions=mode_emission_reductions,
+            mode_emissions_simple_labels=mode_emissions_simple_labels,
+            mode_emissions_complex_labels=mode_emissions_complex_labels,
+            reco_mode_emissions_simple_labels=reco_mode_emissions_simple_labels,
+            reco_mode_emissions_complex_labels=reco_mode_emissions_complex_labels,
+            mode_emission_reductions_simple_labels=mode_emission_reductions_simple_labels,
+            mode_emission_reductions_complex_labels=mode_emission_reductions_complex_labels,
 
             mode_energy=mode_energy,
             reco_mode_energy=reco_mode_energy,
             journey_energy_stats=journey_energy_stats,
 
-            mode_links=mode_links,
+            mode_links_simple_labels=mode_links_simple_labels,
+            mode_links_complex_labels=mode_links_complex_labels,
 
             # professional
             pro_frequencies=[
@@ -90,7 +101,8 @@ class StatsService:
 
             home_location_heatmap=home_location_heatmap,
             workplace_locations=workplace_locations,
-            
+            home_workplace_flows=home_workplace_flows,
+
             behavior_change=behavior_change,
 
             equipments_stats=equipments_stats
@@ -145,18 +157,5 @@ class StatsService:
         return df
 
     def _filter_completed_records(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Get a DataFrame representation of the completed records.
-
-        Args:
-            filter (dict): The filter criteria for the records.
-            flat (bool, optional): Whether to flatten the DataFrame. Defaults to False.
-        """
-        # A record is completed once it has a recommendation: either the new
-        # typo.reco.reco_inter.N (one per journey) or, for records collected before
-        # that change, the legacy typo.reco.reco_dt2.0
-        reco_cols = [col for col in df.columns if col ==
-                     'typo.reco.reco_dt2.0' or col.startswith('typo.reco.reco_inter.')]
-        if not reco_cols:
-            return pd.DataFrame()
-        df = df[df[reco_cols].notna().any(axis=1)]
-        return df
+        """Get a DataFrame representation of the completed records."""
+        return filter_completed_records(df)

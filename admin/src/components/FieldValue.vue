@@ -31,7 +31,7 @@
   </span>
 </template>
 <script setup lang="ts">
-import { toMaxDecimals } from 'src/utils/numbers'
+import { toMaxDecimals } from '@/utils/numbers'
 
 defineOptions({
   name: 'FieldValue',

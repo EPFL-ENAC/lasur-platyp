@@ -1,8 +1,8 @@
-import { defineBoot } from '#q-app/wrappers'
+import { defineBoot } from '#q-app'
 import { createI18n } from 'vue-i18n'
 import { Quasar, Cookies } from 'quasar'
 
-import messages from 'src/i18n'
+import messages from '@/i18n'
 
 export type MessageLanguages = keyof typeof messages
 // Type-define 'en' as the master schema for the resource
@@ -25,6 +25,16 @@ declare module 'vue-i18n' {
 const defaultLocales = ['en', 'fr']
 
 const locales = defaultLocales
+
+// Language names, written in their own language
+const localeLabels: Record<string, string> = {
+  en: 'English',
+  fr: 'Français',
+}
+
+function localeLabel(key: string): string {
+  return localeLabels[key] ?? key.toUpperCase()
+}
 
 function getCurrentLocale(): string {
   let detectedLocale = Cookies.get('locale')
@@ -56,4 +66,4 @@ export default defineBoot(({ app }) => {
 
 const t = i18n.global.t
 
-export { i18n, t, locales, getCurrentLocale }
+export { i18n, t, locales, localeLabel, getCurrentLocale }

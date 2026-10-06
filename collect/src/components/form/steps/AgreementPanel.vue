@@ -4,16 +4,16 @@
       <q-checkbox
         v-model="survey.record.data.terms_conditions"
         :label="t('form.terms_conditions')"
-        size="xl"
+        size="md"
         color="primary"
-        class="text-h6"
+        class="text-subtitle1"
       />
-      <div class="text-h6 q-ml-xl">
+      <div class="text-subtitle1 agreement__link">
         <a
           href="https://modus-ge.ch/mobilyse-cgu-collaborateur-trice-s"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-muted q-ml-sm"
+          class="text-muted"
         >
           {{ t('form.terms_conditions_link') }}
           <q-icon name="open_in_new" size="xs" />
@@ -26,15 +26,15 @@
       <q-checkbox
         v-model="survey.record.data.confidentiality"
         :label="t('form.confidentiality')"
-        size="xl"
+        size="md"
         color="primary"
-        class="text-h6"
+        class="text-subtitle1"
       />
-      <div class="text-h6 q-ml-xl">
+      <div class="text-subtitle1 agreement__link">
         <a
           href="https://modus-ge.ch/mobilyse-notice-protection-des-donnees"
           target="_blank"
-          class="text-muted q-ml-sm"
+          class="text-muted"
           rel="noopener noreferrer"
         >
           {{ t('form.confidentiality_link') }}
@@ -49,3 +49,15 @@
 const { t } = useI18n()
 const survey = useSurvey()
 </script>
+
+<style scoped lang="scss">
+.q-checkbox {
+  margin-top: -10px;
+  margin-left: -10px;
+  margin-bottom: -8px;
+}
+
+.agreement__link {
+  margin-left: 30px;
+}
+</style>

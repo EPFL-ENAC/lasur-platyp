@@ -9,6 +9,7 @@
 
       <q-card-section>
         <q-markdown :src="props.text" no-heading-anchor-links />
+        <q-checkbox v-if="props.checkboxLabel" v-model="checked" :label="props.checkboxLabel" />
       </q-card-section>
 
       <q-separator />
@@ -22,7 +23,7 @@
           @click="onDialogCancel"
           v-close-popup
         />
-        <q-btn :label="t('ok')" color="primary" @click="onDialogOK" v-close-popup />
+        <q-btn :label="t('ok')" color="primary" @click="onDialogOK(checked)" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -37,10 +38,13 @@ interface DialogProps {
   title?: string | undefined
   text: string
   canCancel?: boolean
+  checkboxLabel?: string | undefined
 }
 
 const props = defineProps<DialogProps>()
 defineEmits([...useDialogPluginComponent.emits])
+
+const checked = ref(true)
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 </script>

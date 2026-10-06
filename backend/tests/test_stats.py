@@ -70,7 +70,7 @@ def test_compute_equipments_frequencies():
             Frequency(value='mob_subs', count=8, sum=None),
             Frequency(value='train_subs', count=7, sum=None),
             Frequency(value='moto', count=6, sum=None),
-            Frequency(value='upt_subs', count=2, sum=None),
+            Frequency(value='tpu_unireso', count=2, sum=None),
             Frequency(value='ebike', count=2, sum=None),
             Frequency(value='car', count=2, sum=None),
             Frequency(value='bike', count=2, sum=None),
@@ -130,8 +130,8 @@ def test_compute_travel_time_frequencies():
 
 def test_compute_recommendation_frequencies():
     # Load the test CSV into a DataFrame. It only has legacy typo.reco.reco_dt2.0/.1
-    # data (no typo.reco.reco_inter.N), so every recommendation at both legacy
-    # indices is taken into account.
+    # data (no typo.reco.reco_inter.N), so each person counts once, for the first
+    # legacy recommendation entered: the counts add up to the 30 records.
     df = load_test_dataframe()
     service = FrequenciesService(df)
     result = service.compute_recommendation_frequencies()
@@ -141,17 +141,18 @@ def test_compute_recommendation_frequencies():
         field='reco_inter',
         total=30,
         data=[
-            Frequency(value='covoit', count=18, sum=None),
-            Frequency(value='elec', count=13, sum=None),
-            Frequency(value='inter', count=7, sum=None),
-            Frequency(value='train', count=6, sum=None),
-            Frequency(value='vae', count=6, sum=None),
-            Frequency(value='tpu', count=6, sum=None),
-            Frequency(value='velo', count=2, sum=None),
-            Frequency(value='marche', count=2, sum=None)
+            Frequency(value='covoit', count=11, sum=None),
+            Frequency(value='inter', count=5, sum=None),
+            Frequency(value='tpu', count=4, sum=None),
+            Frequency(value='vae', count=3, sum=None),
+            Frequency(value='train', count=3, sum=None),
+            Frequency(value='elec', count=2, sum=None),
+            Frequency(value='velo', count=1, sum=None),
+            Frequency(value='marche', count=1, sum=None)
         ]
     )
     assert_frequencies_equal(result, expected)
+    assert sum(f.count for f in result.data) == 30
 
 
 def test_compute_recommendation_pro_frequencies():
@@ -165,7 +166,6 @@ def test_compute_recommendation_pro_frequencies():
         field='reco_pros',
         total=30,
         data=[
-            Frequency(value='elec', count=4, sum=None),
             Frequency(value='train', count=4, sum=None),
             Frequency(value='avoid', count=2, sum=None),
             Frequency(value='bike', count=1, sum=None),
@@ -175,87 +175,31 @@ def test_compute_recommendation_pro_frequencies():
     assert_frequencies_equal(result, expected)
 
 
-def test_compute_modes_frequencies():
-    # Load the test CSV into a DataFrame
-    df = load_test_dataframe()
-    service = FrequenciesService(df)
-    result = service.compute_modes_frequencies()
-
-    # print(result)
-    expected = [
-        Frequencies(field='walking', total=30, data=[Frequency(value='1', count=3, sum=3), Frequency(
-            value='3', count=2, sum=6), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=1, sum=5)]),
-        Frequencies(field='bike', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2), Frequency(
-            value='3', count=5, sum=15), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=1, sum=5)]),
-        Frequencies(field='ebike', total=30, data=[]),
-        Frequencies(field='pub', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='3', count=7, sum=21), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=3, sum=15)]),
-        Frequencies(field='moto', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='3', count=1, sum=3), Frequency(value='4', count=1, sum=4), Frequency(value='5', count=2, sum=10)]),
-        Frequencies(field='carpool', total=30, data=[
-                    Frequency(value='3', count=1, sum=3)]),
-        Frequencies(field='car', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2), Frequency(
-            value='3', count=1, sum=3), Frequency(value='4', count=3, sum=12), Frequency(value='5', count=3, sum=15)]),
-        Frequencies(field='train', total=30, data=[Frequency(value='1', count=1, sum=1), Frequency(
-            value='3', count=2, sum=6), Frequency(value='5', count=1, sum=5)]),
-        Frequencies(field='other', total=30, data=[])
-    ]
-    assert len(result) == len(expected)
-    for res_freqs, exp_freqs in zip(result, expected):
-        assert_frequencies_equal(res_freqs, exp_freqs)
-
-
 def test_compute_modes_pro_frequencies():
-    # Load the test CSV into a DataFrame
+    # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
+    # completed records) contribute, since pro mode frequencies are no
+    # longer computed for v1/v2 records.
     df = load_test_dataframe()
     service = FrequenciesService(df)
     result = service.compute_modes_pro_frequencies()
 
     expected = [
-        Frequencies(field='national_car', total=30, data=[
-                    Frequency(value='3', count=1, sum=3), Frequency(value='48', count=1, sum=48)]),
-        Frequencies(field='national_train', total=30, data=[
-                    Frequency(value='1', count=1, sum=1), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
-        Frequencies(field='national_moto', total=30, data=[
-                    Frequency(value='1', count=2, sum=2), Frequency(value='240', count=1, sum=240)]),
-        Frequencies(field='europe_plane', total=30, data=[
+        Frequencies(field='national_bike', total=7, data=[
+                    Frequency(value='1', count=1, sum=1)]),
+        Frequencies(field='national_moto', total=7, data=[
                     Frequency(value='1', count=2, sum=2)]),
-        Frequencies(field='inter_train', total=30, data=[
-                    Frequency(value='36', count=1, sum=36)]),
-        Frequencies(field='inter_plane', total=30, data=[
-                    Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2), Frequency(value='36', count=1, sum=36)]),
-        Frequencies(field='national_bike', total=30, data=[
-                    Frequency(value='1', count=1, sum=1)])
+        Frequencies(field='national_car', total=7, data=[
+                    Frequency(value='3', count=1, sum=3)]),
+        Frequencies(field='national_train', total=7, data=[
+                    Frequency(value='1', count=1, sum=1), Frequency(value='4', count=1, sum=4), Frequency(value='6', count=1, sum=6)]),
+        Frequencies(field='europe_plane', total=7, data=[
+                    Frequency(value='1', count=2, sum=2)]),
+        Frequencies(field='inter_plane', total=7, data=[
+                    Frequency(value='1', count=1, sum=1), Frequency(value='2', count=1, sum=2)]),
     ]
     assert len(result) == len(expected)
     for res_freqs, exp_freqs in zip(result, expected):
         assert_frequencies_equal(res_freqs, exp_freqs)
-
-
-def test_compute_modes_emissions():
-    # Load the test CSV into a DataFrame
-    df = load_test_dataframe()
-    service = EmissionsService(df)
-    result = service.compute_modes_emissions()
-
-    # print(result)
-    expected = [
-        Emissions(mode='bike', total=30, distances=2693.855,
-                  journeys=2430, emissions=151.304),
-        Emissions(mode='pub', total=30, distances=20522.579,
-                  journeys=3690, emissions=2496.472),
-        Emissions(mode='moto', total=30, distances=6272.711,
-                  journeys=1620, emissions=2469.62),
-        Emissions(mode='car', total=30, distances=15427.775,
-                  journeys=2970, emissions=15166.121),
-        Emissions(mode='train', total=30, distances=1250.259,
-                  journeys=1080, emissions=82.563),
-        Emissions(mode='carpool', total=30, distances=2302.862,
-                journeys=270, emissions=214.166),
-    ]
-    assert len(result) == len(expected)
-    for res_emission, exp_emission in zip(result, expected):
-        assert_emissions_equal(res_emission, exp_emission)
 
 
 def test_compute_modes_pro_emissions():
@@ -282,73 +226,59 @@ def test_compute_modes_pro_emissions():
         assert_emissions_equal(res_emission, exp_emission)
 
 
-def test_compute_mode_reco_links():
-    # Load the test CSV into a DataFrame. It only has legacy typo.reco.reco_dt2.0/.1
-    # data (no typo.reco.reco_inter.N), so every journey's mode is linked to both
-    # legacy recommendations, weighted by the person's total journey days.
-    df = load_test_dataframe()
-    service = LinksService(df)
-    result = service.compute_mode_reco_links()
+def test_compute_modes_pro_emissions_modes_match_pro_frequencies():
+    # Every mode reported by compute_modes_pro_frequencies must also be
+    # reported by compute_modes_pro_emissions, including zero-emission modes
+    # (walking) and journeys with no hex_id / workplace (distance 0).
+    hex_paris = h3.latlng_to_cell(48.85, 2.35, 5)
+    base = {'data.version': '3.0', 'data.workplace.lat': 46.2,
+            'data.workplace.lon': 6.15}
+    df = pd.DataFrame([
+        {**base, 'token': 'a',
+         'data.freq_mod_pro_journeys.0.mode': 'walking',
+         'data.freq_mod_pro_journeys.0.days': 2,
+         'data.freq_mod_pro_journeys.0.hex_id': hex_paris},
+        {**base, 'token': 'b',
+         'data.freq_mod_pro_journeys.0.mode': 'car',
+         'data.freq_mod_pro_journeys.0.days': 3,
+         'data.freq_mod_pro_journeys.0.hex_id': None},
+        {**base, 'token': 'c', 'data.workplace.lat': None,
+         'data.freq_mod_pro_journeys.0.mode': 'moto',
+         'data.freq_mod_pro_journeys.0.days': 1,
+         'data.freq_mod_pro_journeys.0.hex_id': hex_paris},
+        {**base, 'token': 'd',
+         'data.freq_mod_pro_journeys.0.mode': 'train',
+         'data.freq_mod_pro_journeys.0.days': 1,
+         'data.freq_mod_pro_journeys.0.hex_id': hex_paris},
+    ])
 
-    # print(result)
-    expected = Links(
-        total=30,
-        data=[
-            Link(source='walking', target='elec', value=1),
-            Link(source='walking', target='train', value=3),
-            Link(source='walking', target='vae', value=11),
-            Link(source='walking', target='tpu', value=17),
-            Link(source='walking', target='covoit', value=1),
-            Link(source='bike', target='covoit', value=5),
-            Link(source='bike', target='elec', value=4),
-            Link(source='bike', target='velo', value=1),
-            Link(source='bike', target='marche', value=1),
-            Link(source='bike', target='tpu', value=2),
-            Link(source='bike', target='train', value=1),
-            Link(source='pub', target='covoit', value=8),
-            Link(source='pub', target='elec', value=6),
-            Link(source='pub', target='train', value=3),
-            Link(source='pub', target='vae', value=1),
-            Link(source='pub', target='inter', value=11),
-            Link(source='pub', target='tpu', value=11),
-            Link(source='moto', target='elec', value=2),
-            Link(source='moto', target='train', value=1),
-            Link(source='moto', target='covoit', value=1),
-            Link(source='car', target='elec', value=4),
-            Link(source='car', target='train', value=5),
-            Link(source='car', target='covoit', value=7),
-            Link(source='car', target='inter', value=7),
-            Link(source='train', target='train', value=2),
-            Link(source='train', target='vae', value=6),
-            Link(source='train', target='covoit', value=1),
-            Link(source='train', target='elec', value=1),
-            Link(source='train', target='tpu', value=1),
-            Link(source='car', target='vae', value=11),
-            Link(source='car', target='tpu', value=6),
-            Link(source='carpool', target='inter', value=5),
-            Link(source='carpool', target='vae', value=5),
-            Link(source='bike', target='inter', value=15),
-            Link(source='bike', target='vae', value=15),
-            Link(source='moto', target='marche', value=3),
-            Link(source='moto', target='vae', value=8),
-            Link(source='moto', target='velo', value=5),
-            Link(source='moto', target='tpu', value=5),
-            Link(source='moto', target='inter', value=5),
-            Link(source='walking', target='inter', value=25),
-            Link(source='train', target='inter', value=5),
-        ]
-    )
-    assert_links_equal(result, expected)
+    freq_modes = {f.field.split('_', 1)[1]
+                  for f in FrequenciesService(df).compute_modes_pro_frequencies()}
+    emissions = EmissionsService(df).compute_modes_pro_emissions()
+    by_mode = {e.mode: e for e in emissions}
+
+    assert freq_modes == {'walking', 'car', 'moto', 'train'}
+    assert set(by_mode) == freq_modes
+    # journeys = days * 2 (round trips), regardless of computable distance
+    assert by_mode['walking'].journeys == 4
+    assert by_mode['walking'].emissions == 0
+    assert by_mode['walking'].distances > 0
+    assert by_mode['car'].journeys == 6
+    assert by_mode['car'].distances == 0
+    assert by_mode['moto'].journeys == 2
+    assert by_mode['moto'].distances == 0
+    assert by_mode['train'].emissions > 0
 
 
 def test_compute_mode_reco_pro_links():
-    # Load the test CSV into a DataFrame
+    # Load the test CSV into a DataFrame. Only v3 records (7 of the 30
+    # completed records) contribute.
     df = load_test_dataframe()
     service = LinksService(df)
     result = service.compute_mode_reco_pro_links()
 
     expected = Links(
-        total=30,
+        total=7,
         data=[
             Link(source='plane', target='train', value=1),
             Link(source='plane', target='avoid', value=2),

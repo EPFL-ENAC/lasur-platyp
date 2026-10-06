@@ -1,15 +1,19 @@
 <template>
-  <q-page>
-    <div class="text-h4 q-pa-md row">
+  <q-page class="q-pa-lg">
+    <div class="text-subtitle2 row">
       <q-breadcrumbs gutter="sm" active-color="title">
         <q-breadcrumbs-el :label="t('records')" to="/records" />
         <q-breadcrumbs-el :label="record?.token" />
       </q-breadcrumbs>
     </div>
-    <q-separator />
-    <div class="q-pa-md">
-      <div>
-        <div class="text-h6 q-mb-sm">{{ t('record.raw_data') }}</div>
+    <q-card flat class="q-my-lg">
+      <q-card-section>
+        <div class="text-h6 text-secondary q-my-none">{{ t('record.raw_data') }}</div>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section>
         <div class="row q-col-gutter-md">
           <div class="col-12 col-md-6">
             <fields-list :items="items1" :dbobject="record" />
@@ -64,9 +68,16 @@
             </div>
           </q-expansion-item>
         </q-list>
-      </div>
-      <div>
-        <div class="text-h6 q-mb-sm q-mt-lg">{{ t('record.isochrones') }}</div>
+      </q-card-section>
+    </q-card>
+    <q-card flat class="q-my-xl">
+      <q-card-section>
+        <div class="text-h6 text-secondary">{{ t('record.isochrones') }}</div>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section>
         <div class="text-help q-mb-md">{{ t('record.isochrones_hint') }}</div>
         <div class="text-help q-mb-md">
           {{ t('record.reco', { mode: reco }) }}
@@ -79,18 +90,18 @@
           :height="'600px'"
           :zoom="11"
         />
-      </div>
-    </div>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import type { Company, Campaign } from 'src/models'
-import IsochronesMap from 'src/components/IsochronesMap.vue'
-import FieldsList from 'src/components/FieldsList.vue'
-import type { FieldItem } from 'src/components/FieldsList.vue'
-import type { Record } from 'src/models'
-import { notifyError } from 'src/utils/notify'
+import type { Company, Campaign } from '@/models'
+import IsochronesMap from '@/components/IsochronesMap.vue'
+import FieldsList from '@/components/FieldsList.vue'
+import type { FieldItem } from '@/components/FieldsList.vue'
+import type { Record } from '@/models'
+import { notifyError } from '@/utils/notify'
 
 interface Location {
   lat: number
@@ -145,7 +156,7 @@ const items = computed<FieldItem[]>(() => {
         },
         {
           label: campaign.value?.name || val.campaign_id,
-          to: `/company/${val.company_id}?campaign=${val.campaign_id}`,
+          to: `/company/${val.company_id}/campaign/${val.campaign_id}`,
           icon: 'campaign',
         },
       ],

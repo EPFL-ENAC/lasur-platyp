@@ -147,48 +147,48 @@ class ModalTypoService:
 
     def get_recommendation_employer_actions(self, company: Company, campaign: Campaign, custom_actions: list[CompanyAction], locale: str, reco_inter: list, reco_pro: list[str]) -> dict:
         """Get employer actions for a record"""
-        url = f"{self.url}/modal-typo/empl"
+        url = f"{self.url}/modal-typo/empl_v2"
 
         # get campaign actions
-        actions = campaign.actions if campaign.actions else {}
+        campaign_actions = campaign.actions if campaign.actions else {}
+        custom_actions_by_id = {
+            str(custom_action.id): custom_action for custom_action in (custom_actions or [])}
 
-        # check if custom actions are applied and change id for locale label
-        if custom_actions and len(custom_actions) > 0:
-            for group in actions:
-                if actions[group]:
-                    for i, action in enumerate(actions[group]):
-                        # check if action can be parsed as an int
-                        if self.is_id(action):
-                            # check if action is a custom action
-                            for custom_action in custom_actions:
-                                if str(custom_action.id) == action:
-                                    if custom_action.labels:
-                                        # replace action with its label
-                                        if locale in custom_action.labels:
-                                            actions[group][i] = custom_action.labels[locale]
-                                        elif "en" in custom_action.labels:
-                                            # if no label for the locale, use the english label
-                                            actions[group][i] = custom_action.labels["en"]
-                                        else:
-                                            # if no label for the locale, use the first label
-                                            actions[group][i] = list(
-                                                custom_action.labels.values())[0]
-                                    break
+        # replace custom action ids by their locale label, ignore ids of deleted custom actions
+        actions = {}
+        for group in campaign_actions:
+            actions[group] = []
+            for action in campaign_actions[group] or []:
+                if not self.is_id(action):
+                    actions[group].append(action)
+                    continue
+                custom_action = custom_actions_by_id.get(action)
+                if not custom_action:
+                    continue
+                if custom_action.labels:
+                    if locale in custom_action.labels:
+                        actions[group].append(custom_action.labels[locale])
+                    elif "en" in custom_action.labels:
+                        # if no label for the locale, use the english label
+                        actions[group].append(custom_action.labels["en"])
+                    else:
+                        # if no label for the locale, use the first label
+                        actions[group].append(
+                            list(custom_action.labels.values())[0])
+                else:
+                    actions[group].append(action)
 
+        # tpu and train measures are stored together as mesures_tpu, the service names them mesures_tp
         data = {
             "empl": {
-                "mesures_globa": actions["mesures_globa"] if "mesures_globa" in actions else [],
-                "mesures_tpu": actions["mesures_tpu"] if "mesures_tpu" in actions else [],
-                "mesures_train": actions["mesures_train"] if "mesures_train" in actions else [],
-                "mesures_inter": actions["mesures_inter"] if "mesures_inter" in actions else [],
-                "mesures_velo": actions["mesures_velo"] if "mesures_velo" in actions else [],
-                "mesures_covoit": actions["mesures_covoit"] if "mesures_covoit" in actions else [],
-                "mesures_elec": actions["mesures_elec"] if "mesures_elec" in actions else [],
-                "mesures_pro_globa": actions["mesures_pro_globa"] if "mesures_pro_globa" in actions else [],
-                "mesures_pro_velo": actions["mesures_pro_velo"] if "mesures_pro_velo" in actions else [],
-                "mesures_pro_tpu": actions["mesures_pro_tpu"] if "mesures_pro_tpu" in actions else [],
-                "mesures_pro_train": actions["mesures_pro_train"] if "mesures_pro_train" in actions else [],
-                "mesures_pro_elec": actions["mesures_pro_elec"] if "mesures_pro_elec" in actions else [],
+                "mesures_globa": actions.get("mesures_globa", []),
+                "mesures_tp": actions.get("mesures_tpu", []),
+                "mesures_velo": actions.get("mesures_velo", []),
+                "mesures_covoit": actions.get("mesures_covoit", []),
+                "mesures_elec": actions.get("mesures_elec", []),
+                "mesures_pro_velo": actions.get("mesures_pro_velo", []),
+                "mesures_pro_tp": actions.get("mesures_pro_tpu", []),
+                "mesures_pro_elec": actions.get("mesures_pro_elec", []),
             },
             "reco_dt2": reco_inter,
             "reco_pro": reco_pro
@@ -197,8 +197,8 @@ class ModalTypoService:
             url, headers=self.headers, json=data)
         response.raise_for_status()
         empl_actions = response.json()
-        empl_actions["mesures_globa"] = actions["mesures_globa"] if "mesures_globa" in actions else []
-        empl_actions["mesures_pro_globa"] = actions["mesures_pro_globa"] if "mesures_pro_globa" in actions else []
+        empl_actions["mesures_globa"] = actions.get("mesures_globa", [])
+        empl_actions["mesures_pro_globa"] = actions.get("mesures_pro_globa", [])
         return empl_actions
 
     def get_freq_mod_params(self, record: Record) -> dict:

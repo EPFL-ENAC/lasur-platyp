@@ -23,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import AddressInput from 'src/components/AddressInput.vue'
-import type { AddressLocation } from 'src/components/models'
-import type { Workplace } from 'src/models'
+import AddressInput from '@/components/AddressInput.vue'
+import type { AddressLocation } from '@/components/models'
+import type { Workplace } from '@/models'
 
 const { t } = useI18n()
 interface Props {

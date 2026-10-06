@@ -12,3 +12,7 @@ node_modules
 data-dev
 AGENTS.md
 .serena/
+.claude
+
+plans
+meetings.md

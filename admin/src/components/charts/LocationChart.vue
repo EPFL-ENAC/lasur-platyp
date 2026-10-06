@@ -1,87 +1,142 @@
 <template>
-  <chart-shell
-    :height="height"
-    :loading="!hasData"
-    :has-data="hasData"
-    :show-info="hasData"
-    :no-data-title="props.title"
-    :no-data-text="t('stats.no_data')"
-    :exportable="!!exportable"
-    :capture-raw-image="captureRawImage"
+  <chart-panel
+    :title="t('stats.locations_heatmap.title')"
+    :description="t('stats.locations_heatmap.description')"
+    :inline="inline"
   >
-    <div ref="wrapper">
-      <div class="title text-center q-mb-md">{{ props.title }}</div>
-      <location-heatmap
-        ref="heatmap"
-        :h3Heatmap="props.homeLocationsHeatmap"
-        :dots="props.workplaceLocations"
-        :heatmap-gradient="gradient"
-        :center="[7.4474, 46.9481]"
-        :zoom="5"
-        :fit-bounds-margins="2"
-        :height="mapHeight"
-        :map-id="id"
-        :no-controls="props.noControls"
-      >
-        <div class="legend-item">
-          <span class="legend-swatch dot"></span>
-          <span class="legend-label">{{ t('stats.locationsHeatmap.workplaces') }}</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-swatch">
-            <svg
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              height="16"
-              width="16"
-              viewBox="0 0 726 628"
-            >
-              <polygon
-                points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314"
-                :fill="gradient.colorAt(0)"
-                :stroke="gradient.colorAt(0)"
-                stroke-width="4"
-              />
-            </svg>
-          </span>
-          <span class="legend-label">{{ t('stats.locationsHeatmap.households') }}</span>
-        </div>
-        <div>
-          <div class="text-hint">
-            <span class="legend-label">{{ t('stats.locationsHeatmap.households_number') }}</span>
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
+    <chart-shell
+      ref="shellRef"
+      :height="height"
+      :loading="!hasData"
+      :has-data="hasData"
+      :show-info="hasData"
+      :no-data-title="t('stats.locations_heatmap.title')"
+      :no-data-text="t('stats.no_data')"
+      :exportable="!inline"
+      :capture-raw-image="captureRawImage"
+    >
+      <div ref="wrapper">
+        <div class="title text-center q-mb-md">{{ t('stats.locations_heatmap.title') }}</div>
+        <location-heatmap
+          ref="heatmap"
+          :h3Heatmap="props.homeLocationsHeatmap"
+          :workplaces="props.workplaceLocations"
+          :flows="props.homeWorkplaceFlows"
+          :campaign-colors="campaignColors"
+          :interactive="!props.inline"
+          :heatmap-gradient="gradient"
+          :center="[7.4474, 46.9481]"
+          :zoom="5"
+          :fit-bounds-margins="2"
+          :height="mapHeight"
+          :no-controls="props.noControls"
+        >
+          <div v-if="groups.length === 0" class="legend-item">
+            <span class="legend-swatch dot"></span>
+            <span class="legend-label">{{ t('stats.locations_heatmap.workplaces') }}</span>
           </div>
-          <div class="gradient-container">
-            <div
-              class="gradient-bar"
-              :style="{ background: gradient.toCSSGradient('to right') }"
-            ></div>
-            <div class="gradient-labels">
-              <span>1</span>
-              <span>{{ max }}</span>
+          <div v-for="(group, i) in groups" :key="group.name" class="legend-item">
+            <span class="legend-swatch dot" :style="{ backgroundColor: groupColor(i) }"></span>
+            <span class="legend-label">
+              {{ t('stats.locations_heatmap.group_workplaces', { group: group.name }) }}
+            </span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch">
+              <svg
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                height="16"
+                width="16"
+                viewBox="0 0 726 628"
+              >
+                <polygon
+                  points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314"
+                  :fill="gradient.colorAt(0)"
+                  :stroke="gradient.colorAt(0)"
+                  stroke-width="4"
+                />
+              </svg>
+            </span>
+            <span class="legend-label">{{ t('stats.locations_heatmap.households') }}</span>
+          </div>
+          <div class="legend-item">
+            <span
+              class="legend-swatch line"
+              :style="{ background: `linear-gradient(to right, ${gradient.colorAt(0)}, #ef4444)` }"
+            ></span>
+            <span class="legend-label">{{ t('stats.locations_heatmap.flows') }}</span>
+          </div>
+          <div>
+            <div class="text-hint">
+              <span class="legend-label">{{ t('stats.locations_heatmap.households_number') }}</span>
+            </div>
+            <div class="gradient-container">
+              <div
+                class="gradient-bar"
+                :style="{ background: gradient.toCSSGradient('to right') }"
+              ></div>
+              <div class="gradient-labels">
+                <span>1</span>
+                <span>{{ max }}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </location-heatmap>
-    </div>
-  </chart-shell>
+        </location-heatmap>
+      </div>
+    </chart-shell>
+  </chart-panel>
 </template>
 <script setup lang="ts">
+import ChartPanel from './ChartPanel.vue'
 import html2canvas from 'html2canvas'
-import { GradientScale } from 'src/utils/colors'
+import type { Ref } from 'vue'
+import { GradientScale } from '@/utils/colors'
 import ChartShell from './ChartShell.vue'
 import LocationHeatmap from '../LocationHeatmap.vue'
-import { getRandomId } from 'src/utils/random'
-import type { H3Heatmap, LatLon } from 'src/models'
+import { GROUP_COLORS } from './commons'
+import type { H3Heatmap, HomeWorkplaceFlow, WorkplaceLocation } from '@/models'
 
 const { t } = useI18n()
+const stats = useStats()
+
+// In a comparison, dots take the colour of the group their campaign belongs to
+const groups = computed(() => stats.comparisonResults?.groups ?? [])
+
+function groupColor(index: number): string {
+  return GROUP_COLORS[index % GROUP_COLORS.length] ?? '#ccc'
+}
+
+const campaignColors = computed<Record<number, string>>(() =>
+  Object.fromEntries(
+    groups.value.flatMap((group, i) => group.campaign_ids.map((id) => [id, groupColor(i)])),
+  ),
+)
 
 interface Props {
-  title: string
   homeLocationsHeatmap: H3Heatmap
-  workplaceLocations: LatLon[]
+  workplaceLocations: WorkplaceLocation[]
+  homeWorkplaceFlows: HomeWorkplaceFlow[]
   height?: number
   noControls?: boolean
-  exportable?: boolean
+  inline?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -94,10 +149,20 @@ const mapHeight = computed(() => `${props.height - 50}px`)
 
 type LocationHeatmapExposed = {
   exportImage: () => Promise<string | null>
+  mapEl: Ref<HTMLDivElement | undefined>
+}
+
+type ChartShellExposed = {
+  handleExport: () => Promise<void>
 }
 
 const heatmap = useTemplateRef<LocationHeatmapExposed>('heatmap')
 const wrapper = useTemplateRef<HTMLDivElement>('wrapper')
+const shellRef = useTemplateRef<ChartShellExposed>('shellRef')
+
+function onChartDownload() {
+  shellRef.value?.handleExport()
+}
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -116,15 +181,23 @@ async function captureRawImage(): Promise<string | null> {
   await nextTick()
 
   const wrapperEl = wrapper.value
-  const mapRootEl = document.getElementById(id.value)
+  const mapRootEl = heatmap.value.mapEl.value
 
   if (!mapRootEl) {
     console.warn('captureRawImage: map root not found')
     return null
   }
 
+  // MapLibre's map root is only a template ref and has no id, so html2canvas's
+  // onclone can't find it via getElementById. Assign a stable id just for the
+  // clone lookup, then restore it afterwards.
+  const MAP_ROOT_ID = 'map-root-export'
+  const previousId = mapRootEl.id
+  mapRootEl.id = MAP_ROOT_ID
+
   const mapImageUrl = await heatmap.value.exportImage()
   if (!mapImageUrl) {
+    mapRootEl.id = previousId
     return null
   }
 
@@ -141,12 +214,12 @@ async function captureRawImage(): Promise<string | null> {
       scale: window.devicePixelRatio || 2,
       logging: false,
       onclone: (clonedDocument) => {
-        const clonedMapRoot = clonedDocument.getElementById(id.value)
+        const clonedMapRoot = clonedDocument.getElementById(MAP_ROOT_ID)
         if (!clonedMapRoot) return
 
         // Hide MapLibre-rendered parts only, keep legend visible.
         const mapCanvasContainers = clonedMapRoot.querySelectorAll(
-          '.maplibregl-canvas-container, .maplibregl-control-container',
+          '.maplibregl-canvas-container, .maplibregl-control-container, .map-reset',
         )
 
         mapCanvasContainers.forEach((el) => {
@@ -191,21 +264,22 @@ async function captureRawImage(): Promise<string | null> {
   } catch (error) {
     console.error('captureRawImage failed:', error)
     return null
+  } finally {
+    mapRootEl.id = previousId
   }
 }
 
 const gradient = computed(() => {
   const maxValue = max.value
+  // Single-hue pastel blues, near white (sparse) → darker blue (dense)
   return new GradientScale([
-    { value: 0, color: '#440154' },
-    { value: maxValue * 0.25, color: '#3b528b' },
-    { value: maxValue * 0.5, color: '#21918c' },
-    { value: maxValue * 0.75, color: '#5ec962' },
-    { value: maxValue, color: '#fde725' },
+    { value: 0, color: '#eef3fb' },
+    { value: maxValue * 0.25, color: '#c5d6ef' },
+    { value: maxValue * 0.5, color: '#92b2df' },
+    { value: maxValue * 0.75, color: '#5d88c6' },
+    { value: maxValue, color: '#2f5c9d' },
   ])
 })
-
-const id = ref(`location-heatmap-${getRandomId()}`)
 
 const hasData = computed(() => {
   const hasHeatmapData =
@@ -270,6 +344,12 @@ const max = computed(() => {
   width: 12px;
   height: 12px;
   margin-left: 2px;
+}
+
+.legend-swatch.line {
+  height: 3px;
+  border-radius: 2px;
+  align-self: center;
 }
 
 .gradient-container {

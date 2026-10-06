@@ -21,7 +21,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { Frequencies } from 'src/models'
+import type { Frequencies } from '@/models'
 
 const { t, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
@@ -115,7 +115,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
   const values =
     categories?.map((category) => {
       const item = frequencies.data.find((item) => item.value === `${category}`)
-      return item ? (props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count) : 0
+      return item ? (props.percent ? Math.round((item.count / total.value) * 100) : item.count) : 0
     }) || []
 
   const newOption: EChartsOption = {
@@ -130,7 +130,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.chartTranslationName}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -140,7 +140,7 @@ function initValuesChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+      formatter: `${props.xaxis ? `${props.xaxis}: ` : ''}<b>{b}</b><br/>{c}\u00A0${props.percent ? '%' : ''}`,
     },
     legend: {
       show: false,
@@ -174,7 +174,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
   const dataset = frequencies.data.map((item) => ({
     key: item.value || 'null',
     name: keyLabel(item.value || 'null'),
-    value: props.percent ? ((item.count / total.value) * 100).toFixed(2) : item.count,
+    value: props.percent ? Math.round((item.count / total.value) * 100) : item.count,
   }))
 
   // Extract category names and values for yAxis and series
@@ -197,7 +197,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     height: props.height - 100,
     title: {
       text: t(`stats.${props.chartTranslationName}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -207,7 +207,7 @@ function initLabelsChartOptions(frequencies: Frequencies) {
     },
     tooltip: {
       trigger: 'item',
-      formatter: `<b>{b}</b><br/>{c} ${props.percent ? '%' : ''}`,
+      formatter: `<b>{b}</b><br/>{c}\u00A0${props.percent ? '%' : ''}`,
     },
     legend: {
       show: false,

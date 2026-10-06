@@ -52,6 +52,7 @@ export interface RecordData {
   company_vehicle?: boolean
   travel_time: number
   equipments: string[]
+  equipments_custom?: string | undefined
   constraints: string[]
   constraints_custom?: string | undefined
   freq_mod_journeys: Journey[]
@@ -94,6 +95,9 @@ export interface RecordCertificate {
 export interface Recommendation {
   reco?: {
     reco_inter: string[]
+    bravo?: number[]
+    /** Public transport pass suited to the home-to-work origin/destination */
+    pt_pass?: string
     scores: {
       covoit: number
       elec: number
@@ -118,10 +122,10 @@ export interface Recommendation {
     }
   }
   reco_actions?: {
-    mesure_dt1: string[]
-    mesure_dt2: string[]
+    // measures by recommendation code, the value is "" when there are none
+    mesure_dt?: { [reco: string]: string[] | string }
+    mesure_pro?: { [reco: string]: string[] | string }
     mesures_globa?: string[]
-    mesure_pro: string[][]
     mesures_pro_globa?: string[]
   }
   reco_pro?: {
@@ -160,6 +164,7 @@ export interface IsochronesParams {
 export interface IsochronesData {
   isochrones: GeoJSON.FeatureCollection<GeoJSON.Geometry>
   pois: GeoJSON.FeatureCollection<GeoJSON.Geometry>
+  transit?: GeoJSON.FeatureCollection<GeoJSON.Geometry> | null
 }
 
 export interface PoisParams {
@@ -172,13 +177,17 @@ export interface RecommendationsPreviewData {
     mainFm: string
     isModeSustainable: boolean
     isModeOptions: boolean
-    recoDt: string[]
+    journeys: Journey[]
+    recoInter: string[]
+    bravo: number[]
+    ptPass?: string | undefined
     center: [number, number] | null
-    mesureDt1: string[]
-    mesureDt2: string[]
+    mesureDt: string[][]
     globalActions: string[]
+    companyName: string
   }
   pro: {
+    proJourneys: ProJourney[]
     recoPros: string[]
     proJourneyLocations: (PlaceLocation | undefined)[]
     mesurePro: string[][]

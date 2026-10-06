@@ -1,8 +1,7 @@
 <template>
-  <q-page>
-    <div class="title-bar q-pa-md">
-      <div class="text-h4 text-title">{{ t('companies') }}</div>
-
+  <q-page class="q-pa-lg">
+    <div class="title-bar">
+      <div class="text-subtitle2">{{ t('companies') }}</div>
       <div class="title-toolbar">
         <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
           <template v-slot:append>
@@ -19,8 +18,7 @@
         />
       </div>
     </div>
-    <q-separator />
-    <div class="q-pa-md">
+    <div class="q-my-md">
       <q-table
         flat
         ref="tableRef"
@@ -30,7 +28,6 @@
         v-model:pagination="pagination"
         :loading="loading"
         :filter="filter"
-        table-header-class="bg-secondary-ultra-light text-secondary"
         binary-state-sort
         @request="onRequest"
         :rows-per-page-options="[10, 25, 50]"
@@ -51,7 +48,7 @@
         </template>
         <template v-slot:body-cell-administrators="props">
           <q-td :props="props">
-            <q-badge color="primary" :label="props.row.administrators.length || 0" />
+            <q-badge :label="props.row.administrators.length || 0" />
           </q-td>
         </template>
         <template v-slot:body-cell-can_be_cited="props">
@@ -67,7 +64,6 @@
           <q-td :props="props">
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="foreground"
               size="12px"
               flat
               dense
@@ -78,7 +74,6 @@
             </q-btn>
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="foreground"
               size="12px"
               flat
               dense
@@ -89,7 +84,6 @@
             </q-btn>
             <q-btn
               v-if="authStore.isAdminOfThisCompany(props.row)"
-              color="foreground"
               size="12px"
               flat
               dense
@@ -115,13 +109,13 @@
 </template>
 
 <script setup lang="ts">
-import { DefaultAlignment, type Query } from 'src/components/models'
-import type { Company } from 'src/models'
-import CompanyDialog from 'src/components/company/CompanyDialog.vue'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import { makePaginationRequestHandler } from 'src/utils/pagination'
-import type { PaginationOptions } from 'src/utils/pagination'
-import { notifyError } from 'src/utils/notify'
+import { DefaultAlignment, type Query } from '@/components/models'
+import type { Company } from '@/models'
+import CompanyDialog from '@/components/company/CompanyDialog.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import { makePaginationRequestHandler } from '@/utils/pagination'
+import type { PaginationOptions } from '@/utils/pagination'
+import { notifyError } from '@/utils/notify'
 
 const { t } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()

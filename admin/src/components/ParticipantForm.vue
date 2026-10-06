@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Participant, ParticipantData } from 'src/models'
+import type { Participant, ParticipantData } from '@/models'
 
 interface Props {
   modelValue: Participant | undefined

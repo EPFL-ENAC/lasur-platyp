@@ -1,6 +1,6 @@
 <template>
-  <div class="q-mt-lg">
-    <div class="text-subtitle1">
+  <div>
+    <div class="question-label text-bold q-mb-md">
       {{ t('lookup_address_or_select_on_map') }}
     </div>
 
@@ -12,7 +12,6 @@
         color="field"
         bg-color="field"
         outlined
-        rounded
         dense
         :placeholder="t('type_enter_to_lookup_address')"
         :loading="loading"
@@ -22,12 +21,7 @@
         @update:model-value="onAddressInput"
         @keyup.enter="onSuggestAddress"
       >
-        <q-menu
-          v-model="showSuggestions"
-          no-parent-event
-          no-focus
-          auto-close
-        >
+        <q-menu v-model="showSuggestions" no-parent-event no-focus auto-close>
           <q-list style="min-width: 100px">
             <q-item
               v-for="sugg in suggestions"
@@ -63,9 +57,9 @@
 
 <script setup lang="ts">
 import type { Feature, Point } from 'geojson'
-import type { AddressLocation } from 'src/models'
-import { geocoderApi, toAddress } from 'src/utils/geocoder'
-import { formatCoordinates } from 'src/utils/numbers'
+import type { AddressLocation } from '@/models'
+import { geocoderApi, toAddress } from '@/utils/geocoder'
+import { formatCoordinates } from '@/utils/numbers'
 
 const { t } = useI18n()
 
@@ -89,7 +83,7 @@ const props = withDefaults(
   }>(),
   {
     readonly: false,
-  }
+  },
 )
 
 const suggestions = ref<Suggestion[]>([])

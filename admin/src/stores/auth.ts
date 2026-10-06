@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { keycloak } from 'src/boot/api'
+import { keycloak } from '@/boot/api'
 import type { KeycloakProfile } from 'keycloak-js'
-import type { Company } from 'src/models'
+import type { Company } from '@/models'
 
 export const useAuthStore = defineStore('auth', () => {
   const profile = ref<KeycloakProfile>()
@@ -9,8 +9,18 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => profile.value !== undefined)
   const isAdmin = computed(() => realmRoles.value.includes('platyp-admin'))
   const initialized = ref(false)
+  // Set when Keycloak itself fails to refresh the access token (e.g. the
+  // refresh token has expired). This happens client-side, before any request
+  // reaches the API, so the axios response interceptor in boot/api.ts never
+  // sees it — that boot file watches this flag instead to trigger the same
+  // "session expired" notification + redirect.
+  const sessionExpired = ref(false)
 
-  const accessToken = computed(() => keycloak.token)
+  // keycloak is a plain (non-reactive) Keycloak instance, so a `computed`
+  // reading keycloak.token would never invalidate: Vue has nothing to track
+  // and the value freezes at whatever it was on first access, even after
+  // updateToken() refreshes the underlying token. Track it explicitly instead.
+  const accessToken = ref<string | undefined>(keycloak.token)
 
   async function init() {
     if (isAuthenticated.value || initialized.value) return Promise.resolve(true)
@@ -27,7 +37,12 @@ export const useAuthStore = defineStore('auth', () => {
       if (authenticated) {
         realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
         profile.value = await keycloak.loadUserProfile()
-        keycloak.onTokenExpired = () => void updateToken()
+        sessionExpired.value = false
+        accessToken.value = keycloak.token
+        keycloak.onTokenExpired = () => void updateToken().catch(() => undefined)
+        keycloak.onAuthRefreshSuccess = () => {
+          accessToken.value = keycloak.token
+        }
       }
       return authenticated
     } catch (error) {
@@ -52,6 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
       // If keycloak was never initialized, just clear local state
       profile.value = undefined
       realmRoles.value = []
+      accessToken.value = undefined
       return
     }
     if (!isAuthenticated.value) return
@@ -62,6 +78,7 @@ export const useAuthStore = defineStore('auth', () => {
       .then(() => {
         profile.value = undefined
         realmRoles.value = []
+        accessToken.value = undefined
       })
   }
 
@@ -71,12 +88,14 @@ export const useAuthStore = defineStore('auth', () => {
   async function updateToken(minValidity = 30) {
     try {
       await keycloak.updateToken(minValidity)
+      accessToken.value = keycloak.token
       return keycloak.token
     } catch (error) {
       console.error('Token refresh error:', error)
       profile.value = undefined
       realmRoles.value = []
-      return null
+      sessionExpired.value = true
+      throw error
     }
   }
 
@@ -101,6 +120,7 @@ export const useAuthStore = defineStore('auth', () => {
     accessToken,
     keycloak,
     initialized,
+    sessionExpired,
     init,
     login,
     logout,

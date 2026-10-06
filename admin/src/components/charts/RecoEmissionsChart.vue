@@ -28,8 +28,8 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
-import { MODE_COLORS } from './commons'
+import { formatNumber, formatTons } from '@/utils/numbers'
+import { MODE_COLORS, readableTextColor } from './commons'
 
 const { t, locale } = useI18n()
 const stats = useStats()
@@ -57,8 +57,8 @@ const textLabels = computed(() => {
   if (total.value < 5) return null
 
   return {
-    current_emissions: formatNumber(currentEmissions.value / 1000),
-    new_emissions: formatNumber(newEmissions.value / 1000),
+    current_emissions: formatTons(currentEmissions.value / 1000),
+    new_emissions: formatTons(newEmissions.value / 1000),
     cheeseburgers: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 18.8)),
     vacuum: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 73.43)),
     shirt: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 13.23466)),
@@ -143,7 +143,7 @@ function initChartOptions() {
     height: props.height - 100,
     title: {
       text: t(`stats.emissions_${props.reco}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -157,7 +157,7 @@ function initChartOptions() {
       formatter: function (params: any) {
         const tar = params[1]
         if (!tar) return ''
-        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' kgCO₂eq'
+        return tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + '\u00A0kgCO₂eq'
       },
     },
     legend: {
@@ -230,12 +230,14 @@ function initChartOptions() {
               color: '#000',
             },
           },
-          ...categories.map((cat) => ({
-            value: categoryEmissions[cat] || 0,
-            itemStyle: {
-              color: MODE_COLORS[cat] || MODE_COLORS.default || '#ccc',
-            },
-          })),
+          ...categories.map((cat) => {
+            const color = MODE_COLORS[cat] || MODE_COLORS.default || '#ccc'
+            return {
+              value: categoryEmissions[cat] || 0,
+              itemStyle: { color },
+              label: { color: readableTextColor(color) },
+            }
+          }),
           {
             value: newEmissions.value,
             itemStyle: {

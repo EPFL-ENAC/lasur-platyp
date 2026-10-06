@@ -1,7 +1,7 @@
 <template>
-  <q-page>
-    <div class="title-bar q-pa-md">
-      <div class="text-h4 row">
+  <q-page class="q-pa-lg">
+    <div class="title-bar">
+      <div class="text-subtitle2 row">
         <q-breadcrumbs gutter="sm" active-color="title">
           <q-breadcrumbs-el :label="t('companies')" to="/companies" />
           <q-breadcrumbs-el :label="company?.name" />
@@ -9,19 +9,30 @@
       </div>
       <q-btn
         v-if="isCompanyAdmin"
+        flat
         round
-        size="sm"
-        color="negative"
-        icon="delete"
+        icon="fa-regular fa-trash-can"
         :aria-label="t('remove')"
-        class="q-ml-xs"
+        class="btn-danger-icon q-ml-xs"
         @click="onShowRemove"
       />
     </div>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-lg">
       <q-card-section>
-        <h5 class="text-h5 q-my-none">{{ t('overview') }}</h5>
+        <div class="title-bar">
+          <h5 class="text-h6 text-secondary q-my-none">{{ t('overview') }}</h5>
+          <div class="title-toolbar">
+            <q-btn
+              v-if="isCompanyAdmin"
+              size="md"
+              color="primary"
+              icon="edit"
+              :label="t('edit')"
+              @click="onEdit"
+            />
+          </div>
+        </div>
       </q-card-section>
 
       <q-separator />
@@ -36,60 +47,52 @@
           </div>
         </div>
       </q-card-section>
-
-      <template v-if="isCompanyAdmin">
-        <q-separator />
-
-        <q-card-actions align="right">
-          <q-btn size="sm" color="primary" icon="edit" :label="t('edit')" @click="onEdit" />
-        </q-card-actions>
-      </template>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
-        <h5 class="text-h5 q-my-none">{{ t('company.actions') }}</h5>
+        <div class="title-bar">
+          <h5 class="text-h6 text-secondary q-my-none">{{ t('company.actions') }}</h5>
+          <div class="title-toolbar">
+            <q-btn
+              v-if="isCompanyAdmin"
+              size="md"
+              color="primary"
+              :label="t('company.custom_actions')"
+              icon="settings"
+              @click="onShowCustomActions"
+            >
+              <q-badge
+                v-if="actionsStore.items.length"
+                color="white"
+                class="text-secondary q-ml-sm"
+              >
+                {{ actionsStore.items.length }}
+              </q-badge>
+            </q-btn>
+          </div>
+        </div>
       </q-card-section>
 
       <q-separator />
 
       <q-card-section>{{ t('company.employer_measures_description') }}</q-card-section>
-
-      <template v-if="isCompanyAdmin">
-        <q-separator />
-
-        <q-card-actions align="right">
-          <q-btn
-            v-if="isCompanyAdmin"
-            size="sm"
-            color="primary"
-            :label="t('company.custom_actions')"
-            icon="settings"
-            @click="onShowCustomActions"
-          >
-            <q-badge v-if="actionsStore.items.length" color="white" class="text-secondary q-ml-sm">
-              {{ actionsStore.items.length }}
-            </q-badge>
-          </q-btn>
-        </q-card-actions>
-      </template>
     </q-card>
 
     <q-table
       v-if="company"
-      class="q-ma-md"
+      class="q-my-xl"
       flat
       bordered
       :rows="campaigns"
       :columns="columns"
-      table-header-class="bg-secondary-ultra-light text-secondary"
       row-key="id"
       :loading="campaignsStore.loading"
       :no-data-label="t('no_data')"
     >
       <template #top>
         <div class="title-bar">
-          <h5 class="text-h5 q-my-none">{{ t('campaigns') }}</h5>
+          <h5 class="text-h6 text-secondary q-my-none">{{ t('campaigns') }}</h5>
 
           <div class="title-toolbar">
             <q-btn
@@ -165,17 +168,17 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign, Company } from 'src/models'
-import type { Service } from 'src/stores/services'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import CustomActionsDialog from 'src/components/company/CustomActionsDialog.vue'
-import type { FieldItem } from 'src/components/FieldsList.vue'
-import FieldsList from 'src/components/FieldsList.vue'
-import CompanyDialog from 'src/components/company/CompanyDialog.vue'
-import CompanyCampaignDialog from 'src/components/company/CompanyCampaignDialog.vue'
-import { notifySuccess, notifyError } from 'src/utils/notify'
+import type { Campaign, Company } from '@/models'
+import type { Service } from '@/stores/services'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import CustomActionsDialog from '@/components/company/CustomActionsDialog.vue'
+import type { FieldItem } from '@/components/FieldsList.vue'
+import FieldsList from '@/components/FieldsList.vue'
+import CompanyDialog from '@/components/company/CompanyDialog.vue'
+import CompanyCampaignDialog from '@/components/company/CompanyCampaignDialog.vue'
+import { notifySuccess, notifyError } from '@/utils/notify'
 import type { QTableColumn } from 'quasar'
-import { checkUrlParamNumber } from 'src/utils/numbers'
+import { checkUrlParamNumber } from '@/utils/numbers'
 
 const route = useRoute()
 const router = useRouter()
@@ -354,6 +357,7 @@ function onAddCampaign() {
     name: '',
     company_id: company.value?.id || 0,
     open_workplaces: false,
+    parking_paid: false,
     with_professional_questions: true,
   } as Campaign
   showCampaignDialog.value = true

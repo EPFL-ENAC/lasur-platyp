@@ -24,7 +24,7 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { CampaignStats } from 'src/models'
+import type { CampaignStats } from '@/models'
 import { useQuasar } from 'quasar'
 
 interface Props {
@@ -86,11 +86,12 @@ function initChartOptions() {
         //radius: ['30%', '50%'],
         radius: ['40%', '70%'],
         center: ['50%', '50%'],
+        percentPrecision: 0,
         // adjust the start and end angle
         //startAngle: 180,
         //endAngle: 360,
         avoidLabelOverlap: true,
-        color: ['#4caf50', '#ff9800', '#2196f3'],
+        color: ['#78c1a3', '#e8b27a', '#99c7df'],
         label: {
           margin: 0,
           fontWeight: 'bold',

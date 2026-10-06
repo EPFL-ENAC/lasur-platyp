@@ -22,8 +22,8 @@ Si ces champs sont laissés vides, la campagne utilisera les informations de con
 
 Si des mesures d'accompagnement à la mobilité des collaborateur·trice·s sont déjà en place au moment de la campagne, vous pouvez les renseigner ici afin que les collaborateur·trice·s concernés puissent en avoir l'information :
 
-1. Activez "Avec des mesures employeur spécifiques à cette campagne"
-2. Sélectionnez les mesures propres à cette campagne
+1. Ouvrez l'onglet "Mesures employeur"
+2. Sélectionnez les mesures propres à cette campagne, ou créez-en via "Ajouter une nouvelle mesure…" en fin de liste
 3. Utile pour :
    - Pilotes testant de nouvelles initiatives
    - Mesures saisonnières

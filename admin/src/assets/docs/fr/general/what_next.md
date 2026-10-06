@@ -12,3 +12,7 @@ Cela vous permet de poursuivre sereinement, si vous le souhaitez, la démarche d
 _\* Liste de conseillers·ères spécialisé·e·s et autres informations : [Mobility Management Suisse](https://mms-gms.ch/f/conseil-specialise)_
 
 _\*\* Soutien financier ou ressources : programmes communaux, cantonaux ([Plan de mobilité | ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite) ; [SIL - rsGE H 1 21.03: Règlement relatif aux plans de mobilité d'entreprises (RPMob)](https://silgeneve.ch/legis/index.aspx)), fédéraux ([Encouragement de projets mobilité durable dans les entreprises](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5)), etc._
+
+<div class="text-center q-mt-xl">
+  <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE.svg" alt="Roue de demandes de mobilité" style="max-width: 100%" />
+</div>

@@ -41,6 +41,9 @@ export interface Campaign extends Entity {
   contact_name?: string
   info_url?: string
   nb_employees?: number
+  parking_provided?: boolean
+  parking_paid?: boolean
+  parking_details?: string
   company_id?: number
   actions?: EmployerActions
   rewards_message?: { [locale: string]: string } | undefined
@@ -154,27 +157,31 @@ export interface StatLinks extends Links {
   } | null
 }
 
-export interface JourneyEnergyData {
-  days: number
-  energy_kcal: number
-  is_intermodal: boolean
-  journey_id: string
-  mode: string
+export interface EnergyByLabel {
   token: string
-  travel_time: number
+  label: string
+  energy_kcal: number
+}
+export interface EnergyBreakdown {
+  simple: EnergyByLabel[]
+  detailed: EnergyByLabel[]
 }
 export interface JourneyEnergy {
   total: number
-  data: JourneyEnergyData[]
   average_energy_per_unique_token?: number | null
+  breakdown: EnergyBreakdown
 }
-export interface JourneyEnergyGainsByMode {
-  mode: string
+export interface JourneyEnergyGainsByLabel {
+  label: string
   added_kcal: number
+}
+export interface JourneyEnergyGainsBreakdown {
+  simple: JourneyEnergyGainsByLabel[]
+  detailed: JourneyEnergyGainsByLabel[]
 }
 export interface JourneyEnergyGains {
   total: number
-  gains_per_mode: JourneyEnergyGainsByMode[]
+  gains_per_mode: JourneyEnergyGainsBreakdown
   current_above_who_count: number
   reco_above_who_count: number
 }
@@ -186,9 +193,14 @@ export interface JourneyEnergyStats {
 
 export function makeDefaultJourneyEnergyStats(): JourneyEnergyStats {
   return {
-    current: { total: 0, data: [] },
-    reco: { total: 0, data: [] },
-    gains: { total: 0, gains_per_mode: [], current_above_who_count: 0, reco_above_who_count: 0 },
+    current: { total: 0, breakdown: { simple: [], detailed: [] } },
+    reco: { total: 0, breakdown: { simple: [], detailed: [] } },
+    gains: {
+      total: 0,
+      gains_per_mode: { simple: [], detailed: [] },
+      current_above_who_count: 0,
+      reco_above_who_count: 0,
+    },
   }
 }
 
@@ -255,8 +267,11 @@ export function makeDefaultBehaviorChangeStats(): BehaviorChangeStats {
 export interface EquipmentPerRecommendation {
   bike: number
   ebike: number
-  upt_subs: number
-  train_subs: number
+  tpu_unireso: number
+  tpu_leman_pass: number
+  train_demi_tarif: number
+  train_abo_gen: number
+  sncf: number
   mob_subs: number
   moto: number
   car: number
@@ -295,8 +310,11 @@ export const recommendationLabelsReversed = recommendationLabels.toReversed()
 export const equipmentLabels = [
   'bike',
   'ebike',
-  'upt_subs',
-  'train_subs',
+  'tpu_unireso',
+  'tpu_leman_pass',
+  'train_demi_tarif',
+  'train_abo_gen',
+  'sncf',
   'mob_subs',
   'moto',
   'car',
@@ -305,41 +323,83 @@ export const equipmentLabels = [
 ] as const
 
 export const recommendationToEquipmentMap: {
-  [key in (typeof recommendationLabels)[number]]: (typeof equipmentLabels)[number] | null
+  [key in (typeof recommendationLabels)[number]]: (typeof equipmentLabels)[number][] | null
 } = {
   marche: null,
-  velo: 'bike',
-  vae: 'ebike',
+  velo: ['bike'],
+  vae: ['ebike'],
   cargo: null,
-  train: 'train_subs',
-  tpu: 'upt_subs',
-  covoit: 'mob_subs',
-  elec: 'ev',
-  inter: 'inter',
+  train: ['train_demi_tarif', 'train_abo_gen'],
+  tpu: ['tpu_unireso', 'tpu_leman_pass'],
+  covoit: ['mob_subs'],
+  elec: ['ev'],
+  inter: ['inter'],
 }
+
+/**
+ * Public transport pass recommended to participants, with the number of them
+ * already holding a matching subscription. `already_equipped` is null when the
+ * information is not collected: the equipment question only lists Swiss
+ * products, so nothing tells us who already holds an SNCF pass.
+ */
+export interface PtPassRecommendation {
+  pass_type: string
+  recommended: number
+  already_equipped: number | null
+}
+
+export const ptPassLabels = ['unireso', 'leman', 'cff', 'sncf', 'other'] as const
 
 export interface EquipmentsStats {
   total: number
   equipment_recommendation_matrix: EquipmentRecommendationMatrix
+  pt_pass_recommendations: PtPassRecommendation[]
 }
 
 export type H3Heatmap = { [hexId: string]: number }
 
-export interface LatLon {
+export interface WorkplaceCampaign {
+  id: number
+  name: string
+  company_name: string
+}
+
+export interface WorkplaceLocation {
+  id: number
   lat: number
   lon: number
+  name: string | null
+  address: string | null
+  count: number
+  campaign_id: number
+  campaign: WorkplaceCampaign
+}
+
+export interface HomeWorkplaceFlow {
+  hex_id: string
+  workplace_id: number
+  count: number
+}
+
+export interface LocationStats {
+  home_location_heatmap: H3Heatmap
+  workplace_locations: WorkplaceLocation[]
+  home_workplace_flows: HomeWorkplaceFlow[]
 }
 
 export interface Stats {
   total: number
   frequencies: Frequencies[] | null
-  mode_frequencies: Frequencies[] | null
   mode_frequencies_complex_labels: Frequencies[] | null
   mode_frequencies_simple_labels: Frequencies[] | null
-  mode_emissions: Emissions[] | null
-  mode_emission_reductions: EmissionReduction[] | null
-  reco_mode_emissions: Emissions[] | null
-  mode_links: StatLinks | null
+  mode_emissions_simple_labels: Emissions[] | null
+  mode_emissions_complex_labels: Emissions[] | null
+  mode_emission_reductions_simple_labels: EmissionReduction[] | null
+  mode_emission_reductions_complex_labels: EmissionReduction[] | null
+  reco_mode_emissions_simple_labels: Emissions[] | null
+  reco_mode_emissions_complex_labels: Emissions[] | null
+  mode_links_simple_labels: StatLinks | null
+  mode_links_complex_labels: StatLinks | null
   pro_frequencies: Frequencies[] | null
   pro_mode_frequencies: Frequencies[] | null
   pro_mode_emissions: Emissions[] | null
@@ -347,10 +407,63 @@ export interface Stats {
   pro_mode_emission_reductions: EmissionReduction[] | null
   pro_mode_links: StatLinks | null
   home_location_heatmap: H3Heatmap | null
-  workplace_locations: LatLon[] | null
+  workplace_locations: WorkplaceLocation[] | null
+  home_workplace_flows: HomeWorkplaceFlow[] | null
   journey_energy_stats: JourneyEnergyStats | null
   behavior_change: BehaviorChangeStats | null
   equipments_stats: EquipmentsStats | null
+}
+
+export type ComparisonMode = 'cross_sectional' | 'longitudinal'
+
+export interface CampaignGroup {
+  name: string
+  label?: string
+  campaign_ids: number[]
+}
+
+export interface ComparisonStats extends Stats {
+  name: string
+  campaign_ids: number[]
+}
+
+export interface ModeTransition {
+  source_group: string
+  target_group: string
+  source_mode: string
+  target_mode: string
+  count: number
+}
+
+export interface ModeTransitions {
+  /** Participants contributing to at least one transition */
+  total: number
+  data: ModeTransition[]
+}
+
+/**
+ * Distinct participants across all the groups of a longitudinal comparison,
+ * as the groups' own totals count each of them once per group.
+ */
+export interface UniqueTotals {
+  participants: number
+  /** Answered at least one lever question, in any group */
+  levers: number
+  /** Answered the motivation question, in any group */
+  motivation: number
+}
+
+export interface ComparisonResult {
+  groups: ComparisonStats[]
+  /** Modes are simple typology labels */
+  mode_transitions?: ModeTransitions
+  /** Modes are detailed (complex) typology labels */
+  mode_transitions_complex_labels?: ModeTransitions
+  warnings?: string[]
+  /** Map data over every surviving group; absent when no group survived. */
+  locations?: LocationStats
+  /** Longitudinal mode only */
+  unique_totals?: UniqueTotals
 }
 
 export interface IsochronesParams {

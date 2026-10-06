@@ -1,20 +1,14 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="total > 0"
-    :no-data-title="t(`stats.${props.type}.title`)"
+    :show-table="!exportable"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p class="q-mb-xs">{{ t(`stats.${props.type}.texts.default`) }}</p>
-    <p v-if="mostRecommendedTarget">
-      {{
-        t(`stats.${props.type}.texts.specific`, { mode: keyLabel(mostRecommendedTarget.target) })
-      }}
-    </p>
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -29,15 +23,27 @@ import {
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import type { StatLinks } from 'src/models'
-import { MODE_COLORS } from './commons'
+import type { StatLinks } from '@/models'
+import {
+  COMPLEX_LABELS_COLORS,
+  complexLabelSortOrder,
+  labelColor,
+  MODE_COLORS,
+  modeSortOrder,
+  SIMPLE_LABELS_COLORS,
+  simpleLabelSortOrder,
+} from './commons'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 use([SVGRenderer, SankeyChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
 
 interface Props {
   type: string
   links: StatLinks | null
+  // Which typology the links are expressed in: 'simple' links a simple label
+  // to a simple recommendation, 'complex' links a complex label to a
+  // recommended transport mode. When not set, both ends are transport modes.
+  labelType?: 'simple' | 'complex'
   height?: number
   loading?: boolean
   exportable?: boolean
@@ -47,8 +53,28 @@ const props = withDefaults(defineProps<Props>(), {
   exportable: true,
 })
 
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
+
 const option = ref<EChartsOption>({})
 const total = ref(0)
+
+// simple/complex links show the same title: qualify it with the typology the
+// chart is currently rendering
+const chartTitle = computed(() => {
+  const title = t(`stats.${props.type}.title`)
+  if (!props.labelType) {
+    return title
+  }
+  const modalSplit =
+    props.labelType === 'simple'
+      ? t('stats.freq_mod.modal_split.simple')
+      : t('stats.freq_mod.modal_split.detailed')
+  return `${title} (${modalSplit.toLowerCase()})`
+})
 
 watch(
   () => props.loading,
@@ -77,6 +103,24 @@ const mostRecommendedTarget = computed(() => {
   return links.most_recommended_target
 })
 
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+const chartInfoText = computed(() => {
+  if (mostRecommendedTarget.value) {
+    return t(`stats.${props.type}.texts.specific`, {
+      mode: targetLabel(mostRecommendedTarget.value.target),
+    })
+  }
+  return ''
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartInfoText, (text) => emit('update:chartInfoText', text), { immediate: true })
+
 function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {
     return 'N/A'
@@ -86,6 +130,57 @@ function keyLabel(key: string) {
     return key
   }
   return t(`transportation_modes.${shortKey(key)}`)
+}
+
+function labelTypeLabel(key: string, labelType: 'simple' | 'complex') {
+  if (key === 'null' || key === 'None') {
+    return 'N/A'
+  }
+  const messageKey = `${labelType}_labels.${shortKey(key)}`
+  // recommendations may be expressed as a transport mode rather than a
+  // typology label: fall back to the mode vocabulary instead of showing the
+  // raw i18n key
+  return te(messageKey) ? t(messageKey) : keyLabel(key)
+}
+
+function labelTypeColor(key: string, labelType: 'simple' | 'complex') {
+  const colors = labelType === 'simple' ? SIMPLE_LABELS_COLORS : COMPLEX_LABELS_COLORS
+  return labelColor(colors, shortKey(key)) || modeColor(key)
+}
+
+function modeColor(key: string) {
+  return MODE_COLORS[shortKey(key)] || MODE_COLORS.default || '#ccc'
+}
+
+// Link sources are typology labels when labelType is set
+function sourceLabel(key: string) {
+  return props.labelType ? labelTypeLabel(key, props.labelType) : keyLabel(key)
+}
+
+function sourceColor(key: string) {
+  return props.labelType ? labelTypeColor(key, props.labelType) : modeColor(key)
+}
+
+// Simple links target the simple recommendation, which is a simple label too;
+// the other variants target a recommended transport mode
+function targetLabel(key: string) {
+  return props.labelType === 'simple' ? labelTypeLabel(key, 'simple') : keyLabel(key)
+}
+
+function targetColor(key: string) {
+  return props.labelType === 'simple' ? labelTypeColor(key, 'simple') : modeColor(key)
+}
+
+function sourceOrder(key: string) {
+  if (props.labelType === 'simple') return simpleLabelSortOrder(shortKey(key))
+  if (props.labelType === 'complex') return complexLabelSortOrder(shortKey(key))
+  return modeSortOrder(shortKey(key))
+}
+
+function targetOrder(key: string) {
+  return props.labelType === 'simple'
+    ? simpleLabelSortOrder(shortKey(key))
+    : modeSortOrder(shortKey(key))
 }
 
 function initChartOptions() {
@@ -102,16 +197,31 @@ function initChartOptions() {
   }
   total.value = links.total ?? 0
   const linksData = links.data.map((item) => ({
-    source: keyLabel(item.source),
-    target: keyLabel(item.target) + recoSuffix,
+    source: sourceLabel(item.source),
+    target: targetLabel(item.target) + recoSuffix,
     value: item.value,
   }))
 
-  const nodes = new Set<string>()
+  const sourceNodes = new Set<string>()
+  const targetNodes = new Set<string>()
   links.data.forEach((item) => {
-    nodes.add(item.source)
-    nodes.add(item.target + '_reco')
+    sourceNodes.add(item.source)
+    targetNodes.add(item.target)
   })
+  const nodes = [
+    ...Array.from(sourceNodes)
+      .sort((a, b) => sourceOrder(a) - sourceOrder(b))
+      .map((key) => ({
+        name: sourceLabel(key),
+        itemStyle: { color: sourceColor(key) },
+      })),
+    ...Array.from(targetNodes)
+      .sort((a, b) => targetOrder(a) - targetOrder(b))
+      .map((key) => ({
+        name: targetLabel(key) + recoSuffix,
+        itemStyle: { color: targetColor(key) },
+      })),
+  ]
 
   const newOption: EChartsOption = {
     grid: {
@@ -123,8 +233,8 @@ function initChartOptions() {
     animation: false,
     height: props.height - 80,
     title: {
-      text: t(`stats.${props.type}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      text: chartTitle.value,
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       textStyle: {
@@ -137,22 +247,24 @@ function initChartOptions() {
     tooltip: {
       trigger: 'item',
       triggerOn: 'mousemove',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: (params: any) => {
+        if (params.dataType === 'edge') {
+          return `${params.data.source} → ${params.data.target}<br/><b>${params.data.value}</b>`
+        }
+        // node value is the number of participants flowing through it
+        return `${params.name}<br/><b>${params.value}</b>`
+      },
     },
     series: [
       {
         type: 'sankey',
         top: 60,
+        layoutIterations: 0,
         emphasis: {
           focus: 'adjacency',
         },
-        data: Array.from(nodes).map((key) => ({
-          name: key.endsWith('_reco')
-            ? keyLabel(key.replace('_reco', '')) + recoSuffix
-            : keyLabel(key),
-          itemStyle: {
-            color: MODE_COLORS[key.replace('_reco', '')] || MODE_COLORS.default || '#ccc',
-          },
-        })),
+        data: nodes,
         links: linksData,
       },
     ],

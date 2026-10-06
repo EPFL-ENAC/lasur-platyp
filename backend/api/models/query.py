@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Literal, Optional, Dict
 
 from pydantic import BaseModel, Field
 from geojson_pydantic import Polygon, MultiPolygon
@@ -97,10 +97,6 @@ class DataEntryRead(DataEntryBase):
     id: int
 
 
-class ParticipantData(BaseModel):
-    data: Optional[Dict] = None
-
-
 class CampaignInfo(BaseModel):
     name: str
     company_name: str
@@ -178,7 +174,8 @@ class StatLinks(Links):
 
 
 class JourneyEnergyLeg(BaseModel):
-    """Energy expenditure for a single journey leg (per person)."""
+    """Energy expenditure for a single journey leg (per person). Internal to
+    EnergyService (used to compute gains); not part of the public payload."""
     token: str
     journey_id: str
     mode: str
@@ -198,23 +195,44 @@ class EnergyExpenditure(BaseModel):
     avg_daily_kcal: float
 
 
+class EnergyByLabel(BaseModel):
+    """A participant's energy expenditure credited to one typology bucket."""
+    token: str
+    label: str
+    energy_kcal: float
+
+
+class EnergyBreakdown(BaseModel):
+    """Per-participant energy expenditure, grouped by label at two typology
+    granularities: simple (typo.reco.simple_labels / reco_simple) and detailed
+    (typo.reco.complex_labels / reco_inter)."""
+    simple: List[EnergyByLabel] = []
+    detailed: List[EnergyByLabel] = []
+
+
 class EnergyByJourney(BaseModel):
-    """Energy expenditure broken down by journey legs."""
+    """Energy expenditure summary for current or recommended journeys."""
     total: int
-    data: List[JourneyEnergyLeg] = []
     average_energy_per_unique_token: Optional[float] = None
+    breakdown: EnergyBreakdown = EnergyBreakdown()
 
 
-class JourneyEnergyGainsByMode(BaseModel):
-    """Energy gain (reduction) thanks to a specific mode if recommendations were followed."""
-    mode: str
+class JourneyEnergyGainsByLabel(BaseModel):
+    """Energy gain (reduction) credited to one typology bucket if recommendations were followed."""
+    label: str
     added_kcal: float
+
+
+class JourneyEnergyGainsBreakdown(BaseModel):
+    """Energy gains broken down by label, at simple and detailed typology granularities."""
+    simple: List[JourneyEnergyGainsByLabel] = []
+    detailed: List[JourneyEnergyGainsByLabel] = []
 
 
 class JourneyEnergyGains(BaseModel):
     """Energy gain (reduction) for a journey leg if recommendations were followed."""
     total: float
-    gains_per_mode: List[JourneyEnergyGainsByMode] = []
+    gains_per_mode: JourneyEnergyGainsBreakdown = JourneyEnergyGainsBreakdown()
     current_above_who_count: int = 0
     reco_above_who_count: int = 0
 
@@ -224,7 +242,6 @@ class JourneyEnergyStats(BaseModel):
     current: EnergyByJourney
     reco: EnergyByJourney
     gains: JourneyEnergyGains
-    
 
 
 class BehaviorChangeLever(BaseModel):
@@ -250,16 +267,19 @@ class BehaviorChangeByModeBase(BaseModel):
 class BehaviorChangeByModeLever(BehaviorChangeByModeBase):
     levers: List[BehaviorChangeLever] = []
 
+
 class BehaviorChangeByModeMotivation(BehaviorChangeByModeBase):
     motivations: List[BehaviorChangeMotivation] = []
 
 
 class BehaviorChangeStatsBase(BaseModel):
     total_responses: int
-    aggregation_type: str # "all_aggregated", "mode_split", or "mixed"
+    aggregation_type: str  # "all_aggregated", "mode_split", or "mixed"
+
 
 class BehaviorChangeStatsLever(BehaviorChangeStatsBase):
     by_mode_levers: List[BehaviorChangeByModeLever]
+
 
 class BehaviorChangeStatsMotivation(BehaviorChangeStatsBase):
     by_mode_motivation: List[BehaviorChangeByModeMotivation] = []
@@ -275,8 +295,11 @@ class BehaviorChangeStats(BaseModel):
 class EquipmentPerRecommendation(BaseModel):
     bike: int = 0
     ebike: int = 0
-    upt_subs: int = 0
-    train_subs: int = 0
+    tpu_unireso: int = 0
+    tpu_leman_pass: int = 0
+    train_demi_tarif: int = 0
+    train_abo_gen: int = 0
+    sncf: int = 0
     mob_subs: int = 0
     moto: int = 0
     car: int = 0
@@ -299,20 +322,71 @@ class EquipmentRecommendationMatrix(BaseModel):
     elec: EquipmentPerRecommendation = EquipmentPerRecommendation()
     inter: EquipmentPerRecommendation = EquipmentPerRecommendation()
 
+
+class PtPassRecommendation(BaseModel):
+    """Public transport pass recommended to participants, and how many of them
+    already hold a matching subscription.
+
+    already_equipped is None when the information is not collected: the
+    equipment question only lists Swiss products, so nothing tells us whether a
+    participant already holds an SNCF (French railways) pass.
+    """
+    pass_type: str
+    recommended: int = 0
+    already_equipped: Optional[int] = None
+
+
 class EquipmentsStats(BaseModel):
     total: int
     equipment_recommendation_matrix: EquipmentRecommendationMatrix
+    pt_pass_recommendations: List[PtPassRecommendation] = []
+
+
+class WorkplaceCampaign(BaseModel):
+    id: int
+    name: str
+    company_name: str
+
+
+class WorkplaceLocation(BaseModel):
+    """One campaign at one place: campaigns sharing coordinates are separate workplaces."""
+    id: int  # stable index in the list, sorted by (lat, lon, campaign_id)
+    lat: float
+    lon: float
+    name: Optional[str] = None
+    address: Optional[str] = None
+    count: int  # completed records at this workplace
+    campaign_id: int
+    # filled by route-level enrichment
+    campaign: Optional[WorkplaceCampaign] = None
+
+
+class HomeWorkplaceFlow(BaseModel):
+    hex_id: str  # same H3 ids as home_location_heatmap keys
+    workplace_id: int
+    count: int
+
+
+class LocationStats(BaseModel):
+    """Map data: home hexagons, workplaces (one per place and campaign) and their flows."""
+    home_location_heatmap: dict[str, int]
+    workplace_locations: List[WorkplaceLocation]
+    home_workplace_flows: List[HomeWorkplaceFlow]
+
 
 class Stats(BaseModel):
     total: int = 0
     frequencies: Optional[List[Frequencies]] = None
-    mode_frequencies: Optional[List[Frequencies]] = None
     mode_frequencies_simple_labels: Optional[List[Frequencies]] = None
     mode_frequencies_complex_labels: Optional[List[Frequencies]] = None
-    mode_emissions: Optional[List[Emissions]] = None
-    reco_mode_emissions: Optional[List[Emissions]] = None
-    mode_emission_reductions: Optional[List[EmissionReductions]] = None
-    mode_links: Optional[StatLinks] = None
+    mode_emissions_simple_labels: Optional[List[Emissions]] = None
+    mode_emissions_complex_labels: Optional[List[Emissions]] = None
+    reco_mode_emissions_simple_labels: Optional[List[Emissions]] = None
+    reco_mode_emissions_complex_labels: Optional[List[Emissions]] = None
+    mode_emission_reductions_simple_labels: Optional[List[EmissionReductions]] = None
+    mode_emission_reductions_complex_labels: Optional[List[EmissionReductions]] = None
+    mode_links_simple_labels: Optional[StatLinks] = None
+    mode_links_complex_labels: Optional[StatLinks] = None
     pro_frequencies: Optional[List[Frequencies]] = None
     pro_mode_frequencies: Optional[List[Frequencies]] = None
     pro_mode_emissions: Optional[List[Emissions]] = None
@@ -320,13 +394,67 @@ class Stats(BaseModel):
     pro_mode_emission_reductions: Optional[List[EmissionReductions]] = None
     pro_mode_links: Optional[StatLinks] = None
     home_location_heatmap: Optional[Dict[str, int]] = None
-    workplace_locations: Optional[List[dict]] = None
-    workplace_location_heatmap: Optional[Dict[str, int]] = None
+    workplace_locations: Optional[List[WorkplaceLocation]] = None
+    home_workplace_flows: Optional[List[HomeWorkplaceFlow]] = None
     mode_energy: Optional[List[EnergyExpenditure]] = None
     reco_mode_energy: Optional[List[EnergyExpenditure]] = None
     journey_energy_stats: Optional[JourneyEnergyStats] = None
     behavior_change: Optional[BehaviorChangeStats] = None
     equipments_stats: Optional[EquipmentsStats] = None
+
+
+class CampaignGroup(BaseModel):
+    name: str
+    campaign_ids: List[int]
+
+
+class ComparisonRequest(BaseModel):
+    groups: List[CampaignGroup]
+    mode: Literal["cross_sectional", "longitudinal"] = "cross_sectional"
+    filter: Optional[dict] = None
+
+
+class ComparisonStats(Stats):
+    name: str
+    campaign_ids: List[int]
+
+
+class ModeTransition(BaseModel):
+    source_group: str
+    target_group: str
+    source_mode: str
+    target_mode: str
+    count: int
+
+
+class ModeTransitions(BaseModel):
+    # participants contributing to at least one transition
+    total: int = 0
+    data: List[ModeTransition] = []
+
+
+class UniqueTotals(BaseModel):
+    """Distinct participants (by email_hash) across all the groups of a
+    longitudinal comparison, as the groups' own totals count each of them once
+    per group."""
+    participants: int = 0
+    # answered at least one lever question, in any group
+    levers: int = 0
+    # answered the motivation question, in any group
+    motivation: int = 0
+
+
+class ComparisonResult(BaseModel):
+    groups: List[ComparisonStats] = []
+    # simple typology labels
+    mode_transitions: Optional[ModeTransitions] = None
+    # detailed (complex) typology labels
+    mode_transitions_complex_labels: Optional[ModeTransitions] = None
+    warnings: Optional[List[str]] = None
+    # map data over every surviving group
+    locations: Optional[LocationStats] = None
+    # longitudinal mode only
+    unique_totals: Optional[UniqueTotals] = None
 
 
 class GeoWithin(BaseModel):

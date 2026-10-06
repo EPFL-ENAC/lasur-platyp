@@ -1,19 +1,8 @@
 import re
+import numpy as np
 import pandas as pd
 import h3
 
-
-MODES = [
-    'walking',
-    'bike',
-    'ebike',
-    'pub',
-    'moto',
-    'carpool',
-    'car',
-    'train',
-    'other'
-]
 
 RECOS = [
     'train',
@@ -24,26 +13,6 @@ RECOS = [
     'inter',
     'elec',
     'covoit'
-]
-
-MODES_PRO_V1 = [
-    'local_walking',
-    'local_car',
-    'local_pub',
-    'local_bike',
-    'local_moto',
-    'local_train',
-    'region_car',
-    'region_pub',
-    'region_train',
-    'region_moto',
-    'region_plane',
-    'europe_car',
-    'europe_train',
-    'europe_plane',
-    'inter_car',
-    'inter_train',
-    'inter_plane'
 ]
 
 MODES_PRO = [
@@ -72,10 +41,21 @@ RECOS_PRO = [
 ]
 
 DAYS_PER_YEAR_FACTOR = {
-    'week': 45,  # worked weeks
+    'week': 47,  # worked weeks
     'month': 11,  # worked months
     'year': 1,
 }
+
+# typo.reco.complex_labels values to fold into a single bucket: {raw_value: target_bucket}
+COMPLEX_LABEL_MERGE = {"pub": "tp", "train": "tp"}
+
+
+def merge_label_components(label: str, merge_map: dict[str, str]) -> str:
+    """Apply a component-wise merge to a (possibly '+'-joined intermodal)
+    complex label, so both a plain label and any combination containing it
+    fold into the same target, e.g. with merge_map={'pub': 'tp'}:
+    'pub' -> 'tp', 'car+pub' -> 'car+tp', 'pub+bike' -> 'tp+bike'."""
+    return "+".join(merge_map.get(part, part) for part in label.split("+"))
 
 
 def normalize_pro_days_to_yearly(days: float, days_per) -> float:
@@ -90,6 +70,10 @@ def normalize_pro_days_to_yearly(days: float, days_per) -> float:
 
 
 RECO_INTER_PATTERN = re.compile(r'^typo\.reco\.reco_inter\.(\d+)$')
+# Per-journey recommendation column prefixes: reco_inter carries the intermodal
+# (detailed) recommendation, reco_simple the simple typology one.
+RECO_INTER_PREFIX = 'typo.reco.reco_inter'
+RECO_SIMPLE_PREFIX = 'typo.reco.reco_simple'
 # Legacy general recommendations (not tied to a specific journey), superseded by
 # typo.reco.reco_inter but still present on records collected before that change.
 RECO_LEGACY_COLUMNS = ['typo.reco.reco_dt2.0', 'typo.reco.reco_dt2.1']
@@ -99,11 +83,19 @@ class BaseStatsService:
 
     def __init__(self, df: pd.DataFrame):
         self.df = df
+        self._v3_cache = None
+        self._journey_attributes_cache = {}
+        self._main_journey_cache = {}
+
+    def _reco_journey_columns(self, df: pd.DataFrame, prefix: str = RECO_INTER_PREFIX) -> list[str]:
+        """{prefix}.N columns present in df, sorted by journey index N."""
+        pattern = re.compile(rf'^{re.escape(prefix)}\.(\d+)$')
+        cols = [c for c in df.columns if pattern.match(c)]
+        return sorted(cols, key=lambda c: int(pattern.match(c).group(1)))
 
     def _reco_inter_columns(self, df: pd.DataFrame) -> list[str]:
         """typo.reco.reco_inter.N columns present in df, sorted by journey index N."""
-        cols = [c for c in df.columns if RECO_INTER_PATTERN.match(c)]
-        return sorted(cols, key=lambda c: int(RECO_INTER_PATTERN.match(c).group(1)))
+        return self._reco_journey_columns(df, RECO_INTER_PREFIX)
 
     def _reco_legacy_columns(self, df: pd.DataFrame) -> list[str]:
         """typo.reco.reco_dt2.{0,1} columns present in df."""
@@ -111,12 +103,16 @@ class BaseStatsService:
 
     def _has_completed_recommendation(self, df: pd.DataFrame) -> pd.Series:
         """Boolean mask: whether a row has a recommendation, new or legacy."""
-        reco_cols = self._reco_inter_columns(df) + self._reco_legacy_columns(df)
+        reco_cols = self._reco_inter_columns(
+            df) + self._reco_legacy_columns(df)
         if not reco_cols:
             return pd.Series(False, index=df.index)
         return df[reco_cols].notna().any(axis=1)
 
-    def _build_reco_weighted(self, df: pd.DataFrame) -> pd.DataFrame | None:
+    def _build_reco_weighted(
+        self, df: pd.DataFrame, reco_prefix: str = RECO_INTER_PREFIX,
+        include_legacy: bool = True,
+    ) -> pd.DataFrame | None:
         """
         One row per recommendation instance that should be taken into account, with
         the journey-frequency weight it should count for: ['token', 'journey',
@@ -134,6 +130,11 @@ class BaseStatsService:
         Args:
             df: DataFrame of records (needs a 'token' column to key journeys/legacy
                 rows; falls back to the row index when absent)
+            reco_prefix: per-journey recommendation column prefix, either
+                typo.reco.reco_inter (intermodal, the default) or
+                typo.reco.reco_simple (simple typology)
+            include_legacy: whether to also emit the legacy typo.reco.reco_dt2.{0,1}
+                recommendations; only reco_inter has a legacy equivalent
 
         Returns:
             DataFrame with columns ['token', 'journey', 'reco_mode', 'days'] or None
@@ -148,51 +149,299 @@ class BaseStatsService:
         journey_days_cols = [c for c in df.columns if re.fullmatch(
             r'data\.freq_mod_journeys\.\d+\.days', c)]
         if journey_days_cols and 'token' in df.columns:
-            days_by_token = df[journey_days_cols].sum(axis=1)
+            # Coerce before summing: some records have this field stored as a
+            # non-numeric string, which would otherwise raise (or
+            # string-concatenate instead of summing).
+            days_by_token = df[journey_days_cols].apply(
+                pd.to_numeric, errors='coerce').sum(axis=1)
             days_by_token.index = df['token']
             days_by_token = days_by_token.groupby(level=0).sum()
         else:
             days_by_token = pd.Series(dtype=float)
 
-        rows = []
-        for col in self._reco_inter_columns(df):
-            journey_id = RECO_INTER_PATTERN.match(col).group(1)
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+
+        # One (token, journey, reco_mode, days) frame per recommendation
+        # column, concatenated at the end -- vectorized instead of a
+        # Python-level `.items()` loop per column.
+        frames = []
+        for col in self._reco_journey_columns(df, reco_prefix):
+            journey_id = col.rsplit('.', 1)[1]
             days_col = f'data.freq_mod_journeys.{journey_id}.days'
-            for idx, reco in df[col].dropna().items():
-                token = df.at[idx, 'token'] if 'token' in df.columns else idx
-                if days_col in df.columns and pd.notna(df.at[idx, days_col]):
-                    days = df.at[idx, days_col]
-                else:
-                    days = days_by_token.get(token, 1)
-                rows.append({'token': token, 'journey': journey_id,
-                              'reco_mode': reco, 'days': days})
+            reco_s = df[col].dropna()
+            if reco_s.empty:
+                continue
+            idx = reco_s.index
+            tokens = token_series.loc[idx]
+            # Coerce: some records store this field as a non-numeric string,
+            # which would otherwise raise in the arithmetic downstream
+            # (energy/emissions calculations multiply by 'days').
+            own_days = pd.to_numeric(df[days_col].loc[idx], errors='coerce') if days_col in df.columns else pd.Series(
+                np.nan, index=idx)
+            fallback_days = tokens.map(days_by_token).fillna(1)
+            days = own_days.where(own_days.notna(), fallback_days)
+            frames.append(pd.DataFrame({
+                'token': tokens.to_numpy(),
+                'journey': journey_id,
+                'reco_mode': reco_s.to_numpy(),
+                'days': days.to_numpy(),
+            }))
 
-        for col in self._reco_legacy_columns(df):
+        for col in (self._reco_legacy_columns(df) if include_legacy else []):
             journey_id = f'legacy_{col.rsplit(".", 1)[1]}'
-            for idx, reco in df[col].dropna().items():
-                token = df.at[idx, 'token'] if 'token' in df.columns else idx
-                days = days_by_token.get(token, 1)
-                rows.append({'token': token, 'journey': journey_id,
-                              'reco_mode': reco, 'days': days})
+            reco_s = df[col].dropna()
+            if reco_s.empty:
+                continue
+            idx = reco_s.index
+            tokens = token_series.loc[idx]
+            days = tokens.map(days_by_token).fillna(1)
+            frames.append(pd.DataFrame({
+                'token': tokens.to_numpy(),
+                'journey': journey_id,
+                'reco_mode': reco_s.to_numpy(),
+                'days': days.to_numpy(),
+            }))
 
-        if not rows:
+        if not frames:
             return None
-        return pd.DataFrame(rows)
+        return pd.concat(frames, ignore_index=True)
 
-    def _get_records_v1(self) -> pd.DataFrame:
-        """Get records with data.version as NaN"""
-        if 'data.version' not in self.df.columns:
-            return self.df.copy()
-        df_v1 = self.df[self.df['data.version'].isna()].copy()
-        return df_v1
+    JOURNEY_DAYS_PATTERN = re.compile(
+        r'^data\.freq_mod_journeys\.(\d+)\.days$')
 
-    def _get_records_v2(self) -> pd.DataFrame:
-        """Get records with data.version starting with '2.'"""
-        if 'data.version' not in self.df.columns:
-            return pd.DataFrame()
-        df_v2 = self.df[self.df['data.version'].notna(
-        ) & self.df['data.version'].str.startswith('2.')].copy()
-        return df_v2
+    def _main_journey(self, df: pd.DataFrame) -> pd.DataFrame:
+        """One row per record that declared a home-to-work journey, describing
+        its main one: ['row', 'journey', 'days'].
+
+        Home-to-work modal split charts are person-centric: whatever the number
+        of journeys (sequences) someone declared, they count exactly once, for
+        the journey they make the most often (data.freq_mod_journeys.N.days),
+        ties being broken by the first one entered (lowest journey index).
+
+        Journey days are coerced to numeric -- some records store this field as
+        a non-numeric string -- and journeys without a positive frequency are
+        not eligible.
+
+        Cached per df identity: every modal split chart selects the same main
+        journeys. Callers must not mutate the result.
+        """
+        cache_key = ('main_journey', id(df))
+        if cache_key in self._main_journey_cache:
+            return self._main_journey_cache[cache_key]
+
+        frames = []
+        for col in df.columns:
+            matched = self.JOURNEY_DAYS_PATTERN.match(col)
+            if not matched:
+                continue
+            journey_id = matched.group(1)
+            days = pd.to_numeric(df[col], errors='coerce')
+            mask = days > 0
+            if not mask.any():
+                continue
+            idx = df.index[mask]
+            frames.append(pd.DataFrame({
+                'row': idx,
+                'journey': journey_id,
+                'order': int(journey_id),
+                'days': days.loc[idx].to_numpy(),
+            }))
+
+        if not frames:
+            main = pd.DataFrame(columns=['row', 'journey', 'days'])
+        else:
+            combined = pd.concat(frames, ignore_index=True)
+            combined = combined.sort_values(
+                ['row', 'days', 'order'], ascending=[True, False, True])
+            combined = combined.drop_duplicates(subset='row', keep='first')
+            main = combined[['row', 'journey', 'days']].reset_index(drop=True)
+
+        self._main_journey_cache[cache_key] = main
+        return main
+
+    def _journey_values(
+        self, df: pd.DataFrame, journeys: pd.DataFrame,
+        values_by_journey: dict[str, pd.Series],
+    ) -> pd.Series:
+        """Value declared on the journey each row of `journeys` points at,
+        resolved per journey index rather than record by record."""
+        values = pd.Series(np.nan, index=journeys.index, dtype=object)
+        for journey_id, group in journeys.groupby('journey'):
+            journey_values = values_by_journey.get(journey_id)
+            if journey_values is None:
+                continue
+            values.loc[group.index] = journey_values.loc[group['row']].to_numpy()
+        return values
+
+    def _main_journey_values(
+        self, df: pd.DataFrame, values_by_journey: dict[str, pd.Series],
+        first_entered_fallback: bool = False,
+    ) -> pd.DataFrame:
+        """One row per record, with the value its main journey carries:
+        ['row', 'journey', 'days', 'value'].
+
+        The main journey is selected on the journey frequencies alone
+        (_main_journey), so a record whose main journey carries no value is
+        left out rather than counted for a less frequent journey.
+
+        Args:
+            df: DataFrame of records
+            values_by_journey: journey index -> value attached to that journey
+                (a typology label, a recommendation, ...), aligned on df.index
+            first_entered_fallback: also keep the records that declared no
+                journey frequency at all (nothing to rank them by), through the
+                first journey entered that carries a value
+        """
+        columns = ['row', 'journey', 'days', 'value']
+        main = self._main_journey(df).copy()
+        if not main.empty:
+            main['value'] = self._journey_values(df, main, values_by_journey)
+            main = main[main['value'].notna()]
+        else:
+            main = pd.DataFrame(columns=columns)
+
+        if not first_entered_fallback:
+            return main[columns].reset_index(drop=True)
+
+        # No journey frequency to rank: keep the first journey entered that
+        # carries a value, so that these persons count once too.
+        unranked = df.index[~df.index.isin(self._main_journey(df)['row'])]
+        frames = [main[columns]]
+        for journey_id in sorted(values_by_journey, key=int):
+            values = values_by_journey[journey_id].loc[unranked].dropna()
+            if values.empty:
+                continue
+            frames.append(pd.DataFrame({
+                'row': values.index,
+                'journey': journey_id,
+                'days': 0,
+                'value': values.to_numpy(),
+            }))
+
+        combined = pd.concat(frames, ignore_index=True)
+        # journeys were appended in ascending index order, first one wins
+        combined = combined.drop_duplicates(subset='row', keep='first')
+        return combined[columns].reset_index(drop=True)
+
+    def _main_journey_labels(self, df: pd.DataFrame, label_prefix: str) -> pd.DataFrame:
+        """Main home-to-work journey of each record, with its typology label
+        (typo.reco.{simple,complex}_labels.N), see _main_journey_values.
+
+        Cached per (df identity, label prefix): computed once and then reused by
+        each label of the modal split. Callers must not mutate the result.
+        """
+        cache_key = ('labels', id(df), label_prefix)
+        if cache_key not in self._main_journey_cache:
+            pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+            labels_by_journey = {
+                pattern.match(col).group(1): df[col]
+                for col in df.columns if pattern.match(col)
+            }
+            self._main_journey_cache[cache_key] = self._main_journey_values(
+                df, labels_by_journey)
+        return self._main_journey_cache[cache_key]
+
+    def _build_reco_per_person(
+        self, df: pd.DataFrame, reco_prefix: str = RECO_INTER_PREFIX,
+        include_legacy: bool = True,
+    ) -> pd.DataFrame | None:
+        """One row per person, with the recommendation their potential modal
+        split share counts for: ['token', 'journey', 'reco_mode'].
+
+        - New-style {reco_prefix}.N is the recommendation made for the journey
+          of the same index in data.freq_mod_journeys: the one kept is the
+          recommendation of the person's main journey (_main_journey).
+        - Legacy typo.reco.reco_dt2.{0,1} are general recommendations that
+          predate per-journey recommendations: for records that have no
+          per-journey recommendation at all, the first one entered is kept, so
+          that these persons also count exactly once.
+
+        Returns:
+            DataFrame with columns ['token', 'journey', 'reco_mode'] or None
+            when no recommendation data is found.
+        """
+        if df.empty:
+            return None
+
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+
+        recos_by_journey = {
+            col.rsplit('.', 1)[1]: df[col]
+            for col in self._reco_journey_columns(df, reco_prefix)
+        }
+        # Recommendations do not all come with a journey frequency (legacy
+        # records have none), hence the fallback on the first journey entered.
+        main = self._main_journey_values(
+            df, recos_by_journey, first_entered_fallback=True)
+
+        frames = []
+        if not main.empty:
+            frames.append(pd.DataFrame({
+                'token': token_series.loc[main['row']].to_numpy(),
+                'journey': main['journey'].to_numpy(),
+                'reco_mode': main['value'].to_numpy(),
+            }))
+
+        legacy_cols = self._reco_legacy_columns(df) if include_legacy else []
+        if legacy_cols:
+            covered = df.index.isin(main['row']) if not main.empty else np.zeros(
+                len(df), dtype=bool)
+            # first legacy recommendation entered, for records not covered above
+            legacy_s = df[legacy_cols].bfill(axis=1).iloc[:, 0]
+            legacy_s = legacy_s[~covered].dropna()
+            if not legacy_s.empty:
+                frames.append(pd.DataFrame({
+                    'token': token_series.loc[legacy_s.index].to_numpy(),
+                    'journey': 'legacy',
+                    'reco_mode': legacy_s.to_numpy(),
+                }))
+
+        if not frames:
+            return None
+        return pd.concat(frames, ignore_index=True)
+
+    def _build_label_frame(self, df: pd.DataFrame, label_prefix: str) -> pd.DataFrame | None:
+        """One row per (token, journey, label) for the given typo.reco.*_labels.N
+        columns, built the same explicit-suffix way as _reco_inter_columns."""
+        label_pattern = re.compile(rf'^{re.escape(label_prefix)}\.(\d+)$')
+        label_cols = [c for c in df.columns if label_pattern.match(c)]
+        if not label_cols:
+            return None
+
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+        frames = []
+        for col in label_cols:
+            journey_id = label_pattern.match(col).group(1)
+            label_s = df[col].dropna()
+            if label_s.empty:
+                continue
+            frames.append(pd.DataFrame({
+                'token': token_series.loc[label_s.index].to_numpy(),
+                'journey': journey_id,
+                'label': label_s.to_numpy(),
+            }))
+        if not frames:
+            return None
+        return pd.concat(frames, ignore_index=True)
+
+    def _get_records_v3(self) -> pd.DataFrame:
+        """Get records with data.version starting with '3.'
+
+        Cached per instance: called repeatedly by the same stats service
+        with an identical result each time. Safe to return the cached frame
+        as-is (not a copy) since no caller mutates it in place -- they only
+        read from it or derive new frames from it.
+        """
+        if self._v3_cache is None:
+            if 'data.version' not in self.df.columns:
+                self._v3_cache = pd.DataFrame()
+            else:
+                self._v3_cache = self.df[self.df['data.version'].notna(
+                ) & self.df['data.version'].str.startswith('3.')].copy()
+        return self._v3_cache
 
     def _calculate_distance(self, origin_lat: float, origin_lon: float, dest_lat: float, dest_lon: float) -> float:
         """Calculate the distance between origin and destination locations."""
@@ -221,7 +470,7 @@ class BaseStatsService:
                 'train': 1.22,
                 'car': 1.22,
                 'bike': 1.22,
-                'walk': 1.22,
+                'walking': 1.22,
                 'moto': 1.22,
                 'pub': 1.22,
                 'boat': 1.22,
@@ -236,7 +485,7 @@ class BaseStatsService:
             else:
                 # Si pas meme hexagone, on convertit le centre du h3 sélectionné en h3 plus petit pour calculer des distances plus précises
                 return h3.great_circle_distance(h3.cell_to_latlng(h3.cell_to_center_child(h3_index, 9)),
-                                                (lat, lon)) * avg_dist_coeff[mode]
+                                                (lat, lon)) * avg_dist_coeff.get(mode, 1.22)
         except Exception:
             return 0
 
@@ -258,6 +507,32 @@ class BaseStatsService:
         work_lon = float(row['data.workplace.lon'])
         return self._calculate_distance(origin_lat, origin_lon, work_lat, work_lon)
 
+    def _calculate_distance_home_to_work_series(self, df: pd.DataFrame) -> pd.Series:
+        """Vectorized equivalent of _calculate_distance_home_to_work applied
+        over every row at once, instead of via DataFrame.apply(axis=1)."""
+        required = ['data.origin.lat', 'data.origin.lon',
+                    'data.workplace.lat', 'data.workplace.lon']
+        if not all(c in df.columns for c in required):
+            return pd.Series(0.0, index=df.index)
+
+        origin_lat = pd.to_numeric(df['data.origin.lat'], errors='coerce')
+        origin_lon = pd.to_numeric(df['data.origin.lon'], errors='coerce')
+        work_lat = pd.to_numeric(df['data.workplace.lat'], errors='coerce')
+        work_lon = pd.to_numeric(df['data.workplace.lon'], errors='coerce')
+        valid = origin_lat.notna() & origin_lon.notna() & work_lat.notna() & work_lon.notna()
+
+        with np.errstate(invalid='ignore'):
+            cos_angle = (
+                np.cos(np.radians(origin_lat)) * np.cos(np.radians(work_lat)) *
+                np.cos(np.radians(work_lon) - np.radians(origin_lon)) +
+                np.sin(np.radians(origin_lat)) * np.sin(np.radians(work_lat))
+            )
+            # guard against floating-point drift just past acos's [-1, 1] domain
+            cos_angle = np.clip(cos_angle, -1.0, 1.0)
+            distance_km = 6371 * np.arccos(cos_angle) * 1.3
+
+        return pd.Series(np.where(valid, distance_km, 0.0), index=df.index)
+
     def _build_journey_dataframe(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
         Extract journey data from freq_mod_journeys columns.
@@ -277,25 +552,30 @@ class BaseStatsService:
         if len(col_days) == 0:
             return None
 
-        journeys_list = []
-        for idx, row in df.iterrows():
-            for col in col_days:
-                days = row[col]
-                if pd.notna(days) and days > 0:
-                    # Extract journey number from column name
-                    journey_id = col.split('.')[2]
-                    journeys_list.append({
-                        'token': row.get('token', idx),
-                        'journey': journey_id,
-                        'days': days,
-                        'dist': row['distance_km'],
-                        'travel_time': row.get('data.travel_time', 0)
-                    })
-
-        if len(journeys_list) == 0:
+        # Reshape wide day-per-journey columns into one row per (record, journey),
+        # vectorized instead of a Python-level iterrows/column scan. Coerce to
+        # numeric first: some records store this field as a non-numeric
+        # string, which would otherwise raise on `> 0`.
+        journey_id_by_col = {c: c.split('.')[2] for c in col_days}
+        stacked = df[col_days].apply(pd.to_numeric, errors='coerce').stack()  # drops NaN by default
+        stacked = stacked[stacked > 0]
+        if stacked.empty:
             return None
 
-        return pd.DataFrame(journeys_list)
+        row_idx = stacked.index.get_level_values(0)
+        col_idx = stacked.index.get_level_values(1)
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+        travel_time_series = df['data.travel_time'] if 'data.travel_time' in df.columns else pd.Series(
+            0, index=df.index)
+
+        return pd.DataFrame({
+            'token': token_series.loc[row_idx].to_numpy(),
+            'journey': col_idx.map(journey_id_by_col).to_numpy(),
+            'days': stacked.to_numpy(),
+            'dist': df['distance_km'].loc[row_idx].to_numpy(),
+            'travel_time': travel_time_series.loc[row_idx].to_numpy(),
+        })
 
     def _build_modes_dataframe(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
@@ -314,24 +594,25 @@ class BaseStatsService:
         Returns:
             DataFrame with columns ['token', 'journey', 'mode'] or None if no data
         """
-        modes_list = []
-        for idx, row in df.iterrows():
-            for col in df.columns:
-                if '.freq_mod_journeys.' in col and '.modes.' in col:
-                    mode_val = row[col]
-                    if pd.notna(mode_val):
-                        parts = col.split('.')
-                        journey_id = parts[2]
-                        modes_list.append({
-                            'token': row.get('token', idx),
-                            'journey': journey_id,
-                            'mode': mode_val
-                        })
-
-        if len(modes_list) == 0:
+        mode_cols = [c for c in df.columns if '.freq_mod_journeys.' in c and '.modes.' in c]
+        if not mode_cols:
             return None
 
-        return pd.DataFrame(modes_list)
+        journey_id_by_col = {c: c.split('.')[2] for c in mode_cols}
+        stacked = df[mode_cols].stack()  # drops NaN by default
+        if stacked.empty:
+            return None
+
+        row_idx = stacked.index.get_level_values(0)
+        col_idx = stacked.index.get_level_values(1)
+        token_series = df['token'] if 'token' in df.columns else pd.Series(
+            df.index, index=df.index)
+
+        return pd.DataFrame({
+            'token': token_series.loc[row_idx].to_numpy(),
+            'journey': col_idx.map(journey_id_by_col).to_numpy(),
+            'mode': stacked.to_numpy(),
+        })
 
     def _calculate_intermodality_attributes(self, combined_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -385,17 +666,29 @@ class BaseStatsService:
 
         Returns:
             Enriched DataFrame with all journey attributes or None if no data
-            Columns: ['token', 'journey', 'days', 'dist', 'mode', 'is_train', 
+            Columns: ['token', 'journey', 'days', 'dist', 'mode', 'is_train',
                      'is_walking', 'has_train', 'n_modes', 'is_intermodal', 'is_walking_intermodal']
+
+        Cached per (instance, df identity): callers commonly invoke this
+        repeatedly with the same frame (e.g. the cached _get_records_v3()
+        result). A copy is returned on every call since callers mutate the
+        result in place (adding computed columns).
         """
+        cache_key = id(df)
+        if cache_key in self._journey_attributes_cache:
+            cached = self._journey_attributes_cache[cache_key]
+            return None if cached is None else cached.copy()
+
         # Step 1: Build journeys dataframe
         journeys_df = self._build_journey_dataframe(df)
         if journeys_df is None:
+            self._journey_attributes_cache[cache_key] = None
             return None
 
         # Step 2: Build modes dataframe
         modes_df = self._build_modes_dataframe(df)
         if modes_df is None:
+            self._journey_attributes_cache[cache_key] = None
             return None
 
         # Step 3: Join journeys and modes
@@ -403,12 +696,14 @@ class BaseStatsService:
             modes_df, on=['token', 'journey'], how='inner')
 
         if len(combined_df) == 0:
+            self._journey_attributes_cache[cache_key] = None
             return None
 
         # Step 4: Calculate intermodality attributes
         combined_df = self._calculate_intermodality_attributes(combined_df)
 
-        return combined_df
+        self._journey_attributes_cache[cache_key] = combined_df
+        return combined_df.copy()
 
     def _normalize_mode_name(self, df: pd.DataFrame, column: str) -> str:
         """Normalize mode naming, because recommendations use different terms."""
@@ -422,3 +717,17 @@ class BaseStatsService:
             'vae': 'ebike'
         })
         return df[column]
+
+
+def filter_completed_records(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep only the completed records.
+
+    A record is completed once it has a recommendation: either the new
+    typo.reco.reco_inter.N (one per journey) or, for records collected before
+    that change, the legacy typo.reco.reco_dt2.0
+    """
+    reco_cols = [col for col in df.columns if col ==
+                 'typo.reco.reco_dt2.0' or col.startswith('typo.reco.reco_inter.')]
+    if not reco_cols:
+        return pd.DataFrame()
+    return df[df[reco_cols].notna().any(axis=1)]

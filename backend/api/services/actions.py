@@ -1,8 +1,9 @@
 from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlmodel import select
+from sqlalchemy.orm.attributes import flag_modified
 from fastapi import HTTPException
-from api.models.domain import CompanyAction
+from api.models.domain import Campaign, CompanyAction
 from api.models.query import CompanyActionResult, CompanyActionDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from api.auth import User, is_admin, require_admin_or_perm
@@ -61,9 +62,29 @@ class CompanyActionService(EntityService):
                 status_code=404, detail="Company action not found")
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
+        await self._remove_from_campaigns(entity)
         await self.session.delete(entity)
         await self.session.commit()
         return entity
+
+    async def _remove_from_campaigns(self, entity: CompanyAction) -> None:
+        """Remove references to a company action from the company's campaigns"""
+        action_id = str(entity.id)
+        res = await self.session.exec(
+            select(Campaign).where(Campaign.company_id == entity.company_id)
+        )
+        for campaign in res.all():
+            if not campaign.actions:
+                continue
+            changed = False
+            for group, values in campaign.actions.items():
+                if values and action_id in values:
+                    campaign.actions[group] = [
+                        value for value in values if value != action_id]
+                    changed = True
+            if changed:
+                # JSON column changes are not tracked automatically
+                flag_modified(campaign, "actions")
 
     async def find(self, filter: dict, fields: list, sort: list, range: list, user: User = None) -> CompanyActionResult:
         """Get all company actions matching filter and range"""

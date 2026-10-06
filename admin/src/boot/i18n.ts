@@ -1,8 +1,8 @@
-import { defineBoot } from '#q-app/wrappers'
+import { defineBoot } from '#q-app'
 import { createI18n } from 'vue-i18n'
 import { Quasar, Cookies } from 'quasar'
 
-import messages from 'src/i18n'
+import messages from '@/i18n'
 
 export type MessageLanguages = keyof typeof messages
 // Type-define 'en-US' as the master schema for the resource
@@ -26,6 +26,16 @@ const defaultLocales = ['en', 'fr']
 
 const locales = defaultLocales
 
+// Language names, written in their own language
+const localeLabels: Record<string, string> = {
+  en: 'English',
+  fr: 'Français',
+}
+
+function localeLabel(key: string): string {
+  return localeLabels[key] ?? key.toUpperCase()
+}
+
 function getCurrentLocale(): string {
   let detectedLocale = Cookies.get('locale')
     ? Cookies.get('locale') // previously selected
@@ -41,7 +51,9 @@ function getCurrentLocale(): string {
   return detectedLocale || locales[0] || 'en'
 }
 
-const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
+// The `false` type argument matches the `legacy: false` option below, so that
+// `i18n.global` is typed as a Composer (locale is a ref) rather than a VueI18n.
+const i18n = createI18n<{ message: MessageSchema }, MessageLanguages, false>({
   locale: getCurrentLocale(),
   fallbackLocale: locales[0] || 'en',
   globalInjection: true,
@@ -56,4 +68,4 @@ export default defineBoot(({ app }) => {
 
 const t = i18n.global.t
 
-export { i18n, t, locales, getCurrentLocale }
+export { i18n, t, locales, localeLabel, getCurrentLocale }

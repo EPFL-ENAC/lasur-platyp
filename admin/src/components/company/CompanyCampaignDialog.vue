@@ -10,18 +10,9 @@
 
       <q-card-section>
         <q-form ref="form">
-          <q-tabs
-            v-model="tab"
-            dense
-            no-caps
-            active-color="secondary"
-            active-bg-color="white"
-            active-class="tab-active"
-            indicator-color="transparent"
-            class="bg-secondary-ultra-light"
-            align="left"
-          >
+          <q-tabs v-model="tab" no-caps align="left">
             <q-tab name="general" :label="t('general')" />
+            <q-tab name="measures" :label="t('company.actions')" />
             <q-tab
               name="workplaces"
               :label="t('campaign.workplaces.title')"
@@ -71,17 +62,6 @@
                 :hint="t('campaign.info_url_hint')"
                 lazy-rules
                 :rules="[(val) => !val || /^(http|https):/.test(val) || t('valid_url_required')]"
-                class="q-mb-md"
-              />
-              <q-input
-                outlined
-                rounded
-                color="field"
-                v-model.number="selected.nb_employees"
-                type="number"
-                :min="0"
-                :label="t('campaign.nb_employees')"
-                :hint="t('campaign.nb_employees_hint')"
                 class="q-mb-md"
               />
               <q-input
@@ -144,27 +124,64 @@
                   </q-icon>
                 </template>
               </q-input>
+              <q-input
+                outlined
+                rounded
+                color="field"
+                v-model.number="selected.nb_employees"
+                type="number"
+                :min="0"
+                :label="t('campaign.nb_employees')"
+                :hint="t('campaign.nb_employees_hint')"
+                class="q-mb-md"
+              />
+              <div>
+                <div class="q-mb-xs">{{ t('campaign.parking_provided') }} *</div>
+                <q-field
+                  borderless
+                  dense
+                  hide-bottom-space
+                  :model-value="selected.parking_provided"
+                  :rules="[(val) => val !== undefined || t('field_required')]"
+                >
+                  <template #control>
+                    <q-option-group
+                      v-model="selected.parking_provided"
+                      type="radio"
+                      inline
+                      :options="[
+                        { label: t('yes'), value: true },
+                        { label: t('no'), value: false },
+                      ]"
+                      @update:model-value="onParkingProvidedChanged"
+                    />
+                  </template>
+                </q-field>
+                <div v-if="selected.parking_provided" class="q-ml-md">
+                  <q-checkbox
+                    v-model="selected.parking_paid"
+                    :label="t('campaign.parking_paid')"
+                    class="q-mb-md"
+                  />
+                  <q-input
+                    outlined
+                    rounded
+                    color="field"
+                    type="textarea"
+                    v-model="selected.parking_details"
+                    :label="t('campaign.parking_details')"
+                    class="q-mb-md"
+                  />
+                </div>
+              </div>
               <div>
                 <q-toggle
                   v-model="selected.with_professional_questions"
                   :label="t('campaign.with_professional_questions')"
                 />
-                <p class="text-hint q-mb-md">{{ t('campaign.with_professional_questions_hint') }}</p>
-              </div>
-              <div>
-                <q-toggle
-                  v-model="withActions"
-                  :label="t('campaign.with_actions')"
-                  @update:model-value="onWithActionsChanged"
-                />
-                <p class="text-hint q-mb-md">{{ t('campaign.employer_measures_hint') }}</p>
-                <employer-actions-input
-                  v-if="withActions"
-                  v-model="selected.actions"
-                  :company="props.company"
-                  :label="t('company.actions')"
-                  class="q-mt-lg"
-                />
+                <p class="text-hint q-mb-md">
+                  {{ t('campaign.with_professional_questions_hint') }}
+                </p>
               </div>
               <div>
                 <q-toggle
@@ -192,6 +209,12 @@
                   </template>
                 </div>
               </div>
+            </q-tab-panel>
+            <q-tab-panel name="measures">
+              <div class="text-hint q-mb-md">
+                {{ t('campaign.employer_measures_hint') }}
+              </div>
+              <employer-actions-input v-model="selected.actions" :company="props.company" />
             </q-tab-panel>
             <q-tab-panel name="workplaces">
               <div class="text-hint q-mb-md">
@@ -229,10 +252,10 @@
                     <q-item-section side>
                       <q-btn
                         flat
-                        size="sm"
-                        color="negative"
-                        icon="delete"
-                        class="q-mt-sm"
+                        round
+                        icon="fa-regular fa-trash-can"
+                        :aria-label="t('remove')"
+                        class="btn-danger-icon q-mt-sm"
                         @click="selected.workplaces.splice(index, 1)"
                       />
                     </q-item-section>
@@ -286,11 +309,11 @@
 
 <script setup lang="ts">
 import slug from 'slug'
-import type { Campaign, Company, Workplace } from 'src/models'
-import { notifyError } from 'src/utils/notify'
-import EmployerActionsInput from 'src/components/company/EmployerActionsInput.vue'
-import WorkplaceInput from 'src/components/company/WorkplaceInput.vue'
-import { generateToken } from 'src/utils/generate'
+import type { Campaign, Company, Workplace } from '@/models'
+import { notifyError } from '@/utils/notify'
+import EmployerActionsInput from '@/components/company/EmployerActionsInput.vue'
+import WorkplaceInput from '@/components/company/WorkplaceInput.vue'
+import { generateToken } from '@/utils/generate'
 import Papa from 'papaparse'
 
 interface DialogProps {
@@ -311,7 +334,6 @@ const selected = ref<Campaign>({
   name: '',
   with_professional_questions: true,
 } as Campaign)
-const withActions = ref(false)
 const withRewards = ref(false)
 const editMode = ref(false)
 const tab = ref('general')
@@ -347,17 +369,16 @@ function onInit() {
   if (!selected.value.workplaces) {
     selected.value.workplaces = []
   }
-  // check if there are some actions selected
-  withActions.value =
-    Object.keys(selected.value.actions || {}).filter((key) =>
-      selected.value.actions && selected.value.actions[key]
-        ? selected.value.actions[key].length > 0
-        : false,
-    ).length > 0
-
   withRewards.value = !!selected.value.rewards_message
 
   editMode.value = selected.value.id !== undefined
+  // force an explicit yes/no answer on new campaigns
+  if (!editMode.value) {
+    delete selected.value.parking_provided
+  } else {
+    selected.value.parking_provided = !!selected.value.parking_provided
+  }
+  selected.value.parking_paid = !!selected.value.parking_paid
   if (editMode.value && !selected.value.slug) {
     selected.value.slug = generateSlug()
   }
@@ -377,6 +398,13 @@ function generateSlug() {
 async function onSave() {
   if (!selected.value.slug) {
     selected.value.slug = generateSlug()
+  }
+  // the validated fields live in the "general" panel: QTabPanels unmounts the
+  // inactive panels, and an unmounted field unregisters itself from the QForm,
+  // so its rules would be skipped silently while another tab is showing
+  if (tab.value !== 'general') {
+    tab.value = 'general'
+    await nextTick()
   }
   const valid = await form.value.validate()
   if (!valid) return
@@ -411,9 +439,10 @@ async function onSave() {
   }
 }
 
-function onWithActionsChanged(value: boolean) {
+function onParkingProvidedChanged(value: boolean) {
   if (!value) {
-    selected.value.actions = {}
+    selected.value.parking_paid = false
+    delete selected.value.parking_details
   }
 }
 

@@ -1,13 +1,54 @@
 <template>
-  <q-page>
-    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('records') }}</h4>
-    <q-separator />
-
-    <div class="q-pa-md">
+  <q-page class="q-pa-lg">
+    <div class="title-bar">
+      <div class="text-subtitle2">{{ t('records') }}</div>
+      <div class="title-toolbar">
+        <q-select
+          outlined
+          rounded
+          color="field"
+          dense
+          multiple
+          emit-value
+          map-options
+          use-chips
+          v-model="companyFilter"
+          :label="t('companies')"
+          :options="companyOptions"
+          style="min-width: 200px"
+          @update:model-value="onFilter"
+        />
+        <q-select
+          outlined
+          rounded
+          color="field"
+          dense
+          multiple
+          emit-value
+          map-options
+          use-chips
+          v-model="campaignFilter"
+          :label="t('campaigns')"
+          :options="campaignOptions"
+          style="min-width: 200px"
+          @update:model-value="onFilter"
+        />
+        <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <download-data-button
+          :filter="filter"
+          :company-filter="companyFilter"
+          :campaign-filter="campaignFilter"
+        />
+      </div>
+    </div>
+    <div class="q-my-md">
       <q-table
         flat
         ref="tableRef"
-        table-header-class="bg-secondary-ultra-light text-secondary"
         :rows="rows"
         :columns="columns"
         row-key="id"
@@ -19,51 +60,6 @@
         :rows-per-page-options="[10, 25, 50]"
         :no-data-label="authStore.isAdmin ? t('no_records') : t('records_not_super_admin')"
       >
-        <template v-slot:top>
-          <download-data-button
-            :filter="filter"
-            :company-filter="companyFilter"
-            :campaign-filter="campaignFilter"
-          />
-          <q-space />
-          <q-select
-            outlined
-            rounded
-            color="field"
-            dense
-            multiple
-            emit-value
-            map-options
-            use-chips
-            v-model="companyFilter"
-            :label="t('companies')"
-            :options="companyOptions"
-            class="q-mr-md"
-            style="min-width: 200px"
-            @update:model-value="onFilter"
-          />
-          <q-select
-            outlined
-            rounded
-            color="field"
-            dense
-            multiple
-            emit-value
-            map-options
-            use-chips
-            v-model="campaignFilter"
-            :label="t('campaigns')"
-            :options="campaignOptions"
-            class="q-mr-md"
-            style="min-width: 200px"
-            @update:model-value="onFilter"
-          />
-          <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
         <template v-slot:body-cell-token="props">
           <q-td :props="props">
             <router-link :to="`/record/${props.row.id}`" class="modus">{{
@@ -73,7 +69,10 @@
         </template>
         <template v-slot:body-cell-company_id="props">
           <q-td :props="props">
-            <router-link :to="`/company/${props.row.company_id}`" class="modus">
+            <router-link
+              :to="`/company/${props.row.company_id}/campaign/${props.row.campaign_id}`"
+              class="modus"
+            >
               {{ getCompanyName(props.row.company_id) }} ({{
                 getCampaignName(props.row.campaign_id)
               }})
@@ -83,7 +82,7 @@
         <template v-slot:body-cell-recommendations="props">
           <q-td :props="props">
             <template v-for="reco in getRecoDt2(props.row)" :key="reco">
-              <q-chip :label="reco" color="primary" class="text-white" />
+              <q-chip dense :label="reco" />
             </template>
           </q-td>
         </template>
@@ -95,7 +94,6 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
-              color="foreground"
               size="12px"
               flat
               dense
@@ -105,7 +103,6 @@
             >
             </q-btn>
             <q-btn
-              color="foreground"
               size="12px"
               flat
               dense
@@ -130,13 +127,13 @@
 </template>
 
 <script setup lang="ts">
-import { DefaultAlignment, type Query } from 'src/components/models'
-import type { Record, Company, Campaign } from 'src/models'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
-import DownloadDataButton from 'src/components/DownloadDataButton.vue'
-import { makePaginationRequestHandler } from 'src/utils/pagination'
-import type { PaginationOptions } from 'src/utils/pagination'
-import { notifyError } from 'src/utils/notify'
+import { DefaultAlignment, type Query } from '@/components/models'
+import type { Record, Company, Campaign } from '@/models'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import DownloadDataButton from '@/components/DownloadDataButton.vue'
+import { makePaginationRequestHandler } from '@/utils/pagination'
+import type { PaginationOptions } from '@/utils/pagination'
+import { notifyError } from '@/utils/notify'
 
 const { t } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()

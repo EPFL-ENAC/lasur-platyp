@@ -3,6 +3,28 @@ export default {
     brand: 'Mobilyse',
   },
   form: {
+    // Title shown at the top of each survey step, keyed by step name.
+    step_title: {
+      agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
+      employment: 'Vos habitudes de travail',
+      workplace: '@:form.workplace',
+      origin_places: '@:form.origin',
+      travel_time: 'Votre trajet',
+      constraints: '@:form.constraints',
+      equipments: '@:form.equipments',
+      intermodality: 'Votre trajet domicile-travail',
+      travel_pro: '@:form.travel_pro',
+      freq_mod_pro: 'Vos déplacements professionnels',
+      importance: '@:form.importance',
+      needs: '@:form.needs',
+      age_class: 'À propos de vous',
+      recommendations: '@:form.recommendations_header',
+      recommendations_pro: '@:form.recommendations_pro_header',
+      change: '@:form.change',
+      email: 'Rester en contact',
+      comments: 'Vos remarques',
+      final: 'Merci',
+    },
     error: {
       terms_conditions: 'Veuillez accepter les conditions générales pour continuer',
       confidentiality: 'Veuillez accepter la politique de confidentialité pour continuer',
@@ -13,6 +35,8 @@ export default {
       journey_days: 'Veuillez spécifier le nombre de jours par semaine pour chaque trajet',
       pro_journey_mode: 'Veuillez spécifier le mode de transport pour chaque trajet',
       pro_journey_hex_id: 'Veuillez spécifier la destination pour chaque trajet',
+      pro_journey_days: 'Veuillez préciser un nombre de jours valide',
+      travel_time: 'Veuillez préciser votre temps de trajet',
       change_motivation_required: "Veuillez indiquer votre volonté d'adopter ce mode de transport",
       invalid_email: 'Veuillez entrer une adresse email valide',
     },
@@ -26,10 +50,10 @@ export default {
 
     age_class: 'Quelle est votre âge ?',
     age_class_option: {
-      '16_24': 'moins de 25 ans',
-      '25_44': '25 - 44 ans',
-      '45_64': '45 - 64 ans',
-      '65': '65 ans et plus',
+      '16_24': 'moins de 25\u00A0ans',
+      '25_44': '25 - 44\u00A0ans',
+      '45_64': '45 - 64\u00A0ans',
+      '65': '65\u00A0ans et plus',
     },
     employment_rate: 'Quel est votre taux de travail ?',
     remote_work_rate:
@@ -40,6 +64,7 @@ export default {
     no: 'Non',
     multiple_options: 'Plusieurs réponses possibles',
     workplace: 'Votre lieu de travail habituel',
+    workplace_select_label: 'Sélectionnez un site dans la liste',
     workplace_option: {
       other: 'Autre lieu de travail (à préciser)',
     },
@@ -62,19 +87,23 @@ export default {
     equipments: 'De quels équipements de mobilité disposez-vous pour vos déplacements quotidiens ?',
     equipments_option: {
       bike: 'Vélo',
-      upt_subs: 'Abonnement de transports publics urbains',
-      train_subs: 'Abonnement de train',
+      tpu_unireso: 'Unireso',
+      tpu_leman_pass: 'Léman Pass',
+      train_demi_tarif: 'Demi-tarif',
+      train_abo_gen: 'Abonnement général',
+      sncf: 'Abonnement SNCF',
       moto: 'Moto / scooter / cyclomoteur',
       ebike: 'Vélo à assistance électrique',
       mob_subs: 'Abonnement de mobilité partagée (Mobility, Donkey Republic, etc.)',
       car: 'Voiture (conducteur/passager)',
       ev: 'Voiture électrique',
+      other: 'Autre (à préciser)',
     },
     freq_mod:
       'Combien de fois par semaine utilisez vous ces modes de transport pour venir au travail ?',
     freq_mod_hint: "Nombre de jours d'une semaine type",
     mode: {
-      walking: 'La marche (>10 min.)',
+      walking: 'La marche (>10\u00A0min.)',
       bike: 'Le vélo',
       ebike: 'Le vélo à assistance électrique',
       cargo: 'Le vélo cargo',
@@ -92,16 +121,28 @@ export default {
       other_hint: 'Trottinette, roller, skateboard, hoverboard...',
       combined: 'Comment vous rendez-vous habituellement sur votre lieu de travail ?',
     },
-    intermodality: 'Quels sont les modes de transport que vous utilisez ?',
+    intermodality: 'Comment vous rendez-vous habituellement au travail ?',
     intermodality_hint:
-      "Pour un trajet typique domicile-travail : cliquez sur les modes de transport que vous utilisez, organisez-les dans l'ordre d'utilisation de votre domicile à votre lieu de travail, puis indiquez sur le curseur le nombre de jours par semaine où vous utilisez ce mode ou cette combinaison de modes de transport. Répétez ces étapes pour un autre trajet typique si vous le souhaitez.",
+      'Décrivez votre trajet habituel de votre domicile à votre travail, étape par étape.',
     journey: {
       label_idx: 'Recommandation #{index}',
-      label_option_idx: 'Option #{index}',
-      hint: "Décrivez la suite de modes de transports d'un trajet typique.",
-      add: 'Ajouter un trajet',
+      title: 'Votre trajet',
+      title_idx: 'Trajet {index}',
+      not_set_up: 'Pas encore renseigné',
+      add: 'Ajouter un autre trajet',
       remove: 'Supprimer le trajet',
       days_per_week: 'Jours par semaine',
+      modes_label: "Modes, dans l'ordre",
+      modes_hint_empty:
+        'Commencez par le mode utilisé en quittant votre domicile. Ajoutez-en un à chaque changement de transport.',
+      modes_hint: '{max} étapes au maximum. Touchez × sur une étape pour la retirer.',
+      add_mode: 'Ajouter le mode suivant',
+      remove_mode: 'Retirer {mode}',
+      electric: 'Version électrique : {mode}',
+      frequency_label: 'À quelle fréquence faites-vous ce trajet ?',
+      frequency_hint: 'Entre 1 et 5\u00A0jours par semaine.',
+      days: 'jours',
+      per_week: 'par semaine',
     },
     intermodality_pro: 'Quel est le principal mode de transport que vous utilisez ?',
     intermodality_pro_hint: 'Décrivez un ou plusieurs déplacements professionnels typiques.',
@@ -110,9 +151,14 @@ export default {
       hint: "Sélectionnez l'aire de destination et le principal mode de transport d'un déplacement professionnel typique.",
       add: 'Ajouter un déplacement',
       remove: 'Supprimer le déplacement',
-      days_per_week: 'Jours par semaine',
-      days_per_month: 'Jours par mois',
-      days_per_year: 'Jours par année',
+      frequency: {
+        label: 'À quelle fréquence effectuez-vous ce déplacement ?',
+        days: 'jours',
+        per: 'par',
+        week: 'Semaine',
+        month: 'Mois',
+        year: 'Année',
+      },
       is_company_vehicle: {
         label: 'Le véhicule utilisé en général est...',
         option: {
@@ -143,17 +189,29 @@ export default {
     comments:
       'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité ?',
     recommendations:
-      'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail',
+      'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
+    recommendations_header: 'Recommandations de Mobilyse pour les déplacements domicile-travail',
+    recommendations_preamble:
+      'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
+    recommendations_pro_header: 'Recommandations de Mobilyse pour les déplacements professionnels',
+    recommendations_pro_preamble:
+      'Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.',
     recommendations_print: {
       title: 'Recommandations de mobilité',
+      header:
+        'Modes de transport adaptés aux trajets domicile-travail et aux déplacements professionnels déclarés',
     },
     actions:
       'Pas de mesures | La mesure de votre employeur : {actions} | Les mesures de votre employeur : {actions}',
     actions_global:
       'Pas de mesures globales | Votre employeur propose également la mesure suivante : {actions} | Votre employeur propose également les mesures suivantes : {actions}',
-    change: 'À propos du mode de transport recommandé :',
+    employer_measures_eyebrow: 'Avantages supplémentaires',
+    employer_measures_header: 'Votre employeur propose également les mesures suivantes',
+    employer_measures_description:
+      'En tant que collaborateur·trice de {organisation}, vous pourriez bénéficier aussi des mesures d’accompagnement suivantes:',
+    change: 'À propos du mode de transport',
     change_motivation: 'Votre ouverture au changement',
     change_motivation_hint:
       'Sur une échelle de 1 (pas intéressé·e) à 5 (très motivé·e), dans quelle mesure êtes-vous prêt·e à adopter ce mode de transport pour vos déplacements domicile-travail ?',
@@ -161,11 +219,22 @@ export default {
       "Qu'est-ce qui vous aiderait à utiliser ce mode de transport (même si vous l'utilisez déjà partiellement) ?",
     change_levers_option: {
       financial_support: 'Une aide financière',
-      work_flexibility: 'Une plus grande flexibilité au travail (horaires, télétravail, etc.)',
-      collective_changes:
-        "Des changements collectifs (communication de l'organisation, participation de collègues, etc.)",
-      work_environment:
-        "Des aménagements sur le lieu de travail (douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.)",
+      financial_support_hint:
+        "Pour louer ou acheter un véhicule, acheter un abonnement de transport public, pour de l'équipement, etc.",
+      test: 'Périodes de test',
+      test_hint:
+        'Par exemple, quelques semaines pour tester un équipement ou un autre mode de transport, etc.',
+      coaching: 'Accompagnement personnalisé',
+      events: 'Evènements autour de la mobilité',
+      events_hint: 'Par exemple, Bike to work, sorties, repas, etc.',
+      company_vehicle: "Véhicule d'entreprise disponible sur site",
+      company_vehicle_hint: 'Par exemple, vélo, voiture, camionnette, etc.',
+      work_flexibility: 'Une plus grande flexibilité au travail',
+      work_flexibility_hint:
+        'Par exemple, la possibilité de télétravailler, des horaires de travail flexibles, etc.',
+      work_environment: 'Ajustements et équipements des espaces de travail',
+      work_environment_hint:
+        "Par exemple, douches, parking sécurisé pour vélos, navette d'entreprise, points de rencontre pour covoiturage, etc.",
       other: 'Autre',
     },
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
@@ -176,11 +245,11 @@ export default {
 **Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par Mobilyse. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
       label: 'Votre adresse email (optionnelle)',
     },
-    final: 'Vos réponses ont été enregistrées, merci de votre participation !',
+    final: 'Merci d’avoir participé à Mobilyse !',
     final_subtitle:
       'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
     final_car:
-      'Au fait, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
+      'A part ça, connaissez-vous le coût réel de votre voiture ? Découvrez-le [ici](https://comob.dev.stimul.io/) en 3 questions',
     final_rewards: {
       title: "L'organisation offre des récompenses pour les participants à ce questionnaire",
       download: 'Télécharger votre attestation de participation',
@@ -199,18 +268,12 @@ export default {
     inter: 'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
     combined:
       'Actuellement, vous vous rendez au travail avec une combinaison de modes de transport.',
-    sustainable:
-      ' Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les alternatives suivantes sont à votre disposition :',
-    sustainable_options:
-      'Félicitations ! Vos déplacements domicile-travail sont déjà durables. Les options suivantes sont à votre disposition :',
-    not_sustainable:
-      'Sur la base des informations que vous avez renseignées, les alternatives suivantes vous sont recommandées :',
     actions:
       'Votre employeur met en oeuvre les mesures suivantes afin de promouvoir la mobilité durable',
   },
   reco: {
     covoit: 'Le covoiturage',
-    elec: 'La voiture électrique',
+    elec: 'Le véhicule électrique',
     inter: "L'intermodalité",
     marche: 'La marche',
     tpu: 'Les transports publics',
@@ -224,8 +287,26 @@ export default {
     walking: 'La marche',
     bike: 'Le vélo',
     pub: 'Les transports publics',
+    inter_ma_tp: 'Mobilité active + transports publics',
+    inter_tim_tp: 'Transport motorisé individuel + transports publics',
     avoid:
       'Visez à réduire la fréquence de vos déplacements de longue distance et, dans la mesure du possible, privilégiez les solutions de vidéoconférence.',
+  },
+  bravo: {
+    1: 'Félicitations ! Votre habitude de déplacement est déjà quelque peu durable.',
+    2: 'Félicitations ! Votre habitude de déplacement est déjà durable.',
+    recommends: 'Mobilyse recommande le mode de transport suivant :',
+    recommends_also: 'Mobilyse recommande également le mode de transport suivant :',
+  },
+  pt_pass: {
+    unireso:
+      'Pour utiliser cette recommandation, un abonnement Unireso pourrait être intéressant !',
+    leman:
+      'Pour utiliser cette recommandation, un abonnement Léman Pass pourrait être intéressant !',
+    cff: 'Pour utiliser cette recommandation, un abonnement CFF pourrait être intéressant !',
+    sncf: 'Pour utiliser cette recommandation, un abonnement SNCF pourrait être intéressant !',
+    other:
+      'Pour utiliser cette recommandation, un abonnement de transports publics pourrait être intéressant !',
   },
   actions: {
     budget: 'Budget mobilité',
@@ -239,9 +320,6 @@ export default {
     cff_pass_ag: 'Abonnement train (abonnement général)',
     cff_pass_dtp: 'Abonnement train (demi tarif plus)',
     cff_pass_dt: 'Abonnement train (demi tarif)',
-    pnr_pass: 'Abonnement P+R',
-    shuttle: 'Navette depuis la gare la plus proche',
-    velo_station: 'Abonnement vélo-station',
     bike_subs: "Subvention à l'achat d'un vélo ou vélo électrique",
     shower: 'Douches, casiers et vestiaires',
     bike_parking: 'Stationnement vélo sécurisé',
@@ -267,13 +345,17 @@ export default {
     hide: 'Masquer les avantages',
   },
   contact: {
-    description:
-      "Pour plus d'informations sur la mobilité à {company_name}, veuillez contacter : {contact_name} {contact_email}",
-    website: "Veuillez visiter la page d'informations à {info_url}",
+    header: "Pour plus d'informations sur la mobilité à {company_name}",
+    contact_line: 'Veuillez contacter : {contact_name}',
+    copy_email: 'Copier l’adresse e-mail',
+    more_info: "Plus d'informations",
+    copied: 'E-mail copié dans le presse-papiers',
   },
   isochrones: {
     accessible_areas:
       "Saviez-vous que vous avez accès aux zones et points d'intérêts ci-dessous {mode} ?",
+    map_description:
+      'La carte ci-dessous représente la zone accessible avec {mode} depuis votre lieu de travail.',
     pois: "Points d'intérêt",
     modes: {
       walk: 'à pied',
@@ -291,7 +373,7 @@ export default {
       transport: 'Transport',
       commerce: 'Commerce',
     },
-    minutes: '{count} min',
+    minutes: '{count}\u00A0min',
   },
   certificate: {
     title: 'Attestation',
@@ -300,13 +382,15 @@ export default {
   },
   resume: 'Continuer le questionnaire',
   start_new: 'Ou recommencer du début',
-  start: 'Démarrer',
+  start: 'Commencer',
   token: 'Identifiant',
   lookup_address_or_select_on_map: 'Rechercher une adresse ou sélectionner sur la carte',
   type_enter_to_lookup_address: "Taper l'adresse puis Entrée pour chercher",
-  welcome: 'Bienvenue sur le {brand}',
+  welcome_eyebrow: 'Enquête mobilité',
+  welcome: 'Bienvenue sur {brand}',
   welcome_intro:
     'Veuillez remplir ce questionnaire afin que nous puissions vous proposer les mesures de mobilité les plus pertinentes.',
+  or: 'Ou',
   no_results: 'Pas de résultat',
   local: 'Local',
   regional: 'National',
@@ -317,5 +401,13 @@ export default {
   select_preferred_language: 'Sélectionner votre langue préférée',
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
   dark_mode: 'Mode sombre',
+  footer: {
+    modus_name: 'Fondation Modus',
+    modus_tagline: 'Pour une mobilité durable à Genève.',
+    lasur: 'Laboratoire de sociologie urbaine',
+    it4r: 'ENAC-IT4R',
+  },
   transit_lines: 'Réseau transports publics',
+  print: 'Imprimer',
+  eurogeographics_attributions: 'EuroGeographics pour les limites administratives',
 }

@@ -1,46 +1,58 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="true"
-    :no-data-title="t('stats.emissions_reductions_share.title')"
+    :show-table="!exportable"
+    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p class="q-mb-xs">{{ t('stats.emissions_reductions_share.texts.default') }}</p>
-    <p v-if="biggestEmission">
-      {{
-        t('stats.emissions_reductions_share.texts.specific', {
-          percentage: formatNumber(biggestEmission.percentage || 0),
-          mode: keyLabel(biggestEmission.mode),
-        })
-      }}
-    </p>
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
 import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
-import { PieChart } from 'echarts/charts'
+import { PieChart, BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS, modeSortOrder } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  modeSortOrder,
+  simpleLabelSortOrder,
+  complexLabelSortOrder,
+  comparisonTotal,
+} from './commons'
+import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
+import { formatNumber, formatPercent } from '@/utils/numbers'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
-import type { EmissionReduction } from 'src/models'
+import type { ComparisonStats, EmissionReduction } from '@/models'
 
 const { t, locale } = useI18n()
-use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+use([
+  SVGRenderer,
+  PieChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
+  chartTranslationName: string
   reductions: EmissionReduction[] | null
   height?: number
   loading?: boolean
@@ -50,6 +62,23 @@ const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
+
+function findGroupReductions(groupStats: ComparisonStats): EmissionReduction[] | undefined {
+  switch (props.chartTranslationName) {
+    case 'reductions_share_simple':
+      return groupStats.mode_emission_reductions_simple_labels ?? undefined
+    case 'reductions_share_complex':
+      return groupStats.mode_emission_reductions_complex_labels ?? undefined
+    default:
+      return undefined
+  }
+}
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 interface PercentageEmission {
   mode: string
@@ -65,6 +94,7 @@ const totalSavings = computed(() => {
 })
 
 const biggestEmission = computed<PercentageEmission | null>(() => {
+  if (isComparison.value) return null
   if (total.value < 5) return null
   if (!props.reductions) return null
 
@@ -80,6 +110,25 @@ const biggestEmission = computed<PercentageEmission | null>(() => {
   })
   return biggest
 })
+
+const chartDescription = computed(() => {
+  if (biggestEmission.value) {
+    return t(`stats.emissions_${props.chartTranslationName}.texts.specific`, {
+      percentage: formatPercent(biggestEmission.value.percentage || 0),
+      mode: keyLabel(biggestEmission.value.mode),
+    })
+  }
+  return ''
+})
+
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartDescription, (text) => emit('update:chartInfoText', text), { immediate: true })
 
 watch([() => props.loading], () => {
   if (props.loading) {
@@ -101,14 +150,18 @@ function keyLabel(key: string) {
   if (key === 'null' || key === 'None') {
     return 'N/A'
   }
-  // is integer ?
   if (Number.isInteger(Number(key))) {
     return key
   }
-  return t(`stats.emissions_reductions_share.labels.${shortKey(key)}`)
+  return t(`stats.emissions_${props.chartTranslationName}.labels.${shortKey(key)}`)
 }
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
   if (!props.reductions) {
@@ -120,7 +173,21 @@ function initChartOptions() {
     return
   }
 
-  recoEmissions.sort((a, b) => modeSortOrder(a.mode) - modeSortOrder(b.mode))
+  recoEmissions.sort((a, b) => {
+    if (props.chartTranslationName.includes('simple')) {
+      return simpleLabelSortOrder(shortKey(a.mode)) - simpleLabelSortOrder(shortKey(b.mode))
+    }
+    if (props.chartTranslationName.includes('complex')) {
+      return complexLabelSortOrder(shortKey(a.mode)) - complexLabelSortOrder(shortKey(b.mode))
+    }
+    return modeSortOrder(a.mode) - modeSortOrder(b.mode)
+  })
+
+  const colors = props.chartTranslationName.includes('simple')
+    ? SIMPLE_LABELS_COLORS
+    : props.chartTranslationName.includes('complex')
+      ? COMPLEX_LABELS_COLORS
+      : MODE_COLORS
 
   total.value = recoEmissions[0]?.total || 0
   const newOption: EChartsOption = {
@@ -134,8 +201,8 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_reductions_share.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      text: t(`stats.emissions_${props.chartTranslationName}.title`),
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -150,19 +217,19 @@ function initChartOptions() {
         if (!p) return ''
 
         const val = formatNumber(p.value as number)
-        return `${p.name}<br/><b>${p.percent}%</b> (${val} kgCO₂eq)`
+        return `${p.name}<br/><b>${p.percent}%</b> (${val}\u00A0kgCO₂eq)`
       },
     },
     legend: {
       show: true,
       bottom: 16,
-      type: 'scroll',
     },
     series: [
       {
-        name: t(`stats.emissions_reductions_share.series`) || '',
+        name: t(`stats.emissions_${props.chartTranslationName}.series`) || '',
         type: 'pie',
         radius: ['40%', '70%'],
+        percentPrecision: 0,
         top: 'middle',
         avoidLabelOverlap: true,
         label: {
@@ -173,7 +240,7 @@ function initChartOptions() {
           name: keyLabel(item.mode),
           value: item.reduced,
         })),
-        color: recoEmissions.map((item) => MODE_COLORS[item.mode] || '#FCC447'),
+        color: recoEmissions.map((item) => colors[shortKey(item.mode)] || '#e3cd72'),
       },
     ],
   }
@@ -182,5 +249,59 @@ function initChartOptions() {
 
 function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupReductions = groups.map((group) => ({
+    name: group.name,
+    participants: group.total,
+    reductions: findGroupReductions(group) ?? [],
+  }))
+  if (groupReductions.every((group) => group.reductions.length === 0)) {
+    return
+  }
+
+  const colors = props.chartTranslationName.includes('simple')
+    ? SIMPLE_LABELS_COLORS
+    : props.chartTranslationName.includes('complex')
+      ? COMPLEX_LABELS_COLORS
+      : MODE_COLORS
+  const sortOrder = props.chartTranslationName.includes('simple')
+    ? simpleLabelSortOrder
+    : props.chartTranslationName.includes('complex')
+      ? complexLabelSortOrder
+      : modeSortOrder
+
+  const groupDatasets: ComparisonGroupDataset[] = groupReductions.map((group) => {
+    total.value += group.reductions[0]?.total ?? 0
+    return {
+      name: group.name,
+      participants: group.participants,
+      items: group.reductions.map((item) => ({
+        key: shortKey(item.mode),
+        name: keyLabel(item.mode),
+        value: item.reduced,
+      })),
+    }
+  })
+
+  const keyOrder = Array.from(
+    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+  ).sort((a, b) => sortOrder(a) - sortOrder(b))
+
+  option.value = buildGroupStackedBarOption({
+    groupDatasets,
+    colors,
+    percent: true,
+    title: t(`stats.emissions_${props.chartTranslationName}.title`),
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
+    height: props.height - 100,
+    yAxisName: '%',
+    keyOrder,
+  })
 }
 </script>

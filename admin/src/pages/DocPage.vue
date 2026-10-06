@@ -1,8 +1,7 @@
 <template>
-  <q-page>
-    <h4 class="text-h4 q-ma-none q-pa-md text-title">{{ t('doc') }}</h4>
-    <q-separator />
-    <div class="q-pa-md">
+  <q-page class="q-pa-lg">
+    <div class="text-subtitle2">{{ t('doc') }}</div>
+    <div class="q-my-md">
       <q-markdown
         :src="locale === 'fr' ? WelcomeFr : WelcomeEn"
         no-heading-anchor-links
@@ -37,47 +36,49 @@
 </template>
 
 <script setup lang="ts">
-import WelcomeEn from 'src/assets/docs/en/welcome.md'
-import WelcomeFr from 'src/assets/docs/fr/welcome.md'
-import PrivacyEn from 'src/assets/docs/en/general/privacy.md'
-import PrivacyFr from 'src/assets/docs/fr/general/privacy.md'
-import TermsEn from 'src/assets/docs/en/general/terms.md'
-import TermsFr from 'src/assets/docs/fr/general/terms.md'
-import WhatNextEn from 'src/assets/docs/en/general/what_next.md'
-import WhatNextFr from 'src/assets/docs/fr/general/what_next.md'
-import NeedMoreHelpEn from 'src/assets/docs/en/general/need_more_help.md'
-import NeedMoreHelpFr from 'src/assets/docs/fr/general/need_more_help.md'
-import CreateEn from 'src/assets/docs/en/organisations/create.md'
-import CreateFr from 'src/assets/docs/fr/organisations/create.md'
-import OrgSettingsEn from 'src/assets/docs/en/organisations/settings.md'
-import OrgSettingsFr from 'src/assets/docs/fr/organisations/settings.md'
-import EmployerMeasuresEn from 'src/assets/docs/en/organisations/employer_measures.md'
-import EmployerMeasuresFr from 'src/assets/docs/fr/organisations/employer_measures.md'
-import CustomMeasuresEn from 'src/assets/docs/en/organisations/custom_measures.md'
-import CustomMeasuresFr from 'src/assets/docs/fr/organisations/custom_measures.md'
-import BestPracticesEn from 'src/assets/docs/en/organisations/best_practices.md'
-import BestPracticesFr from 'src/assets/docs/fr/organisations/best_practices.md'
-import CommonIssuesEn from 'src/assets/docs/en/organisations/common_issues.md'
-import CommonIssuesFr from 'src/assets/docs/fr/organisations/common_issues.md'
-import MobilityAdvisorEn from 'src/assets/docs/en/organisations/mobility_advisor.md'
-import MobilityAdvisorFr from 'src/assets/docs/fr/organisations/mobility_advisor.md'
-import CampaignSettingsEn from 'src/assets/docs/en/campaigns/settings.md'
-import CampaignSettingsFr from 'src/assets/docs/fr/campaigns/settings.md'
-import CampaignCommonIssuesEn from 'src/assets/docs/en/campaigns/common_issues.md'
-import CampaignCommonIssuesFr from 'src/assets/docs/fr/campaigns/common_issues.md'
-import CampaignBestPracticesEn from 'src/assets/docs/en/campaigns/best_practices.md'
-import CampaignBestPracticesFr from 'src/assets/docs/fr/campaigns/best_practices.md'
-import CampaignShareLinkEn from 'src/assets/docs/en/campaigns/share_link.md'
-import CampaignShareLinkFr from 'src/assets/docs/fr/campaigns/share_link.md'
-import CampaignIsochroneEn from 'src/assets/docs/en/campaigns/display_isochrone.md'
-import CampaignIsochroneFr from 'src/assets/docs/fr/campaigns/display_isochrone.md'
-import CampaignRewardEn from 'src/assets/docs/en/campaigns/reward.md'
-import CampaignRewardFr from 'src/assets/docs/fr/campaigns/reward.md'
-import CampaignDashboardEn from 'src/assets/docs/en/campaigns/dashboard.md'
-import CampaignDashboardFr from 'src/assets/docs/fr/campaigns/dashboard.md'
-import MarkdownDialog from 'src/components/MarkdownDialog.vue'
+import WelcomeEn from '@/assets/docs/en/welcome.md'
+import WelcomeFr from '@/assets/docs/fr/welcome.md'
+import PrivacyEn from '@/assets/docs/en/general/privacy.md'
+import PrivacyFr from '@/assets/docs/fr/general/privacy.md'
+import VpnEn from '@/assets/docs/en/general/vpn.md'
+import VpnFr from '@/assets/docs/fr/general/vpn.md'
+import TermsEn from '@/assets/docs/en/general/terms.md'
+import TermsFr from '@/assets/docs/fr/general/terms.md'
+import WhatNextEn from '@/assets/docs/en/general/what_next.md'
+import WhatNextFr from '@/assets/docs/fr/general/what_next.md'
+import NeedMoreHelpEn from '@/assets/docs/en/general/need_more_help.md'
+import NeedMoreHelpFr from '@/assets/docs/fr/general/need_more_help.md'
+import CreateEn from '@/assets/docs/en/organisations/create.md'
+import CreateFr from '@/assets/docs/fr/organisations/create.md'
+import OrgSettingsEn from '@/assets/docs/en/organisations/settings.md'
+import OrgSettingsFr from '@/assets/docs/fr/organisations/settings.md'
+import CustomMeasuresEn from '@/assets/docs/en/organisations/custom_measures.md'
+import CustomMeasuresFr from '@/assets/docs/fr/organisations/custom_measures.md'
+import BestPracticesEn from '@/assets/docs/en/organisations/best_practices.md'
+import BestPracticesFr from '@/assets/docs/fr/organisations/best_practices.md'
+import MobilityAdvisorEn from '@/assets/docs/en/organisations/mobility_advisor.md'
+import MobilityAdvisorFr from '@/assets/docs/fr/organisations/mobility_advisor.md'
+import CommonIssuesEn from '@/assets/docs/en/organisations/common_issues.md'
+import CommonIssuesFr from '@/assets/docs/fr/organisations/common_issues.md'
+import CampaignSettingsEn from '@/assets/docs/en/campaigns/settings.md'
+import CampaignSettingsFr from '@/assets/docs/fr/campaigns/settings.md'
+import CampaignEmployerMeasuresEn from '@/assets/docs/en/campaigns/employer_measures.md'
+import CampaignEmployerMeasuresFr from '@/assets/docs/fr/campaigns/employer_measures.md'
+import CampaignCommonIssuesEn from '@/assets/docs/en/campaigns/common_issues.md'
+import CampaignCommonIssuesFr from '@/assets/docs/fr/campaigns/common_issues.md'
+import CampaignBestPracticesEn from '@/assets/docs/en/campaigns/best_practices.md'
+import CampaignBestPracticesFr from '@/assets/docs/fr/campaigns/best_practices.md'
+import CampaignShareLinkEn from '@/assets/docs/en/campaigns/share_link.md'
+import CampaignShareLinkFr from '@/assets/docs/fr/campaigns/share_link.md'
+import CampaignIsochroneEn from '@/assets/docs/en/campaigns/display_isochrone.md'
+import CampaignIsochroneFr from '@/assets/docs/fr/campaigns/display_isochrone.md'
+import CampaignRewardEn from '@/assets/docs/en/campaigns/reward.md'
+import CampaignRewardFr from '@/assets/docs/fr/campaigns/reward.md'
+import CampaignDashboardEn from '@/assets/docs/en/campaigns/dashboard.md'
+import CampaignDashboardFr from '@/assets/docs/fr/campaigns/dashboard.md'
+import MarkdownDialog from '@/components/MarkdownDialog.vue'
 import { useQuasar } from 'quasar'
-import { isFirstVisit } from 'src/utils/localStorage'
+import { isFirstVisit } from '@/utils/localStorage'
 
 const $q = useQuasar()
 const { locale, t } = useI18n()
@@ -109,11 +110,6 @@ const sections = computed<DocSection[]>(() => [
         markdown: locale.value === 'fr' ? OrgSettingsFr : OrgSettingsEn,
       },
       {
-        title: t('docs.organisations.employer_measures.title'),
-        caption: t('docs.organisations.employer_measures.caption'),
-        markdown: locale.value === 'fr' ? EmployerMeasuresFr : EmployerMeasuresEn,
-      },
-      {
         title: t('docs.organisations.custom_measures.title'),
         caption: t('docs.organisations.custom_measures.caption'),
         markdown: locale.value === 'fr' ? CustomMeasuresFr : CustomMeasuresEn,
@@ -143,6 +139,11 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.campaigns.settings.title'),
         caption: t('docs.campaigns.settings.caption'),
         markdown: locale.value === 'fr' ? CampaignSettingsFr : CampaignSettingsEn,
+      },
+      {
+        title: t('docs.campaigns.employer_measures.title'),
+        caption: t('docs.campaigns.employer_measures.caption'),
+        markdown: locale.value === 'fr' ? CampaignEmployerMeasuresFr : CampaignEmployerMeasuresEn,
       },
       {
         title: t('docs.campaigns.share_link.title'),
@@ -188,6 +189,11 @@ const sections = computed<DocSection[]>(() => [
         title: t('docs.general.privacy.title'),
         caption: t('docs.general.privacy.caption'),
         markdown: locale.value === 'fr' ? PrivacyFr : PrivacyEn,
+      },
+      {
+        title: t('docs.general.vpn.title'),
+        caption: t('docs.general.vpn.caption'),
+        markdown: locale.value === 'fr' ? VpnFr : VpnEn,
       },
       {
         title: t('docs.general.what_next.title'),

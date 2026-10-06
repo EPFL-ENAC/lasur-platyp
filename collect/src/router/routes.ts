@@ -3,26 +3,26 @@ import type { RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('@/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: 'go/:token', component: () => import('pages/IndexPage.vue') },
+      { path: '', component: () => import('@/pages/IndexPage.vue') },
+      { path: 'go/:token', component: () => import('@/pages/IndexPage.vue') },
     ],
   },
   {
     path: '/certificate/:token',
-    component: () => import('pages/CertificatePreviewPage.vue'),
+    component: () => import('@/pages/CertificatePreviewPage.vue'),
   },
   {
     path: '/print-reco',
-    component: () => import('pages/RecoPreviewPage.vue'),
+    component: () => import('@/pages/RecoPreviewPage.vue'),
   },
 
   // Always leave this as last one,
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
+    component: () => import('@/pages/ErrorNotFound.vue'),
   },
 ]
 

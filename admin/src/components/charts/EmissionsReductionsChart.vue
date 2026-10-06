@@ -1,19 +1,14 @@
 <template>
   <e-charts-shell
+    ref="shellRef"
     :height="height"
     :loading="props.loading"
     :has-data="total > 0"
-    :show-info="true"
-    :no-data-title="t(`stats.emissions_${props.chartTranslationName}.title`)"
+    :show-table="!exportable"
+    :no-data-title="chartTitle"
     :option="option"
     :exportable="!!exportable"
-  >
-    <p class="q-mb-xs">{{ t(`stats.emissions_${props.chartTranslationName}.texts.default`) }}</p>
-    <q-markdown
-      v-if="textLabels"
-      :src="t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels)"
-    />
-  </e-charts-shell>
+  />
 </template>
 
 <script setup lang="ts">
@@ -22,33 +17,110 @@ import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
-import { MODE_COLORS } from './commons'
+import {
+  MODE_COLORS,
+  SIMPLE_LABELS_COLORS,
+  COMPLEX_LABELS_COLORS,
+  aggregateReductionsBySimpleLabel,
+  modeSortOrder,
+  simpleLabelSortOrder,
+  complexLabelSortOrder,
+  readableTextColor,
+  comparisonTotal,
+} from './commons'
+import { buildGroupStackedBarOption, type ComparisonGroupDataset } from './comparisonCharts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
 } from 'echarts/components'
-import { formatNumber } from 'src/utils/numbers'
-import type { EmissionReduction, Emissions } from 'src/models'
+import { formatNumber, formatTons, roundTo } from '@/utils/numbers'
+import type { ComparisonStats, EmissionReduction, Emissions } from '@/models'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 use([SVGRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent])
+
+const stats = useStats()
+const isComparison = computed(() => !!stats.comparisonMode)
 
 interface Props {
   chartTranslationName: string
   emissions: Emissions[] | null
   reductions: EmissionReduction[] | null
+  // Fold recommended modes into simple typology labels before charting, for
+  // the data the backend only ships in detailed form.
+  foldRecoToSimple?: boolean
   yaxis?: string
   rangeStep?: number
   height?: number
   loading?: boolean
   exportable?: boolean
+  // Overrides the title taken from `chartTranslationName`.
+  title?: string
+  // Comparison tooltip wording of a value's share of its group total.
+  shareLabelKey?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 400,
   exportable: true,
 })
+
+const chartTitle = computed(
+  () => props.title || t(`stats.emissions_${props.chartTranslationName}.title`),
+)
+
+// Which vocabulary the categories are expressed in, and so which labels,
+// colors and ordering they take.
+const labelType = computed<'simple' | 'complex' | 'mode'>(() => {
+  if (props.foldRecoToSimple || props.chartTranslationName.includes('simple')) {
+    return 'simple'
+  }
+  return props.chartTranslationName.includes('complex') ? 'complex' : 'mode'
+})
+
+const labelColors = computed(() => {
+  if (labelType.value === 'simple') return SIMPLE_LABELS_COLORS
+  return labelType.value === 'complex' ? COMPLEX_LABELS_COLORS : MODE_COLORS
+})
+
+function labelSortOrder(key: string): number {
+  if (labelType.value === 'simple') return simpleLabelSortOrder(key)
+  return labelType.value === 'complex' ? complexLabelSortOrder(key) : modeSortOrder(key)
+}
+
+const reductions = computed(() =>
+  props.reductions && props.foldRecoToSimple
+    ? aggregateReductionsBySimpleLabel(props.reductions)
+    : props.reductions,
+)
+
+function findGroupReductions(groupStats: ComparisonStats): EmissionReduction[] | undefined {
+  const found = findRawGroupReductions(groupStats)
+  if (!found || !props.foldRecoToSimple) {
+    return found
+  }
+  return aggregateReductionsBySimpleLabel(found)
+}
+
+function findRawGroupReductions(groupStats: ComparisonStats): EmissionReduction[] | undefined {
+  switch (props.chartTranslationName) {
+    case 'reductions_mod_simple':
+      return groupStats.mode_emission_reductions_simple_labels ?? undefined
+    case 'reductions_mod_complex':
+      return groupStats.mode_emission_reductions_complex_labels ?? undefined
+    case 'reductions_mod_pro':
+      return groupStats.pro_mode_emission_reductions ?? undefined
+    default:
+      return undefined
+  }
+}
+
+type EChartsShellExposed = {
+  handleExport: () => Promise<void>
+}
+
+const shellRef = useTemplateRef<EChartsShellExposed>('shellRef')
 
 const option = ref<EChartsOption>({})
 const total = ref(0)
@@ -56,11 +128,15 @@ const currentEmissions = ref(0)
 const newEmissions = ref(0)
 
 const textLabels = computed(() => {
+  if (isComparison.value) return null
   if (total.value < 5) return null
 
   return {
-    current_emissions: formatNumber(currentEmissions.value / 1000), // convert from kg to tons
-    new_emissions: formatNumber(newEmissions.value / 1000),
+    current_emissions: formatTons(currentEmissions.value / 1000), // convert from kg to tons
+    new_emissions: formatTons(newEmissions.value / 1000),
+    percent: currentEmissions.value
+      ? Math.round((100 * (currentEmissions.value - newEmissions.value)) / currentEmissions.value)
+      : 0,
     cheeseburgers: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 18.8)),
     vacuum: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 73.43)),
     shirt: formatNumber(Math.round((currentEmissions.value - newEmissions.value) / 13.23466)),
@@ -71,13 +147,29 @@ const textLabels = computed(() => {
   }
 })
 
+const emit = defineEmits<{ 'update:chartInfoText': [text: string] }>()
+
+defineExpose({
+  handleExport: () => shellRef.value?.handleExport(),
+})
+
+const chartInfoText = computed(() => {
+  if (textLabels.value) {
+    return t(`stats.emissions_${props.chartTranslationName}.texts.specific`, textLabels.value)
+  }
+  return ''
+})
+
+// Emitted rather than exposed: see SimpleLabelsShareChart.
+watch(chartInfoText, (text) => emit('update:chartInfoText', text), { immediate: true })
+
 watch([() => props.loading], () => {
   if (props.loading) {
     initChartOptions()
   }
 })
 
-watch([() => props.height, locale], () => {
+watch([() => props.height, locale, () => props.foldRecoToSimple, () => props.title], () => {
   if (!props.loading) {
     initChartOptions()
   }
@@ -95,6 +187,18 @@ function keyLabel(key: string) {
   if (Number.isInteger(Number(key))) {
     return key
   }
+  // for the simple/complex label variants, categories are v3 typology
+  // labels (e.g. 'TIM', 'car+pub'), not plain transport modes
+  if (labelType.value === 'simple') {
+    // a folded value with no simple label of its own, such as 'avoid', keeps
+    // its transport mode label
+    const messageKey = `simple_labels.${shortKey(key)}`
+    if (te(messageKey)) {
+      return t(messageKey)
+    }
+  } else if (labelType.value === 'complex') {
+    return t(`complex_labels.${shortKey(key)}`)
+  }
   return t(`transportation_modes.${shortKey(key)}`)
 }
 
@@ -102,9 +206,14 @@ const SCALE_FACTOR = 1 / 1000 // convert from kg to tons
 const UNIT_LABEL = 'tCO₂eq'
 
 function initChartOptions() {
+  if (isComparison.value) {
+    initComparisonChartOptions()
+    return
+  }
+
   option.value = {}
   total.value = 0
-  if (!props.emissions || !props.reductions) {
+  if (!props.emissions || !reductions.value) {
     return
   }
 
@@ -112,12 +221,16 @@ function initChartOptions() {
   if (emissions.length === 0) {
     return
   }
-  const recoEmissions = props.reductions || []
+  const recoEmissions = reductions.value || []
   if (recoEmissions.length === 0) {
     return
   }
 
-  const categories = recoEmissions.sort((a, b) => b.reduced - a.reduced).map((item) => item.mode)
+  const categories = [...recoEmissions]
+    .sort((a, b) => b.reduced - a.reduced)
+    .map((item) => item.mode)
+
+  const colors = labelColors.value
 
   // make dataset for waterfall chart: reference is current total of emissions, then for each category, show from previous to current
   currentEmissions.value = emissions.map((item) => item.emissions).reduce((a, b) => a + b, 0)
@@ -146,8 +259,8 @@ function initChartOptions() {
     animation: false,
     height: props.height - 100,
     title: {
-      text: t(`stats.emissions_${props.chartTranslationName}.title`),
-      subtext: t(`stats.total`, { count: total.value }),
+      text: chartTitle.value,
+      subtext: t(`stats.total_participants`, { count: total.value }),
       left: 'center',
       top: 0,
       itemGap: 10,
@@ -162,7 +275,13 @@ function initChartOptions() {
         const tar = params[1]
         if (!tar) return ''
         return (
-          tar.name + '<br/>' + tar.seriesName + ' : ' + formatNumber(tar.value) + ' ' + UNIT_LABEL
+          tar.name +
+          '<br/>' +
+          tar.seriesName +
+          ' : ' +
+          formatTons(tar.value) +
+          '\u00A0' +
+          UNIT_LABEL
         )
       },
     },
@@ -210,7 +329,10 @@ function initChartOptions() {
               }
               sum += categoryEmissions[c] || 0
             }
-            return (currentEmissions.value - sum - (categoryEmissions[cat] || 0)) * SCALE_FACTOR
+            return roundTo(
+              (currentEmissions.value - sum - (categoryEmissions[cat] || 0)) * SCALE_FACTOR,
+              1,
+            )
           }),
           0,
         ],
@@ -226,24 +348,26 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return formatNumber(params.value as number) + ' ' + UNIT_LABEL
+            return formatTons(params.value as number) + '\u00A0' + UNIT_LABEL
           },
         },
         data: [
           {
-            value: currentEmissions.value * SCALE_FACTOR,
+            value: roundTo(currentEmissions.value * SCALE_FACTOR, 1),
             itemStyle: {
               color: '#000',
             },
           },
-          ...categories.map((cat) => ({
-            value: (categoryEmissions[cat] || 0) * SCALE_FACTOR,
-            itemStyle: {
-              color: MODE_COLORS[cat] || MODE_COLORS.default || '#ccc',
-            },
-          })),
+          ...categories.map((cat) => {
+            const color = colors[shortKey(cat)] || colors.default || '#ccc'
+            return {
+              value: roundTo((categoryEmissions[cat] || 0) * SCALE_FACTOR, 1),
+              itemStyle: { color },
+              label: { color: readableTextColor(color) },
+            }
+          }),
           {
-            value: newEmissions.value * SCALE_FACTOR,
+            value: roundTo(newEmissions.value * SCALE_FACTOR, 1),
             itemStyle: {
               color: '#000',
             },
@@ -257,5 +381,58 @@ function initChartOptions() {
 
 function shortKey(key: string) {
   return key.replace('freq_mod_pro_', '').replace('freq_mod_', '')
+}
+
+function initComparisonChartOptions() {
+  option.value = {}
+  total.value = 0
+
+  const groups = stats.comparisonResults?.groups ?? []
+  const groupReductions = groups.map((group) => ({
+    name: group.name,
+    participants: group.total,
+    reductions: findGroupReductions(group) ?? [],
+  }))
+  if (groupReductions.every((group) => group.reductions.length === 0)) {
+    return
+  }
+
+  const colors = labelColors.value
+
+  const groupDatasets: ComparisonGroupDataset[] = groupReductions.map((group) => {
+    total.value += group.reductions[0]?.total ?? 0
+    return {
+      name: group.name,
+      participants: group.participants,
+      items: group.reductions.map((item) => ({
+        key: shortKey(item.mode),
+        name: keyLabel(item.mode),
+        // Comparison stacks annual totals, which read better in tons than in kg.
+        value: roundTo(item.reduced * SCALE_FACTOR, 1),
+      })),
+    }
+  })
+
+  const keyOrder = Array.from(
+    new Set(groupDatasets.flatMap((group) => group.items.map((item) => item.key))),
+  ).sort((a, b) => labelSortOrder(a) - labelSortOrder(b))
+
+  option.value = buildGroupStackedBarOption({
+    groupDatasets,
+    colors,
+    percent: false,
+    title: chartTitle.value,
+    totalLabel: t('stats.total_participants', { count: comparisonTotal(total.value) }),
+    height: props.height - 100,
+    yAxisName: t('stats.units.tco2eq_per_year'),
+    keyOrder,
+    valueUnit: t('stats.units.tco2eq_per_year'),
+    ...(props.shareLabelKey
+      ? {
+          valueShareLabel: (percent: string, group: string) =>
+            t(props.shareLabelKey!, { percent, group }),
+        }
+      : {}),
+  })
 }
 </script>

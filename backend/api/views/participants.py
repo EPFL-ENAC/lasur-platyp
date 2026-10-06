@@ -1,11 +1,8 @@
-from typing import List
 from fastapi import APIRouter, Depends, Query, HTTPException
-from fastapi.datastructures import UploadFile
-from fastapi.param_functions import File
 from api.db import get_session, AsyncSession
 from api.auth import kc_service, User
 from api.models.domain import Participant
-from api.models.query import ParticipantResult, ParticipantData, ParticipantDraft
+from api.models.query import ParticipantResult, ParticipantDraft
 from api.services.participants import ParticipantService
 from enacit4r_sql.utils.query import validate_params, ValidationError
 from api.models.domain import Participant
@@ -68,12 +65,3 @@ async def update(
     """Update a participant by id"""
     return await ParticipantService(session).update(id, item, user)
 
-
-@router.post("/_upload", response_model=List[ParticipantData], response_model_exclude_none=True)
-async def read_participants_from_excel(
-        files: UploadFile = File(
-            description="Excel file containing participant descriptions"),
-    session: AsyncSession = Depends(get_session),
-    user: User = Depends(kc_service.get_user_info())
-):
-    return await ParticipantService(session).parse(files.file._file)

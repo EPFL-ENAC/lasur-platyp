@@ -1,324 +1,356 @@
 <template>
-  <q-card flat class="q-my-md">
-    <q-expansion-item
-      v-model="preferencesStore.statsSectionsExpandedState.mobilityAnalysis"
-      :label="t('stats.sections.mobility_analysis.title')"
-      header-class="text-h5"
-      data-section-name="mobility_analysis"
-      expand-icon-toggle
-    >
-      <q-markdown
-        class="compact text-caption q-px-md q-pb-md q-mt-sm"
-        :src="t('stats.sections.mobility_analysis.description')"
-      />
-      <q-separator />
-      <q-card-section>
-        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.home_to_work') }}</h6>
-        <div class="grid-container">
-          <div>
-            <location-chart
-              :title="t('stats.locationsHeatmap.title')"
-              :height="height"
-              :home-locations-heatmap="stats.homeLocationsHeatmap"
-              :workplace-locations="stats.workplaceLocations"
-            />
-          </div>
-          <div>
-            <div>
-              <q-btn-toggle
-                v-model="modalType"
-                :options="[
-                  { label: t('stats.freq_mod.modal_split.simple'), value: 'simple' },
-                  { label: t('stats.freq_mod.modal_split.detailed'), value: 'detailed' },
-                ]"
-                outlined
-                unelevated
-                no-caps
-                color="grey"
-                toggle-color="primary"
-              />
-            </div>
-            <simple-labels-share-chart
-              v-if="modalType === 'simple'"
-              :height="height"
-              :frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
-              :loading="stats.loading"
-            />
-            <complex-labels-share-chart
-              v-if="modalType === 'detailed'"
-              :height="height"
-              :frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <travel-time-frequencies-chart
-              :frequencies="getFreq('travel_time')"
-              :xaxis="t('stats.travel_time.xaxis')"
-              :range-step="5"
-              :percent="percent"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <equipment-frequencies-chart
-              :frequencies="getFreq('equipments')"
-              :percent="percent"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <mobility-constraints-frequencies-chart
-              :frequencies="getFreq('constraints')"
-              :percent="percent"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <emissions-chart
-              chartTranslationName="freq_mod"
-              :emissions="stats.emissions?.['freq_mod'] ?? null"
-              :xaxis="t('stats.emissions_freq_mod.xaxis')"
-              :yaxis="t('stats.emissions_freq_mod.yaxis')"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <journey-energy-chart
-              type="current"
-              :journey-energy-stats="stats.journeyEnergyStats"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-        </div>
-      </q-card-section>
-      <q-card-section>
-        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.professional_travel') }}</h6>
-        <div class="grid-container">
-          <div>
-            <frequencies-stack-chart
-              chartTranslationName="freq_mod_pro"
-              :frequencies="getFreqArray('freq_mod_pro')"
-              :groups="['local', 'national', 'europe', 'inter']"
-              :xaxis="t('stats.freq_mod_pro.xaxis')"
-              :height="height"
-              :percent="percent"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <emissions-chart
-              chartTranslationName="freq_mod_pro"
-              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
-              :xaxis="t('stats.emissions_freq_mod_pro.xaxis')"
-              :yaxis="t('stats.emissions_freq_mod_pro.yaxis')"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-        </div>
-      </q-card-section>
-    </q-expansion-item>
-  </q-card>
+  <div>
+    <q-tabs v-model="tab" no-caps align="left" @update:model-value="onTabChanged">
+      <q-tab name="analysis" :label="t('stats.sections.mobility_analysis.title')" />
+      <q-tab name="potentials" :label="t('stats.sections.mobility_potentials.title')" />
+      <q-tab name="behavioural" :label="t('stats.sections.behavioural_changes.title')" />
+    </q-tabs>
+    <q-tab-panels v-model="tab">
+      <q-tab-panel name="analysis" class="q-px-none">
+        <div class="text-h5 section-title">{{ t('stats.sections.mobility_analysis.title') }}</div>
+        <q-markdown
+          class="compact text-subtitle1 section-lead"
+          :src="t('stats.sections.mobility_analysis.description')"
+        />
+        <p v-if="participationTextComputed" class="compact text-subtitle1 participation-line">
+          {{ participationTextComputed }}
+        </p>
+        <details-panel class="section-details">
+          <q-markdown class="compact" :src="t('stats.sections.mobility_analysis.details')" />
+        </details-panel>
 
-  <q-card flat class="q-my-md">
-    <q-expansion-item
-      v-model="preferencesStore.statsSectionsExpandedState.mobilityPotentials"
-      :label="t('stats.sections.mobility_potentials.title')"
-      header-class="text-h5"
-      data-section-name="mobility_potentials"
-      expand-icon-toggle
-    >
-      <q-markdown
-        class="compact text-caption q-px-md q-pb-md q-mt-sm"
-        :src="t('stats.sections.mobility_potentials.description')"
-      />
-      <mobility-potential-insights
-        frequency-key="reco_inter"
-        reduction-key="reductions_mod"
-        :collaborators-count="collaboratorsCount || undefined"
-      />
-      <q-separator />
-
-      <q-card-section>
-        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.home_to_work') }}</h6>
-        <div class="grid-container">
-          <div>
-            <share-chart
-              chartTranslationName="reco_inter"
-              :frequencies="getFreq('reco_inter')"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <links-chart
-              type="mod_reco"
-              :links="stats.links['mod_reco'] ?? null"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <emissions-reductions-chart
-              chartTranslationName="reductions_mod"
-              :emissions="stats.emissions?.['freq_mod'] ?? null"
-              :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
-              :yaxis="t('stats.emissions_reductions_mod.yaxis')"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <emissions-reductions-share-chart
-              :reductions="stats.emissionsReductions?.['reductions_mod'] ?? null"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <journey-energy-chart
-              type="reco"
-              :height="height"
-              :journey-energy-stats="stats.journeyEnergyStats"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <journey-energy-share-chart
-              :journeyEnergyStats="stats.journeyEnergyStats"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
+        <div class="subsection-title">
+          {{ t('stats.sections.mobility_analysis.title') }} -
+          {{ t('stats.sections.home_to_work') }}
         </div>
-      </q-card-section>
-
-      <q-card-section>
-        <h6 class="text-h6 q-mt-none q-mb-md">{{ t('stats.sections.professional_travel') }}</h6>
         <div class="grid-container">
-          <div>
-            <share-chart
-              chartTranslationName="reco_pros"
-              :height="height"
-              :frequencies="getFreq('reco_pros')"
-              :loading="stats.loading"
-            />
-          </div>
-          <div>
-            <emissions-reductions-chart
-              chartTranslationName="reductions_mod_pro"
-              :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
-              :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
-              :yaxis="t('stats.emissions_reductions_mod_pro.yaxis')"
-              :height="height"
-              :loading="stats.loading"
-            />
-          </div>
+          <location-chart
+            class="grid-item-full-row"
+            :height="Math.round(height * 1.5)"
+            :home-locations-heatmap="stats.homeLocationsHeatmap"
+            :workplace-locations="stats.workplaceLocations"
+            :home-workplace-flows="stats.homeWorkplaceFlows"
+          />
+          <freq-mod-chart
+            :height="height"
+            :simple-frequencies="stats.frequencies?.['freq_mod_simple'] ?? null"
+            :detailed-frequencies="stats.frequencies?.['freq_mod_complex'] ?? null"
+            :loading="stats.loading"
+          />
+          <travel-time-frequencies-chart
+            :frequencies="getFreq('travel_time')"
+            :xaxis="t('stats.travel_time.xaxis')"
+            :range-step="5"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <equipment-frequencies-chart
+            :frequencies="getFreq('equipments')"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <mobility-constraints-frequencies-chart
+            :frequencies="getFreq('constraints')"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <emissions-mod-chart
+            :height="height"
+            :simple-emissions="stats.emissions?.['freq_mod_simple'] ?? null"
+            :detailed-emissions="stats.emissions?.['freq_mod_complex'] ?? null"
+            :loading="stats.loading"
+          />
+          <journey-energy-chart
+            type="current"
+            :journey-energy-stats="stats.journeyEnergyStats"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <modal-evolution-sankey
+            v-if="stats.comparisonMode === 'longitudinal'"
+            :height="height"
+            :loading="stats.loading"
+          />
         </div>
-      </q-card-section>
-    </q-expansion-item>
-  </q-card>
-
-  <q-card flat class="q-my-md">
-    <q-expansion-item
-      v-model="preferencesStore.statsSectionsExpandedState.behaviouralChanges"
-      :label="t('stats.sections.behavioural_changes.title')"
-      header-class="text-h5"
-      data-section-name="behavioural_changes"
-      expand-icon-toggle
-    >
-      <q-markdown
-        class="compact text-caption q-px-md q-pb-md q-mt-sm"
-        :src="t('stats.sections.behavioural_changes.description')"
-      />
-      <q-separator />
-
-      <q-card-section>
+        <div class="subsection-title">
+          {{ t('stats.sections.mobility_analysis.title') }} -
+          {{ t('stats.sections.professional_travel') }}
+        </div>
         <div class="grid-container">
-          <div>
-            <behavior-change-chart
-              type="levers"
-              :behavior-change-stats="stats.behaviorChange"
-              :height="height"
-              :loading="stats.loading"
-              :percent="percent"
-            />
-          </div>
-          <div>
-            <behavior-change-chart
-              type="motivation"
-              :behavior-change-stats="stats.behaviorChange"
-              :height="height"
-              :loading="stats.loading"
-              :percent="percent"
-            />
-          </div>
-          <div>
-            <equipment-recommendation-matrix-chart
-              :equipmentsStats="stats.equipmentsStats"
-              :height="height"
-              :loading="stats.loading"
-              has-options
-            />
-          </div>
+          <freq-mod-pro-chart
+            :frequencies="getFreqArray('freq_mod_pro')"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <emissions-mod-pro-chart
+            :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
+            :height="height"
+            :loading="stats.loading"
+          />
         </div>
-      </q-card-section>
-    </q-expansion-item>
-  </q-card>
+      </q-tab-panel>
+      <q-tab-panel name="potentials" class="q-px-none">
+        <div class="text-h5 section-title" data-section-name="mobility_potentials" expand-icon-toggle>
+          {{ t('stats.sections.mobility_potentials.title') }}
+        </div>
+        <q-markdown
+          class="compact text-subtitle1 section-lead"
+          :src="t('stats.sections.mobility_potentials.description')"
+        />
+        <details-panel class="section-details">
+          <mobility-potential-insights
+            frequency-key="reco_inter"
+            :reduction-key="
+              stats.redModalType === 'simple' ? 'reductions_mod_simple' : 'reductions_mod_complex'
+            "
+            :collaborators-count="collaboratorsCount || undefined"
+            class="q-mb-md"
+          />
+        </details-panel>
+
+        <div class="subsection-title">
+          {{ t('stats.sections.mobility_potentials.title') }} -
+          {{ t('stats.sections.home_to_work') }}
+        </div>
+        <div class="grid-container">
+          <freq-reco-chart
+            :simple-frequencies="getFreq('reco_simple')"
+            :detailed-frequencies="getFreq('reco_inter')"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <links-reco-chart
+            :simple-links="stats.links['mod_reco_simple'] ?? null"
+            :detailed-links="stats.links['mod_reco_complex'] ?? null"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <reco-emissions-mod-chart
+            v-if="stats.comparisonMode"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <emissions-reductions-mod-chart :height="height" :loading="stats.loading" />
+          <emissions-reductions-mod-share-chart :height="height" :loading="stats.loading" />
+          <journey-energy-chart
+            type="reco"
+            :height="height"
+            :journey-energy-stats="stats.journeyEnergyStats"
+            :loading="stats.loading"
+          />
+          <journey-energy-share-chart
+            :journeyEnergyStats="stats.journeyEnergyStats"
+            :height="height"
+            :loading="stats.loading"
+          />
+        </div>
+
+        <div class="subsection-title">
+          {{ t('stats.sections.mobility_potentials.title') }} -
+          {{ t('stats.sections.professional_travel') }}
+        </div>
+        <div class="grid-container">
+          <freq-reco-pro-chart
+            :frequencies="getFreq('reco_pros')"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <emissions-reductions-mod-pro-chart
+            :emissions="stats.emissions?.['freq_mod_pro'] ?? null"
+            :reductions="stats.emissionsReductions?.['reductions_mod_pro'] ?? null"
+            :height="height"
+            :loading="stats.loading"
+          />
+        </div>
+      </q-tab-panel>
+      <q-tab-panel name="behavioural" class="q-px-none">
+        <div class="text-h5 section-title" data-section-name="behavioural_changes" expand-icon-toggle>
+          {{ t('stats.sections.behavioural_changes.title') }}
+        </div>
+        <q-markdown
+          class="compact text-subtitle1 section-lead section-lead--last"
+          :src="t('stats.sections.behavioural_changes.description')"
+        />
+        <div class="grid-container">
+          <levers-change-chart
+            :behavior-change-stats="stats.behaviorChange"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <motivation-change-chart
+            :behavior-change-stats="stats.behaviorChange"
+            :height="height"
+            :loading="stats.loading"
+          />
+          <equipment-recommendation-matrix-chart
+            class="grid-item-full-row"
+            :equipmentsStats="stats.equipmentsStats"
+            :height="height"
+            :loading="stats.loading"
+            has-options
+          />
+          <pt-pass-recommendation-chart
+            :equipments-stats="stats.equipmentsStats"
+            :height="height"
+            :loading="stats.loading"
+          />
+        </div>
+      </q-tab-panel>
+    </q-tab-panels>
+  </div>
 </template>
 <script setup lang="ts">
-import EquipmentFrequenciesChart from 'src/components/charts/EquipmentFrequenciesChart.vue'
+import DetailsPanel from '@/components/DetailsPanel.vue'
+import EquipmentFrequenciesChart from '@/components/charts/EquipmentFrequenciesChart.vue'
 import MobilityConstraintsFrequenciesChart from './MobilityConstraintsFrequenciesChart.vue'
-import FrequenciesStackChart from 'src/components/charts/FrequenciesStackChart.vue'
-import TravelTimeFrequenciesChart from 'src/components/charts/TravelTimeFrequenciesChart.vue'
-import LocationChart from 'src/components/charts/LocationChart.vue'
-import EmissionsChart from 'src/components/charts/EmissionsChart.vue'
-import EmissionsReductionsChart from 'src/components/charts/EmissionsReductionsChart.vue'
-import EmissionsReductionsShareChart from 'src/components/charts/EmissionsReductionsShareChart.vue'
-import LinksChart from 'src/components/charts/LinksChart.vue'
-import ShareChart from 'src/components/charts/ShareChart.vue'
-import SimpleLabelsShareChart from 'src/components/charts/SimpleLabelsShareChart.vue'
-import ComplexLabelsShareChart from 'src/components/charts/ComplexLabelsShareChart.vue'
-import JourneyEnergyChart from 'src/components/charts/JourneyEnergyChart.vue'
-import JourneyEnergyShareChart from 'src/components/charts/JourneyEnergyShareChart.vue'
-import BehaviorChangeChart from 'src/components/charts/BehaviorChangeChart.vue'
-import EquipmentRecommendationMatrixChart from 'src/components/charts/EquipmentRecommendationMatrixChart.vue'
+import TravelTimeFrequenciesChart from '@/components/charts/TravelTimeFrequenciesChart.vue'
+import LocationChart from '@/components/charts/LocationChart.vue'
+import EmissionsModChart from '@/components/charts/EmissionsModChart.vue'
+import EmissionsModProChart from '@/components/charts/EmissionsModProChart.vue'
+import EmissionsReductionsModChart from '@/components/charts/EmissionsReductionsModChart.vue'
+import RecoEmissionsModChart from '@/components/charts/RecoEmissionsModChart.vue'
+import EmissionsReductionsModProChart from '@/components/charts/EmissionsReductionsModProChart.vue'
+import EmissionsReductionsModShareChart from '@/components/charts/EmissionsReductionsModShareChart.vue'
+import LinksRecoChart from '@/components/charts/LinksRecoChart.vue'
+import FreqModChart from '@/components/charts/FreqModChart.vue'
+import FreqRecoChart from '@/components/charts/FreqRecoChart.vue'
+import FreqRecoProChart from '@/components/charts/FreqRecoProChart.vue'
+import FreqModProChart from '@/components/charts/FreqModProChart.vue'
+import JourneyEnergyChart from '@/components/charts/JourneyEnergyChart.vue'
+import JourneyEnergyShareChart from '@/components/charts/JourneyEnergyShareChart.vue'
+import LeversChangeChart from '@/components/charts/LeversChangeChart.vue'
+import MotivationChangeChart from '@/components/charts/MotivationChangeChart.vue'
+import EquipmentRecommendationMatrixChart from '@/components/charts/EquipmentRecommendationMatrixChart.vue'
+import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationChart.vue'
+import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import MobilityPotentialInsights from '../MobilityPotentialInsights.vue'
-import type { Frequencies } from 'src/models'
+import type { Frequencies } from '@/models'
+import { participationText } from './commons'
 
 interface Props {
   height: number
-  percent: boolean
   collaboratorsCount?: number | undefined
+  headcountKnown?: boolean
 }
 
-defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  headcountKnown: false,
+})
 
 const { t } = useI18n()
 const preferencesStore = usePreferencesStore()
 const stats = useStats()
 
-const modalType = ref('simple')
+const tab = ref('analysis')
+
+onMounted(() => {
+  if (preferencesStore.statsSectionsExpandedState.mobilityAnalysis) {
+    tab.value = 'analysis'
+  } else if (preferencesStore.statsSectionsExpandedState.mobilityPotentials) {
+    tab.value = 'potentials'
+  } else if (preferencesStore.statsSectionsExpandedState.behaviouralChanges) {
+    tab.value = 'behavioural'
+  }
+})
 
 const getFreq = (key: string) => {
   return (stats.frequencies?.[key] ?? null) as Frequencies | null
 }
 
+// Participation line under the mobility-analysis intro, main view only
+// (comparison mode has its own per-group chips). Case 1: every in-scope
+// campaign announces a headcount — response rate over the announced
+// collaborators. Case 2: the headcount is missing for at least one campaign —
+// the assessment is stated on the recorded responses alone. The numerator is
+// the completed-questionnaire count (stats.total); nb_employees is missing for
+// a campaign when it is null/undefined, and an announced count of 0 is treated
+// as missing the same way (DashboardPanel sums it as 0).
+const collaboratorsCount = computed(() => props.collaboratorsCount ?? 0)
+const headcountKnown = computed(() => props.headcountKnown && collaboratorsCount.value > 0)
+const participationTextComputed = computed(() =>
+  participationText({
+    total: stats.total,
+    collaboratorsCount: collaboratorsCount.value,
+    headcountKnown: headcountKnown.value,
+    isComparison: !!stats.comparisonMode,
+  }),
+)
+
 const getFreqArray = (key: string) => {
   return (stats.frequencies?.[key] ?? null) as Frequencies[] | null
+}
+
+const onTabChanged = (newTab: string) => {
+  preferencesStore.statsSectionsExpandedState.mobilityAnalysis = newTab === 'analysis'
+  preferencesStore.statsSectionsExpandedState.mobilityPotentials = newTab === 'potentials'
+  preferencesStore.statsSectionsExpandedState.behaviouralChanges = newTab === 'behavioural'
 }
 </script>
 
 <style lang="css" scoped>
+/* Quasar paints tab panels white by default; let the page background show through. */
+.q-tab-panels {
+  background: transparent;
+}
+
+/* Section rhythm: 64px above a section title, 8px between title, lead and
+   read-more, 48px before the charts. Chart columns sit 32px apart. */
+.q-tab-panel {
+  padding-top: 64px;
+  padding-bottom: 0;
+}
+
+.section-title {
+  margin-bottom: 8px;
+}
+
+.section-lead {
+  margin-bottom: 8px;
+}
+
+.participation-line {
+  margin: 0 0 8px;
+}
+
+/* Whatever closes the intro (read-more, or the lead when there is none)
+   carries the 48px gap to the charts */
+.section-details,
+.section-lead--last {
+  margin-bottom: 48px;
+}
+
+.section-details :deep(a.read-more) {
+  margin-bottom: 0;
+}
+
+/* Sub-section title: between the section (28px purple) and the chart titles
+   (20px yellow): dark purple, semibold, with a hairline rule above. */
+.subsection-title {
+  margin: 48px 0 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--secondary-border-color);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 30px;
+  color: var(--foreground-color);
+}
+
+/* Two chart columns; one below tablet width. A fixed count (rather than
+   auto-fit) keeps a two-chart row from sharing the width with a third,
+   unused track opened by a full-row chart further down. */
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px 32px;
+}
+
+@media (max-width: 1279px) {
+  .grid-container {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.grid-item-full-row {
+  grid-column: 1 / -1;
 }
 </style>

@@ -1,4 +1,9 @@
-import { type StyleSpecification } from 'maplibre-gl'
+import { type StyleSpecification, setWorkerUrl } from 'maplibre-gl'
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
+
+// maplibre-gl v6 is ESM-only and cannot locate its worker through a bundler:
+// route it through Vite's worker pipeline so it ships as a self-contained chunk.
+setWorkerUrl(workerUrl)
 
 export const style: StyleSpecification = {
   version: 8,

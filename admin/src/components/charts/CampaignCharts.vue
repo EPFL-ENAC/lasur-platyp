@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Campaign, CampaignStats } from 'src/models'
+import type { Campaign, CampaignStats } from '@/models'
 import CampaignCountsChart from './CampaignCountsChart.vue'
 import CampaignHistoryChart from './CampaignHistoryChart.vue'
 

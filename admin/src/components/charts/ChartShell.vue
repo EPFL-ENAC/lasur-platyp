@@ -1,43 +1,35 @@
 <template>
   <div class="chart-shell">
-    <div :style="containerStyle" class="chart-shell__visual">
-      <div class="toolbar-overlay">
-        <q-btn
-          v-if="hasData && exportable"
-          dense
-          unelevated
-          icon="download"
-          :disable="loading || exporting || !captureRawImage"
-          @click="handleExport"
-        />
-      </div>
+    <div class="chart-shell__frame" :style="frameStyle">
+      <div :style="containerStyle" class="chart-shell__visual">
+        <div v-if="hasData" class="chart-shell__content">
+          <slot />
+        </div>
 
-      <div v-if="hasData" class="chart-shell__content">
-        <slot />
-      </div>
-
-      <div v-else class="chart-shell__empty column items-center justify-center q-px-md">
-        <div v-if="noDataTitle" class="text-h6 text-center">{{ noDataTitle }}</div>
-        <div class="text-subtitle1 text-foreground text-center">
-          {{ noDataText }}
+        <div v-else class="chart-shell__empty column items-center justify-center q-px-md">
+          <div v-if="noDataTitle" class="text-h6 text-center">{{ noDataTitle }}</div>
+          <div class="text-subtitle1 text-foreground text-center">
+            {{ noDataText }}
+          </div>
         </div>
       </div>
     </div>
 
-    <div v-if="showInfo && $slots.info" class="q-mt-md chart-text">
-      <slot name="info" />
+    <div v-if="hasData" class="q-mt-md">
+      <slot name="table" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import { downloadDataUrl, mergeImageWithLogo } from 'src/utils/images'
+import { downloadDataUrl, mergeImageWithLogo } from '@/utils/images'
 
 interface Props {
   height?: number | undefined
   hasData: boolean
   showInfo?: boolean | undefined
+  showTable?: boolean | undefined
   loading?: boolean | undefined
   noDataTitle?: string
   noDataText: string
@@ -47,6 +39,9 @@ interface Props {
   logoPadding?: number | undefined
   logoWidthRatio?: number | undefined
   captureRawImage?: () => Promise<string | null>
+  // Turn the chart a quarter counter-clockwise (landscape chart on a portrait
+  // page): +height+ is then its length along the page, its width the page's.
+  rotated?: boolean | undefined
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -60,13 +55,37 @@ const props = withDefaults(defineProps<Props>(), {
   logoWidthRatio: 0.12,
 })
 
+defineExpose({
+  handleExport,
+})
+
 const exporting = ref(false)
 
-const containerStyle = computed<CSSProperties>(() => ({
-  height: `${props.height}px`,
-  width: '100%',
-  position: 'relative',
-}))
+const frameStyle = computed<CSSProperties>(() =>
+  props.rotated
+    ? { height: `${props.height}px`, position: 'relative', containerType: 'inline-size' }
+    : {},
+)
+
+const containerStyle = computed<CSSProperties>(() =>
+  props.rotated
+    ? {
+        // Swapped sides, the frame width (cqw) becoming the chart height;
+        // shifted by its own length so the turn lands back in the frame.
+        width: `${props.height}px`,
+        height: '100cqw',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        transformOrigin: 'top left',
+        transform: 'rotate(-90deg) translateX(-100%)',
+      }
+    : {
+        height: `${props.height}px`,
+        width: '100%',
+        position: 'relative',
+      },
+)
 
 async function handleExport() {
   if (exporting.value || props.loading || !props.hasData || !props.captureRawImage) {
@@ -94,6 +113,13 @@ async function handleExport() {
 </script>
 
 <style scoped>
+/* Plain block around the sized chart area: the details dialog frames it, and
+   a block with no explicit width always fits its parent, padding included. */
+.chart-shell__frame {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .chart-shell__visual {
   position: relative;
   width: 100%;

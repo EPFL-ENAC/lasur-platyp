@@ -45,17 +45,7 @@
         </div>
       </q-card-section>
 
-      <q-tabs
-        v-model="tab"
-        dense
-        active-color="secondary"
-        active-bg-color="background"
-        active-class="tab-active"
-        indicator-color="transparent"
-        class="bg-secondary-ultra-light q-mx-md"
-        align="justify"
-        narrow-indicator
-      >
+      <q-tabs v-model="tab" no-caps class="q-mx-md" align="justify">
         <q-tab name="fr" label="Français" />
         <q-tab name="en" label="English" />
       </q-tabs>
@@ -96,9 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Campaign } from 'src/models'
-import { makeSurveyLink } from 'src/utils/links'
-import { notifyError, notifySuccess } from 'src/utils/notify'
+import type { Campaign } from '@/models'
+import { makeSurveyLink } from '@/utils/links'
+import { notifyError, notifySuccess } from '@/utils/notify'
 
 const { t, locale } = useI18n()
 

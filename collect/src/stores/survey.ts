@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Record, Recommendation } from 'src/models'
+import type { Record, Recommendation } from '@/models'
 
 const RecoToMode: { [key: string]: string | undefined } = {
   marche: 'walking',
@@ -28,6 +28,7 @@ export const useSurvey = defineStore(
       'needs',
       'age_class',
       'recommendations',
+      'recommendations_pro',
       'change',
       'email',
       'comments',
@@ -41,6 +42,7 @@ export const useSurvey = defineStore(
     const changeStepIndex = ref(0)
     const timestamp = ref(Date.now())
     const recommendation = ref<Recommendation>({})
+    const recommendationLoaded = ref(false)
 
     const stepName = computed(() => stepNames[step.value - 1])
     const previousStepName = computed(() => stepNames[step.value - 2])
@@ -48,6 +50,7 @@ export const useSurvey = defineStore(
     function init(cr: Record) {
       record.value = cr
       recommendation.value = {}
+      recommendationLoaded.value = false
       started.value = false
       step.value = 1
       changeStepIndex.value = 0
@@ -57,12 +60,14 @@ export const useSurvey = defineStore(
     function finish() {
       record.value = {} as Record
       recommendation.value = {}
+      recommendationLoaded.value = false
       tokenOrSlug.value = null
     }
 
     function reset() {
       record.value = {} as Record
       recommendation.value = {}
+      recommendationLoaded.value = false
       started.value = false
       step.value = 0
       changeStepIndex.value = 0
@@ -74,13 +79,17 @@ export const useSurvey = defineStore(
      * Raw reco_inter indices of the first occurrence of each unique recommended mode,
      * in order of appearance. The same mode can appear several times in reco_inter;
      * this drives the 'change' step so it is only shown once per unique mode.
+     * Journeys already sustainable (bravo 2) are left out, as their recommendation
+     * is not shown; this can leave no index at all, then the 'change' step is skipped.
      */
     function uniqueChangeIndices() {
       const recoInter = recommendation.value.reco?.reco_inter
       if (!recoInter || !recoInter.length) return [0]
+      const bravo = recommendation.value.reco?.bravo || []
       const seen = new Set<string>()
       const indices: number[] = []
       recoInter.forEach((mode, i) => {
+        if (bravo[i] === 2) return
         if (!seen.has(mode)) {
           seen.add(mode)
           indices.push(i)
@@ -91,7 +100,7 @@ export const useSurvey = defineStore(
 
     /**
      * Number of 'change' sub-steps, one per unique recommended mode (reco_inter).
-     * At least one, so the step is still shown when there is no recommendation.
+     * At least one when there is no recommendation, none when all journeys are bravo 2.
      */
     function changeStepsCount() {
       return uniqueChangeIndices().length
@@ -164,7 +173,7 @@ export const useSurvey = defineStore(
       }
       step.value -= 1
       if (stepName.value === 'change') {
-        changeStepIndex.value = changeStepsCount() - 1
+        changeStepIndex.value = Math.max(changeStepsCount() - 1, 0)
       }
       let skipped = skipDecSteps(withProfessionalQuestions)
       while (skipped) {
@@ -186,6 +195,18 @@ export const useSurvey = defineStore(
         step.value += 1
         return true
       }
+      if (
+        recommendationLoaded.value &&
+        stepName.value === 'recommendations_pro' &&
+        !recommendation.value.reco_pro?.reco_pros?.length
+      ) {
+        step.value += 1
+        return true
+      }
+      if (recommendationLoaded.value && stepName.value === 'change' && !changeStepsCount()) {
+        step.value += 1
+        return true
+      }
 
       return false
     }
@@ -199,8 +220,24 @@ export const useSurvey = defineStore(
         step.value -= 1
         return true
       }
+      if (
+        recommendationLoaded.value &&
+        stepName.value === 'recommendations_pro' &&
+        !recommendation.value.reco_pro?.reco_pros?.length
+      ) {
+        step.value -= 1
+        return true
+      }
+      if (recommendationLoaded.value && stepName.value === 'change' && !changeStepsCount()) {
+        step.value -= 1
+        return true
+      }
 
       return false
+    }
+
+    function hasEquipment(equipment: string) {
+      return record.value.data?.equipments?.includes(equipment)
     }
 
     function getFreqMod(mode: string) {
@@ -317,6 +354,7 @@ export const useSurvey = defineStore(
       previousStepName,
       timestamp,
       recommendation,
+      recommendationLoaded,
       init,
       finish,
       reset,
@@ -332,6 +370,7 @@ export const useSurvey = defineStore(
       getMainFreqMod,
       isModeSustainable,
       isModeInRecommendation,
+      hasEquipment,
       isRecommendationAtIndexInUse,
     }
   },

@@ -1,0 +1,93 @@
+<template>
+  <chart-panel
+    :title="chartTitle"
+    :description="t('stats.reco_pros.description')"
+    :chart-info-text="infoText"
+    :inline="inline"
+  >
+    <q-toolbar v-if="!inline" class="chart-toolbar">
+      <q-space />
+      <q-btn flat icon="more_vert">
+        <q-menu>
+          <q-list style="min-width: 200px">
+            <q-item clickable v-close-popup @click="onToggleModalType">
+              <q-item-section side>
+                <q-icon :name="stats.recoProModalType === 'simple' ? 'pie_chart' : 'lens'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  stats.recoProModalType === 'simple'
+                    ? t('stats.freq_mod.modal_split.detailed')
+                    : t('stats.freq_mod.modal_split.simple')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onChartDownload">
+              <q-item-section side>
+                <q-icon name="download" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('download') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </q-toolbar>
+    <share-chart
+      ref="chartRef"
+      chartTranslationName="reco_pros"
+      :label-type="modalType === 'simple' ? 'simple' : 'mode'"
+      :fold-reco-to-simple="modalType === 'simple'"
+      :title="chartTitle"
+      :frequencies="frequencies"
+      :height="height"
+      :loading="loading"
+      :exportable="!inline"
+      @update:chart-info-text="infoText = $event"
+    />
+  </chart-panel>
+</template>
+
+<script setup lang="ts">
+import ChartPanel from '@/components/charts/ChartPanel.vue'
+import ShareChart from '@/components/charts/ShareChart.vue'
+import type { Frequencies } from '@/models'
+
+interface Props {
+  height: number
+  loading?: boolean
+  frequencies: Frequencies | null
+  inline?: boolean
+}
+
+defineProps<Props>()
+
+type ShareChartExposed = {
+  handleExport: () => Promise<void>
+}
+
+const chartRef = useTemplateRef<ShareChartExposed>('chartRef')
+const infoText = ref('')
+
+const { t } = useI18n()
+
+const stats = useStats()
+
+const modalType = computed(() => (stats.recoProModalType === 'simple' ? 'simple' : 'detailed'))
+
+const chartTitle = computed(
+  () =>
+    `${t('stats.reco_pros.title')} (${t(
+      `stats.freq_mod.modal_split.${modalType.value}`,
+    ).toLowerCase()})`,
+)
+
+function onToggleModalType() {
+  stats.recoProModalType = stats.recoProModalType === 'simple' ? 'detailed' : 'simple'
+}
+
+function onChartDownload() {
+  chartRef.value?.handleExport()
+}
+</script>

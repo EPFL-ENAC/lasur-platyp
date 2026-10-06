@@ -21,15 +21,15 @@
           />
           <h3 class="text-h5 text-secondary q-mb-none">{{ t('certificate.participation_id', { id: certificate.response_id_in_campaign }) }}</h3>
         </div>
-        <h3 class="text-h6 text-right">{{ t('certificate.date', { date: new Date().toLocaleDateString() }) }}</h3>
+        <h3 class="text-h6 text-right">{{ t('certificate.date', { date: new Date().toLocaleDateString(locale) }) }}</h3>
       </report-page>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import ReportPage from 'src/components/ReportPage.vue'
-import type { RecordCertificate } from 'src/models'
+import ReportPage from '@/components/ReportPage.vue'
+import type { RecordCertificate } from '@/models'
 
 const { t, locale } = useI18n()
 const collector = useCollector()

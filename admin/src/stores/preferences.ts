@@ -2,7 +2,7 @@ import {
   getLocalStorageBoolean,
   getLocalStorageJSON,
   setLocalStorage,
-} from 'src/utils/localStorage'
+} from '@/utils/localStorage'
 
 export interface StatsSectionsExpandedState {
   mobilityAnalysis: boolean

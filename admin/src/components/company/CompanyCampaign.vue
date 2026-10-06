@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-lg">
       <q-card-section>
-        <h5 class="text-h5 q-ma-none">{{ t('participation_following') }}</h5>
+        <h5 class="text-h6 text-secondary q-ma-none">{{ t('participation_following') }}</h5>
       </q-card-section>
 
       <q-separator />
@@ -12,9 +12,9 @@
       </q-card-section>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
-        <h5 class="text-h5 q-ma-none">{{ t('overview') }}</h5>
+        <h5 class="text-h6 text-secondary q-ma-none">{{ t('overview') }}</h5>
       </q-card-section>
 
       <q-separator />
@@ -44,9 +44,9 @@
       </q-card-section>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
-        <h5 class="text-h5 q-ma-none">
+        <h5 class="text-h6 text-secondary q-ma-none">
           {{ t('campaign.workplaces.title') }}
           <q-badge color="primary" class="on-right">{{ workplacesCount }}</q-badge>
         </h5>
@@ -65,7 +65,7 @@
         </div>
         <div>
           <div v-for="(wp, index) in visibleWorkplaces" :key="index" class="workplace">
-            <div class="text-overline text-half-muted workplace-name">{{ wp.name }}</div>
+            <div class="text-h6 text-half-muted workplace-name">{{ wp.name }}</div>
             <div class="workplace-address">
               <div>{{ wp.address }}</div>
               <div class="q-mt-sm">
@@ -85,20 +85,23 @@
                 icon="map"
                 expand-icon="expand_more"
                 header-class="bg-super-muted"
+                @before-show="onWorkplaceExpand(index)"
               >
-                <div class="q-pa-sm">
+                <div class="q-py-sm">
                   <isochrones-map
+                    v-if="loadedIsochrones.has(index)"
                     :mapId="`map-workplace-${index}`"
                     :center="[wp.lon, wp.lat]"
                     :reco="wp.address"
                     height="400px"
                   />
-                  <div class="text-body2 q-mt-sm">
-                    {{ t('campaign.workplaces.isochrones_hint') }}
-                  </div>
                 </div>
               </q-expansion-item>
             </div>
+          </div>
+
+          <div v-if="visibleWorkplaces.length" class="text-body2 q-mt-sm">
+            {{ t('campaign.workplaces.isochrones_hint') }}
           </div>
         </div>
         <div class="row q-mt-sm">
@@ -140,9 +143,9 @@
       </q-card-actions>
     </q-card>
 
-    <q-card flat class="q-ma-md">
+    <q-card flat class="q-my-xl">
       <q-card-section>
-        <h5 class="text-h5 q-ma-none">{{ t('participants') }}</h5>
+        <h5 class="text-h6 text-secondary q-ma-none">{{ t('participants') }}</h5>
       </q-card-section>
 
       <q-separator />
@@ -180,17 +183,17 @@
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar'
-import type { Campaign, Company, EmployerActions } from 'src/models'
-import CampaignCharts from 'src/components/charts/CampaignCharts.vue'
-import FieldsList from 'src/components/FieldsList.vue'
-import IsochronesMap from 'src/components/IsochronesMap.vue'
-import EmailTemplateDialog from 'src/components/EmailTemplateDialog.vue'
-import type { FieldItem } from 'src/components/FieldsList.vue'
-import { formatCoordinates } from 'src/utils/numbers'
-import { notifyInfo } from 'src/utils/notify'
-import { actionItems, actionProItems } from 'src/utils/options'
+import type { Campaign, Company, EmployerActions } from '@/models'
+import CampaignCharts from '@/components/charts/CampaignCharts.vue'
+import FieldsList from '@/components/FieldsList.vue'
+import IsochronesMap from '@/components/IsochronesMap.vue'
+import EmailTemplateDialog from '@/components/EmailTemplateDialog.vue'
+import type { FieldItem } from '@/components/FieldsList.vue'
+import { formatCoordinates } from '@/utils/numbers'
+import { notifyInfo } from '@/utils/notify'
+import { actionItems, actionProItems } from '@/utils/options'
 import Papa from 'papaparse'
-import { makeSurveyLink } from 'src/utils/links'
+import { makeSurveyLink } from '@/utils/links'
 
 const { t, locale } = useI18n()
 const authStore = useAuthStore()
@@ -206,6 +209,11 @@ const SHOW_WORKPLACES_MIN = 5
 
 const showEmailTemplateDialog = ref(false)
 const shownWorkplaces = ref<number>(SHOW_WORKPLACES_MIN)
+const loadedIsochrones = ref<Set<number>>(new Set())
+
+function onWorkplaceExpand(index: number) {
+  loadedIsochrones.value.add(index)
+}
 
 const isCompanyAdmin = computed(() => {
   if (!props.company) return false
@@ -226,11 +234,8 @@ const workplacesCount = computed(() => {
   return props.item.workplaces ? props.item.workplaces.length : 0
 })
 
-const hasActions = computed(
-  () =>
-    Object.keys(props.item.actions || {}).filter((key) =>
-      props.item.actions && props.item.actions[key] ? props.item.actions[key].length > 0 : false,
-    ).length > 0,
+const hasActions = computed(() =>
+  Object.values(formattedActions.value).some((actions) => actions && actions.length > 0),
 )
 
 const formattedActions = computed(() => {
@@ -239,7 +244,9 @@ const formattedActions = computed(() => {
     Object.keys(props.item.actions).forEach((group) => {
       allActions[group] =
         props.item.actions && props.item.actions[group]
-          ? props.item.actions[group].map((action) => {
+          ? props.item.actions[group]
+              .filter((action) => !actionsStore.isDeleted(action, props.company?.id))
+              .map((action) => {
               // check action can be parsed as a number
               const actionId = parseInt(action, 10)
               if (!isNaN(actionId)) {
@@ -286,6 +293,20 @@ const items1: FieldItem[] = [
   {
     field: 'nb_employees',
     label: 'campaign.nb_employees',
+  },
+  {
+    field: 'parking_provided',
+    label: 'campaign.parking_provided',
+  },
+  {
+    field: 'parking_paid',
+    label: 'campaign.parking_paid',
+    visible: (val: Campaign) => !!val.parking_provided,
+  },
+  {
+    field: 'parking_details',
+    label: 'campaign.parking_details',
+    visible: (val: Campaign) => !!val.parking_provided && !!val.parking_details,
   },
 ]
 
@@ -355,7 +376,7 @@ function onDownloadWorkplaces() {
 
 <style scoped>
 .workplace {
-  padding: 1rem 0.5rem;
+  padding: 1rem 0rem;
 
   display: grid;
   grid-template-areas:
@@ -363,8 +384,6 @@ function onDownloadWorkplaces() {
     'workplace-isochrone workplace-isochrone';
 
   gap: 1rem;
-
-  border-bottom: 1px solid var(--secondary-border-color);
 }
 
 .workplace-name {

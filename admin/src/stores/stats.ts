@@ -2,20 +2,25 @@ import {
   type BehaviorChangeStats,
   makeDefaultBehaviorChangeStats,
   makeDefaultJourneyEnergyStats,
+  type CampaignGroup,
   type CampaignStats,
+  type ComparisonMode,
+  type ComparisonResult,
   type Emissions,
   type Frequencies,
   type H3Heatmap,
+  type HomeWorkplaceFlow,
+  type WorkplaceLocation,
   type JourneyEnergyStats,
   type StatLinks,
   type Stats,
   type EquipmentsStats,
   type EmissionReduction,
-} from 'src/models'
-import type { Filter } from 'src/components/models'
-import { api } from 'src/boot/api'
-import { getLocalStorageJSON, setLocalStorage } from 'src/utils/localStorage'
-import { getRandomId } from 'src/utils/random'
+} from '@/models'
+import type { Filter } from '@/components/models'
+import { api } from '@/boot/api'
+import { getIndexedDB, removeIndexedDB, setIndexedDB } from '@/utils/indexedDb'
+import { getRandomId } from '@/utils/random'
 
 const authStore = useAuthStore()
 
@@ -25,10 +30,21 @@ export interface StatsState {
   emissionsReductions: { [key: string]: EmissionReduction[] }
   links: { [key: string]: StatLinks }
   homeLocationsHeatmap: H3Heatmap
-  workplaceLocations: { lat: number; lon: number }[]
+  workplaceLocations: WorkplaceLocation[]
+  homeWorkplaceFlows: HomeWorkplaceFlow[]
   journeyEnergyStats: JourneyEnergyStats
   behaviorChange: BehaviorChangeStats
   equipmentsStats: EquipmentsStats | null
+  total: number
+  // Headcount context of the dashboard at dump time: announced collaborators
+  // summed over the campaigns in scope, and whether every one of those
+  // campaigns has a headcount. Consumed by the participation sentence on the
+  // report's intro page; absent in states saved before it existed.
+  collaboratorsCount?: number | undefined
+  headcountKnown?: boolean | undefined
+  comparisonResults: ComparisonResult | null
+  privacyWarnings: string[]
+  comparisonMode: ComparisonMode | null
 }
 
 export const useStats = defineStore('stats', () => {
@@ -41,10 +57,41 @@ export const useStats = defineStore('stats', () => {
   )
   const links = ref<{ [key: string]: StatLinks }>({} as { [key: string]: StatLinks })
   const homeLocationsHeatmap = ref<H3Heatmap>({})
-  const workplaceLocations = ref<{ lat: number; lon: number }[]>([])
+  const workplaceLocations = ref<WorkplaceLocation[]>([])
+  const homeWorkplaceFlows = ref<HomeWorkplaceFlow[]>([])
   const journeyEnergyStats = ref<JourneyEnergyStats>({} as JourneyEnergyStats)
   const behaviorChange = ref<BehaviorChangeStats>({} as BehaviorChangeStats)
   const equipmentsStats = ref<EquipmentsStats | null>(null)
+  // Completed-questionnaire count returned by /stats/all (Stats.total): the
+  // basis of the participation-rate line in the mobility-analysis section.
+  const total = ref(0)
+
+  const comparisonResults = ref<ComparisonResult | null>(null)
+  const privacyWarnings = ref<string[]>([])
+  const comparisonMode = ref<ComparisonMode | null>(null)
+
+  const freqModalType = ref('simple')
+  const emModalType = ref('simple')
+  const recoEmModalType = ref('simple')
+  const redModalType = ref('simple')
+  const redShareModalType = ref('simple')
+  const linksModalType = ref('simple')
+  const modalEvolutionModalType = ref('simple')
+  const recoModalType = ref('simple')
+  const leversModalType = ref('simple')
+  const motivationModalType = ref('simple')
+  const equipmentsModalType = ref('simple')
+  const recoProModalType = ref('simple')
+  const freqProModalType = ref('simple')
+  const emProModalType = ref('simple')
+  const redProModalType = ref('simple')
+
+  const travelTimePercent = ref(true)
+  const equipmentsPercent = ref(true)
+  const constraintsPercent = ref(true)
+  const freqModProPercent = ref(true)
+  const leversPercent = ref(true)
+  const motivationPercent = ref(true)
 
   const loading = ref(false)
 
@@ -56,9 +103,12 @@ export const useStats = defineStore('stats', () => {
     links.value = {}
     homeLocationsHeatmap.value = {}
     workplaceLocations.value = []
+    homeWorkplaceFlows.value = []
     journeyEnergyStats.value = makeDefaultJourneyEnergyStats()
     behaviorChange.value = makeDefaultBehaviorChangeStats()
     equipmentsStats.value = null
+    total.value = 0
+    resetComparison()
 
     return loadAllStats(filter).finally(() => {
       loading.value = false
@@ -82,13 +132,22 @@ export const useStats = defineStore('stats', () => {
           stats.frequencies?.forEach((freq) => {
             frequencies.value[freq.field] = freq
           })
-          frequencies.value['freq_mod'] = stats.mode_frequencies || []
           frequencies.value['freq_mod_complex'] = stats.mode_frequencies_complex_labels || []
           frequencies.value['freq_mod_simple'] = stats.mode_frequencies_simple_labels || []
-          emissions.value['freq_mod'] = stats.mode_emissions || []
-          emissions.value['reco_mod'] = stats.reco_mode_emissions || []
-          emissionsReductions.value['reductions_mod'] = stats.mode_emission_reductions || []
-          links.value['mod_reco'] = stats.mode_links || {
+          emissions.value['freq_mod_simple'] = stats.mode_emissions_simple_labels || []
+          emissions.value['freq_mod_complex'] = stats.mode_emissions_complex_labels || []
+          emissions.value['reco_mod_simple'] = stats.reco_mode_emissions_simple_labels || []
+          emissions.value['reco_mod_complex'] = stats.reco_mode_emissions_complex_labels || []
+          emissionsReductions.value['reductions_mod_simple'] =
+            stats.mode_emission_reductions_simple_labels || []
+          emissionsReductions.value['reductions_mod_complex'] =
+            stats.mode_emission_reductions_complex_labels || []
+          links.value['mod_reco_simple'] = stats.mode_links_simple_labels || {
+            total: 0,
+            data: [],
+            most_recommended_target: null,
+          }
+          links.value['mod_reco_complex'] = stats.mode_links_complex_labels || {
             total: 0,
             data: [],
             most_recommended_target: null,
@@ -107,9 +166,11 @@ export const useStats = defineStore('stats', () => {
           }
           homeLocationsHeatmap.value = stats.home_location_heatmap || {}
           workplaceLocations.value = stats.workplace_locations || []
+          homeWorkplaceFlows.value = stats.home_workplace_flows || []
           journeyEnergyStats.value = stats.journey_energy_stats || makeDefaultJourneyEnergyStats()
           behaviorChange.value = stats.behavior_change || makeDefaultBehaviorChangeStats()
           equipmentsStats.value = stats.equipments_stats || null
+          total.value = stats.total ?? 0
         })
         .catch((err) => {
           console.error(err)
@@ -141,13 +202,61 @@ export const useStats = defineStore('stats', () => {
     })
   }
 
-  function dumpToLocalStorage() {
+  async function loadComparison(
+    groups: CampaignGroup[],
+    mode: ComparisonMode,
+    geoFilter: Filter | undefined = undefined,
+  ) {
+    loading.value = true
+    comparisonResults.value = null
+    privacyWarnings.value = []
+    return authStore
+      .updateToken()
+      .then(() => {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`,
+          },
+        }
+        return api
+          .post('/stats/compare', { groups, mode, filter: geoFilter }, config)
+          .then((res) => {
+            const result = res.data as ComparisonResult
+            comparisonResults.value = result
+            privacyWarnings.value = result.warnings || []
+            comparisonMode.value = mode
+            // The map covers every surviving group, not only the main one
+            homeLocationsHeatmap.value = result.locations?.home_location_heatmap ?? {}
+            workplaceLocations.value = result.locations?.workplace_locations ?? []
+            homeWorkplaceFlows.value = result.locations?.home_workplace_flows ?? []
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
+  function resetComparison() {
+    comparisonResults.value = null
+    privacyWarnings.value = []
+    comparisonMode.value = null
+  }
+
+  async function dumpToIndexedDB(
+    headcount?: { collaboratorsCount: number; headcountKnown: boolean },
+  ) {
     const id = getRandomId()
-    setLocalStorage(makeStatsStateId(id), JSON.stringify(toJSONState()))
+    await setIndexedDB(makeStatsStateId(id), toJSONState(headcount))
     return id
   }
 
-  function toJSONState(): StatsState {
+  function toJSONState(headcount?: {
+    collaboratorsCount: number
+    headcountKnown: boolean
+  }): StatsState {
     return {
       frequencies: frequencies.value,
       emissions: emissions.value,
@@ -155,9 +264,16 @@ export const useStats = defineStore('stats', () => {
       links: links.value,
       homeLocationsHeatmap: homeLocationsHeatmap.value,
       workplaceLocations: workplaceLocations.value,
+      homeWorkplaceFlows: homeWorkplaceFlows.value,
       journeyEnergyStats: journeyEnergyStats.value,
       behaviorChange: behaviorChange.value,
       equipmentsStats: equipmentsStats.value,
+      total: total.value,
+      collaboratorsCount: headcount?.collaboratorsCount,
+      headcountKnown: headcount?.headcountKnown,
+      comparisonResults: comparisonResults.value,
+      privacyWarnings: privacyWarnings.value,
+      comparisonMode: comparisonMode.value,
     }
   }
 
@@ -169,13 +285,41 @@ export const useStats = defineStore('stats', () => {
     links,
     homeLocationsHeatmap,
     workplaceLocations,
+    homeWorkplaceFlows,
+    total,
     journeyEnergyStats,
     equipmentsStats,
+    comparisonResults,
+    privacyWarnings,
+    comparisonMode,
+    freqModalType,
+    emModalType,
+    recoEmModalType,
+    redModalType,
+    redShareModalType,
+    linksModalType,
+    modalEvolutionModalType,
+    recoModalType,
+    leversModalType,
+    motivationModalType,
+    equipmentsModalType,
+    recoProModalType,
+    freqProModalType,
+    emProModalType,
+    redProModalType,
+    travelTimePercent,
+    equipmentsPercent,
+    constraintsPercent,
+    freqModProPercent,
+    leversPercent,
+    motivationPercent,
     loading,
     loadStats,
     getCampaignStats,
+    loadComparison,
+    resetComparison,
     toJSONState,
-    dumpToLocalStorage,
+    dumpToIndexedDB,
   }
 })
 
@@ -183,10 +327,10 @@ function makeStatsStateId(uuid: string): string {
   return `stats_${uuid}`
 }
 
-export function getStateFromLocalStorage(id: string): StatsState | null {
-  return getLocalStorageJSON<StatsState | null>(makeStatsStateId(id), null)
+export async function getStateFromIndexedDB(id: string): Promise<StatsState | null> {
+  return getIndexedDB<StatsState>(makeStatsStateId(id))
 }
 
-export function flushStateFromLocalStorage(id: string): void {
-  localStorage.removeItem(makeStatsStateId(id))
+export async function flushStateFromIndexedDB(id: string): Promise<void> {
+  return removeIndexedDB(makeStatsStateId(id))
 }

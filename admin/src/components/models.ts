@@ -18,3 +18,12 @@ export interface AddressLocation {
   lat?: number | undefined
   lon?: number | undefined
 }
+
+export type BoundaryLevel = 'filtering'
+
+export interface PlaceLocation {
+  lat: number
+  lon: number
+  level: BoundaryLevel
+  feature_id?: string | number | undefined
+}
