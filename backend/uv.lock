@@ -1564,7 +1564,7 @@ wheels = [
 
 [[package]]
 name = "platyp-api"
-version = "1.0.1"
+version = "3.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "alembic" },
