@@ -274,14 +274,15 @@ function initChartOptions() {
       formatter: function (params: any) {
         const tar = params[1]
         if (!tar) return ''
+        const value = formatTons(tar.value) + '\u00A0' + UNIT_LABEL
+        // the black bars, current and after recommendations, are totals
+        const isTotal = tar.dataIndex === 0 || tar.dataIndex === categories.length + 1
         return (
           tar.name +
           '<br/>' +
-          tar.seriesName +
-          ' : ' +
-          formatTons(tar.value) +
-          '\u00A0' +
-          UNIT_LABEL
+          (isTotal
+            ? t(`stats.emissions_${props.chartTranslationName}.labels.totalEmissions`, { value })
+            : tar.seriesName + ' : ' + value)
         )
       },
     },
@@ -348,11 +349,7 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            const value = formatTons(params.value as number) + '\u00A0' + UNIT_LABEL
-            // the black bars, current and after recommendations, are totals
-            return params.dataIndex === 0 || params.dataIndex === categories.length + 1
-              ? t(`stats.emissions_${props.chartTranslationName}.labels.totalEmissions`, { value })
-              : value
+            return formatTons(params.value as number) + '\u00A0' + UNIT_LABEL
           },
         },
         data: [
