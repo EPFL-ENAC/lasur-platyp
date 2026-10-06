@@ -14,6 +14,8 @@ export const style: StyleSpecification = {
       tileSize: 256,
       minzoom: 0,
       maxzoom: 20,
+      attribution:
+        'data © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>, map cc-by <a href="https://github.com/xyztobixyz/OSM-Swiss-Style" target="_blank">xyztobixyz</a>, Elevation: ASTER GDEM, EarthEnv-DEM90, CDEM contains information under OGL Canada',
     },
   },
   layers: [

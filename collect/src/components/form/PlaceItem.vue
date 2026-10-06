@@ -60,7 +60,7 @@ function onInit() {
   map.value.addControl(
     new AttributionControl({
       compact: true,
-      customAttribution: `© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>, <a href="https://eurogeographics.org/" target="_blank">${t('eurogeographics_attributions')}</a>, <a href="https://www.geoboundaries.org/" target="_blank">geoBoundaries</a>`,
+      customAttribution: `© <a href="https://eurogeographics.org/" target="_blank">${t('eurogeographics_attributions')}</a>, <a href="https://www.geoboundaries.org/" target="_blank">geoBoundaries</a>`,
     }),
   )
 

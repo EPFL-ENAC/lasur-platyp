@@ -1,7 +1,7 @@
-@import url(./assets/fonts/wallop/main.css);
+@import url(./assets/fonts/nunito/main.css);
 
 body {
-  font-family: Wallop;
+  font-family: Nunito, Helvetica, Arial, sans-serif;
 }
 
 .kcBodyClass {
