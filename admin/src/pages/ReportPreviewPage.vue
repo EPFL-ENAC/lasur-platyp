@@ -138,7 +138,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="!stats.comparisonMode" :org-names="orgs">
         <links-reco-chart
           :simple-links="stats.links['mod_reco_simple'] ?? null"
           :detailed-links="stats.links['mod_reco_complex'] ?? null"
