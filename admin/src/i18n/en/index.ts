@@ -87,6 +87,7 @@ const emissionsLabels = {
   distances: 'Total distance',
   current: 'Current',
   postSaving: 'Total after recommendations',
+  totalEmissions: 'Total emissions: {value}',
 }
 
 // Shared by the simple and detailed commute emissions charts.

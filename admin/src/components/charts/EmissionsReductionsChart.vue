@@ -348,7 +348,11 @@ function initChartOptions() {
             if (params.value === 0) {
               return ''
             }
-            return formatTons(params.value as number) + '\u00A0' + UNIT_LABEL
+            const value = formatTons(params.value as number) + '\u00A0' + UNIT_LABEL
+            // the black bars, current and after recommendations, are totals
+            return params.dataIndex === 0 || params.dataIndex === categories.length + 1
+              ? t(`stats.emissions_${props.chartTranslationName}.labels.totalEmissions`, { value })
+              : value
           },
         },
         data: [
