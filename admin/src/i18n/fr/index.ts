@@ -887,8 +887,6 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         default:
           'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",
-        comparison:
-          "Ce graphique compare les mesures d'accompagnement souhaitées par les participant·e·s, par mode et par groupe de campagnes. Par exemple, tous modes confondus, la mesure « {lever} » est souhaitée par environ {lastPercent}% des participant·e·s à {lastGroup}, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.",
       },
     },
     behavior_change_motivation: {

@@ -868,8 +868,6 @@ Thank you for your valuable contribution! If you have any questions, please cont
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific: 'The support that participants feel they need most is {lever}.',
-        comparison:
-          'This graph compares the support measures desired by participants, by mode and by campaign group. For example, across all modes, the measure “{lever}” is desired by approximately {lastPercent}% of participants in {lastGroup}, compared to approximately {prevPercent}% of participants in {prevGroup}.',
       },
     },
     behavior_change_motivation: {
