@@ -884,7 +884,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         allModes: 'Tous les modes',
       },
       texts: {
-        info: "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité.",
+        info: "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité. Il montre quelles sont les mesures qui sont les plus sélectionnées par les participant·e·s.",
         default:
           'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
         specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",

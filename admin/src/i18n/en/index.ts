@@ -865,7 +865,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         allModes: 'All modes',
       },
       texts: {
-        info: 'This chart helps to understand how participants would like to be supported in evolving their mobility.',
+        info: 'This chart helps to understand how participants would like to be supported in evolving their mobility. It shows which measures are most frequently selected by participants.',
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific: 'The support that participants feel they need most is {lever}.',
