@@ -420,6 +420,13 @@ async function onSave() {
   selected.value.start_date =
     selected.value.start_date === '' ? undefined : selected.value.start_date
   selected.value.end_date = selected.value.end_date === '' ? undefined : selected.value.end_date
+  // the end date must be after the start date, when both are set
+  if (selected.value.start_date && selected.value.end_date) {
+    if (selected.value.end_date <= selected.value.start_date) {
+      notifyError(t('end_date_after_start'))
+      return
+    }
+  }
   if (selected.value.id) {
     campaignsStore.service
       .update(selected.value.id, selected.value)

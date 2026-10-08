@@ -942,7 +942,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       },
       texts: {
         default:
-          'Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou si il serait pertinent de les aider à y avoir accès.',
+          'Ce tableau montre les équipements des participant·e·s en fonction des recommandations qui leur ont été faites. Cela permet de comprendre si les participant·e·s ont dans leur ensemble déjà accès au mode qui leur a été recommandé, ou s\'il serait pertinent de les aider à y avoir accès.',
         specific:
           'Par exemple, environ {percentage}% des participant·e·s à qui le mode {mode} est recommandé sont actuellement équipés pour suivre cette recommandation.',
         hover_hint: 'Passez la souris sur les cellules pour plus de détails',
@@ -1118,6 +1118,7 @@ Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en c
     'Seuls les super administrateurs peuvent voir les enregistrements directement sur Mobilyse. Cependant, ils sont toujours disponibles pour téléchargement sur le bouton ci-dessus',
   close: 'Fermer',
   cancel: 'Annuler',
+  confirm: 'Confirmer',
   companies: 'Organisations',
   company_campaign: 'Organisation (campagne)',
   company_removed: 'Organisation supprimée',
@@ -1134,6 +1135,7 @@ Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en c
   email: 'Email',
   enabled: 'Activé',
   end_date: 'Date de fin',
+  end_date_after_start: 'La date de fin doit être ultérieure à la date de début',
   error_not_found: 'Oops. Rien ici...',
   field_required: 'Ce champ est requis',
   first_name: 'Prénom',

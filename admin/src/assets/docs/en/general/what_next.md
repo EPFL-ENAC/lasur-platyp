@@ -14,5 +14,5 @@ _\* List of specialist advisers and further information: [Mobility Management Sw
 _\*\* Financial support or resources: municipal and cantonal programmes ([Mobility Plan | ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite); [SIL - rsGE H 1 21.03: Regulations on Corporate Mobility Plans (RPMob)](https://silgeneve.ch/legis/index.aspx)), federal ([Promotion of sustainable mobility projects in companies](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5)), etc._
 
 <div class="text-center q-mt-xl">
-  <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE.svg" alt="Mobility demands wheel" style="max-width: 100%" />
+  <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_EN.svg" alt="Mobility demands wheel" style="max-width: 100%" />
 </div>

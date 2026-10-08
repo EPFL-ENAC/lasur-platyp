@@ -21,12 +21,19 @@
 </template>
 
 <script setup lang="ts">
+import { isFirstVisit } from '@/utils/localStorage'
+
 const preferences = usePreferencesStore()
 const authStore = useAuthStore()
 const { t } = useI18n()
 
 const showDataProtectionNotice = ref(
-  !preferences.doNotShowNotice && !preferences.hasAlreadyShownDataProtectionNoticeThisTime,
+  !preferences.doNotShowNotice &&
+    !preferences.hasAlreadyShownDataProtectionNoticeThisTime &&
+    // On the first visit the user is redirected to the doc page (privacy
+    // policy included) right after this page mounts — don't pop the notice
+    // over that flash; it shows the next time the dashboard is viewed.
+    !isFirstVisit(),
 )
 
 function onClose() {
