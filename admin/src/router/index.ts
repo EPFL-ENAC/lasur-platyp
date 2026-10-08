@@ -7,6 +7,17 @@ import {
 } from 'vue-router'
 import routes from './routes'
 import { isFirstVisit, markVisited } from '@/utils/localStorage'
+import { useAuthStore } from '@/stores/auth'
+
+// Auth state read synchronously in the navigation guard: the router is created
+// before Pinia installs in the boot sequence, so the store is resolved lazily.
+function authIsAuthenticated(): boolean {
+  try {
+    return useAuthStore().isAuthenticated
+  } catch {
+    return false
+  }
+}
 
 /*
  * If not building with SSR mode, you can
@@ -37,14 +48,19 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     const docUrl = '/doc'
 
-    if (isFirstVisit() && to.path !== docUrl && from.path !== docUrl) {
-      next(docUrl)
-    } else {
-      if (from.path === docUrl) {
-        markVisited()
-      }
+    // First-visit redirect lives in MainLayout's authenticated flow (this guard
+    // runs before auth resolves, and redirecting while unauthenticated creates a
+    // blank /doc hop that poisons the flag — see MainLayout.vue).
+    // Leaving /doc only counts as "read the doc" when authenticated: the
+    // unauthenticated bounce out of a blank /doc must not mark the visit.
+    if (isFirstVisit() && to.path === docUrl && from.path !== docUrl && authIsAuthenticated()) {
       next()
+      return
     }
+    if (from.path === docUrl && authIsAuthenticated()) {
+      markVisited()
+    }
+    next()
   })
 
   return Router
