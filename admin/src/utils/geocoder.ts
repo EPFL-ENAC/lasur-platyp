@@ -1,6 +1,10 @@
 import type { Feature, FeatureCollection } from 'geojson'
 
-const COUNTRIES = ['ch']
+const COUNTRIES = ['ch', 'fr']
+// ponytail: one Nominatim request, so "in the GG" is an axis-aligned box: all of
+// Switzerland plus the Grand Genève French fringe. FR overshoot (Annecy, Chamonix)
+// is accepted; tighten to point-in-polygon if Modus wants the exact boundary.
+const VIEWBOX = '5.85,45.8,10.5,47.85'
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
 
 function handleNominatimResponse(geojson: FeatureCollection): Feature[] {
@@ -51,7 +55,7 @@ export const geocoderApi = {
     try {
       let countrycodes = COUNTRIES.join(',')
       if (config.countries && config.countries.length > 0) countrycodes = config.countries.join(',')
-      const request = `${NOMINATIM_URL}/search?q=${config.query}&limit=${config.limit}&format=geojson&polygon_geojson=1&addressdetails=1&countrycodes=${countrycodes}`
+      const request = `${NOMINATIM_URL}/search?q=${config.query}&limit=${config.limit}&format=geojson&polygon_geojson=1&addressdetails=1&countrycodes=${countrycodes}&viewbox=${VIEWBOX}&bounded=1`
       if (searchController) searchController.abort()
       searchController = new AbortController()
       const response = await fetch(request, {
