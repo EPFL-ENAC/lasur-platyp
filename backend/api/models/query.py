@@ -241,11 +241,34 @@ class JourneyEnergyGains(BaseModel):
     reco_above_who_count: int = 0
 
 
+class EnergyBoxSample(BaseModel):
+    """One journey-level sample of the boxplot charts: the journey's current
+    daily kcal paired with its potential daily kcal under the recommended mode
+    (equal to current when the journey has no per-journey recommendation)."""
+    token: str
+    journey: str
+    # Grouping keys, one per (chart, modal split) combination: the current
+    # chart keys by current label, the reco chart by recommended one.
+    current_simple: Optional[str] = None  # typo.reco.simple_labels.N
+    current_complex: Optional[str] = None  # typo.reco.complex_labels.N (merged)
+    reco_simple: Optional[str] = None  # typo.reco.reco_simple.N
+    reco_mode: Optional[str] = None  # typo.reco.reco_inter.N, real mode
+    current_kcal: float
+    reco_kcal: Optional[float] = None  # None = journey has no per-journey recommendation
+
+
+class EnergyBoxStats(BaseModel):
+    """Journey-level energy distributions for the boxplot charts, computed on
+    the same pairing as the gains: one sample per (token, journey) instance."""
+    samples: List[EnergyBoxSample] = []
+
+
 class JourneyEnergyStats(BaseModel):
     """Complete energy expenditure statistics."""
     current: EnergyByJourney
     reco: EnergyByJourney
     gains: JourneyEnergyGains
+    boxes: EnergyBoxStats = EnergyBoxStats()
 
 
 class BehaviorChangeLever(BaseModel):

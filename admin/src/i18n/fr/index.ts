@@ -845,6 +845,11 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
       who_above_count: "Participant·e·s au-dessus de la recommandation de l'OMS",
       whoMin: 'Dépense énergétique quotidienne recommandée par l’OMS (150\u00A0kcal/jour)',
       participantsAverage: 'Dépense énergétique quotidienne moyenne des participant·e·s',
+      box_current: 'Dépense journalière actuelle',
+      box_reco: 'Dépense journalière en suivant le mode recommandé',
+      box_jitter: 'Réponses individuelles',
+      show_jitter: 'Afficher les réponses individuelles',
+      hide_jitter: 'Masquer les réponses individuelles',
       texts: {
         default:
           "L'OMS recommande d'exercer une activité physique active modérée (comme la marche ou le vélo) brûlant quotidiennement environ 150\u00A0kcal/jour/pers, soit l'équivalent de 37\u00A0min de marche, 23\u00A0min de fitness ou 14\u00A0min de football par jour.",

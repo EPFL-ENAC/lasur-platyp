@@ -828,6 +828,11 @@ Thank you for your valuable contribution! If you have any questions, please cont
       who_above_count: 'Participants above WHO recommendation',
       whoMin: 'Minimum daily energy expenditure recommended by the WHO (150\u00A0kcal/day)',
       participantsAverage: 'Average daily energy expenditure of participants (kcal/day)',
+      box_current: 'Current daily expenditure',
+      box_reco: 'Daily expenditure following the recommended mode',
+      box_jitter: 'Individual answers',
+      show_jitter: 'Show individual answers',
+      hide_jitter: 'Hide individual answers',
       texts: {
         default:
           'The WHO recommends engaging in moderate-intensity physical activity (such as walking or cycling) burning approximately 150\u00A0kcal/day/person, equivalent to 37\u00A0minutes of walking, 23\u00A0minutes of fitness, or 14\u00A0minutes of football per day.',

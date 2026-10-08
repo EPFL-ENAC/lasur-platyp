@@ -162,6 +162,25 @@ export interface EnergyByLabel {
   label: string
   energy_kcal: number
 }
+
+/** One journey-level sample of the boxplot charts: current daily kcal paired
+ * with its potential daily kcal under the recommended mode (null = no
+ * per-journey recommendation, the journey stays as-is). */
+export interface EnergyBoxSample {
+  token: string
+  journey: string
+  // Grouping keys, one per (chart, modal split) combination
+  current_simple: string | null
+  current_complex: string | null
+  reco_simple: string | null
+  reco_mode: string | null
+  current_kcal: number
+  reco_kcal: number | null
+}
+
+export interface EnergyBoxStats {
+  samples: EnergyBoxSample[]
+}
 export interface EnergyBreakdown {
   simple: EnergyByLabel[]
   detailed: EnergyByLabel[]
@@ -189,6 +208,7 @@ export interface JourneyEnergyStats {
   current: JourneyEnergy
   reco: JourneyEnergy
   gains: JourneyEnergyGains
+  boxes?: EnergyBoxStats | null
 }
 
 export function makeDefaultJourneyEnergyStats(): JourneyEnergyStats {
@@ -201,6 +221,7 @@ export function makeDefaultJourneyEnergyStats(): JourneyEnergyStats {
       current_above_who_count: 0,
       reco_above_who_count: 0,
     },
+    boxes: { samples: [] },
   }
 }
 

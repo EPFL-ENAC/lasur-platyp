@@ -22,6 +22,18 @@
                 }}</q-item-label>
               </q-item-section>
             </q-item>
+            <q-item v-if="boxplotActive" clickable v-close-popup @click="onToggleJitter">
+              <q-item-section side>
+                <q-icon :name="showJitter ? 'visibility_off' : 'visibility'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{
+                  showJitter
+                    ? t('stats.energy_journey.hide_jitter')
+                    : t('stats.energy_journey.show_jitter')
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable v-close-popup @click="onChartDownload">
               <q-item-section side>
                 <q-icon name="download" />
@@ -53,7 +65,7 @@ import EChartsShell from './EChartsShell.vue'
 import type { EChartsOption, SeriesOption } from 'echarts'
 import type { CallbackDataParams } from 'echarts/types/dist/shared'
 import { use } from 'echarts/core'
-import { BarChart, LineChart } from 'echarts/charts'
+import { BarChart, BoxplotChart, LineChart, ScatterChart } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import {
   TitleComponent,
@@ -74,6 +86,7 @@ import {
 } from './commons'
 import type { EnergyByLabel, JourneyEnergyStats } from '@/models'
 import { formatKcal, formatNumber, formatPercent } from '@/utils/numbers'
+import { boxGroups, sortBoxGroups, boxRecoKcal, type BoxKeyField } from './energyBoxes'
 
 const stats = useStats()
 const isComparison = computed(() => !!stats.comparisonMode)
@@ -82,6 +95,8 @@ const isComparison = computed(() => !!stats.comparisonMode)
 use([
   SVGRenderer,
   BarChart,
+  BoxplotChart,
+  ScatterChart,
   TitleComponent,
   LineChart,
   TooltipComponent,
@@ -118,9 +133,27 @@ function onChartDownload() {
 }
 
 const modalType = ref<'simple' | 'detailed'>('simple')
+// Individual answers (jitter) over the boxplot: on by default, toggleable from
+// the chart menu when the boxplot is rendered.
+const showJitter = ref(true)
+
+// The boxplot replaces the bar chart past the answer threshold, single-campaign
+// view only, when the box payload exists. Shared by the dispatch below and the
+// menu item's visibility.
+const boxplotActive = computed(
+  () =>
+    !isComparison.value &&
+    (props.journeyEnergyStats?.current?.total ?? 0) > BOX_ANSWER_THRESHOLD &&
+    boxSamples.value.length > 0,
+)
 
 function onToggleModalType() {
   modalType.value = modalType.value === 'simple' ? 'detailed' : 'simple'
+  initChartOptions()
+}
+
+function onToggleJitter() {
+  showJitter.value = !showJitter.value
   initChartOptions()
 }
 
@@ -144,6 +177,21 @@ function labelText(label: string): string {
   return t(`${labelNamespace.value}.${label}`)
 }
 
+// Boxplot (journey-level distributions): the grouping key follows the chart --
+// the current chart groups by the journey's current label, the reco chart by
+// its recommended one -- at the modal split the toggle selects. 'Autres' and
+// 'Total' get their own labels from the behavior-change namespace.
+const boxKeyField = computed(() => {
+  if (props.type === 'current') {
+    return modalType.value === 'simple' ? ('current_simple' as const) : ('current_complex' as const)
+  }
+  return modalType.value === 'simple' ? ('reco_simple' as const) : ('reco_mode' as const)
+})
+
+// Boxplot replaces the bar chart when the journey data has more than
+// BOX_ANSWER_THRESHOLD answers (journeyEnergyStats.current.total).
+const boxSamples = computed(() => props.journeyEnergyStats?.boxes?.samples ?? [])
+
 // Comparison mode doesn't use the simple/detailed breakdown at all (the toggle
 // is hidden there too), so the title stays plain in that case.
 const chartTitle = computed(() => {
@@ -157,6 +205,9 @@ const total = ref(0)
 const addedEnergy = ref(0)
 const newHealthyParticipants = ref(0)
 const WHO_RECOMMENDATION = 150
+
+// Boxplot replaces the bar chart above this many answers
+const BOX_ANSWER_THRESHOLD = 100
 
 const textLabelsCurrent = computed(() => {
   if (isComparison.value) return null
@@ -275,6 +326,14 @@ function initChartOptions() {
   total.value = 0
 
   if (!props.journeyEnergyStats) return
+
+  // Boxplot replaces the bar chart past the answer threshold (single-campaign
+  // view; comparison mode keeps its own bars). The store's initial stats are
+  // an empty object (no `current`) until /stats/all resolves: guard the read.
+  if (boxplotActive.value) {
+    initBoxplotOptions()
+    return
+  }
 
   const rawData: EnergyByLabel[] =
     props.journeyEnergyStats[props.type]?.breakdown[modalType.value] || []
@@ -460,6 +519,279 @@ function initChartOptions() {
       },
     ],
   }
+}
+
+/**
+ * Boxplot view (journey-level distributions, replaces the bar chart when the
+ * journey data has more than BOX_ANSWER_THRESHOLD answers). One box pair per
+ * group: 'Total' always first, then a box per mode reaching the split
+ * threshold (10 samples), then 'Autres' pooling the modes below it. The reco
+ * chart shows two boxes per group -- the journey's current daily kcal and its
+ * potential daily kcal under the recommended mode (current when the journey
+ * has no per-journey recommendation); the current chart shows one box per
+ * group (current kcal). Real samples are jittered over each box.
+ */
+function initBoxplotOptions() {
+  const journeyStats = props.journeyEnergyStats
+  if (!journeyStats?.current) return
+  option.value = {}
+  total.value = journeyStats.current.total ?? 0
+
+  const keyField = boxKeyField.value
+  const keyOrderFn = boxKeyOrder(keyField)
+  const samples = boxSamples.value
+  const grouped = sortBoxGroups(boxGroups(samples, keyField, keyOrderFn), keyOrderFn)
+  if (grouped.length === 0) {
+    return
+  }
+
+  const isPaired = props.type === 'reco'
+  // One category per BOX slot: two per group in paired mode (current box left,
+  // reco box right), one per group otherwise. The two boxplot series are
+  // null-padded so each box renders in its own slot (a series maps box i to
+  // category i, so overlapping slots would draw the pairs on top of each
+  // other).
+  const slots: string[] = []
+  grouped.forEach((group) => {
+    if (isPaired) {
+      slots.push(boxGroupLabel(group.key), boxGroupLabel(group.key))
+    } else {
+      slots.push(boxGroupLabel(group.key))
+    }
+  })
+
+  const boxCurrentValues: (number[] | null)[] = []
+  const boxRecoValues: (number[] | null)[] = []
+  const jitterCurrent: [number, number][] = []
+  const jitterReco: [number, number][] = []
+
+  grouped.forEach((group, groupIndex) => {
+    const groupSamples = group.samples
+    const currentIdx = isPaired ? groupIndex * 2 : groupIndex
+    const recoIdx = isPaired ? groupIndex * 2 + 1 : -1
+    // A single sample has no spread: the jitter point carries it.
+    boxCurrentValues[currentIdx] =
+      groupSamples.length >= 2 ? groupSamples.map((s) => Math.round(s.current_kcal)) : null
+    if (isPaired) {
+      boxRecoValues[recoIdx] =
+        groupSamples.length >= 2 ? groupSamples.map((s) => Math.round(boxRecoKcal(s))) : null
+    }
+    const jitterHalf = isPaired ? 0.2 : 0.25
+    groupSamples.forEach((sample, i) => {
+      // Deterministic scatter (i % 5), not random: the chart is stable across
+      // re-renders, exports, and the printable report.
+      jitterCurrent.push([currentIdx - jitterHalf + (i % 5) * (jitterHalf / 2), sample.current_kcal])
+      if (isPaired) {
+        jitterReco.push([recoIdx + jitterHalf - (i % 5) * (jitterHalf / 2), boxRecoKcal(sample)])
+      }
+    })
+  })
+
+  // ECharts boxplot takes [min, Q1, median, Q3, max] per box, and CRASHES on
+  // null data entries (getInitialData reads item.value unconditionally) -- so
+  // both box colors live in ONE series as per-item itemStyle, empty slots
+  // carry an invisible zero box, and the pair colors appear in the legend via
+  // empty dummy series (a series maps box i to category i, so two series with
+  // null slots is not an option).
+  const computeFiveNumbers = (values: number[]): number[] => {
+    const sorted = [...values].sort((a, b) => a - b)
+    const q = (p: number) => {
+      const pos = (sorted.length - 1) * p
+      const base = Math.floor(pos)
+      const rest = pos - base
+      return (
+        sorted[base]! +
+        (sorted[base + 1] !== undefined ? rest * (sorted[base + 1]! - sorted[base]!) : 0)
+      )
+    }
+    return [sorted[0]!, q(0.25), q(0.5), q(0.75), sorted[sorted.length - 1]!]
+  }
+
+  const styleCurrent = boxItemStyle('current')
+  const styleReco = boxItemStyle('reco')
+  const boxplotData = slots.map((_, slotIdx) => {
+    if (Array.isArray(boxCurrentValues[slotIdx])) {
+      return { value: computeFiveNumbers(boxCurrentValues[slotIdx]!), itemStyle: styleCurrent }
+    }
+    if (Array.isArray(boxRecoValues[slotIdx])) {
+      return { value: computeFiveNumbers(boxRecoValues[slotIdx]!), itemStyle: styleReco }
+    }
+    // No box in this slot (single-sample group): invisible placeholder, the
+    // jitter points carry the values.
+    return { value: [0, 0, 0, 0, 0], itemStyle: { opacity: 0 } }
+  })
+
+  const series: SeriesOption[] = [
+    {
+      name: 'boxplot',
+      type: 'boxplot',
+      data: boxplotData,
+      // Tooltip rows are built per box color by the formatter below; the
+      // series' own name never shows.
+      silent: false,
+    },
+    // Legend dummies: empty data renders nothing, the icon carries the color.
+    {
+      name: t('stats.energy_journey.box_current'),
+      type: 'line',
+      data: [],
+      itemStyle: { color: styleCurrent.borderColor },
+      silent: true,
+    },
+    ...(isPaired
+      ? [
+          {
+            name: t('stats.energy_journey.box_reco'),
+            type: 'line',
+            data: [],
+            itemStyle: { color: styleReco.borderColor },
+            silent: true,
+          } as SeriesOption,
+        ]
+      : []),
+    ...(showJitter.value
+      ? [
+          {
+            name: t('stats.energy_journey.box_jitter'),
+            type: 'scatter',
+            data: isPaired ? [...jitterCurrent, ...jitterReco] : jitterCurrent,
+            symbolSize: 5,
+            itemStyle: { color: 'rgba(0,0,0,0.25)' },
+            z: 20,
+          } as SeriesOption,
+        ]
+      : []),
+    {
+      type: 'line',
+      name: t('stats.energy_journey.whoMin'),
+      color: 'black',
+      symbol: 'none',
+      silent: true, // Doesn't intercept mouse events
+      data: [],
+      markLine: {
+        symbol: ['none', 'none'], // Remove arrows
+        label: {
+          show: true,
+          position: 'insideEndTop',
+          formatter: `${WHO_RECOMMENDATION}\u00A0kcal`,
+          distance: 10,
+          fontWeight: 'bold',
+        },
+        lineStyle: {
+          type: 'dashed',
+          width: 2,
+          opacity: 0.8,
+        },
+        data: [
+          {
+            yAxis: WHO_RECOMMENDATION,
+          },
+        ],
+        z: 1000,
+      },
+    },
+  ]
+
+  option.value = {
+    grid: {
+      left: '5%',
+      right: '5%',
+      bottom: '20%',
+      top: '80px',
+      containLabel: true,
+    },
+    animation: false,
+    height: props.height - 100,
+    title: {
+      text: chartTitle.value,
+      subtext: t('stats.total_participants', { count: journeyStats.current.total }),
+      left: 'center',
+      top: 0,
+      itemGap: 10,
+      textStyle: { fontSize: 16 },
+    },
+    tooltip: {
+      trigger: 'axis',
+      formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) => {
+        const list = Array.isArray(paramsList) ? paramsList : [paramsList]
+        let res = `${list[0]?.name}<br/>`
+        list.forEach((item) => {
+          if (item.seriesType === 'scatter') return
+          const value = item.value
+          if (Array.isArray(value) && value.length >= 5) {
+            const [lo, q1, med, q3, hi] = value as number[]
+            // An invisible placeholder box (all zeros, single-sample slot)
+            // contributes no row.
+            if (lo === 0 && q1 === 0 && med === 0 && q3 === 0 && hi === 0) return
+            const style = (item as unknown as { data?: { itemStyle?: { borderColor?: string } } })
+              .data?.itemStyle
+            const isReco = style?.borderColor === styleReco.borderColor
+            const name = isReco
+              ? t('stats.energy_journey.box_reco')
+              : t('stats.energy_journey.box_current')
+            res +=
+              `${item.marker} ${name}: ` +
+              `${formatKcal(lo)} / ${formatKcal(med)} / ${formatKcal(hi)}<br/>` +
+              `&nbsp;&nbsp;Q1 ${formatKcal(q1)} · Q3 ${formatKcal(q3)}<br/>`
+          } else if (typeof value === 'number') {
+            res += `${item.marker} ${item.seriesName}: ${formatKcal(value)}\u00A0kcal<br/>`
+          }
+        })
+        return res
+      },
+    },
+    legend: {
+      bottom: 0,
+      data: [
+        { name: t('stats.energy_journey.box_current'), icon: 'roundRect' },
+        ...(isPaired ? [{ name: t('stats.energy_journey.box_reco'), icon: 'roundRect' }] : []),
+        ...(showJitter.value ? [{ name: t('stats.energy_journey.box_jitter'), icon: 'circle' }] : []),
+        { name: t('stats.energy_journey.whoMin'), icon: 'rect', itemStyle: { color: 'black' } },
+      ],
+    },
+    xAxis: {
+      type: 'category',
+      data: slots,
+      name: props.xaxis || '',
+      nameLocation: 'middle',
+      nameGap: 30,
+      axisLabel: {
+        interval: 0,
+        width: 120,
+        overflow: 'break',
+      },
+    },
+    yAxis: {
+      type: 'value',
+      name: t('stats.energy_journey.yaxis'),
+      nameLocation: 'middle',
+      nameGap: 40,
+    },
+    series,
+  }
+}
+
+function boxGroupLabel(key: string): string {
+  if (key === 'total') return t(`stats.behavior_change_levers.labels.total`)
+  if (key === 'autres') return t(`stats.behavior_change_levers.labels.autres`)
+  return labelText(key)
+}
+
+function boxItemStyle(kind: 'current' | 'reco') {
+  if (kind === 'current') {
+    return { color: '#eef3f8', borderColor: '#6a88b0', borderWidth: 1.5 }
+  }
+  return { color: '#f3f8ee', borderColor: '#8fb87d', borderWidth: 1.5 }
+}
+
+function boxKeyOrder(keyField: BoxKeyField): (key: string) => number {
+  if (keyField === 'current_simple' || keyField === 'reco_simple') {
+    return simpleLabelSortOrder
+  }
+  if (keyField === 'current_complex') {
+    return complexLabelSortOrder
+  }
+  return modeSortOrder
 }
 
 function initComparisonChartOptions() {

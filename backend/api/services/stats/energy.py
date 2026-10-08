@@ -3,9 +3,14 @@ import numpy as np
 from api.models.query import (
     EnergyExpenditure, EnergyByLabel, EnergyBreakdown, JourneyEnergyGains,
     JourneyEnergyGainsByLabel, JourneyEnergyGainsBreakdown, JourneyEnergyLeg,
-    EnergyByJourney, JourneyEnergyStats,
+    EnergyBoxSample, EnergyBoxStats, EnergyByJourney, JourneyEnergyStats,
 )
-from api.services.stats.commons import BaseStatsService, RECO_SIMPLE_PREFIX, COMPLEX_LABEL_MERGE, merge_label_components
+from api.services.stats.commons import (
+    BaseStatsService,
+    RECO_SIMPLE_PREFIX,
+    COMPLEX_LABEL_MERGE,
+    merge_label_components,
+)
 from pydantic import BaseModel, Field
 
 # MET values (Metabolic Equivalent of Task) in kcal/hr for 70kg average person
@@ -180,7 +185,8 @@ class EnergyService(BaseStatsService):
         return JourneyEnergyStats(
             current=current_energy,
             reco=reco_energy,
-            gains=self._compute_journey_energy_gains(current_legs, reco_legs, simple_label_frame)
+            gains=self._compute_journey_energy_gains(current_legs, reco_legs, simple_label_frame),
+            boxes=self._compute_energy_boxes(df_v3, current_df, reco_df),
         )
 
     #
@@ -471,6 +477,106 @@ class EnergyService(BaseStatsService):
             )
             for row in df_combined.itertuples(index=False)
         ]
+
+    def _compute_energy_boxes(
+        self,
+        df_v3: pd.DataFrame,
+        current_df: pd.DataFrame | None,
+        reco_df: pd.DataFrame | None,
+    ) -> EnergyBoxStats:
+        """
+        Journey-level energy distributions for the boxplot charts: one sample
+        per (token, journey) instance, pairing the journey's current daily kcal
+        with its potential daily kcal under the recommended mode.
+
+        - current_kcal: the journey's own daily kcal, summed over its real-mode
+          legs (same figure the label breakdowns credit to one bucket).
+        - reco_kcal: the journey's post-switch daily kcal when it has a
+          new-style per-journey recommendation (typo.reco.reco_inter.N,
+          matched 1:1 with the journey of the same index); None when it does
+          not -- that journey stays as-is, the frontend falls back to current.
+          Legacy recommendations (typo.reco.reco_dt2) are person-level, carry
+          no journey index, and are excluded from the pairing.
+        - Grouping keys, one per (chart, modal split) combination:
+          current_simple / current_complex describe the journey as it is (the
+          current chart), reco_simple (typo.reco.reco_simple) and reco_mode
+          (the real recommended mode) describe its recommendation (the reco
+          chart).
+
+        Returns:
+            EnergyBoxStats with one EnergyBoxSample per journey instance
+        """
+        samples: list[EnergyBoxSample] = []
+        if current_df is None or current_df.empty:
+            return EnergyBoxStats(samples=[])
+
+        # Current kcal per (token, journey), summed over the journey's mode legs
+        journey_energy = current_df.groupby(['token', 'journey'])['energy_kcal'].sum().reset_index()
+
+        # Per-journey label frames, one column per grouping key
+        def labeled_frame(prefix: str, merge_labels: dict[str, str] | None, column: str):
+            frame = self._build_label_frame(df_v3, prefix)
+            if frame is None:
+                return None
+            if merge_labels:
+                frame = frame.assign(
+                    label=frame['label'].map(
+                        lambda label: merge_label_components(str(label), merge_labels)))
+            return frame.rename(columns={'label': column})
+
+        merged = journey_energy
+        for prefix, merge_labels, column in (
+            ('typo.reco.simple_labels', None, 'current_simple'),
+            ('typo.reco.complex_labels', COMPLEX_LABEL_MERGE, 'current_complex'),
+            (RECO_SIMPLE_PREFIX, None, 'reco_simple'),
+        ):
+            frame = labeled_frame(prefix, merge_labels, column)
+            if frame is not None:
+                merged = merged.merge(frame, on=['token', 'journey'], how='left')
+
+        # Post-switch kcal + real recommended mode per recommended journey,
+        # from the same tested pipeline as the reco breakdown (weighted
+        # reco_inter, travel-time mapping, mode normalization). Legacy
+        # recommendations (journey == 'legacy_N') carry no real journey index
+        # and never join one.
+        reco_energy_df = self._build_reco_energy_df(df_v3)
+        if reco_energy_df is not None and not reco_energy_df.empty:
+            reco_kcal = (
+                reco_energy_df.groupby(['token', 'journey'])['energy_kcal']
+                .sum()
+                .reset_index()
+                .rename(columns={'energy_kcal': 'reco_kcal'}))
+            reco_modes = (
+                reco_energy_df.groupby(['token', 'journey'])['reco_mode']
+                .agg(lambda modes: modes.iloc[0])
+                .reset_index())
+            merged = merged.merge(reco_kcal, on=['token', 'journey'], how='left')
+            merged = merged.merge(reco_modes, on=['token', 'journey'], how='left')
+
+        # Journeys with no per-journey recommendation have no key and no reco
+        # kcal: the frontend falls back to current for the potential box.
+        for column in ('current_simple', 'current_complex', 'reco_simple', 'reco_mode', 'reco_kcal'):
+            if column not in merged.columns:
+                merged[column] = None
+
+        for row in merged.itertuples(index=False):
+            samples.append(EnergyBoxSample(
+                token=str(row.token),
+                journey=str(row.journey),
+                current_simple=str(row.current_simple) if row.current_simple is not None
+                and not pd.isna(row.current_simple) else None,
+                current_complex=str(row.current_complex) if row.current_complex is not None
+                and not pd.isna(row.current_complex) else None,
+                reco_simple=str(row.reco_simple) if row.reco_simple is not None
+                and not pd.isna(row.reco_simple) else None,
+                reco_mode=str(row.reco_mode) if row.reco_mode is not None
+                and not pd.isna(row.reco_mode) else None,
+                current_kcal=float(row.energy_kcal),
+                reco_kcal=float(row.reco_kcal) if row.reco_kcal is not None
+                and not pd.isna(row.reco_kcal) else None,
+            ))
+
+        return EnergyBoxStats(samples=samples)
 
     def _group_current_energy_by_label(
         self, df_combined: pd.DataFrame, source_df: pd.DataFrame, label_prefix: str,

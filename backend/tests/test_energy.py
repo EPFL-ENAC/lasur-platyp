@@ -260,6 +260,40 @@ def test_compute_journey_energy_stats_reco_breakdown():
         assert not simple_labels.issubset(real_modes) or len(real_modes) == 0
 
 
+def test_compute_journey_energy_boxes():
+    """Journey-level box samples: one per (token, journey), pairing current
+    and potential (reco) kcal; grouping keys per (chart, modal split)."""
+    df = load_test_dataframe()
+    service = EnergyService(df)
+
+    result = service.compute_journey_energy_stats()
+    samples = result.boxes.samples
+
+    # One sample per journey instance
+    assert len(samples) > 0
+    keys = {(s.token, s.journey) for s in samples}
+    assert len(keys) == len(samples)
+
+    for sample in samples:
+        assert sample.current_kcal >= 0
+        # reco_kcal: None (no per-journey recommendation) or a usable kcal figure
+        if sample.reco_kcal is not None:
+            assert sample.reco_kcal >= 0
+
+    # Samples join on (token, journey) and must not duplicate current energy:
+    # every sample's current_kcal is one journey's full figure, so the sum
+    # over samples equals the per-leg current total (one row per journey).
+    current_df = service._build_current_energy_df(df)
+    legs_total = sum(leg.energy_kcal
+                     for leg in service._current_energy_legs(current_df) if current_df is not None)
+    sample_total = sum(s.current_kcal for s in samples)
+    assert abs(legs_total - sample_total) < 0.01
+
+    # Legacy-only fixture: no per-journey recommendations, so no reco keys
+    if all(s.reco_mode is None for s in samples):
+        assert all(s.reco_kcal is None for s in samples)
+
+
 def test_journey_energy_stats_real_mode_invariant():
     """
     The underlying per-participant kcal total must not depend on which
