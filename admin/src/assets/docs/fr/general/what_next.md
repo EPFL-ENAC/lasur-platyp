@@ -1,6 +1,6 @@
 ### Quelles prochaines étapes pour votre stratégie mobilité ?
 
-Une fois un premier diagnostic mobilité effectué avec Mobilyse, vous avez une vue d'ensemble de l'état actuel de la mobilité domicile-travail et professionnelle des collaborateur·trice·s. Cela inclue notamment les modes de transports actuellement utilisés, les distances parcourues, les équipements de mobilité ou encore les contraintes, mais aussi les impacts carbone ou sanitaire de la mobilité des participant·e·s.
+Une fois un premier diagnostic mobilité effectué avec Mobilyse, vous avez une vue d'ensemble de l'état actuel de la mobilité domicile-travail et professionnelle des collaborateur·trice·s. Cela inclut notamment les modes de transports actuellement utilisés, les distances parcourues, les équipements de mobilité ou encore les contraintes, mais aussi les impacts carbone ou sanitaire de la mobilité des participant·e·s.
 Vous avez également, via la deuxième section du Tableau de bord, une vue d'ensemble des potentiels changements possibles au vu des situations, désirs et contraintes des collaborateur·trice·s.
 Cela vous permet de poursuivre sereinement, si vous le souhaitez, la démarche de plan de mobilité d'entreprise, qui comprend les étapes suivantes:
 

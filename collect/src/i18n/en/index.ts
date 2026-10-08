@@ -336,7 +336,7 @@ export default {
   isochrones: {
     accessible_areas:
       'Did you know that you can access the following areas and points of interest {mode}?',
-    map_description: 'The map below shows the area you can reach with {mode} from your workplace.',
+    map_description: 'The map below shows the area you can reach with {mode} from your home.',
     pois: 'Points of interest',
     modes: {
       walk: 'on foot',

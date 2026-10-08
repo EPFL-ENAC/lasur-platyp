@@ -1111,6 +1111,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   email: 'Email',
   enabled: 'Enabled',
   end_date: 'End Date',
+  end_date_after_start: 'The end date must be after the start date',
   error_not_found: 'Oops. Nothing here...',
   field_required: 'This field is required',
   first_name: 'First Name',
