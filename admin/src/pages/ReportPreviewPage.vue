@@ -250,7 +250,15 @@
         <q-markdown :src="t('generated_report.final_page_body')" />
 
         <div class="text-center q-mt-xl">
-          <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE.svg" alt="graph" style="max-width: 100%" />
+          <img
+            :src="
+              locale === 'fr'
+                ? '/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_FR.svg'
+                : '/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_EN.svg'
+            "
+            alt="graph"
+            style="max-width: 100%"
+          />
         </div>
       </report-page>
     </div>
