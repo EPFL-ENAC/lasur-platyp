@@ -1118,6 +1118,7 @@ Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en c
     'Seuls les super administrateurs peuvent voir les enregistrements directement sur Mobilyse. Cependant, ils sont toujours disponibles pour téléchargement sur le bouton ci-dessus',
   close: 'Fermer',
   cancel: 'Annuler',
+  confirm: 'Confirmer',
   companies: 'Organisations',
   company_campaign: 'Organisation (campagne)',
   company_removed: 'Organisation supprimée',

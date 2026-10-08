@@ -1095,6 +1095,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
     'Only super admins can see records directly on Mobilyse. However, they are still available for download on the button above',
   close: 'Close',
   cancel: 'Cancel',
+  confirm: 'Confirm',
   companies: 'Companies',
   company_campaign: 'Company (campaign)',
   company_removed: 'Company removed',
