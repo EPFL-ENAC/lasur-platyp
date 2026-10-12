@@ -65,10 +65,10 @@ const introductionText = computed(() => (locale.value === 'fr' ? IntroductionFr 
   height: 36px;
   min-height: 36px;
   padding: 0 12px;
-  border: 1px solid $brand-purple-100;
+  border: 1px solid $brand-secondary-100;
   border-radius: 8px; // radius-default
   background-color: white;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
   font-size: 13px;
   font-weight: 600;
   box-shadow:
@@ -78,7 +78,7 @@ const introductionText = computed(() => (locale.value === 'fr' ? IntroductionFr 
 
 .q-btn.doc-btn :deep(.q-icon) {
   font-size: 16px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .q-btn.doc-btn :deep(.q-btn__content) {
@@ -86,8 +86,8 @@ const introductionText = computed(() => (locale.value === 'fr' ? IntroductionFr 
 }
 
 .body--dark .q-btn.doc-btn {
-  background-color: $brand-purple-800;
-  border-color: $brand-purple-200;
-  color: $brand-purple-50;
+  background-color: $brand-secondary-800;
+  border-color: $brand-secondary-200;
+  color: $brand-secondary-50;
 }
 </style>

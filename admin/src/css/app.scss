@@ -23,6 +23,35 @@
   font-display: swap; /* Controls how the font is displayed while loading */
 }
 
+// Brand palettes. Neutral defaults with zero specificity (:where), so that
+// branding/branding.css overrides them whatever the stylesheet order.
+:where(:root) {
+  --brand-primary-25: #f5fbff;
+  --brand-primary-50: #f0f9ff;
+  --brand-primary-100: #e0f2fe;
+  --brand-primary-200: #bae6fd;
+  --brand-primary-300: #a5dcfd;
+  --brand-primary-400: #91d5fc;
+  --brand-primary-500: #7dd3fc;
+  --brand-primary-600: #38bdf8;
+  --brand-primary-700: #0369a1;
+  --brand-primary-800: #075985;
+  --brand-primary-900: #0c4a6e;
+  --brand-primary-950: #082f49;
+  --brand-secondary-25: #fcfcfd;
+  --brand-secondary-50: #f8fafc;
+  --brand-secondary-100: #e2e8f0;
+  --brand-secondary-200: #cbd5e1;
+  --brand-secondary-300: #94a3b8;
+  --brand-secondary-400: #64748b;
+  --brand-secondary-500: #5b6b80;
+  --brand-secondary-600: #475569;
+  --brand-secondary-700: #334155;
+  --brand-secondary-800: #1e293b;
+  --brand-secondary-900: #0f172a;
+  --brand-secondary-950: #020617;
+}
+
 body {
   font-family: Nunito, Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision;
@@ -39,24 +68,24 @@ a {
 }
 
 a.q-markdown--link,
-a.modus {
+a.brand-link {
   text-decoration: underline;
-  text-decoration-color: $brand-yellow-800;
+  text-decoration-color: $brand-primary-800;
   text-decoration-thickness: min(0.08em, 0.1rem);
   text-underline-offset: 0.14em;
   color: black;
 }
 
 .body--dark a.q-markdown--link,
-.body--dark a.modus {
-  text-decoration-color: $brand-yellow-300;
+.body--dark a.brand-link {
+  text-decoration-color: $brand-primary-300;
   color: white;
 }
 
 a:hover.q-markdown--link,
-a:hover.modus {
+a:hover.brand-link {
   text-decoration: underline;
-  color: $brand-yellow-300;
+  color: $brand-primary-300;
 }
 
 .q-markdown--heading-h2,
@@ -72,7 +101,7 @@ a:hover.modus {
 .q-markdown--heading-h5,
 .q-markdown--heading-h6 {
   font-weight: 700;
-  color: $brand-yellow-600;
+  color: $brand-primary-600;
 }
 
 .body--dark .q-markdown--heading-h1,
@@ -81,7 +110,7 @@ a:hover.modus {
 .body--dark .q-markdown--heading-h4,
 .body--dark .q-markdown--heading-h5,
 .body--dark .q-markdown--heading-h6 {
-  color: $brand-yellow-300;
+  color: $brand-primary-300;
 }
 
 .text-help {
@@ -215,9 +244,9 @@ li + li {
 // yellow surface with a 1px border one step darker.
 .q-btn.bg-primary,
 .q-btn.bg-accent {
-  background: $brand-yellow-400 !important;
-  color: $brand-yellow-800 !important;
-  border: 1px solid $brand-yellow-500;
+  background: $brand-primary-400 !important;
+  color: $brand-primary-800 !important;
+  border: 1px solid $brand-primary-500;
 }
 
 // Neutral variant: buttons that carry no color of their own. White surface,
@@ -225,8 +254,8 @@ li + li {
 // the header controls). Quasar paints its own shadow on ::before, so clear it.
 .q-btn:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--round):not([class*='bg-']) {
   background: white;
-  color: $brand-purple-800;
-  border: 1px solid $brand-purple-100;
+  color: $brand-secondary-800;
+  border: 1px solid $brand-secondary-100;
   box-shadow:
     0 1px 2px 0 rgba(10, 13, 18, 0.05),
     inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
@@ -237,14 +266,14 @@ li + li {
 }
 
 .body--dark .q-btn:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--round):not([class*='bg-']) {
-  background: $brand-purple-800;
-  border-color: $brand-purple-200;
-  color: $brand-purple-50;
+  background: $brand-secondary-800;
+  border-color: $brand-secondary-200;
+  color: $brand-secondary-50;
 }
 
 // Destructive icon button: quiet by default, red on hover
 .q-btn.btn-danger-icon {
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .q-btn.btn-danger-icon .q-icon {
@@ -257,7 +286,7 @@ li + li {
 }
 
 .body--dark .q-btn.btn-danger-icon {
-  color: $brand-purple-200;
+  color: $brand-secondary-200;
 }
 
 // Typography, applied to Quasar's own text classes so every page reads the
@@ -272,7 +301,7 @@ li + li {
   font-weight: 600;
   line-height: 20px;
   letter-spacing: 0;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .text-subtitle2 .q-breadcrumbs__el {
@@ -285,7 +314,7 @@ li + li {
   font-weight: 700;
   line-height: 40px;
   letter-spacing: -0.01em;
-  color: $brand-yellow-600;
+  color: $brand-primary-600;
 }
 
 .text-h5 {
@@ -293,7 +322,7 @@ li + li {
   font-weight: 600;
   line-height: 36px;
   letter-spacing: -0.01em;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .text-h6 {
@@ -301,7 +330,7 @@ li + li {
   font-weight: 700;
   line-height: 28px;
   letter-spacing: 0;
-  color: $brand-yellow-600;
+  color: $brand-primary-600;
 }
 
 .text-subtitle1,
@@ -311,22 +340,22 @@ li + li {
   font-weight: 400;
   line-height: 28px;
   letter-spacing: 0;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .body--dark .text-subtitle2 {
-  color: $brand-purple-200;
+  color: $brand-secondary-200;
 }
 
 .body--dark .text-h4,
 .body--dark .text-h6 {
-  color: $brand-yellow-300;
+  color: $brand-primary-300;
 }
 
 .body--dark .text-h5,
 .body--dark .text-subtitle1,
 .body--dark .q-markdown.text-subtitle1 p {
-  color: $brand-purple-50;
+  color: $brand-secondary-50;
 }
 
 // "Read more" toggle: yellow text link with a chevron
@@ -335,7 +364,7 @@ a.read-more {
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
-  color: $brand-yellow-700;
+  color: $brand-primary-700;
 }
 
 a.read-more .q-icon {
@@ -343,7 +372,7 @@ a.read-more .q-icon {
 }
 
 .body--dark a.read-more {
-  color: $brand-yellow-300;
+  color: $brand-primary-300;
 }
 
 .title-bar {

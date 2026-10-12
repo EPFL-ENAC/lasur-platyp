@@ -3,12 +3,12 @@
     <q-page-container>
       <q-page class="flex flex-center auth-page">
         <div class="background-container">
-          <img src="/admin/PATTERN-VIOLET.svg" aria-hidden="true" class="background-pattern" />
+          <img src="/admin/branding/pattern.svg" aria-hidden="true" class="background-pattern" />
           <div aria-hidden="true" class="background-dots"></div>
         </div>
         <q-card :style="$q.screen.lt.sm ? { width: '80%' } : { width: '400px' }">
           <q-card-actions class="flex justify-center q-mt-xl q-ml-xl q-mr-xl q-mb-xs">
-            <img src="/admin/LOGO-VIOLET.svg" height="50px" />
+            <img src="/admin/branding/logo.svg" height="50px" />
           </q-card-actions>
           <q-card-actions class="flex justify-center q-mx-lg q-my-lg q-pa-none">
             <q-btn
@@ -95,7 +95,7 @@ async function onLogin() {
 // Dot grid, same as the main layout: 3px dots on a 30px pitch, dissolving
 // towards the left and right sides via a mask -- no image asset needed.
 .background-dots {
-  --dot-color: #{$brand-purple-200};
+  --dot-color: #{$brand-secondary-200};
   --dot-fade: linear-gradient(90deg, transparent 0%, #000 45%, #000 55%, transparent 100%);
 
   position: absolute;
@@ -110,6 +110,6 @@ async function onLogin() {
 }
 
 .body--dark .background-dots {
-  --dot-color: #{$brand-purple-100};
+  --dot-color: #{$brand-secondary-100};
 }
 </style>

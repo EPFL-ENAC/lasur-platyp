@@ -1,38 +1,38 @@
 // Quasar SCSS (& Sass) Variables
 // --------------------------------------------------
 
-$brand-yellow-25: #fffcf4;
-$brand-yellow-50: #fef8e7;
-$brand-yellow-100: #fdf1cf;
-$brand-yellow-200: #fbe29f;
-$brand-yellow-300: #f8d36f;
-$brand-yellow-400: #f3c65f;
-$brand-yellow-500: #e2b24a;
-$brand-yellow-600: #c79232;
-$brand-yellow-700: #9f7324;
-$brand-yellow-800: #77561c;
-$brand-yellow-900: #4f3913;
-$brand-yellow-950: #2c1f09;
+$brand-primary-25: var(--brand-primary-25);
+$brand-primary-50: var(--brand-primary-50);
+$brand-primary-100: var(--brand-primary-100);
+$brand-primary-200: var(--brand-primary-200);
+$brand-primary-300: var(--brand-primary-300);
+$brand-primary-400: var(--brand-primary-400);
+$brand-primary-500: var(--brand-primary-500);
+$brand-primary-600: var(--brand-primary-600);
+$brand-primary-700: var(--brand-primary-700);
+$brand-primary-800: var(--brand-primary-800);
+$brand-primary-900: var(--brand-primary-900);
+$brand-primary-950: var(--brand-primary-950);
 
-$brand-purple-25: #f9f9f9;
-$brand-purple-50: #f7f7f7;
-$brand-purple-100: #dcc2cf;
-$brand-purple-200: #bca2b0;
-$brand-purple-300: #a28594;
-$brand-purple-400: #88697a;
-$brand-purple-500: #6d5162;
-$brand-purple-600: #573e4d;
-$brand-purple-700: #49313e;
-$brand-purple-800: #382430;
-$brand-purple-900: #291823;
-$brand-purple-950: #0c0e12;
+$brand-secondary-25: var(--brand-secondary-25);
+$brand-secondary-50: var(--brand-secondary-50);
+$brand-secondary-100: var(--brand-secondary-100);
+$brand-secondary-200: var(--brand-secondary-200);
+$brand-secondary-300: var(--brand-secondary-300);
+$brand-secondary-400: var(--brand-secondary-400);
+$brand-secondary-500: var(--brand-secondary-500);
+$brand-secondary-600: var(--brand-secondary-600);
+$brand-secondary-700: var(--brand-secondary-700);
+$brand-secondary-800: var(--brand-secondary-800);
+$brand-secondary-900: var(--brand-secondary-900);
+$brand-secondary-950: var(--brand-secondary-950);
 
-$primary: $brand-yellow-500;
-$secondary: $brand-purple-600;
-$accent: $brand-yellow-500;
+$primary: $brand-primary-500;
+$secondary: $brand-secondary-600;
+$accent: $brand-primary-500;
 
-$dark: $brand-purple-800;
-$dark-page: $brand-purple-800;
+$dark: $brand-secondary-800;
+$dark-page: $brand-secondary-800;
 
 $positive: #21ba45;
 $negative: #c10015;
@@ -55,19 +55,19 @@ $button-shadow-active:
 
 // Theme Tokens
 body {
-  --nav-bg: #{$brand-yellow-100};
-  --foreground-color: #{$brand-purple-600};
-  --foreground-bg: #{$brand-purple-600};
-  --title-color: #{$brand-yellow-700};
-  --field-color: #{$brand-purple-600};
-  --field-label-color: #{$brand-purple-600};
+  --nav-bg: #{$brand-primary-100};
+  --foreground-color: #{$brand-secondary-600};
+  --foreground-bg: #{$brand-secondary-600};
+  --title-color: #{$brand-primary-700};
+  --field-color: #{$brand-secondary-600};
+  --field-label-color: #{$brand-secondary-600};
   --field-bg: #{'white'};
-  --secondary-border-color: #{$brand-purple-200};
-  --muted-color: #{$brand-purple-300};
-  --half-muted-color: #{$brand-purple-400};
-  --super-muted-color: #{$brand-purple-100};
-  --hint-color: #{$brand-purple-400};
-  --primary-muted-color: #{$brand-yellow-200};
+  --secondary-border-color: #{$brand-secondary-200};
+  --muted-color: #{$brand-secondary-300};
+  --half-muted-color: #{$brand-secondary-400};
+  --super-muted-color: #{$brand-secondary-100};
+  --hint-color: #{$brand-secondary-400};
+  --primary-muted-color: #{$brand-primary-200};
   --card-bg: #{'white'};
   --success-color: #168654;
   --success-bg: #f5fbf9;
@@ -75,20 +75,20 @@ body {
 }
 
 body.body--dark {
-  --nav-bg: #{$brand-purple-600};
-  --foreground-color: #{$brand-yellow-500};
-  --foreground-bg: #{$brand-yellow-500};
-  --title-color: #{$brand-yellow-500};
-  --field-color: #{$brand-yellow-50};
-  --field-label-color: #{$brand-yellow-50};
-  --field-bg: #{$brand-purple-700};
-  --secondary-border-color: #{$brand-purple-300};
-  --muted-color: #{$brand-purple-300};
-  --half-muted-color: #{$brand-purple-200};
-  --super-muted-color: #{$brand-purple-400};
-  --hint-color: #{$brand-purple-200};
-  --primary-muted-color: #{$brand-yellow-300};
-  --card-bg: #{$brand-purple-800};
+  --nav-bg: #{$brand-secondary-600};
+  --foreground-color: #{$brand-primary-500};
+  --foreground-bg: #{$brand-primary-500};
+  --title-color: #{$brand-primary-500};
+  --field-color: #{$brand-primary-50};
+  --field-label-color: #{$brand-primary-50};
+  --field-bg: #{$brand-secondary-700};
+  --secondary-border-color: #{$brand-secondary-300};
+  --muted-color: #{$brand-secondary-300};
+  --half-muted-color: #{$brand-secondary-200};
+  --super-muted-color: #{$brand-secondary-400};
+  --hint-color: #{$brand-secondary-200};
+  --primary-muted-color: #{$brand-primary-300};
+  --card-bg: #{$brand-secondary-800};
 }
 
 // Global Class Definitions
@@ -147,7 +147,7 @@ body.body--dark {
 // Quasar Overrides using variables
 
 .bg-secondary-ultra-light {
-  background-color: $brand-purple-100 !important;
+  background-color: $brand-secondary-100 !important;
 }
 
 .q-badge.bg-primary,
@@ -171,7 +171,6 @@ body.body--dark {
 .q-card:has(.q-checkbox[aria-checked='true']) {
   border-color: $primary !important;
 }
-
 
 // Empty box is drawn as a hairline; once ticked the fill hides the border
 // anyway, so only the unchecked state needs thinning down from Quasar's 2px.

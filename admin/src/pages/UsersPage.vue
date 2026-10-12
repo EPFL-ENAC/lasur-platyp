@@ -34,7 +34,7 @@
         </template>
         <template v-slot:body-cell-email="props">
           <q-td :props="props">
-            <a :href="`mailto:${props.row.email}`" class="modus">{{ props.row.email }}</a>
+            <a :href="`mailto:${props.row.email}`" class="brand-link">{{ props.row.email }}</a>
           </q-td>
         </template>
         <template v-slot:body-cell-name="props">

@@ -96,7 +96,15 @@ const commuteEmissionsDescriptionExample =
 
 export default {
   main: {
-    brand: 'Mobilyse',
+    // Branding defaults, overridden at runtime by branding/branding.js
+    brand: 'Platform',
+    operator: 'the platform provider',
+    authors: 'the platform provider',
+    links: {
+      website: 'https://github.com/EPFL-ENAC/lasur-platyp',
+      terms: '',
+      privacy: '',
+    },
   },
   company: {
     label: 'Organisation',
@@ -121,9 +129,9 @@ export default {
     contact_info: 'Contact Information',
     info_url: 'Information link',
     info_url_hint: 'Provide a link to more information about the organisation mobility options.',
-    can_be_cited: 'Can be cited as a mobilyse user',
+    can_be_cited: "Can be cited as a @:{'main.brand'} user",
     can_be_cited_toggle:
-      'I do not want the Modus Foundation to cite the name of my organisation as a user of mobilyse',
+      "I do not want @:{'main.operator'} to cite the name of my organisation as a user of @:{'main.brand'}",
     your_role: 'Your role',
     roles: {
       admin: 'Administrator',
@@ -144,9 +152,9 @@ export default {
       'Here you can specify the measures already in place to support your employees’ mobility. The measures listed are a selection of "default" measures, as well as the "custom measures" of your organisation. If a measure is missing, pick "Add a new measure…" at the end of the list to create it: it will be added to the custom measures of the organisation.',
     rewards: {
       toggle: 'I want to reward participants.',
-      hint: 'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, mobilyse can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
+      hint: 'Rewarding employees who respond to the questionnaire (either systematically or via a draw / lottery) helps to achieve a higher response rate. If you wish to reward participants, @:{\'main.brand\'} can provide a "certificate" (PDF document) at the end of the questionnaire completion for each respondent, which will prove their participation. The respondent can then forward this certificate to the person in charge of organizing the rewards. We suggest that you customize the message that will be displayed on this certificate, explaining the procedure to follow (who to forward this proof to, how to claim their reward, what are the terms of the lottery...).',
       default_message:
-        'Congratulations and thank you for your participation in the mobilyse survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able get [...] as a reward.',
+        "Congratulations and thank you for your participation in the @:{'main.brand'} survey! Your responses are valuable and will help us better understand how to assist you with your daily mobility. By downloading this document and forwarding it to [...], you will be able get [...] as a reward.",
       message_placeholder: 'Message for participants',
     },
     contact_name: 'Contact Name',
@@ -195,7 +203,7 @@ export default {
       defaultContactName: 'CONTACT_NAME',
       template: `Dear colleagues,
 
-Mobilyse is a tool developed by the Modus Foundation and EPFL to help organisations tailor the help they provide to their employees for daily mobility. We wish to use this tool to understand how best to support you in your daily mobility, whether for commuting or for business trips. 🚲🚃🚶🚈 To do so, we need to better understand your travel habits and aspirations and therefore invite you to participate in the following survey. It will take no more than 10\u00A0minutes and will provide you with travel suggestions straight away:
+@:{'main.brand'} is a tool developed by @:{'main.authors'} to help organisations tailor the help they provide to their employees for daily mobility. We wish to use this tool to understand how best to support you in your daily mobility, whether for commuting or for business trips. 🚲🚃🚶🚈 To do so, we need to better understand your travel habits and aspirations and therefore invite you to participate in the following survey. It will take no more than 10\u00A0minutes and will provide you with travel suggestions straight away:
 
 [{surveyLink}]({surveyLink})
 
@@ -206,7 +214,7 @@ Why take part?
 - Share your opinion on the support provided for your mobility, and help improve it 🙋
 - Contribute to improving a free, open-access tool 🎁
 
-The survey is anonymous and no personal data will be recorded. 🔐 Please note that you can select the language (FR/EN) in the top right-hand corner. To find out more about mobilyse, please visit: https://modus-ge.ch/project/mobilyse/.
+The survey is anonymous and no personal data will be recorded. 🔐 Please note that you can select the language (FR/EN) in the top right-hand corner. To find out more about @:{'main.brand'}, please visit: @:{'main.links.website'}.
 
 Thank you for your valuable contribution! If you have any questions, please contact: [{contactEmail}](mailto:{contactEmail}).
 
@@ -218,22 +226,23 @@ Thank you for your valuable contribution! If you have any questions, please cont
   },
   docs: {
     title: 'Documentation',
-    hint: 'Find here all the documentation to help you use Mobilyse administration interface.',
+    hint: "Find here all the documentation to help you use @:{'main.brand'} administration interface.",
     general: {
       title: 'General',
       privacy: {
         title: 'Privacy and data protection',
-        caption: 'Learn about how Mobilyse handles data and ensures the privacy of participants',
+        caption:
+          "Learn about how @:{'main.brand'} handles data and ensures the privacy of participants",
       },
       vpn: {
         title: 'VPN and firewall issues',
         caption:
-          'Learn about potential VPN and firewall issues that may affect the use of Mobilyse',
+          "Learn about potential VPN and firewall issues that may affect the use of @:{'main.brand'}",
       },
       terms: {
         title: 'Terms of use',
         caption:
-          'Learn about the terms of use for Mobilyse and your responsibilities as an administrator',
+          "Learn about the terms of use for @:{'main.brand'} and your responsibilities as an administrator",
       },
       what_next: {
         title: 'What to do next?',
@@ -249,7 +258,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       title: 'Organisations',
       create: {
         title: 'How to create an organisation?',
-        caption: 'Learn how to create a new organisation in Mobilyse',
+        caption: "Learn how to create a new organisation in @:{'main.brand'}",
       },
       settings: {
         title: 'How to manage organisation settings?',
@@ -264,8 +273,9 @@ Thank you for your valuable contribution! If you have any questions, please cont
         caption: 'Solutions to frequently encountered problems',
       },
       best_practices: {
-        title: 'Best practices for using Mobilyse',
-        caption: 'Tips and recommendations to make the most of Mobilyse for your organisation',
+        title: "Best practices for using @:{'main.brand'}",
+        caption:
+          "Tips and recommendations to make the most of @:{'main.brand'} for your organisation",
       },
       mobility_advisor: {
         title: 'How to use the mobility advisor?',
@@ -302,7 +312,8 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       best_practices: {
         title: 'Best practices for campaign management',
-        caption: 'Tips and recommendations to make the most of the campaign features in Mobilyse',
+        caption:
+          "Tips and recommendations to make the most of the campaign features in @:{'main.brand'}",
       },
       dashboard: {
         title: 'How to use the campaign dashboard?',
@@ -447,7 +458,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
       },
       mobility_potentials: {
         title: 'Mobility potentials',
-        description: `This section presents the personalized recommendations suggested to participants. Mobilyse indicates which modes are most likely to suit employees based on their habits, constraints, preferences, residential and work location… Some graphs also illustrate the potential gains in terms of impact on greenhouse gas emissions and health, in the event that all participants adopt the recommendations formulated by mobilyse.`,
+        description: `This section presents the personalized recommendations suggested to participants. @:{'main.brand'} indicates which modes are most likely to suit employees based on their habits, constraints, preferences, residential and work location… Some graphs also illustrate the potential gains in terms of impact on greenhouse gas emissions and health, in the event that all participants adopt the recommendations formulated by @:{'main.brand'}.`,
         insights: {
           most_potential:
             'The mode with the highest potential for users is: **{mode}** (recommended to about **{percentage}%** of respondents)',
@@ -544,7 +555,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     reco_inter: {
       title: 'Potential modal split (detailed)',
       description:
-        'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the mode of transport recommended for their home-to-work commute.',
+        "This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by @:{'main.brand'}. Each participant is assigned the mode of transport recommended for their home-to-work commute.",
       labels: {
         ...transportationModes,
       },
@@ -557,7 +568,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     reco_simple: {
       title: 'Potential modal split (simple)',
       description:
-        'This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by Mobilyse. Each participant is assigned the simple mobility typology recommended for their home-to-work commute.',
+        "This chart shows the potential modal split among participants, if all participants were to follow the recommendations made to them by @:{'main.brand'}. Each participant is assigned the simple mobility typology recommended for their home-to-work commute.",
       labels: {
         ...simpleShortLabels,
       },
@@ -825,7 +836,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         'This graph shows the daily energy expenditure associated with each participant’s commute to and from work, in kcal/day, based on the compendium of physical activities, which lists energy expenditure by activity and duration (link: https://pacompendium.com/). Each bar represents one participant.',
       title_reco: 'Potential Physical Activity Diagram following Recommendations',
       description_reco:
-        'This graph shows the potential daily energy expenditure that would result from each participant’s commute to and from work, in kcal/day, assuming that all participants follow the recommendations made by Mobilyse. The energy expenditure figures are based on the compendium of physical activities, which provides energy expenditure figures by activity and duration. (link: https://pacompendium.com/). Each bar represents one participant.',
+        "This graph shows the potential daily energy expenditure that would result from each participant’s commute to and from work, in kcal/day, assuming that all participants follow the recommendations made by @:{'main.brand'}. The energy expenditure figures are based on the compendium of physical activities, which provides energy expenditure figures by activity and duration. (link: https://pacompendium.com/). Each bar represents one participant.",
       title_share: 'Transport modes with highest potential energy gains',
       description_share:
         'This chart shows which modes of transport have the most potential for increased physical activity.',
@@ -886,15 +897,15 @@ Thank you for your valuable contribution! If you have any questions, please cont
         total: 'Total',
       },
       texts: {
-        info: 'This graph shows the motivation of participants to adopt the recommendations made by Mobilyse for their home-work travel.',
+        info: "This graph shows the motivation of participants to adopt the recommendations made by @:{'main.brand'} for their home-work travel.",
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific:
           'Overall, about {percentage}% (combined rather motivated and very motivated) of participants are motivated to adopt the recommendations made to them.',
         comparison:
-          'This graph compares participants’ motivations for using the modes of transport recommended by Mobilyse during the various selected campaigns. For example, approximately {lastPercent}% of participants who were recommended the {mode} mode during {lastGroup} are somewhat motivated* to adopt this recommendation, compared to approximately {prevPercent}% of participants during {prevGroup}.\n\n&ast; rather motivated or very motivated',
+          "This graph compares participants’ motivations for using the modes of transport recommended by @:{'main.brand'} during the various selected campaigns. For example, approximately {lastPercent}% of participants who were recommended the {mode} mode during {lastGroup} are somewhat motivated* to adopt this recommendation, compared to approximately {prevPercent}% of participants during {prevGroup}.\n\n&ast; rather motivated or very motivated",
         comparison_all_modes:
-          'This graph compares participants’ motivations for using the modes of transport recommended by Mobilyse during the various selected campaigns. For example, across all modes, approximately {lastPercent}% of participants in {lastGroup} are somewhat motivated* to adopt the recommendations made to them, compared to approximately {prevPercent}% of participants in {prevGroup}.\n\n&ast; rather motivated or very motivated',
+          "This graph compares participants’ motivations for using the modes of transport recommended by @:{'main.brand'} during the various selected campaigns. For example, across all modes, approximately {lastPercent}% of participants in {lastGroup} are somewhat motivated* to adopt the recommendations made to them, compared to approximately {prevPercent}% of participants in {prevGroup}.\n\n&ast; rather motivated or very motivated",
       },
     },
     equipments_by_recommendations: {
@@ -1021,7 +1032,7 @@ Last updated: August 2026.`,
   },
   database_data_protection_notice: {
     title: 'Data Protection Notice',
-    content: `The database you are about to receive as part of the campaign launched via the Mobilyse tool contains disaggregated data derived from responses provided voluntarily and anonymously by your employees.
+    content: `The database you are about to receive as part of the campaign launched via the @:{'main.brand'} tool contains disaggregated data derived from responses provided voluntarily and anonymously by your employees.
 
 However, it cannot be ruled out that certain disaggregated data may, indirectly, allow one or more individuals to be identified.
 In this case, the report may contain data subject to applicable data protection legislation (such as the Federal Data Protection Act, or the GDPR if employees are based in the EU), if you choose to cross this database with other external data in your possession.
@@ -1034,7 +1045,7 @@ Last updated: March 2026`,
   },
   report_data_protection_notice: {
     title: 'Data Protection Notice',
-    content: `The report you are about to receive as part of the campaign launched via the Mobilyse tool contains aggregated data derived from responses provided voluntarily and anonymously by your employees.
+    content: `The report you are about to receive as part of the campaign launched via the @:{'main.brand'} tool contains aggregated data derived from responses provided voluntarily and anonymously by your employees.
 
 However, depending on the size of your company and the structure of the responses, it cannot be ruled out that certain aggregated data may, directly or indirectly, allow one or more individuals to be identified.
 In this case, the report may contain personal data, which is subject to applicable data protection legislation (such as the Federal Data Protection Act, or the GDPR if employees are based in the EU).
@@ -1056,12 +1067,6 @@ Furthermore, we recommend that you adapt your processing register accordingly.
     loading_record: 'Error loading record. It may not exist or you do not have access to it.',
     pdf_export_failed: 'Error exporting PDF. Please try again later.',
     no_charts_to_export: 'No charts to export as PDF.',
-  },
-  footer: {
-    modus_name: 'Fondation Modus',
-    modus_tagline: 'Promoting sustainable mobility in the Greater Geneva',
-    lasur: 'Laboratory Of Urban Sociology (LASUR)',
-    it4r: 'ENAC-IT4R',
   },
   generated_report: {
     title: 'Generated mobility report',
@@ -1092,7 +1097,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   records: 'Records',
   no_records: 'No records',
   records_not_super_admin:
-    'Only super admins can see records directly on Mobilyse. However, they are still available for download on the button above',
+    "Only super admins can see records directly on @:{'main.brand'}. However, they are still available for download on the button above",
   close: 'Close',
   cancel: 'Cancel',
   confirm: 'Confirm',
@@ -1122,11 +1127,11 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   group: 'Group',
   help: 'Help',
   identifier: 'Identifier',
-  welcome: 'Welcome to the Mobilyse administration interface!',
+  welcome: "Welcome to the @:{'main.brand'} administration interface!",
   welcome_subtitle:
-    'Use the menu to navigate through the different sections and manage organisations, campaigns, users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of Mobilyse.',
-  introduction_text: `Welcome to the Mobilyse administration interface!
-Use the menu to navigate through the different sections, manage organisations, campaigns, and users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of Mobilyse.`,
+    "Use the menu to navigate through the different sections and manage organisations, campaigns, users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of @:{'main.brand'}.",
+  introduction_text: `Welcome to the @:{'main.brand'} administration interface!
+Use the menu to navigate through the different sections, manage organisations, campaigns, and users, and review mobility statistics. The Documentation section is also available to inform and guide you through the various features of @:{'main.brand'}.`,
   label_en: 'Label (EN)',
   label_fr: 'Label (FR)',
   last_modified: 'Last Modified',

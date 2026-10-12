@@ -2,42 +2,33 @@
   <q-footer class="app-footer">
     <div class="app-footer__content">
       <div class="app-footer__col">
-        <a href="https://modus-ge.ch/" target="_blank" rel="noopener noreferrer">
-          <img src="/admin/LOGO-JAUNE.svg" alt="Mobilyse" class="app-footer__brand" />
+        <a :href="t('main.links.website')" target="_blank" rel="noopener noreferrer">
+          <img
+            src="/admin/branding/logo-dark.svg"
+            :alt="t('main.brand')"
+            class="app-footer__brand"
+          />
         </a>
       </div>
-
-      <div class="app-footer__col">
-        <a href="https://modus-ge.ch/" target="_blank" rel="noopener" class="app-footer__logo-link">
-          <span class="app-footer__logo app-footer__logo--modus" role="img" aria-label="Modus" />
+      <div v-for="partner in branding.partners" :key="partner.url" class="app-footer__col">
+        <a :href="partner.url" target="_blank" rel="noopener" class="app-footer__logo-link">
+          <span
+            class="app-footer__logo"
+            role="img"
+            :aria-label="partner.alt"
+            :style="{ width: `${partner.width}px`, '--logo': `url('${partner.logo}')` }"
+          />
         </a>
-        <p class="app-footer__name">{{ t('footer.modus_name') }}</p>
-        <a href="https://modus-ge.ch/" target="_blank" rel="noopener" class="app-footer__link">
-          {{ t('footer.modus_tagline') }}
-          <q-icon name="arrow_outward" />
-        </a>
-      </div>
-
-      <div class="app-footer__col">
-        <a href="https://www.epfl.ch" target="_blank" rel="noopener" class="app-footer__logo-link">
-          <span class="app-footer__logo app-footer__logo--epfl" role="img" aria-label="EPFL" />
-        </a>
+        <p v-if="partner.name" class="app-footer__name">{{ t(partner.name) }}</p>
         <a
-          href="https://www.epfl.ch/labs/lasur/"
+          v-for="link in partner.links"
+          :key="link.url"
+          :href="link.url"
           target="_blank"
           rel="noopener"
           class="app-footer__link"
         >
-          {{ t('footer.lasur') }}
-          <q-icon name="arrow_outward" />
-        </a>
-        <a
-          href="https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/"
-          target="_blank"
-          rel="noopener"
-          class="app-footer__link"
-        >
-          {{ t('footer.it4r') }}
+          {{ t(link.label) }}
           <q-icon name="arrow_outward" />
         </a>
       </div>
@@ -46,15 +37,17 @@
 </template>
 
 <script setup lang="ts">
+import { branding } from '@/utils/branding'
+
 const { t } = useI18n()
 </script>
 
 <style scoped lang="scss">
 // Always the dark band, whatever the theme
 .app-footer {
-  --footer-bg: #{$brand-purple-700};
-  --footer-fg: #{$brand-purple-50};
-  --footer-link: #{$brand-yellow-300};
+  --footer-bg: #{$brand-secondary-700};
+  --footer-fg: #{$brand-secondary-50};
+  --footer-link: #{$brand-primary-300};
 
   background-color: var(--footer-bg);
   color: var(--footer-fg);
@@ -63,7 +56,9 @@ const { t } = useI18n()
 
 .app-footer__content {
   display: grid;
-  grid-template-columns: 30% 44% 26%;
+  grid-template-columns: 30%;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
   align-items: start;
   width: 100%;
   max-width: 1280px;
@@ -101,20 +96,9 @@ const { t } = useI18n()
   mask-position: left center;
   -webkit-mask-size: contain;
   mask-size: contain;
-}
-
-.app-footer__logo--modus {
-  width: 88px;
   height: 32px;
-  -webkit-mask-image: url('/admin/modus_logo.svg');
-  mask-image: url('/admin/modus_logo.svg');
-}
-
-.app-footer__logo--epfl {
-  width: 110px;
-  height: 32px;
-  -webkit-mask-image: url('/admin/epfl_logo.svg');
-  mask-image: url('/admin/epfl_logo.svg');
+  -webkit-mask-image: var(--logo);
+  mask-image: var(--logo);
 }
 
 .app-footer__name {
@@ -146,6 +130,7 @@ const { t } = useI18n()
 @media (max-width: 767px) {
   .app-footer__content {
     grid-template-columns: 1fr;
+    grid-auto-flow: row;
     gap: 32px;
   }
 }

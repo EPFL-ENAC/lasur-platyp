@@ -37,11 +37,11 @@
             <router-link
               v-if="authStore.isAdminOfThisCompany(props.row)"
               :to="`/company/${props.row.id}`"
-              class="modus"
+              class="brand-link"
             >
               {{ props.row.name }}
             </router-link>
-            <span v-else class="modus">
+            <span v-else class="brand-link">
               {{ props.row.name }}
             </span>
           </q-td>
