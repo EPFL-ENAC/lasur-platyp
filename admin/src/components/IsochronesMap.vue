@@ -156,8 +156,6 @@ function onInit() {
   map.value.addControl(
     new AttributionControl({
       compact: true,
-      customAttribution:
-        '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
     }),
   )
   marker = new Marker().setLngLat([props.center[0], props.center[1]])

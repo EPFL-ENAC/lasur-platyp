@@ -59,7 +59,6 @@
 import ChartPanel from '@/components/charts/ChartPanel.vue'
 import BehaviorChangeChart from '@/components/charts/BehaviorChangeChart.vue'
 import { lowerCaseFirst } from '@/utils/string'
-import { formatPercent } from '@/utils/numbers'
 import type { BehaviorChangeByModeLever, BehaviorChangeStats } from '@/models'
 
 interface Props {
@@ -104,11 +103,7 @@ function onChartDownload() {
 
 const total = computed(() => props.behaviorChangeStats?.levers?.total_responses ?? 0)
 
-// info only for the single-campaign view: comparison mode shows the
-// comparison sentence instead.
-const panelDescription = computed(() =>
-  stats.comparisonMode ? '' : t('stats.behavior_change_levers.texts.info'),
-)
+const panelDescription = computed(() => t('stats.behavior_change_levers.texts.info'))
 
 const descriptionValues = computed(() => {
   const levers = props.behaviorChangeStats?.levers
@@ -133,48 +128,27 @@ function allModesRow(byMode: BehaviorChangeByModeLever[] | undefined) {
   return byMode?.find((item) => item.mode === 'Total' || item.mode === 'allModes')
 }
 
-/** The lever percentage as charted: its share of the lever selections of the row. */
-function leverPercent(row: BehaviorChangeByModeLever, category: string) {
-  return row.levers.find((lever) => lever.category === category)?.percentage ?? 0
-}
-
-const comparisonValues = computed(() => {
+/** The most needed lever, all modes, of the last campaign group. */
+const comparisonLever = computed(() => {
   const groups = stats.comparisonResults?.groups ?? []
-  if (groups.length < 2) return null
-
-  const lastGroup = groups[groups.length - 1]!
-  const prevGroup = groups[groups.length - 2]!
-  const lastRow = allModesRow(lastGroup.behavior_change?.levers?.by_mode_levers)
-  const prevRow = allModesRow(prevGroup.behavior_change?.levers?.by_mode_levers)
-  if (!lastRow?.response_count || !prevRow?.response_count) return null
-
-  const topLever = [...lastRow.levers].sort((a, b) => b.count - a.count)[0]
-  if (!topLever?.count) return null
-
-  return {
-    lever: keyLabel(topLever.category),
-    lastGroup: lastGroup.name,
-    prevGroup: prevGroup.name,
-    lastPercent: formatPercent(leverPercent(lastRow, topLever.category)),
-    prevPercent: formatPercent(leverPercent(prevRow, topLever.category)),
-  }
+  const lastRow = allModesRow(groups[groups.length - 1]?.behavior_change?.levers?.by_mode_levers)
+  const topLever = [...(lastRow?.levers ?? [])].sort((a, b) => b.count - a.count)[0]
+  return topLever?.count ? keyLabel(topLever.category) : null
 })
 
 const chartDescription = computed(() => {
+  const defaultText = t('stats.behavior_change_levers.texts.default')
   if (stats.comparisonMode) {
-    return comparisonValues.value
-      ? t('stats.behavior_change_levers.texts.comparison', comparisonValues.value)
-      : t('stats.behavior_change_levers.texts.default')
+    return comparisonLever.value
+      ? `${defaultText}\n\n${t('stats.behavior_change_levers.texts.specific', { lever: comparisonLever.value })}`
+      : defaultText
   }
 
   if (total.value < 5) {
-    return t('stats.behavior_change_levers.texts.default')
+    return defaultText
   }
 
-  return `${t('stats.behavior_change_levers.texts.default')}\n\n${t(
-    'stats.behavior_change_levers.texts.specific',
-    descriptionValues.value,
-  )}`
+  return `${defaultText}\n\n${t('stats.behavior_change_levers.texts.specific', descriptionValues.value)}`
 })
 
 function keyLabel(key: string) {

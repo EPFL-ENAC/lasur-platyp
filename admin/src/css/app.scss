@@ -413,3 +413,18 @@ a.read-more .q-icon {
   right: 0;
   z-index: 100;
 }
+
+// Standalone hairlines vanish at fractional zoom levels on Firefox: a 1px
+// block paints sub-device-pixel and compositing can round it to nothing.
+// Draw the line as a border instead — borders round as part of the box
+// (same reason q-table hairlines survive). The 1px size stays, only the
+// painting mechanism changes.
+.q-separator--horizontal {
+  height: 0;
+  border-top: 1px solid var(--secondary-border-color);
+}
+
+.q-separator--vertical {
+  width: 0;
+  border-left: 1px solid var(--secondary-border-color);
+}

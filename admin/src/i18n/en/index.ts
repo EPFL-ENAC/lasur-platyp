@@ -87,6 +87,7 @@ const emissionsLabels = {
   distances: 'Total distance',
   current: 'Current',
   postSaving: 'Total after recommendations',
+  totalEmissions: 'Total emissions: {value}',
 }
 
 // Shared by the simple and detailed commute emissions charts.
@@ -864,12 +865,10 @@ Thank you for your valuable contribution! If you have any questions, please cont
         allModes: 'All modes',
       },
       texts: {
-        info: 'This chart helps to understand how participants would like to be supported in evolving their mobility.',
+        info: 'This chart helps to understand how participants would like to be supported in evolving their mobility. It shows which measures are most frequently selected by participants.',
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
         specific: 'The support that participants feel they need most is {lever}.',
-        comparison:
-          'This graph compares the support measures desired by participants, by mode and by campaign group. For example, across all modes, the measure “{lever}” is desired by approximately {lastPercent}% of participants in {lastGroup}, compared to approximately {prevPercent}% of participants in {prevGroup}.',
       },
     },
     behavior_change_motivation: {
@@ -1096,6 +1095,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
     'Only super admins can see records directly on Mobilyse. However, they are still available for download on the button above',
   close: 'Close',
   cancel: 'Cancel',
+  confirm: 'Confirm',
   companies: 'Companies',
   company_campaign: 'Company (campaign)',
   company_removed: 'Company removed',
@@ -1112,6 +1112,7 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   email: 'Email',
   enabled: 'Enabled',
   end_date: 'End Date',
+  end_date_after_start: 'The end date must be after the start date',
   error_not_found: 'Oops. Nothing here...',
   field_required: 'This field is required',
   first_name: 'First Name',

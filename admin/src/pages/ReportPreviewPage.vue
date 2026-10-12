@@ -138,7 +138,7 @@
         />
       </report-page>
 
-      <report-page :org-names="orgs">
+      <report-page v-if="!stats.comparisonMode" :org-names="orgs">
         <links-reco-chart
           :simple-links="stats.links['mod_reco_simple'] ?? null"
           :detailed-links="stats.links['mod_reco_complex'] ?? null"
@@ -250,7 +250,15 @@
         <q-markdown :src="t('generated_report.final_page_body')" />
 
         <div class="text-center q-mt-xl">
-          <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE.svg" alt="graph" style="max-width: 100%" />
+          <img
+            :src="
+              locale === 'fr'
+                ? '/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_FR.svg'
+                : '/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_EN.svg'
+            "
+            alt="graph"
+            style="max-width: 100%"
+          />
         </div>
       </report-page>
     </div>

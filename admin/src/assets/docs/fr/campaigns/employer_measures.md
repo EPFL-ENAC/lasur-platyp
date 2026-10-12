@@ -49,11 +49,11 @@ Ces mesures soutiennent la mobilité durable lors des déplacements professionne
 
 - **Système de visioconférence sur site** : Technologie pour limiter les déplacements longue distance
 
-#### Mesures vélo professionnelles
+#### Mesures professionnelles vélo
 
 - **Flotte de vélos électriques pour les déplacements professionnels** : Vélos mis à disposition pour les usages professionnels
 
-#### Mesures transports publics professionnels
+#### Mesures professionnelles transports publics
 
 - **Abonnement transports publics (UNIRESO)** : Abonnement local pour les déplacements professionnels
 - **Remboursement des billets de transports publics pour les déplacements professionnels** : Prise en charge des coûts
@@ -61,7 +61,7 @@ Ces mesures soutiennent la mobilité durable lors des déplacements professionne
 - **Obligation d'utiliser le train lorsque possible** : Politique imposant l'usage du train pour les déplacements professionnels
 - **Remboursement des billets de train pour les déplacements professionnels** : Prise en charge des coûts
 
-#### Mesures véhicules électriques professionnelles
+#### Mesures professionnelles véhicules électriques
 
 - **Flotte de véhicules électriques pour les déplacements professionnels** : Véhicules électriques mis à disposition pour les usages professionnels
 

@@ -45,7 +45,7 @@ These measures help employees with their daily commute to and from work.
 
 These measures support sustainable mobility for business trips and professional travel.
 
-#### Global Professional Measures
+#### Professional Global Measures
 
 - **Workplace videoconferencing system**: Technology to reduce long-distance travel needs
 

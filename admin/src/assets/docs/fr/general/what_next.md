@@ -1,6 +1,6 @@
 ### Quelles prochaines étapes pour votre stratégie mobilité ?
 
-Une fois un premier diagnostic mobilité effectué avec Mobilyse, vous avez une vue d'ensemble de l'état actuel de la mobilité domicile-travail et professionnelle des collaborateur·trice·s. Cela inclue notamment les modes de transports actuellement utilisés, les distances parcourues, les équipements de mobilité ou encore les contraintes, mais aussi les impacts carbone ou sanitaire de la mobilité des participant·e·s.
+Une fois un premier diagnostic mobilité effectué avec Mobilyse, vous avez une vue d'ensemble de l'état actuel de la mobilité domicile-travail et professionnelle des collaborateur·trice·s. Cela inclut notamment les modes de transports actuellement utilisés, les distances parcourues, les équipements de mobilité ou encore les contraintes, mais aussi les impacts carbone ou sanitaire de la mobilité des participant·e·s.
 Vous avez également, via la deuxième section du Tableau de bord, une vue d'ensemble des potentiels changements possibles au vu des situations, désirs et contraintes des collaborateur·trice·s.
 Cela vous permet de poursuivre sereinement, si vous le souhaitez, la démarche de plan de mobilité d'entreprise, qui comprend les étapes suivantes:
 
@@ -14,5 +14,5 @@ _\* Liste de conseillers·ères spécialisé·e·s et autres informations : [Mob
 _\*\* Soutien financier ou ressources : programmes communaux, cantonaux ([Plan de mobilité | ge.ch](https://www.ge.ch/dossier/plan-mobilite-geneve/mobilite-entreprises/plan-mobilite) ; [SIL - rsGE H 1 21.03: Règlement relatif aux plans de mobilité d'entreprises (RPMob)](https://silgeneve.ch/legis/index.aspx)), fédéraux ([Encouragement de projets mobilité durable dans les entreprises](https://www.suisseenergie.ch/encouragement-de-projet/mobilite-durable/?_fumanNewsletterId=329385:cf700aa7d3be4a638e5f29d79d3998b5)), etc._
 
 <div class="text-center q-mt-xl">
-  <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE.svg" alt="Roue de demandes de mobilité" style="max-width: 100%" />
+  <img src="/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_FR.svg" alt="Roue de demandes de mobilité" style="max-width: 100%" />
 </div>

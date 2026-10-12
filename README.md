@@ -44,3 +44,15 @@ Local Postgres database:
 ```sh
 make run-db
 ```
+
+## Release versioning
+
+Bump the version of the backend, admin and collect apps in one go (semver):
+
+```sh
+make bump-patch   # 3.0.0 -> 3.0.1
+make bump-minor   # 3.0.0 -> 3.1.0
+make bump-major   # 3.0.0 -> 4.0.0
+```
+
+This updates `backend/pyproject.toml` and `backend/uv.lock` (via `uv version`), and the `package.json` and `package-lock.json` files of `admin` and `collect` (via `npm version`). It does not commit or tag; do that manually.

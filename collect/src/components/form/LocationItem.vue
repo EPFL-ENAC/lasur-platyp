@@ -72,8 +72,6 @@ function initMap() {
   map.value.addControl(
     new AttributionControl({
       compact: true,
-      customAttribution:
-        '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
     }),
   )
 

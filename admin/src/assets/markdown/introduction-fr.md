@@ -19,9 +19,9 @@ Nous expliquons ici ce que signifient les acronymes utilisés et ce que comprenn
 • TIM : Transport Individuel Motorisé, comprend les voitures (y compris le covoiturage), motos et scooters
 • MA : Mobilité Active, comprend la marche et tous types de vélos, ainsi que la micromobilité ("autre")
 • TP + vélos : comprend toutes les combinaisons de mode qui incluent des transports publics et du vélo sous toutes ses formes (mécanique, électrique, cargo).
-• TP + MA : comprend toute combinaison qui inclue des transports publics et des modes actifs
-• TIM + TP : comprend toute combinaison qui inclue des transports individuels motorisés et des transports publics
-• TIM + MA : comprend toute combinaison qui inclue des transports individuels motorisés et des modes actifs
+• TP + MA : comprend toute combinaison qui inclut des transports publics et des modes actifs
+• TIM + TP : comprend toute combinaison qui inclut des transports individuels motorisés et des transports publics
+• TIM + MA : comprend toute combinaison qui inclut des transports individuels motorisés et des modes actifs
 
 **Graphes sur les déplacements professionnels**
 

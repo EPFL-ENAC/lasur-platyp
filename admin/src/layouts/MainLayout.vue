@@ -171,6 +171,7 @@
 import AppFooter from '@/components/AppFooter.vue'
 import { Cookies, useQuasar } from 'quasar'
 import { locales, localeLabel } from '@/boot/i18n'
+import { isFirstVisit } from '@/utils/localStorage'
 
 const authStore = useAuthStore()
 const countsStore = useCountsStore()
@@ -202,6 +203,14 @@ onMounted(() => {
     if (!authStore.isAuthenticated) {
       router.push({ path: '/signin' })
     } else {
+      // First-visit redirect lives here, once auth is resolved: the router
+      // guard runs before init(), and redirecting while unauthenticated sends
+      // the user to a blank /doc (MainLayout hides when unauthenticated) whose
+      // auto-bounce back would mark the doc as read. Fresh sign-ins land on
+      // the documentation page with the welcome dialog (DocPage.onMounted).
+      if (isFirstVisit() && router.currentRoute.value.path !== '/doc') {
+        router.push('/doc')
+      }
       countsStore.refresh()
     }
   })

@@ -120,6 +120,7 @@
             :loading="stats.loading"
           />
           <links-reco-chart
+            v-if="!stats.comparisonMode"
             :simple-links="stats.links['mod_reco_simple'] ?? null"
             :detailed-links="stats.links['mod_reco_complex'] ?? null"
             :height="height"
