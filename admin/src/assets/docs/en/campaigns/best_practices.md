@@ -15,7 +15,7 @@
 
 ### When sharing the questionnaire with staff
 
-Based on tests carried out in 2025 with Mobilyse, here are a few tips to increase the response rate to the questionnaire, highlighting the key points regarding communication with staff:
+Based on tests carried out in 2025 with {brand}, here are a few tips to increase the response rate to the questionnaire, highlighting the key points regarding communication with staff:
 
 - **The ‘why’ behind the initiative**: communicate clearly about the initiative: 1) why this survey, 2) how the results will be used, and 3) what benefits it will bring them (the analysis will help improve support for sustainable mobility for employees, based on their needs and wishes; in particular, we are asking for their views and how best to support them; etc.)
 

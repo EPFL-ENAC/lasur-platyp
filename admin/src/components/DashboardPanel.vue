@@ -543,14 +543,14 @@ async function openReport(withTables: boolean) {
 // Filters card: bordered white panel with generous padding
 .filters-card {
   padding: 32px 40px;
-  border: 1px solid $brand-purple-100;
+  border: 1px solid $brand-secondary-100;
   border-radius: 12px; // radius-lg
   background-color: white;
 }
 
 .body--dark .filters-card {
-  border-color: $brand-purple-600;
-  background-color: $brand-purple-800;
+  border-color: $brand-secondary-600;
+  background-color: $brand-secondary-800;
 }
 
 .filter-field {
@@ -562,11 +562,11 @@ async function openReport(withTables: boolean) {
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .body--dark .filter-label {
-  color: $brand-purple-50;
+  color: $brand-secondary-50;
 }
 
 // Pill selects: same 44px as the buttons, white, hairline border, chevron on
@@ -592,7 +592,7 @@ async function openReport(withTables: boolean) {
 }
 
 .filter-select :deep(.q-field__control::before) {
-  border-color: $brand-purple-100;
+  border-color: $brand-secondary-100;
 }
 
 .filter-select :deep(.q-field__native) {
@@ -603,20 +603,20 @@ async function openReport(withTables: boolean) {
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .filter-select :deep(.q-field__append .q-icon) {
   font-size: 22px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .body--dark .filter-select :deep(.q-field__control) {
-  background-color: $brand-purple-700;
+  background-color: $brand-secondary-700;
 }
 
 .body--dark .filter-select :deep(.q-field__native) {
-  color: $brand-purple-50;
+  color: $brand-secondary-50;
 }
 
 // "Add more comparisons": a text link with a circled plus
@@ -626,7 +626,7 @@ async function openReport(withTables: boolean) {
   min-height: 0;
   font-size: 14px;
   font-weight: 600;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .q-btn.add-more-btn :deep(.q-btn__content) {
@@ -634,7 +634,7 @@ async function openReport(withTables: boolean) {
 }
 
 .body--dark .q-btn.add-more-btn {
-  color: $brand-purple-50;
+  color: $brand-secondary-50;
 }
 
 .compare-remove {

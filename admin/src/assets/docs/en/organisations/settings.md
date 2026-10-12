@@ -41,4 +41,4 @@ Contact information helps participants and system users know who to reach out to
   - Employee transportation benefits
   - Organisation-specific mobility guidelines
 
-Note: Personal information entered into the Mobilyse tool is processed in accordance with our [privacy policy](https://modus-ge.ch/mobilyse-notice-protection-des-donnees).
+Note: Personal information entered into the {brand} tool is processed in accordance with our [privacy policy]({privacy_url}).

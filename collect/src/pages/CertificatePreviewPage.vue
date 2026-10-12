@@ -10,18 +10,19 @@
 
     <div class="report-container">
       <report-page v-if="certificate">
-        <img src="/LOGO-VIOLET.svg" alt="logo" class="q-mb-lg logo" />
+        <img src="/branding/logo.svg" alt="logo" class="q-mb-lg logo" />
         <h1 class="text-h2 q-mt-xl text-primary text-center">
           {{ t('certificate.title') }}
         </h1>
         <div class="bg-white q-pa-md text-center">
-          <q-markdown
-            class="compact text-body2 q-mb-lg text-secondary"
-            :src="text"
-          />
-          <h3 class="text-h5 text-secondary q-mb-none">{{ t('certificate.participation_id', { id: certificate.response_id_in_campaign }) }}</h3>
+          <q-markdown class="compact text-body2 q-mb-lg text-secondary" :src="text" />
+          <h3 class="text-h5 text-secondary q-mb-none">
+            {{ t('certificate.participation_id', { id: certificate.response_id_in_campaign }) }}
+          </h3>
         </div>
-        <h3 class="text-h6 text-right">{{ t('certificate.date', { date: new Date().toLocaleDateString(locale) }) }}</h3>
+        <h3 class="text-h6 text-right">
+          {{ t('certificate.date', { date: new Date().toLocaleDateString(locale) }) }}
+        </h3>
       </report-page>
     </div>
   </div>
@@ -49,18 +50,20 @@ const text = computed(() => {
   return rewardsMessage
 })
 
-watch(token, async (newToken) => {
-  if (!newToken) {
-    return
-  }
-  certificate.value = await collector.loadRecordCertificate(newToken)
-}, { immediate: true })
-
+watch(
+  token,
+  async (newToken) => {
+    if (!newToken) {
+      return
+    }
+    certificate.value = await collector.loadRecordCertificate(newToken)
+  },
+  { immediate: true },
+)
 
 const printReport = () => {
   window.print()
 }
-
 </script>
 
 <style scoped>

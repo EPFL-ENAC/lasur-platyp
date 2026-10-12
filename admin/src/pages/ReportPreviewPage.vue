@@ -10,7 +10,7 @@
 
     <div v-if="stats" class="report-container">
       <report-page is-title>
-        <img src="/admin/LOGO-ALTER-VIOLET.svg" alt="logo" />
+        <img src="/admin/branding/logo-alt.svg" alt="logo" />
         <h1 class="text-h2">{{ t('mobility_statistics') }}</h1>
         <div class="text-h6">{{ orgs.join(', ') }}</div>
         <div class="text-h6">{{ campaigns.join(', ') }}</div>
@@ -251,11 +251,7 @@
 
         <div class="text-center q-mt-xl">
           <img
-            :src="
-              locale === 'fr'
-                ? '/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_FR.svg'
-                : '/admin/V1-ROUE_DEM_MOBILITE-MOBILYSE_EN.svg'
-            "
+            :src="locale === 'fr' ? '/admin/branding/wheel-fr.svg' : '/admin/branding/wheel-en.svg'"
             alt="graph"
             style="max-width: 100%"
           />
@@ -291,7 +287,11 @@ import PtPassRecommendationChart from '@/components/charts/PtPassRecommendationC
 import ModalEvolutionSankey from '@/components/charts/ModalEvolutionSankey.vue'
 import { type StatsState, flushStateFromIndexedDB, getStateFromIndexedDB } from '@/stores/stats'
 import type { Frequencies } from '@/models'
-import { chartReportKey, chartReportTablesKey, participationText } from '@/components/charts/commons'
+import {
+  chartReportKey,
+  chartReportTablesKey,
+  participationText,
+} from '@/components/charts/commons'
 
 interface Props {
   height: number

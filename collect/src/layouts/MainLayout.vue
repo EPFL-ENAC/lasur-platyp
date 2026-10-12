@@ -3,9 +3,9 @@
     <q-header bordered class="bg-nav">
       <q-toolbar class="header-toolbar">
         <div class="header-toolbar__content">
-          <a href="https://modus-ge.ch/" target="_blank" rel="noopener noreferrer">
+          <a :href="t('main.links.website')" target="_blank" rel="noopener noreferrer">
             <img
-              :src="$q.dark.isActive ? '/LOGO-JAUNE.svg' : '/LOGO-VIOLET.svg'"
+              :src="$q.dark.isActive ? '/branding/logo-dark.svg' : '/branding/logo.svg'"
               alt="Logo"
               height="25px"
             />
@@ -52,7 +52,7 @@
     <q-page-container>
       <div class="background-container">
         <img
-          :src="$q.dark.isActive ? '/PATTERN-BLANC.svg' : '/PATTERN-VIOLET.svg'"
+          :src="$q.dark.isActive ? '/branding/pattern-dark.svg' : '/branding/pattern.svg'"
           aria-hidden="true"
           class="background-pattern"
         />
@@ -110,9 +110,9 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 // survey button skin, so everything they need is declared here.
 .q-btn.header-btn {
   --header-btn-bg: #{'white'};
-  --header-btn-border: #{$brand-purple-100};
-  --header-btn-text: #{$brand-purple-800};
-  --header-btn-icon: #{$brand-purple-400};
+  --header-btn-border: #{$brand-secondary-100};
+  --header-btn-text: #{$brand-secondary-800};
+  --header-btn-icon: #{$brand-secondary-400};
   --header-btn-shadow: 0 1px 2px 0 rgba(10, 13, 18, 0.05), inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
 
   height: 48px;
@@ -126,9 +126,9 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 .body--dark .q-btn.header-btn {
-  --header-btn-bg: #{$brand-purple-800};
-  --header-btn-border: #{$brand-purple-200};
-  --header-btn-text: #{$brand-purple-50};
+  --header-btn-bg: #{$brand-secondary-800};
+  --header-btn-border: #{$brand-secondary-200};
+  --header-btn-text: #{$brand-secondary-50};
 }
 
 .q-btn.header-btn :deep(.q-btn-dropdown__arrow) {
@@ -180,7 +180,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 // height and dissolving towards the left and right sides. The grid is one
 // repeating gradient and the fade is a mask -- no image asset needed.
 .background-dots {
-  --dot-color: #{$brand-purple-200};
+  --dot-color: #{$brand-secondary-200};
   --dot-fade: linear-gradient(90deg, transparent 0%, #000 45%, #000 55%, transparent 100%);
 
   position: absolute;
@@ -195,6 +195,6 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 .body--dark .background-dots {
-  --dot-color: #{$brand-purple-100};
+  --dot-color: #{$brand-secondary-100};
 }
 </style>

@@ -8,9 +8,9 @@
         color="primary"
         class="text-subtitle1"
       />
-      <div class="text-subtitle1 agreement__link">
+      <div v-if="t('main.links.terms')" class="text-subtitle1 agreement__link">
         <a
-          href="https://modus-ge.ch/mobilyse-cgu-collaborateur-trice-s"
+          :href="t('main.links.terms')"
           target="_blank"
           rel="noopener noreferrer"
           class="text-muted"
@@ -30,9 +30,9 @@
         color="primary"
         class="text-subtitle1"
       />
-      <div class="text-subtitle1 agreement__link">
+      <div v-if="t('main.links.privacy')" class="text-subtitle1 agreement__link">
         <a
-          href="https://modus-ge.ch/mobilyse-notice-protection-des-donnees"
+          :href="t('main.links.privacy')"
           target="_blank"
           class="text-muted"
           rel="noopener noreferrer"

@@ -1,8 +1,8 @@
 {
   "name": "collect",
   "version": "3.0.0",
-  "description": "Data collection app for Mobilyse",
-  "productName": "Mobilyse",
+  "description": "Mobility survey platform data collection",
+  "productName": "Platform",
   "author": "ymarcon <yannick.marcon@epfl.ch>",
   "type": "module",
   "private": true,

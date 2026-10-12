@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   exportable: true,
   exportFileName: 'chart.png',
-  logoUrl: '/admin/LOGO-VIOLET.svg',
+  logoUrl: '/admin/branding/logo.svg',
   logoPadding: 24,
   logoWidthRatio: 0.12,
 })

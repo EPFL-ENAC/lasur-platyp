@@ -3,7 +3,7 @@
     <div class="text-subtitle2">{{ t('doc') }}</div>
     <div class="q-my-md">
       <q-markdown
-        :src="locale === 'fr' ? WelcomeFr : WelcomeEn"
+        :src="withBrand(locale === 'fr' ? WelcomeFr : WelcomeEn)"
         no-heading-anchor-links
         class="q-mb-xl"
       />
@@ -24,7 +24,11 @@
               header-class="text-secondary"
             >
               <div class="q-pa-md">
-                <q-markdown v-if="entry.markdown" :src="entry.markdown" no-heading-anchor-links />
+                <q-markdown
+                  v-if="entry.markdown"
+                  :src="withBrand(entry.markdown)"
+                  no-heading-anchor-links
+                />
               </div>
             </q-expansion-item>
           </template>
@@ -82,6 +86,14 @@ import { isFirstVisit } from '@/utils/localStorage'
 
 const $q = useQuasar()
 const { locale, t } = useI18n()
+
+// Docs are plain markdown, so the branding placeholders are filled in here
+function withBrand(md: string) {
+  return md
+    .replaceAll('{brand}', t('main.brand'))
+    .replaceAll('{terms_url}', t('main.links.terms'))
+    .replaceAll('{privacy_url}', t('main.links.privacy'))
+}
 
 interface DocEntry {
   title: string

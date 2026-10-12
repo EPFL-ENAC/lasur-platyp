@@ -1,6 +1,14 @@
 export default {
   main: {
-    brand: 'Mobilyse',
+    // Branding defaults, overridden at runtime by branding/branding.js
+    brand: 'Platform',
+    operator: 'the platform provider',
+    authors: 'the platform provider',
+    links: {
+      website: 'https://github.com/EPFL-ENAC/lasur-platyp',
+      terms: '',
+      privacy: '',
+    },
   },
   form: {
     // Title shown at the top of each survey step, keyed by step name.
@@ -43,7 +51,7 @@ export default {
     },
     agreement: 'General terms and conditions of use (GTC) and confidentiality policy',
     agreement_hint:
-      'The GTC formalizes the agreement between you and the Modus Foundation to which you consent, by using Mobilyse. The confidentiality policy explains what the data collected is used for and how it is processed.',
+      "The GTC formalizes the agreement between you and @:{'main.operator'} to which you consent, by using @:{'main.brand'}. The confidentiality policy explains what the data collected is used for and how it is processed.",
     terms_conditions: 'I have read and accept the GTC',
     terms_conditions_link: 'See the terms and conditions',
     confidentiality: 'I have read and accept the privacy policy',
@@ -183,11 +191,11 @@ export default {
     needs_hint: 'On a scale of 1 (not at all suitable) to 5 (completely suitable)',
     comments: 'Thank you! Do you have any comments on this survey or on the mobility plan process?',
     recommendations: 'Recommended modes of transport for your home-to-work journeys:',
-    recommendations_header: 'Mobilyse’s recommendations for your commute',
+    recommendations_header: "@:{'main.brand'}’s recommendations for your commute",
     recommendations_preamble:
       'Based on your situation, we propose below one or more modes of transport that seem suitable for your home-to-work journey.',
     recommendations_pro: 'Recommended modes of transport for your professional journeys:',
-    recommendations_pro_header: 'Mobilyse’s recommendations for professional travels',
+    recommendations_pro_header: "@:{'main.brand'}’s recommendations for professional travels",
     recommendations_pro_preamble:
       'Here are our recommended transport modes for your professional journeys based on your responses.',
     recommendations_print: {
@@ -229,12 +237,12 @@ export default {
     change_other_levers_specify: 'Please specify what other measures would help you',
     email: {
       title: 'Follow-up of participants over time (optional)',
-      text: `By providing your email address, you enable your organisation to monitor how mobility practices and preferences evolve over time. When Mobilyse is used again in the future, this helps identify which mobility measures are effective and which could be improved, allowing your employer to better support your mobility needs.
+      text: `By providing your email address, you enable your organisation to monitor how mobility practices and preferences evolve over time. When @:{'main.brand'} is used again in the future, this helps identify which mobility measures are effective and which could be improved, allowing your employer to better support your mobility needs.
 
-**Important:** your email address is instantly encrypted and never stored by Mobilyse. Your employer cannot, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
+**Important:** your email address is instantly encrypted and never stored by @:{'main.brand'}. Your employer cannot, identify you or link your responses to you personally. We guarantee that no one has access to your email address at any point.`,
       label: 'Your email address (optional)',
     },
-    final: 'Thank you for being part of the mobilyse adventure!',
+    final: "Thank you for being part of the @:{'main.brand'} adventure!",
     final_subtitle: 'Your contribution helps us build a more sustainable future.',
     final_car:
       'By the way, do you know the real cost of your car? Find out [here](https://comob.dev.stimul.io/) in 3 questions',
@@ -281,8 +289,8 @@ export default {
   bravo: {
     1: 'Congratulations! Your commuting habit is already somewhat sustainable.',
     2: 'Congratulations! Your commuting habit is already sustainable.',
-    recommends: 'Mobilyse recommends the following mode:',
-    recommends_also: 'Mobilyse also recommends the following mode:',
+    recommends: "@:{'main.brand'} recommends the following mode:",
+    recommends_also: "@:{'main.brand'} also recommends the following mode:",
   },
   pt_pass: {
     unireso: 'To use public transports, a Unireso pass might be a good option!',
@@ -381,12 +389,6 @@ export default {
   select_preferred_language: 'Select your preferred language',
   select_or_drag_item: 'Select or drag one of the options',
   dark_mode: 'Dark mode',
-  footer: {
-    modus_name: 'Fondation Modus',
-    modus_tagline: 'For sustainable mobility in Geneva.',
-    lasur: 'Urban Sociology Lab',
-    it4r: 'ENAC-IT4R',
-  },
   transit_lines: 'Public transport network',
   print: 'Print',
   eurogeographics_attributions: 'EuroGeographics for the administrative boundaries',

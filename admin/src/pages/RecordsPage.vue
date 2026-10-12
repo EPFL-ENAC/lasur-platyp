@@ -62,7 +62,7 @@
       >
         <template v-slot:body-cell-token="props">
           <q-td :props="props">
-            <router-link :to="`/record/${props.row.id}`" class="modus">{{
+            <router-link :to="`/record/${props.row.id}`" class="brand-link">{{
               props.row.token
             }}</router-link>
           </q-td>
@@ -71,7 +71,7 @@
           <q-td :props="props">
             <router-link
               :to="`/company/${props.row.company_id}/campaign/${props.row.campaign_id}`"
-              class="modus"
+              class="brand-link"
             >
               {{ getCompanyName(props.row.company_id) }} ({{
                 getCampaignName(props.row.campaign_id)
@@ -93,23 +93,9 @@
         </template>
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
-            <q-btn
-              size="12px"
-              flat
-              dense
-              round
-              icon="visibility"
-              :to="`/record/${props.row.id}`"
-            >
+            <q-btn size="12px" flat dense round icon="visibility" :to="`/record/${props.row.id}`">
             </q-btn>
-            <q-btn
-              size="12px"
-              flat
-              dense
-              round
-              icon="delete"
-              @click="onShowRemove(props.row)"
-            >
+            <q-btn size="12px" flat dense round icon="delete" @click="onShowRemove(props.row)">
             </q-btn>
           </q-td>
         </template>

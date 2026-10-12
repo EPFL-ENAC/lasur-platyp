@@ -1,6 +1,14 @@
 export default {
   main: {
-    brand: 'Mobilyse',
+    // Branding defaults, overridden at runtime by branding/branding.js
+    brand: 'Platform',
+    operator: 'le fournisseur de la plateforme',
+    authors: 'le fournisseur de la plateforme',
+    links: {
+      website: 'https://github.com/EPFL-ENAC/lasur-platyp',
+      terms: '',
+      privacy: '',
+    },
   },
   form: {
     // Title shown at the top of each survey step, keyed by step name.
@@ -42,7 +50,7 @@ export default {
     },
     agreement: "Conditions générales d'utilisation (CGU) et politique de confidentialité",
     agreement_hint:
-      "Les CGU formalisent l'accord auquel vous consentez, entre vous et la Fondation Modus, en utilisant Mobilyse. La politique de confidentialité vous explique à quoi servent les données récoltées et comment celles-ci sont traitées.",
+      "Les CGU formalisent l'accord auquel vous consentez, entre vous et @:{'main.operator'}, en utilisant @:{'main.brand'}. La politique de confidentialité vous explique à quoi servent les données récoltées et comment celles-ci sont traitées.",
     terms_conditions: "J'ai lu et accepte les CGU",
     terms_conditions_link: "Voir les conditions générales d'utilisation",
     confidentiality: "J'ai lu et accepte la politique de confidentialité",
@@ -190,12 +198,14 @@ export default {
       'Merci! Avez-vous des commentaires sur ce questionnaire ou sur la démarche de plan de mobilité ?',
     recommendations:
       'Les modes de transport suivants sont recommandés pour vos déplacements domicile-travail :',
-    recommendations_header: 'Recommandations de Mobilyse pour les déplacements domicile-travail',
+    recommendations_header:
+      "Recommandations de @:{'main.brand'} pour les déplacements domicile-travail",
     recommendations_preamble:
       'En fonction de votre situation, nous vous proposons ci-dessous un ou plusieurs mode de transport qui semble(nt) adapté(s) pour votre déplacement domicile-travail.',
     recommendations_pro:
       'Les modes de transports suivants sont recommandés pour vos déplacements professionnels :',
-    recommendations_pro_header: 'Recommandations de Mobilyse pour les déplacements professionnels',
+    recommendations_pro_header:
+      "Recommandations de @:{'main.brand'} pour les déplacements professionnels",
     recommendations_pro_preamble:
       'Voici nos recommandations de transport pour vos déplacements professionnels, en fonction des réponses que vous nous avez fournies.',
     recommendations_print: {
@@ -240,12 +250,12 @@ export default {
     change_other_levers_specify: 'Veuillez préciser ce qui vous aiderait',
     email: {
       title: 'Suivi dans le temps des participant·e·s (optionnel)',
-      text: `En renseignant votre adresse e-mail, vous permettez à votre organisation de suivre l’évolution des pratiques et des préférences en matière de mobilité au fil du temps. Lors d’une future utilisation de Mobilyse, cela contribuera à identifier les mesures de mobilité qui fonctionnent bien et celles qui peuvent être améliorées, afin que votre employeur puisse mieux soutenir vos besoins.
+      text: `En renseignant votre adresse e-mail, vous permettez à votre organisation de suivre l’évolution des pratiques et des préférences en matière de mobilité au fil du temps. Lors d’une future utilisation de @:{'main.brand'}, cela contribuera à identifier les mesures de mobilité qui fonctionnent bien et celles qui peuvent être améliorées, afin que votre employeur puisse mieux soutenir vos besoins.
 
-**Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par Mobilyse. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
+**Important :** Votre e-mail est immédiatement chiffré et n’est jamais stocké par @:{'main.brand'}. Votre employeur ne peut en aucun cas vous identifier ni relier vos réponses à votre identité. Nous garantissons que personne n’a accès à votre e mail, à aucun moment.`,
       label: 'Votre adresse email (optionnelle)',
     },
-    final: 'Merci d’avoir participé à Mobilyse !',
+    final: "Merci d’avoir participé à @:{'main.brand'} !",
     final_subtitle:
       'Votre contribution est précieuse pour construire un futur plus durable, ensemble.',
     final_car:
@@ -295,8 +305,8 @@ export default {
   bravo: {
     1: 'Félicitations ! Votre habitude de déplacement est déjà quelque peu durable.',
     2: 'Félicitations ! Votre habitude de déplacement est déjà durable.',
-    recommends: 'Mobilyse recommande le mode de transport suivant :',
-    recommends_also: 'Mobilyse recommande également le mode de transport suivant :',
+    recommends: "@:{'main.brand'} recommande le mode de transport suivant :",
+    recommends_also: "@:{'main.brand'} recommande également le mode de transport suivant :",
   },
   pt_pass: {
     unireso:
@@ -401,12 +411,6 @@ export default {
   select_preferred_language: 'Sélectionner votre langue préférée',
   select_or_drag_item: 'Sélectionnez ou glisser une des options',
   dark_mode: 'Mode sombre',
-  footer: {
-    modus_name: 'Fondation Modus',
-    modus_tagline: 'Pour une mobilité durable à Genève.',
-    lasur: 'Laboratoire de sociologie urbaine',
-    it4r: 'ENAC-IT4R',
-  },
   transit_lines: 'Réseau transports publics',
   print: 'Imprimer',
   eurogeographics_attributions: 'EuroGeographics pour les limites administratives',

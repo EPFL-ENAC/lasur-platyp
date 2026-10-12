@@ -1,8 +1,8 @@
 {
   "name": "admin",
   "version": "3.0.0",
-  "description": "Mobilyse administration",
-  "productName": "Mobilyse Admin",
+  "description": "Mobility survey platform administration",
+  "productName": "Platform Admin",
   "author": "ymarcon <yannick.marcon@epfl.ch>",
   "type": "module",
   "private": true,

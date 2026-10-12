@@ -3,7 +3,7 @@
     <div aria-hidden="true" class="background-dots"></div>
 
     <header v-if="!props.isTitle">
-      <img src="/admin/LOGO-VIOLET.svg" alt="logo" />
+      <img src="/admin/branding/logo.svg" alt="logo" />
 
       <div>{{ t('mobility_statistics') }} - {{ props.orgNames?.join(', ') || '' }}</div>
     </header>
@@ -55,7 +55,7 @@ const { t } = useI18n()
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/admin/PATTERN-JAUNE.svg');
+  background-image: url('/admin/branding/pattern-accent.svg');
   background-repeat: no-repeat;
   background-position: 0rem -5rem;
   background-size: cover;
@@ -93,7 +93,7 @@ footer::after {
 // left and right edges via a mask -- no image asset needed. Painted above the
 // white page background and below all content.
 .background-dots {
-  --dot-color: #{$brand-purple-200};
+  --dot-color: #{$brand-secondary-200};
   --dot-fade: linear-gradient(90deg, transparent 0%, #000 45%, #000 55%, transparent 100%);
 
   position: absolute;

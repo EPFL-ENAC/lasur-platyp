@@ -30,8 +30,8 @@ Est également affiché le type d'aide que ces participant·e·s estiment le plu
 
 #### Télécharger le diagnostic sous forme de rapport
 
-Un bouton permet de télécharger les éléments présents dans le Tableau de bord, sous forme de PDF. Cela fournit directement une présentation des résultats issus de Mobilyse.
+Un bouton permet de télécharger les éléments présents dans le Tableau de bord, sous forme de PDF. Cela fournit directement une présentation des résultats issus de {brand}.
 
 #### Télécharger les données désagrégées
 
-Afin d'aller plus loin dans l'analyse des réponses des participant·e·s, nous donnons la possibilité de télécharger en format _.csv_ les données ligne par ligne (qui restent anonymes, voir [notice de confidentialité](https://modus-ge.ch/mobilyse-notice-protection-des-donnees)). Le traitement de ces données doit par contre s'effectuer dans le respect de la réglementation en vigueur, en dehors du cadre de Mobilyse.
+Afin d'aller plus loin dans l'analyse des réponses des participant·e·s, nous donnons la possibilité de télécharger en format _.csv_ les données ligne par ligne (qui restent anonymes, voir [notice de confidentialité]({privacy_url})). Le traitement de ces données doit par contre s'effectuer dans le respect de la réglementation en vigueur, en dehors du cadre de {brand}.
