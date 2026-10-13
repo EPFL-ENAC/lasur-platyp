@@ -15,7 +15,7 @@
 
 ### Lors du partage du questionaire aux collaborateur·trice·s
 
-Sur la base des tests menés sur l'année 2025 avec Mobilyse, nous livrons ici quelques conseils pour augmenter le taux de réponses au questionnaire, en exposant les points déterminants sur la communication aux collaborateur·trice·s:
+Sur la base des tests menés sur l'année 2025 avec {brand}, nous livrons ici quelques conseils pour augmenter le taux de réponses au questionnaire, en exposant les points déterminants sur la communication aux collaborateur·trice·s:
 
 - **Le « pourquoi » de la démarche** : communiquer clairement sur la démarche : 1) pourquoi ce sondage, 2) comment les résultats seront utilisés, et 3) qu’est-ce que cela va leur apporter (l’analyse va permettre d’améliorer les aides pour la mobilité durable pour les collaborateur·trice·s, en partant de leurs besoins et de leurs désirs ; on demande notamment leurs avis et comment les accompagner au mieux ; etc.)
 

@@ -110,7 +110,7 @@
       <!-- Custom Body Slot to handle the link -->
       <template #body-cell-name="props">
         <q-td :props="props">
-          <router-link :to="`/company/${id}/campaign/${props.row.id}`" class="modus">
+          <router-link :to="`/company/${id}/campaign/${props.row.id}`" class="brand-link">
             {{ props.row.name }}
           </router-link>
         </q-td>

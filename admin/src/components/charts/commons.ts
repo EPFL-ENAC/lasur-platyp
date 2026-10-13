@@ -73,6 +73,11 @@ export const updateOptions: SetOptionOpts = {
   notMerge: true,
 }
 
+// Brand palette steps, from the CSS variables of src/css/app.scss / branding.css
+function brandColor(step: string) {
+  return getComputedStyle(document.documentElement).getPropertyValue(`--brand-${step}`).trim()
+}
+
 registerTheme('platyp', {
   textStyle: {
     fontFamily: 'Nunito, sans-serif',
@@ -90,35 +95,35 @@ registerTheme('platyp', {
 registerTheme('platyp-dark', {
   textStyle: {
     fontFamily: 'Nunito, sans-serif',
-    color: '#bca2b0',
+    color: brandColor('secondary-200'),
   },
   title: {
     textStyle: {
       color: getCssVar('primary'),
     },
     subtextStyle: {
-      color: '#bca2b0',
+      color: brandColor('secondary-200'),
     },
   },
   legend: {
     textStyle: {
-      color: '#fffcf4',
+      color: brandColor('primary-25'),
     },
   },
   label: {
-    color: '#fffcf4',
-    fill: '#fffcf4',
+    color: brandColor('primary-25'),
+    fill: brandColor('primary-25'),
   },
   bar: {
     label: {
-      color: '#fffcf4',
-      fill: '#fffcf4',
+      color: brandColor('primary-25'),
+      fill: brandColor('primary-25'),
     },
   },
   line: {
     label: {
-      color: '#fffcf4',
-      fill: '#fffcf4',
+      color: brandColor('primary-25'),
+      fill: brandColor('primary-25'),
     },
   },
   markLine: {

@@ -3,6 +3,7 @@ import { createI18n } from 'vue-i18n'
 import { Quasar, Cookies } from 'quasar'
 
 import messages from '@/i18n'
+import { branding } from '@/utils/branding'
 
 export type MessageLanguages = keyof typeof messages
 // Type-define 'en-US' as the master schema for the resource
@@ -60,6 +61,12 @@ const i18n = createI18n<{ message: MessageSchema }, MessageLanguages, false>({
   legacy: false,
   messages,
 })
+
+// Deployment branding overrides (brand name, links, ...)
+for (const [lang, msgs] of Object.entries(branding.messages ?? {})) {
+  i18n.global.mergeLocaleMessage(lang, msgs as MessageSchema)
+}
+document.title = `${i18n.global.t('main.brand')} Admin`
 
 export default defineBoot(({ app }) => {
   // Set i18n instance on app

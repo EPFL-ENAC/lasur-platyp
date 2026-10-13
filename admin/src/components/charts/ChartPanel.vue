@@ -15,7 +15,7 @@
       <a
         href="#"
         v-if="!inline"
-        class="modus chart-panel__link"
+        class="brand-link chart-panel__link"
         @click.prevent="showDialog = true"
         >{{ t('more_details') }}</a
       >

@@ -61,7 +61,7 @@ const { t } = useI18n()
 
 <style scoped lang="scss">
 .clear-icon {
-  color: $brand-yellow-400;
+  color: $brand-primary-400;
   font-size: 20px;
   padding: 8px 8px 8px 0;
   cursor: pointer;

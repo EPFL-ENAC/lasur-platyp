@@ -231,19 +231,19 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 
 .welcome__eyebrow {
   margin-bottom: 12px;
-  color: $brand-yellow-700;
+  color: $brand-primary-700;
 }
 
 .welcome__title {
   margin: 0 0 36px;
   letter-spacing: -0.01em;
-  color: $brand-purple-900;
+  color: $brand-secondary-900;
 }
 
 .welcome__intro {
   max-width: 42rem;
   margin: 0 auto 48px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .welcome__token {
@@ -258,12 +258,12 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   justify-content: center;
   gap: 8px;
   padding: 24px 16px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .body--dark {
   .welcome__eyebrow {
-    color: $brand-yellow-300;
+    color: $brand-primary-300;
   }
 
   .welcome__title {
@@ -272,7 +272,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 
   .welcome__intro,
   .welcome__language {
-    color: $brand-purple-100;
+    color: $brand-secondary-100;
   }
 }
 </style>

@@ -123,7 +123,7 @@ const hasActions = computed(() => currentModeActions.value.length || props.globa
   filter: invert(52%) sepia(88%) saturate(138%) hue-rotate(3deg) brightness(95%) contrast(246%);
 }
 .employer-measures-header {
-  color: $brand-yellow-600;
+  color: $brand-primary-600;
   font-size: 18px;
   font-weight: 400;
   margin: 8px 0 8px;
@@ -140,7 +140,7 @@ const hasActions = computed(() => currentModeActions.value.length || props.globa
   margin-bottom: 8px;
 }
 .action-chip {
-  background-color: $brand-yellow-50;
+  background-color: $brand-primary-50;
   border: 1px solid #ccc;
   border-radius: 9999px;
   padding: 6px 14px;

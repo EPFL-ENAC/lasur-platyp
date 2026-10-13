@@ -3,9 +3,9 @@
     <q-header v-if="authStore.isAuthenticated" bordered class="bg-nav">
       <q-toolbar class="header-toolbar">
         <q-toolbar-title class="logos">
-          <a href="https://modus-ge.ch/" target="_blank" class="logo" rel="noopener noreferrer">
+          <a :href="t('main.links.website')" target="_blank" class="logo" rel="noopener noreferrer">
             <img
-              :src="$q.dark.isActive ? '/admin/LOGO-JAUNE.svg' : '/admin/LOGO-VIOLET.svg'"
+              :src="$q.dark.isActive ? '/admin/branding/logo-dark.svg' : '/admin/branding/logo.svg'"
               height="32px"
             />
           </a>
@@ -154,7 +154,9 @@
     <q-page-container v-if="authStore.isAuthenticated">
       <div class="background-container">
         <img
-          :src="$q.dark.isActive ? '/admin/PATTERN-BLANC.svg' : '/admin/PATTERN-VIOLET.svg'"
+          :src="
+            $q.dark.isActive ? '/admin/branding/pattern-dark.svg' : '/admin/branding/pattern.svg'
+          "
           aria-hidden="true"
           class="background-pattern"
         />
@@ -262,8 +264,8 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 // Header controls, same skin as the collect app header
 .q-btn.header-btn {
   --header-btn-bg: #{'white'};
-  --header-btn-border: #{$brand-purple-100};
-  --header-btn-text: #{$brand-purple-800};
+  --header-btn-border: #{$brand-secondary-100};
+  --header-btn-text: #{$brand-secondary-800};
   --header-btn-shadow: 0 1px 2px 0 rgba(10, 13, 18, 0.05), inset 0 -2px 0 0 rgba(10, 13, 18, 0.05);
 
   height: 48px;
@@ -277,9 +279,9 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 .body--dark .q-btn.header-btn {
-  --header-btn-bg: #{$brand-purple-800};
-  --header-btn-border: #{$brand-purple-200};
-  --header-btn-text: #{$brand-purple-50};
+  --header-btn-bg: #{$brand-secondary-800};
+  --header-btn-border: #{$brand-secondary-200};
+  --header-btn-text: #{$brand-secondary-50};
 }
 
 .q-btn.header-btn :deep(.q-btn-dropdown__arrow) {
@@ -291,11 +293,11 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 .q-btn.menu-btn {
   width: 48px;
   height: 48px;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .body--dark .q-btn.menu-btn {
-  color: $brand-purple-50;
+  color: $brand-secondary-50;
 }
 
 .menu-btn__icon {
@@ -358,7 +360,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 // height and dissolving towards the left and right sides. The grid is one
 // repeating gradient and the fade is a mask -- no image asset needed.
 .background-dots {
-  --dot-color: #{$brand-purple-200};
+  --dot-color: #{$brand-secondary-200};
   --dot-fade: linear-gradient(90deg, transparent 0%, #000 45%, #000 55%, transparent 100%);
 
   position: absolute;
@@ -373,7 +375,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 .body--dark .background-dots {
-  --dot-color: #{$brand-purple-100};
+  --dot-color: #{$brand-secondary-100};
 }
 
 .nav-wrapper {
@@ -399,7 +401,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   line-height: 16px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 // Rows: 40px, 14px labels, 18px icons. Inactive icons are muted, the active
@@ -412,7 +414,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .nav-item + .nav-item {
@@ -422,7 +424,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 .nav-item :deep(.q-item__section--avatar) {
   min-width: 20px;
   padding-right: 12px; // spacing-md
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .nav-item :deep(.q-icon) {
@@ -430,12 +432,12 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 .nav-item:hover {
-  background-color: $brand-yellow-200;
+  background-color: $brand-primary-200;
 }
 
 .nav-item.q-router-link--active,
 .nav-item.q-router-link--active:hover {
-  background-color: $brand-yellow-25;
+  background-color: $brand-primary-25;
 }
 
 .nav-item.q-router-link--active::before {
@@ -446,11 +448,11 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   left: 0;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background-color: $brand-purple-800;
+  background-color: $brand-secondary-800;
 }
 
 .nav-item.q-router-link--active :deep(.q-item__section--avatar) {
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .nav-item :deep(.q-item__section--side) {
@@ -459,7 +461,7 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 
 .nav-item :deep(.nav-item__link-icon) {
   font-size: 16px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 // Count badge, the total of the table on that page
@@ -472,21 +474,21 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   font-weight: 600;
   line-height: 20px;
   text-align: center;
-  color: $brand-purple-700;
-  background-color: rgba($brand-purple-800, 0.08);
+  color: $brand-secondary-700;
+  background-color: color-mix(in srgb, #{$brand-secondary-800} 8%, transparent);
 }
 
 // Account row: avatar, name, role. Sign-out lives in the menu it opens.
 .nav-account {
   padding: 12px;
-  border-top: 1px solid $brand-purple-100;
+  border-top: 1px solid $brand-secondary-100;
 }
 
 .q-btn.nav-account__btn {
   width: 100%;
   padding: 6px 8px;
   border-radius: 8px; // radius-default
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .q-btn.nav-account__btn :deep(.q-btn__content) {
@@ -497,8 +499,8 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 
 .nav-account__avatar {
   flex: none;
-  background-color: $brand-purple-800;
-  color: $brand-yellow-100;
+  background-color: $brand-secondary-800;
+  color: $brand-primary-100;
   font-size: 13px;
   font-weight: 700;
 }
@@ -522,13 +524,13 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .nav-account__chevron {
   flex: none;
   font-size: 18px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 // Dark theme
@@ -536,43 +538,42 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 .body--dark .nav-item :deep(.q-item__section--avatar),
 .body--dark .nav-account__role,
 .body--dark .nav-account__chevron {
-  color: $brand-purple-200;
+  color: $brand-secondary-200;
 }
 
 .body--dark .nav-item,
 .body--dark .q-btn.nav-account__btn {
-  color: $brand-purple-50;
+  color: $brand-secondary-50;
 }
 
 .body--dark .nav-item:hover {
-  background-color: rgba($brand-purple-50, 0.08);
+  background-color: color-mix(in srgb, #{$brand-secondary-50} 8%, transparent);
 }
 
 .body--dark .nav-item.q-router-link--active,
 .body--dark .nav-item.q-router-link--active:hover {
-  background-color: $brand-purple-600;
+  background-color: $brand-secondary-600;
 }
 
 .body--dark .nav-item.q-router-link--active::before {
-  background-color: $brand-yellow-200;
+  background-color: $brand-primary-200;
 }
 
 .body--dark .nav-item.q-router-link--active :deep(.q-item__section--avatar) {
-  color: $brand-yellow-200;
+  color: $brand-primary-200;
 }
 
 .body--dark .nav-account {
-  border-top-color: $brand-purple-600;
+  border-top-color: $brand-secondary-600;
 }
 
 .body--dark .nav-account__avatar {
-  background-color: $brand-yellow-200;
-  color: $brand-purple-800;
+  background-color: $brand-primary-200;
+  color: $brand-secondary-800;
 }
 
 .body--dark .nav-badge {
-  color: $brand-purple-50;
-  background-color: rgba($brand-purple-50, 0.12);
+  color: $brand-secondary-50;
+  background-color: color-mix(in srgb, #{$brand-secondary-50} 12%, transparent);
 }
-
 </style>

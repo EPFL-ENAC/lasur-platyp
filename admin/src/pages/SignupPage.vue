@@ -3,12 +3,12 @@
     <q-page-container>
       <q-page class="flex flex-center auth-page">
         <div class="background-container">
-          <img src="/admin/PATTERN-VIOLET.svg" aria-hidden="true" class="background-pattern" />
+          <img src="/admin/branding/pattern.svg" aria-hidden="true" class="background-pattern" />
           <div aria-hidden="true" class="background-dots"></div>
         </div>
         <q-card :style="$q.screen.lt.sm ? { width: '80%' } : { width: '400px' }">
           <q-card-actions class="flex justify-center q-mt-lg q-ml-xl q-mr-xl q-mb-xs">
-            <img src="/admin/LOGO-VIOLET.svg" height="50px" />
+            <img src="/admin/branding/logo.svg" height="50px" />
           </q-card-actions>
           <q-card-section class="q-mx-lg q-my-md q-pa-none">
             <q-form ref="form">
@@ -72,10 +72,11 @@
                 :label="t('terms_and_conditions_accept') + ' *'"
               />
               <q-btn
+                v-if="t('main.links.terms')"
                 flat
                 no-caps
                 class="text-hint q-mb-md"
-                href="https://modus-ge.ch/mobilyse-cgu-organisation"
+                :href="t('main.links.terms')"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -238,7 +239,7 @@ function onCopyPassword() {
 // Dot grid, same as the main layout: 3px dots on a 30px pitch, dissolving
 // towards the left and right sides via a mask -- no image asset needed.
 .background-dots {
-  --dot-color: #{$brand-purple-200};
+  --dot-color: #{$brand-secondary-200};
   --dot-fade: linear-gradient(90deg, transparent 0%, #000 45%, #000 55%, transparent 100%);
 
   position: absolute;
@@ -253,6 +254,6 @@ function onCopyPassword() {
 }
 
 .body--dark .background-dots {
-  --dot-color: #{$brand-purple-100};
+  --dot-color: #{$brand-secondary-100};
 }
 </style>

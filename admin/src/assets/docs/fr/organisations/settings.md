@@ -41,4 +41,4 @@ Les informations de contact permettent aux participant·e·s et utilisateur·tri
   - Avantages pour les déplacements des collaborateur·trice·s
   - Directives spécifiques à l'organisation
 
-Note : Les informations personnelles renseignées dans l'outil Mobilyse sont traitées conformément à notre [politique de confidentialité](https://modus-ge.ch/mobilyse-notice-protection-des-donnees).
+Note : Les informations personnelles renseignées dans l'outil {brand} sont traitées conformément à notre [politique de confidentialité]({privacy_url}).

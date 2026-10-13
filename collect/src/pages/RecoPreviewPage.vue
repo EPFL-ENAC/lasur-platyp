@@ -10,7 +10,7 @@
 
     <div class="report-container">
       <report-page v-if="data">
-        <img src="/LOGO-VIOLET.svg" alt="logo" class="q-mb-lg logo" />
+        <img src="/branding/logo.svg" alt="logo" class="q-mb-lg logo" />
         <h1 class="text-h2 q-mt-xl text-primary text-center">
           {{ t('form.recommendations_print.title') }}
         </h1>

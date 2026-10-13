@@ -1,38 +1,38 @@
 // Quasar SCSS (& Sass) Variables
 // --------------------------------------------------
 
-$brand-yellow-25: #fffcf4;
-$brand-yellow-50: #fef8e7;
-$brand-yellow-100: #fdf1cf;
-$brand-yellow-200: #fbe29f;
-$brand-yellow-300: #f8d36f;
-$brand-yellow-400: #f3c65f;
-$brand-yellow-500: #e2b24a;
-$brand-yellow-600: #c79232;
-$brand-yellow-700: #9f7324;
-$brand-yellow-800: #77561c;
-$brand-yellow-900: #4f3913;
-$brand-yellow-950: #2c1f09;
+$brand-primary-25: var(--brand-primary-25);
+$brand-primary-50: var(--brand-primary-50);
+$brand-primary-100: var(--brand-primary-100);
+$brand-primary-200: var(--brand-primary-200);
+$brand-primary-300: var(--brand-primary-300);
+$brand-primary-400: var(--brand-primary-400);
+$brand-primary-500: var(--brand-primary-500);
+$brand-primary-600: var(--brand-primary-600);
+$brand-primary-700: var(--brand-primary-700);
+$brand-primary-800: var(--brand-primary-800);
+$brand-primary-900: var(--brand-primary-900);
+$brand-primary-950: var(--brand-primary-950);
 
-$brand-purple-25: #f9f9f9;
-$brand-purple-50: #f7f7f7;
-$brand-purple-100: #dcc2cf;
-$brand-purple-200: #bca2b0;
-$brand-purple-300: #a28594;
-$brand-purple-400: #88697a;
-$brand-purple-500: #6d5162;
-$brand-purple-600: #573e4d;
-$brand-purple-700: #49313e;
-$brand-purple-800: #382430;
-$brand-purple-900: #291823;
-$brand-purple-950: #0c0e12;
+$brand-secondary-25: var(--brand-secondary-25);
+$brand-secondary-50: var(--brand-secondary-50);
+$brand-secondary-100: var(--brand-secondary-100);
+$brand-secondary-200: var(--brand-secondary-200);
+$brand-secondary-300: var(--brand-secondary-300);
+$brand-secondary-400: var(--brand-secondary-400);
+$brand-secondary-500: var(--brand-secondary-500);
+$brand-secondary-600: var(--brand-secondary-600);
+$brand-secondary-700: var(--brand-secondary-700);
+$brand-secondary-800: var(--brand-secondary-800);
+$brand-secondary-900: var(--brand-secondary-900);
+$brand-secondary-950: var(--brand-secondary-950);
 
-$primary: $brand-yellow-500;
-$secondary: $brand-purple-600;
-$accent: $brand-yellow-500;
+$primary: $brand-primary-500;
+$secondary: $brand-secondary-600;
+$accent: $brand-primary-500;
 
-$dark: $brand-purple-800;
-$dark-page: $brand-purple-800;
+$dark: $brand-secondary-800;
+$dark-page: $brand-secondary-800;
 
 $positive: #21ba45;
 $negative: #c10015;
@@ -52,35 +52,35 @@ $button-shadow-active: 0 1px 2px 0 rgba(10, 13, 18, 0.05);
 
 // Theme Tokens
 body {
-  --nav-bg: #{$brand-yellow-100};
-  --foreground-color: #{$brand-purple-600};
-  --foreground-bg: #{$brand-purple-600};
+  --nav-bg: #{$brand-primary-100};
+  --foreground-color: #{$brand-secondary-600};
+  --foreground-bg: #{$brand-secondary-600};
   --background: white;
-  --title-color: #{$brand-yellow-700};
-  --field-color: #{$brand-purple-600};
-  --field-label-color: #{$brand-purple-600};
+  --title-color: #{$brand-primary-700};
+  --field-color: #{$brand-secondary-600};
+  --field-label-color: #{$brand-secondary-600};
   --field-bg: #{'white'};
-  --secondary-border-color: #{$brand-purple-200};
-  --muted-color: #{$brand-purple-300};
-  --half-muted-color: #{$brand-purple-400};
-  --super-muted-color: #{$brand-purple-100};
-  --hint-color: #{$brand-purple-400};
+  --secondary-border-color: #{$brand-secondary-200};
+  --muted-color: #{$brand-secondary-300};
+  --half-muted-color: #{$brand-secondary-400};
+  --super-muted-color: #{$brand-secondary-100};
+  --hint-color: #{$brand-secondary-400};
 }
 
 body.body--dark {
-  --nav-bg: #{$brand-purple-600};
-  --foreground-color: #{$brand-yellow-500};
-  --foreground-bg: #{$brand-yellow-500};
-  --background: #{$brand-purple-800};
-  --title-color: #{$brand-yellow-500};
-  --field-color: #{$brand-yellow-50};
-  --field-label-color: #{$brand-yellow-50};
-  --field-bg: #{$brand-purple-600};
-  --secondary-border-color: #{$brand-purple-300};
-  --muted-color: #{$brand-purple-300};
-  --half-muted-color: #{$brand-purple-200};
-  --super-muted-color: #{$brand-purple-400};
-  --hint-color: #{$brand-purple-200};
+  --nav-bg: #{$brand-secondary-600};
+  --foreground-color: #{$brand-primary-500};
+  --foreground-bg: #{$brand-primary-500};
+  --background: #{$brand-secondary-800};
+  --title-color: #{$brand-primary-500};
+  --field-color: #{$brand-primary-50};
+  --field-label-color: #{$brand-primary-50};
+  --field-bg: #{$brand-secondary-600};
+  --secondary-border-color: #{$brand-secondary-300};
+  --muted-color: #{$brand-secondary-300};
+  --half-muted-color: #{$brand-secondary-200};
+  --super-muted-color: #{$brand-secondary-400};
+  --hint-color: #{$brand-secondary-200};
 }
 
 // Global Class Definitions
@@ -139,7 +139,7 @@ body.body--dark {
 // Quasar Overrides using variables
 
 .bg-secondary-ultra-light {
-  background-color: $brand-purple-100 !important;
+  background-color: $brand-secondary-100 !important;
 }
 
 .q-btn {
@@ -148,7 +148,7 @@ body.body--dark {
 
 .q-btn.bg-primary {
   color: $secondary !important;
-  outline: 1px solid $brand-yellow-600 !important;
+  outline: 1px solid $brand-primary-600 !important;
 }
 
 .q-badge.bg-primary,
@@ -201,49 +201,49 @@ body.body--dark {
 
 .q-table thead tr {
   height: 52px;
-  background-color: $brand-purple-25;
+  background-color: $brand-secondary-25;
 }
 
 .q-table th {
   padding: 0 24px;
   font-size: 14px;
   font-weight: 600;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
   border-color: var(--secondary-border-color);
 }
 
 .q-table th.sortable:hover,
 .q-table th.sorted {
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 .q-table tbody td {
   height: 64px;
   padding: 0 24px;
   font-size: 15px;
-  color: $brand-purple-800;
-  border-color: $brand-purple-100;
+  color: $brand-secondary-800;
+  border-color: $brand-secondary-100;
 }
 
 .q-table tbody tr:hover td {
-  background-color: $brand-yellow-25;
+  background-color: $brand-primary-25;
 }
 
 .q-table__bottom {
   padding: 12px 24px;
   min-height: 56px;
   font-size: 14px;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
   border-color: var(--secondary-border-color);
 }
 
 // Row actions: quiet icons that darken on hover
 .q-table tbody .q-btn.q-btn--flat.q-btn--round {
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .q-table tbody .q-btn.q-btn--flat.q-btn--round:hover {
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
 }
 
 // Chips and badges inside tables read as soft pills
@@ -252,42 +252,42 @@ body.body--dark {
   margin: 2px 4px 2px 0;
   padding: 2px 10px;
   border-radius: 999px;
-  border: 1px solid $brand-yellow-200;
-  background-color: $brand-yellow-50 !important;
-  color: $brand-yellow-800 !important;
+  border: 1px solid $brand-primary-200;
+  background-color: $brand-primary-50 !important;
+  color: $brand-primary-800 !important;
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
 }
 
 .body--dark .q-table__container {
-  background-color: $brand-purple-800;
+  background-color: $brand-secondary-800;
 }
 
 .body--dark .q-table thead tr {
-  background-color: $brand-purple-700;
+  background-color: $brand-secondary-700;
 }
 
 .body--dark .q-table th,
 .body--dark .q-table__bottom {
-  color: $brand-purple-200;
+  color: $brand-secondary-200;
 }
 
 .body--dark .q-table tbody td {
-  color: $brand-purple-50;
-  border-color: $brand-purple-600;
+  color: $brand-secondary-50;
+  border-color: $brand-secondary-600;
 }
 
 .body--dark .q-table tbody tr:hover td {
-  background-color: $brand-purple-700;
+  background-color: $brand-secondary-700;
 }
 
 // Tabs: a tinted tray with a white raised pill for the active tab
 .q-tabs {
   border-radius: 12px !important; // radius-lg
   border: 1px solid var(--secondary-border-color) !important; // same as cards
-  background-color: $brand-purple-25;
-  color: $brand-purple-400 !important;
+  background-color: $brand-secondary-25;
+  color: $brand-secondary-400 !important;
 }
 
 // The strip clips its overflow, so the tray padding lives inside it: the
@@ -305,7 +305,7 @@ body.body--dark {
   line-height: 24px;
   letter-spacing: 0;
   text-transform: none;
-  color: $brand-purple-400;
+  color: $brand-secondary-400;
 }
 
 .q-tabs .q-tab + .q-tab {
@@ -314,7 +314,7 @@ body.body--dark {
 
 .q-tabs .q-tab--active {
   background-color: white;
-  color: $brand-purple-800;
+  color: $brand-secondary-800;
   box-shadow:
     0 1px 3px 0 rgba(10, 13, 18, 0.1),
     0 1px 2px 0 rgba(10, 13, 18, 0.06);
@@ -325,17 +325,17 @@ body.body--dark {
 }
 
 .body--dark .q-tabs {
-  background-color: $brand-purple-800;
-  color: $brand-purple-200 !important;
+  background-color: $brand-secondary-800;
+  color: $brand-secondary-200 !important;
 }
 
 .body--dark .q-tabs .q-tab {
-  color: $brand-purple-200;
+  color: $brand-secondary-200;
 }
 
 .body--dark .q-tabs .q-tab--active {
-  background-color: $brand-purple-600;
-  color: $brand-purple-50;
+  background-color: $brand-secondary-600;
+  color: $brand-secondary-50;
 }
 
 .text-hint {
