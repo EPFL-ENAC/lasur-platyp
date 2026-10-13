@@ -64,9 +64,10 @@ const $q = useQuasar()
 // Same container as the header toolbar, so both bands align on the same edges.
 .app-footer__content {
   display: grid;
-  grid-template-columns: 30%;
-  grid-auto-columns: 1fr;
+  grid-template-columns: 1fr;
+  grid-auto-columns: auto;
   grid-auto-flow: column;
+  column-gap: 64px;
   align-items: start;
   width: 100%;
   max-width: 1280px;
