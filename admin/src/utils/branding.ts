@@ -20,6 +20,8 @@ export interface Branding {
   messages?: Record<string, Record<string, unknown>>
   /** Partner columns shown in the footer */
   partners?: BrandingPartner[]
+  /** Side of the header menu button and of the drawer it opens (admin), default 'left' */
+  menuSide?: 'left' | 'right'
 }
 
 export const branding: Branding = (window as unknown as { branding?: Branding }).branding ?? {}

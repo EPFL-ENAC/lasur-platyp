@@ -36,7 +36,12 @@
           </q-list>
         </q-btn-dropdown>
 
-        <q-btn flat round class="menu-btn" aria-label="Menu" @click="toggleDrawer">
+        <q-btn
+          flat
+          round
+          class="menu-btn"
+          :class="{ 'menu-btn--left': menuSide === 'left' }"
+          aria-label="Menu" @click="toggleDrawer">
           <svg
             class="menu-btn__icon"
             viewBox="0 0 24 24"
@@ -57,7 +62,7 @@
     <q-drawer
       v-if="authStore.isAuthenticated"
       v-model="drawerOpen"
-      side="left"
+      :side="menuSide"
       bordered
       class="bg-nav text-foreground"
     >
@@ -174,6 +179,7 @@ import AppFooter from '@/components/AppFooter.vue'
 import { Cookies, useQuasar } from 'quasar'
 import { locales, localeLabel } from '@/boot/i18n'
 import { isFirstVisit } from '@/utils/localStorage'
+import { branding } from '@/utils/branding'
 
 const authStore = useAuthStore()
 const countsStore = useCountsStore()
@@ -182,6 +188,7 @@ const router = useRouter()
 const $q = useQuasar()
 
 const drawerOpen = ref(false)
+const menuSide = branding.menuSide === 'right' ? 'right' : 'left'
 
 const displayName = computed(() => authStore.profile?.email || '')
 
@@ -298,6 +305,11 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 
 .body--dark .q-btn.menu-btn {
   color: $brand-secondary-50;
+}
+
+// Toolbar is a flex row: move the burger before the logo
+.menu-btn--left {
+  order: -1;
 }
 
 .menu-btn__icon {

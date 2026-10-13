@@ -5,4 +5,6 @@ window.branding = {
   messages: {},
   // Footer partner columns: { logo, width, alt, url, name?, links?: [{ label, url }] }
   partners: [],
+  // Side of the header menu button and of the drawer it opens: 'left' (default) or 'right'
+  menuSide: 'left',
 }
