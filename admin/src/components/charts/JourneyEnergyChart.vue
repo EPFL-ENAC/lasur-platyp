@@ -500,23 +500,6 @@ function initComparisonChartOptions() {
       yAxisIndex: 0,
       color,
       data: [avgKcal[i] ?? 0, null],
-      ...(i === 0
-        ? {
-            markLine: {
-              symbol: ['none', 'none'],
-              label: {
-                show: true,
-                position: 'insideEndTop',
-                formatter: `${WHO_RECOMMENDATION}\u00A0kcal`,
-                distance: 10,
-                fontWeight: 'bold',
-              },
-              lineStyle: { type: 'dashed', width: 2, opacity: 0.8 },
-              data: [{ yAxis: WHO_RECOMMENDATION }],
-              z: 1000,
-            },
-          }
-        : {}),
     })
     series.push({
       name: group.name,
