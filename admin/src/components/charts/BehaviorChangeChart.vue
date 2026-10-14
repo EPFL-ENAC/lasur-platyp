@@ -577,7 +577,6 @@ function initComparisonChartOptions() {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      confine: true,
       formatter: (paramsList: CallbackDataParams | CallbackDataParams[]) =>
         comparisonTooltip(data, Array.isArray(paramsList) ? paramsList : [paramsList]),
     },
