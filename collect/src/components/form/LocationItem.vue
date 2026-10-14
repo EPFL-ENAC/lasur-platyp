@@ -11,9 +11,18 @@
 
 <script setup lang="ts">
 import type { AddressLocation } from '@/models'
-import { AttributionControl, FullscreenControl, Map, Marker, NavigationControl } from 'maplibre-gl'
+import {
+  AttributionControl,
+  FullscreenControl,
+  type LngLat,
+  Map,
+  Marker,
+  NavigationControl,
+} from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import type { Point } from 'geojson'
 import { style } from '@/utils/maps'
+import { geocoderApi, toAddress } from '@/utils/geocoder'
 import AddressInput from './AddressInput.vue'
 
 interface Props {
@@ -80,17 +89,24 @@ function initMap() {
     marker.addTo(map.value)
   }
 
-  if (!props.readonly) {
-    map.value.on('click', (e) => {
-      addressLocation.value = {
-        ...(addressLocation.value || { address: '' }),
-        lat: e.lngLat.lat,
-        lon: e.lngLat.lng,
-        address: undefined,
-      }
+  // readonly can change after mount (e.g. "other" workplace selected)
+  map.value.on('click', (e) => {
+    if (!props.readonly) void onMapClick(e.lngLat)
+  })
+}
 
-      onUpdateMarker()
-    })
+// Snap to the nearest address, so the point does not land in a lake or a field
+async function onMapClick(lngLat: LngLat) {
+  const { features } = await geocoderApi.reverseGeocode({
+    query: { lat: lngLat.lat, lon: lngLat.lng },
+  })
+  const snapped = features[0]
+  const [lon, lat] = snapped ? (snapped.geometry as Point).coordinates : [lngLat.lng, lngLat.lat]
+  addressLocation.value = {
+    ...(addressLocation.value || { address: '' }),
+    lat,
+    lon,
+    address: snapped ? toAddress(snapped) : undefined,
   }
 }
 

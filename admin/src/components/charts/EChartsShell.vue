@@ -226,6 +226,8 @@ const resolvedOption = computed<ECBasicOption>(() => {
     else if (opt[key]) opt[key] = formatValueAxis(opt[key], defaultType)
   }
   if (pieBox.value && Array.isArray(opt.series)) opt.series = opt.series.map(fitPie)
+  // Keep tooltips inside the chart box, which clips whatever overflows it.
+  if (opt.tooltip && !Array.isArray(opt.tooltip)) opt.tooltip = { confine: true, ...opt.tooltip }
   return opt as ECBasicOption
 })
 

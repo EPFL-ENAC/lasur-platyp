@@ -192,23 +192,39 @@ const comparisonValues = computed(() => {
   }
 })
 
+/** Whether a charted campaign has an 'Autres' row, gathering the less recommended modes. */
+const hasOthers = computed(() => {
+  const sources = stats.comparisonMode
+    ? (stats.comparisonResults?.groups ?? []).map((group) => group.behavior_change)
+    : [props.behaviorChangeStats]
+  return sources.some((source) =>
+    source?.motivation?.by_mode_motivation.some((m) => m.mode === 'Autres'),
+  )
+})
+
 const chartDescription = computed(() => {
+  const defaultText = hasOthers.value
+    ? `${t('stats.behavior_change_motivation.texts.default')} ${t('stats.behavior_change_motivation.texts.others')}`
+    : t('stats.behavior_change_motivation.texts.default')
   if (stats.comparisonMode) {
-    return comparisonValues.value
-      ? t(
-          `stats.behavior_change_motivation.texts.${comparisonValues.value.key}`,
-          comparisonValues.value.values,
-        )
-      : t('stats.behavior_change_motivation.texts.default')
+    if (!comparisonValues.value) return defaultText
+    const comparisonText = t(
+      `stats.behavior_change_motivation.texts.${comparisonValues.value.key}`,
+      comparisonValues.value.values,
+    )
+    return [
+      comparisonText,
+      hasOthers.value ? defaultText : '',
+      t('stats.behavior_change_motivation.texts.footnote'),
+    ]
+      .filter(Boolean)
+      .join('\n\n')
   }
 
   if (total.value < 5) {
-    return t('stats.behavior_change_motivation.texts.default')
+    return defaultText
   }
 
-  return `${t('stats.behavior_change_motivation.texts.default')}\n\n${t(
-    'stats.behavior_change_motivation.texts.specific',
-    descriptionValues.value,
-  )}`
+  return `${defaultText}\n\n${t('stats.behavior_change_motivation.texts.specific', descriptionValues.value)}`
 })
 </script>

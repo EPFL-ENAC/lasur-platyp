@@ -58,6 +58,7 @@ window.branding = {
       links: [{ label: 'footer.modus_tagline', url: 'https://modus-ge.ch/' }], // label is an i18n key
     },
   ],
+  menuSide: 'left', // header menu button and drawer side (admin): 'left' (default) or 'right'
 }
 ```
 
