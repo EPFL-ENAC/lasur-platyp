@@ -895,6 +895,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         info: "Ce graphique permet de comprendre comment les participant·e·s souhaiteraient être accompagné·e·s dans l'évolution de leur mobilité. Il montre quelles sont les mesures qui sont les plus sélectionnées par les participant·e·s.",
         default:
           'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
+        others: 'Le mode "Autres" regroupe l\'ensemble des autres modes.',
         specific: "L'aide dont les participant·e·s estiment avoir le plus besoin est {lever}.",
       },
     },
@@ -916,12 +917,14 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
         info: "Ce graphique montre la motivation des participant·e·s à adopter les recommandations qui leur sont faites par @:{'main.brand'} pour leur déplacement domicile-travail.",
         default:
           'Les modes affichés sont ceux qui ont été recommandés à suffisamment de personnes ayant répondu à cette question.',
+        others: 'Le mode "Autres" regroupe l\'ensemble des autres modes.',
         specific:
           'Au total, environ {percentage}% des participant·e·s sont motivé·e·s pour adopter les recommandations qui leur sont faites.',
         comparison:
-          "Ce graphique compare les motivations des participant·e·s pour utiliser les modes recommandés par @:{'main.brand'} au cours des différentes campagnes sélectionnées. Par exemple, environ {lastPercent}% des participant·e·s à qui on a recommandé le mode {mode} lors de {lastGroup} sont plutôt motivé·e·s* pour adopter cette recommandation, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.\n\n&ast; plutôt motivé·e·s ou très motivé·e·s",
+          "Ce graphique compare les motivations des participant·e·s pour utiliser les modes recommandés par @:{'main.brand'} au cours des différentes campagnes sélectionnées. Par exemple, environ {lastPercent}% des participant·e·s à qui on a recommandé le mode {mode} lors de {lastGroup} sont plutôt motivé·e·s* pour adopter cette recommandation, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.",
         comparison_all_modes:
-          "Ce graphique compare les motivations des participant·e·s pour utiliser les modes recommandés par @:{'main.brand'} au cours des différentes campagnes sélectionnées. Par exemple, tous modes confondus, environ {lastPercent}% des participant·e·s à {lastGroup} sont plutôt motivé·e·s* pour adopter les recommandations qui leur sont faites, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.\n\n&ast; plutôt motivé·e·s ou très motivé·e·s",
+          "Ce graphique compare les motivations des participant·e·s pour utiliser les modes recommandés par @:{'main.brand'} au cours des différentes campagnes sélectionnées. Par exemple, tous modes confondus, environ {lastPercent}% des participant·e·s à {lastGroup} sont plutôt motivé·e·s* pour adopter les recommandations qui leur sont faites, comparé à environ {prevPercent}% des participant·e·s à {prevGroup}.",
+        footnote: '&ast; plutôt motivé·e·s ou très motivé·e·s',
       },
     },
     equipments_by_recommendations: {

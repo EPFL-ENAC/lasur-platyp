@@ -879,6 +879,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
         info: 'This chart helps to understand how participants would like to be supported in evolving their mobility. It shows which measures are most frequently selected by participants.',
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
+        others: 'The mode "Other" gathers all the other modes.',
         specific: 'The support that participants feel they need most is {lever}.',
       },
     },
@@ -900,12 +901,14 @@ Thank you for your valuable contribution! If you have any questions, please cont
         info: "This graph shows the motivation of participants to adopt the recommendations made by @:{'main.brand'} for their home-work travel.",
         default:
           'The modes displayed are those that have been recommended to sufficiently many people who have answered this question.',
+        others: 'The mode "Other" gathers all the other modes.',
         specific:
           'Overall, about {percentage}% (combined rather motivated and very motivated) of participants are motivated to adopt the recommendations made to them.',
         comparison:
-          "This graph compares participants’ motivations for using the modes of transport recommended by @:{'main.brand'} during the various selected campaigns. For example, approximately {lastPercent}% of participants who were recommended the {mode} mode during {lastGroup} are somewhat motivated* to adopt this recommendation, compared to approximately {prevPercent}% of participants during {prevGroup}.\n\n&ast; rather motivated or very motivated",
+          "This graph compares participants’ motivations for using the modes of transport recommended by @:{'main.brand'} during the various selected campaigns. For example, approximately {lastPercent}% of participants who were recommended the {mode} mode during {lastGroup} are somewhat motivated* to adopt this recommendation, compared to approximately {prevPercent}% of participants during {prevGroup}.",
         comparison_all_modes:
-          "This graph compares participants’ motivations for using the modes of transport recommended by @:{'main.brand'} during the various selected campaigns. For example, across all modes, approximately {lastPercent}% of participants in {lastGroup} are somewhat motivated* to adopt the recommendations made to them, compared to approximately {prevPercent}% of participants in {prevGroup}.\n\n&ast; rather motivated or very motivated",
+          "This graph compares participants’ motivations for using the modes of transport recommended by @:{'main.brand'} during the various selected campaigns. For example, across all modes, approximately {lastPercent}% of participants in {lastGroup} are somewhat motivated* to adopt the recommendations made to them, compared to approximately {prevPercent}% of participants in {prevGroup}.",
+        footnote: '&ast; rather motivated or very motivated',
       },
     },
     equipments_by_recommendations: {

@@ -136,19 +136,26 @@ const comparisonLever = computed(() => {
   return topLever?.count ? keyLabel(topLever.category) : null
 })
 
+/** Whether a charted campaign has an 'Autres' row, gathering the less recommended modes. */
+const hasOthers = computed(() => {
+  const sources = stats.comparisonMode
+    ? (stats.comparisonResults?.groups ?? []).map((group) => group.behavior_change)
+    : [props.behaviorChangeStats]
+  return sources.some((source) => source?.levers?.by_mode_levers.some((m) => m.mode === 'Autres'))
+})
+
 const chartDescription = computed(() => {
-  const defaultText = t('stats.behavior_change_levers.texts.default')
+  const othersText = hasOthers.value
+    ? `${t('stats.behavior_change_levers.texts.default')} ${t('stats.behavior_change_levers.texts.others')}`
+    : ''
+  let lever: string | null | undefined
   if (stats.comparisonMode) {
-    return comparisonLever.value
-      ? `${defaultText}\n\n${t('stats.behavior_change_levers.texts.specific', { lever: comparisonLever.value })}`
-      : defaultText
+    lever = comparisonLever.value
+  } else if (total.value >= 5) {
+    lever = descriptionValues.value.lever
   }
-
-  if (total.value < 5) {
-    return defaultText
-  }
-
-  return `${defaultText}\n\n${t('stats.behavior_change_levers.texts.specific', descriptionValues.value)}`
+  const specificText = lever ? t('stats.behavior_change_levers.texts.specific', { lever }) : ''
+  return [othersText, specificText].filter(Boolean).join('\n\n')
 })
 
 function keyLabel(key: string) {
