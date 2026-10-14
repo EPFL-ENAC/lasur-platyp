@@ -72,7 +72,7 @@ export const geocoderApi = {
     try {
       if (reverseController) reverseController.abort()
       reverseController = new AbortController()
-      const request = `${NOMINATIM_URL}/reverse?lat=${config.query.lat}&lon=${config.query.lon}&format=geojson&polygon_geojson=1&addressdetails=1`
+      const request = `${NOMINATIM_URL}/reverse?lat=${config.query.lat}&lon=${config.query.lon}&format=geojson&addressdetails=1&layer=address&zoom=18`
       const response = await fetch(request, {
         signal: reverseController.signal,
       })

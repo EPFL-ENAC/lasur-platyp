@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="question-label text-bold q-mb-md">
+    <div v-if="!props.readonly" class="question-label text-bold q-mb-md">
       {{ t('lookup_address_or_select_on_map') }}
     </div>
 

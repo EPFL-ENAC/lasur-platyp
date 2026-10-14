@@ -10,7 +10,10 @@
       @update:modelValue="onWorkplaceSelected"
       class="q-mb-lg"
     />
-    <OrSeparator v-if="workplaceOptions.length > 0" class="q-mb-lg" />
+    <OrSeparator
+      v-if="workplaceOptions.length > 0 && selectedWorkplace === OTHER_WORKPLACE_OPTION"
+      class="q-mb-lg"
+    />
     <LocationItem
       :readonly="selectedWorkplace !== OTHER_WORKPLACE_OPTION"
       map-id="workplace-map"
