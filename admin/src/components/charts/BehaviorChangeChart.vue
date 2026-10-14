@@ -286,7 +286,7 @@ function getSortedModes<
     | BehaviorChangeStats['levers']['by_mode_levers']
     | BehaviorChangeStats['motivation']['by_mode_motivation'],
 >(data: T): T {
-  const copy = [...data].sort((a, b) => modeOrder(a.mode) - modeOrder(b.mode)) as T
+  const copy = [...data].sort((a, b) => modeOrder(b.mode) - modeOrder(a.mode)) as T
 
   moveToStart(
     copy,
@@ -309,13 +309,15 @@ function getSortedModes<
 }
 
 // Reporting order of a row: the simple typology when the modes are folded,
-// the transport mode order otherwise.
+// the transport mode order otherwise. Rows are sorted by decreasing order, as a
+// category y axis draws its first row at the bottom: the most virtuous mode
+// shows on top, above 'Autres' and 'Total'.
 function modeOrder(mode: string): number {
   return isSimpleLabel(mode) ? simpleLabelSortOrder(mode) : modeSortOrder(mode)
 }
 
 function orderModes(modes: string[]): string[] {
-  const copy = [...modes].sort((a, b) => modeOrder(a) - modeOrder(b))
+  const copy = [...modes].sort((a, b) => modeOrder(b) - modeOrder(a))
   moveToStart(
     copy,
     copy.find((mode) => mode === 'other'),
