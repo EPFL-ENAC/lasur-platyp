@@ -41,7 +41,9 @@
           round
           class="menu-btn"
           :class="{ 'menu-btn--left': menuSide === 'left' }"
-          aria-label="Menu" @click="toggleDrawer">
+          aria-label="Menu"
+          @click="toggleDrawer"
+        >
           <svg
             class="menu-btn__icon"
             viewBox="0 0 24 24"
@@ -62,7 +64,7 @@
     <q-drawer
       v-if="authStore.isAuthenticated"
       v-model="drawerOpen"
-      :side="menuSide"
+      side="left"
       bordered
       class="bg-nav text-foreground"
     >
