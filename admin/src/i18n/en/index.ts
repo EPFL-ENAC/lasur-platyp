@@ -429,7 +429,7 @@ Thank you for your valuable contribution! If you have any questions, please cont
     total: 'N: {count}',
     total_participants: 'Number of participants: {count}',
     total_trips: 'Number of trips: {count}',
-    no_data: 'No data available',
+    no_data: 'No data available (5 participants are required to display the graph)',
     observed: 'Data from participants',
     participants_median: 'Participants median',
     geneva_median: 'Geneva area median',

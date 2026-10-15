@@ -440,7 +440,7 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     total: 'N : {count}',
     total_participants: 'Nombre de participant·e·s : {count}',
     total_trips: 'Nombre de trajets : {count}',
-    no_data: 'Aucune donnée disponible',
+    no_data: 'Aucune donnée disponible (5 participant·e·s sont requis·e·s pour afficher le graphique)',
     observed: 'Données des participant·e·s',
     participants_median: 'Médiane des participant·e·s',
     geneva_median: 'Médiane de la région de Genève',
