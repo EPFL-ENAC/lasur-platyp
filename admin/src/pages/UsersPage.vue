@@ -3,6 +3,11 @@
     <div class="title-bar">
       <div class="text-subtitle2">{{ t('users') }}</div>
       <div class="title-toolbar">
+        <q-toggle
+          :model-value="usersStore.signupEnabled"
+          :label="t('signup_enabled')"
+          @update:model-value="onSignupToggle"
+        />
         <q-input dense outlined rounded color="field" debounce="300" v-model="filter" clearable>
           <template v-slot:append>
             <q-icon name="search" />
@@ -178,7 +183,12 @@ const columns = computed(() => {
 
 onMounted(() => {
   usersStore.init()
+  usersStore.loadSignup().catch(notifyError)
 })
+
+function onSignupToggle(enabled: boolean) {
+  usersStore.setSignup(enabled).catch(notifyError)
+}
 
 function onAdd() {
   selected.value = {} as AppUser

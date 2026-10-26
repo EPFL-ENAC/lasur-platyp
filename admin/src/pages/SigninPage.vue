@@ -14,7 +14,8 @@
             <q-btn
               flat
               :label="t('signup')"
-              :disable="!authStore.initialized"
+              :disable="!authStore.initialized || !usersStore.signupEnabled"
+              :title="usersStore.signupEnabled ? '' : t('signup_disabled')"
               color="primary"
               to="/signup"
             />
@@ -41,9 +42,11 @@ import { notifyError } from '@/utils/notify'
 const $q = useQuasar()
 const { t } = useI18n()
 const authStore = useAuthStore()
+const usersStore = useUsersStore()
 const router = useRouter()
 
 onMounted(async () => {
+  usersStore.loadSignup().catch(notifyError)
   await authStore.init()
   if (authStore.isAuthenticated) {
     router.push('/')

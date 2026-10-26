@@ -201,6 +201,12 @@ class AccessLog(AccessLogBase, table=True):
     )
     data_entry_id: int = Field(default=None, foreign_key="dataentry.id")
 
+
+
+class AppSetting(SQLModel, table=True):
+    key: str = Field(primary_key=True)
+    value: str
+
 # Association tables
 
 
