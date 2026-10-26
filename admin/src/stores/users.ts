@@ -7,6 +7,7 @@ const authStore = useAuthStore()
 export const useUsersStore = defineStore('users', () => {
   const users = ref<AppUser[]>([])
   const loading = ref(false)
+  const signupEnabled = ref(false)
 
   async function init() {
     // fetch users from the server
@@ -66,6 +67,27 @@ export const useUsersStore = defineStore('users', () => {
     return api.post(`/user/_register`, payload)
   }
 
+  async function loadSignup() {
+    return api.get('/user/_signup').then((res) => {
+      signupEnabled.value = res.data.enabled
+      return signupEnabled.value
+    })
+  }
+
+  async function setSignup(enabled: boolean) {
+    if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
+    return authStore.updateToken().then(() => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
+      }
+      return api.put('/user/_signup', { enabled }, config).then((res) => {
+        signupEnabled.value = res.data.enabled
+      })
+    })
+  }
+
   async function update(payload: AppUser) {
     if (!authStore.isAuthenticated) return Promise.reject('Not authenticated')
     if (payload.roles === undefined) {
@@ -116,5 +138,8 @@ export const useUsersStore = defineStore('users', () => {
     update_password,
     remove,
     register,
+    signupEnabled,
+    loadSignup,
+    setSignup,
   }
 })

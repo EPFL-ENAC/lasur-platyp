@@ -6,5 +6,5 @@ window.branding = {
   // Footer partner columns: { logo, width, alt, url, name?, links?: [{ label, url }] }
   partners: [],
   // Side of the header menu button (the drawer it opens is always on the left side): 'left' (default) or 'right'
-  menuSide: 'right',
+  menuSide: 'left',
 }
