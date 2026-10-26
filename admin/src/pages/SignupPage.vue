@@ -160,6 +160,10 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 onMounted(async () => {
+  if (!(await usersStore.loadSignup().catch(() => false))) {
+    router.replace('/signin')
+    return
+  }
   await authStore.init()
   if (authStore.isAuthenticated) {
     router.push('/')

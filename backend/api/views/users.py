@@ -1,10 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+from api.db import get_session, AsyncSession
 from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
+from api.services.settings import SettingsService
 from api.auth import kc_service, User, kc_admin_service
 from api.config import config
 from api.rate_limit import limiter
 
 router = APIRouter()
+
+
+class SignupSetting(BaseModel):
+    enabled: bool
 
 
 @router.get("/", response_model=AppUserResult, response_model_exclude_none=True)
@@ -14,6 +21,23 @@ async def find(user: User = Depends(kc_service.require_admin())):
     return AppUserResult(
         skip=0, limit=len(app_users), total=len(app_users), data=app_users
     )
+
+
+@router.get("/_signup", response_model=SignupSetting)
+async def get_signup(session: AsyncSession = Depends(get_session)) -> SignupSetting:
+    """Whether user self-registration is enabled (public)"""
+    return SignupSetting(enabled=await SettingsService(session).is_signup_enabled())
+
+
+@router.put("/_signup", response_model=SignupSetting)
+async def set_signup(
+    payload: SignupSetting,
+    session: AsyncSession = Depends(get_session),
+    user: User = Depends(kc_service.require_admin()),
+) -> SignupSetting:
+    """Enable or disable user self-registration"""
+    enabled = await SettingsService(session).set_signup_enabled(payload.enabled)
+    return SignupSetting(enabled=enabled)
 
 
 @router.get("/{id}", response_model=AppUser, response_model_exclude_none=True)
@@ -44,16 +68,23 @@ async def create(
 
 @router.post("/_register", response_model=AppUser, response_model_exclude_none=True)
 @limiter.limit(config.RATE_LIMIT_USERS_REGISTER)
-async def register(request: Request, item: AppUserDraft) -> AppUser:
+async def register(
+    request: Request,
+    item: AppUserDraft,
+    session: AsyncSession = Depends(get_session),
+) -> AppUser:
     """User self-registration"""
+    if not await SettingsService(session).is_signup_enabled():
+        raise HTTPException(status_code=403, detail="error.signup_disabled")
     # check user does not exist
     try:
         existing_user = await kc_admin_service.get_user(item.username)
-        if existing_user:
-            raise HTTPException(
-                status_code=400, detail="error.registration_failed")
     except Exception:
-        pass
+        # Keycloak raises when the user is not found
+        existing_user = None
+    if existing_user:
+        raise HTTPException(
+            status_code=400, detail="error.registration_failed")
 
     if kc_admin_service.check_valid_password(item.password) is False:
         raise HTTPException(
