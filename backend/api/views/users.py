@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
+from keycloak.exceptions import KeycloakError
 from pydantic import BaseModel
 from api.db import get_session, AsyncSession
 from api.models.users import AppUser, AppUserResult, AppUserDraft, AppUserPassword
@@ -79,8 +80,10 @@ async def register(
     # check user does not exist
     try:
         existing_user = await kc_admin_service.get_user(item.username)
-    except Exception:
-        # Keycloak raises when the user is not found
+    except KeycloakError as e:
+        # Keycloak raises 404 when the user is not found, anything else is a real failure
+        if e.response_code != 404:
+            raise
         existing_user = None
     if existing_user:
         raise HTTPException(
@@ -101,7 +104,14 @@ async def register(
     actions = ["VERIFY_EMAIL"]
     if config.KEYCLOAK_TOTP:
         actions.append("CONFIGURE_TOTP")
-    return await kc_admin_service.create_user(new_user, actions)
+    try:
+        return await kc_admin_service.create_user(new_user, actions)
+    except KeycloakError as e:
+        # 409: username or email already taken
+        if e.response_code == 409:
+            raise HTTPException(
+                status_code=400, detail="error.registration_failed")
+        raise
 
 
 @router.put("/{id}", response_model=AppUser, response_model_exclude_none=True)
