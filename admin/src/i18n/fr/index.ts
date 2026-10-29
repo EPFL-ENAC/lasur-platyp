@@ -1172,6 +1172,9 @@ Utilisez le menu pour naviguer à travers les différentes sections et gérer le
   signout: 'Déconnexion',
   signin: 'Connexion',
   signup: 'Inscription',
+  join: 'Rejoindre',
+  join_hint:
+    "Vous êtes connecté en tant que {email}, mais pas encore inscrit : acceptez les termes et conditions pour rejoindre l'application.",
   name: 'Nom',
   no_results: 'Aucun résultat',
   participants_campaign_hint:
