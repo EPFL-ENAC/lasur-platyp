@@ -16,6 +16,7 @@ interface CustomWindow extends Window {
     KEYCLOAK_URL?: string
     KEYCLOAK_REALM?: string
     AUTH_CLIENT_ID: string
+    AUTH_API_CLIENT_ID?: string
     API_URL: string
     API_PATH: string
     COLLECT_URL: string
@@ -25,10 +26,12 @@ interface CustomWindow extends Window {
 const appEnv = (window as unknown as CustomWindow).env
 
 const keycloak = new Keycloak({
-  url: appEnv.KEYCLOAK_URL || 'https://enac-it-sso.epfl.ch/',
-  realm: appEnv.KEYCLOAK_REALM || 'LASUR',
+  url: appEnv.KEYCLOAK_URL || 'https://enac-it-sso2.epfl.ch/',
+  realm: appEnv.KEYCLOAK_REALM || 'external',
   clientId: appEnv.AUTH_CLIENT_ID,
 })
+// the app roles are client roles of the backend client when set, else realm roles
+const authApiClientId = appEnv.AUTH_API_CLIENT_ID
 const baseUrl = `${appEnv.API_URL}${appEnv.API_PATH}`
 const api = axios.create({
   baseURL: baseUrl,
@@ -64,7 +67,7 @@ export default defineBoot(({ app, router }) => {
   // stores/auth.ts's updateToken() and watched below).
   function handleExpiredSession() {
     authStore.profile = undefined
-    authStore.realmRoles = []
+    authStore.roles = []
     if (router.currentRoute.value.path !== '/signin') {
       notifyWarning('error.session_expired')
       void router.push('/signin')
@@ -90,4 +93,4 @@ export default defineBoot(({ app, router }) => {
   )
 })
 
-export { api, baseUrl, keycloak, collectUrl }
+export { api, baseUrl, keycloak, authApiClientId, collectUrl }

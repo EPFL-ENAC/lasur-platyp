@@ -9,14 +9,16 @@ ADMIN_ROLE = "platyp-admin"
 USER_ROLE = "platyp-user"
 
 kc_service = KeycloakService(config.KEYCLOAK_URL, config.KEYCLOAK_REALM,
-                             config.KEYCLOAK_API_ID, config.KEYCLOAK_API_SECRET, ADMIN_ROLE)
+                             config.KEYCLOAK_API_ID, config.KEYCLOAK_API_SECRET, ADMIN_ROLE,
+                             client_roles=config.KEYCLOAK_CLIENT_ROLES)
 
 kc_admin_service = KeycloakAdminService(config.KEYCLOAK_URL, config.KEYCLOAK_REALM,
-                                        config.KEYCLOAK_API_ID, config.KEYCLOAK_API_SECRET, USER_ROLE)
+                                        config.KEYCLOAK_API_ID, config.KEYCLOAK_API_SECRET, USER_ROLE,
+                                        client_roles=config.KEYCLOAK_CLIENT_ROLES)
 
 
 def is_admin(user: User) -> bool:
-    return ADMIN_ROLE in user.realm_roles
+    return ADMIN_ROLE in kc_service.get_roles(user)
 
 
 async def check_admin_or_perm(user: User, resource: str, permission: str):

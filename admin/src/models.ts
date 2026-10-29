@@ -81,6 +81,8 @@ export interface AppUser {
   totp: boolean
   roles: string[]
   password?: string
+  // identity providers (e.g. github, google) the user signs in with, no password then
+  identity_providers?: string[]
 }
 
 export interface ParticipantData {

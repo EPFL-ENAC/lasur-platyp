@@ -66,6 +66,7 @@
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <q-btn
+              v-if="!props.row.identity_providers?.length"
               size="12px"
               flat
               dense
