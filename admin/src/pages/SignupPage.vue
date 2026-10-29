@@ -12,61 +12,70 @@
           </q-card-actions>
           <q-card-section class="q-mx-lg q-my-md q-pa-none">
             <q-form ref="form">
-              <q-input
-                filled
-                v-model="selected.email"
-                type="email"
-                :label="t('email') + ' *'"
-                lazy-rules
-                :rules="[
-                  (val) => !!val || t('field_required'),
-                  (val) => /\S+@\S+\.\S+/.test(val) || t('error.invalid_email'),
-                ]"
-                class="q-mb-sm"
-              />
-              <q-input
-                filled
-                v-model="selected.password"
-                :type="showPassword ? 'text' : 'password'"
-                :label="t('password') + ' *'"
-                :hint="t('password_hint')"
-                autocomplete="new-password"
-                lazy-rules
-                :rules="[(val) => !!val || t('field_required')]"
-                class="q-mb-xl"
-              >
-                <template v-slot:append>
-                  <q-icon
-                    name="visibility"
-                    size="xs"
-                    class="cursor-pointer on-left"
-                    @click="showPassword = !showPassword"
-                  />
-                  <q-icon
-                    name="content_copy"
-                    size="xs"
-                    class="cursor-pointer on-left"
-                    @click="onCopyPassword"
-                  />
-                  <q-icon name="electric_bolt" class="cursor-pointer" @click="onGeneratePassword" />
-                </template>
-              </q-input>
-              <q-input
-                filled
-                v-model="selected.first_name"
-                :label="t('first_name') + ' *'"
-                lazy-rules
-                :rules="[(val) => !!val || t('field_required')]"
-                class="q-mb-sm"
-              />
-              <q-input
-                filled
-                v-model="selected.last_name"
-                :label="t('last_name') + ' *'"
-                lazy-rules
-                :rules="[(val) => !!val || t('field_required')]"
-                class="q-mb-sm"
-              />
+              <div v-if="joining" class="q-mb-md">
+                {{ t('join_hint', { email: authStore.profile?.email }) }}
+              </div>
+              <template v-else>
+                <q-input
+                  filled
+                  v-model="selected.email"
+                  type="email"
+                  :label="t('email') + ' *'"
+                  lazy-rules
+                  :rules="[
+                    (val) => !!val || t('field_required'),
+                    (val) => /\S+@\S+\.\S+/.test(val) || t('error.invalid_email'),
+                  ]"
+                  class="q-mb-sm"
+                />
+                <q-input
+                  filled
+                  v-model="selected.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  :label="t('password') + ' *'"
+                  :hint="t('password_hint')"
+                  autocomplete="new-password"
+                  lazy-rules
+                  :rules="[(val) => !!val || t('field_required')]"
+                  class="q-mb-xl"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      name="visibility"
+                      size="xs"
+                      class="cursor-pointer on-left"
+                      @click="showPassword = !showPassword"
+                    />
+                    <q-icon
+                      name="content_copy"
+                      size="xs"
+                      class="cursor-pointer on-left"
+                      @click="onCopyPassword"
+                    />
+                    <q-icon
+                      name="electric_bolt"
+                      class="cursor-pointer"
+                      @click="onGeneratePassword"
+                    />
+                  </template>
+                </q-input>
+                <q-input
+                  filled
+                  v-model="selected.first_name"
+                  :label="t('first_name') + ' *'"
+                  lazy-rules
+                  :rules="[(val) => !!val || t('field_required')]"
+                  class="q-mb-sm"
+                />
+                <q-input
+                  filled
+                  v-model="selected.last_name"
+                  :label="t('last_name') + ' *'"
+                  lazy-rules
+                  :rules="[(val) => !!val || t('field_required')]"
+                  class="q-mb-sm"
+                />
+              </template>
               <q-checkbox
                 v-model="terms_and_conditions_accepted"
                 :label="t('terms_and_conditions_accept') + ' *'"
@@ -104,6 +113,14 @@
           </q-card-section>
           <q-card-actions class="flex justify-center q-mx-lg q-mb-lg q-pa-none">
             <q-btn
+              v-if="joining"
+              flat
+              :label="t('signout')"
+              color="primary"
+              @click="authStore.logout()"
+            />
+            <q-btn
+              v-else
               flat
               :label="t('signin')"
               :disable="!authStore.initialized"
@@ -113,7 +130,7 @@
             <q-space />
             <q-btn
               outline
-              :label="t('signup')"
+              :label="t(joining ? 'join' : 'signup')"
               :disable="!authStore.initialized"
               :loading="!authStore.initialized"
               color="primary"
@@ -143,6 +160,8 @@ const router = useRouter()
 const form = ref()
 const terms_and_conditions_accepted = ref(false)
 const showPassword = ref(false)
+// signed-in user of the realm without the app roles: joins the app instead of creating an account
+const joining = computed(() => authStore.isAuthenticated && !authStore.isMember)
 const selected = ref<AppUser>({
   email: '',
 } as AppUser)
@@ -165,18 +184,28 @@ onMounted(async () => {
     return
   }
   await authStore.init()
-  if (authStore.isAuthenticated) {
+  if (authStore.isMember) {
     router.push('/')
   }
 })
 
 async function onSignup() {
-  if (!(await form.value.validate())) {
+  if (!joining.value && !(await form.value.validate())) {
     notifyError(t('error.form_invalid'))
     return
   }
   if (!terms_and_conditions_accepted.value) {
     notifyError(t('error.accept_terms_and_conditions'))
+    return
+  }
+  if (joining.value) {
+    try {
+      await authStore.join()
+    } catch (error) {
+      notifyError(error)
+      return
+    }
+    router.push('/')
     return
   }
   try {

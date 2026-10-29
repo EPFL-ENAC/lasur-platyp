@@ -1150,6 +1150,9 @@ Use the menu to navigate through the different sections, manage organisations, c
   signout: 'Sign-out',
   signin: 'Sign-in',
   signup: 'Sign-up',
+  join: 'Join',
+  join_hint:
+    'You are signed in as {email}, but not registered yet: accept the terms and conditions to join.',
   name: 'Name',
   no_results: 'No results',
   participants_campaign_hint:

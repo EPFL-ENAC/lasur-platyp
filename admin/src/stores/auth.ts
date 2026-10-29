@@ -8,6 +8,8 @@ export const useAuthStore = defineStore('auth', () => {
   const roles = ref<string[]>([])
   const isAuthenticated = computed(() => profile.value !== undefined)
   const isAdmin = computed(() => roles.value.includes('platyp-admin'))
+  // a signed-in user of the realm is not necessarily a user of the app
+  const isMember = computed(() => roles.value.includes('platyp-user'))
   const initialized = ref(false)
   // Set when Keycloak itself fails to refresh the access token (e.g. the
   // refresh token has expired). This happens client-side, before any request
@@ -36,7 +38,10 @@ export const useAuthStore = defineStore('auth', () => {
       initialized.value = true
       if (authenticated) {
         roles.value = readRoles()
-        if (!roles.value.includes('platyp-user')) await join()
+        // in a realm shared with other apps (client roles), join without asking: the other users are
+        // sent to the sign-up page, to accept the terms and conditions
+        if (authApiClientId && !isMember.value)
+          await join().catch((error) => console.error('Joining the app failed', error))
         profile.value = await keycloak.loadUserProfile()
         sessionExpired.value = false
         accessToken.value = keycloak.token
@@ -65,13 +70,10 @@ export const useAuthStore = defineStore('auth', () => {
    * Refused when sign-up is disabled: the user stays without roles.
    */
   async function join() {
-    try {
-      await api.post('/user/_join', {}, { headers: { Authorization: `Bearer ${keycloak.token}` } })
-      await keycloak.updateToken(-1)
-      roles.value = readRoles()
-    } catch (error) {
-      console.error('Joining the app failed', error)
-    }
+    await api.post('/user/_join', {}, { headers: { Authorization: `Bearer ${keycloak.token}` } })
+    await keycloak.updateToken(-1)
+    accessToken.value = keycloak.token
+    roles.value = readRoles()
   }
 
   async function login() {
@@ -137,6 +139,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     isAuthenticated,
     isAdmin,
+    isMember,
     profile,
     roles,
     accessToken,
@@ -144,6 +147,7 @@ export const useAuthStore = defineStore('auth', () => {
     initialized,
     sessionExpired,
     init,
+    join,
     login,
     logout,
     updateToken,
