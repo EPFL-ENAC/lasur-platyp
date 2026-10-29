@@ -15,11 +15,14 @@ class Config(BaseSettings):
     DB_URL: str | None = None
 
     # Keycloak
-    KEYCLOAK_REALM: str = "LASUR"
-    KEYCLOAK_URL: str = "https://enac-it-sso.epfl.ch"
+    KEYCLOAK_REALM: str = "external"
+    KEYCLOAK_URL: str = "https://enac-it-sso2.epfl.ch"
     KEYCLOAK_API_ID: str
     KEYCLOAK_API_SECRET: str
     KEYCLOAK_TOTP: bool = True
+    # True: roles are client roles of the API client, in a realm shared with other apps (local, dev)
+    # False: roles are realm roles, in a realm of its own (prod)
+    KEYCLOAK_CLIENT_ROLES: bool = False
 
     LASUR_API_URL: str = "https://lasur-ws.epfl.ch"
     LASUR_API_KEY: str = ""

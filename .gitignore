@@ -16,3 +16,6 @@ AGENTS.md
 
 plans
 meetings.md
+
+# Keycloak users migration files (password hashes)
+migration

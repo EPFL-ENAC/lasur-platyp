@@ -440,7 +440,8 @@ Nous vous remercions pour votre précieuse collaboration ! En cas de question, n
     total: 'N : {count}',
     total_participants: 'Nombre de participant·e·s : {count}',
     total_trips: 'Nombre de trajets : {count}',
-    no_data: 'Aucune donnée disponible (5 participant·e·s sont requis·e·s pour afficher le graphique)',
+    no_data:
+      'Aucune donnée disponible (5 participant·e·s sont requis·e·s pour afficher le graphique)',
     observed: 'Données des participant·e·s',
     participants_median: 'Médiane des participant·e·s',
     geneva_median: 'Médiane de la région de Genève',
@@ -1080,9 +1081,12 @@ Par ailleurs, nous vous recommandons d'adapter votre registre du traitement en c
   error: {
     session_expired: 'Votre session a expiré. Veuillez vous reconnecter.',
     accept_terms_and_conditions: 'Vous devez accepter les termes et conditions.',
-    registration_failed: "L'inscription a échoué. Veuillez réessayer plus tard.",
+    registration_failed:
+      "L'inscription a échoué. Si vous avez déjà un compte (p. ex. pour une autre application EPFL ENAC), connectez-vous.",
     signup_disabled: "L'inscription est actuellement désactivée.",
     password_complexity_not_met: 'Le mot de passe ne répond pas aux exigences de complexité.',
+    password_with_identity_provider:
+      "Cet utilisateur se connecte avec un fournisseur d'identité (p. ex. GitHub, Google) et n'a pas de mot de passe.",
     invalid_email: 'Une adresse email valide est requise.',
     form_invalid: 'Certains champs sont invalides.',
     loading_company:

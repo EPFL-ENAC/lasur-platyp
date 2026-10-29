@@ -1062,9 +1062,12 @@ Furthermore, we recommend that you adapt your processing register accordingly.
   error: {
     session_expired: 'Your session has expired. Please sign in again.',
     accept_terms_and_conditions: 'You must accept the terms and conditions.',
-    registration_failed: 'Registration failed. Please try again later.',
+    registration_failed:
+      'Registration failed. If you already have an account (e.g. for another EPFL ENAC application), sign in instead.',
     signup_disabled: 'Sign-up is currently disabled.',
     password_complexity_not_met: 'The password does not meet the complexity requirements.',
+    password_with_identity_provider:
+      'This user signs in with an identity provider (e.g. GitHub, Google) and has no password.',
     invalid_email: 'A valid email address is required.',
     form_invalid: 'Some fields are invalid.',
     loading_company: 'Error loading company. It may not exist or you do not have access to it.',
