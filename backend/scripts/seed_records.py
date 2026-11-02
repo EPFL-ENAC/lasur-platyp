@@ -15,9 +15,12 @@ pool size across separate seed runs on different campaigns lets the same
 fake participant show up in 2+ campaigns, which is what
 LongitudinalService.filter_longitudinal requires to include them.
 
-Usage:
+Usage (local):
     uv run dotenv -f ../.env run python scripts/seed_records.py --campaign-id 1 --count 20
     uv run dotenv -f ../.env run python scripts/seed_records.py --campaign-id 2 --count 20 --participants 10
+
+Usage (deployed backend container, DB_URL taken from its environment):
+    docker compose exec backend python scripts/seed_records.py --campaign-id 1 --count 20
 """
 
 import argparse

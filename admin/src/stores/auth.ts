@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia'
-import { keycloak } from '@/boot/api'
+import { api, keycloak, authApiClientId } from '@/boot/api'
 import type { KeycloakProfile } from 'keycloak-js'
 import type { Company } from '@/models'
 
 export const useAuthStore = defineStore('auth', () => {
   const profile = ref<KeycloakProfile>()
-  const realmRoles = ref<string[]>([])
+  const roles = ref<string[]>([])
   const isAuthenticated = computed(() => profile.value !== undefined)
-  const isAdmin = computed(() => realmRoles.value.includes('platyp-admin'))
+  const isAdmin = computed(() => roles.value.includes('platyp-admin'))
+  // a signed-in user of the realm is not necessarily a user of the app
+  const isMember = computed(() => roles.value.includes('platyp-user'))
   const initialized = ref(false)
   // Set when Keycloak itself fails to refresh the access token (e.g. the
   // refresh token has expired). This happens client-side, before any request
@@ -25,7 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function init() {
     if (isAuthenticated.value || initialized.value) return Promise.resolve(true)
     profile.value = undefined
-    realmRoles.value = []
+    roles.value = []
     try {
       const authenticated = await keycloak.init({
         onLoad: 'check-sso', // Optional: 'login-required' forces login right away, 'check-sso' checks if the user is already logged in.
@@ -35,7 +37,11 @@ export const useAuthStore = defineStore('auth', () => {
 
       initialized.value = true
       if (authenticated) {
-        realmRoles.value = keycloak.tokenParsed?.realm_access?.roles || []
+        roles.value = readRoles()
+        // in a realm shared with other apps (client roles), join without asking: the other users are
+        // sent to the sign-up page, to accept the terms and conditions
+        if (authApiClientId && !isMember.value)
+          await join().catch((error) => console.error('Joining the app failed', error))
         profile.value = await keycloak.loadUserProfile()
         sessionExpired.value = false
         accessToken.value = keycloak.token
@@ -52,6 +58,24 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  function readRoles(): string[] {
+    if (authApiClientId)
+      return keycloak.tokenParsed?.resource_access?.[authApiClientId]?.roles || []
+    return keycloak.tokenParsed?.realm_access?.roles || []
+  }
+
+  /**
+   * A user of the realm without the app roles (signed in with an identity provider or registered
+   * for another app) joins the app as if signed up, then gets the roles in a new token.
+   * Refused when sign-up is disabled: the user stays without roles.
+   */
+  async function join() {
+    await api.post('/user/_join', {}, { headers: { Authorization: `Bearer ${keycloak.token}` } })
+    await keycloak.updateToken(-1)
+    accessToken.value = keycloak.token
+    roles.value = readRoles()
+  }
+
   async function login() {
     if (isAuthenticated.value) return
     // Ensure keycloak is initialized before attempting login
@@ -66,7 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (!keycloak.didInitialize) {
       // If keycloak was never initialized, just clear local state
       profile.value = undefined
-      realmRoles.value = []
+      roles.value = []
       accessToken.value = undefined
       return
     }
@@ -77,7 +101,7 @@ export const useAuthStore = defineStore('auth', () => {
       })
       .then(() => {
         profile.value = undefined
-        realmRoles.value = []
+        roles.value = []
         accessToken.value = undefined
       })
   }
@@ -93,7 +117,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       console.error('Token refresh error:', error)
       profile.value = undefined
-      realmRoles.value = []
+      roles.value = []
       sessionExpired.value = true
       throw error
     }
@@ -115,13 +139,15 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     isAuthenticated,
     isAdmin,
+    isMember,
     profile,
-    realmRoles,
+    roles,
     accessToken,
     keycloak,
     initialized,
     sessionExpired,
     init,
+    join,
     login,
     logout,
     updateToken,

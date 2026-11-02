@@ -210,9 +210,17 @@ const localeOptions = computed(() => {
 const currentLocaleLabel = computed(() => localeLabel(locale.value))
 
 onMounted(() => {
-  authStore.init().then(() => {
+  authStore.init().then(async () => {
     if (!authStore.isAuthenticated) {
       router.push({ path: '/signin' })
+    } else if (
+      !authStore.isMember &&
+      (await useUsersStore()
+        .loadSignup()
+        .catch(() => false))
+    ) {
+      // signed-in user of the realm, not a user of the app: accept the terms and conditions to join
+      router.push({ path: '/signup' })
     } else {
       // First-visit redirect lives here, once auth is resolved: the router
       // guard runs before init(), and redirecting while unauthenticated sends
