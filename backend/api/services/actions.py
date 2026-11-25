@@ -153,7 +153,7 @@ class CompanyActionService(EntityService):
 
         for key, value in payload.model_dump().items():
             # print(key, value)
-            if key not in ["id"]:
+            if key not in ["id", "company_id"]:
                 setattr(entity, key, value)
         await self.session.commit()
         return entity
