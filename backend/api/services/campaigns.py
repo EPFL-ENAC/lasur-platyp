@@ -203,7 +203,7 @@ class CampaignService(EntityService):
 
         for key, value in payload.model_dump().items():
             # print(key, value)
-            if key not in ["id", "created_at", "updated_at", "created_by", "updated_by", "workplaces"]:
+            if key not in ["id", "company_id", "created_at", "updated_at", "created_by", "updated_by", "workplaces"]:
                 setattr(entity, key, value)
         entity.updated_at = datetime.now()
         if user:
