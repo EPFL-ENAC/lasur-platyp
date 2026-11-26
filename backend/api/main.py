@@ -4,7 +4,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from api.config import config
 from api.db import get_session, AsyncSession
-from logging import basicConfig, INFO, DEBUG
+from logging import basicConfig, exception
 from pydantic import BaseModel
 from sqlalchemy.sql import text
 from api.views.companies import router as companies_router
@@ -18,7 +18,7 @@ from api.views.stats import router as stats_router
 from api.views.isochrones import router as isochrones_router
 from api.rate_limit import limiter
 
-basicConfig(level=DEBUG)
+basicConfig(level=config.LOG_LEVEL)
 
 app = FastAPI(root_path=config.PATH_PREFIX)
 app.state.limiter = limiter
@@ -29,7 +29,6 @@ origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -59,8 +58,9 @@ async def get_health(
     # Check DB connection
     try:
         await session.exec(text("SELECT 1"))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"DB Error: {e}")
+    except Exception:
+        exception("Health check: database error")
+        raise HTTPException(status_code=500, detail="Database unavailable")
 
     return HealthCheck(status="OK")
 
