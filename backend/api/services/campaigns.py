@@ -201,9 +201,13 @@ class CampaignService(EntityService):
         if user is not None and not is_admin(user):
             await require_admin_or_perm(user, f"company:{entity.company_id}", "update")
 
+        if payload.company_id is not None and payload.company_id != entity.company_id:
+            raise HTTPException(
+                status_code=400, detail="Campaign cannot be moved to another company")
+
         for key, value in payload.model_dump().items():
             # print(key, value)
-            if key not in ["id", "created_at", "updated_at", "created_by", "updated_by", "workplaces"]:
+            if key not in ["id", "company_id", "created_at", "updated_at", "created_by", "updated_by", "workplaces"]:
                 setattr(entity, key, value)
         entity.updated_at = datetime.now()
         if user:

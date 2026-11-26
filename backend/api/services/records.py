@@ -142,6 +142,10 @@ class RecordService(EntityService):
         )
         entity = res.one_or_none()
         if entity:
+            # the token must not let a record be moved to another campaign (and company)
+            if entity.campaign_id != campaign.id:
+                raise HTTPException(
+                    status_code=400, detail="Record does not belong to this campaign")
             return await self.update(entity.id, payload, campaign)
         return await self.create(payload, campaign)
 

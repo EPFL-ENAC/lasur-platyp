@@ -4,7 +4,7 @@ from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlmodel import select
 from fastapi import HTTPException
-from api.models.domain import Participant
+from api.models.domain import Participant, Record
 from api.models.query import ParticipantResult, ParticipantDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
@@ -160,11 +160,6 @@ class ParticipantService(EntityService):
 
     async def update(self, id: int, payload: ParticipantDraft, user: User = None) -> Participant:
         """Update a participant"""
-        # Get campaign to verify access
-        campaign = await CampaignService(self.session).get(payload.campaign_id, user)
-        if user is not None and not is_admin(user):
-            await require_admin_or_perm(user, f"company:{campaign.company_id}", "update")
-
         res = await self.session.exec(
             select(Participant).where(Participant.id == id)
         )
@@ -172,17 +167,29 @@ class ParticipantService(EntityService):
         if not entity:
             raise HTTPException(
                 status_code=404, detail="Participant not found")
-        if entity.identifier != payload.identifier:
-            # changing the identifier is allowed but make sure it is unique in the campaign
+
+        # Verify access to the current campaign, and to the target one when moving the participant
+        campaign_service = CampaignService(self.session)
+        await campaign_service.get(entity.campaign_id, user, "update")
+        if entity.campaign_id != payload.campaign_id:
+            await campaign_service.get(payload.campaign_id, user, "update")
+            # the survey record stays in the participant's campaign
+            res = await self.session.exec(
+                select(Record.id).where(Record.token == entity.token))
+            if res.first() is not None:
+                raise HTTPException(
+                    status_code=400, detail="Participant has a survey record, it cannot be moved to another campaign")
+
+        if entity.identifier != payload.identifier or entity.campaign_id != payload.campaign_id:
+            # changing the identifier or the campaign is allowed but make sure the identifier is unique in the campaign
             res = await self.session.exec(
                 select(Participant).where(
-                    Participant.identifier == payload.identifier, Participant.campaign_id == entity.campaign_id)
+                    Participant.identifier == payload.identifier, Participant.campaign_id == payload.campaign_id)
             )
             if res.one_or_none() is not None:
                 raise HTTPException(
                     status_code=400, detail="Participant identifier already exists")
         for key, value in payload.model_dump().items():
-            print(key, value)
             if key not in ["id", "created_at", "updated_at", "created_by", "updated_by", "token"]:
                 setattr(entity, key, value)
         entity.updated_at = datetime.now()

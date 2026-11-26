@@ -36,6 +36,8 @@ class Config(BaseSettings):
 
     PATH_PREFIX: str = "/api"
 
+    LOG_LEVEL: str = "INFO"
+
     @model_validator(mode="before")
     def form_db_url(cls, values: dict) -> dict:
         """Form the DB URL from the settings"""

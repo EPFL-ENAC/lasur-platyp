@@ -1713,9 +1713,7 @@ dependencies = [
     { name = "enacit4r-sql" },
     { name = "fastapi" },
     { name = "geojson-pydantic" },
-    { name = "geopandas" },
     { name = "h3" },
-    { name = "matplotlib" },
     { name = "pandas" },
     { name = "psycopg2" },
     { name = "pydantic-settings" },
@@ -1728,6 +1726,8 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "geopandas" },
+    { name = "matplotlib" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
 ]
@@ -1741,9 +1741,7 @@ requires-dist = [
     { name = "enacit4r-sql", git = "https://github.com/EPFL-ENAC/enacit4r-sql?rev=0.4.1" },
     { name = "fastapi", specifier = ">=0.165.0,<0.166" },
     { name = "geojson-pydantic", specifier = ">=2.1.0,<3" },
-    { name = "geopandas", specifier = ">=1.1.3,<2" },
     { name = "h3", specifier = ">=4.3.1,<5" },
-    { name = "matplotlib", specifier = ">=3.10.8,<4" },
     { name = "pandas", specifier = ">=2.2.3,<3" },
     { name = "psycopg2", specifier = ">=2.9.10,<3" },
     { name = "pydantic-settings", specifier = ">=2.6.1,<3" },
@@ -1756,6 +1754,8 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "geopandas", specifier = ">=1.1.3,<2" },
+    { name = "matplotlib", specifier = ">=3.10.8,<4" },
     { name = "pytest", specifier = ">=9.0.1,<10" },
     { name = "pytest-asyncio", specifier = ">=1.3.0,<2" },
 ]
