@@ -116,8 +116,14 @@ async def test_participant_identifier_unique_in_target_campaign(db):
 @pytest.mark.parametrize("user", [USER, ADMIN])
 async def test_company_id_is_immutable(db, user):
     session = AsyncSessionStub(db)
-    await CampaignService(session).update(1, CampaignDraft(name="renamed", company_id=2), user)
-    await CompanyActionService(session).update(1, CompanyActionDraft(group="train", company_id=2), user)
+    for update in (CampaignService(session).update(1, CampaignDraft(name="moved", company_id=2), user),
+                   CompanyActionService(session).update(1, CompanyActionDraft(group="moved", company_id=2), user)):
+        with pytest.raises(HTTPException) as e:
+            await update
+        assert e.value.status_code == 400
+    # same company is fine
+    await CampaignService(session).update(1, CampaignDraft(name="renamed", company_id=1), user)
+    await CompanyActionService(session).update(1, CompanyActionDraft(group="train", company_id=1), user)
     db.expire_all()
     assert (db.get(Campaign, 1).name, db.get(Campaign, 1).company_id) == ("renamed", 1)
     assert (db.get(CompanyAction, 1).group, db.get(CompanyAction, 1).company_id) == ("train", 1)
