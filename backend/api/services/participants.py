@@ -4,7 +4,7 @@ from api.db import AsyncSession
 from sqlalchemy.sql import text
 from sqlmodel import select
 from fastapi import HTTPException
-from api.models.domain import Participant
+from api.models.domain import Participant, Record
 from api.models.query import ParticipantResult, ParticipantDraft
 from enacit4r_sql.utils.query import QueryBuilder
 from datetime import datetime
@@ -173,6 +173,12 @@ class ParticipantService(EntityService):
         await campaign_service.get(entity.campaign_id, user, "update")
         if entity.campaign_id != payload.campaign_id:
             await campaign_service.get(payload.campaign_id, user, "update")
+            # the survey record stays in the participant's campaign
+            res = await self.session.exec(
+                select(Record.id).where(Record.token == entity.token))
+            if res.first() is not None:
+                raise HTTPException(
+                    status_code=400, detail="Participant has a survey record, it cannot be moved to another campaign")
 
         if entity.identifier != payload.identifier or entity.campaign_id != payload.campaign_id:
             # changing the identifier or the campaign is allowed but make sure the identifier is unique in the campaign
